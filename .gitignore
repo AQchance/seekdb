@@ -388,3 +388,5 @@ deps/3rd
 test/tmp
 test/var
 tmp
+use.sh
+debug.sh
