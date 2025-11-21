@@ -33,7 +33,7 @@ int MySchemaService::init(const char *file_name)
   if (OB_SUCCESS != (ret = restore_schema_.init())
       || OB_SUCCESS != (ret = restore_schema_.parse_from_file(
           file_name, schema_guard_))) {
-    STORAGE_LOG(ERROR, "fail to get schema manger");
+
   }
   return ret;
 }
@@ -44,7 +44,7 @@ int MySchemaService::add_schema(const char *file_name)
   schema_guard_ = NULL;
   if (OB_SUCCESS != (ret = restore_schema_.parse_from_file(
           file_name, schema_guard_))) {
-    STORAGE_LOG(ERROR, "failed to add schema");
+
   }
   return ret;
 }

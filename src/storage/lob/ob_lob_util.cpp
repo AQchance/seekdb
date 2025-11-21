@@ -170,7 +170,7 @@ int ObInsertLobColumnHelper::insert_lob_column(ObIAllocator &allocator,
           lob_param.inrow_threshold_ = lob_storage_param.inrow_threshold_;
           lob_param.is_index_table_ = lob_storage_param.is_index_table_;
           lob_param.main_table_rowkey_col_ = !lob_storage_param.is_index_table_ && lob_storage_param.is_rowkey_col_;
-          LOG_DEBUG("lob storage param", K(lob_storage_param), K(cs_type));
+
         }
         if (OB_FAIL(ret)) {
         } else if (!src.is_valid()) {

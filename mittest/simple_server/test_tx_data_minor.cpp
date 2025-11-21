@@ -102,7 +102,7 @@ void ObTxDataMinorTest::freeze_tx_data()
     EXE_SQL("alter system minor freeze tenant sys");
   }
   ATOMIC_STORE(&stop, true);
-  STORAGE_LOG(INFO, "freeze done");
+
 }
 
 int INSERT_THREAD_NUM = 32;
@@ -225,7 +225,7 @@ int main(int argc, char **argv)
   oceanbase::unittest::init_log_and_gtest(argc, argv);
   OB_LOGGER.set_log_level(log_level);
 
-  LOG_INFO("main>>>");
+
   oceanbase::unittest::RunCtx.time_sec_ = time_sec;
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

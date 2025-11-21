@@ -72,7 +72,7 @@ int clear_tx_data(ObTxDataTable *tx_data_table)
   ObTxDataMemtableWriteGuard write_guard;
   ObTxDataMemtable *tx_data_memtable = nullptr;
   if (OB_FAIL(mgr->get_all_memtables_for_write(write_guard))) {
-    STORAGE_LOG(WARN, "get all memtables for write fail.", KR(ret), KPC(mgr));
+
   } else {
     ObTransID tx_id;
     ObTableHandleV2 (&memtable_handles)[MAX_TX_DATA_MEMTABLE_CNT] = write_guard.handles_;
@@ -84,20 +84,20 @@ int clear_tx_data(ObTxDataTable *tx_data_table)
                     K(memtable_handles[i]));
       } else if (OB_ISNULL(tx_data_memtable)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(ERROR, "tx data memtable is nullptr.", KR(ret), K(memtable_handles[i]));
+
       } else {
         for (int64_t i = 0; OB_SUCC(ret) && i < 10; i++) {
           tx_id = i;
           if (tx_data_memtable->contain_tx_data(tx_id)) {
             ObTxData *existed_tx_data = nullptr;
             if (OB_FAIL(tx_data_memtable->get_tx_data(tx_id.tx_id_, existed_tx_data))) {
-              STORAGE_LOG(WARN, "get tx data from tx data memtable failed.", KR(ret), K(i), KPC(tx_data_memtable));
+
             } else if (OB_ISNULL(existed_tx_data)) {
               ret = OB_ERR_UNEXPECTED;
               STORAGE_LOG(WARN, "existed tx data is unexpected nullptr", KR(ret),
                           KPC(tx_data_memtable));
             } else if (OB_FAIL(tx_data_memtable->remove(tx_id.tx_id_))) {
-              STORAGE_LOG(ERROR, "remove tx data from tx data memtable failed.", KR(ret), K(tx_id), KPC(tx_data_memtable));
+
             }
           }
         }
@@ -260,7 +260,7 @@ TEST_F(TestMultiVersionMergeRecycle, recycle_macro)
   prepare_one_macro(&micro_data[1], 1);
   prepare_data_end(handle1);
   merge_context.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[2];
@@ -283,7 +283,7 @@ TEST_F(TestMultiVersionMergeRecycle, recycle_macro)
   prepare_one_macro(&micro_data2[1], 1);
   prepare_data_end(handle2);
   merge_context.tables_handle_.add_table(handle2);
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = 100;
@@ -354,7 +354,7 @@ TEST_F(TestMultiVersionMergeRecycle, recycle_after_reuse)
   prepare_one_macro(&micro_data[1], 1);
   prepare_data_end(handle1);
   merge_context.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[2];
@@ -378,7 +378,7 @@ TEST_F(TestMultiVersionMergeRecycle, recycle_after_reuse)
   prepare_one_macro(&micro_data2[1], 1);
   prepare_data_end(handle2);
   merge_context.tables_handle_.add_table(handle2);
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = 100;
@@ -453,7 +453,7 @@ TEST_F(TestMultiVersionMergeRecycle, reuse_after_recycle)
   prepare_one_macro(&micro_data[1], 1);
   prepare_data_end(handle1);
   merge_context.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[2];
@@ -477,7 +477,7 @@ TEST_F(TestMultiVersionMergeRecycle, reuse_after_recycle)
   prepare_one_macro(&micro_data2[1], 1);
   prepare_data_end(handle2);
   merge_context.tables_handle_.add_table(handle2);
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = 100;
@@ -558,7 +558,7 @@ TEST_F(TestMultiVersionMergeRecycle, recycled_micros_after_reuse)
   prepare_one_macro(&micro_data[1], 2);
   prepare_data_end(handle1);
   merge_context.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[1];
@@ -574,7 +574,7 @@ TEST_F(TestMultiVersionMergeRecycle, recycled_micros_after_reuse)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   merge_context.tables_handle_.add_table(handle2);
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = 100;
@@ -669,7 +669,7 @@ TEST_F(TestMultiVersionMergeRecycle, rowkeys_across_micros)
   prepare_one_macro(micro_data, 5);
   prepare_data_end(handle1);
   merge_context.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[1];
@@ -685,7 +685,7 @@ TEST_F(TestMultiVersionMergeRecycle, rowkeys_across_micros)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   merge_context.tables_handle_.add_table(handle2);
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = 100;
@@ -783,7 +783,7 @@ TEST_F(TestMultiVersionMergeRecycle, rowkeys_across_macro)
   prepare_one_macro(&micro_data[4], 1);
   prepare_data_end(handle1);
   merge_context.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[1];
@@ -799,7 +799,7 @@ TEST_F(TestMultiVersionMergeRecycle, rowkeys_across_macro)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   merge_context.tables_handle_.add_table(handle2);
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = 100;
@@ -891,7 +891,7 @@ TEST_F(TestMultiVersionMergeRecycle, recycle_macro_with_last_row)
   prepare_one_macro(&micro_data[1], 2);
   prepare_data_end(handle1);
   merge_context.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[1];
@@ -907,7 +907,7 @@ TEST_F(TestMultiVersionMergeRecycle, recycle_macro_with_last_row)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   merge_context.tables_handle_.add_table(handle2);
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = 100;
@@ -991,7 +991,7 @@ TEST_F(TestMultiVersionMergeRecycle, reuse_after_recycle_with_last)
   prepare_one_macro(&micro_data[3], 1);
   prepare_data_end(handle1);
   merge_context.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[1];
@@ -1007,7 +1007,7 @@ TEST_F(TestMultiVersionMergeRecycle, reuse_after_recycle_with_last)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   merge_context.tables_handle_.add_table(handle2);
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = 100;

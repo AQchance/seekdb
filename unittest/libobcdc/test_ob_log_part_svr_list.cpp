@@ -228,7 +228,7 @@ TEST_F(TestObLogPartSvrList, next_server)
   IObLogFetcher *fetcher = new ObLogFetcher();
   static_cast<ObLogFetcher*>(fetcher)->inited_ = true;
   instance->fetcher_ = fetcher;
-  LOG_INFO("found fetcher", K(TCTX.fetcher_));
+
   // request next log: log_id=250
   uint64_t next_log_id = 250;
   BlackList black_list;

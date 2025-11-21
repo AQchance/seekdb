@@ -3719,7 +3719,7 @@ int main(int argc, char **argv)
   OB_LOGGER.set_file_name("test_memtable.log", true, false,
                           "test_memtable.log");
   OB_LOGGER.set_log_level("INFO");
-  STORAGE_LOG(INFO, "begin unittest: test simple memtable");
+
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

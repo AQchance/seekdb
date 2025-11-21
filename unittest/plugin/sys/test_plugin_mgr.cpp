@@ -41,7 +41,7 @@ TEST(TestObPluginMgr, test_find_plugin)
   };
   for (size_t i = 0; i < sizeof(not_exist_names)/sizeof(not_exist_names[0]); i++) {
     const ObString name(not_exist_names[i]);
-    LOG_INFO("before find plugin(not exist)", K(name));
+
     ASSERT_NE(OB_SUCCESS, plugin_mgr.find_plugin(OBP_PLUGIN_TYPE_FT_PARSER, name, plugin_entry));
     ASSERT_EQ(nullptr, plugin_entry);
   }
@@ -54,7 +54,7 @@ TEST(TestObPluginMgr, test_find_plugin)
 
   for (size_t i = 0; i < sizeof(plugin_names)/sizeof(plugin_names[0]); i++) {
     const ObString name(plugin_names[i]);
-    LOG_INFO("before find plugin", K(name));
+
     ASSERT_EQ(OB_SUCCESS, plugin_mgr.find_plugin(OBP_PLUGIN_TYPE_FT_PARSER, name, plugin_entry));
     ASSERT_NE(nullptr, plugin_entry);
   }

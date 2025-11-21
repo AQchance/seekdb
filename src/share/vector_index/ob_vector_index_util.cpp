@@ -435,7 +435,7 @@ int ObVectorIndexUtil::parser_params_from_string(
       }
       param.dim_ = 0; // TODO@xiajin: fill dim
     }
-    LOG_DEBUG("parser vector index param", K(ret), K(index_param_str), K(param));
+
   }
   return ret;
 }
@@ -692,7 +692,7 @@ int ObVectorIndexParam::build_search_param(const ObVectorIndexParam &index_param
         search_param.similarity_threshold_ = query_param.similarity_threshold_;
       }
     }
-    LOG_TRACE("vector param", K(index_param), K(query_param), K(search_param));
+
   }
   return ret;
 }
@@ -851,7 +851,7 @@ int ObVectorIndexUtil::filter_index_param(const ObString &index_param_str, const
             first_item = false;
           }
         } else {
-          LOG_INFO("do not print: ", K(new_param_name), K(new_param_value));
+
         }
       }
     }
@@ -1083,7 +1083,7 @@ int ObVectorIndexUtil::construct_rebuild_index_param(
       // extra_info_max_size changed
       if (new_vec_param.extra_info_max_size_ == 0) {
         // skip, do nothing
-        LOG_DEBUG("extra_info_max_size set to 0, skip", K(new_vec_param), K(old_vec_param));
+
       } else {
         int64_t extra_info_actual_size = 0;
         if (data_table_schema.get_index_type() != ObIndexType::INDEX_TYPE_IS_NOT) {
@@ -1126,10 +1126,10 @@ int ObVectorIndexUtil::construct_rebuild_index_param(
         MEMCPY(buf, new_index_params.ptr(), new_index_params.length());
         MEMCPY(buf + new_index_params.length(), not_set_params_str, pos);
         new_index_params.assign_ptr(buf, alloc_len);
-        LOG_DEBUG("vector index params", K(new_index_params));
+
       }
     }
-    LOG_DEBUG("construct_rebuild_index_param", K(new_index_params));
+
   }
   return ret;
 }
@@ -1601,7 +1601,7 @@ int ObVectorIndexUtil::get_vector_index_column_id(
             } else if (OB_FAIL(col_ids.push_back(new_col_id))) {
               LOG_WARN("fail to push back col names", K(ret), K(new_col_id));
             } else {
-              LOG_DEBUG("success to get vector index col name", K(ret), K(new_col_id));
+
             }
           }
         }
@@ -2307,7 +2307,7 @@ int ObVectorIndexUtil::update_param_extra_actual_size(const ObTableSchema &data_
           if (OB_FAIL(index_schema.set_index_params(new_index_params))) {
             LOG_WARN("fail to set index params", K(ret), K(new_index_params));
           } else {
-            LOG_DEBUG("vector index params", K(new_index_params));
+
           }
         }
       }
@@ -2362,13 +2362,13 @@ int ObVectorIndexUtil::check_extra_info_size(const ObTableSchema &tbl_schema,
       if (!is_column_valid && !is_extra_max_size_set) {
         extra_info_actual_size = 0;
         ret = OB_SUCCESS;
-        LOG_INFO("not set extra_max_size, and rowkey_type not support");
+
       } else {
         LOG_WARN("fail to check extra info size", K(ret), K(rowkey_size), K(extra_info_max_size));
       }
     } else {
       extra_info_actual_size = ObVecExtraInfo::get_encode_size(extra_objs);
-      LOG_INFO("get extra info actual size", K(extra_info_actual_size), K(rowkey_size), K(extra_info_max_size));
+
       if (is_extra_max_size_set) {
         if (extra_info_max_size != 1 && rowkey_size > extra_info_max_size) {
           ret = OB_INVALID_ARGUMENT;
@@ -2384,7 +2384,7 @@ int ObVectorIndexUtil::check_extra_info_size(const ObTableSchema &tbl_schema,
         //   LOG_WARN("fail to get session extra info max size", K(ret));
         // }
         if (extra_info_actual_size > session_extra_info_max_size) {
-          LOG_INFO("extra_info_actual_size larger than session_extra_info_max_size", K(extra_info_actual_size), K(rowkey_size), K(session_extra_info_max_size));
+
           extra_info_actual_size = 0;
         }
       }
@@ -2526,7 +2526,7 @@ int ObVectorIndexUtil::get_latest_avaliable_index_tids_for_hnsw(
       ret = OB_INVALID_ARGUMENT;
       LOG_WARN("failed to get latest avaliable index tids for hnsw", K(ret), K(inc_tid_heap.count()));
     } else {
-      LOG_DEBUG("get latest avaliable index tids for hnsw", K(inc_tid), K(vbitmap_tid), K(snapshot_tid), K(emdedded_tid));
+
     }
   }
 
@@ -3547,7 +3547,7 @@ int ObVectorIndexUtil::check_index_param(
             MEMCPY(buf, index_params.ptr(), index_params.length());
             MEMCPY(buf + index_params.length(), not_set_params_str, pos);
             index_params.assign_ptr(buf, alloc_len);
-            LOG_DEBUG("vector index params", K(index_params));
+
           }
         }
       }
@@ -4459,7 +4459,7 @@ int ObVectorIndexUtil::generate_index_schema_from_exist_table(
               if (FAILEDx(new_index_schema.sort_column_array_by_column_id())) {
                 LOG_WARN("failed to sort column", K(ret));
               } else {
-                LOG_INFO("succeed to set extra info table columns", K(new_index_schema));
+
               }
             }
           } else if (new_vec_param.extra_info_actual_size_ == 0) {
@@ -4471,7 +4471,7 @@ int ObVectorIndexUtil::generate_index_schema_from_exist_table(
             if (FAILEDx(new_index_schema.sort_column_array_by_column_id())) {
               LOG_WARN("failed to sort column", K(ret));
             } else {
-              LOG_INFO("succeed to del extra info columns", K(new_index_schema));
+
             }
           }
         }
@@ -4489,7 +4489,7 @@ int ObVectorIndexUtil::generate_index_schema_from_exist_table(
       } // end is_vec_ivf_index.
     }
   }
-  LOG_DEBUG("generate_index_schema_from_exist_table", K(ret), K(new_index_params), K(new_index_table_name));
+
   return ret;
 }
 
@@ -4638,7 +4638,7 @@ int ObVectorIndexUtil::check_vec_aux_index_deleted(
       }
     }
   }
-  LOG_INFO("check_vec_aux_index_deleted", K(ret), K(is_all_deleted));
+
   return ret;
 }
 
@@ -4823,7 +4823,7 @@ int ObVectorIndexUtil::check_vector_index_by_column_name(
       }
     }
   }
-  LOG_INFO("check_vector_index_by_column_name", K(is_valid), K(ret));
+
   return ret;
 }
 
@@ -4877,7 +4877,7 @@ int ObVectorIndexUtil::get_vector_index_column_name(
               LOG_WARN("fail to push back col names", K(ret), K(new_col_name));
             } else {
               has_get_column_name = true;
-              LOG_DEBUG("success to get vector index col name", K(ret), K(new_col_name));
+
             }
           }
         }
@@ -5233,7 +5233,7 @@ int ObVectorIndexUtil::get_dropping_vec_index_invisiable_table_schema(
         }
       }
     }
-    LOG_INFO("get dropping vec aux table name", K(ret), K(tenant_id), K(data_table_id), K(index_table_id));
+
   }
   return ret;
 }
@@ -5826,10 +5826,10 @@ int ObVectorIndexUtil::estimate_vector_memory_used(
   }
 
   if (OB_FAIL(ret) || !param_filled) {
-    LOG_INFO("skip esitmate memory", K(ret), K(param_filled));
+
   } else if (VIAT_HNSW == param.type_) {
     // vsag not support hnsw estimate now, skip for tmp
-    LOG_INFO("skip esitmate hnsw memory, vsag not support");
+
   } else if (need_estimate) {
     ObVectorIndexAlgorithmType build_type = param.type_;
     int64_t build_metric = param.m_;
@@ -5867,7 +5867,7 @@ int ObVectorIndexUtil::estimate_vector_memory_used(
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("estimate vector index memory used.", K(estimate_memory), K(index_schema.get_table_name_str()), K(row_count), K(param));
+
   }
   return ret;
 }

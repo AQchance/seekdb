@@ -180,7 +180,7 @@ TEST_F(TestTmpFileBlock, test_block_manager_op)
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_NE(nullptr, handle.get());
 
-  LOG_INFO("test_block_manager_op");
+
 }
 
 TEST_F(TestTmpFileBlock, test_block_manager_stat)
@@ -275,7 +275,7 @@ TEST_F(TestTmpFileBlock, test_block_manager_stat)
   ASSERT_EQ(3, macro_block_count);
   ASSERT_EQ(page_num * 3 - 30, used_page_num);
 
-  LOG_INFO("test_block_manager_stat");
+
 }
 
 TEST_F(TestTmpFileBlock, test_block)
@@ -359,7 +359,7 @@ TEST_F(TestTmpFileBlock, test_block)
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(true, can_remove);
 
-  LOG_INFO("test_block");
+
 }
 
 TEST_F(TestTmpFileBlock, test_block_page_bit_map)
@@ -510,7 +510,7 @@ TEST_F(TestTmpFileBlock, test_block_page_bit_map)
   ASSERT_NE(OB_SUCCESS, ret);
   ret = bitmap.is_all_false(100, bitmap.get_capacity(), value);
   ASSERT_NE(OB_SUCCESS, ret);
-  LOG_INFO("test_block_page_bit_map");
+
 }
 
 TEST_F(TestTmpFileBlock, test_block_page_bit_map_iter)
@@ -580,7 +580,7 @@ TEST_F(TestTmpFileBlock, test_block_page_bit_map_iter)
       ASSERT_EQ(end_page_id, starts[i]-1);
     }
   }
-  LOG_INFO("test_block_page_bit_map_iter");
+
 }
 
 } // namespace oceanbase

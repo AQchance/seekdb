@@ -264,7 +264,7 @@ int ObTableLoadObjCaster::string_to_enum(ObIAllocator &alloc, const ObObj &src,
     value = pos + 1; // enum start from 1
   }
   output_value = value;
-  LOG_DEBUG("finish string_enum", K(ret), K(in_str), K(str_values), K(output_value), K(lbt()));
+
   return ret;
 }
 
@@ -353,7 +353,7 @@ int ObTableLoadObjCaster::string_to_set(ObIAllocator &alloc, const ObObj &src,
   }
 
   output_value = value;
-  LOG_DEBUG("finish string_set", K(ret), K(in_str), K(str_values), K(output_value), K(lbt()));
+
   return ret;
 }
 

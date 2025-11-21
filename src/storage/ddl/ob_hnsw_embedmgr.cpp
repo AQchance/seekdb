@@ -615,7 +615,7 @@ int ObEmbeddingTaskMgr::submit_batch_info(ObTaskBatchInfo *&batch_info)
     int64_t slot_idx = -1;
     if (OB_FAIL(slot_ring_.reserve_slot(slot_idx))) {
       if (OB_EAGAIN == ret) {
-        LOG_DEBUG("slots is full", "batch_count", batch_info->get_count(), K(slot_idx));
+
       } else {
         LOG_WARN("reserve task slot failed", K(ret));
       }

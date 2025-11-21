@@ -235,7 +235,7 @@ TEST_F(TestTableLockFlush, restore_tablelock_memtable)
   ObLockParam param;
   ObLSHandle handle;
   ObLSID ls_id(111);
-  LOG_INFO("create_ls");
+
   ASSERT_EQ(OB_SUCCESS, gen_create_ls_arg(tenant_id_, ls_id, arg));
   ASSERT_EQ(OB_SUCCESS, MTL(ObLSService *)->create_ls(arg));
   EXPECT_EQ(OB_SUCCESS, MTL(ObLSService *)->get_ls(ls_id, handle, ObLSGetMod::STORAGE_MOD));
@@ -251,7 +251,7 @@ TEST_F(TestTableLockFlush, restore_tablelock_memtable)
   mock_store_ctx(ob_store_ctx, part_ctx, txDesc, ls);
   auto &mem_ctx = part_ctx.mt_ctx_;
 
-  LOG_INFO("create_memtable");
+
   ObTabletID tablet_id(LS_LOCK_TABLET);
   ObTenantMetaMemMgr *t3m = MTL(ObTenantMetaMemMgr *);
   ObLockMemtableMgr memtable_mgr;
@@ -299,7 +299,7 @@ TEST_F(TestTableLockFlush, restore_tablelock_memtable)
   share::SCN table_lock_op2_commit_version = share::SCN::plus(share::SCN::min_scn(), 15);
   share::SCN table_lock_op2_commit_scn = share::SCN::plus(share::SCN::min_scn(), 15);
 
-  LOG_INFO("lock");
+
   ASSERT_EQ(share::SCN::max_scn(), memtable->get_rec_scn());
   ASSERT_EQ(OB_SUCCESS, memtable->lock(param, ob_store_ctx, table_lock_op1));
   ASSERT_EQ(OB_SUCCESS, memtable->update_lock_status(table_lock_op1,
@@ -314,7 +314,7 @@ TEST_F(TestTableLockFlush, restore_tablelock_memtable)
                                                      LOCK_OP_COMPLETE));
   ASSERT_EQ(table_lock_op1_commit_scn, memtable->get_rec_scn());
 
-  LOG_INFO("memtable flush");
+
   // add flush task and confirm freeze_scn
   ASSERT_EQ(OB_SUCCESS, memtable->flush(share::SCN::plus(share::SCN::min_scn(), 12)));
   // get table lock store info
@@ -327,7 +327,7 @@ TEST_F(TestTableLockFlush, restore_tablelock_memtable)
   max_consequent_callbacked_scn = share::SCN::plus(share::SCN::min_scn(), 16);
   freezer.max_consequent_callbacked_scn_ = max_consequent_callbacked_scn;
 
-  LOG_INFO("memtable flush again");
+
   ASSERT_EQ(OB_EAGAIN, memtable->flush(share::SCN::max_scn()));
   EXPECT_EQ(OB_SUCCESS, memtable->get_table_lock_store_info(table_lock_store_info));
   // only lock op can be dumped
@@ -340,12 +340,12 @@ TEST_F(TestTableLockFlush, restore_tablelock_memtable)
   memtable->obj_lock_map_.init();
   freezer.max_consequent_callbacked_scn_ = max_consequent_callbacked_scn;
 
-  LOG_INFO("recover obj lock");
+
   ASSERT_EQ(OB_SUCCESS, memtable->recover_obj_lock(table_lock_store_info[0]));
   memtable->set_flushed_scn(freezer.max_consequent_callbacked_scn_);
   ASSERT_EQ(share::SCN::max_scn(), memtable->get_rec_scn());
 
-  LOG_INFO("remove ls");
+
   ASSERT_EQ(OB_SUCCESS, MTL(ObLSService*)->remove_ls(ls_id));
 }
 
@@ -404,10 +404,10 @@ TEST_F(TestTableLockFlush, restore_tx_ctx)
   ctx1.mt_ctx_.lock_mem_ctx_.lock_list_.get_first()->set_logged();
 
   ObLSTxCtxMgr *ls_tx_ctx_mgr = ls->get_tx_svr()->mgr_;
-  LOG_INFO("before insert into tx map", K(ls_tx_ctx_mgr->ls_tx_ctx_map_.count()));
+
   EXPECT_EQ(OB_SUCCESS, ls_tx_ctx_mgr->ls_tx_ctx_map_.insert_and_get(id1, &ctx1, NULL));
   DEFER(ls_tx_ctx_mgr->ls_tx_ctx_map_.revert(&ctx1));
-  LOG_INFO("after insert into tx map", K(ctx1), K(ls_tx_ctx_mgr->ls_tx_ctx_map_.count()));
+
 
   // get lock_table store info in tx_ctx_table
   ObPartTransCtx* tx_ctx = nullptr;
@@ -432,11 +432,11 @@ TEST_F(TestTableLockFlush, restore_tx_ctx)
             obj_lock->map_[3]->get_first()->lock_op_.commit_version_);
   DEFER(ls_tx_ctx_mgr->ls_tx_ctx_map_.del(id1, &ctx1));
   ctx1.is_inited_ = false;
-  LOG_INFO("after delete from tx map", KP(tx_ctx), KPC(tx_ctx), KP(&ctx1), K(ctx1), K(ls_tx_ctx_mgr->ls_tx_ctx_map_.count()));
+
   ls_tx_ctx_mgr->ls_tx_ctx_map_.reset();
 
   handle.reset();
-  LOG_INFO("restore_tx_ctx remove_ls");
+
   ASSERT_EQ(OB_SUCCESS, MTL(ObLSService*)->remove_ls(ls_id));
 }
 

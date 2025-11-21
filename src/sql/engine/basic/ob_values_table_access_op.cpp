@@ -122,7 +122,7 @@ int ObValuesTableAccessOp::inner_get_next_row()
           LOG_WARN("get next row from row store failed", K(ret));
         }
       } else {
-        LOG_DEBUG("output row", "row", ROWEXPR2STR(eval_ctx_, MY_SPEC.output_));
+
       }
       break;
     } while (OB_SUCC(ret));

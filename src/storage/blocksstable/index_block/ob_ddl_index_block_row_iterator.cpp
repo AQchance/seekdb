@@ -138,7 +138,7 @@ int ObDDLIndexBlockRowIterator::locate_key(const ObDatumRowkey &rowkey)
       is_iter_start_ = true;
       is_iter_finish_ = false;
     }
-    LOG_TRACE("Binary search rowkey in ddl block", K(ret), K(rowkey), KPC(this));
+
   }
   return ret;
 }
@@ -174,7 +174,7 @@ int ObDDLIndexBlockRowIterator::locate_range(const ObDatumRange &range,
     is_iter_start_ = true;
     is_iter_finish_ = false;
   }
-  LOG_TRACE("Locate range in ddl block by range", K(ret), K(range), KPC(this));  
+  
   return ret;
 }
 
@@ -203,7 +203,7 @@ int ObDDLIndexBlockRowIterator::locate_range()
       LOG_WARN("block meta tree locate range failed", K(ret), K(range));
     } else {
       is_iter_finish_ = true;
-      LOG_INFO("no data to locate", K(ret));
+
       ret = OB_SUCCESS;
     }
   } else if (OB_ISNULL(cur_tree_value_)) {
@@ -593,7 +593,7 @@ int ObDDLSStableAllRangeIterator::locate_key(const ObDatumRowkey &rowkey)
       is_iter_finish_ = false;
     }
   }
-  LOG_TRACE("locate rowkey in ddl merge sstable", K(ret), K(rowkey), KPC(this));
+
   return ret;
 }
 
@@ -621,7 +621,7 @@ int ObDDLSStableAllRangeIterator::locate_range(const ObDatumRange &range,
     is_iter_start_ = true;
     is_iter_finish_ = false;
   }
-  LOG_TRACE("Locate range in ddl merge sstable", K(ret), K(range), KPC(this));  
+  
   return ret;
 }
 
@@ -1187,7 +1187,7 @@ int ObDDLMergeBlockRowIterator::init_sstable_index_iter(const ObMicroBlockData &
       LOG_WARN("push back sstable iter failed", K(ret));
     }
   }
-  LOG_INFO("init ddl merge iter", K(ret), KPC(sst_index_iter), K(iter_param), K(idx_block_data), KPC(iter_param.sstable_));
+
   return ret;
 }
 
@@ -1222,12 +1222,12 @@ int ObDDLMergeBlockRowIterator::get_readable_ddl_kvs(const ObIndexBlockIterParam
           if (OB_NOT_NULL(cur_ddl_memtable)) {
             if (cur_ddl_memtable->is_table_with_scn_range() && OB_NOT_NULL(iter_param.sstable_)) {
               if (cur_ddl_memtable->get_scn_range().is_valid() && iter_param.sstable_->get_end_scn() >= cur_ddl_memtable->get_scn_range().end_scn_) {
-                LOG_INFO("smaller scn, skip ddl memtable", K(iter_param.sstable_->get_end_scn()), K(cur_ddl_memtable->get_scn_range()), K(sstable_cg_idx));
+
                 skip = true;
               }
             }
             if (cur_ddl_memtable->get_key().get_column_group_id() != sstable_cg_idx || cur_ddl_memtable->get_slice_idx() != sstable_slice_idx) {
-              LOG_INFO("unmatch cg_idx or slice_idx, skip ddl memtable", K(sstable_cg_idx), K(sstable_slice_idx), K(cur_ddl_memtable->get_key()));
+
               skip = true;
             }
             if (!skip) {
@@ -1460,7 +1460,7 @@ int ObDDLMergeBlockRowIterator::locate_key(const ObDatumRowkey &rowkey)
       }
     }
   }
-  LOG_TRACE("merge iter locate key", K(ret), K(rowkey), K(iters_), K(consumer_cnt_));
+
   return ret;
 }
 
@@ -2160,7 +2160,7 @@ int ObDDLMergeBlockRowIterator::get_index_row_count(const ObDatumRange &range,
       }
       if (OB_ITER_END == ret) {
         ret = OB_SUCCESS;
-        LOG_INFO("get merge idx row cnt success", K(index_row_count), K(data_row_count));
+
       }
     }
 
@@ -2179,7 +2179,7 @@ ObUnitedSliceRowIterator::ObUnitedSliceRowIterator()
   : allocator_(nullptr), merge_iter_(nullptr), idx_block_data_(nullptr),
     slice_count_(0), start_slice_idx_(-1), end_slice_idx_(-1), cur_slice_idx_(-1), is_iter_end_(false)
 {
-  LOG_TRACE("[slice index iter]: construct", KP(this));
+
 }
 
 ObUnitedSliceRowIterator::~ObUnitedSliceRowIterator()
@@ -2678,7 +2678,7 @@ int ObUnitedSliceRowIterator::prepare_slice_query_param(const int64_t slice_idx,
       slice_root_block_.type_ = ObMicroBlockData::DDL_MERGE_INDEX_BLOCK;
       slice_root_block_.buf_ = DDL_EMPTY_SSTABLE_DUMMY_INDEX_DATA_BUF;
       slice_root_block_.size_ = DDL_EMPTY_SSTABLE_DUMMY_INDEX_DATA_SIZE;
-      LOG_TRACE("[slice index iter] slice sstable not found, mock slice root block", K(ret), K(slice_idx), K(cg_idx), K(slice_root_block_));
+
     }
 
     // prepare slice ddl memtables
@@ -2756,7 +2756,7 @@ int ObUnitedSliceRowIterator::get_next(
             ret = OB_ITER_END;
           }
         }
-        LOG_TRACE("[slice index iter] init slice iter", K(ret), K(cur_slice_idx_), K(query_range), K(slice_iter_param), K(slice_ddl_memtables));
+
       }
 
       if (OB_SUCC(ret)) {
@@ -2792,7 +2792,7 @@ int ObUnitedSliceRowIterator::get_next(
 
     }
   }
-  LOG_TRACE("[slice index iter] get next", KP(this), K(ret), K(is_reverse_scan_), K(is_iter_end_), K(cur_slice_idx_), K(row_offset), K(endkey), KPC(idx_row_header));
+
   return ret;
 }
 
@@ -2867,7 +2867,7 @@ int ObUnitedSliceRowIterator::get_index_row_count(
       }
     }
   }
-  LOG_TRACE("[slice index iter] get index row count", KP(this), K(ret), K(index_row_count), K(data_row_count), K(range));
+
   return ret;
 }
 

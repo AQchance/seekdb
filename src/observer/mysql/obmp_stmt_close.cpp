@@ -71,9 +71,9 @@ int ObMPStmtClose::process()
     session->set_proxy_version(get_proxy_version());
     session->init_use_rich_format();
     const bool enable_flt = session->get_control_info().is_valid();
-    LOG_TRACE("close ps stmt or cursor", K_(stmt_id), K(session->get_server_sid()));
+
     if (OB_FAIL(session->check_tenant_status())) {
-      LOG_INFO("unit has been migrated, need deny new request", K(ret), K(MTL_ID()));
+
     } else if (OB_FAIL(sql::ObFLTUtils::init_flt_info(
                  pkt.get_extra_info(), *session,
                  get_conn()->proxy_cap_flags_.is_full_link_trace_support(),

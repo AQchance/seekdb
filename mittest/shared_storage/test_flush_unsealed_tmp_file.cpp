@@ -62,7 +62,7 @@ public:
       ObTenantFileManager *tenant_file_mgr = MTL(ObTenantFileManager*);
       ASSERT_NE(nullptr, tenant_file_mgr);
       if (idx % 2 == 0) {
-        LOG_INFO("start flush tmp file");
+
         ObTenantFileManager* file_manager = MTL(ObTenantFileManager*);
         ASSERT_NE(nullptr, file_manager);
         ObSSTmpFileFlushTask &flush_task = file_manager->tmp_file_flush_task_;
@@ -87,15 +87,15 @@ public:
             break;
           }
         }
-        LOG_INFO("finish flush tmp file");
+
       } else {
-        LOG_INFO("start append tmp file");
+
         const int64_t append_cnt = 100;
         for (int64_t i = 1; i <= append_cnt; i++) {
           ob_usleep(ObSSTmpFileFlushTask::SLOW_SCHEDULE_INTERVAL_US / 10);
           append_write_tmp_file(i * file_size_, (i + 1) * file_size_);
         }
-        LOG_INFO("finish append tmp file");
+
         int64_t file_len = 0;
         MacroBlockId macro_id;
         macro_id.set_id_mode((uint64_t)ObMacroBlockIdMode::ID_MODE_SHARE);

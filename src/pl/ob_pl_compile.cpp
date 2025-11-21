@@ -324,7 +324,7 @@ int ObPLCompiler::compile(
   OX (func.get_stat_for_update().compile_time_ = compile_end - compile_start);
   OX (session_info_.add_plsql_compile_time(compile_end - compile_start));
   FLT_SET_TAG(pl_compile_cg_time, compile_end - resolve_end);
-  LOG_INFO(">>>>>>>>Final Compile Anonymous Block Time: ", K(ret), K(stmt_id), K(compile_end - compile_start));
+
   return ret;
 }
 
@@ -449,7 +449,7 @@ int ObPLCompiler::compile(
   }
 
   int64_t init_end = ObTimeUtility::current_time();
-  LOG_INFO(">>>>>>>>Init AST Time: ", K(routine.get_routine_id()), K(routine.get_routine_name()), K(init_end - init_start));
+
     
   //Step 2: Parser
   ObStmtNodeTree *parse_tree = NULL;
@@ -462,7 +462,7 @@ int ObPLCompiler::compile(
   }
 
   int64_t parse_end = ObTimeUtility::current_time();
-  LOG_INFO(">>>>>>>>Parse Time: ", K(routine.get_routine_id()), K(routine.get_routine_name()), K(parse_end - init_end));
+
   FLT_SET_TAG(pl_compile_parser_time, parse_end - init_end);
   //Step 3: Resolver
   if (OB_SUCC(ret)) {
@@ -494,7 +494,7 @@ int ObPLCompiler::compile(
   OX (func.set_profiler_unit_info(routine.get_routine_id(), func.get_proc_type()));
 
   int64_t resolve_end = ObTimeUtility::current_time();
-  LOG_INFO(">>>>>>>>Resolve Time: ", K(routine.get_routine_id()), K(routine.get_routine_name()), K(resolve_end - parse_end));
+
   FLT_SET_TAG(pl_compile_resolve_time, resolve_end - parse_end);
   //Step 4: Code Generator
   if (OB_SUCC(ret)) {
@@ -556,10 +556,10 @@ int ObPLCompiler::compile(
   }
 
   int64_t cg_end = ObTimeUtility::current_time();
-  LOG_INFO(">>>>>>>>CG Time: ", K(routine.get_routine_id()), K(routine.get_routine_name()), K(cg_end - resolve_end));
+
   FLT_SET_TAG(pl_compile_cg_time, cg_end - resolve_end);
   int64_t final_end = ObTimeUtility::current_time();
-  LOG_INFO(">>>>>>>>Final Compile Routine Time: ", K(routine.get_routine_id()), K(routine.get_routine_name()), K(final_end - init_start));
+
   
   OX (func.get_stat_for_update().compile_time_ = final_end - init_start);
   OX (session_info_.add_plsql_compile_time(final_end - init_start));
@@ -865,7 +865,7 @@ int ObPLCompiler::compile_package(const ObPackageInfo &package_info,
                                             source,
                                             schema::PACKAGE_TYPE == package_info.get_type(),
                                             schema_guard_, package.get_allocator()));
-      LOG_DEBUG("trigger package source", K(source), K(package_info.get_type()), K(ret));
+
     } else {
       source = package_info.get_source();
     }
@@ -989,7 +989,7 @@ int ObPLCompiler::compile_package(const ObPackageInfo &package_info,
     OX (package.get_stat_for_update().type_ = ObPLCacheObjectType::PACKAGE_TYPE);
   }
   FLT_SET_TAG(pl_compile_cg_time, compile_end - resolve_end);
-  LOG_INFO(">>>>>>>>Final Compile Package Time: ", K(package.get_id()), K(package.get_name()), K(compile_end - compile_start));
+
   return ret;
 }
 

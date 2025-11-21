@@ -175,14 +175,14 @@ void process(ObIBackupTabletProvider *provider, ObBackupMacroBlockTaskMgr *task_
           if (has_remain && !is_run_out) {
             continue;
           } else if (is_run_out) {
-            LOG_INFO("run out", K(items));
+
             break;
           }
         }
       } else {
         const ObTabletID &first = items.at(0).tablet_id_;
         const ObTabletID &last = items.at(items.count() - 1).tablet_id_;
-        LOG_INFO("backup items infos", K(first), K(last), K(items.count()));
+
       }
     }
   }
@@ -330,7 +330,7 @@ int64_t TestBackupExternalSort::calculate_min_item_count()
   const int64_t min_memory_limit = ObExternalSortConstant::MIN_MEMORY_LIMIT;
   const int64_t item_size = sizeof(item) + item.get_deep_copy_size();
   int64_t min_count = min_memory_limit / item_size;
-  LOG_INFO("calculate min item count", K(min_memory_limit), K(item_size), K(min_count));
+
   return min_count;
 }
 

@@ -120,7 +120,7 @@ private:
 void ObStorageCachePolicyPrewarmerTest::wait_major_finish()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("wait major begin");
+
   common::ObMySQLProxy &sql_proxy = get_curr_simple_server().get_sql_proxy();
 
   ObSqlString sql;
@@ -141,12 +141,12 @@ void ObStorageCachePolicyPrewarmerTest::wait_major_finish()
       OK(result->get_int("result", scn));
       OK(result->get_int("frozen_scn", new_major_scn));
     }
-    LOG_INFO("major result", K(scn), K(new_major_scn));
+
     ob_usleep(100 * 1000); // 100_ms
   } while (0 != scn || old_major_scn == new_major_scn);
   
   old_major_scn = new_major_scn;
-  LOG_INFO("major finished", K(new_major_scn));
+
 }
 
 void ObStorageCachePolicyPrewarmerTest::set_ls_and_tablet_id_for_run_ctx()
@@ -186,7 +186,7 @@ void ObStorageCachePolicyPrewarmerTest::set_ls_and_tablet_id_for_run_ctx()
   run_ctx_.ls_id_ = ls->get_ls_id();
   run_ctx_.ls_epoch_ = ls->get_ls_epoch();
   run_ctx_.tenant_epoch_ = MTL_EPOCH_ID();
-  LOG_INFO("finish set run ctx", K(run_ctx_));
+
 }
 
 void ObStorageCachePolicyPrewarmerTest::add_task(SCPTabletTaskMap &tablet_tasks, ObStorageCacheTaskStatusType status, int64_t end_time, const int64_t tablet_id)
@@ -243,7 +243,7 @@ TEST_F(ObStorageCachePolicyPrewarmerTest, basic)
     micro_cache->clear_micro_cache();
     OK(prewarmer.prewarm_hot_tablet(run_ctx_.ls_id_, run_ctx_.tablet_id_, task));
     first_stat = prewarmer.get_tablet_major_prewarm_stat();
-    LOG_INFO("read init major", K(i), K(first_stat));
+
     succeed = first_stat.macro_block_fail_cnt_ == 0
         && first_stat.micro_block_fail_cnt_ == 0
         && first_stat.micro_block_hit_cnt_ == 0
@@ -258,7 +258,7 @@ TEST_F(ObStorageCachePolicyPrewarmerTest, basic)
   for (int i = 0; i < MAX_RETRY_TIMES && !succeed; i++) {
     OK(prewarmer.prewarm_hot_tablet(run_ctx_.ls_id_, run_ctx_.tablet_id_, task));
     second_stat = prewarmer.get_tablet_major_prewarm_stat();
-    LOG_INFO("read init major again", K(i), K(second_stat));
+
     succeed = second_stat.macro_block_fail_cnt_ == 0
         && second_stat.micro_block_fail_cnt_ == 0
         && second_stat.micro_block_hit_cnt_ == first_stat.micro_block_add_cnt_
@@ -280,7 +280,7 @@ TEST_F(ObStorageCachePolicyPrewarmerTest, basic)
   for (int i = 0; i < MAX_RETRY_TIMES && !succeed; i++) {
     OK(prewarmer.prewarm_hot_tablet(run_ctx_.ls_id_, run_ctx_.tablet_id_, task));
     third_stat = prewarmer.get_tablet_major_prewarm_stat();
-    LOG_INFO("read second major", K(i), K(third_stat));
+
     succeed = third_stat.macro_block_fail_cnt_ == 0
         && third_stat.micro_block_fail_cnt_ == 0
         && third_stat.micro_block_add_cnt_ + third_stat.micro_block_hit_cnt_ == third_stat.micro_block_num_;
@@ -288,7 +288,7 @@ TEST_F(ObStorageCachePolicyPrewarmerTest, basic)
   ASSERT_TRUE(succeed);
 
   task->dec_ref_count();
-  LOG_INFO("Finish basic");
+
   
   // test clean history
   ObStorageCachePolicyService *policy_service = MTL(ObStorageCachePolicyService *);

@@ -117,7 +117,7 @@ int TestTabletAutoincMgr::prepare_part_list(
       } else {
         LOG_WARN("fail to generate data", K(sql));
       }
-      LOG_INFO("finish read sql", K(sql), K(part_list), K(table_id), K(part_id));
+
     }
   }
   return ret;

@@ -132,7 +132,7 @@ int ObWorkloadRepositoryService::inner_switch_to_follower()
   int ret = OB_SUCCESS;
   // cancel previous wr timer task
   wr_timer_task_.cancel_current_task();
-  LOG_INFO("stop to execute workload repository snapshot timer", KPC(this));
+
   return ret;
 }
 

@@ -117,7 +117,7 @@ int ObMemoryDump::init()
       ret = OB_ALLOCATE_MEMORY_FAILED;
       LOG_WARN("alloc mem failed", K(ret));
     } else {
-      LOG_INFO("pre memory size", K(sizeof(PreAllocMemory)));
+
       print_buf_ = pre_mem->print_buf_;
       array_ = pre_mem->array_buf_;
       tenant_ids_ = (uint64_t*)pre_mem->tenant_ids_buf_;
@@ -316,7 +316,7 @@ AChunk *ObMemoryDump::find_chunk(void *ptr)
   bool has_segv = false;
   do_with_segv_catch(func, has_segv, ret);
   if (has_segv) {
-    LOG_INFO("restore from sigsegv, let's goon~");
+
   }
   return ret;
 }
@@ -503,7 +503,7 @@ void ObMemoryDump::handle(void *task)
   int ret = OB_SUCCESS;
   bool segv_cnt_over = false;
   ObMemoryDumpTask *m_task = static_cast<ObMemoryDumpTask*>(task);
-  LOG_INFO("handle dump task", "task", *m_task);
+
 
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
@@ -576,7 +576,7 @@ void ObMemoryDump::handle(void *task)
           bool has_segv = false;
           do_with_segv_catch(func, has_segv, ret);
           if (has_segv) {
-            LOG_INFO("restore from sigsegv, let's goon~");
+
             segv_cnt++;
             continue;
           }
@@ -685,7 +685,7 @@ void ObMemoryDump::handle(void *task)
           chunks_[cnt++] = chunk;
         }
       }
-      LOG_INFO("chunk cnt", K(cnt));
+
       // sort chunk
       lib::ob_sort(chunks_, chunks_ + cnt);
       // iter chunk
@@ -713,7 +713,7 @@ void ObMemoryDump::handle(void *task)
         bool has_segv = false;
         do_with_segv_catch(func, has_segv, ret);
         if (has_segv) {
-          LOG_INFO("restore from sigsegv, let's goon~");
+
           continue;
         }
       } // iter chunk end

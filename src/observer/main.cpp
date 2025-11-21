@@ -226,13 +226,13 @@ static int safe_sd_notify(int unset_environment, const char *state)
     systemd_handle = dlopen("libsystemd.so", RTLD_LAZY);
   }
   if (nullptr == systemd_handle) {
-      LOG_INFO("systemd library not available, sd_notify will be disabled");
+
   } else {
     sd_notify_func = (sd_notify_func_t)dlsym(systemd_handle, "sd_notify");
     if (nullptr == sd_notify_func) {
       LOG_WARN("failed to get sd_notify symbol from systemd library");
     } else {
-      LOG_INFO("systemd notify initialized successfully");
+
       // Call sd_notify if available
       sd_notify_func(unset_environment, state);
     }
@@ -377,7 +377,7 @@ int inner_main(int argc, char *argv[])
       _LOG_INFO("Virtual memory : %'15ld byte", memory_used);
     }
     // print in log file.
-    LOG_INFO("Build basic information for each syslog file", "info", syslog_file_info);
+
     print_args(argc, argv);
     ObCommandLineParser::print_version();
     print_all_limits();
@@ -400,7 +400,7 @@ int inner_main(int argc, char *argv[])
       lib::Worker worker;
       lib::Worker::set_worker_to_thread_local(&worker);
       ObServer &observer = ObServer::get_instance();
-      LOG_INFO("observer starts", "observer_version", PACKAGE_STRING);
+
       // to speed up bootstrap phase, need set election INIT TS
       // to count election keep silence time as soon as possible after observer process started
       ATOMIC_STORE(&palf::election::INIT_TS, palf::election::get_monotonic_ts());
@@ -416,7 +416,7 @@ int inner_main(int argc, char *argv[])
                        "STATUS=seekdb is ready and running\n");
       }
       if (initialize) {
-        LOG_INFO("observer starts in initialize mode, exit now", K(initialize));
+
         _exit(OB_SUCC(ret) ? 0 : 1);
       }
       if (OB_FAIL(ret)) {
@@ -433,7 +433,7 @@ int inner_main(int argc, char *argv[])
     unlink(PID_FILE_NAME);
   }
 
-  LOG_INFO("observer exits", "observer_version", PACKAGE_STRING);
+
   return ret;
 }
 

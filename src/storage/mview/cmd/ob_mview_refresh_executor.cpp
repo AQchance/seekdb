@@ -372,7 +372,7 @@ int ObMViewRefreshExecutor::do_nested_refresh_()
     LOG_WARN("fail to gen target nested mview topo order", K(ret));
   } else if (nested_mview_ids.count() == 1) {
     nested_consistent_refresh = false;
-    LOG_INFO("not nested mview, no need sync refresh", K(ret));
+
   }
   if (OB_FAIL(ret)) {
   } else if (nested_consistent_refresh) {
@@ -410,7 +410,7 @@ int ObMViewRefreshExecutor::do_nested_refresh_()
     }
   }
   int64_t end_ts = ObTimeUtility::fast_current_time();
-  LOG_INFO("do nested refresh", K(ret), K(nested_consistent_refresh), K(target_mview_id), K(end_ts - start_ts));
+
   return ret;
 }
 
@@ -555,7 +555,7 @@ int ObMViewRefreshExecutor::scheduler_nested_mviews_sync_refresh_(
         const uint64_t mview_id = nested_mview_ids.at(idx);
         // check mds exist in sys ls leader
         if (OB_FAIL(ctx_->check_status())) {
-          LOG_INFO("fail to check status", K(ret));
+
         } else if (OB_FAIL(target_mview_deps.get_refactored(mview_id, dep_mview_ids))) {
           LOG_WARN("fail to get dep mviews", K(ret));
         } else {
@@ -586,9 +586,9 @@ int ObMViewRefreshExecutor::scheduler_nested_mviews_sync_refresh_(
                                tenant_id_, mview_id, table_schema))) {
               LOG_WARN("fail to get table schema", K(ret));
             } else if (OB_ISNULL(table_schema)) {
-              LOG_INFO("mview not exist, skip refresh it, may try complete refresh", K(ret));
+
             } else if (OB_FAIL(generate_database_table_name_(table_schema, table_name))) {
-              LOG_INFO("fail to generate database table name", K(ret), K(table_name));
+
             } else if (OB_FALSE_IT(refresh_arg.list_ = table_name.ptr())) {
             } else if (OB_FAIL(refresh_executor.execute(*ctx_, refresh_arg))) {
               LOG_WARN("fail to do nested refresh", K(ret));
@@ -612,13 +612,13 @@ int ObMViewRefreshExecutor::scheduler_nested_mviews_sync_refresh_(
               int tmp_ret = OB_SUCCESS;
               if (OB_TMP_FAIL(check_register_new_mview_list_(target_mview_id, mview_id, refresh_id, 
                               target_data_sync_scn, target_mview_deps, mview_reverse_deps, trans, mv_sets))) {
-                LOG_INFO("fail to register new mview list", K(tmp_ret), K(mview_id), K(mview_info));
+
               }
             }
             if (need_retry) {
               usleep(1 * 1000 * 1000); // 1s
             }
-            LOG_INFO("do nested refresh mview", K(ret), K(refresh_arg), K(mview_info), K(idx), K(need_retry));
+
           } while (need_retry && OB_SUCC(ret) && OB_SUCC(ctx_->check_status()));
         }
       }
@@ -654,9 +654,9 @@ int ObMViewRefreshExecutor::scheduler_nested_mviews_refresh_(
                     tenant_id_, mview_id, table_schema))) {
           LOG_WARN("fail to get table schema", K(ret));
         } else if (OB_ISNULL(table_schema)) {
-          LOG_INFO("mview not exist, skip refresh it, may try complete refresh", K(ret));
+
         } else if (OB_FAIL(generate_database_table_name_(table_schema, table_name))) {
-          LOG_INFO("fail to generate database table name", K(ret), K(table_name));
+
         } else if (OB_FALSE_IT(refresh_arg.list_ = table_name.ptr())) {
         } else if (OB_FAIL(refresh_executor.execute(*ctx_, refresh_arg))) {
           LOG_WARN("fail to do nested refresh", K(ret));
@@ -740,13 +740,13 @@ int ObMViewRefreshExecutor::generate_database_table_name_(
   const ObDatabaseSchema *database_schema = nullptr;
   if (OB_ISNULL(table_schema)) {
     ret = OB_INVALID_ARGUMENT;
-    LOG_INFO("table schema is null", K(ret), KP(table_schema));
+
   } else if (OB_FAIL(schema_checker_.get_database_schema(tenant_id_,
                      table_schema->get_database_id(), database_schema))) {
     LOG_WARN("fail to get database schema", KR(ret));
   } else if (OB_ISNULL(database_schema)) {
     ret = OB_ERR_UNEXPECTED;
-    LOG_INFO("database not exist", K(ret));
+
   } else if (OB_FAIL(table_name.assign_fmt("%s.%s",
                      database_schema->get_database_name_str().ptr(),
                      table_schema->get_table_name_str().ptr()))) {
@@ -774,7 +774,7 @@ int ObMViewRefreshExecutor::set_collation_connection_var_(
                                            collation_connection_var))) {
       LOG_WARN("fail to get local session var", K(ret));
     } else if (OB_ISNULL(collation_connection_var)) {
-      LOG_INFO("no collation connection var, skip", K(ret), KP(collation_connection_var));
+
     } else if (OB_ISNULL(trans.get_session_info())) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("session info is null", KP(trans.get_session_info()));

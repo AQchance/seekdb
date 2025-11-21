@@ -308,7 +308,7 @@ int TestDDLOperator::create_table(const uint64_t tenant_id, const uint64_t datab
       pre_tenant_id_, table_id))) {
     LOG_WARN("fetch_new_table_id failed", K(ret));
   } else {
-    LOG_INFO("table id get", K(table_id));
+
     share::ObInnerTableSchema::all_server_schema(table_schema);
     table_schema.set_tenant_id(tenant_id);
     table_schema.set_database_id(database_id);

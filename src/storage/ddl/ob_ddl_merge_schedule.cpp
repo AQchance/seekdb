@@ -60,7 +60,7 @@ int ObDDLMergeScheduler::schedule_ddl_minor_merge_on_demand(
   } else if (OB_FAIL(ddl_kv_mgr_handle.get_obj()->get_ddl_kvs(!need_freeze/*frozen_only*/, ddl_kvs_handle))) {
     LOG_WARN("get freezed ddl kv failed", K(ret));
   } else if (ddl_kvs_handle.empty()) {
-    LOG_TRACE("empty ddl kv", "tablet_id", ddl_kv_mgr_handle.get_obj()->get_tablet_id());
+
   } else if (need_freeze && OB_FAIL(ddl_kv_mgr_handle.get_obj()->freeze_ddl_kv(
           ddl_kvs_handle.at(0).get_obj()->get_ddl_start_scn(),
           ddl_kvs_handle.at(0).get_obj()->get_snapshot_version(),
@@ -80,7 +80,7 @@ int ObDDLMergeScheduler::schedule_ddl_minor_merge_on_demand(
       }
     }
   }
-  LOG_TRACE("schedule tablet ddl minor merge", K(ret), K(param));
+
   return ret;
 }
 /*
@@ -100,7 +100,7 @@ int ObDDLMergeScheduler::check_need_merge_for_ss(ObTablet &tablet, ObArray<ObDDL
   } else if (ObDDLKVType::DDL_KV_FULL == ddl_kvs.at(0).get_obj()->get_ddl_kv_type() && GCTX.is_shared_storage_mode()) {
     need_schedule_merge = true;
     ddl_kv_type = ObDDLKVType::DDL_KV_FULL;
-    LOG_INFO("ddl kv exist, need merge", K(ret), K(tablet.get_tablet_id()));
+
   }
   return ret;
 }
@@ -126,7 +126,7 @@ int ObDDLMergeScheduler::finish_log_freeze_ddl_kv(const ObLSID &ls_id, ObTabletH
       LOG_WARN("failed to schedule ddl minor merge", K(ret), K(ls_id), K(tablet_handle.get_obj()->get_tablet_id()));
     } else {
       ret = OB_SUCCESS;
-      LOG_INFO("background will schedule ddl minor merge", K(tablet_handle.get_obj()->get_tablet_id()));
+
     }
   }
 
@@ -153,13 +153,13 @@ int ObDDLMergeScheduler::check_need_merge_for_idem_sn(ObTablet &tablet, ObArray<
     LOG_WARN("invalid argument, return param should be invalid", K(ret), K(ddl_kv_type), K(need_schedule_merge));
   } else if (tablet.get_tablet_meta().has_transfer_table()) {
     if (REACH_THREAD_TIME_INTERVAL(PRINT_LOG_INTERVAL)) {
-      LOG_INFO("The tablet in the transfer process does not do ddl major_merge", K(tablet.get_tablet_id()));
+
     }
   } else if (tablet.get_tablet_meta().ddl_data_format_version_ < DDL_IDEM_DATA_FORMAT_VERSION) {
-    LOG_INFO("skip check need merge for idem sn, data format version is less than idem data format version", K(tablet.get_tablet_meta().ddl_data_format_version_));
+
   } else if ((tablet.get_major_table_count() > 0) ||
               tablet.get_tablet_meta().table_store_flag_.with_major_sstable()) {
-    LOG_INFO("tablet already exist, not need to merge", K(ret), K(tablet.get_tablet_id()));
+
   } else {
     /* check need to merge major, first */
     if (OB_FAIL(tablet.get_ddl_complete(share::SCN::max_scn(), arena, user_data))) {
@@ -171,7 +171,7 @@ int ObDDLMergeScheduler::check_need_merge_for_idem_sn(ObTablet &tablet, ObArray<
     } else if (user_data.has_complete_ && is_full_direct_load(user_data.direct_load_type_)) {
       need_schedule_merge = true;
       ddl_kv_type = ObDDLKVType::DDL_KV_FULL;
-      LOG_INFO("set ddl complete need merge", K(ret), K(user_data));
+
     }
 
     /* check need to merge dump */
@@ -183,7 +183,7 @@ int ObDDLMergeScheduler::check_need_merge_for_idem_sn(ObTablet &tablet, ObArray<
     } else if (ObDDLKVType::DDL_KV_FULL == ddl_kvs.at(0).get_obj()->get_ddl_kv_type() && !GCTX.is_shared_storage_mode()) {
       need_schedule_merge = true;
       ddl_kv_type = ObDDLKVType::DDL_KV_FULL;
-      LOG_INFO("ddl kv exist, need merge", K(ret), K(user_data));
+
     }
 
     if (OB_SUCC(ret) && need_schedule_merge) {
@@ -208,10 +208,10 @@ int ObDDLMergeScheduler::check_need_merge_for_nidem_sn(ObTablet &tablet, ObArray
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("invalid argument, return param should be invalid", K(ret), K(ddl_kv_type), K(need_schedule_merge));
   } else if (!(tablet.get_tablet_meta().ddl_data_format_version_ < DDL_IDEM_DATA_FORMAT_VERSION)) {
-    LOG_INFO("skip check need merge for nidem sn, data format version is not less than idem data format version", K(tablet.get_tablet_meta().ddl_data_format_version_));
+
   } else if (tablet.get_tablet_meta().has_transfer_table()) {
     if (REACH_THREAD_TIME_INTERVAL(PRINT_LOG_INTERVAL)) {
-      LOG_INFO("The tablet in the transfer process does not do ddl major_merge", K(tablet.get_tablet_id()));
+
     }
   } else {
     bool is_major_sstable_exist = false;
@@ -303,7 +303,7 @@ int ObDDLMergeScheduler::schedule_ddl_merge(ObLSHandle &ls_handle,
     LOG_WARN("invalid arg", K(ret), K(ls_id), K(tablet_handle));
   } else if (OB_FAIL(tablet_handle.get_obj()->get_ddl_kv_mgr(ddl_kv_mgr_handle))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
-      LOG_TRACE("kv mgr not exist", K(ret), K(tablet_handle.get_obj()->get_tablet_id()));
+
       ret = OB_SUCCESS; /* for empty table, ddl kv may not exist*/
     }
   }
@@ -312,7 +312,7 @@ int ObDDLMergeScheduler::schedule_ddl_merge(ObLSHandle &ls_handle,
   } else if (OB_FAIL(ObDDLMergeScheduler::check_tablet_need_merge(*tablet_handle.get_obj(), ddl_kv_mgr_handle, need_schedule_merge, ddl_kv_type))) {
     LOG_WARN("failed to check tablet need merge", K(ret), K(ls_id), K(tablet_id));
   } else if (need_schedule_merge) {
-    LOG_INFO("need schedule merge", K(ret), K(ls_id), K(tablet_id), K(need_schedule_merge), K(ddl_kv_type));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -325,7 +325,7 @@ int ObDDLMergeScheduler::schedule_ddl_merge(ObLSHandle &ls_handle,
             if (OB_SIZE_OVERFLOW != ret && OB_EAGAIN != ret) {
               LOG_WARN("failed to schedule tablet ddl merge", K(ret), K(ls_id), K(tablet_id));
             } else {
-              LOG_TRACE("schedule ddl minor merge failed", K(ret), K(ls_id), K(tablet_id));
+
             }
           }
       #endif
@@ -334,7 +334,7 @@ int ObDDLMergeScheduler::schedule_ddl_merge(ObLSHandle &ls_handle,
             if (OB_SIZE_OVERFLOW != ret && OB_EAGAIN != ret) {
               LOG_WARN("failed to schedule tablet ddl merge", K(ret), K(ls_id), K(tablet_id));
             } else {
-              LOG_TRACE("schedule ddl major merge failed", K(ret), K(ls_id), K(tablet_id));
+
             }
           }
         }
@@ -355,7 +355,7 @@ int ObDDLMergeScheduler::schedule_ddl_merge(ObLSHandle &ls_handle,
     LOG_WARN("failed to check if it is split src tablet", K(tmp_ret), K(tablet_handle));
   }
 #endif
-  LOG_TRACE("schedule ddl tablet merge", K(ret), K(ls_id), K(tablet_id));
+
   return ret;
 }
 
@@ -386,7 +386,7 @@ int ObDDLMergeScheduler::schedule_tablet_ddl_major_merge(
     LOG_WARN("schdule ddl major merge func should not be used in share storage mode", K(ret), K(lbt()));
   } else if (tablet_handle.get_obj()->get_tablet_meta().has_transfer_table()) {
     if (REACH_THREAD_TIME_INTERVAL(PRINT_LOG_INTERVAL)) {
-      LOG_INFO("The tablet in the transfer process does not do ddl major_merge", K(tablet_handle));
+
     }
   } else {
     need_schedule_merge = true;
@@ -440,7 +440,7 @@ int ObDDLMergeScheduler::schedule_tablet_ddl_major_merge(
     if (OB_FAIL(ObDDLUtil::is_major_exist(ls_id, tablet_handle.get_obj()->get_tablet_meta().tablet_id_, is_major_sstable_exist))) {
       LOG_WARN("failed to check major sstable exist", K(ret), K(ls_id), K(tablet_handle.get_obj()->get_tablet_meta().tablet_id_));
     } else if (is_major_sstable_exist) {
-      LOG_INFO("major sstable already exist, don't need to schdule ddl merge", K(ret), K(ls_id), K(tablet_handle.get_obj()->get_tablet_meta().tablet_id_));
+
     } else if (OB_FAIL(tablet_handle.get_obj()->get_ddl_kv_mgr(ddl_kv_mgr_handle))) {
       LOG_WARN("get ddl kv mgr failed", K(ret));
     } else if (OB_FAIL(ddl_kv_mgr_handle.get_obj()->check_has_freezed_ddl_kv(has_freezed_ddl_kv))) {

@@ -152,7 +152,7 @@ int ObPxPools::StopPoolFunc::operator() (common::hash::HashMapPair<int64_t, ObPx
     LOG_WARN("pool is null", K(group_id));
   } else {
     pool->stop();
-    LOG_INFO("DEL_POOL_STEP_1: mark px pool stop succ!", K(group_id));
+
   }
   return ret;
 }
@@ -166,9 +166,9 @@ int ObPxPools::DeletePoolFunc::operator() (common::hash::HashMapPair<int64_t, Ob
     LOG_WARN("pool is null", K(group_id));
   } else {
     pool->wait();
-    LOG_INFO("DEL_POOL_STEP_2: wait pool empty succ!", K(group_id));
+
     pool->destroy();
-    LOG_INFO("DEL_POOL_STEP_3: pool destroy succ!", K(group_id), K(pool->get_queue_size()));
+
     common::ob_delete(pool);
   }
   return ret;
@@ -274,7 +274,7 @@ void ObPxPool::run1()
   //ObTaTLCacheGuard ta_guard(tenant_id_);
   CLEAR_INTERRUPTABLE();
   ObCgroupCtrl *cgroup_ctrl = GCTX.cgroup_ctrl_;
-  LOG_INFO("run px pool", K(group_id_), K(tenant_id_), K_(active_threads));
+
   SET_GROUP_ID();
 
 	if (!is_inited_) {
@@ -495,7 +495,7 @@ void ObResourceGroup::check_worker_count()
       token_change_ts_ = now;
       ATOMIC_STORE(&shrink_, false);
       acquire_more_worker(diff, succ_num, /* force */ true);
-      LOG_INFO("worker thread created", K(tenant_->id()), K(group_id_), K(token));
+
     } else if (OB_UNLIKELY(workers_.get_size() < token) &&
                OB_LIKELY(ObMallocAllocator::get_instance()->get_tenant_remain(tenant_->id()) >
                          ObMallocAllocator::get_instance()->get_tenant_limit(tenant_->id()) * 0.05)) {
@@ -503,12 +503,12 @@ void ObResourceGroup::check_worker_count()
       if (OB_LIKELY(now - token_change_ts_ >= EXPAND_INTERVAL)) {
         token_change_ts_ = now;
         acquire_more_worker(1, succ_num);
-        LOG_INFO("worker thread created", K(tenant_->id()), K(group_id_), K(token));
+
       }
     } else if (OB_UNLIKELY(workers_.get_size() > token) && OB_LIKELY(now - token_change_ts_ >= shrink_ts)) {
       token_change_ts_ = now;
       ATOMIC_STORE(&shrink_, true);
-      LOG_INFO("worker thread began to shrink", K(tenant_->id()), K(group_id_), K(token));
+
     }
     IGNORE_RETURN workers_lock_.unlock();
   }
@@ -520,7 +520,7 @@ void ObResourceGroup::check_worker_count(ObThWorker &w)
   if (OB_UNLIKELY(ATOMIC_LOAD(&shrink_))
       && OB_LIKELY(ATOMIC_BCAS(&shrink_, true, false))) {
     w.stop();
-    LOG_INFO("worker thread exit", K(tenant_->id()), K(workers_.get_size()));
+
   }
 }
 
@@ -1004,7 +1004,7 @@ void* ObTenant::wait(void* t)
     }
     sleep_and_warn(tenant);
   }
-  LOG_INFO("start remove nesting", K(tenant->nesting_workers_.get_size()), K_(tenant->id));
+
   while (tenant->nesting_workers_.get_size() > 0) {
     int ret = OB_SUCCESS;
     if (OB_SUCC(tenant->workers_lock_.trylock())) {
@@ -1024,10 +1024,10 @@ void* ObTenant::wait(void* t)
     }
     sleep_and_warn(tenant);
   }
-  LOG_INFO("finish remove nesting", K(tenant->nesting_workers_.get_size()), K_(tenant->id));
-  LOG_INFO("start remove group_map", K_(tenant->id));
+
+
   tenant->group_map_.wait_group();
-  LOG_INFO("finish remove group_map", K_(tenant->id));
+
   if (!is_virtual_tenant_id(tenant->id_) && !tenant->wait_mtl_finished_) {
     ObTenantSwitchGuard guard(tenant);
     tenant->stop_mtl_module();
@@ -1035,7 +1035,7 @@ void* ObTenant::wait(void* t)
     tenant->wait_mtl_module();
     tenant->wait_mtl_finished_ = true;
   }
-  LOG_INFO("finish waiting", K_(tenant->id));
+
   return nullptr;
 }
 
@@ -1056,7 +1056,7 @@ int ObTenant::try_wait()
         LOG_ERROR("tenant gc thread create failed", K(ret), K(errno), K(id_));
       } else {
         ret = OB_EAGAIN;
-        LOG_INFO("tenant pthread_create gc thread successfully", K(id_), K(gc_thread_));
+
       }
     }
   } else {
@@ -1064,7 +1064,7 @@ int ObTenant::try_wait()
       LOG_WARN("tenant pthread_tryjoin_np failed", K(errno), K(id_));
     } else {
       ATOMIC_STORE(&gc_thread_, nullptr); // avoid try_wait again after wait success
-      LOG_INFO("tenant pthread_tryjoin_np successfully", K(id_));
+
     }
     const int64_t ts = ObTimeUtility::current_time() - stopped_;
     // only warn for one time in all tenant.
@@ -1324,7 +1324,7 @@ int ObTenant::recv_group_request(ObRequest &req, int64_t group_id)
       LOG_WARN("failed to create and insert group", K(ret), K(group_id), K(id_));
     }
   } else {
-    LOG_INFO("create group successfully", K_(id), K(group_id), K(group));
+
   }
   if (OB_SUCC(ret)) {
     if (req.get_type() == ObRequest::OB_RPC) {
@@ -1356,7 +1356,7 @@ int ObTenant::recv_group_request(ObRequest &req, int64_t group_id)
           group->token_change_ts_ = now;
           ATOMIC_STORE(&group->shrink_, false);
           group->acquire_more_worker(1, succ_num, /* force */ true);
-          LOG_INFO("worker thread created", K(id()), K(group->group_id_));
+
         }
         IGNORE_RETURN group->workers_lock_.unlock();
       } else {
@@ -1629,7 +1629,7 @@ void ObTenant::print_throttled_time()
     ObTenant *tenant_;
   };
   ThrottledTimeLog throttled_time_log(this);
-  LOG_INFO("dump throttled time info", K(id_), K(throttled_time_log));
+
 }
 
 void ObTenant::regist_threads_to_cgroup()
@@ -1666,7 +1666,7 @@ void ObTenant::regist_threads_to_cgroup()
         }
       }
     }
-    LOG_INFO("regist threads to cgroup from thread list", K(ret), K(id_), K(thread_list_.get_size()));
+
     thread_list_lock_.unlock();
   }
 }
@@ -1751,20 +1751,20 @@ void ObTenant::check_worker_count()
       token_change_ts_ = now;
       ATOMIC_STORE(&shrink_, false);
       acquire_more_worker(diff, succ_num, /* force */ true);
-      LOG_INFO("worker thread created", K(id_), K(token));
+
     } else if (OB_UNLIKELY(token > workers_.get_size())
                && OB_LIKELY(ObMallocAllocator::get_instance()->get_tenant_remain(id_) > ObMallocAllocator::get_instance()->get_tenant_limit(id_) * 0.05)) {
       ATOMIC_STORE(&shrink_, false);
       if (OB_LIKELY(now - token_change_ts_ >= EXPAND_INTERVAL)) {
         token_change_ts_ = now;
         acquire_more_worker(1, succ_num);
-        LOG_INFO("worker thread created", K(id_), K(token));
+
       }
     } else if (OB_UNLIKELY(token < workers_.get_size())
                && OB_LIKELY(now - token_change_ts_ >= SHRINK_INTERVAL)) {
       token_change_ts_ = now;
       ATOMIC_STORE(&shrink_, true);
-      LOG_INFO("worker thread began to shrink", K(id_), K(token));
+
     }
     IGNORE_RETURN workers_lock_.unlock();
   }
@@ -1793,7 +1793,7 @@ void ObTenant::check_worker_count(ObThWorker &w)
       && OB_UNLIKELY(ATOMIC_LOAD(&shrink_))
       && OB_LIKELY(ATOMIC_BCAS(&shrink_, true, false))) {
     w.stop();
-    LOG_INFO("worker thread exit", K(id_), K(workers_.get_size()));
+
   }
 }
 

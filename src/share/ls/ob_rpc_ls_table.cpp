@@ -133,9 +133,9 @@ int ObRpcLSTable::get_ls_info_(ObLSInfo &ls_info)
     } else if (OB_SUCCESS != (tmp_ret = ls_info.find_leader(leader))
                || OB_ISNULL(leader)) {
       need_retry = true;
-      LOG_INFO("leader doesn't exist, try use all_server_list", KR(tmp_ret), K(ls_info));
+
     } else {
-      LOG_INFO("fetch root ls success", K(local_cluster_id), K(ls_info), K(rs_list));
+
     }
     // case 4: try use all_server_list from local configure
     if (need_retry) { // overwrite ret
@@ -144,11 +144,11 @@ int ObRpcLSTable::get_ls_info_(ObLSInfo &ls_info)
         LOG_WARN("fail to construct all server list", KR(ret), K(rs_list));
       } else if (server_list.empty()) {
         // server_list is empty, do nothing
-        LOG_INFO("server_list is empty, do nothing", KR(ret), K(server_list));
+
       } else if (OB_FAIL(do_detect_master_rs_ls_(local_cluster_id, server_list, ls_info))) {
         LOG_WARN("fail to detect master rs", KR(ret), K(local_cluster_id), K(server_list));
       } else {
-        LOG_INFO("fetch root ls success", K(local_cluster_id), K(ls_info), K(server_list));
+
       }
     }
   }
@@ -189,7 +189,7 @@ int ObRpcLSTable::update(
       LOG_WARN("report sys_tenant's ls through rpc failed", K(replica), K(rs_addr), KR(ret));
     }
   }
-  LOG_INFO("update sys_tenant's ls replica", KR(ret), K(replica));
+
   return ret;
 }
 
@@ -236,7 +236,7 @@ int ObRpcLSTable::do_detect_master_rs_ls_(
            && start_idx <= end_idx
            && end_idx < server_list.count()
            && OB_ISNULL(leader)) {
-      LOG_TRACE("[RPC_LS] do detect master rs", K(cluster_id), K(start_idx), K(end_idx), K(server_list));
+
       if (OB_FAIL(do_detect_master_rs_ls_(cluster_id, start_idx, end_idx,
                                                  server_list, ls_info))) {
         LOG_WARN("fail to detect master rs", KR(ret), K(cluster_id),
@@ -244,7 +244,7 @@ int ObRpcLSTable::do_detect_master_rs_ls_(
       } else {
         int tmp_ret = ls_info.find_leader(leader);
         if (OB_SUCCESS == tmp_ret && OB_NOT_NULL(leader)) {
-          LOG_TRACE("[RPC_LS] get master rs", KR(ret), K(cluster_id), "addr", leader->get_server());
+
         }
         start_idx = end_idx + 1;
         end_idx = server_list.count() - 1;
@@ -314,7 +314,7 @@ int ObRpcLSTable::do_detect_master_rs_ls_(
         } else if (OB_FAIL(deal_with_result_ls_(*result, leader_exist, server_list, ls_info))) {
           LOG_WARN("fail to deal with result", KR(ret), K(addr), KPC(result));
         } else {
-          LOG_TRACE("detect master rs", KR(ret), K(addr), KPC(result));
+
         }
       } // end for
 
@@ -412,7 +412,7 @@ int ObRpcLSTable::remove(
       LOG_WARN("remove sys_tenant's ls through rpc failed", KR(ret), K(rs_addr), K(arg));
     }
   }
-  LOG_INFO("remove sys_tenant's ls replica", KR(ret), K(server));
+
   return ret;
 }
 

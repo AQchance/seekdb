@@ -125,7 +125,7 @@ int ObDRTaskMgr::try_pop_and_execute_task(
   ObSqlString sql;
   if (OB_UNLIKELY(ERRSIM_DISASTER_RECOVERY_POP_AND_EXECUTE_TASK)) {
     // for test, return success, skip pop task
-    LOG_INFO("errsim disaster recovery pop and execute task", KR(ret));
+
   } else if (OB_UNLIKELY(!is_valid_tenant_id(tenant_id))) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", KR(ret), K(tenant_id));
@@ -143,7 +143,7 @@ int ObDRTaskMgr::try_pop_and_execute_task(
   }
   if (OB_FAIL(ret) || is_zero_row(dr_tasks_.count())) {
     // skip
-    LOG_TRACE("skip execute task", KR(ret), "count", dr_tasks_.count());
+
   } else if (OB_FAIL(check_and_set_parallel_migrate_task_(tenant_id))) {
     LOG_WARN("failed to check tenant enable_parallel_migration", KR(ret), K(tenant_id));
   } else {
@@ -170,7 +170,7 @@ int ObDRTaskMgr::try_clean_and_cancel_task(
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(ERRSIM_DISASTER_RECOVERY_CLEAN_TASK)) {
     // for test, return success, skip clean task
-    LOG_INFO("errsim disaster recovery clean task", KR(ret));
+
   } else if (OB_UNLIKELY(!is_valid_tenant_id(tenant_id))) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", KR(ret), K(tenant_id));
@@ -218,7 +218,7 @@ int ObDRTaskMgr::execute_task_(
       // task can only be executed after task status update success
       LOG_WARN("fail to execute task", KR(ret), K(task));
     } else {
-      LOG_INFO("succeed to execute task", K(task));
+
     }
     // if a task execute failed, it should be cleaned up for any reason.
     // avoid duplicate scheduling tasks.
@@ -265,7 +265,7 @@ int ObDRTaskMgr::update_task_schedule_status_(
     const ObDRTask &task)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("[DRTASK_NOTICE] update task schedule status", K(task));
+
   ObSqlString sql;
   ObMySQLTransaction trans;
   int64_t affected_rows = 0;
@@ -317,7 +317,7 @@ int ObDRTaskMgr::check_and_set_parallel_migrate_task_(
     LOG_WARN("failed to check tenant enable_parallel_migration", KR(ret), K(tenant_id));
   } else if (!enable_parallel_migration) {
     // skip
-    LOG_TRACE("enable_parallel_migration is false", K(tenant_id), K(enable_parallel_migration));
+
   } else {
     for (int64_t i = 0; OB_SUCC(ret) && i < dr_tasks_.count(); ++i) {
       ObDRTask *task = dr_tasks_.at(i);
@@ -333,7 +333,7 @@ int ObDRTaskMgr::check_and_set_parallel_migrate_task_(
           LOG_WARN("migrate_task is nullptr", KR(ret), K(*task));
         } else {
           migrate_task->set_prioritize_same_zone_src(true);
-          LOG_INFO("task has parallel migrate task", K(*task));
+
         }
       }
     }
@@ -360,7 +360,7 @@ int ObDRTaskMgr::check_clean_and_cancel_task_()
     } else if (OB_FAIL(check_task_need_cleaning_(*task, need_cleaning, ret_comment))) {
       LOG_WARN("fail to check task need cleaning", KR(ret), KP(task));
     } else if (need_cleaning ) {
-      LOG_INFO("[DRTASK_NOTICE] need clean migrate task in schedule list", KP(task));
+
       if (OB_FAIL(DisasterRecoveryUtils::record_history_and_clean_task(
                     *task, OB_LS_REPLICA_TASK_RESULT_UNCERTAIN, ret_comment))) {
         LOG_WARN("failed to remove task and record task history", KR(ret), KP(task));
@@ -368,7 +368,7 @@ int ObDRTaskMgr::check_clean_and_cancel_task_()
     } else if (OB_FAIL(check_need_cancel_migrate_task_(*task, need_cancel))) {
       LOG_WARN("fail to check need cancel migrate task", KR(ret), KP(task));
     } else if (need_cancel) {
-      LOG_INFO("[DRTASK_NOTICE] need cancel migrate task in schedule list", KP(task));
+
       if (OB_FAIL(DisasterRecoveryUtils::send_rpc_to_cancel_task(*task))) {
         LOG_WARN("fail to send rpc to cancel migrate task", KR(ret), KP(task));
       }
@@ -447,7 +447,7 @@ int ObDRTaskMgr::check_need_cancel_migrate_task_(
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid dr task", KR(ret), K(task));
   } else if (ObDRTaskType::LS_MIGRATE_REPLICA != task.get_disaster_recovery_task_type()) {
-    LOG_TRACE("skip, task is not a migration task", K(task));
+
   } else if ((0 == task.get_comment().case_compare(drtask::MIGRATE_REPLICA_DUE_TO_UNIT_NOT_MATCH)
            || 0 == task.get_comment().case_compare(drtask::REPLICATE_REPLICA))) {
     // only surpport cancel unit not match migration task

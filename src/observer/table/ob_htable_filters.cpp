@@ -1122,7 +1122,7 @@ int FilterListOR::filter_cell(const ObHTableCell &cell, ReturnCode &ret_code)
             cell_included_.at(i) = true;
           }
           ret_code = merge_return_code(ret_code, local_rc);
-          LOG_DEBUG("[yzfdebug] OR filter cell", K(i), K(local_rc), K(ret_code));
+
         }
       }
     } // end for
@@ -1371,7 +1371,7 @@ SingleColumnValueFilter::~SingleColumnValueFilter()
 
 void SingleColumnValueFilter::reset()
 {
-  LOG_DEBUG("[yzfdebug] reset SingleColumnValueFilter");
+
   found_column_ = false;
   matched_column_ = false;
 }
@@ -1382,24 +1382,24 @@ int SingleColumnValueFilter::filter_cell(const ObHTableCell &cell, ReturnCode &r
   if (matched_column_) {
     // already found and matched the single column
     ret_code = ReturnCode::INCLUDE;
-    LOG_DEBUG("[yzfdebug] already matched column", K(ret_code));
+
   } else if (latest_version_only_ && found_column_) {
     // found but not matched the column
     ret_code = ReturnCode::NEXT_ROW;
-    LOG_DEBUG("[yzfdebug] latest verion only but not matched", K(ret_code));
+
   } else if (!match_family_column(cell)) {
     ret_code = ReturnCode::INCLUDE;
-    LOG_DEBUG("[yzfdebug] not found column yet", K(ret_code));
+
   } else {
     found_column_ = true;
-    LOG_DEBUG("[yzfdebug] found column", K_(found_column));
+
     if (filter_column_value(cell)) {
       ret_code = (latest_version_only_) ? (ReturnCode::NEXT_ROW) : (ReturnCode::INCLUDE);
-      LOG_DEBUG("[yzfdebug] found column but value not match", K_(latest_version_only), K(ret_code));
+
     } else {
       matched_column_ = true;
       ret_code = ReturnCode::INCLUDE;
-      LOG_DEBUG("[yzfdebug] found column and match", K(ret_code));
+
     }
   }
   return ret;
@@ -1420,7 +1420,7 @@ bool SingleColumnValueFilter::filter_row()
 {
   // If column was found, return false if it was matched, true if it was not
   // If column not found, return true if we filter if missing, false if not
-  LOG_DEBUG("[yzfdebug] filter row", K_(found_column), K_(matched_column), K_(filter_if_missing));
+
   return found_column_ ? (!matched_column_) : (filter_if_missing_);
 }
 
@@ -2637,7 +2637,7 @@ CheckAndMutateFilter::~CheckAndMutateFilter()
 
 void CheckAndMutateFilter::reset()
 {
-  LOG_DEBUG("[yzfdebug] reset CheckAndMutateFilter");
+
   found_column_ = false;
   matched_column_ = false;
 }
@@ -2654,21 +2654,21 @@ int CheckAndMutateFilter::filter_cell(const ObHTableCell &cell, ReturnCode &ret_
   if (matched_column_) {
     // already found and matched the single column
     ret_code = ReturnCode::INCLUDE;
-    LOG_DEBUG("[yzfdebug] already matched column", K(ret_code));
+
   } else if (found_column_) {  // latest_version_only_ == true
     // found but not matched the column
     ret_code = ReturnCode::NEXT_ROW;
-    LOG_DEBUG("[yzfdebug] latest verion only but not matched", K(ret_code));
+
   } else if (match_column(cell)) {
     found_column_ = true;
-    LOG_DEBUG("[yzfdebug] found column", K_(found_column));
+
     if (value_is_null_ || !filter_column_value(cell)) {
       matched_column_ = true;
       ret_code = ReturnCode::INCLUDE;
-      LOG_DEBUG("[yzfdebug] found column and match", K(ret_code));
+
     } else {
       ret_code = ReturnCode::NEXT_ROW;
-      LOG_DEBUG("[yzfdebug] found column but value not match", K(ret_code));
+
     }
   }
   return ret;
@@ -2687,7 +2687,7 @@ bool CheckAndMutateFilter::filter_column_value(const ObHTableCell &cell)
 
 bool CheckAndMutateFilter::filter_row()
 {
-  LOG_DEBUG("[yzfdebug] filter row", K_(found_column), K_(matched_column), K_(value_is_null));
+
   bool bret = true;
   bret = found_column_ ? (!matched_column_) : true;
   return bret;

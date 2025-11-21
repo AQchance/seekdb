@@ -54,12 +54,12 @@ int ObDeleteLogPlan::generate_normal_raw_plan()
   } else {
     bool need_limit = true;
     ObSEArray<OrderItem, 4> order_items;
-    LOG_TRACE("start to allocate operators for ", "sql", get_optimizer_context().get_query_ctx()->get_sql_stmt());
+
     OPT_TRACE("generate plan for ", get_stmt());
     if (OB_FAIL(generate_plan_tree())) {
       LOG_WARN("failed to generate plan tree for plain select", K(ret));
     } else {
-      LOG_TRACE("succeed to generate plan tree", K(candidates_.candidate_plans_.count()));
+
     }
 
     if (OB_SUCC(ret) && get_subquery_filters().count() > 0) {
@@ -76,7 +76,7 @@ int ObDeleteLogPlan::generate_normal_raw_plan()
       if (OB_FAIL(candi_allocate_order_by(need_limit, order_items))) {
         LOG_WARN("failed to allocate order by operator", K(ret));
       } else {
-        LOG_TRACE("succeed to allocate order by operator", K(candidates_.candidate_plans_.count()));
+
       }
     }
 
@@ -85,7 +85,7 @@ int ObDeleteLogPlan::generate_normal_raw_plan()
       if (OB_FAIL(candi_allocate_limit(order_items))) {
         LOG_WARN("failed to allocate limit operator", K(ret));
       } else {
-        LOG_TRACE("succeed to allocate limit operator", K(candidates_.candidate_plans_.count()));
+
       }
     }
     
@@ -105,7 +105,7 @@ int ObDeleteLogPlan::generate_normal_raw_plan()
         if (OB_FAIL(candi_allocate_pdml_delete())) {
           LOG_WARN("failed to allocate pdml as top", K(ret));
         } else {
-          LOG_TRACE("succeed to allocate pdml operator", K(candidates_.candidate_plans_.count()));
+
         }
       } else {
         if (OB_FAIL(candi_allocate_delete())) {
@@ -177,11 +177,11 @@ int ObDeleteLogPlan::candi_allocate_delete()
                                          delete_plans))) {
     LOG_WARN("failed to create delete plans", K(ret));
   } else if (!delete_plans.empty()) {
-    LOG_TRACE("succeed to create delete plan using hint", K(delete_plans.count()));
+
   } else if (OB_FAIL(create_delete_plans(candi_plans, false, false, delete_plans))) {
     LOG_WARN("failed to create delete plans", K(ret));
   } else {
-    LOG_TRACE("succeed to create delete plan ignore hint", K(delete_plans.count()));
+
   }
   if (OB_SUCC(ret)) {
     if (OB_FAIL(prune_and_keep_best_plans(delete_plans))) {
@@ -280,7 +280,7 @@ int ObDeleteLogPlan::candi_allocate_pdml_delete()
                                                index_dml_infos_.at(i)))) {
       LOG_WARN("failed to allocate one pdml delete", K(ret));
     } else {
-      LOG_TRACE("succeed to allocate one pdml delete");
+
     }
   }
   return ret;

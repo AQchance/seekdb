@@ -71,7 +71,7 @@ int ObTxCtxMemtableMgr::init(const common::ObTabletID &tablet_id,
   freezer_ = freezer;
   t3m_ = t3m;
   is_inited_ = true;
-  LOG_INFO("tx ctx memtable mgr init successfully", K(ls_id), K(tablet_id), K(this));
+
 
   return ret;
 }
@@ -131,10 +131,10 @@ const ObTxCtxMemtable *ObTxCtxMemtableMgr::get_tx_ctx_memtable_(const int64_t po
   const ObTxCtxMemtable *memtable = nullptr;
   if (OB_ISNULL(imemtable)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (!imemtable->is_tx_ctx_memtable()) {
     ret = OB_ENTRY_NOT_EXIST;
-    STORAGE_LOG(WARN, "not tx ctx memtable", K(ret), K(imemtable->get_key()));
+
   } else {
     memtable = static_cast<const ObTxCtxMemtable*>(imemtable);
   }
@@ -176,7 +176,7 @@ int ObTxCtxMemtableMgr::unregister_from_common_checkpoint_(const ObTxCtxMemtable
                                                              memtable))) {
     LOG_WARN("tx ctx unregister_common_checkpoint failed", K(ret), K(ls_id_), K(memtable));
   } else {
-    LOG_INFO("unregister from common checkpoint successfully", K_(ls_id), K(memtable));
+
   }
   return ret;
 }
@@ -187,13 +187,13 @@ int ObTxCtxMemtableMgr::release_head_memtable_(ObIMemtable *imemtable,
   int ret = OB_SUCCESS;
   int tmp_ret = OB_SUCCESS;
 
-  LOG_INFO("tx ctx memtable mgr release head memtable", K(*imemtable));
+
   ObTxCtxMemtable *memtable = static_cast<ObTxCtxMemtable *>(imemtable);
   if (get_memtable_count_() > 0 && force) {
     // for force
     const int64_t idx = get_memtable_idx(memtable_head_);
     if (nullptr != tables_[idx] && memtable == tables_[idx]) {
-      LOG_INFO("release head memtable", K(ret), K_(ls_id), KP(memtable));
+
       if (OB_TMP_FAIL(unregister_from_common_checkpoint_(memtable))) {
         LOG_WARN("unregister from common checkpoint failed", K(tmp_ret), K_(ls_id), K(memtable));
       }

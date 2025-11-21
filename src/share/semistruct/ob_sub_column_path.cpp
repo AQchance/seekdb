@@ -272,7 +272,7 @@ int ObSubColumnPath::parse_sub_column_path(const ObString& json_path, ObSubColum
       ++i;
       if (i > len) {
         ret = OB_NOT_SUPPORTED;
-        LOG_INFO("not support json path for semistruct", K(i), K(json_path));
+
       } else {
         int64_t start = i;
         while (i < len && (ptr[i] != '.' && ptr[i] != '[')) {
@@ -287,7 +287,7 @@ int ObSubColumnPath::parse_sub_column_path(const ObString& json_path, ObSubColum
       ++i;
       if (i > len) {
         ret = OB_NOT_SUPPORTED;
-        LOG_INFO("not support json path for semistruct", K(i), K(json_path));
+
       } else {
         int64_t start = i;
         while (i < len && ptr[i] != ']') {
@@ -295,16 +295,16 @@ int ObSubColumnPath::parse_sub_column_path(const ObString& json_path, ObSubColum
         }
         if (i >= len) {
           ret = OB_NOT_SUPPORTED;
-          LOG_INFO("not support json path for semistruct", K(i), K(json_path));
+
         } else if (ptr[i] != ']') {
           ret = OB_NOT_SUPPORTED;
-          LOG_INFO("not support json path for semistruct", K(i), K(json_path));
+
         } else {
           bool is_valid = false;
           int64_t array_idx = ObFastAtoi<int64_t>::atoi(ptr + start, ptr + i, is_valid);
           if (! is_valid) {
             ret = OB_NOT_SUPPORTED;
-            LOG_INFO("not support json path for semistruct", K(i), K(json_path));
+
           } else if (OB_FAIL(col_path.add_path_item(ObSubColumnPathItem::ARRAY, array_idx))) {
             LOG_WARN("add path item fail", K(ret), K(start), K(i), K(array_idx), K(json_path));
           } else {
@@ -314,7 +314,7 @@ int ObSubColumnPath::parse_sub_column_path(const ObString& json_path, ObSubColum
       }
     } else {
       ret = OB_NOT_SUPPORTED;
-      LOG_INFO("not support json path for semistruct", K(i), K(json_path));
+
     }
   }
   return ret;

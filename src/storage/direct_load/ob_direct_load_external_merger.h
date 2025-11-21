@@ -87,10 +87,10 @@ bool ObDirectLoadExternalMerger<T, Compare>::HeapCompare::operator()(const HeapI
   bool bret = false;
   if (OB_ISNULL(compare_)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), KP(compare_));
+
   } else if (OB_ISNULL(left_item.item_) || OB_ISNULL(right_item.item_)) {
     ret = common::OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "invalid compare items", KR(ret), KP(left_item.item_), KP(right_item.item_));
+
   } else {
     bret = !compare_->operator()(left_item.item_, right_item.item_);
   }
@@ -125,15 +125,15 @@ int ObDirectLoadExternalMerger<T, Compare>::init(const common::ObIArray<External
   int ret = common::OB_SUCCESS;
   if (IS_INIT) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObDirectLoadExternalMerger init twice", KR(ret), KP(this));
+
   } else if (0 == iters.count() || OB_ISNULL(compare)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K(iters.count()), KP(compare));
+
   } else {
     compare_.set_compare(compare);
     iters_ = &iters;
     if (iters.count() > 1 && OB_FAIL(build_heap())) {
-      STORAGE_LOG(WARN, "fail to build heap", KR(ret));
+
     } else {
       is_inited_ = true;
     }
@@ -150,20 +150,20 @@ int ObDirectLoadExternalMerger<T, Compare>::build_heap()
   for (int64_t i = 0; OB_SUCC(ret) && i < iters_->count(); ++i) {
     if (OB_FAIL(iters_->at(i)->get_next_item(item))) {
       if (OB_UNLIKELY(common::OB_ITER_END != ret)) {
-        STORAGE_LOG(WARN, "fail to get next item", KR(ret), K(i));
+
       } else {
         ret = common::OB_SUCCESS;
       }
     } else if (OB_ISNULL(item)) {
       ret = common::OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "invalid item", KR(ret), KP(item));
+
     } else {
       heap_item.item_ = item;
       heap_item.idx_ = i;
       if (OB_FAIL(heap_.push(heap_item))) {
-        STORAGE_LOG(WARN, "fail to push heap", KR(ret));
+
       } else if (OB_FAIL(compare_.get_error_code())) {
-        STORAGE_LOG(WARN, "fail to compare items", KR(ret));
+
       }
     }
   }
@@ -177,16 +177,16 @@ int ObDirectLoadExternalMerger<T, Compare>::get_next_item(const T *&item)
   item = nullptr;
   if (IS_NOT_INIT) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObDirectLoadExternalMerger not init", KR(ret), KP(this));
+
   } else if (1 == iters_->count()) {
     if (OB_FAIL(direct_get_next_item(item))) {
       if (OB_UNLIKELY(common::OB_ITER_END != ret)) {
-        STORAGE_LOG(WARN, "fail to directly get next item", KR(ret));
+
       }
     }
   } else if (OB_FAIL(heap_get_next_item(item))) {
     if (OB_UNLIKELY(common::OB_ITER_END != ret)) {
-      STORAGE_LOG(WARN, "fail to get next item from heap", KR(ret));
+
     }
   }
   return ret;
@@ -199,10 +199,10 @@ int ObDirectLoadExternalMerger<T, Compare>::direct_get_next_item(const T *&item)
   item = nullptr;
   if (OB_UNLIKELY(1 != iters_->count())) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K(iters_->count()));
+
   } else if (OB_FAIL(iters_->at(0)->get_next_item(item))) {
     if (OB_UNLIKELY(common::OB_ITER_END != ret)) {
-      STORAGE_LOG(WARN, "fail to get next item", KR(ret));
+
     }
   }
   return ret;
@@ -214,29 +214,29 @@ int ObDirectLoadExternalMerger<T, Compare>::heap_get_next_item(const T *&item)
   int ret = common::OB_SUCCESS;
   if (OB_UNLIKELY(iters_->count() <= 1)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K(iters_->count()));
+
   } else if (last_iter_idx_ >= 0 && last_iter_idx_ < iters_->count()) {
     ExternalIterator *iter = iters_->at(last_iter_idx_);
     HeapItem heap_item;
     heap_item.idx_ = last_iter_idx_;
     if (OB_FAIL(iter->get_next_item(heap_item.item_))) {
       if (OB_UNLIKELY(common::OB_ITER_END != ret)) {
-        STORAGE_LOG(WARN, "fail to get next item", KR(ret));
+
       } else {
         if (OB_FAIL(heap_.pop())) {
-          STORAGE_LOG(WARN, "fail to pop heap item", KR(ret));
+
         } else if (OB_FAIL(compare_.get_error_code())) {
-          STORAGE_LOG(WARN, "fail to compare items", KR(ret));
+
         }
       }
     } else if (OB_ISNULL(heap_item.item_)) {
       ret = common::OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "invalid item", KR(ret), KP(heap_item.item_));
+
     } else {
       if (OB_FAIL(heap_.replace_top(heap_item))) {
-        STORAGE_LOG(WARN, "fail to replace heap top", KR(ret));
+
       } else if (OB_FAIL(compare_.get_error_code())) {
-        STORAGE_LOG(WARN, "fail to compare items", KR(ret));
+
       }
     }
     last_iter_idx_ = -1;
@@ -249,12 +249,12 @@ int ObDirectLoadExternalMerger<T, Compare>::heap_get_next_item(const T *&item)
   if (OB_SUCC(ret)) {
     const HeapItem *head_item = nullptr;
     if (OB_FAIL(heap_.top(head_item))) {
-      STORAGE_LOG(WARN, "fail to get heap top item", KR(ret));
+
     } else if (OB_FAIL(compare_.get_error_code())) {
-      STORAGE_LOG(WARN, "fail to compare items", KR(ret));
+
     } else if (OB_ISNULL(head_item) || OB_ISNULL(head_item->item_)) {
       ret = common::OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "invalid heap item", KR(ret), KP(head_item));
+
     } else {
       item = head_item->item_;
       last_iter_idx_ = head_item->idx_;

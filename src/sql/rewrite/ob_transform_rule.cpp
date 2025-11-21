@@ -325,9 +325,9 @@ int ObTransformRule::accept_transform(common::ObIArray<ObParentDMLStmt> &parent_
   } else if (force_accept) {
     trans_happened = true;
   } else if (ctx_->is_set_stmt_oversize_) {
-    LOG_TRACE("not accept transform because large set stmt", K(ctx_->is_set_stmt_oversize_));
+
   } else if (ctx_->eval_cost_) {
-    LOG_TRACE("not accept transform because already in one cost evaluation process", K(ctx_->eval_cost_));
+
   } else {
     cost_based_trans_tried_ = true;
     if (OB_FAIL(evaluate_cost(eval_parent_stmts, trans_stmt, true, trans_stmt_cost, is_expected,
@@ -364,7 +364,7 @@ int ObTransformRule::accept_transform(common::ObIArray<ObParentDMLStmt> &parent_
   } else if (OB_FAIL(adjust_transformed_stmt(parent_stmts, trans_stmt, tmp1, tmp2))) {
     LOG_WARN("failed to adjust transformed stmt", K(ret));
   } else if (force_accept) {
-    LOG_TRACE("succeed force accept transform because hint/rule");
+
     stmt = trans_stmt;
     OPT_TRACE("hint or rule force cost based transform apply.");
   } else {
@@ -428,7 +428,7 @@ int ObTransformRule::evaluate_cost(common::ObIArray<ObParentDMLStmt> &parent_stm
       // jinmao TODO: defensive code, remove it later
       LOG_WARN("failed to formalize stmt", K(ret));
     } else {
-      LOG_DEBUG("get transformed heuristic rule stmt when evaluate_cost", K(*root_stmt));
+
       CREATE_WITH_TEMP_CONTEXT(param) {
         ObRawExprFactory tmp_expr_factory(CURRENT_CONTEXT->get_arena_allocator());
         HEAP_VAR(ObOptimizerContext, optctx,

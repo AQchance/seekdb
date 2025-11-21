@@ -89,7 +89,7 @@ void ObPrimaryLSService::do_work()
         }
       }
          
-      LOG_INFO("[PRIMARY_LS_SERVICE] finish one round", KR(ret), K(tenant_schema));
+
       tenant_schema.reset();
       idle(idle_time_us);
     }// end while
@@ -161,7 +161,7 @@ int ObPrimaryLSService::set_tenant_dropping_status_(
             LOG_WARN("failed to update ls status", KR(ret), K(attr));
           }
           task_cnt++;
-          LOG_INFO("[PRIMARY_LS_SERVICE] set sys ls to pre tenant dropping", KR(ret), K(attr));
+
         }
         if (OB_FAIL(ret)) {
         } else if (!attr.ls_is_normal() && !attr.ls_is_pre_tenant_dropping()) {
@@ -353,7 +353,7 @@ int ObPrimaryLSService::try_delete_ls_(const share::ObLSStatusInfo &status_info)
     }
   }
   const int64_t cost = ObTimeUtility::fast_current_time() - start_time;
-  LOG_INFO("[PRIMARY_LS_SERVICE] finish to try delete LS", KR(ret), K(status_info), K(cost), K(can_offline));
+
   return ret;
 }
 
@@ -379,7 +379,7 @@ int ObPrimaryLSService::sys_ls_tenant_drop_(const share::ObLSStatusInfo &info)
       LOG_WARN("failed to update ls status", KR(ret), K(info), K(pre_status), K(target_status));
     }
   }
-  LOG_INFO("[PRIMARY_LS_SERVICE] set sys ls tenant dropping", KR(ret), K(info), K(can_offline));
+
   return ret;
 }
 
@@ -405,11 +405,11 @@ int ObPrimaryLSService::check_sys_ls_can_offline_(bool &can_offline)
     if (status_info.ls_id_.is_sys_ls()) {
     } else {
       can_offline = false;
-      LOG_INFO("[PRIMARY_LS_SERVICE] sys ls can not offline", K(status_info));
+
     }
   }
   if (OB_SUCC(ret) && can_offline) {
-    LOG_INFO("[PRIMARY_LS_SERVICE] sys ls can offline", K(status_info_array));
+
   }
   return ret;
 }
@@ -463,7 +463,7 @@ int ObPrimaryLSService::process_all_ls_status_to_steady_(const share::schema::Ob
       LOG_WARN("failed to process status to steady", KR(ret));
     } 
   }
-  LOG_INFO("[PRIMARY_LS_SERVICE] finish process all ls status to steady", KR(ret), K(tenant_id_));
+
   return ret;
 }
 
@@ -577,7 +577,7 @@ int ObPrimaryLSService::create_all_user_ls_for_creating_tenant_(
       }
     }
   }
-  LOG_INFO("created user ls count", KR(ret), K(tenant_id), K(ls_created_count));
+
   return ret;
 }
 
@@ -652,7 +652,7 @@ int ObPrimaryLSService::advance_user_ls_status_for_creating_tenant()
     if (OB_FAIL(check_has_one_normal_ls())) {
       LOG_WARN("failed to check has one normal ls", KR(ret));
     } else {
-      LOG_INFO("succeed to advance user ls status for creating tenant", KR(ret), K(tenant_id_));
+
     }
   }
   return ret;
@@ -695,7 +695,7 @@ int ObPrimaryLSService::create_duplicate_ls()
               new_ls, share::NORMAL_SWITCHOVER_STATUS))) {
     LOG_WARN("failed to insert new operation", KR(ret), K(new_ls));
   } 
-  LOG_INFO("[LS_MGR] create duplicate ls", KR(ret), K(new_ls));
+
   return ret;
 }
 
@@ -756,7 +756,7 @@ int ObDupLSCreateHelper::check_and_create_duplicate_ls_if_needed(
           *sql_proxy_,
           duplicate_ls_status_info))) {
         if (OB_ENTRY_NOT_EXIST == tmp_ret) {
-          LOG_INFO("duplicate ls not exist, need create one", K_(tenant_id));
+
           tmp_ret = OB_SUCCESS;
           // create duplicate ls
           ObAddr sys_ls_leader;
@@ -781,7 +781,7 @@ int ObDupLSCreateHelper::check_and_create_duplicate_ls_if_needed(
           LOG_WARN("fail to get duplicate log stream from table", KR(tmp_ret), K_(tenant_id));
         }
       } else if (!duplicate_ls_status_info.ls_is_normal()) { // need wait
-        LOG_INFO("duplicate ls is not in normal status, need wait", K(duplicate_ls_status_info));
+
       } else if (OB_TMP_FAIL(location_service_->get_leader_with_retry_until_timeout(
           GCONF.cluster_id,
           tenant_id_,

@@ -81,7 +81,7 @@ int ObTabletAbortTransferHelper::on_register_success_(
   const int64_t start_ts = ObTimeUtil::current_time();
   share::SCN unsed_scn;
   const bool for_replay = false;
-  LOG_INFO("[TRANSFER] transfer in tablet aborted on_register_success_", K(transfer_in_aborted_info));
+
 
   if (!transfer_in_aborted_info.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
@@ -137,7 +137,7 @@ int ObTabletAbortTransferHelper::check_transfer_in_tablet_aborted_(
       } else if (tablet->is_empty_shell()) {
         //do nothing
       } else if (for_replay && tablet->get_tablet_meta().transfer_info_.transfer_start_scn_ > scn) {
-        LOG_INFO("tablet is new, skip wait transfer in abort tablet", KPC(tablet), K(scn));
+
       } else {
         ret = OB_EAGAIN;
         LOG_WARN("tablet still exist, need retry", K(ret), K(tablet_info), KPC(tablet));
@@ -175,7 +175,7 @@ int ObTabletAbortTransferHelper::on_replay(
   } else if (OB_FAIL(check_can_skip_replay_(scn, transfer_in_aborted_info, skip_replay))) {
     LOG_WARN("failed to check can skip replay", K(ret), K(scn), K(transfer_in_aborted_info));
   } else if (skip_replay) {
-    LOG_INFO("skip replay transfer in abort", K(ret), K(scn));
+
   } else if (CLICK_FAIL(on_replay_success_(scn, transfer_in_aborted_info, ctx))) {
     LOG_WARN("failed to on register_success_", K(ret), K(scn), K(transfer_in_aborted_info));
   }
@@ -195,7 +195,7 @@ int ObTabletAbortTransferHelper::on_replay_success_(
   ObLS *ls = nullptr;
   const int64_t start_ts = ObTimeUtil::current_time();
   const bool for_replay = true;
-  LOG_INFO("[TRANSFER] transfer in tablet aborted on_replay_success_", K(scn), K(transfer_in_aborted_info));
+
 
   if (!scn.is_valid() || !transfer_in_aborted_info.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
@@ -237,7 +237,7 @@ bool ObTabletAbortTransferHelper::check_can_do_tx_end(
   int64_t pos = 0;
   ObTransferUtils::set_transfer_module();
 
-  LOG_INFO("check can do finish transfer in tx end", K(is_willing_to_commit), K(for_replay), K(log_scn));
+
   if (OB_ISNULL(buf) || buf_len < 0 || (for_replay && !log_scn.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("check can replay finish transfer in commit get invalid argument", K(ret), KP(buf), K(buf_len), K(for_replay), K(log_scn));

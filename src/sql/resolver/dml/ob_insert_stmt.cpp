@@ -300,7 +300,7 @@ int ObInsertStmt::get_ddl_sort_keys(common::ObIArray<OrderItem> &sort_keys) cons
     } else if (OB_FAIL(c_stmts.at(0)->get_select_exprs(column_list))) {
       LOG_WARN("get select exprs failed", K(ret));
     } else {
-      LOG_INFO("get ddl sort keys", K(sort_keys), K(column_list), K(view_column_list));
+
       ObSEArray<uint64_t, 4> column_ids; // the offset in select_items of sortkey
       for (int64_t i = 0; OB_SUCC(ret) && i < sort_keys.count(); ++i) {
         int64_t j = 0;
@@ -443,7 +443,7 @@ int ObInsertStmt::check_pdml_disabled(const bool is_online_ddl,
       }
     }
   }
-  LOG_TRACE("check insert pdml disabled", K(is_online_ddl), K(disable_pdml), K(is_pk_auto_inc), K(is_normal_table_overwrite()));
+
   return ret;
 }
 

@@ -117,7 +117,7 @@ int ObDropPrimaryKeyTask::process()
     ddl_tracing_.release_span_hierarchy();
     if (OB_FAIL(ret)) {
       add_event_info("drop primary key task process fail");
-      LOG_INFO("drop primary key task process fail", "ddl_event_info", ObDDLEventInfo());
+
     }
   }
   return ret;

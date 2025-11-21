@@ -37,12 +37,12 @@ class TestSessionSerDe : public ::testing::Test
 public:
   static void SetUpTestCase()
   {
-    LOG_INFO("SetUpTestCase");
+
     EXPECT_EQ(OB_SUCCESS, MockTenantModuleEnv::get_instance().init());
   }
   static void TearDownTestCase()
   {
-    LOG_INFO("TearDownTestCase");
+
     MockTenantModuleEnv::get_instance().destroy();
   }
 
@@ -101,7 +101,7 @@ TEST_F(TestSessionSerDe, tx_desc)
   ASSERT_EQ(tx2->state_, ObTxDesc::State::IDLE);
   ASSERT_EQ(tx2->parts_.count(), 1);
   ASSERT_EQ(tx2->parts_[0].id_, tx.parts_[0].id_);
-  LOG_INFO("x", KP(&session), KP(&session2));
+
 }
 }
 }

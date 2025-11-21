@@ -42,7 +42,7 @@ public:
     ret = malloc_allocator->create_and_add_tenant_allocator(OB_SYS_TENANT_ID);
     ASSERT_EQ(OB_SUCCESS, ret);
     int s = (int)time(NULL);
-    LOG_INFO("initial setup random seed", K(s));
+
     srandom(s);
   }
 
@@ -173,7 +173,7 @@ TEST_F(TestRARowStore, basic)
   CALL(verify_rows, 0, rs_.get_row_cnt(), "get", rs_.get_row_cnt(), true);
 
   CALL(append_rows, 10000);
-  LOG_INFO("mem", K(rs_.get_mem_hold()));
+
   ASSERT_EQ(13000, rs_.get_row_cnt());
   for (int64_t i = 0; i < rs_.get_row_cnt(); i++) {
     CALL(verify_row, i, true);
@@ -188,7 +188,7 @@ TEST_F(TestRARowStore, basic)
 
   enable_big_row_ = true;
   CALL(append_rows, 20000);
-  LOG_INFO("mem", K(rs_.get_mem_hold()));
+
   ASSERT_EQ(33000, rs_.get_row_cnt());
   CALL(verify_rows, 0, rs_.get_row_cnt(), "get", 1000, true);
 
@@ -213,7 +213,7 @@ TEST_F(TestRARowStore, mem_perf)
   for (int64_t i = 0; i < 10000; i++) {
     CALL(verify_row, random() % rs_.get_row_cnt(), true);
   }
-  LOG_INFO("mem", K(rs_.get_mem_hold()));
+
 
   begin = ObTimeUtil::current_time();
   CALL(verify_rows, 0, rows, "scan");
@@ -245,7 +245,7 @@ TEST_F(TestRARowStore, disk)
   }
   int64_t rows = round * 10000;
   LOG_WARN("mem and disk", K(rows), K(rs_.get_mem_hold()), K(rs_.get_file_size()));
-  LOG_INFO("disk write:", K(rows), K(write_time));
+
 
   begin = ObTimeUtil::current_time();
   CALL(verify_rows, 0, rs_.get_row_cnt(), "rscan");
@@ -421,7 +421,7 @@ TEST_F(TestRARowStore, start_dump_by_total_mem_used)
   int ret = OB_SUCCESS;
   append_rows(500000);
   int64_t avg_row_size = rs_.get_mem_hold() / rs_.get_row_cnt();
-  LOG_INFO("average row size", K(avg_row_size));
+
 
   lib::ObMallocAllocator *malloc_allocator = lib::ObMallocAllocator::get_instance();
   malloc_allocator->set_tenant_limit(OB_SYS_TENANT_ID, 1L << 30);

@@ -110,7 +110,7 @@ TEST_F(TestIndexBlockRowScanner, transform)
   ASSERT_EQ(OB_SUCCESS, prepare_tmp_rowkey(tmp_rowkey));
   for (int64_t i = 0; i < idx_blk_header->row_cnt_; ++i) {
     ASSERT_EQ(OB_SUCCESS, idx_blk_header->rowkey_vector_->get_rowkey(i, tmp_rowkey));
-    STORAGE_LOG(INFO, "Show transformed root block rowkey", K(tmp_rowkey));
+
   }
   ObDatumRow row;
   ASSERT_EQ(OB_SUCCESS, row.init(allocator_, TEST_COLUMN_CNT));

@@ -330,7 +330,7 @@ int ObDbmsStatsHistoryManager::calssify_table_stat_part_ids(ObExecContext &ctx,
       }
     }
   }
-  LOG_TRACE("calssify table stat part ids", K(partition_ids), K(no_stat_part_ids), K(have_stat_part_ids));
+
   return ret;
 }
 
@@ -368,7 +368,7 @@ int ObDbmsStatsHistoryManager::backup_having_table_part_stats(ObMySQLTransaction
   } else if (OB_FAIL(trans.write(tenant_id, raw_sql.ptr(), affected_rows))) {
     LOG_WARN("fail to exec sql", K(raw_sql), K(ret));
   } else {
-    LOG_TRACE("succeed to backup having table part stats", K(raw_sql), K(affected_rows));
+
   }
   return ret;
 }
@@ -414,7 +414,7 @@ int ObDbmsStatsHistoryManager::backup_no_table_part_stats(ObMySQLTransaction &tr
       } else if (OB_FAIL(trans.write(tenant_id, raw_sql.ptr(), affected_rows))) {
         LOG_WARN("fail to exec sql", K(raw_sql), K(ret));
       } else {
-        LOG_TRACE("succeed to backup no table part stats", K(raw_sql), K(affected_rows));
+
       }
     }
   }
@@ -561,7 +561,7 @@ int ObDbmsStatsHistoryManager::generate_having_stat_part_col_map(ObExecContext &
       }
     }
   }
-  LOG_TRACE("generate having stat part col map", K(have_stat_part_col_map.size()), K(partition_ids), K(column_ids));
+
   return ret;
 }
 
@@ -695,7 +695,7 @@ int ObDbmsStatsHistoryManager::backup_having_column_stats(ObMySQLTransaction &tr
       } else if (OB_FAIL(trans.write(tenant_id, raw_sql.ptr(), affected_rows))) {
         LOG_WARN("fail to exec sql", K(raw_sql), K(ret));
       } else {
-        LOG_TRACE("succeed to backup having column stats", K(raw_sql), K(affected_rows));
+
       }
     }
   }
@@ -775,7 +775,7 @@ int ObDbmsStatsHistoryManager::backup_no_column_stats(ObMySQLTransaction &trans,
                     } else {
                       cur_cnt = 0;
                       values_list.reuse();
-                      LOG_TRACE("succeed to backup no table part stats", K(raw_sql), K(affected_rows));
+
                     }
                   }
                 }
@@ -799,7 +799,7 @@ int ObDbmsStatsHistoryManager::backup_no_column_stats(ObMySQLTransaction &trans,
           } else if (OB_FAIL(trans.write(tenant_id, raw_sql.ptr(), affected_rows))) {
             LOG_WARN("fail to exec sql", K(raw_sql), K(ret));
           } else {
-            LOG_TRACE("succeed to backup no table part stats", K(raw_sql), K(affected_rows));
+
           }
         }
       }
@@ -857,7 +857,7 @@ int ObDbmsStatsHistoryManager::backup_histogram_stats(ObMySQLTransaction &trans,
     } else if (OB_FAIL(trans.write(tenant_id, raw_sql.ptr(), affected_rows))) {
       LOG_WARN("fail to exec sql", K(raw_sql), K(ret));
     } else {
-      LOG_TRACE("succeed to backup having column stats", K(raw_sql), K(affected_rows));
+
     }
   }
   return ret;
@@ -1069,7 +1069,7 @@ int ObDbmsStatsHistoryManager::get_stats_history_retention_and_availability(ObEx
           LOG_WARN("failed to get result", K(ret));
         } else {
           ret = OB_SUCCESS;
-          LOG_TRACE("Succeed to get stats history info", K(result), K(raw_sql));
+
         }
       }
       int tmp_ret = OB_SUCCESS;
@@ -1174,7 +1174,7 @@ int ObDbmsStatsHistoryManager::fetch_table_stat_histrory(ObExecContext &ctx,
           LOG_WARN("failed to get result", K(ret));
         } else {
           ret = OB_SUCCESS;
-          LOG_TRACE("Succeed to get stats history info", K(raw_sql), K(all_part_stats));
+
         }
       }
       int tmp_ret = OB_SUCCESS;
@@ -1289,7 +1289,7 @@ int ObDbmsStatsHistoryManager::fetch_column_stat_history(ObExecContext &ctx,
           LOG_WARN("failed to get result", K(ret));
         } else {
           ret = OB_SUCCESS;
-          LOG_TRACE("Succeed to get stats history info", K(raw_sql), K(all_cstats));
+
         }
       }
       int tmp_ret = OB_SUCCESS;
@@ -1465,7 +1465,7 @@ int ObDbmsStatsHistoryManager::fetch_histogram_stat_histroy(ObExecContext &ctx,
             LOG_WARN("failed to get result", K(ret));
           } else {
             ret = OB_SUCCESS;
-            LOG_TRACE("Succeed to get stats history info", K(raw_sql), K(col_stat));
+
           }
         }
         int tmp_ret = OB_SUCCESS;

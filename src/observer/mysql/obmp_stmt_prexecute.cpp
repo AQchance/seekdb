@@ -108,7 +108,7 @@ int ObMPStmtPrexecute::before_process()
         sql_.assign_ptr(pos, static_cast<ObString::obstr_size_t>(sql_len_));
         pos += sql_len_;
       }
-      LOG_DEBUG("get sql in prexecute protocol.", K(stmt_id_), K(sql_));
+
     }
 
     // params_num
@@ -278,7 +278,7 @@ int ObMPStmtPrexecute::before_process()
             set_arraybounding(true);
             if (get_ctx().can_reroute_sql_) {
               get_ctx().can_reroute_sql_ = false;
-              LOG_INFO("arraybinding not support reroute sql.");
+
             }
             // only init param_store
             // array_binding_row_ and array_binding_columns_ will init later
@@ -315,7 +315,7 @@ int ObMPStmtPrexecute::before_process()
                 ObMySQLUtil::get_uint4(pos, close_stmt_count_);
                 int tmp_ret = OB_SUCCESS;
                 if (0 != close_stmt_count_) {
-                  LOG_INFO("close stmt count:", K(close_stmt_count_), K(stmt_id_));
+
                   // OCI not support close_stmt_count_ is not 0 yet.
                   // for (int64_t i = 0; i < close_stmt_count_; i++) {
                   //   int32_t close_stmt_id = -1;
@@ -429,7 +429,7 @@ int ObMPStmtPrexecute::execute_response(ObSQLSessionInfo &session,
   ACTIVE_SESSION_FLAG_SETTER_GUARD(in_sql_execution);
   int ret = OB_SUCCESS;
   if (OB_OCI_EXACT_FETCH != exec_mode_ && stmt::T_SELECT == stmt_type_) {
-    LOG_DEBUG("begin server cursor.");
+
     set_ps_cursor_type(ObPrexecutePsCursorType);
     ObDbmsCursorInfo *cursor = NULL;
     bool use_stream = false;
@@ -502,7 +502,7 @@ int ObMPStmtPrexecute::execute_response(ObSQLSessionInfo &session,
         ObSchemaGetterGuard schema_guard;
         if (0 != iteration_count_ && cursor->get_field_columns().count() > 0) {
           has_result = 1;
-          LOG_DEBUG("has result set.", K(stmt_id_));
+
         }
         if (OB_FAIL(session.get_autocommit(ac))) {
           LOG_WARN("fail to get autocommit", K(ret));
@@ -765,7 +765,7 @@ int ObMPStmtPrexecute::response_query_header(ObSQLSessionInfo &session,
     int8_t has_result = 0;
     bool ps_out = false;
 
-    LOG_DEBUG("before response_query_header",KPC(fields), KPC(param_fields), KPC(returning_params_field));
+
 
     // check has arraybinding result
     if (OB_NOT_NULL(returning_params_field) && is_arraybinding_has_result_type(stmt_type_)) {
@@ -1027,7 +1027,7 @@ int ObMPStmtPrexecute::response_returning_rows(ObSQLSessionInfo &session,
            && !OB_FAIL(result.get_next_row(result_row))) {
       arraybinding_row_->get_cell(0).set_int(get_curr_sql_idx());
       arraybinding_row_->get_cell(1).set_int(ret);
-      LOG_DEBUG("before send result_row", KPC(result_row));
+
       CK((arraybinding_row_->get_count() == (result_row->get_count() + 3)), arraybinding_row_->get_count(), result_row->get_count());
       ObNewRow *row = const_cast<ObNewRow*>(result_row);
       for (int i = 0; OB_SUCC(ret) && i < row->get_count(); i++) {
@@ -1053,7 +1053,7 @@ int ObMPStmtPrexecute::response_returning_rows(ObSQLSessionInfo &session,
         arraybinding_row_->get_cell(i+2).set_null();
       }
       arraybinding_row_->get_cell(arraybinding_row_->get_count() - 1).set_varchar(ob_oracle_strerror(ret));
-      LOG_DEBUG("error occured before send arraybinding_row_", KPC(arraybinding_row_));
+
       if (OB_SUCCESS != (response_ret = response_row(session, *arraybinding_row_, arraybinding_columns_, false, &result.get_exec_context()))) {
         LOG_WARN("fail to response row to client", K(response_ret));
       }
@@ -1232,9 +1232,9 @@ int ObMPStmtPrexecute::send_param_field_packet(ObSQLSessionInfo &session,
         ObMySQLResultSet::replace_lob_type(session, ob_field, field);
         OMPKField fp(field);
         if (OB_FAIL(response_packet(fp, &session))) {
-          LOG_DEBUG("response packet fail", K(ret));
+
         } else {
-          LOG_DEBUG("send param packet in prepare-execute protocol.", K(field));
+
         }
       }
     }
@@ -1292,7 +1292,7 @@ int ObMPStmtPrexecute::send_column_packet(ObSQLSessionInfo &session,
         if (OB_FAIL(response_packet(fp, &session))) {
           LOG_WARN("response packet fail", K(ret));
         } else {
-          LOG_DEBUG("send column packet in prepare-execute protocol.", K(field));
+
         }
       }
     }

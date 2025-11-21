@@ -96,7 +96,7 @@ int ObHybridSearchExecutor::execute_search(ObObj &query_res) {
             LOG_WARN("deep copy query result failed", K(ret));
           }
         } else if (OB_ITER_END == ret) {
-          LOG_INFO("no result return!", K(ret), K(tenant_id_));
+
           query_res.set_null();
           ret = OB_SUCCESS;
         } else {
@@ -309,7 +309,7 @@ int ObHybridSearchExecutor::construct_column_index_info(ObIAllocator &alloc, con
                   } else if (OB_FAIL(column_index_info.set_refactored(column_names.string(), index_info))) {
                     LOG_WARN("failed to set_refactored column name", K(ret), K(column_names.string()));
                   } else {
-                    LOG_INFO("column index info", K(ret), K(column_names.string()), K(index_name));
+
                   }
                 }
               }

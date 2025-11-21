@@ -105,7 +105,7 @@ void generate_plan(TestSqlCtx &test_sql_ctx, const char *query,
                    ParamStore &params, ObLogPlan *&logical_plan,
                    ObPhysicalPlan *&phy_plan, ObSQLSessionInfo &session)
 {
-  LOG_INFO("generate_plan!", KP(&session));
+
   ParseResult parse_result;
   ObStmt *stmt = NULL;
   ASSERT_EQ(OB_SUCCESS, session.test_init(0, 0, 0, test_sql_ctx.allocator_));
@@ -224,7 +224,7 @@ void generate_plan(TestSqlCtx &test_sql_ctx, const char *query,
                 logical_plan[6], phy_plan[6], session[6]);
 
 
-  LOG_INFO("phy_plan type:",K(phy_plan[0]->get_plan_type()),K(phy_plan[1]->get_plan_type()),K(phy_plan[2]->get_plan_type()),K(phy_plan[3]->get_plan_type()));
+
 
   // for (int i = 0; i < TEST_PLAN_NUM; i++) {
   //   phy_plan[i]->set_plan_id(i);

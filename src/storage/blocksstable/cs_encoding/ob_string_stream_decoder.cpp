@@ -421,7 +421,7 @@ int ObStringStreamDecoder::decode_stream_meta_(
     LOG_WARN("fail to deserialize", K(ret), KP(buf), K(len));
   } else {
     str_meta_size = pos;
-    LOG_DEBUG("after decode string stream meta", K(ctx), K(str_meta_size));
+
   }
 
   return ret;

@@ -130,7 +130,7 @@ int ObSortColumnIdArray::build_sort_array(
     } // end of for
     if (OB_SUCC(ret)) {
       lib::ob_sort(array_.begin(), array_.end());
-      LOG_TRACE("success to sort array", KR(ret), K(array_));
+
       get_func_ = get_func_from_array;
     }
   }
@@ -241,7 +241,7 @@ int ObTableCkmItems::build(
   if (OB_FAIL(prepare_build(table_id, schema_guard, tablet_ls_pair_cache, tablet_id_array))) {
     LOG_WARN("failed to prepare build ckm items", K(ret));
   } else if (OB_FAIL(ckm_items_.init(tenant_id_, tablet_pairs_.count()))) {
-    STORAGE_LOG(WARN, "failed to init ckm array", K(ret), K_(tenant_id), K(tablet_pairs_.count()));
+
   } else if (OB_FAIL(ObTabletReplicaChecksumOperator::get_tablet_replica_checksum_items(
                              tenant_id_, sql_proxy,
                              compaction_scn, tablet_pairs_,
@@ -282,7 +282,7 @@ int ObTableCkmItems::build_for_s2(
   if (OB_FAIL(prepare_build(table_id, schema_guard, tablet_ls_pair_cache, tablet_id_array))) {
     LOG_WARN("failed to prepare build ckm items", K(ret));
   } else if (OB_FAIL(ckm_items_.init(tenant_id_, tablet_pairs_.count()))) {
-    STORAGE_LOG(WARN, "failed to init ckm array", K(ret), K_(tenant_id), K(tablet_pairs_.count()));
+
   } else if (OB_FAIL(ObTabletReplicaChecksumOperator::batch_get(tenant_id_,
                                                                 tablet_pairs_,
                                                                 compaction_scn,
@@ -347,7 +347,7 @@ int ObTableCkmItems::build_column_ckm_sum_array(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("checksum items or tablet pairs are empty", KR(ret), K_(ckm_items), K_(tablet_pairs));
   } else if (!ckm_sum_array_.empty()) {
-    LOG_INFO("use cached ckm array", KR(ret), K_(row_count), K_(ckm_sum_array), K(compaction_scn));
+
   } else {
     row_count_ = 0;
     ckm_sum_array_.reuse();
@@ -393,7 +393,7 @@ int ObTableCkmItems::build_column_ckm_sum_array(
         ret = OB_ITEM_NOT_MATCH;
         LOG_WARN("compaction scn mismtach", KR(ret), K(cur_item), K(compaction_scn));
       }
-      LOG_TRACE("build_column_ckm_sum_array", KR(ret), K(pair_idx), KPC(cur_item), K(compaction_scn), K(row_cnt));
+
     } // end of for
   }
   if (OB_SUCC(ret)) {
@@ -558,7 +558,7 @@ int ObTableCkmItems::validate_tablet_column_ckm(
         if (OB_SUCC(ret)) {
           ret = OB_E(EventTable::EN_RS_USER_INDEX_CHECKSUM_ERROR) OB_SUCCESS;
           if (OB_FAIL(ret)) {
-            STORAGE_LOG(INFO, "ERRSIM EN_RS_USER_INDEX_CHECKSUM_ERROR", K(ret));
+
             ret = OB_CHECKSUM_ERROR;
           }
         }
@@ -621,7 +621,7 @@ int ObTableCkmItems::compare_ckm_by_column_ids(
         }
       } else if (!data_column_schema->is_column_stored_in_sstable()) {
         // virtual column/ROWID fake column only tag in data table
-        LOG_TRACE("column do not need to compare checksum", KPC(data_column_schema), K(data_column_schema->is_column_stored_in_sstable()));
+
       } else if (OB_UNLIKELY(!data_ckm.sort_col_id_array_.is_inited())) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("sort col id is unexpected invalid", KR(ret), K(data_ckm));

@@ -64,7 +64,7 @@ int HashTable<Bucket, Prober>::build_prepare(int64_t row_count, int64_t bucket_c
   used_buckets_ = 0;
   buckets_->reuse();
   OZ (buckets_->init(nbuckets_));
-  LOG_DEBUG("build prepare", K(row_count), K(bucket_count), K_(nbuckets), K(sizeof(Bucket)));
+
   return ret;
 }
 
@@ -380,7 +380,7 @@ int HashTable<Bucket, Prober>::probe_batch_normal(
     uint64_t idx = 0;
     uint64_t unmatched_idx = 0;
     uint64_t unmatched_cnt = output_info.selector_cnt_;
-    LOG_DEBUG("before calc condistions", K(unmatched_cnt));
+
     while (OB_SUCC(ret) && 0 < unmatched_cnt) {
       unmatched_idx = 0;
       // need to ensure unmatched_rows are not END_ROW_PTR!
@@ -412,7 +412,7 @@ int HashTable<Bucket, Prober>::probe_batch_normal(
       unmatched_cnt = unmatched_idx;
     }
     output_info.selector_cnt_ = idx;
-    LOG_DEBUG("probe batch normal", K(idx));
+
   } else if (OB_FAIL(ObHJStoredRow::convert_rows_to_exprs(*ctx.build_output_,
                  *ctx.eval_ctx_,
                  ctx.build_row_meta_,
@@ -776,7 +776,7 @@ int ProberBase<Bucket>::calc_join_conditions(JoinTableCtx &ctx,
       }
     } // for end
 
-    LOG_DEBUG("trace match", K(ret), K(matched), K(batch_idx));
+
   }
 
   return ret;

@@ -144,7 +144,7 @@ int ObSequenceDMLProxy::next_batch(
                   "SELECT NEXT_VALUE FROM %s "
                   "WHERE SEQUENCE_ID = %lu FOR UPDATE",
                   tname, sequence_id))) {
-        STORAGE_LOG(WARN, "fail format sql", K(ret));
+
       } else if (OB_FAIL(sql_client_retry_weak.read(res, tenant_id, sql.ptr()))) {
         LOG_WARN("fail to execute sql", K(sql), K(ret));
       } else if (NULL == (result = res.get_result())) {
@@ -385,7 +385,7 @@ int ObSequenceDMLProxy::init_sequence_value_table(
   const char *tname = OB_ALL_SEQUENCE_VALUE_TNAME;
   // First operation on the sequence object, simultaneously initialize the __all_sequence_value table
   if (OB_FAIL(sql.assign_fmt("INSERT INTO %s (", tname))) {
-    STORAGE_LOG(WARN, "append table name failed, ", K(ret));
+
   } else {
     ObSqlString values;
     SQL_COL_APPEND_VALUE(sql, values, sequence_id, "sequence_id", "%lu");
@@ -428,7 +428,7 @@ int ObSequenceDMLProxy::init_sequence_value_table(
                   "SELECT NEXT_VALUE FROM %s "
                   "WHERE SEQUENCE_ID = %lu FOR UPDATE",
                   tname, sequence_id))) {
-        STORAGE_LOG(WARN, "fail format sql", K(ret));
+
       } else if (OB_FAIL(sql_client_retry_weak.read(res, tenant_id, sql.ptr()))) {
         LOG_WARN("fail to execute sql", K(sql), K(ret));
       } else if (NULL == (result = res.get_result())) {

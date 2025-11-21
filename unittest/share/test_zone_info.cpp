@@ -58,7 +58,7 @@ void TestZoneInfo::SetUp()
 
 TEST_F(TestZoneInfo, create_global_info)
 {
-  LOG_INFO("zone info size", K(sizeof(ObGlobalInfo)), K(sizeof(ObZoneInfo)));
+
 }
 
 TEST_F(TestZoneInfo, zone_item_update)
@@ -117,7 +117,7 @@ TEST_F(TestZoneInfo, zone_item_update)
   ASSERT_EQ(2, global_info_.frozen_version_.value_);
   ASSERT_EQ(now, global_info_.frozen_time_.value_);
 
-  LOG_INFO("global_info", K_(global_info));
+
 }
 
 TEST_F(TestZoneInfo, zone_info)
@@ -139,7 +139,7 @@ TEST_F(TestZoneInfo, zone_info)
   ret = ObZoneTableOperation::load_zone_info(db_initer_.get_sql_proxy(), zone_info);
   ASSERT_EQ(2, zone_info.last_merged_time_);
 
-  LOG_INFO("zone_info", K(zone_info));
+
 
   ObArray<ObZone> zone_list;
   ASSERT_EQ(OB_SUCCESS, ObZoneTableOperation::get_zone_list(

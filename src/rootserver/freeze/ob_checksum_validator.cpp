@@ -105,7 +105,7 @@ int ObChecksumValidator::deal_with_special_table_at_last(bool &finish_validate)
   } else if (OB_FAIL(get_tablet_replica_checksum_and_validate(true /*include_larger_than*/))) {
     if (OB_ITEM_NOT_MATCH == ret) {
       (void) uncompact_info_.add_skip_verify_table(table_id_);
-      LOG_TRACE("mismatch checksum cnt when deal with special table", KR(ret), K_(cur_tablet_ls_pair_array));
+
       ret = OB_SUCCESS;
     } else {
       LOG_WARN("fail to validate tablet replica checksum", KR(ret), "compaction_scn", get_compaction_scn(), K_(table_id),
@@ -116,7 +116,7 @@ int ObChecksumValidator::deal_with_special_table_at_last(bool &finish_validate)
     LOG_WARN("failed to validate cross cluster checksum", K(ret));
   } else {
     finish_validate = true;
-    LOG_INFO("success to deal with special table", KR(ret), K_(table_id), K_(table_compaction_info));
+
   }
   return ret;
 }
@@ -151,7 +151,7 @@ int ObChecksumValidator::get_table_compaction_info(
       ret = OB_SUCCESS;
       table_compaction_info.reset();
       table_compaction_info.table_id_ = table_id;
-      LOG_TRACE("return init table compaction info", KR(ret));
+
     } else {
       LOG_WARN("fail to get val from hashmap", KR(ret), K(table_id));
     }
@@ -220,14 +220,14 @@ int ObChecksumValidator::get_tablet_ls_pairs(
           if (OB_FAIL(ret)) {
             if (enter_cnt++ == 0) {
               ret = OB_ITEM_NOT_MATCH;
-              STORAGE_LOG(INFO, "ERRSIM EN_GET_TABLET_LS_PAIR_IN_RS", K(ret), K(simple_schema), K_(cur_tablet_ls_pair_array));
+
             } else {
               ret = OB_SUCCESS;
             }
           }
         }
 #endif
-      LOG_TRACE("success to get tablet ls pairs", KR(ret), K_(cur_tablet_ls_pair_array));
+
     }
   }
   return ret;
@@ -290,7 +290,7 @@ int ObChecksumValidator::validate_checksum(
         LOG_WARN("failed to build table ckm items", KR(tmp_ret), K_(table_id), K_(cur_tablet_ls_pair_array),
           K_(replica_ckm_items));
       } else {
-        LOG_DEBUG("success to build ckm item", KR(tmp_ret), K(last_table_ckm_items_), K_(table_compaction_info));
+
       }
     } else {
       last_table_ckm_items_.clear();
@@ -301,7 +301,7 @@ int ObChecksumValidator::validate_checksum(
   if (FAILEDx(table_compaction_map_.set_refactored(table_id_, table_compaction_info_, true /*overwrite*/))) {
     LOG_WARN("fail to set refactored", KR(ret), K_(table_id), K_(table_compaction_info));
   } else {
-    LOG_TRACE("success to validate table", KR(ret), K_(table_id), K_(table_compaction_info));
+
   }
   // do no clear table_compaction_info_ until validate next table
   replica_ckm_items_.reset();
@@ -358,7 +358,7 @@ int ObChecksumValidator::update_table_compaction_info_by_tablet()
         if (OB_FAIL(ret)) {
           ret = OB_SUCCESS;
           if (tablet_id.id() > ObTabletID::MIN_USER_TABLET_ID) {
-            LOG_INFO("ERRSIM EN_SKIP_INDEX_MAJOR", K(ret), K(tablet_id));
+
             table_compaction_info_.set_can_skip_verifying();
           }
         }
@@ -380,7 +380,7 @@ int ObChecksumValidator::update_table_compaction_info_by_tablet()
       table_compaction_info_.tablet_cnt_ = cur_tablet_ls_pair_array_.count();
       table_compaction_info_.set_compacted();
     }
-    LOG_TRACE("update_table_compaction_info_by_tablet", KR(ret), K_(table_compaction_info));
+
   }
 
   return ret;
@@ -431,7 +431,7 @@ int ObChecksumValidator::validate_cross_cluster_checksum()
         LOG_WARN("failed to push back tablet_ls_pair", KR(ret));
       } else {
         table_compaction_info_.set_verified();
-        LOG_TRACE("after cross cluster validate table checksum", K(ret), K_(table_compaction_info));
+
       }
     }
   } else {  // no need to validate cross-cluster checksum
@@ -692,13 +692,13 @@ int ObChecksumValidator::validate_index_checksum() {
       LOG_WARN("fail to handle index table", KR(ret), KPC_(simple_schema));
     }
   } else if (table_compaction_info_.need_check_fts_) {
-    LOG_INFO("check fts for data table", KR(ret), K_(table_compaction_info));
+
   } else if (table_compaction_info_.is_compacted()) { // for data table, check status
     if (0 == table_compaction_info_.unfinish_index_cnt_) { // no unfinish index
       table_compaction_info_.set_index_ckm_verified();
     }
   }
-  LOG_TRACE("validate_index_checksum", KR(ret), K_(table_id), K_(table_compaction_info));
+
   return ret;
 }
 
@@ -730,7 +730,7 @@ int ObChecksumValidator::handle_index_table(
       index_compaction_info.set_index_ckm_verified();
     }
   } else if (fts_group_array_.need_check_fts() && index_simple_schema.is_fts_or_multivalue_index()) {
-    LOG_INFO("skip fts or multivalue index", KR(ret), K(index_table_id), K(index_compaction_info));
+
   } else {
       if (index_compaction_info.is_compacted() && data_compaction_info.is_compacted()) {
 #ifdef ERRSIM
@@ -739,7 +739,7 @@ int ObChecksumValidator::handle_index_table(
           if (OB_FAIL(ret)) {
             if (!is_inner_table(index_table_id)) {
               ret = OB_EAGAIN;
-              STORAGE_LOG(INFO, "ERRSIM EN_MEDIUM_VERIFY_GROUP_SKIP_SET_VERIFY failed", K(ret));
+
             } else {
               ret = OB_SUCCESS;
             }
@@ -781,7 +781,7 @@ int ObChecksumValidator::handle_index_table(
       LOG_WARN("failed to set", K(ret), K(data_compaction_info));
     }
   }
-  LOG_TRACE("handle index table", KR(ret), K_(table_id), K(index_compaction_info), K(data_compaction_info));
+
   return ret;
 }
 
@@ -891,7 +891,7 @@ int ObChecksumValidator::build_ckm_item_for_fts(const int64_t table_id,
   } else if (OB_FAIL(finish_verify_fts_ckm(table_id))) {
     LOG_WARN("failed to skip verify fts ckm", KR(ret), K(table_id));
   } else {
-    LOG_INFO("skip verify fts ckm", KR(ret), K(table_id));
+
   }
   return ret;
 }
@@ -942,7 +942,7 @@ int ObChecksumValidator::handle_fts_checksum(
         if (OB_FAIL(validate_fts_indexs(fts_group.at(idx), finish_table_ids))) {
           LOG_WARN("failed to validate doc rowkey index", KR(ret), K(idx), K(fts_group));
         } else {
-          LOG_INFO("validate index info", K(ret), K(fts_group), K(idx), K(fts_group.at(idx)), K(finish_table_ids));
+
         }
       } // for of fts_group
     } // for of fts_group_array

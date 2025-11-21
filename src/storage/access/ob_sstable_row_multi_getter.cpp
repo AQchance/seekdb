@@ -143,7 +143,7 @@ int ObSSTableRowMultiGetter::inner_get_next_row(const blocksstable::ObDatumRow *
           EVENT_INC(ObStatEventIds::MAJOR_SSSTORE_READ_ROW_COUNT);
         }
       }
-      LOG_DEBUG("inner get next row", K(*store_row));
+
     }
   }
   return ret;
@@ -161,7 +161,7 @@ int ObSSTableRowMultiGetter::fetch_row(ObSSTableReadHandle &read_handle, const b
     }
     //switch context each row due to the cache will be disabled if too many rows getted
   } else if (OB_FAIL(micro_getter_->switch_context(*iter_param_, *access_ctx_, sstable_))) {
-    STORAGE_LOG(WARN, "Fail to switch context", K(ret));
+
   }
   if (OB_FAIL(ret)) {
   } else if (read_handle.need_read_block() && nullptr == macro_block_reader_) {

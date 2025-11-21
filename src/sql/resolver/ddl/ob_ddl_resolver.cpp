@@ -2560,7 +2560,7 @@ int ObDDLResolver::resolve_table_option(const ParseNode *option_node, const bool
             ObKVAttr attr; // used for check validity
             tmp_str.assign_ptr(const_cast<char *>(option_node->children_[0]->str_value_),
                                   static_cast<int32_t>(option_node->children_[0]->str_len_));
-            LOG_INFO("resolve kv attributes", K(tmp_str));
+
             if (OB_FAIL(ObSQLUtils::convert_sql_text_to_schema_for_storing(
                           *allocator_, session_info_->get_dtc_params(), tmp_str))) {
               LOG_WARN("fail to convert comment to utf8", K(ret));
@@ -3288,7 +3288,7 @@ int ObDDLResolver::resolve_column_definition(ObColumnSchemaV2 &column,
         }
       }
     }
-    LOG_DEBUG("resolve column definition mid", K(column));
+
     // Specify the position of the column, currently only supported in mysql mode for add column syntax
     if (OB_SUCC(ret) && lib::is_mysql_mode()) {
       ParseNode *pos_node = NULL;
@@ -3565,7 +3565,7 @@ int ObDDLResolver::resolve_normal_column_attribute(ObColumnSchemaV2 &column,
                                                                    is_set_orig_default))) {
           LOG_WARN("resolve default value failed", K(ret));
         }
-        LOG_DEBUG("finish resolve default value", K(ret), K(default_value), K(column), K(attr_node->num_child_), K(attr_node->param_num_));
+
         break;
       }
       case T_CONSTR_AUTO_INCREMENT:
@@ -3791,7 +3791,7 @@ int ObDDLResolver::resolve_normal_column_attribute(ObColumnSchemaV2 &column,
       }
     }
   }
-  LOG_DEBUG("resolve normal column attribute end", K(column));
+
   return ret;
 }
 
@@ -3838,7 +3838,7 @@ int ObDDLResolver::resolve_generated_column_attribute(ObColumnSchemaV2 &column,
   }
   for (int64_t i = 0; OB_SUCC(ret) && attrs_node && i < attrs_node->num_child_; ++i) {
     ParseNode *attr_node = attrs_node->children_[i];
-    LOG_DEBUG("resolve generated column attr", K(attr_node->type_), K(resolve_stat));
+
     switch (attr_node->type_) {
     case T_CONSTR_NOT_NULL:
       if (is_external_table) {
@@ -5033,7 +5033,7 @@ int ObDDLResolver::resolve_part_func(ObResolverParams &params,
         } else if (OB_FAIL(part_func_exprs.push_back(func_expr))) {
           LOG_WARN("array push back fail", K(ret));
         } else {
-          LOG_DEBUG("succ to resolve_part_func", KPC(func_expr));
+
 
         }//do nothing
       } // end of for
@@ -5407,7 +5407,7 @@ int ObDDLResolver::print_expr_to_default_value(ObRawExpr &expr,
                 column.is_default_expr_v2_column()))) {
       LOG_WARN("set orig default value failed", K(ret));
     } else {
-      LOG_DEBUG("succ to print_expr_to_default_value", K(expr), K(column), K(default_value), K(expr_def), K(ret));
+
     }
   }
   return ret;
@@ -5709,7 +5709,7 @@ int ObDDLResolver::check_default_value(ObObj &default_value,
     } else if (OB_FAIL(print_expr_to_default_value(*expr, column, schema_checker, tz_info_wrap.get_time_zone_info()))) {
       LOG_WARN("fail to print_expr_to_default_value", KPC(expr), K(column), K(ret));
     }
-    LOG_DEBUG("finish check default value", K(input_default_value), K(expr_str), K(tmp_default_value), K(tmp_dest_obj), K(tmp_dest_obj_null), KPC(expr), K(ret));
+
   } else {
     bool is_oracle_mode = false;
     if (OB_FAIL(cast_default_value(session_info, default_value, tz_info_wrap.get_time_zone_info(),
@@ -5721,7 +5721,7 @@ int ObDDLResolver::check_default_value(ObObj &default_value,
       LOG_WARN("fail to check default value length", K(ret), K(default_value), K(column));
     } else {
       default_value.set_collation_type(column.get_collation_type());
-      LOG_DEBUG("succ to set default value", K(input_default_value), K(default_value), K(column), K(ret), K(lbt()));
+
     }
   }
   return ret;
@@ -5880,7 +5880,7 @@ int ObDDLResolver::calc_default_value(share::schema::ObColumnSchemaV2 &column,
       }
       exec_ctx.set_physical_plan_ctx(NULL);
     }
-    LOG_DEBUG("finish calc default value", K(column), K(expr_str), K(default_value), KPC(expr), K(ret));
+
   } else {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("it should not arrive here", K(ret), K(default_value), K(column), K(lbt()));
@@ -8621,7 +8621,7 @@ int ObDDLResolver::resolve_not_null_constraint_node(
     } else {
       cst_name.assign_ptr(cst_name_node->str_value_, static_cast<int32_t>(cst_name_node->str_len_));
     }
-    LOG_DEBUG("resolve not null constraint node mid", K(cst_name), K(cst_name_node));
+
     if (OB_SUCC(ret)) {
       if (OB_UNLIKELY(is_identity_column
                             && (!cst.get_enable_flag()
@@ -8640,10 +8640,10 @@ int ObDDLResolver::resolve_not_null_constraint_node(
       } else if (OB_FAIL(add_not_null_constraint(column, cst_name, is_sys_generate_name, cst, *allocator_, stmt_))) {
         LOG_WARN("add not null constraint", K(ret));
       } else {
-        LOG_DEBUG("before column set not null", K(column), K(cst));
+
         column.add_not_null_cst(cst.get_rely_flag(), cst.get_enable_flag(),
                                 cst.is_validated());
-        LOG_DEBUG("after column set not null", K(column));
+
       }
     }
   }
@@ -8720,7 +8720,7 @@ int ObDDLResolver::add_not_null_constraint(ObColumnSchemaV2 &column,
       LOG_WARN("create not null expr string failed", K(ret));
     } else {
       cst.set_check_expr(expr_str);
-      LOG_DEBUG("set not null check expr", K(expr_str));
+
     }
   }
 
@@ -8755,7 +8755,7 @@ int ObDDLResolver::add_not_null_constraint(ObColumnSchemaV2 &column,
       alter_table_stmt->get_alter_table_arg().alter_constraint_type_ =
                           obrpc::ObAlterTableArg::ADD_CONSTRAINT;
     }
-    LOG_DEBUG("alter, add not null constraint", K(cst), K(alter_table_schema));
+
   } else {
     ret = OB_ERR_UNEXPECTED;
     SQL_RESV_LOG(WARN, "unexpected stmt type", K(ret), K(stmt->get_stmt_type()));
@@ -9929,7 +9929,7 @@ int ObDDLResolver::resolve_auto_partition(ObPartitionedStmt *stmt, ParseNode *no
           if (0 != errsim_auto_part_size) {
             auto_part_size = std::abs(errsim_auto_part_size);
           }
-          LOG_INFO("use default tenant config for auto partitioning", K(auto_part_size), K(errsim_auto_part_size));
+
         }
       }
 
@@ -10084,7 +10084,7 @@ int ObDDLResolver::try_set_auto_partition_by_config(const ParseNode *node,
 
     if (!tenant_config.is_valid()) {
       table_schema.forbid_auto_partition();
-      LOG_INFO("tenant_config has not been loaded over");
+
     } else if (tenant_config->enable_auto_split) {
       // check table
       ObPartitionFuncType unused_part_func_type = PARTITION_FUNC_TYPE_MAX;// we can make sure that the part_expre is empty so enable_auto_partition will handle this situation
@@ -11405,7 +11405,7 @@ int ObDDLResolver::calc_ddl_parallelism(const uint64_t hint_parallelism, const u
       }
     }
   }
-  LOG_INFO("calc ddl parallelism", K(parallelism));
+
   return ret;
 }
 

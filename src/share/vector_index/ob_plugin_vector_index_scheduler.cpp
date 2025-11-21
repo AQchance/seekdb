@@ -237,7 +237,7 @@ bool ObPluginVectorIndexLoadScheduler::check_can_do_work()
     LOG_WARN("fail to check oracle mode", KR(ret), K_(tenant_id));
   } else if (is_oracle_mode) {
     bret = false;
-    LOG_DEBUG("vector index not support oracle mode", K_(tenant_id));
+
   }
   return bret;
 }
@@ -253,7 +253,7 @@ int ObPluginVectorIndexLoadScheduler::check_schema_version()
     LOG_WARN("fail to get tenant schema version", K(ret), K_(tenant_id));
   } else if (!ObSchemaService::is_formal_version(schema_version)) {
     ret = OB_EAGAIN;
-    LOG_INFO("is not a formal_schema_version", KR(ret), K(schema_version));
+
   } else if (local_schema_version_ == OB_INVALID_VERSION ||  local_schema_version_ < schema_version) {
     FLOG_INFO("schema changed", KR(ret), K_(local_schema_version), K(schema_version)); 
     local_schema_version_ = schema_version;
@@ -279,7 +279,7 @@ void ObPluginVectorIndexLoadScheduler::mark_tenant_need_check()
     local_tenant_task_.need_check_ = true;
     FLOG_INFO("finish mark tenant need check", K(local_tenant_task_));
   }
-  LOG_DEBUG("finsh mark tenant need check", KR(ret), K(local_tenant_task_.need_check_));
+
 }
 
 int ObPluginVectorIndexLoadScheduler::check_is_vector_index_table(const ObTableSchema &table_schema,
@@ -528,7 +528,7 @@ int ObPluginVectorIndexLoadScheduler::execute_adapter_maintenance()
     }
   }
 
-  LOG_INFO("finish generate tenant tablet tasks", KR(ret), K_(tenant_id));
+
   return ret;
 }
 
@@ -544,7 +544,7 @@ int ObPluginVectorIndexLoadScheduler::check_tenant_memory()
     ret = OB_SUCCESS;
     current_memory_config_ = 0;
   } else {
-    LOG_INFO("get vector mem limit size", KR(ret), K_(tenant_id), K_(current_memory_config));
+
   }
   return ret;
 }
@@ -589,7 +589,7 @@ int ObPluginVectorIndexLoadScheduler::check_and_load_task_executors()
       if (OB_FAIL(ivf_task_exec_.clear_old_task_ctx_if_need())) {
         LOG_WARN("fail to clear old ivf task ctx", K(ret));
       } else {
-        LOG_TRACE("schema not changed, skip ivf task loading", K(ret));
+
       }
     } else if (OB_FAIL(ivf_task_exec_.check_and_set_thread_pool())) {
       LOG_WARN("fail to check and open thread pool", K(ret));
@@ -676,7 +676,7 @@ int ObPluginVectorIndexLoadScheduler::execute_one_memdata_sync_task(ObPluginVect
         } else if (OB_TTL_TASK_FINISH == task_ctx->task_status_
                    || OB_TTL_TASK_CANCEL == task_ctx->task_status_) {
           // do nothing
-          LOG_INFO("memdata load task finish or cancelled", K(mgr->get_ls_task_ctx()), KPC(task_ctx));
+
         } else {
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("memdata load no expected task status", KR(ret), K(mgr->get_ls_task_ctx()), KPC(task_ctx));
@@ -686,7 +686,7 @@ int ObPluginVectorIndexLoadScheduler::execute_one_memdata_sync_task(ObPluginVect
         LOG_WARN("memdata load unexpect ls task status", KR(ret), KPC(mgr), KPC(task_ctx));
       }
     } else { // if is running do nothing, if not need schedular.
-      LOG_INFO("nmemdata load o need to schedule task", K(mgr->get_ls_task_ctx()), KPC(task_ctx));
+
     }
 
     if (OB_SUCC(ret) 
@@ -734,7 +734,7 @@ int ObPluginVectorIndexLoadScheduler::try_schedule_task(ObPluginVectorIndexMgr *
       task_ctx->task_status_ = OB_TTL_TASK_RUNNING;
     }
   } else {
-    LOG_DEBUG("status when try schedule task", KPC(mgr), K(task_ctx));
+
   }
 
   return OB_SUCCESS;
@@ -757,7 +757,7 @@ int ObPluginVectorIndexLoadScheduler::try_schedule_remaining_tasks(ObPluginVecto
     } else {
       common::ObSpinLockGuard ctx_guard(task_ctx->lock_);
       if (can_schedule_task(task_ctx) && task_ctx->task_status_ == OB_TTL_TASK_PREPARE) {
-        LOG_INFO("try schedule remaining task", KPC(task_ctx), KPC(current_ctx));
+
         if (OB_FAIL(try_schedule_task(mgr, task_ctx))) {
           if (OB_SIZE_OVERFLOW != ret) {
             LOG_WARN("fail to try schedule dag task", KR(ret));
@@ -824,9 +824,9 @@ int ObPluginVectorIndexLoadScheduler::generate_vec_idx_memdata_dag(ObPluginVecto
   } else if (OB_FAIL(dag_scheduler->add_dag(dag))) {
     // handle special ret code by caller
     if (OB_EAGAIN == ret) {
-      LOG_INFO("vector index memdata sync dag already exists, no need to re-schedule", KR(ret));
+
     } else if (OB_SIZE_OVERFLOW == ret) {
-      LOG_INFO("dag scheduler is full", KR(ret));
+
     } else {
       LOG_WARN("fail to add vector index memdata sync dag to queue", KR(ret));
     }
@@ -862,23 +862,23 @@ int ObPluginVectorIndexLoadScheduler::check_task_state(ObPluginVectorIndexMgr *m
     if (task_ctx->task_status_ == OB_TTL_TASK_CANCEL
         || task_ctx->task_status_ == OB_TTL_TASK_FINISH) {
       // do nothing, schedule next
-      LOG_INFO("cancel current memdata sync task", KR(ret), KPC(task_ctx));
+
     } else if (task_ctx->task_status_ == OB_TTL_TASK_RUNNING) {
       // will schedule this
       if (task_ctx->err_code_ == OB_SUCCESS) {
         task_ctx->task_status_ = OB_TTL_TASK_FINISH;
-        LOG_INFO("current memdata sync task finish", KR(ret), KPC(task_ctx));
+
         // task success, schedule next
       } else if (in_retry_list(task_ctx->err_code_)) {
         task_ctx->task_status_ = OB_TTL_TASK_PREPARE; // reset ot prepare state, will rescheduler by timer or dag task
-        LOG_INFO("current memdata sync task failed, will retry", K(task_ctx->err_code_));
+
       } else if (OB_PARTITION_NOT_EXIST == task_ctx->err_code_
                  || OB_PARTITION_IS_BLOCKED == task_ctx->err_code_
                  || OB_TABLE_NOT_EXIST == task_ctx->err_code_
                  || OB_ERR_UNKNOWN_TABLE == task_ctx->err_code_
                  || OB_LS_NOT_EXIST == task_ctx->err_code_
                  || OB_TABLET_NOT_EXIST == task_ctx->err_code_) {
-        LOG_INFO("cancel current memdata sync task since partition state change", KR(ret), KPC(task_ctx));
+
         task_ctx->task_status_ = OB_TTL_TASK_CANCEL;
         // canceled, schedule next
       } else if (OB_ALLOCATE_MEMORY_FAILED == task_ctx->err_code_
@@ -903,7 +903,7 @@ int ObPluginVectorIndexLoadScheduler::check_task_state(ObPluginVectorIndexMgr *m
 
   // current task stopped, schedule remaining tasks
   if (is_stop && OB_SUCC(ret)) {
-    LOG_INFO("stop current memdata sync task", KR(ret), KPC(task_ctx));
+
     if (OB_FAIL(try_schedule_remaining_tasks(mgr, task_ctx))) {
       LOG_WARN("fail to schedule remaining tasks", KR(ret));
     }
@@ -1219,11 +1219,11 @@ void ObPluginVectorIndexLoadScheduler::run_task()
     LOG_WARN("vector index load task not inited", KR(ret));
   } else if (!ObTTLUtil::check_can_process_tenant_tasks(tenant_id_)) {
     // check ObMultiVersionSchemaService ready
-    LOG_INFO("schema service not ready", KR(ret));
+
   } else if (ATOMIC_BCAS(&need_do_for_switch_, true, false)) {
     // reserved, do nothing
     int tmp_ret = OB_SUCCESS;
-    LOG_INFO("switch leader", K(tenant_id_), K(ls_->get_ls_id()), K(is_leader_), K(is_stopped_));
+
     if (!check_can_do_work() || is_stopped() || !is_leader_) { // skip
     } else if (OB_TMP_FAIL(resume_task_executors())) {
       LOG_WARN("fail to resume async task", K(tmp_ret));
@@ -1363,7 +1363,7 @@ int ObPluginVectorIndexLoadScheduler::replay(const void *buffer,
   } else {
     // do nothing
   }
-  LOG_INFO("ObPluginVectorIndexLoadScheduler replay", K(ret), K(ls_log), K(base_header));
+
   return ret;
 }
 
@@ -1383,14 +1383,14 @@ void ObPluginVectorIndexLoadScheduler::refresh_adapter_rb_flag()
     FOREACH_X(iter, index_ls_mgr->get_complete_adapter_map(), OB_SUCC(ret)) {
       ObPluginVectorIndexAdaptor *adapter = iter->second;
       if (OB_ISNULL(adapter->get_snap_data_()) || !adapter->get_snap_data_()->is_inited()) {
-        LOG_INFO("snap_data index is empty or not init, won't set rb_flag");
+
       } else {
         ObVectorIndexMemData *snap_memdata = adapter->get_snap_data_();
         TCWLockGuard lock_guard(snap_memdata->mem_data_rwlock_);
         snap_memdata->rb_flag_ = true;
       }
     }
-    LOG_INFO("finish refresh adapter rb flag", K(ret), K(tenant_id_), K(ls_->get_ls_id()));
+
   }
 }
 
@@ -1634,7 +1634,7 @@ int ObVectorIndexTask::process()
     common::ObSpinLockGuard ctx_guard(task_ctx_->lock_);
     task_ctx_->err_code_ = OB_SUCCESS;
     task_ctx_->task_status_ = OB_TTL_TASK_FINISH;
-    LOG_INFO("vec index scheduler is stopped, memdata sync task mark finish", KR(ret), KPC(task_ctx_));
+
   } else {
     bool need_stop = false;
 
@@ -1788,11 +1788,11 @@ int ObVectorIndexMemSyncInfo::add_task_to_waiting_map(ObVectorIndexSyncLog &ls_l
         if (OB_FAIL(waiting_task_map.set_refactored(tablet_id, task_ctx))) {
           LOG_WARN("memdata sync failed to set vector index task ctx", K(ret), K(tablet_id), KPC(task_ctx));
         } else {
-          LOG_INFO("memdata sync success get replay vector index task ctx", K(ret), K(tablet_id), KPC(task_ctx));
+
         }
       }
     } else { // // task already set, not scheduled
-      LOG_INFO("memdata sync duplicate vector index task ctx", K(ret), K(tablet_id), KPC(task_ctx));
+
     }
     if (OB_FAIL(ret) && OB_NOT_NULL(task_ctx)) {
       task_ctx->~ObPluginVectorIndexTaskCtx();
@@ -1823,7 +1823,7 @@ int ObVectorIndexMemSyncInfo::add_task_to_waiting_map(VectorIndexAdaptorMap &ada
       } else if (OB_FAIL(current_map.set_refactored(tablet_id, task_ctx))) {
         LOG_WARN("memdata sync failed to set vector index task ctx", K(ret), K(tablet_id), KPC(task_ctx));
       } else {
-        LOG_INFO("memdata sync success set force index task ctx", K(ret), K(tablet_id), KPC(task_ctx));
+
       }
       if (OB_FAIL(ret) && OB_NOT_NULL(task_ctx)) {
         task_ctx->~ObPluginVectorIndexTaskCtx();

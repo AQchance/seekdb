@@ -112,7 +112,7 @@ int ObSharedExprResolver::add_new_instance(ObRawExprEntry &entry)
   int ret = OB_SUCCESS;
   SharedExprs *shared_exprs = NULL;
   void *ptr = NULL;
-  LOG_TRACE("add new shared expr", KPNAME(*entry.expr_), K(entry.hash_code_));
+
   if (OB_UNLIKELY(!shared_expr_map_.created()) &&
       OB_FAIL(shared_expr_map_.create(128, "MergeSharedExpr"))) {
     LOG_WARN("failed to create hash map", K(ret));

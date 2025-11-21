@@ -384,7 +384,7 @@ int ObMergeGroupByVecOp::init_one_group(const int64_t group_id, bool fill_pos /*
   } else if (OB_FAIL(group_rows_.push_back(aggr_row))) {
     LOG_WARN("push_back failed", K(group_id), K(aggr_row), K(ret));
   } else {
-    LOG_DEBUG("succ init aggr_row", K(group_id), KPC(aggr_row), K(ret));
+
   }
   return ret;
 }
@@ -450,10 +450,10 @@ int ObMergeGroupByVecOp::init_3stage_info()
         } else {
           // is_const
           distinct_col_idx_in_output_.push_back(-1);
-          LOG_DEBUG("distinct expr is const and is not in the output of child", K(i), K(ret));
+
         }
       }
-      LOG_DEBUG("debug distinct exprs", K(ret), K(MY_SPEC.distinct_exprs_.count()));
+
     }
   }
   return ret;
@@ -697,7 +697,7 @@ int ObMergeGroupByVecOp::process_parallel_rollup_key(ObRollupNDVInfo &ndv_info)
       }
       rollup_context_.set_partial_rollup_idx(MY_SPEC.group_exprs_.count(), partial_rollup_idx_);
     }
-    LOG_DEBUG("debug partial rollup keys", K(partial_rollup_idx_));
+
   }
   return ret;
 }
@@ -792,7 +792,7 @@ int ObMergeGroupByVecOp::batch_collect_local_ndvs(const ObBatchRows *child_brs)
       }
     }
   }
-  LOG_DEBUG("debug batch collect local ndvs", K(ret));
+
   return ret;
 }
 
@@ -813,7 +813,7 @@ int ObMergeGroupByVecOp::batch_process_rollup_distributor(const int64_t max_row_
         }
         LOG_WARN("failed to get child batch", K(ret));
       } else if (child_brs->end_ && child_brs->size_ == 0) {
-        LOG_DEBUG("reach iterating end with empty result, do nothing");
+
         break;
       } else if (OB_FAIL(try_check_status())) {
         LOG_WARN("check status failed", K(ret));
@@ -835,7 +835,7 @@ int ObMergeGroupByVecOp::batch_process_rollup_distributor(const int64_t max_row_
       LOG_WARN("failed to process parallel", K(ret));
     } else {
       clear_evaluated_flag();
-      LOG_DEBUG("debug batch process distributor", K(ret));
+
     }
   }
   return ret;
@@ -887,14 +887,14 @@ int ObMergeGroupByVecOp::inner_get_next_batch(const int64_t max_row_cnt)
       LOG_WARN("failed to calc output results", K(ret));
     }
   } else {
-    LOG_DEBUG("begin to get_next_batch rows from child", K(child_batch_cnt));
+
     if (OB_FAIL(before_process_next_batch(child_batch_cnt))) {
       LOG_WARN("failed to before process next batch", K(child_batch_cnt));
     } else {
       brs_holder_.reset();
       while (OB_SUCC(ret) && OB_SUCC(get_child_next_batch_row(child_batch_cnt, child_brs))) {
         if (child_brs->end_ && child_brs->size_ == 0) {
-          LOG_DEBUG("reach iterating end with empty result, do nothing");
+
           break;
         }
         if (OB_FAIL(try_check_status())) {
@@ -942,7 +942,7 @@ int ObMergeGroupByVecOp::set_null(int64_t idx, LastCompactRow *rollup_store_row)
   if (0 > idx) {
   } else {
     rollup_store_row->set_null(idx);
-    LOG_DEBUG("set null", K(idx), K(MY_SPEC.rollup_exprs_.count()));
+
     if (has_dup_group_expr_) {
       int64_t start_idx = idx - MY_SPEC.group_exprs_.count();
       ObExpr *base_expr = MY_SPEC.rollup_exprs_.at(start_idx);
@@ -1351,7 +1351,7 @@ int ObMergeGroupByVecOp::process_rollup(const int64_t diff_group_idx, bool is_en
       max_group_idx = max(start_rollup_id - 1, partial_rollup_idx_);
     }
   }
-  LOG_DEBUG("debug grouping_id", K(end_rollup_id), K(start_rollup_id), K(max_group_idx));
+
   if (end_rollup_id >= start_rollup_id
       && OB_FAIL(gen_rollup_group_rows(start_rollup_id, end_rollup_id, max_group_idx,
                                         cur_group_rowid_))) {
@@ -1717,7 +1717,7 @@ int ObMergeGroupByVecOp::calc_batch_results(const bool is_iter_end, const int64_
     // get empty result from child, just return empty
     brs_.size_ = 0;
     brs_.end_ = is_iter_end;
-    LOG_DEBUG("debug cur_aggr_row_ is null", K(ret));
+
   } else {
     if (is_iter_end) {
       is_end_ = true;
@@ -1805,7 +1805,7 @@ int ObMergeGroupByVecOp::get_n_shuffle_keys_for_exchange(int64_t &shuffle_n_keys
       } else {
         shuffle_n_keys = partial_rollup_idx_ + 1;
       }
-      LOG_TRACE("debug merge groupby shuffle keys", K(shuffle_n_keys));
+
     }
   }
   return ret;

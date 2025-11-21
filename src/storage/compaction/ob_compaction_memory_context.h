@@ -304,7 +304,7 @@ public:
     static_assert(std::is_pod<T>::value, "invalid type");
     if (OB_FAIL(ensure_space(sizeof(T)))) {
       if (ret != OB_BUF_NOT_ENOUGH) {
-        STORAGE_LOG(WARN, "failed to ensure space", K(ret), K(sizeof(T)));
+
       }
     } else {
       *((T *)(data_ + len_)) = value;
@@ -319,10 +319,10 @@ public:
     int ret = OB_SUCCESS;
     if (OB_FAIL(ensure_space(value.get_serialize_size()))) {
       if (ret != OB_BUF_NOT_ENOUGH) {
-        STORAGE_LOG(WARN, "failed to ensure space", K(ret), K(value.get_serialize_size()));
+
       }
     } else if (OB_FAIL(value.serialize(data_, buffer_size_, len_))) {
-      STORAGE_LOG(WARN, "fail to serialize", K(ret), K(buffer_size_), K(len_));
+
     }
     return ret;
   }

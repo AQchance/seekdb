@@ -275,7 +275,7 @@ int ObDDLMacroBlockClogCb::on_success()
         ls_id_, tablet->get_tablet_meta().tablet_id_, true/*is_full_direct_load*/, direct_load_mgr_handle, is_major_sstable_exist))) {
     if (OB_ENTRY_NOT_EXIST == ret && is_major_sstable_exist) {
       ret = OB_TASK_EXPIRED;
-      LOG_INFO("major sstable already exist", K(ret), "tablet_id", tablet->get_tablet_meta().tablet_id_);
+
     } else {
       LOG_WARN("get tablet mgr failed", K(ret), "tablet_id", tablet->get_tablet_meta().tablet_id_);
     }
@@ -285,14 +285,14 @@ int ObDDLMacroBlockClogCb::on_success()
   } else if (is_macro_block_exist_) {
     /* do nothing skip relay it*/
   } else if (with_cs_replica_ && ddl_macro_block_.table_key_ .is_column_store_sstable()) {
-    LOG_INFO("[CS-Replica] skip replay cs replica redo clog in leader", K(ret), K_(with_cs_replica), K_(ddl_macro_block));
+
   } else if (FALSE_IT(ddl_macro_block_.scn_ = __get_scn())) {
   } else if (OB_FAIL(ObDDLKVPendingGuard::set_macro_block(
       tablet, ddl_macro_block_, snapshot_version_, 
       data_format_version_, direct_load_mgr_handle, direct_load_type_))) {
     if (OB_ENTRY_EXIST == ret && is_idem_type(direct_load_type_)) {
       ret = OB_SUCCESS;
-      LOG_INFO("receive repeat macro block, skip", K(ret), K(ddl_macro_block_));
+
     } else {
       LOG_WARN("set macro block into ddl kv failed", K(ret), KPC(tablet), K(ddl_macro_block_),
               K(snapshot_version_), K(data_format_version_), K(direct_load_type_));

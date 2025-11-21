@@ -95,7 +95,7 @@ int ObPlAggUdfFunction::init(ObSQLSessionInfo *session_info,
     if (OB_FAIL(process_init_pl_agg_udf(pl_obj))) {
       LOG_WARN("failed process init pl agg udf", K(ret));
     } else {
-      LOG_TRACE("succeed to process init", K(type_id), K(params_type), K(result_type), K(pl_obj));
+
     }
   }
   return ret;
@@ -142,7 +142,7 @@ int ObPlAggUdfFunction::call_pl_engine_exectue_udf(ParamStore& udf_params,
     if (OB_FAIL(result.get_number(num_res))) {
       LOG_WARN("failed to get number", K(ret));
     } else if (num_res == dst_val) {
-      LOG_TRACE("succeed to call pl engine exectue udf", K(udf_params), K(result));
+
     } else {
       ret = OB_INVALID_ARGUMENT;
       LOG_WARN("get invalid argument for udf return", K(ret));
@@ -272,7 +272,7 @@ int ObPlAggUdfFunction::process_calc_pl_agg_udf(ObObjParam &pl_obj,
           LOG_WARN("get unexpected error", K(ret), K(udf_params->count()));
         } else {
           udf_params->at(0).copy_value_or_obj(pl_obj, true);
-          LOG_TRACE("Succeed to process calc pl agg udf", K(pl_obj), K(tmp_result));
+
         }
       }
     }
@@ -371,7 +371,7 @@ int ObPlAggUdfFunction::process_get_pl_agg_udf_result(ObObjParam &pl_obj,
         if (OB_FAIL(ObObjCaster::to_type(result_type_.get_type(), cast_ctx, src_obj, result))) {
           LOG_WARN("failed to cast type", K(ret));
         } else {
-          LOG_TRACE("succeed to process get pl agg udf result", K(src_obj), K(result));
+
         }
       }
     }

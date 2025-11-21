@@ -96,12 +96,12 @@ int ObTransformGroupByPushdown::try_push_down_groupby_into_join(
   } else if (OB_FAIL(check_push_down_into_join_validity(select_stmt, is_valid))) {
     LOG_WARN("failed to check group by push down validity", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("push down is not valid");
+
   } else if (OB_FAIL(compute_push_down_param(select_stmt, params, myhint,
                                              flatten_joined_tables, is_valid))) {
     LOG_WARN("failed to compute push down param", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("param is not valid after compute params");
+
   } else if (OB_FAIL(distribute_stmt_context_to_params(static_cast<ObSelectStmt *>(stmt),
                                                        params,
                                                        outer_table_set,
@@ -110,7 +110,7 @@ int ObTransformGroupByPushdown::try_push_down_groupby_into_join(
                                                        is_valid))) {
     LOG_WARN("failed when distribute to params");
   } else if (!is_valid) {
-    LOG_TRACE("param is not valid after distribute params");
+
   } else if (OB_FAIL(merge_params_by_cross_joins(static_cast<ObSelectStmt *>(stmt),
                                                  params,
                                                  cross_join_params,
@@ -119,7 +119,7 @@ int ObTransformGroupByPushdown::try_push_down_groupby_into_join(
                                                  force_rewrite))) {
     LOG_WARN("failed when merge params by cross joins");
   } else if (!is_valid) {
-    LOG_TRACE("param is not valid", K(force_rewrite));
+
   } else if (OB_FAIL(try_trans_helper.fill_helper(stmt->get_query_ctx()))) {
     LOG_WARN("failed to fill try trans helper", K(ret));
   } else if (OB_FAIL(do_groupby_push_down_into_join(static_cast<ObSelectStmt *>(stmt),
@@ -133,7 +133,7 @@ int ObTransformGroupByPushdown::try_push_down_groupby_into_join(
                                                     is_happened))) {
     LOG_WARN("failed to transform stmt", K(ret));
   } else if (!is_happened) {
-    LOG_TRACE("is not happened");
+
   } else if (OB_FAIL(get_tables_from_params(*stmt, params, cross_join_params, trans_tables, force_rewrite))) {
     LOG_WARN("get tables failed", K(ret));
   } else if (OB_FAIL(ObTransformUtils::partial_cost_eval_validity_check(*ctx_, parent_stmts, stmt,
@@ -185,12 +185,12 @@ int ObTransformGroupByPushdown::try_push_down_groupby_into_union(
   } else if (!stmt->is_select_stmt()) {
     // do nothing
   } else if ((OB_NOT_NULL(myhint) && myhint->is_disable_hint())) {
-    LOG_TRACE("hint disable");
+
   } else if (FALSE_IT(select_stmt = static_cast<ObSelectStmt *>(stmt))) {
   } else if (OB_FAIL(check_push_down_into_union_validity(select_stmt, is_valid))) {
     LOG_WARN("failed to check group by push down to union validity", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("push down to union is not valid");
+
   } else if (OB_FAIL(try_trans_helper.fill_helper(stmt->get_query_ctx()))) {
     LOG_WARN("failed to fill try trans helper", K(ret));
   } else if (OB_FAIL(get_union_pushdown_param(*select_stmt, param))) {
@@ -198,7 +198,7 @@ int ObTransformGroupByPushdown::try_push_down_groupby_into_union(
   } else if (OB_FAIL(do_groupby_push_down_into_union(select_stmt, param, trans_stmt, is_happened))) {
     LOG_WARN("failed to do groupby push down to union");
   } else if (!is_happened) {
-    LOG_TRACE("transformer not happened");
+
   } else if (OB_ISNULL(single_trans_table = select_stmt->get_table_item(0))) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected null", K(ret));
@@ -246,7 +246,7 @@ int ObTransformGroupByPushdown::check_push_down_into_union_validity(
   } else if (stmt->has_rollup() ||
              stmt->get_aggr_item_size() <= 0) {
     is_valid = false;
-    LOG_TRACE("invalid stmt for eager aggregation", K(is_valid));
+
     OPT_TRACE("invalid stmt for eager aggregation");
   } else if (OB_FAIL(stmt->is_query_deterministic(is_deterministic))) {
     LOG_WARN("failed to check stmt has rand", K(ret));
@@ -418,7 +418,7 @@ int ObTransformGroupByPushdown::check_child_stmts_valid(
     }
   }
   if (OB_SUCC(ret) && is_valid && !exist_basic_select) {
-    LOG_TRACE("there is no basic select stmt, can not transform");
+
     OPT_TRACE("there is no basic select stmt, can not transform");
     is_valid = false;
   }
@@ -1147,7 +1147,7 @@ int ObTransformGroupByPushdown::get_tables_from_params(ObDMLStmt &stmt,
     } else if (OB_FAIL(param.table_bit_index_.to_array(table_indexes))) {
       LOG_WARN("sqlbits to array failed", K(ret));
     } else {
-      LOG_TRACE("show table index", K(table_indexes));
+
       for (int64_t j = 0; OB_SUCC(ret) && j < table_indexes.count(); ++j) {
         TableItem *table_item = NULL;
         if (table_indexes.at(j) <= 0 || table_indexes.at(j) > stmt.get_table_size() ||
@@ -1213,13 +1213,13 @@ int ObTransformGroupByPushdown::check_push_down_into_join_validity(ObSelectStmt 
     //                                  (select c1, count(*) from t2 group by c1);
     //                                  where t1.c1 = t2.c1;
     is_valid = false;
-    LOG_TRACE("invalid stmt for eager aggregation", K(is_valid));
+
     OPT_TRACE("invalid stmt for eager aggregation");
   } else if (OB_FAIL(ObRawExprUtils::extract_column_exprs(stmt->get_group_exprs(), group_cols))) {
     LOG_WARN("failed to extract group columns", K(ret));
   } else if (group_cols.empty()) {
     is_valid = false;
-    LOG_TRACE("invalid stmt for eager aggregation", K(is_valid));
+
     OPT_TRACE("invalid stmt for eager aggregation");
   } else if (OB_FAIL(stmt->is_query_deterministic(is_valid))) {
     LOG_WARN("failed to check stmt has rand", K(ret));
@@ -1384,18 +1384,18 @@ int ObTransformGroupByPushdown::compute_push_down_param(ObSelectStmt *stmt,
   } else if (OB_FAIL(merge_tables_by_aggr_exprs(stmt, params, hint, is_valid))) {
     LOG_WARN("failed to merge tables by aggr exprs", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("not valid after merge_tables_by_aggr_exprs");
+
   } else if (OB_FAIL(merge_tables_by_join_conds(stmt, params, hint, is_valid))) {
     LOG_WARN("failed to merge tables by join conds", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("not valid after merge_tables_by_join_conds");
+
   } else if (OB_FAIL(merge_tables_by_joined_tables(stmt, params, hint, flatten_joined_tables, is_valid))) {
     LOG_WARN("failed to merge tables by joined tables", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("not valid after merge_tables_by_joined_tables");
+
   } else { /* do nothing */ }
 
-  LOG_TRACE("after compute groupby push down param without hint", K(params), K(is_valid));
+
   if (OB_SUCC(ret)) {
     // get_valid_eager_aggr_num == 1 means all tables are merged into one view
     // for which is useless to pushdown groupby
@@ -1769,7 +1769,7 @@ int ObTransformGroupByPushdown::is_filterable_join(ObSelectStmt *stmt,
     LOG_WARN("failed to check filter join", K(ret));
   }
   if (OB_SUCC(ret) && is_valid) {
-    LOG_TRACE("filter join", K(*join_cond));
+
   }
   return ret;
 }
@@ -1948,7 +1948,7 @@ int ObTransformGroupByPushdown::merge_params_by_cross_joins(ObSelectStmt *stmt,
       is_valid = false;
     }
   }
-  LOG_TRACE("transform params after merge", K(params), K(cross_join_params), K(has_distinct));
+
   return ret;
 }
 
@@ -2149,7 +2149,7 @@ int ObTransformGroupByPushdown::distribute_group_aggr(ObSelectStmt *stmt,
       }
     }
   }
-  LOG_TRACE("transform params", K(params));
+
   return ret;
 }
 
@@ -2352,7 +2352,7 @@ int ObTransformGroupByPushdown::do_groupby_push_down_into_join(
       trans_happened = true;
     }
   }
-  LOG_TRACE("do_groupby_push_down_into_join", K(has_cross_join), K(trans_happened));
+
   return ret;
 }
 
@@ -3061,7 +3061,7 @@ int ObTransformGroupByPushdown::transform_aggregation_expr(ObDMLStmt &stmt,
       }
     }
   }
-  LOG_TRACE("transform aggregation", K(mul_params), K(aggr_column));
+
   if (OB_SUCC(ret) && OB_ISNULL(aggr_column)) {
     // the aggregation expr is not pushed into eager view
     if (OB_FAIL(ObTransformUtils::convert_aggr_expr(ctx_, &stmt, &aggr_expr, aggr_column))) {
@@ -3296,7 +3296,7 @@ int ObTransformGroupByPushdown::construct_transform_hint(ObDMLStmt &stmt, void *
       }
     }
   }
-  LOG_DEBUG("show eval", K(ctx_->eval_cost_), K(ret));
+
   return ret;
 }
 
@@ -3454,7 +3454,7 @@ int ObTransformGroupByPushdown::check_single_cut_ratio(ObLogicalOperator *op,
   } else {
     ObLogicalOperator *child_op = op->get_child(0);
     is_valid = cut_ratio > nopushdown_cut_ratio;
-    LOG_TRACE("check trans plan cut ratio", K(is_valid), K(cut_ratio), K(nopushdown_cut_ratio));
+
     OPT_TRACE("check trans plan group by cut ratio", cut_ratio);
   }
   return ret;
@@ -3495,7 +3495,7 @@ int ObTransformGroupByPushdown::check_hint_valid(ObDMLStmt &stmt,
   ObSEArray<ObSEArray<TableItem *, 4>, 4> trans_tables;
   if (NULL == hint) {
     is_valid = (no_rewrite == NULL);
-    LOG_TRACE("check group by hint is null", K(is_valid), K(stmt.get_stmt_hint()));
+
   } else if (OB_ISNULL(query_hint = stmt.get_stmt_hint().query_hint_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get unexpected null", K(ret), K(query_hint));
@@ -3512,12 +3512,12 @@ int ObTransformGroupByPushdown::check_hint_valid(ObDMLStmt &stmt,
         if (is_valid) {
           hint_force_pushdown = true;
         }
-        LOG_TRACE("succeed hint valid", K(is_valid), K(*trans_tables.at(i).at(0)), K(*hint));
+
         if (!is_valid) { break; }
       }
     }
   }
-  LOG_TRACE("succeed to check group by hint valid", K(is_valid), K(trans_tables), K(params), K(hint));
+
   return ret;
 }
 
@@ -3560,7 +3560,7 @@ bool ObTransformGroupByPushdown::can_sum_trans_to_sum_count(const ObRawExpr *exp
         ObDoubleType == obj_type || ObUDoubleType == obj_type) {
       is_able = false;
       OPT_TRACE("invalid aggregation param type");
-      LOG_TRACE("invalid aggregation param type", K(obj_type));
+
     }
   }
   return is_able;

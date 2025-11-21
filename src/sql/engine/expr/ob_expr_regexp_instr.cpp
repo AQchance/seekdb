@@ -158,7 +158,7 @@ int ObExprRegexpInstr::cg_expr(ObExprCGCtx &op_cg_ctx, const ObRawExpr &raw_expr
       rt_expr.extra_ = (!const_text && const_pattern) ? 1 : 0;
       const bool is_use_hs = op_cg_ctx.session_->get_enable_hyperscan_regexp_engine();
       rt_expr.eval_func_ = is_use_hs ? eval_hs_regexp_instr : eval_regexp_instr;
-      LOG_DEBUG("regexp instr expr cg", K(const_text), K(const_pattern), K(rt_expr.extra_));
+
     }
   }
   return ret;

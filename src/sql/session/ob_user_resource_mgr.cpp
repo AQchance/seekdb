@@ -403,7 +403,7 @@ int ObConnectResourceMgr::erase_tenant_conn_res_map(int64_t tenant_id)
     user_res_map_.purge();
     tenant_res_map_.purge();
   }
-  LOG_INFO("erase tenant conn result map", K(tenant_id), K(erase_tenant_cnt), K(erase_user_cnt));
+
   return ret;
 }
 

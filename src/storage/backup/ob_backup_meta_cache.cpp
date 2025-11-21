@@ -193,7 +193,7 @@ int ObBackupMetaCacheReader::fetch_block(const ObBackupMetaIndex &meta_index, co
       } else {
         const int64_t hit_cnt = meta_kv_cache_->get_hit_cnt();
         const int64_t miss_cnt = meta_kv_cache_->get_miss_cnt();
-        LOG_DEBUG("do on cache miss", K(meta_index), K(hit_cnt), K(miss_cnt));
+
       }
     } else {
       LOG_WARN("failed to get value from kv cache", K(ret), K(key));

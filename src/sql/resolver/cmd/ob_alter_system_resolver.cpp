@@ -119,7 +119,7 @@ int ObAlterSystemResolverUtil::resolve_replica_type(const ParseNode *parse_tree,
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(NULL == parse_tree)) {
     replica_type = REPLICA_TYPE_FULL; // For compatibility with early commands, default to FULL type when replica_type is not specified
-    LOG_INFO("resolve_replica_type without any value. default to FULL.");
+
   } else if (OB_UNLIKELY(T_VARCHAR != parse_tree->type_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("type is not T_VARCHAR", "type", get_type_name(parse_tree->type_));
@@ -947,7 +947,7 @@ int ObFlushCacheResolver::resolve(const ParseNode &parse_tree)
                 SERVER_LOG(WARN, "fail to push database id ",K(db_name_list.at(j)), K(db_id), K(ret));
               }
             } // for get db_id ends
-            LOG_INFO("normal tenant flush plan cache ends", K(t_id), K(db_name_list));
+
           }
         } // normal tenant ends
       } // fine-grained plan evcit ends
@@ -1160,7 +1160,7 @@ int ObFlushIlogCacheResolver::resolve(const ParseNode &parse_tree)
       } else {
         stmt->file_id_ = (int32_t)file_id_val;
         stmt_ = stmt;
-        LOG_INFO("flush ilogcache resolve succ", K(file_id_val));
+
       }
     }
   }
@@ -1531,17 +1531,17 @@ int ObSwitchReplicaRoleResolver::resolve(const ParseNode &parse_tree)
           switch (role->value_) {
             case 0: {
               rpc_arg.role_ = ObRole::LEADER;
-              LOG_INFO("switch role to LEADER", K(role->value_));
+
               break;
             }
             case 1: {
               rpc_arg.role_ = ObRole::FOLLOWER;
-              LOG_INFO("switch role to FOLLOWER", K(role->value_));
+
               break;
             }
             case 2: {
               rpc_arg.role_ = ObRole::INVALID_ROLE;
-              LOG_INFO("switch role to ARBITRARY", K(role->value_));
+
               break;
             }
             default: {
@@ -1576,7 +1576,7 @@ int ObSwitchReplicaRoleResolver::resolve(const ParseNode &parse_tree)
                   ret = OB_INVALID_ARGUMENT;
                   LOG_WARN("ls_id or server is invalid", K(rpc_arg));
                 }
-                LOG_INFO("resolve switch replica arg done", K_(rpc_arg.ls_id), K_(rpc_arg.server), K_(rpc_arg.tenant_name));
+
               }
               break;
             }
@@ -2668,7 +2668,7 @@ int ObSetTPResolver::resolve(const ParseNode &parse_tree)
             }
           }
         }
-        LOG_INFO("set tp", K(stmt->get_rpc_arg()));
+
       }
     }
   }
@@ -3708,14 +3708,14 @@ int ObPhysicalRestoreTenantResolver::resolve_decryption_passwd(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("session is null" , K(ret));
   } else if (!session_info_->user_variable_exists(OB_BACKUP_DECRYPTION_PASSWD_ARRAY_SESSION_STR)) {
-    LOG_INFO("no decryption passwd is specified");
+
     arg.passwd_array_.reset();
   } else if (OB_FAIL(session_info_->get_user_variable_value(
       OB_BACKUP_DECRYPTION_PASSWD_ARRAY_SESSION_STR, value))) {
     LOG_WARN("fail to get user variable", K(ret));
   } else {
     arg.passwd_array_ = value.get_varchar();
-    LOG_INFO("succeed to resolve_decryption_passwd", "passwd", arg.passwd_array_);
+
   }
 
   return ret;
@@ -3732,14 +3732,14 @@ int ObPhysicalRestoreTenantResolver::resolve_restore_source_array(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("session is null" , K(ret));
   } else if (!session_info_->user_variable_exists(OB_RESTORE_SOURCE_NAME_SESSION_STR)) {
-    LOG_INFO("no restore source is specified");
+
     arg.multi_uri_.reset();
   } else if (OB_FAIL(session_info_->get_user_variable_value(
       OB_RESTORE_SOURCE_NAME_SESSION_STR, value))) {
     LOG_WARN("failed to get user variable", KR(ret));
   } else {
     arg.multi_uri_ = value.get_varchar();
-    LOG_INFO("succeed to resolve_restore_source_array", "multi_uri", arg.multi_uri_);
+
   }
   return ret;
 }
@@ -4184,7 +4184,7 @@ int ObAlterDiskgroupAddDiskResolver::resolve(const ParseNode &parse_tree)
                     && OB_FAIL(Util::resolve_zone(parse_tree.children_[4], arg.zone_))) {
         LOG_WARN("failed to resolve zone", K(ret));
       } else {
-        LOG_INFO("succeed to resolve add disk arg", K(arg));
+
       }
     }
   }
@@ -4218,7 +4218,7 @@ int ObAlterDiskgroupDropDiskResolver::resolve(const ParseNode &parse_tree)
                     && OB_FAIL(Util::resolve_zone(parse_tree.children_[3], arg.zone_))) {
         LOG_WARN("failed to resolve zone", K(ret));
       } else {
-        LOG_INFO("succeed to resolve drop disk arg", K(arg));
+
       }
     }
   }
@@ -5380,7 +5380,7 @@ int ObBackupSetEncryptionResolver::resolve(const ParseNode &parse_tree)
     const ObString passwd(parse_tree.children_[1]->str_len_, parse_tree.children_[1]->str_value_);
     const uint64_t tenant_id = session_info_->get_login_tenant_id();
 
-    LOG_INFO("resolve set encryption", K(mode), K(passwd));
+
 
     if (NULL == (stmt = create_stmt<ObBackupSetEncryptionStmt>())) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
@@ -5711,7 +5711,7 @@ int ObRecoverTableResolver::resolve_restore_source_(common::ObString &restore_so
       LOG_WARN("failed to get user variable value", K(ret));
     } else {
       restore_source = value.get_char();
-      LOG_INFO("succeed to resolve restore source", K(restore_source));
+
     }
   }
   return ret;
@@ -5948,14 +5948,14 @@ int ObRecoverTableResolver::resolve_backup_set_pwd_(common::ObString &pwd)
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("session is null" , K(ret));
   } else if (!session_info_->user_variable_exists(OB_BACKUP_DECRYPTION_PASSWD_ARRAY_SESSION_STR)) {
-    LOG_INFO("no decryption passwd is specified");
+
     pwd.reset();
   } else if (OB_FAIL(session_info_->get_user_variable_value(
       OB_BACKUP_DECRYPTION_PASSWD_ARRAY_SESSION_STR, value))) {
     LOG_WARN("fail to get user variable", K(ret));
   } else {
     pwd = value.get_varchar();
-    LOG_INFO("succeed to resolve_decryption_passwd", "passwd", pwd);
+
   }
   return ret;
 }
@@ -6076,7 +6076,7 @@ int ObRecoverTableResolver::resolve_scn_(
     }
   } else {
     ret = OB_ERR_UNEXPECTED;
-    LOG_INFO("invalid until", K(ret));
+
     LOG_USER_ERROR(OB_ERR_UNEXPECTED, "invalid until type");
   }
   return ret;

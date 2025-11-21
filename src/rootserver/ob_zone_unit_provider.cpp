@@ -174,7 +174,7 @@ int ObAliveZoneUnitsProvider::prepare_for_next_partition(
       }
     }
   }
-  LOG_INFO("units prepare for next partition", K(ret), K(available_zone_unit_ptrs_));
+
   return ret;
 }
 

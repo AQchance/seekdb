@@ -545,7 +545,7 @@ void ObLockExecutor::mark_lock_session_(sql::ObSQLSessionInfo *session,
                                         const bool is_lock_session)
 {
   if (session->is_lock_session() != is_lock_session) {
-    LOG_INFO("mark lock_session", K(session->get_server_sid()), K(is_lock_session));
+
     session->set_is_lock_session(is_lock_session);
     session->set_need_send_feedback_proxy_info(true);
   } else {
@@ -724,7 +724,7 @@ int ObUnLockExecutor::execute(const ObTableLockOwnerID &owner_id)
       OX (exec_ctx.set_physical_plan_ctx(nullptr));  // avoid core during release exec_ctx
     }
   }
-  LOG_DEBUG("lock_executor debug: release by owner_id", K(ret), K(owner_id), K(release_cnt));
+
   return ret;
 }
 
@@ -844,7 +844,7 @@ int ObUnLockExecutor::release_all_locks_(ObLockContext &ctx,
       allocator.free(arg);
     }
   }
-  LOG_DEBUG("lock_executor debug: release_all_locks_", K(ret), K(arg_list), K(release_cnt));
+
   return ret;
 }
 

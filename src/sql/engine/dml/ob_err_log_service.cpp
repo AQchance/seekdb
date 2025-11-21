@@ -177,7 +177,7 @@ int ObErrLogService::gen_insert_sql_str(ObIAllocator &alloc,
   }
 
   sql_str = insert_buf;
-  LOG_DEBUG("after generate all_sql = ", K(insert_buf), K(sql_str));
+
   return ret;
 }
 
@@ -203,7 +203,7 @@ int ObErrLogService::catch_err_and_gen_sql(ObIAllocator &alloc, const ObSQLSessi
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("session should not be null");
   } else if (column_name_size == 0) {
-    LOG_DEBUG("no column hit, not need to generate dynamic_column_name");
+
   } else if (OB_ISNULL(column_name_buf =
                        static_cast<char *>(alloc.alloc(column_name_size)))) {
     // allocate buff for dynamic_column_name
@@ -255,7 +255,7 @@ int ObErrLogService::catch_err_and_gen_sql(ObIAllocator &alloc, const ObSQLSessi
     }
     dynamic_column_name.assign(column_name_buf, column_name_pos);
     dynamic_column_value.assign(column_value_buf, column_value_pos);
-    LOG_DEBUG("after generate dynamic sql info ====",K(dynamic_column_name), K(dynamic_column_value));
+
   }
   return ret;
 }

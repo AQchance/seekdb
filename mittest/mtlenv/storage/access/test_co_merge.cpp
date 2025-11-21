@@ -472,7 +472,7 @@ void TestCOMerge::create_empty_data_co_sstable(const int64_t snapshot_version, O
   ASSERT_EQ(OB_SUCCESS, storage_schema.init(allocator_, table_schema_, lib::Worker::CompatMode::MYSQL));
   ASSERT_EQ(OB_SUCCESS, ObTabletCreateDeleteHelper::create_empty_sstable( allocator_,
                         storage_schema, ObTabletID(tablet_id_), snapshot_version, table_handle));
-  LOG_INFO("succ to create_empty_sstable", K(table_schema_), K(storage_schema), KPC(table_handle.get_table()));
+
 }
 
 void TestCOMerge::add_all_and_each_column_group()
@@ -551,7 +551,7 @@ TEST_F(TestCOMerge, test_merge_default_row_store_with_empty_major)
 
   merge_context.static_param_.tables_handle_.add_table(empty_co_table_handle);
   merge_context.static_param_.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[1];
@@ -568,7 +568,7 @@ TEST_F(TestCOMerge, test_merge_default_row_store_with_empty_major)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   merge_context.static_param_.tables_handle_.add_table(handle2);
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = 100;
@@ -770,7 +770,7 @@ TEST_F(TestCOMerge, test_column_store_merge_with_empty_co_table)
   prepare_one_macro(&micro_data[2], 1);
   prepare_data_end(handle1);
   merge_context.static_param_.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = 100;
@@ -809,7 +809,7 @@ TEST_F(TestCOMerge, test_column_store_merge_with_empty_co_table)
   get_cg_read_info(col_ids.at(2), cg_read_info);
   prepare_scan_param(*cg_read_info, trans_version_range, store_ctx, iter_param, context);
   ObSSTable *merged_sstable = static_cast<ObSSTable *>(merge_context.merged_cg_tables_handle_.get_table(3));
-  STORAGE_LOG(INFO, "chaser debug sstable", K(ret), KPC(merged_sstable), K(merge_context.merged_cg_tables_handle_));
+
   ASSERT_NE(nullptr, merged_sstable);
   ASSERT_EQ(OB_SUCCESS, merged_sstable->scan(iter_param, context, range, scanner));
   ASSERT_EQ(OB_SUCCESS, res_iter.from(result1));
@@ -868,7 +868,7 @@ TEST_F(TestCOMerge, test_co_merge_with_twice_major)
   prepare_one_macro(&micro_data[2], 1);
   prepare_data_end(handle1);
   merge_context.static_param_.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = 9;
@@ -969,7 +969,7 @@ TEST_F(TestCOMerge, test_co_merge_with_twice_major)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   new_merge_context.static_param_.tables_handle_.add_table(handle2);
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   trans_version_range.snapshot_version_ = 100;
   trans_version_range.multi_version_start_ = 7;
@@ -1113,7 +1113,7 @@ TEST_F(TestCOMerge, test_merge_range)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1);
   merge_context.static_param_.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
 
   ObVersionRange trans_version_range;
@@ -1149,7 +1149,7 @@ TEST_F(TestCOMerge, test_merge_range)
   OK(merge_context.parallel_merge_ctx_.range_array_.push_back(merge_range));
   set_cg_idx(merge_context, 0, 3);
   ASSERT_EQ(OB_SUCCESS, merger.merge_partition(merge_context, 0));
-  STORAGE_LOG(INFO, "finish co merge");
+
   ASSERT_EQ(OB_SUCCESS, merge_context.create_sstables(0,3));
   ASSERT_EQ(3, merge_context.merged_cg_tables_handle_.get_count());
 
@@ -1270,7 +1270,7 @@ TEST_F(TestCOMerge, test_merge_range_with_open)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1);
   merge_context.static_param_.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
 
   ObVersionRange trans_version_range;
@@ -1306,7 +1306,7 @@ TEST_F(TestCOMerge, test_merge_range_with_open)
   OK(merge_context.parallel_merge_ctx_.range_array_.push_back(merge_range));
   set_cg_idx(merge_context, 0, 3);
   ASSERT_EQ(OB_SUCCESS, merger.merge_partition(merge_context, 0));
-  STORAGE_LOG(INFO, "finish co merge");
+
   ASSERT_EQ(OB_SUCCESS, merge_context.create_sstables(0,3));
   ASSERT_EQ(3, merge_context.merged_cg_tables_handle_.get_count());
 
@@ -1421,7 +1421,7 @@ TEST_F(TestCOMerge, test_merge_range_with_left_open)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1);
   merge_context.static_param_.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
 
   ObVersionRange trans_version_range;
@@ -1457,7 +1457,7 @@ TEST_F(TestCOMerge, test_merge_range_with_left_open)
   OK(merge_context.parallel_merge_ctx_.range_array_.push_back(merge_range));
   set_cg_idx(merge_context, 0, 3);
   ASSERT_EQ(OB_SUCCESS, merger.merge_partition(merge_context, 0));
-  STORAGE_LOG(INFO, "finish co merge");
+
   ASSERT_EQ(OB_SUCCESS, merge_context.create_sstables(0,3));
   ASSERT_EQ(3, merge_context.merged_cg_tables_handle_.get_count());
 
@@ -1575,7 +1575,7 @@ TEST_F(TestCOMerge, test_merge_range_with_right_open)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1);
   merge_context.static_param_.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
 
   ObVersionRange trans_version_range;
@@ -1611,7 +1611,7 @@ TEST_F(TestCOMerge, test_merge_range_with_right_open)
   OK(merge_context.parallel_merge_ctx_.range_array_.push_back(merge_range));
   set_cg_idx(merge_context, 0, 3);
   ASSERT_EQ(OB_SUCCESS, merger.merge_partition(merge_context, 0));
-  STORAGE_LOG(INFO, "finish co merge");
+
   ASSERT_EQ(OB_SUCCESS, merge_context.create_sstables(0,3));
   ASSERT_EQ(3, merge_context.merged_cg_tables_handle_.get_count());
 
@@ -1729,7 +1729,7 @@ TEST_F(TestCOMerge, test_merge_range_left_is_min)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1);
   merge_context.static_param_.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
 
   ObVersionRange trans_version_range;
@@ -1765,7 +1765,7 @@ TEST_F(TestCOMerge, test_merge_range_left_is_min)
   OK(merge_context.parallel_merge_ctx_.range_array_.push_back(merge_range));
   set_cg_idx(merge_context, 0, 3);
   ASSERT_EQ(OB_SUCCESS, merger.merge_partition(merge_context, 0));
-  STORAGE_LOG(INFO, "finish co merge");
+
   ASSERT_EQ(OB_SUCCESS, merge_context.create_sstables(0,3));
   ASSERT_EQ(3, merge_context.merged_cg_tables_handle_.get_count());
 
@@ -1892,7 +1892,7 @@ TEST_F(TestCOMerge, test_merge_range_with_right_max)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1);
   merge_context.static_param_.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
 
   ObVersionRange trans_version_range;
@@ -1928,7 +1928,7 @@ TEST_F(TestCOMerge, test_merge_range_with_right_max)
   OK(merge_context.parallel_merge_ctx_.range_array_.push_back(merge_range));
   set_cg_idx(merge_context, 0, 3);
   ASSERT_EQ(OB_SUCCESS, merger.merge_partition(merge_context, 0));
-  STORAGE_LOG(INFO, "finish co merge");
+
   ASSERT_EQ(OB_SUCCESS, merge_context.create_sstables(0,3));
   ASSERT_EQ(3, merge_context.merged_cg_tables_handle_.get_count());
 
@@ -2049,7 +2049,7 @@ TEST_F(TestCOMerge, test_merge_range_with_empty)
                       micro_row_count, macro_row_count, data_iter, co_table_handle);
   ASSERT_EQ(3, static_cast<const ObCOSSTableV2 *>(co_table_handle.get_table())->cs_meta_.column_group_cnt_);
   merge_context.static_param_.tables_handle_.add_table(co_table_handle);
-  STORAGE_LOG(INFO, "finish prepare co sstable", KPC(co_table_handle.get_table()));
+
 
   ObTableHandleV2 handle1;
   scn_range.start_scn_.convert_for_tx(10);
@@ -2059,7 +2059,7 @@ TEST_F(TestCOMerge, test_merge_range_with_empty)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1);
   merge_context.static_param_.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1", KPC(handle1.get_table()));
+
 
 
   ObVersionRange trans_version_range;
@@ -2095,7 +2095,7 @@ TEST_F(TestCOMerge, test_merge_range_with_empty)
   OK(merge_context.parallel_merge_ctx_.range_array_.push_back(merge_range));
   set_cg_idx(merge_context, 0, 3);
   ASSERT_EQ(OB_SUCCESS, merger.merge_partition(merge_context, 0));
-  STORAGE_LOG(INFO, "finish co merge");
+
   ASSERT_EQ(OB_SUCCESS, merge_context.create_sstables(0,3));
   EXPECT_EQ(1, merge_context.merged_cg_tables_handle_.get_count());
 
@@ -2179,7 +2179,7 @@ TEST_F(TestCOMerge, test_merge_range_is_whole_range)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1);
   merge_context.static_param_.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
 
   ObVersionRange trans_version_range;
@@ -2203,7 +2203,7 @@ TEST_F(TestCOMerge, test_merge_range_is_whole_range)
   OK(merge_context.parallel_merge_ctx_.range_array_.push_back(merge_range));
   set_cg_idx(merge_context, 0, 3);
   ASSERT_EQ(OB_SUCCESS, merger.merge_partition(merge_context, 0));
-  STORAGE_LOG(INFO, "finish co merge");
+
   ASSERT_EQ(OB_SUCCESS, merge_context.create_sstables(0,3));
   ASSERT_EQ(3, merge_context.merged_cg_tables_handle_.get_count());
 
@@ -2339,7 +2339,7 @@ TEST_F(TestCOMerge, test_merge_range_with_beyond_range)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1);
   merge_context.static_param_.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
 
   ObVersionRange trans_version_range;
@@ -2375,7 +2375,7 @@ TEST_F(TestCOMerge, test_merge_range_with_beyond_range)
   OK(merge_context.parallel_merge_ctx_.range_array_.push_back(merge_range));
   set_cg_idx(merge_context, 0, 3);
   ASSERT_EQ(OB_SUCCESS, merger.merge_partition(merge_context, 0));
-  STORAGE_LOG(INFO, "finish co merge");
+
   ASSERT_EQ(OB_SUCCESS, merge_context.create_sstables(0,3));
   EXPECT_EQ(1, merge_context.merged_cg_tables_handle_.get_count());
 
@@ -2460,7 +2460,7 @@ TEST_F(TestCOMerge, test_rebuild_sstable)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1);
   merge_context.static_param_.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
 
   ObVersionRange trans_version_range;
@@ -2509,7 +2509,7 @@ TEST_F(TestCOMerge, test_rebuild_sstable)
   ASSERT_EQ(OB_SUCCESS, merger.merge_partition(merge_context, 0));
   ObCOMerger merger1(merger_allocator_, merge_context.static_param_, 0, 3);
   ASSERT_EQ(OB_SUCCESS, merger1.merge_partition(merge_context, 1));
-  STORAGE_LOG(INFO, "finish co merge");
+
   merge_context.cg_merge_info_array_[0]->sstable_builder_.data_store_desc_.get_desc().static_desc_->major_working_cluster_version_ = DATA_VERSION_1_0_0_0;
   merge_context.cg_merge_info_array_[1]->sstable_builder_.data_store_desc_.get_desc().static_desc_->major_working_cluster_version_ = DATA_VERSION_1_0_0_0;
   ASSERT_EQ(OB_SUCCESS, merge_context.create_sstables(0,3));

@@ -704,14 +704,14 @@ int ObUniqTaskQueue<Task, Process>::get_next_group(Group *&next_group)
     Group *barrier_group = NULL;
     if (NULL == group) {
       ret = common::OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "null group", K(ret), KP(group));
+
     }
     if (OB_SUCC(ret)) {
       do {
         group = group->get_next();
         if (NULL == group) {
           ret = common::OB_ERR_UNEXPECTED;
-          STORAGE_LOG(WARN, "null group", K(ret), KP(group));
+
         } else if (groups_.get_header() == group) {
           // ignore
         } else if (group->list_.get_size() > 0) {

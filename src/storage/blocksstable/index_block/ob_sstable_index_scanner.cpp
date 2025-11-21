@@ -690,13 +690,13 @@ int ObSSTableIndexScanner::process_endkey(const ObMicroIndexInfo &index_info, Ob
   } else if (index_info.endkey_.is_discrete_rowkey()) {
     const ObDiscreteDatumRowkey *discrete_rowkey = index_info.endkey_.get_discrete_rowkey();
     if (OB_FAIL(discrete_rowkey->rowkey_vector_->get_rowkey(discrete_rowkey->row_idx_, endkey_))) {
-      STORAGE_LOG(WARN, "failed to get rowkey from discrete rowkey vector", K(ret));
+
     } else {
       index_row.endkey_ = &endkey_;
     }
   } else {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected endkey type", K(ret), K(index_info.endkey_.type_));
+
   }
   return ret;
 }

@@ -124,7 +124,7 @@ int ObMemtable::flush(share::ObLSID ls_id)
                       ObSuspectInfoType::SUSPECT_MEMTABLE_CANT_CREATE_DAG,
                       static_cast<int64_t>(ret),
                       cur_time - mt_stat_.ready_for_flush_time_, mt_stat_.ready_for_flush_time_))) {
-        STORAGE_LOG(WARN, "failed to add suspect info", K(tmp_ret));
+
       }
     }
     compaction::ObTabletMergeDagParam param;
@@ -161,7 +161,7 @@ int LockForReadFunctor::operator()(const ObTxData &tx_data, ObTxCCCtx *tx_cc_ctx
 
   if (OB_ISNULL(tx_cc_ctx) && (ObTxData::RUNNING == state)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "lock for read functor need prepare version.", KR(ret));
+
   } else {
     for (int32_t i = 0; OB_ERR_SHARED_LOCK_CONFLICT == ret; i++) {
       if (OB_FAIL(inner_lock_for_read(tx_data, tx_cc_ctx))) {

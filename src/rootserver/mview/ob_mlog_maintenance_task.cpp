@@ -210,7 +210,7 @@ int ObMLogMaintenanceTask::gc_mlog()
         is_exist = (nullptr != table_schema);
       }
       if (OB_SUCC(ret) && !is_exist) {
-        LOG_INFO("gc one mlog", K_(tenant_id), K(mlog_id));
+
         if (OB_FAIL(drop_mlog(mlog_id))) {
           LOG_WARN("fail to drop mlog", KR(ret), K(mlog_id));
         } else {

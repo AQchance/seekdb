@@ -36,12 +36,12 @@ public:
             get_current_dir_name()));
     ASSERT_EQ(OB_SUCCESS,
         databuff_printf(test_dir_uri_, sizeof(test_dir_uri_), "file://%s", test_dir_));
-    STORAGE_LOG(INFO, "clean test_storageg dir");
+
     ASSERT_EQ(0, ::system("rm -fr test_storage"));
   }
   virtual void TearDown()
   {
-    STORAGE_LOG(INFO, "clean test_storageg dir");
+
     ASSERT_EQ(0, ::system("rm -fr test_storage"));
   }
 

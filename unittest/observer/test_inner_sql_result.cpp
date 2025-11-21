@@ -145,7 +145,7 @@ TEST_F(TestInnerSQLResult, setup)
     ret = res_.result_set().get_next_row(row);
     ASSERT_EQ(OB_SUCCESS, ret);
     ASSERT_TRUE(NULL != row);
-    LOG_INFO("row", K(*row));
+
   }
   ret = res_.result_set().get_next_row(row);
   ASSERT_EQ(OB_ITER_END, ret);

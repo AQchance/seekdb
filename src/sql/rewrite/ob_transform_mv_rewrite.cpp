@@ -339,7 +339,7 @@ int ObTransformMVRewrite::inner_gen_base_table_map(int64_t from_table_idx,
     } else if (OB_FAIL(table_maps.push_back(new_table_map))) {
       LOG_WARN("failed to push back current_map", K(ret), K(new_table_map));
     } else {
-      LOG_DEBUG("generated one table map", K(new_table_map));
+
     }
   } else {
     const TableItem *from_table = from_tables.at(from_table_idx);
@@ -453,7 +453,7 @@ int ObTransformMVRewrite::try_transform_with_one_mv(ObSelectStmt *origin_stmt,
   } else if (OB_FAIL(add_transform_hint(*new_stmt, &mv_info))) {
     LOG_WARN("failed to add transform hint", K(ret));
   } else {
-    LOG_DEBUG("succeed to transform with one mv", KPC(new_stmt));
+
   }
   return ret;
 }
@@ -482,7 +482,7 @@ int ObTransformMVRewrite::try_transform_contain_mode(ObSelectStmt *origin_stmt,
   } else {
     // try to rewrite use every base table map
     OPT_TRACE("try rewrite use", mv_info.mv_schema_->get_table_name());
-    LOG_TRACE("begin try rewrite contain mode", K(mv_info.mv_schema_->get_table_name_str()), K(base_table_maps.count()));
+
     for (int64_t i = 0; OB_SUCC(ret) && !transform_happened && i < base_table_maps.count(); ++i) {
       bool is_valid = true;
       SMART_VAR(MvRewriteHelper,
@@ -507,7 +507,7 @@ int ObTransformMVRewrite::try_transform_contain_mode(ObSelectStmt *origin_stmt,
         } else if (OB_FAIL(check_mv_rewrite_validity(helper, is_valid))) {
           LOG_WARN("failed to check mv rewrite validity", K(ret), K(base_table_maps.at(i)));
         } else if (!is_valid) {
-          LOG_TRACE("does not pass the rewrite validity check", K(base_table_maps.at(i)));
+
         } else if (OB_FAIL(generate_rewrite_stmt_contain_mode(helper))) {
           LOG_WARN("failed to generate rewrite stmt contain mode", K(ret), K(base_table_maps.at(i)));
         } else if (OB_FAIL(check_rewrite_expected(helper, is_valid))) {
@@ -518,7 +518,7 @@ int ObTransformMVRewrite::try_transform_contain_mode(ObSelectStmt *origin_stmt,
           } else {
             // query_stmt has been rewrited in generate_rewrite_stmt_contain_mode, need to re-copy stmt
             query_stmt = NULL;
-            LOG_TRACE("does not pass the rewrite expected check", K(base_table_maps.at(i)));
+
           }
         } else if (OB_FAIL(add_param_constraint(helper))) {
           LOG_WARN("failed to add param constraint", K(ret));
@@ -553,32 +553,32 @@ int ObTransformMVRewrite::check_mv_rewrite_validity(MvRewriteHelper &helper,
   if (OB_FAIL(check_delta_table(helper, is_valid))) {
     LOG_WARN("failed to check delta table", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("does not pass the mv delta table check");
+
   } else if (OB_FAIL(check_join_compatibility(helper, is_valid))) {
     LOG_WARN("failed to check join compatibility", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("does not pass the join compatibility check");
+
   } else if (OB_FAIL(check_predicate_compatibility(helper, is_valid))) {
     LOG_WARN("failed to check predicate compatibility", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("does not pass the predicate compatibility check");
+
   } else if (!helper.query_compensation_preds_.empty()) {
     // not support now
     // TODO: try union rewrite
     is_valid = false;
-    LOG_TRACE("does not pass the predicate compatibility check, has query compensation predicate");
+
   } else if (OB_FAIL(check_group_by_col(helper, is_valid))) {
     LOG_WARN("failed to check group by column", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("does not pass the group by column check");
+
   } else if (OB_FAIL(compute_stmt_expr_map(helper, is_valid))) {
     LOG_WARN("failed to compute expr map", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("does not pass the expr map check");
+
   } else if (OB_FAIL(check_opt_feat_ctrl(helper, is_valid))) {
     LOG_WARN("failed to check optimizer feature control", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("does not pass the optimizer feature control check");
+
   }
   return ret;
 }
@@ -698,7 +698,7 @@ int ObTransformMVRewrite::check_join_compatibility(MvRewriteHelper &helper,
     } else if (OB_FAIL(build_query_join_tree(helper, query_baserel_filters, query_conflict_detectors, is_valid))) {
       LOG_WARN("failed to build query join tree", K(ret));
     } else if (!is_valid) {
-      LOG_DEBUG("does not pass the query join tree build");
+
     } else if (OB_FAIL(compare_join_tree(helper,
                                          helper.mv_tree_,
                                          helper.query_tree_mv_part_,
@@ -706,7 +706,7 @@ int ObTransformMVRewrite::check_join_compatibility(MvRewriteHelper &helper,
                                          is_valid))) {
       LOG_WARN("failed to compare join tree", K(ret));
     } else if (!is_valid) {
-      LOG_DEBUG("does not pass the join tree compare");
+
     }
   }
   return ret;
@@ -779,7 +779,7 @@ int ObTransformMVRewrite::build_mv_join_tree(MvRewriteHelper &helper,
   }
   if (OB_SUCC(ret)) {
     helper.mv_tree_ = root_node;
-    LOG_DEBUG("build mv join tree", KPC(helper.mv_tree_));
+
   }
   return ret;
 }
@@ -879,7 +879,7 @@ int ObTransformMVRewrite::build_query_join_tree(MvRewriteHelper &helper,
                                                     is_valid))) {
     LOG_WARN("failed to build query tree mv part", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("query tree mv part is invalid");
+
   } else if (OB_ISNULL(helper.query_tree_ = helper.query_tree_mv_part_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("query tree in null", K(ret));
@@ -900,7 +900,7 @@ int ObTransformMVRewrite::build_query_join_tree(MvRewriteHelper &helper,
                                                     is_valid))) {
         LOG_WARN("failed to build query tree delta part", K(ret), KPC(helper.query_stmt_->get_table_item(helper.query_stmt_->get_from_item(i))));
       } else if (!is_valid) {
-        LOG_TRACE("query tree delta part is invalid");
+
       } else if (!is_delta_table) {
         // do nothing, delta table has been merged in query tree
       } else if (OB_FAIL(build_join_tree_node(helper.query_tree_, /* left child node */
@@ -911,13 +911,13 @@ int ObTransformMVRewrite::build_query_join_tree(MvRewriteHelper &helper,
                                               is_valid))) {
         LOG_WARN("failed to build query tree node, delta part", K(ret));
       } else if (!is_valid) {
-        LOG_TRACE("no valid detector when generating query join tree, delta part");
+
       } else {
         helper.query_tree_ = new_joined_node;
       }
     }
     if (OB_SUCC(ret) && is_valid) {
-      LOG_DEBUG("build query join tree", KPC(helper.query_tree_));
+
     }
   }
   return ret;
@@ -952,7 +952,7 @@ int ObTransformMVRewrite::inner_build_query_tree_mv_part(MvRewriteHelper &helper
                                                           is_valid)))) {
       LOG_WARN("failed to build left child", K(ret));
     } else if (!is_valid) {
-      LOG_DEBUG("left child is invalid");
+
     } else if (OB_FAIL(SMART_CALL(inner_build_query_tree_mv_part(helper,
                                                                  mv_node->right_child_,
                                                                  baserel_filters,
@@ -962,7 +962,7 @@ int ObTransformMVRewrite::inner_build_query_tree_mv_part(MvRewriteHelper &helper
                                                                  is_valid)))) {
       LOG_WARN("failed to build right child", K(ret));
     } else if (!is_valid) {
-      LOG_DEBUG("right child is invalid");
+
     } else if (OB_FAIL(build_join_tree_node(left_node,
                                             right_node,
                                             conflict_detectors,
@@ -971,7 +971,7 @@ int ObTransformMVRewrite::inner_build_query_tree_mv_part(MvRewriteHelper &helper
                                             is_valid))) {
       LOG_WARN("failed to build tree node", K(ret));
     } else if (!is_valid) {
-      LOG_DEBUG("no valid detector when generating query join tree, mv part");
+
     }
   } else if (OB_FAIL(mv_node->table_set_.to_array(mv_relids))) {
     LOG_WARN("failed to convert table set to array", K(ret));
@@ -1036,7 +1036,7 @@ int ObTransformMVRewrite::inner_build_query_tree_delta_part(MvRewriteHelper &hel
                                                              is_valid)))) {
       LOG_WARN("failed to build left child", K(ret));
     } else if (!is_valid) {
-      LOG_DEBUG("left child is invalid");
+
     } else if (OB_FAIL(SMART_CALL(inner_build_query_tree_delta_part(helper,
                                                                     join_table->right_table_,
                                                                     baserel_filters,
@@ -1047,7 +1047,7 @@ int ObTransformMVRewrite::inner_build_query_tree_delta_part(MvRewriteHelper &hel
                                                                     is_valid)))) {
       LOG_WARN("failed to build right child", K(ret));
     } else if (!is_valid) {
-      LOG_DEBUG("right child is invalid");
+
     } else if (left_is_delta_table && right_is_delta_table) {
       if (OB_FAIL(build_join_tree_node(left_node,
                                        right_node,
@@ -1057,7 +1057,7 @@ int ObTransformMVRewrite::inner_build_query_tree_delta_part(MvRewriteHelper &hel
                                        is_valid))) {
         LOG_WARN("failed to build query tree node, delta part", K(ret));
       } else if (!is_valid) {
-        LOG_DEBUG("no valid detector when generating query join tree, delta part");
+
       } else {
         is_delta_table = true;
       }
@@ -1070,7 +1070,7 @@ int ObTransformMVRewrite::inner_build_query_tree_delta_part(MvRewriteHelper &hel
                                        is_valid))) {
         LOG_WARN("failed to build query tree node, delta part", K(ret));
       } else if (!is_valid) {
-        LOG_DEBUG("no valid detector when generating query join tree, delta part");
+
       } else {
         helper.query_tree_ = node;
         is_delta_table = false;
@@ -1135,7 +1135,7 @@ int ObTransformMVRewrite::build_join_tree_node(JoinTreeNode *left_node,
     } else if (valid_detectors.empty()) {
       // can not generate valid join tree
       is_valid = false;
-      LOG_TRACE("no valid detector when generating join tree");
+
     } else if (OB_FAIL(append(used_detectors, valid_detectors))) {
       LOG_WARN("failed to append used conflict detectors", K(ret));
     } else if (OB_FAIL(ObConflictDetector::merge_join_info(valid_detectors, new_node->join_info_))) {
@@ -1288,7 +1288,7 @@ int ObTransformMVRewrite::compare_join_tree(MvRewriteHelper &helper,
     }
   } else if (mv_node->join_info_.join_type_ != query_node->join_info_.join_type_) {
     is_valid = false;
-    LOG_TRACE("join type not match", K(mv_node->join_info_), K(query_node->join_info_));
+
   } else if (OB_FAIL(compare_join_conds(helper,
                                         mv_node->join_info_.where_conditions_,
                                         query_node->join_info_.where_conditions_,
@@ -1434,7 +1434,7 @@ int ObTransformMVRewrite::add_not_null_compensate(MvRewriteHelper &helper,
     LOG_WARN("failed to find mv not null expr", K(ret));
   } else if (NULL == not_null_expr) {
     is_valid = false;
-    LOG_TRACE("can not find mv not null expr to compensate");
+
   } else if (OB_FAIL(ObTransformUtils::add_is_not_null(ctx_,
                                                        not_null_expr,
                                                        compensate_expr))) {
@@ -1677,7 +1677,7 @@ int ObTransformMVRewrite::generate_equal_compensation_preds(MvRewriteHelper &hel
         // column does not exists in MV
         // we can not build the compensation predicate
         is_valid = false;
-        LOG_TRACE("query column does not exists in mv", KPC(query_expr));
+
       } else if (OB_FAIL(visited_mv_column_exprs.set_refactored(mv_expr))) {
         LOG_WARN("failed to set visited mv expr hash set", K(ret), KPC(mv_expr));
       } else if (OB_FAIL(helper.mv_es_map_.get_refactored(mv_expr, mv_es_id))) {
@@ -2153,31 +2153,31 @@ int ObTransformMVRewrite::compute_stmt_expr_map(MvRewriteHelper &helper,
   } else if (OB_FAIL(compute_join_expr_map(helper, is_valid))) {
     LOG_WARN("failed to compute join expr", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("compute join expr does not pass");
+
   } else if (OB_FAIL(compute_select_expr_map(helper, is_valid))) {
     LOG_WARN("failed to compute select expr", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("compute select expr does not pass");
+
   } else if (OB_FAIL(inner_compute_exprs_map(helper, helper.query_other_conds_, is_valid))) {
     LOG_WARN("failed to compute query other conditions expr", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("compute query other conditions expr does not pass");
+
   } else if (OB_FAIL(inner_compute_exprs_map(helper, helper.mv_compensation_preds_, is_valid))) {
     LOG_WARN("failed to compute compensation expr", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("compute compensation expr does not pass");
+
   } else if (OB_FAIL(inner_compute_exprs_map(helper, helper.query_stmt_->get_having_exprs(), is_valid))) {
     LOG_WARN("failed to compute having expr", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("compute having expr does not pass");
+
   } else if (OB_FAIL(compute_group_by_expr_map(helper, is_valid))) {
     LOG_WARN("failed to compute group by expr", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("compute group by expr does not pass");
+
   } else if (OB_FAIL(compute_order_by_expr_map(helper, is_valid))) {
     LOG_WARN("failed to compute order by expr", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("compute order by expr does not pass");
+
   }
   return ret;
 }
@@ -2628,7 +2628,7 @@ int ObTransformMVRewrite::create_mv_table_item(MvRewriteHelper &helper)
                                                          *ctx_->allocator_))) {
       LOG_WARN("failed to add ref obj version", K(ret));
     } else {
-      LOG_DEBUG("succ to fill table_item", K(mv_item));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -2662,7 +2662,7 @@ int ObTransformMVRewrite::create_mv_column_item(MvRewriteHelper &helper)
         } else if (OB_FAIL(column_item.expr_->pull_relation_id())) {
           LOG_WARN("failed to pullup relation ids", K(ret));
         } else {
-          LOG_DEBUG("succ to fill column_item", K(column_item));
+
         }
       }
     }

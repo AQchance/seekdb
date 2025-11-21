@@ -192,7 +192,7 @@ int ObSchemaGetterGuard::get_schema_version(const uint64_t tenant_id, int64_t &s
       if (OB_SUCCESS != tmp_ret){
         LOG_WARN("query tenant status failed", KR(ret), K(tmp_ret), K(tenant_id));
       } else if (TENANT_DELETED == tenant_status) {
-        LOG_INFO("tenant has been dropped, no need retry", KR(ret), K(tenant_id));
+
         ret = OB_TENANT_HAS_BEEN_DROPPED; //overwrite ret
       }
     }
@@ -284,7 +284,7 @@ int ObSchemaGetterGuard::get_table_mlog_schema(const uint64_t tenant_id,
   if (OB_FAIL(check_tenant_schema_guard(tenant_id))) {
     LOG_WARN("fail to check tenant schema guard", KR(ret), K(tenant_id), K_(tenant_id));
   } else if (OB_FAIL(get_table_schema(tenant_id, data_table_id, table_schema))) {
-    LOG_TRACE("cannot get table schema for table", KR(ret), K(tenant_id), K(data_table_id));
+
   } else if (OB_ISNULL(table_schema)) {
     ret = OB_TABLE_NOT_EXIST;
     LOG_WARN("cannot get table schema for table ", KR(ret), K(tenant_id), K(data_table_id));
@@ -482,10 +482,10 @@ int ObSchemaGetterGuard::get_user_id(uint64_t tenant_id,
                                              simple_user))) {
       LOG_WARN("get simple user failed", KR(ret), K(tenant_id), K(user_name), K(host_name));
     } else if (NULL == simple_user) {
-      LOG_INFO("user not exist", K(tenant_id), K(user_name), K(host_name));
+
     } else {
       user_id = simple_user->get_user_id();
-      LOG_TRACE("succ to get user", K(tenant_id), K(user_id), K(user_name), K(host_name), KPC(simple_user));
+
     }
   }
 
@@ -980,7 +980,7 @@ int ObSchemaGetterGuard::get_database_id(uint64_t tenant_id,
                                             simple_database))) {
         LOG_WARN("get simple database failed", KR(ret), K(tenant_id), K(database_name));
       } else if (NULL == simple_database) {
-        LOG_INFO("database not exist", K(tenant_id), K(database_name));
+
       } else {
         database_id = simple_database->get_database_id();
       }
@@ -1014,7 +1014,7 @@ int ObSchemaGetterGuard::get_tablegroup_id(uint64_t tenant_id,
                                                  simple_tablegroup))) {
     LOG_WARN("get simple tablegroup failed", KR(ret), K(tenant_id), K(tablegroup_name));
   } else if (NULL == simple_tablegroup) {
-    LOG_INFO("tablegroup not exist", K(tenant_id), K(tablegroup_name));
+
   } else {
     tablegroup_id = simple_tablegroup->get_tablegroup_id();
   }
@@ -1075,7 +1075,7 @@ int ObSchemaGetterGuard::get_table_id(uint64_t tenant_id,
           && !is_inner_table(simple_table->get_table_id())
           && false == simple_table->is_tmp_table()) {
         // temporary table is not finded.
-        LOG_TRACE("request for temporary table but non-temporary table returned", K(session_id_), K(session_id), K(check_type));
+
       } else {
         table_id = simple_table->get_table_id();
       }
@@ -1143,7 +1143,7 @@ int ObSchemaGetterGuard::get_foreign_key_id(const uint64_t tenant_id,
   } else if (OB_FAIL(mgr->get_foreign_key_id(tenant_id, database_id, foreign_key_name, foreign_key_id))) {
     LOG_WARN("get foreign key id failed", KR(ret), K(tenant_id), K(database_id), K(foreign_key_name));
   } else if (OB_INVALID_ID == foreign_key_id) {
-    LOG_INFO("foreign key not exist", K(tenant_id), K(database_id), K(foreign_key_name));
+
   }
 
   return ret;
@@ -1172,7 +1172,7 @@ int ObSchemaGetterGuard::get_foreign_key_info(const uint64_t tenant_id,
     LOG_WARN("get foreign key id failed", KR(ret), K(tenant_id), K(database_id),
               K(foreign_key_name));
   } else if (OB_INVALID_ID == foreign_key_info.foreign_key_id_) {
-    LOG_INFO("foreign key not exist", K(tenant_id), K(database_id), K(foreign_key_name));
+
   }
 
   return ret;
@@ -1200,7 +1200,7 @@ int ObSchemaGetterGuard::get_constraint_id(const uint64_t tenant_id,
   } else if (OB_FAIL(mgr->get_constraint_id(tenant_id, database_id, constraint_name, constraint_id))) {
     LOG_WARN("get constraint id failed", KR(ret), K(tenant_id), K(database_id), K(constraint_name));
   } else if (OB_INVALID_ID == constraint_id) {
-    LOG_INFO("constraint not exist", K(tenant_id), K(database_id), K(constraint_name));
+
   }
 
   return ret;
@@ -1231,7 +1231,7 @@ int ObSchemaGetterGuard::get_constraint_info(const uint64_t tenant_id,
     LOG_WARN("get constraint info failed", KR(ret), K(tenant_id),
                 K(database_id), K(constraint_name));
   } else if (OB_INVALID_ID == constraint_info.constraint_id_) {
-    LOG_INFO("constraint not exist", K(tenant_id), K(database_id), K(constraint_name));
+
   }
 
   return ret;
@@ -1288,7 +1288,7 @@ int ObSchemaGetterGuard::get_user_info(
   int ret = OB_SUCCESS;
   user_info = NULL;
 
-  LOG_TRACE("begin to get user schema", K(user_id));
+
 
   if (!check_inner_stat()) {
     ret = OB_INNER_STAT_ERROR;
@@ -1314,7 +1314,7 @@ int ObSchemaGetterGuard::get_database_schema(const uint64_t tenant_id,
 {
   int ret = OB_SUCCESS;
   database_schema = NULL;
-  LOG_TRACE("begin to get database schema", K(database_id));
+
 
   if (!check_inner_stat()) {
     ret = OB_INNER_STAT_ERROR;
@@ -1342,7 +1342,7 @@ int ObSchemaGetterGuard::get_database_schema(const uint64_t tenant_id,
   const ObSchemaMgr *mgr = NULL;
   database_schema = NULL;
 
-  LOG_TRACE("begin to get database schema", K(database_id));
+
 
   if (!check_inner_stat()) {
     ret = OB_INNER_STAT_ERROR;
@@ -1369,7 +1369,7 @@ int ObSchemaGetterGuard::get_tablegroup_schema(
   int ret = OB_SUCCESS;
   tablegroup_schema = NULL;
 
-  LOG_TRACE("begin to get tablegroup schema", K(tablegroup_id));
+
 
   if (!check_inner_stat()) {
     ret = OB_INNER_STAT_ERROR;
@@ -1398,7 +1398,7 @@ int ObSchemaGetterGuard::get_tablegroup_schema(
   const ObSchemaMgr *mgr = NULL;
   tablegroup_schema = NULL;
 
-  LOG_TRACE("begin to get tablegroup schema", K(tablegroup_id));
+
 
   if (!check_inner_stat()) {
     ret = OB_INNER_STAT_ERROR;
@@ -1466,7 +1466,7 @@ int ObSchemaGetterGuard::get_tenant_info(const ObString &tenant_name,
   } else if (OB_FAIL(mgr->get_tenant_schema(tenant_name, simple_tenant))) {
      LOG_WARN("get simple tenant failed", KR(ret), K(tenant_name));
   } else if (NULL == simple_tenant) {
-    LOG_INFO("tenant not exist", K(tenant_name));
+
   } else if (OB_FAIL(get_schema(TENANT_SCHEMA,
                                 OB_SYS_TENANT_ID,
                                 simple_tenant->get_tenant_id(),
@@ -1507,7 +1507,7 @@ int ObSchemaGetterGuard::get_user_info(const uint64_t tenant_id,
                                           simple_user))) {
     LOG_WARN("get simple user failed", KR(ret), K(tenant_id), K(user_name));
   } else if (NULL == simple_user) {
-    LOG_INFO("user not exist", K(tenant_id), K(user_name));
+
   } else if (OB_FAIL(get_schema(USER_SCHEMA,
                                 simple_user->get_tenant_id(),
                                 simple_user->get_user_id(),
@@ -1543,7 +1543,7 @@ int ObSchemaGetterGuard::get_user_info(const uint64_t tenant_id,
     if (OB_FAIL(mgr->get_user_schema(tenant_id, user_name, simple_users))) {
       LOG_WARN("get simple user failed", KR(ret), K(tenant_id), K(user_name));
     } else if (simple_users.empty()) {
-      LOG_INFO("user not exist", K(tenant_id), K(user_name));
+
     } else {
       const ObUserInfo *user_info = NULL;
       for (int64_t i = 0; i < simple_users.count() && OB_SUCC(ret); ++i) {
@@ -1593,7 +1593,7 @@ int ObSchemaGetterGuard::get_database_schema(uint64_t tenant_id,
                                                simple_database))) {
     LOG_WARN("get simple database failed", KR(ret), K(tenant_id), K(database_name));
   } else if (NULL == simple_database) {
-    LOG_INFO("database not exist", K(tenant_id), K(database_name));
+
   } else if (OB_FAIL(get_schema(DATABASE_SCHEMA,
                                 simple_database->get_tenant_id(),
                                 simple_database->get_database_id(),
@@ -2005,7 +2005,7 @@ int ObSchemaGetterGuard::is_user_empty_passwd(const ObUserLoginInfo &login_info,
               "user_name", login_info.user_name_,
               "client_ip_", login_info.client_ip_, KR(ret));
         } else if (!obsys::ObNetUtil::is_match(login_info.client_ip_, user_info->get_host_name_str())) {
-          LOG_TRACE("account not matched, try next", KPC(user_info), K(login_info));
+
         } else {
           matched_user_info = user_info;
           if (0 == login_info.passwd_.length() && 0 == user_info->get_passwd_str().length()) {
@@ -2059,7 +2059,7 @@ int ObSchemaGetterGuard::check_user_access(
               "user_name", login_info.user_name_,
               "client_ip_", login_info.client_ip_, KR(ret));
         } else if (!obsys::ObNetUtil::is_match(login_info.client_ip_, user_info->get_host_name_str())) {
-          LOG_TRACE("account not matched, try next", KPC(user_info), K(login_info));
+
         } else {
           matched_user_info = user_info;
           if (0 == login_info.passwd_.length() && 0 == user_info->get_passwd_str().length()) {
@@ -2271,7 +2271,7 @@ int ObSchemaGetterGuard::check_ssl_access(const ObUserInfo &user_info, SSL *ssl_
   }
 
   if (OB_FAIL(ret)) {
-    LOG_TRACE("fail to check_ssl_access", K(user_info), KR(ret));
+
   }
   return ret;
 }
@@ -2281,7 +2281,7 @@ int ObSchemaGetterGuard::check_ssl_invited_cn(const uint64_t tenant_id, SSL *ssl
 {
   int ret = OB_SUCCESS;
   if (NULL == ssl_st) {
-    LOG_TRACE("not use ssl, no need check invited_cn", K(tenant_id));
+
   } else {
     X509 *cert = NULL;
     X509_name_st *x509Name = NULL;
@@ -2295,7 +2295,7 @@ int ObSchemaGetterGuard::check_ssl_invited_cn(const uint64_t tenant_id, SSL *ssl
         ret = OB_PASSWORD_WRONG;
         LOG_WARN("ob_ssl_invited_common_names not match", "expect", ob_ssl_invited_common_names, KR(ret));
       } else if (NULL == (cert = SSL_get_peer_certificate(ssl_st))) {
-        LOG_TRACE("use ssl, but without peer_certificate", K(tenant_id));
+
       } else if (OB_ISNULL(x509Name = X509_get_subject_name(cert))) {
         ret = OB_PASSWORD_WRONG;
         LOG_WARN("X509 check failed", KR(ret));
@@ -2317,7 +2317,7 @@ int ObSchemaGetterGuard::check_ssl_invited_cn(const uint64_t tenant_id, SSL *ssl
           ret = OB_PASSWORD_WRONG;
           LOG_WARN("ob_ssl_invited_common_names not match", "expect",ob_ssl_invited_common_names, "curr", cn_used,  KR(ret));
         } else {
-          LOG_TRACE("ob_ssl_invited_common_names match", "expect",ob_ssl_invited_common_names, "curr", cn_used,  KR(ret));
+
         }
       }
     }
@@ -3262,7 +3262,7 @@ int ObSchemaGetterGuard::get_schema_version(
     }
 #undef GET_SCHEMA_VERSION
   }
-  LOG_TRACE("get schema version v2", KR(ret), K(schema_type), K(schema_id), K(schema_version));
+
   return ret;
 }
 
@@ -3298,13 +3298,13 @@ int ObSchemaGetterGuard::get_from_local_cache(
     }
     if (!found) {
       ret = OB_ENTRY_NOT_EXIST;
-      LOG_TRACE("local cache miss [id to schema]", KR(ret), K(schema_type), K(tenant_id), K(schema_id));
+
     } else if (OB_ISNULL(tmp_schema)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("tmp schema is NULL", KR(ret), K(schema_type), K(tenant_id), K(schema_id));
     } else {
       schema = static_cast<const T *>(tmp_schema);
-      LOG_TRACE("schema cache hit", K(schema_type), K(tenant_id), K(schema_id));
+
     }
   }
 
@@ -3451,7 +3451,7 @@ int ObSchemaGetterGuard::get_schema(
       }
       if (OB_FAIL(ret)) {
       } else if (OB_FAIL(get_schema_version(tenant_id, schema_version))) {
-        LOG_INFO("fail to get snapshot version", KR(ret), K(tenant_id));
+
       } else if (OB_FAIL(schema_service_->get_schema(
           NULL,
           schema_status,
@@ -4389,7 +4389,7 @@ int ObSchemaGetterGuard::get_outline_info_with_name(
       database_id, name, is_format, simple_outline))) {
     LOG_WARN("get simple outline failed", KR(ret), K(tenant_id), K(database_id), K(name));
   } else if (NULL == simple_outline) {
-    LOG_INFO("outline not exist", K(tenant_id), K(database_id), K(name));
+
   } else if (OB_FAIL(get_schema(OUTLINE_SCHEMA,
                                 simple_outline->get_tenant_id(),
                                 simple_outline->get_outline_id(),
@@ -4437,7 +4437,7 @@ int ObSchemaGetterGuard::get_outline_info_with_name(
       database_id, outline_name, is_format, simple_outline))) {
     LOG_WARN("get simple outline failed", KR(ret), K(tenant_id), K(database_id), K(outline_name));
   } else if (NULL == simple_outline) {
-    LOG_TRACE("outline not exist", K(tenant_id), K(database_id), K(outline_name));
+
   } else if (OB_FAIL(get_schema(OUTLINE_SCHEMA,
                                 simple_outline->get_tenant_id(),
                                 simple_outline->get_outline_id(),
@@ -4479,7 +4479,7 @@ int ObSchemaGetterGuard::get_outline_info_with_signature(
       database_id, signature, is_format, simple_outline))) {
     LOG_WARN("get simple outline failed", KR(ret), K(tenant_id), K(database_id), K(signature));
   } else if (NULL == simple_outline) {
-    LOG_TRACE("outline not exist", K(tenant_id), K(is_format), K(database_id), K(signature));
+
   } else if (OB_FAIL(get_schema(OUTLINE_SCHEMA,
                                 simple_outline->get_tenant_id(),
                                 simple_outline->get_outline_id(),
@@ -4665,7 +4665,7 @@ int ObSchemaGetterGuard::get_routine_info(
     LOG_WARN("get simple routine schema failed", KR(ret), K(tenant_id), K(database_id),
              K(package_id), K(routine_name), K(overload), K(routine_type));
   } else if (NULL == simple_routine) {
-    LOG_TRACE("routine not exist", K(tenant_id), K(database_id), K(routine_name));
+
   } else if (OB_FAIL(get_schema(ROUTINE_SCHEMA,
                                 simple_routine->get_tenant_id(),
                                 simple_routine->get_routine_id(),
@@ -4701,7 +4701,7 @@ int ObSchemaGetterGuard::get_routine_info(
   } else if (OB_FAIL(mgr->get_routine_schema(tenant_id, routine_id, simple_routine))) {
     LOG_WARN("get simple routine schema failed", KR(ret), K(tenant_id), K(routine_id));
   } else if (NULL == simple_routine) {
-    LOG_TRACE("routine not exist", K(routine_id));
+
   } else if (OB_FAIL(get_schema(ROUTINE_SCHEMA,
                                 simple_routine->get_tenant_id(),
                                 simple_routine->get_routine_id(),
@@ -4823,7 +4823,7 @@ int ObSchemaGetterGuard::get_package_info(
     } else if (OB_FAIL(mgr->get_package_schema(tenant_id, package_id, simple_package))) {
       LOG_WARN("get simple package schema failed", KR(ret), K(tenant_id), K(package_id));
     } else if (NULL == simple_package) {
-      LOG_TRACE("package not exist", K(package_id));
+
     } else if (OB_FAIL(get_schema(PACKAGE_SCHEMA,
                                   simple_package->get_tenant_id(),
                                   simple_package->get_package_id(),
@@ -4861,7 +4861,7 @@ int ObSchemaGetterGuard::get_simple_package_info(
     } else if (OB_FAIL(mgr->get_package_schema(tenant_id, package_id, package_info))) {
       LOG_WARN("get simple package schema failed", KR(ret), K(tenant_id), K(package_id));
     } else if (NULL == package_info) {
-      LOG_TRACE("package not exist", K(package_id));
+
     }
   } else {
     ret = OB_INVALID_ARGUMENT;
@@ -4926,7 +4926,7 @@ int ObSchemaGetterGuard::get_trigger_info(const uint64_t tenant_id,
     LOG_WARN("failed to get simple trigger schema", KR(ret), K(tenant_id), K(trigger_id));
   } else if (NULL == simple_trigger) {
     trigger_info = NULL;
-    LOG_TRACE("trigger not exist", K(trigger_id));
+
   } else if (OB_FAIL(get_schema(TRIGGER_SCHEMA,
                                 simple_trigger->get_tenant_id(),
                                 simple_trigger->get_trigger_id(),
@@ -4949,7 +4949,7 @@ int ObSchemaGetterGuard::get_trigger_info(const uint64_t tenant_id,
              K(tenant_id), K(database_id), K(trigger_name));
   } else if (NULL == simple_trigger) {
     trigger_info = NULL;
-    LOG_TRACE("trigger not exist", K(tenant_id), K(database_id), K(trigger_name));
+
   } else if (OB_FAIL(get_schema(TRIGGER_SCHEMA,
                                 simple_trigger->get_tenant_id(),
                                 simple_trigger->get_trigger_id(),
@@ -4972,7 +4972,7 @@ int ObSchemaGetterGuard::get_package_info_from_trigger(
     LOG_WARN("failed to get trigger info", KR(ret), K(tenant_id), K(trigger_id));
   } else if (OB_ISNULL(trigger_info)) {
     package_info = NULL;
-    LOG_TRACE("trigger not exist", K(trigger_id));
+
   } else {
     package_info = !ObTriggerInfo::is_trigger_body_package_id(package_id) ?
                      &trigger_info->get_package_spec_info() :
@@ -4995,7 +4995,7 @@ int ObSchemaGetterGuard::get_package_info_from_trigger(
   } else if (OB_ISNULL(trigger_info)) {
     package_spec_info = NULL;
     package_body_info = NULL;
-    LOG_TRACE("trigger not exist", K(trigger_id));
+
   } else {
     package_spec_info = &trigger_info->get_package_spec_info();
     package_body_info = &trigger_info->get_package_body_info();
@@ -5032,7 +5032,7 @@ int ObSchemaGetterGuard::get_outline_info_with_sql_id(
       database_id, sql_id, is_format, simple_outline))) {
     LOG_WARN("get simple outline failed", KR(ret), K(tenant_id), K(database_id), K(sql_id));
   } else if (NULL == simple_outline) {
-    LOG_TRACE("outline not exist", K(tenant_id), K(database_id), K(sql_id));
+
   } else if (OB_FAIL(get_schema(OUTLINE_SCHEMA,
                                 simple_outline->get_tenant_id(),
                                 simple_outline->get_outline_id(),
@@ -5074,7 +5074,7 @@ int ObSchemaGetterGuard::get_package_info(
   } else if (OB_FAIL(mgr->package_mgr_.get_package_schema(tenant_id, database_id, package_name, package_type, compatible_mode, simple_package))) {
     LOG_WARN("get simple package schema failed", KR(ret), K(tenant_id), K(database_id), K(package_name), K(package_type));
   } else if (NULL == simple_package) {
-    LOG_DEBUG("package not exist", K(tenant_id), K(database_id), K(package_name));
+
   } else if (OB_FAIL(get_schema(PACKAGE_SCHEMA,
                                 simple_package->get_tenant_id(),
                                 simple_package->get_package_id(),
@@ -5082,7 +5082,7 @@ int ObSchemaGetterGuard::get_package_info(
                                 simple_package->get_schema_version()))) {
     LOG_WARN("get package schema failed", KR(ret), K(tenant_id), KPC(simple_package));
   } else if (OB_ISNULL(package_info)) {
-    LOG_DEBUG("NULL ptr", KR(ret), KP(package_info));
+
   } else {/*do nothing*/}
   return ret;
 }
@@ -5512,7 +5512,7 @@ int ObSchemaGetterGuard::get_simple_table_schema(
   } else if (OB_FAIL(mgr->get_table_schema(tenant_id, table_id, table_schema))) {
     LOG_WARN("get simple table failed", KR(ret), K(tenant_id), K(tenant_id_), K(table_id));
   } else if (OB_ISNULL(table_schema)) {
-    LOG_INFO("table not exist", K(tenant_id), K(tenant_id_), K(table_id));
+
   }
   return ret;
 }
@@ -5660,7 +5660,7 @@ int ObSchemaGetterGuard::get_udf_info(const uint64_t tenant_id,
       LOG_WARN("get outline schema failed", KR(ret),
                K(tenant_id), K(name));
     } else if (OB_ISNULL(udf_schema)) {
-      LOG_INFO("udf not exist", K(tenant_id), K(name));
+
     } else if (OB_FAIL(get_schema(UDF_SCHEMA,
                                   udf_schema->get_tenant_id(),
                                   udf_schema->get_udf_id(),
@@ -5668,7 +5668,7 @@ int ObSchemaGetterGuard::get_udf_info(const uint64_t tenant_id,
                                   udf_schema->get_schema_version()))) {
       LOG_WARN("get udf schema failed", KR(ret), K(tenant_id), KPC(udf_schema));
     } else if (OB_ISNULL(udf_info)) {
-      LOG_INFO("udf does not exist", K(tenant_id), K(name), KR(ret));
+
     } else {
       exist = true;
     }
@@ -5917,7 +5917,7 @@ int ObSchemaGetterGuard::get_mock_fk_parent_table_schema_with_name(
     LOG_WARN("failed to get simple mock_fk_parent_table schema", K(ret), K(tenant_id), K(database_id), K(name));
   } else if (NULL == simple_mock_fk_parent_table) {
     mock_fk_parent_table_schema = NULL;
-    LOG_DEBUG("mock_fk_parent_table schema not exist", K(tenant_id), K(database_id), K(name));
+
   } else if (OB_FAIL(get_schema(MOCK_FK_PARENT_TABLE_SCHEMA, simple_mock_fk_parent_table->get_tenant_id(), simple_mock_fk_parent_table->get_mock_fk_parent_table_id(),
                                    mock_fk_parent_table_schema, simple_mock_fk_parent_table->get_schema_version()))) {
     LOG_WARN("get mock_fk_parent_table schema failed", K(ret), KPC(simple_mock_fk_parent_table));
@@ -5936,7 +5936,7 @@ int ObSchemaGetterGuard::get_mock_fk_parent_table_schema_with_id(
     LOG_WARN("failed to get simple trigger schema", K(ret), K(tenant_id), K(mock_fk_parent_table_id));
   } else if (NULL == simple_mock_fk_parent_table) {
     mock_fk_parent_table_schema = NULL;
-    LOG_DEBUG("mock_fk_parent_table not exist", K(mock_fk_parent_table_id));
+
   } else if (OB_FAIL(get_schema(MOCK_FK_PARENT_TABLE_SCHEMA, simple_mock_fk_parent_table->get_tenant_id(), simple_mock_fk_parent_table->get_mock_fk_parent_table_id(),
                                    mock_fk_parent_table_schema, simple_mock_fk_parent_table->get_schema_version()))) {
     LOG_WARN("get mock_fk_parent_table schema failed", K(ret), KPC(simple_mock_fk_parent_table));
@@ -5976,7 +5976,7 @@ int ObSchemaGetterGuard::get_idx_schema_by_origin_idx_name(uint64_t tenant_id,
     LOG_WARN("get simple table failed", KR(ret), K(tenant_id), K(database_id),
              K(index_name));
   } else if (NULL == simple_table) {
-    LOG_INFO("table not exist", K(tenant_id), K(database_id), K(index_name));
+
   } else if (OB_FAIL(get_schema(TABLE_SCHEMA,
                                 simple_table->get_tenant_id(),
                                 simple_table->get_table_id(),
@@ -6008,7 +6008,7 @@ int ObSchemaGetterGuard::get_schema_mgr(const uint64_t tenant_id, const ObSchema
   } else {
     schema_mgr = schema_mgr_info->get_schema_mgr();
     if (OB_ISNULL(schema_mgr)) {
-      LOG_TRACE("schema_mgr is null", K_(is_inited), K(tenant_id), K(tenant_id_), KPC(schema_mgr_info));
+
     }
   }
   return ret;

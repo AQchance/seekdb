@@ -57,15 +57,15 @@ int ObDagTempMacroFlusher::write_disk(ObMacroBlock& macro_block, const bool is_c
   int64_t simplified_buffer_size = 0;
   if (OB_UNLIKELY(OB_ISNULL(temp_file_writer_))) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected null temp_file_writer_", K(ret), KP(temp_file_writer_));
+
   } else if (OB_FAIL(ObSimplifiedSSTableMacroBlockHeader::simplify_macro_block(
               macro_block.get_data_buf(),
               macro_block.get_data_size(),
               simplified_buffer,
               simplified_buffer_size))) {
-    STORAGE_LOG(WARN, "fail to simplify macro block", K(ret));
+
   } else if (OB_FAIL(temp_file_writer_->write(simplified_buffer, !is_close_flush, simplified_buffer_size))) {
-    STORAGE_LOG(WARN, "fail to write macro block to temp file", K(ret));
+
   }
   return ret;
 }
@@ -95,15 +95,15 @@ int ObDagSliceMacroFlusher::write_disk(ObMacroBlock& macro_block, const bool is_
   int64_t simplified_buffer_size = 0;
   if (OB_UNLIKELY(OB_ISNULL(temp_file_writer_))) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected null temp_file_writer_", K(ret), KP(temp_file_writer_));
+
   } else if (OB_FAIL(ObSimplifiedSSTableMacroBlockHeader::simplify_macro_block(
         macro_block.get_data_buf(),
         macro_block.get_data_size(),
         simplified_buffer,
         simplified_buffer_size))) {
-    STORAGE_LOG(WARN, "fail to simplify macro block", K(ret));
+
   } else if (OB_FAIL(temp_file_writer_->write(simplified_buffer, !is_close_flush, simplified_buffer_size))) {
-    STORAGE_LOG(WARN, "fail to write macro block to temp file", K(ret));
+
   }
   return ret;
 }

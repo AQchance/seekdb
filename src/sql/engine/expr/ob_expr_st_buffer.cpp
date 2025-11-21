@@ -639,7 +639,7 @@ int ObExprSTBuffer::parse_text_strategy(ObString &str, ObGeoBufferStrategy &stra
     } else {
       *val = '\0';
       ++val;
-      LOG_DEBUG("invalided buffer strategy", K(key), K(val));
+
       if (!strcmp(key, "endcap")) {
         if ( !strcmp(val, "round") ) {
           strategy.state_num_ &= ~END_FLAT_MASK;
@@ -687,7 +687,7 @@ int ObExprSTBuffer::parse_text_strategy(ObString &str, ObGeoBufferStrategy &stra
       param = strtok_r(NULL, " ", &saver);
     }
   }
-  LOG_DEBUG("invalided buffer strategy", K(strategy.state_num_));
+
   return ret;
 }
 

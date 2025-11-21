@@ -117,7 +117,7 @@ int ObInnerConfigRootAddr::store(const ObIAddrList &addr_list, const ObIAddrList
       } else if (OB_FAIL(proxy_->write(OB_SYS_TENANT_ID, sql.ptr(), affected_rows))) {
         LOG_WARN("execute sql failed", K(ret), K(sql));
       } else {
-        LOG_INFO("ALTER SYSTEM SET rootservice_list succeed", K(addr_list), K(force));
+
       }
     }
   }
@@ -242,7 +242,7 @@ int ObInnerConfigRootAddr::parse_rs_addr(char *addr_buf, ObAddr &addr, int64_t &
       if (OB_ISNULL(sql_port_str = strtok_r(nullptr, ":", &save_ptr))) {
         sql_port_str = port_str;
         port_str = nullptr;
-        LOG_INFO("only has one port, used for obproxy", K(sql_port_str), K(addr_buf));
+
       } else if (OB_NOT_NULL(strtok_r(nullptr, ":", &save_ptr))) {
         ret = OB_INVALID_ARGUMENT;
         LOG_WARN("addr in rs_list not in right format", K(addr_buf), K(ret));

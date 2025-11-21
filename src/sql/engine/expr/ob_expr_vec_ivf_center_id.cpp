@@ -81,7 +81,7 @@ int ObExprVecIVFCenterID::calc_center_id(
   int ret = OB_SUCCESS;
   if (expr.arg_cnt_ == 1) {
     expr_datum.set_null();
-    LOG_DEBUG("[vec index debug]succeed to genearte empty center id", KP(&expr), K(expr), K(expr_datum), K(eval_ctx));
+
   } else if (expr.arg_cnt_ == 2) {
     int64_t buf_len = OB_DOC_ID_COLUMN_BYTE_LENGTH;
     char *buf = expr.get_str_res_mem(eval_ctx, buf_len);

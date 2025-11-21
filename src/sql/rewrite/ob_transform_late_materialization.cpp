@@ -63,7 +63,7 @@ int ObTransformLateMaterialization::transform_one_stmt(ObIArray<ObParentDMLStmt>
   } else if (trans_happened && OB_FAIL(add_transform_hint(*stmt, &info))) {
     LOG_WARN("failed to add transform hint", K(ret));
   } else {
-    LOG_TRACE("succeed to do late materialization", K(trans_happened));
+
   }
   OPT_TRACE_END_SECTION;
   return ret;
@@ -253,7 +253,7 @@ int ObTransformLateMaterialization::gen_trans_info_for_row_store(const ObSelectS
     if (OB_SUCC(ret)) {
       if (info.candi_indexs_.empty()) {
         OPT_TRACE("candidate index is empty");
-        LOG_TRACE("there is no candidate index to late materialize");
+
       } else if (OB_FAIL(info.project_col_in_view_.assign(key_col_ids))) {
         LOG_WARN("failed to assign predicate col in view", K(ret));
       } else if (OB_FAIL(append_array_no_dup(info.project_col_in_view_, orderby_col_ids))) {
@@ -573,7 +573,7 @@ int ObTransformLateMaterialization::inner_accept_transform(ObIArray<ObParentDMLS
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("context is null", K(ret), K(ctx_), K(stmt));
   } else if (ctx_->eval_cost_) {
-    LOG_TRACE("not accept transform because already in one accepct transform");
+
   } else {
     if (OB_SUCC(ret)) {
       if (OB_FAIL(try_trans_helper.fill_helper(stmt->get_query_ctx()))) {
@@ -582,7 +582,7 @@ int ObTransformLateMaterialization::inner_accept_transform(ObIArray<ObParentDMLS
         LOG_WARN("perform late materialization failed", K(ret));
       } else if (force_accept && stmt->get_stmt_hint().query_hint_->has_outline_data()) {
         trans_happened = true;
-        LOG_TRACE("force accept to use late materialization");
+
       } else if (OB_FAIL(evaluate_stmt_cost(parent_stmts, trans_stmt, true, trans_stmt_cost,
                                             is_expected, check_ctx))) {
         LOG_WARN("failed to evaluate cost for the transformed stmt", K(ret));
@@ -619,7 +619,7 @@ int ObTransformLateMaterialization::inner_accept_transform(ObIArray<ObParentDMLS
     LOG_WARN("failed to adjust transformed stmt", K(ret));
   } else if (force_accept) {
     OPT_TRACE("hint or rule force cost based transform apply.");
-    LOG_TRACE("succeed force accept transform because hint/rule");
+
     stmt = trans_stmt;
     reset_stmt_cost();
   } else {
@@ -708,7 +708,7 @@ int ObTransformLateMaterialization::generate_late_materialization_stmt(
                                                         *select_stmt, *view_stmt))) {
     LOG_WARN("generate late materialization hint failed", K(ret));
   } else {
-    LOG_TRACE("got late materialization info", K(info));
+
   }
   return ret;
 }
@@ -1191,7 +1191,7 @@ int ObTransformLateMaterialization::check_transform_plan_expected(ObLogicalOpera
     if (OB_SUCC(ret) && log_op_def::LOG_JOIN == top->get_type()) {
       ObLogJoin *join_op = static_cast<ObLogJoin*>(top);
       if (NESTED_LOOP_JOIN != join_op->get_join_algo()) {
-        LOG_TRACE("not nlj, reject transform", K(join_op->get_join_algo()));
+
       } else if (OB_ISNULL(full_table_scan = join_op->get_child(ObLogicalOperator::second_child))) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("operator is null", K(ret), KP(full_table_scan));
@@ -1221,21 +1221,21 @@ int ObTransformLateMaterialization::check_transform_plan_expected(ObLogicalOpera
       if (OB_FAIL(ret)) {
       } else if (log_op_def::LOG_TABLE_SCAN != join_left_branch->get_type()) {
         is_expected = false;
-        LOG_TRACE("not table scan, reject transform");
+
       } else if (FALSE_IT(index_scan = static_cast<ObLogTableScan *>(join_left_branch))) {
       } else if (!ctx.check_column_store_) {
         // row store table
         if (!index_scan->is_index_scan()) {
           is_expected = false;
-          LOG_TRACE("not index scan, reject transform", K(index_scan->is_index_scan()));
+
         } else if (NULL == sort_op &&
                    ObOptimizerUtil::find_item(ctx.check_sort_indexs_, index_scan->get_index_table_id())) {
           is_expected = false;
-          LOG_TRACE("check sort op, reject transform");
+
         } else if (index_scan->get_index_back()) {
           if (ObOptimizerUtil::find_item(ctx.late_material_indexs_, index_scan->get_index_table_id())) {
             is_expected = false;
-            LOG_TRACE("index back, reject transform");
+
           } else {
             // inside evaluate_cost, the index back tag is inaccurate. Then do double check here
             ObSEArray<ObRawExpr*, 4> temp_exprs;
@@ -1257,7 +1257,7 @@ int ObTransformLateMaterialization::check_transform_plan_expected(ObLogicalOpera
               is_expected = true;
             } else {
               is_expected = false;
-              LOG_TRACE("index back, reject transform");
+
             }
           }
         }
@@ -1269,17 +1269,17 @@ int ObTransformLateMaterialization::check_transform_plan_expected(ObLogicalOpera
           } else if (!is_get && index_scan->get_range_conditions().empty()) {
             // if there is no range, then there is no need to late material
             is_expected = false;
-            LOG_TRACE("there is no range", K(ret));
+
           }
         }
       } else {
         // column store table
         if (!index_scan->use_column_store()) {
           is_expected = false;
-          LOG_TRACE("not use column store, reject transform");
+
         } else if (NULL == sort_op) {
           is_expected = false;
-          LOG_TRACE("check sort op, reject transform");
+
         }
       }
     }

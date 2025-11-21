@@ -176,7 +176,7 @@ int calc_trunc_expr_datetime(const ObExpr &expr, ObEvalCtx &ctx, ObDatum &res_da
                                  fmt_str, single_fmt_ctx->fmt_id_))) {
               LOG_WARN("fail to get format id by format string", K(ret));
             }
-            LOG_DEBUG("new single format ctx", K(ret), KPC(single_fmt_ctx));
+
           }
           OZ(ObExprTRDateFormat::trunc_new_obtime_by_fmt_id(ob_time, single_fmt_ctx->fmt_id_,
                                                             ObMySQLDateTimeType == res_type));

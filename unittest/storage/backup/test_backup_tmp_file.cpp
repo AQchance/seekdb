@@ -224,7 +224,7 @@ TEST_F(TestBackupTmpFile, test_read_write_meta_index)
     EXPECT_EQ(OB_SUCCESS, put(write_meta_index_list, node));
     EXPECT_EQ(OB_SUCCESS, get(node, read_meta_index_list));
     EXPECT_EQ(true, cmp(write_meta_index_list, read_meta_index_list));
-    LOG_INFO("read and write meta index", K(i));
+
   }
 }
 
@@ -244,7 +244,7 @@ TEST_F(TestBackupTmpFile, test_read_write_macro_index)
     EXPECT_EQ(OB_SUCCESS, put(write_macro_index_list, node));
     EXPECT_EQ(OB_SUCCESS, get(node, read_macro_index_list));
     EXPECT_EQ(true, cmp(write_macro_index_list, read_macro_index_list));
-    LOG_INFO("read and write macro index", K(i));
+
   }
 }
 

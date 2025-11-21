@@ -434,7 +434,7 @@ void TestIndexBlockAggregator::validate_sum_agg_row(const ObSkipIndexAggResult &
         }
         default: {
           int ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(WARN, "unexpect type", K(obj_tc));
+
           break;
         }
       }
@@ -1097,7 +1097,7 @@ TEST_F(TestIndexBlockAggregator, test_loose_min_max_data_desc)
   for (int64_t i = 0; i < major_agg_meta_array.count(); ++i) {
     const ObSkipIndexColMeta &agg_meta = major_agg_meta_array.at(i);
     const int64_t schema_column_idx = agg_meta.col_idx_ >= rowkey_cnt ? (agg_meta.col_idx_ - 2) : agg_meta.col_idx_;
-    LOG_INFO("display major agg meta", K(agg_meta));
+
     // check major agg meta
     if ((ObSkipIndexColType::SK_IDX_MIN == agg_meta.col_type_) || (ObSkipIndexColType::SK_IDX_MAX == agg_meta.col_type_)) {
       ASSERT_TRUE((0 == schema_column_idx % 2) || (0 == schema_column_idx % 4));
@@ -1113,7 +1113,7 @@ TEST_F(TestIndexBlockAggregator, test_loose_min_max_data_desc)
     const ObSkipIndexColMeta &agg_meta = minor_agg_meta_array.at(i);
     const int64_t col_idx = agg_meta.col_idx_;
     const int64_t schema_column_idx = agg_meta.col_idx_ > rowkey_cnt ? (col_idx - 2) : col_idx;
-    LOG_INFO("display minor agg meta", K(agg_meta));
+
     ASSERT_TRUE((ObSkipIndexColType::SK_IDX_MIN == agg_meta.col_type_) || (ObSkipIndexColType::SK_IDX_MAX == agg_meta.col_type_));
     ASSERT_TRUE(0 == schema_column_idx % 2);
   }

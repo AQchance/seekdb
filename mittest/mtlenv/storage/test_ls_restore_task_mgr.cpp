@@ -136,7 +136,7 @@ protected:
 // test the base function of ObLSRestoreTaskMgr
 TEST_F(TestRestoreTaskMgr, taskMgr)
 {
-  LOG_INFO("TestRestoreTaskMgr::taskMgr begin");
+
   int64_t max_tablet_num = 2048;
   ObArray<ObTabletID> wait_tablet_ids, schedule_tablet_ids;
   int i = 1;
@@ -203,7 +203,7 @@ TEST_F(TestRestoreTaskMgr, taskMgr)
   ASSERT_EQ(1024, task_mgr_.wait_tablet_set_.size());
   ASSERT_EQ(1024, task_mgr_.schedule_tablet_set_.size());
   ASSERT_EQ(0, task_mgr_.tablet_map_.size());
-  LOG_INFO("TestRestoreTaskMgr::taskMgr finish");
+
 }
 
 
@@ -262,13 +262,13 @@ private:
 // test switch state
 TEST_F(TestLSRestoreHandler, switch_state)
 {
-  LOG_INFO("TestLSRestoreHandler::switch_state begin");
+
   create_ls();
   ObLS *ls = nullptr;
   get_ls(ls);
   ObLSRestoreHandler *handler = ls->get_ls_restore_handler();
   const int64_t rebuild_seq = ls->get_rebuild_seq();
-  LOG_INFO("try to switch state");
+
   EXPECT_EQ(true, nullptr == handler->state_handler_);
   EXPECT_EQ(OB_SUCCESS, handler->update_state_handle_());
   EXPECT_EQ(true, nullptr != handler->state_handler_);
@@ -312,7 +312,7 @@ TEST_F(TestLSRestoreHandler, switch_state)
 
   ls->set_restore_status(ObLSRestoreStatus(ObLSRestoreStatus::Status::RESTORE_START), rebuild_seq);
   ls->disable_replay();
-  LOG_INFO("TestLSRestoreHandler::switch_state finish");
+
 }
 }
 
@@ -350,7 +350,7 @@ namespace unittest
 // ls not created and sys ls has restore finished
 TEST_F(TestLSRestoreHandler, restore_start_1)
 {
-  LOG_INFO("TestLSRestoreHandler::restore_start_1 begin");
+
   ls_create = false;
   restore_finished = true;
   ObLS *ls = nullptr;
@@ -366,12 +366,12 @@ TEST_F(TestLSRestoreHandler, restore_start_1)
   EXPECT_EQ(ObLSRestoreStatus::Status::NONE, status);
   ls->set_restore_status(ObLSRestoreStatus(ObLSRestoreStatus::Status::RESTORE_START), rebuild_seq);
   ls->disable_replay();
-  LOG_INFO("TestLSRestoreHandler::restore_start_1 finish");
+
 }
 // ls created, and ls meta not exist
 TEST_F(TestLSRestoreHandler, restore_start_2)
 {
-  LOG_INFO("TestLSRestoreHandler::restore_start_2 begin");
+
   ls_create = true;
   check_ls_meta_exist_ret = false;
   ObLS *ls = nullptr;
@@ -386,12 +386,12 @@ TEST_F(TestLSRestoreHandler, restore_start_2)
   EXPECT_EQ(ObLSRestoreStatus::Status::QUICK_RESTORE, status);
   ls->set_restore_status(ObLSRestoreStatus(ObLSRestoreStatus::Status::RESTORE_START), rebuild_seq);
   ls->disable_replay();
-  LOG_INFO("TestLSRestoreHandler::restore_start_2 finish");
+
 }
 // ls created and ls meta exist
 TEST_F(TestLSRestoreHandler, restore_start_3)
 {
-  LOG_INFO("TestLSRestoreHandler::restore_start_3 begin");
+
   ls_create = true;
   check_ls_meta_exist_ret = true;
   ObLS *ls = nullptr;
@@ -403,7 +403,7 @@ TEST_F(TestLSRestoreHandler, restore_start_3)
   EXPECT_EQ(OB_SUCCESS, handler->state_handler_->do_restore());
   EXPECT_EQ(OB_SUCCESS, ls->get_restore_status(status));
   EXPECT_EQ(ObLSRestoreStatus::Status::RESTORE_SYS_TABLETS, status);
-  LOG_INFO("TestLSRestoreHandler::restore_start_3 finish");
+
 }
 }
 
@@ -474,7 +474,7 @@ namespace unittest
 // leader restore sys and follower restore sys
 TEST_F(TestLSRestoreHandler, restore_sys)
 {
-  LOG_INFO("TestLSRestoreHandler::restore_sys begin");
+
   ObLS *ls = nullptr;
   get_ls(ls);
   ls->get_ls_restore_handler()->state_handler_ = nullptr;
@@ -504,7 +504,7 @@ TEST_F(TestLSRestoreHandler, restore_sys)
   EXPECT_EQ(OB_SUCCESS, ls->get_ls_restore_handler()->state_handler_->do_restore());
   EXPECT_EQ(0, tablet_mgr.tablet_map_.size());
   EXPECT_EQ(ObLSRestoreStatus::Status::RESTORE_SYS_TABLETS, ls->ls_meta_.restore_status_);
-  LOG_INFO("TestLSRestoreHandler::restore_sys finish");
+
 }
 }
 
@@ -532,7 +532,7 @@ namespace unittest
 // just test in one case.
 TEST_F(TestLSRestoreHandler, restore_group_restore)
 {
-  LOG_INFO("TestLSRestoreHandler::restore_group_restore begin");
+
   ObLS *ls = nullptr;
   get_ls(ls);
   ls->get_ls_restore_handler()->state_handler_ = nullptr;
@@ -543,12 +543,12 @@ TEST_F(TestLSRestoreHandler, restore_group_restore)
   ob_role = ObRole::LEADER;
   EXPECT_EQ(OB_SUCCESS, ls->get_ls_restore_handler()->state_handler_->do_restore());
   EXPECT_EQ(ObLSRestoreStatus::Status::WAIT_RESTORE_TABLETS_META, ls->ls_meta_.restore_status_);
-  LOG_INFO("TestLSRestoreHandler::restore_group_restore finish");
+
 }
 
 TEST_F(TestLSRestoreHandler, wait_state)
 {
-  LOG_INFO("TestLSRestoreHandler::wait_state begin");
+
   ObLS *ls = nullptr;
   get_ls(ls);
   ob_role = ObRole::LEADER;
@@ -672,7 +672,7 @@ TEST_F(TestLSRestoreHandler, wait_state)
 
   ObLSService *ls_svr = MTL(ObLSService*);
   EXPECT_EQ(OB_SUCCESS, ls_svr->remove_ls(ObLSID(100)));
-  LOG_INFO("TestLSRestoreHandler::wait_state finish");
+
 }
 
 }

@@ -171,7 +171,7 @@ int ObAllVirtualTabletSSTableMacroInfo::get_next_macro_info(MacroInfo &info)
         macro_iter_ = nullptr;
         if (OB_FAIL(curr_sstable_meta_handle_.get_sstable_meta().get_macro_info().get_other_block_iter(
             other_blk_iter_))) {
-          STORAGE_LOG(WARN, "fail get other block iterator", K(ret), KPC(curr_sstable_));
+
         }
       }
     } else if (OB_FAIL(get_macro_info(macro_desc, info))) {
@@ -202,7 +202,7 @@ int ObAllVirtualTabletSSTableMacroInfo::get_macro_info(
       reinterpret_cast<char*>(allocator_->alloc(OB_STORAGE_OBJECT_MGR.get_macro_block_size())))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     int64_t io_size = OB_STORAGE_OBJECT_MGR.get_macro_block_size();
-    STORAGE_LOG(WARN, "failed to alloc macro read info buffer", K(ret), K(io_size));
+
   } else {
     macro_read_info.buf_ = io_buf_;
     if (OB_UNLIKELY(!macro_id.is_valid())) {
@@ -217,14 +217,14 @@ int ObAllVirtualTabletSSTableMacroInfo::get_macro_info(
       const int64_t size = macro_handle.get_data_size();
       int64_t pos = 0;
       if (OB_FAIL(common_header.deserialize(buf, size, pos))) {
-        STORAGE_LOG(ERROR, "fail to deserialize common header", K(ret), KP(buf), K(size), K(pos));
+
       } else if (OB_FAIL(common_header.check_integrity())) {
-        STORAGE_LOG(WARN, "invalid common header", K(ret), K(common_header));
+
       } else if (OB_FAIL(macro_header.deserialize(buf, size, pos))) {
-        STORAGE_LOG(ERROR, "fail to deserialize macro header", K(ret), KP(buf), K(size), K(pos));
+
       } else if (OB_UNLIKELY(!macro_header.is_valid())) {
         ret = OB_INVALID_DATA;
-        STORAGE_LOG(WARN, "invalid macro header", K(ret), K(macro_header));
+
       } else {
         info.data_seq_ = macro_header.fixed_header_.data_seq_;
         info.macro_logic_version_ = macro_header.fixed_header_.logical_version_;

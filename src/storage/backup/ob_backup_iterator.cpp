@@ -148,7 +148,7 @@ int ObIBackupIndexIterator::get_file_id_list_(const bool need_read_inner_table, 
         }
       }
     }
-    LOG_INFO("get file id list", K(backup_path), K(need_read_inner_table), K(file_id_list));
+
   }
   return ret;
 }
@@ -173,7 +173,7 @@ int ObIBackupIndexIterator::get_last_file_id_from_inner_table_(int64_t &last_fil
     LOG_WARN("failed to get backup ls task info", K(ret));
   } else {
     last_file_id = ls_task_info.max_file_id_;
-    LOG_INFO("get last file id from inner table", K(ls_task_info), K(last_file_id));
+
   }
   return ret;
 }
@@ -227,7 +227,7 @@ int ObIBackupIndexIterator::pread_file_(const common::ObString &backup_path,
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("path is invalid", K(ret), K(backup_path));
   } else if (OB_UNLIKELY(read_size <= 0)) {
-    LOG_INFO("read data len is zero", K(backup_path));
+
   } else if (OB_FAIL(util.read_part_file(backup_path,
                                          storage_info,
                                          buf,
@@ -421,7 +421,7 @@ int ObIBackupIndexIterator::extract_backup_file_id_(
     } else {
       file_id = tmp_file_id;
       match = true;
-      LOG_INFO("extract backup fie id", K(file_name), K(prefix), K(tmp_file_id), K(suffix_ptr), K(suffix_length));
+
     }
   }
   return ret;
@@ -522,7 +522,7 @@ int ObBackupMacroBlockIndexIterator::get_cur_index(ObBackupMacroRangeIndex &rang
   } else if (OB_FAIL(inner_get_next_macro_range_index_(range_index))) {
     LOG_WARN("failed to inner get next macro range index", K(ret));
   } else {
-    LOG_INFO("inner get next macro range index", K_(backup_data_type), K(range_index));
+
   }
   return ret;
 }
@@ -538,7 +538,7 @@ int ObBackupMacroBlockIndexIterator::next()
     LOG_WARN("file id list should not be empty", K(ret));
   } else if (!need_fetch_new_()) {
     cur_idx_++;
-    LOG_INFO("no need fetch new", K_(cur_idx), K_(cur_file_id), K_(file_id_list));
+
   } else {
     cur_index_list_.reset();
     if (OB_FAIL(do_fetch_new_())) {
@@ -572,7 +572,7 @@ int ObBackupMacroBlockIndexIterator::do_fetch_new_()
     } else if (OB_FAIL(inner_do_fetch_new_(cur_file_id_))) {
       LOG_WARN("failed to do fetch new", K(ret), K(cur_file_id_));
     } else {
-      LOG_INFO("inner do fetch new", K_(cur_file_id), K_(cur_index_list), K_(file_id_list));
+
     }
   }
   return ret;
@@ -598,7 +598,7 @@ int ObBackupMacroBlockIndexIterator::inner_do_fetch_new_(const int64_t file_id)
   } else if (OB_FAIL(block_desc_list_.assign(block_desc_list))) {
     LOG_WARN("failed to assign array", K(ret), K(block_desc_list_));
   } else {
-    LOG_INFO("inner do fetch new", K(file_id));
+
   }
   return ret;
 }
@@ -634,7 +634,7 @@ int ObBackupMacroBlockIndexIterator::fetch_macro_index_list_(const int64_t file_
   } else if (OB_FAIL(current_trailer.check_valid())) {
     LOG_WARN("failed to check trailer", K(ret), K(current_trailer));
   } else if (0 == current_trailer.macro_index_length_) {
-    LOG_INFO("current file has no macro block data", K(ret), K(file_id));
+
   } else if (OB_FAIL(read_backup_index_block_(backup_path,
                  backup_dest_.get_storage_info(),
                  mod_,
@@ -647,7 +647,7 @@ int ObBackupMacroBlockIndexIterator::fetch_macro_index_list_(const int64_t file_
                  current_trailer.macro_index_offset_, buffer_reader, cur_list, block_desc_list))) {
     LOG_WARN("failed to parse from block", K(ret), K(current_trailer), K(buffer_reader));
   } else {
-    LOG_INFO("parse from macro index block", K(file_id), K(block_desc_list), K(cur_list.count()));
+
   }
   return ret;
 }
@@ -803,7 +803,7 @@ int ObBackupMacroRangeIndexIterator::get_cur_index(ObBackupMacroRangeIndex &rang
     LOG_WARN("iterator is end", K(ret), K_(file_length), K_(meet_end), KPC(this));
   } else {
     range_index = cur_index_list_.at(cur_idx_);
-    LOG_INFO("get currrent macro range index", K(range_index));
+
   }
   return ret;
 }
@@ -963,7 +963,7 @@ int ObBackupMacroRangeIndexIterator::get_macro_range_index_list_(
       LOG_WARN("common header is not valid", K(ret), K_(read_offset), K(common_header));
     } else if (BACKUP_BLOCK_MARCO_RANGE_INDEX_INDEX == common_header->data_type_) {
       meet_end_ = true;
-      LOG_INFO("macro range index meet end", K_(file_length), K_(read_offset), KPC(common_header));
+
     } else if (common_header->data_length_ + common_header->align_length_ > buffer_reader.remain()) {
       ret = OB_BUF_NOT_ENOUGH;
       LOG_WARN("backup data has incomplete data, skip it", K(ret), K(*common_header), K(buffer_reader.remain()));
@@ -979,7 +979,7 @@ int ObBackupMacroRangeIndexIterator::get_macro_range_index_list_(
         LOG_WARN("failed to read serialize", K(ret), K(buffer_reader));
       } else if (multi_level_header.index_level_ > 0) {
         meet_end_ = true;
-        LOG_INFO("macro range index meet end", K_(file_length), K_(read_offset), K(multi_level_header));
+
       } else {
         data_size = common_header->data_length_ - (buffer_reader.pos() - pos);
         int64_t end_pos = buffer_reader.pos() + data_size;
@@ -1009,7 +1009,7 @@ int ObBackupMacroRangeIndexIterator::get_current_read_size_(int64_t &read_size)
     ret = OB_BUF_NOT_ENOUGH;
     LOG_WARN("not enough read size", K(file_length_), K(read_offset_));
   } else {
-    LOG_INFO("get current read size", K_(file_length), K_(read_offset));
+
   }
   return ret;
 }
@@ -1095,7 +1095,7 @@ int ObBackupMetaIndexIterator::next()
     LOG_WARN("file id list should not be empty", K(ret));
   } else if (!need_fetch_new_()) {
     cur_idx_++;
-    LOG_INFO("no need fetch new", K(cur_idx_), K_(cur_file_id), K_(file_id_list));
+
   } else {
     cur_index_list_.reset();
     if (OB_FAIL(do_fetch_new_())) {
@@ -1189,7 +1189,7 @@ int ObBackupMetaIndexIterator::inner_do_fetch_new_(const int64_t file_id)
   } else if (OB_FAIL(block_desc_list_.assign(block_desc_list))) {
     LOG_WARN("failed to assign array", K(ret), K(block_desc_list));
   } else {
-    LOG_INFO("inner do fetch new", K(file_id), K(block_desc_list));
+
   }
   return ret;
 }
@@ -1224,7 +1224,7 @@ int ObBackupMetaIndexIterator::fetch_meta_index_list_(const int64_t file_id,
   } else if (OB_FAIL(current_trailer.check_valid())) {
     LOG_WARN("failed to check trailer", K(ret), K(current_trailer));
   } else if (0 == current_trailer.meta_index_length_) {
-    LOG_INFO("current file has no meta data", K(ret), K(file_id));
+
   } else if (OB_FAIL(read_backup_index_block_(backup_path,
                  backup_dest_.get_storage_info(),
                  mod_,
@@ -1237,7 +1237,7 @@ int ObBackupMetaIndexIterator::fetch_meta_index_list_(const int64_t file_id,
                  current_trailer.meta_index_offset_, buffer_reader, cur_list, block_desc_list))) {
     LOG_WARN("failed to parse from block", K(ret), K(buffer_reader));
   } else {
-    LOG_INFO("parse from meta index blocks", K(file_id), K(block_desc_list), K(cur_list.count()));
+
   }
   return ret;
 }
@@ -1342,7 +1342,7 @@ int ObBackupUnorderedMacroBlockIndexIterator::get_cur_index(ObBackupMacroBlockIn
     LOG_WARN("iterator is end", K(ret), KPC(this));
   } else {
     macro_block_index = cur_index_list_.at(cur_idx_);
-    LOG_INFO("inner get next macro block index", K_(backup_data_type), K(macro_block_index));
+
   }
   return ret;
 }
@@ -1358,7 +1358,7 @@ int ObBackupUnorderedMacroBlockIndexIterator::next()
     LOG_WARN("file id list should not be empty", K(ret));
   } else if (!need_fetch_new_()) {
     cur_idx_++;
-    LOG_INFO("no need fetch new", K_(cur_idx), K_(cur_file_id), K_(file_id_list));
+
   } else {
     cur_index_list_.reset();
     if (OB_FAIL(do_fetch_new_())) {
@@ -1393,7 +1393,7 @@ int ObBackupUnorderedMacroBlockIndexIterator::do_fetch_new_()
     } else if (OB_FAIL(inner_do_fetch_new_(cur_file_id_))) {
       LOG_WARN("failed to do fetch new", K(ret), K(cur_file_id_));
     } else {
-      LOG_INFO("inner do fetch new", K_(cur_file_id), K_(cur_index_list), K_(file_id_list));
+
     }
   }
   return ret;
@@ -1415,7 +1415,7 @@ int ObBackupUnorderedMacroBlockIndexIterator::inner_do_fetch_new_(const int64_t 
   } else if (OB_FAIL(cur_index_list_.assign(index_list))) {
     LOG_WARN("failed to assign array", K(ret), K(index_list));
   } else {
-    LOG_INFO("inner do fetch new", K(file_id));
+
   }
   return ret;
 }
@@ -1451,7 +1451,7 @@ int ObBackupUnorderedMacroBlockIndexIterator::fetch_macro_index_list_(
   } else if (OB_FAIL(current_trailer.check_valid())) {
     LOG_WARN("failed to check trailer", K(ret), K(current_trailer));
   } else if (0 == current_trailer.macro_index_length_) {
-    LOG_INFO("current file has no macro block data", K(ret), K(file_id));
+
   } else if (OB_FAIL(read_backup_index_block_(backup_path,
                  backup_dest_.get_storage_info(),
                  mod_,
@@ -1463,7 +1463,7 @@ int ObBackupUnorderedMacroBlockIndexIterator::fetch_macro_index_list_(
   } else if (OB_FAIL(parse_from_index_blocks_(current_trailer.macro_index_offset_, buffer_reader, cur_list))) {
     LOG_WARN("failed to parse from block", K(ret), K(current_trailer), K(buffer_reader));
   } else {
-    LOG_INFO("parse from macro index block", K(file_id), K(cur_list.count()));
+
   }
   return ret;
 }
@@ -1741,7 +1741,7 @@ int ObBackupOrderedMacroBlockIndexIterator::get_macro_block_index_list_(
       LOG_WARN("common header is not valid", K(ret), K_(read_offset), K(common_header));
     } else if (BACKUP_BLOCK_MACRO_BLOCK_INDEX_INDEX == common_header->data_type_) {
       meet_end_ = true;
-      LOG_INFO("macro block index meet end", K_(file_length), K_(read_offset), KPC(common_header));
+
     } else if (common_header->data_zlength_ + common_header->align_length_ > buffer_reader.remain()) {
       ret = OB_BUF_NOT_ENOUGH;
       LOG_WARN("backup data has incomplete data, skip it", K(ret), K(*common_header), K(buffer_reader.remain()));
@@ -1756,7 +1756,7 @@ int ObBackupOrderedMacroBlockIndexIterator::get_macro_block_index_list_(
         LOG_WARN("failed to read serialize", K(ret), K(buffer_reader));
       } else if (multi_level_header.index_level_ > 0) {
         meet_end_ = true;
-        LOG_INFO("macro block index meet end", K_(file_length), K_(read_offset), K(multi_level_header));
+
       } else {
         const int64_t data_zlength = common_header->data_zlength_ - (buffer_reader.pos() - pos);
         const int64_t original_size = common_header->data_length_ - (buffer_reader.pos() - pos);
@@ -1783,7 +1783,7 @@ int ObBackupOrderedMacroBlockIndexIterator::get_current_read_size_(int64_t &read
     ret = OB_BUF_NOT_ENOUGH;
     LOG_WARN("not enough read size", K(file_length_), K(read_offset_));
   } else {
-    LOG_INFO("get current read size", K_(file_length), K_(read_offset));
+
   }
   return ret;
 }
@@ -2054,7 +2054,7 @@ int ObBackupTenantOrderedMetaIndexIterator::get_meta_index_list_(
       LOG_WARN("common header is not valid", K(ret), K_(read_offset), K(common_header));
     } else if (BACKUP_BLOCK_META_INDEX_INDEX == common_header->data_type_) {
       meet_end_ = true;
-      LOG_INFO("meta block index meet end", K_(file_length), K_(read_offset), KPC(common_header));
+
     } else if (common_header->data_zlength_ + common_header->align_length_ > buffer_reader.remain()) {
       ret = OB_BUF_NOT_ENOUGH;
       LOG_WARN("backup data has incomplete data, skip it", K(ret), K(*common_header), K(buffer_reader.remain()));
@@ -2069,7 +2069,7 @@ int ObBackupTenantOrderedMetaIndexIterator::get_meta_index_list_(
         LOG_WARN("failed to read serialize", K(ret), K(buffer_reader));
       } else if (multi_level_header.index_level_ > 0) { // leaf node's index level is 0
         meet_end_ = true;
-        LOG_INFO("meta block index meet end", K_(file_length), K_(read_offset), K(multi_level_header));
+
       } else {
         const int64_t data_zlength = common_header->data_zlength_ - (buffer_reader.pos() - pos);
         const int64_t original_size = common_header->data_length_ - (buffer_reader.pos() - pos);
@@ -2096,7 +2096,7 @@ int ObBackupTenantOrderedMetaIndexIterator::get_current_read_size_(int64_t &read
     ret = OB_BUF_NOT_ENOUGH;
     LOG_WARN("not enough read size", K(file_length_), K(read_offset_));
   } else {
-    LOG_INFO("get current read size", K_(file_length), K_(read_offset));
+
   }
   return ret;
 }
@@ -2151,7 +2151,7 @@ int ObExternBackupTabletMetaIterator::init(const share::ObBackupDest &backup_ten
   } else {
     idx_ = 0;
     is_inited_ = true;
-    LOG_INFO("init extern backup tablet meta iterator", K(backup_tenant_dest), K(backup_set_desc), K(ls_id));
+
   }
   return ret;
 }
@@ -2169,7 +2169,7 @@ int ObExternBackupTabletMetaIterator::next()
     LOG_WARN("failed to inner do next", K(ret));
   } else {
     idx_++;
-    LOG_INFO("get next tablet meta", K_(idx), K_(cur_param));
+
   }
   return ret;
 }
@@ -2210,7 +2210,7 @@ int ObExternBackupTabletMetaIterator::get_cur_tablet_id(common::ObTabletID &tabl
     LOG_WARN("cur param is invalid", K(ret), KPC(this), K(cur_param_));
   } else {
     tablet_id = cur_param_.tablet_id_;
-    LOG_INFO("get cur tablet id 1", K(tablet_id));
+
   }
   return ret;
 }
@@ -2228,7 +2228,7 @@ int ObExternBackupTabletMetaIterator::inner_do_next_()
       }
       LOG_WARN("failed to get next", K(ret));
     } else {
-      LOG_INFO("backup tablet meta index do next", K_(idx));
+
       idx_++;
       break;
     }
@@ -2329,7 +2329,7 @@ int ObBackupTabletMetaIndexIterator::get_cur_tablet_id(common::ObTabletID &table
     LOG_WARN("cur param is invalid", K(ret), K(cur_meta_index_));
   } else {
     tablet_id = cur_meta_index_.meta_key_.tablet_id_;
-    LOG_INFO("get cur tablet id 2", K(tablet_id), K_(ls_id));
+
   }
   return ret;
 }
@@ -2342,16 +2342,16 @@ int ObBackupTabletMetaIndexIterator::inner_do_next_()
       LOG_WARN("failed to do next", K(ret));
     } else if (iterator_.is_iter_end()) {
       is_iter_end_ = true;
-      LOG_INFO("iterator is end", K_(iterator));
+
       break;
     } else if (OB_FAIL(iterator_.get_cur_index(cur_meta_index_))) {
       LOG_WARN("failed to get cur index", K(ret));
     } else {
       if (BACKUP_TABLET_META != cur_meta_index_.meta_key_.meta_type_) {
-        LOG_INFO("skip backup tablet meta index do next", K_(idx), K_(ls_id), K_(cur_meta_index));
+
         continue;
       } else {
-        LOG_INFO("backup tablet meta index do next", K_(idx), K_(cur_meta_index));
+
         idx_++;
         break;
       }

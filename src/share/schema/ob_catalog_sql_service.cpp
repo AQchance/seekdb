@@ -111,7 +111,7 @@ int ObCatalogSqlService::add_schema(ObISQLClient &sql_client,
        OB_SUCC(ret) && i < ARRAYSIZEOF(tname);
        ++i) {
     if (OB_FAIL(sql.assign_fmt("INSERT INTO %s(", tname[i]))) {
-      STORAGE_LOG(WARN, "append table name failed", K(ret));
+
     } else if (OB_FAIL(gen_sql(sql, values, schema))) {
       LOG_WARN("fail to gen sql", K(ret));
     } else if (i == THE_HISTORY_TABLE_IDX) {
@@ -156,7 +156,7 @@ int ObCatalogSqlService::alter_schema(ObISQLClient &sql_client,
     if (OB_FAIL(sql.assign_fmt("%s INTO %s(",
                                (i != THE_HISTORY_TABLE_IDX) ? "REPLACE" : "INSERT",
                                tname[i]))) {
-      STORAGE_LOG(WARN, "append table name failed", K(ret));
+
     } else if (OB_FAIL(gen_sql(sql, values, schema))) {
       LOG_WARN("fail to gen sql", K(ret));
     } else if (i == THE_HISTORY_TABLE_IDX) {
@@ -210,7 +210,7 @@ int ObCatalogSqlService::drop_schema(ObISQLClient &sql_client,
   }
   for (int64_t i = THE_HISTORY_TABLE_IDX; OB_SUCC(ret) && i < ARRAYSIZEOF(tname); ++i) {
     if (OB_FAIL(sql.assign_fmt("INSERT INTO %s(", tname[THE_HISTORY_TABLE_IDX]))) {
-      STORAGE_LOG(WARN, "append table name failed", K(ret));
+
     } else if (OB_FAIL(gen_sql(sql, values, schema))) {
       LOG_WARN("fail to gen sql", K(ret));
     } else if (i == THE_HISTORY_TABLE_IDX) {

@@ -141,7 +141,7 @@ int ObTabletReplayExecutor::execute(const share::SCN &scn, const share::ObLSID &
               || GCONF.errsim_test_tablet_id == tablet->get_tablet_id().id()) {
             ret = EN_REPLAY_FATAL_ERROR ? : OB_SUCCESS;
             if (OB_FAIL(ret)) {
-              STORAGE_LOG(ERROR, "fake EN_REPLAY_FATAL_ERROR", K(ret));
+
             }
           }       
         }

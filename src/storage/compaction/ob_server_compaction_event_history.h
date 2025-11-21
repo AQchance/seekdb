@@ -168,10 +168,10 @@ PUSH_COMPACTION_EVENT(MTL_ID(), MAJOR_MERGE, compaction_scn, event, role, timest
     const int64_t buf_size = ::oceanbase::common::OB_DIAGNOSE_INFO_LENGTH;     \
     SIMPLE_TO_STRING_##n if (OB_FAIL(MTL(ObServerCompactionEventHistory *)     \
                                          ->add_event(event_item))) {           \
-      STORAGE_LOG(WARN, "failed to add event", K(ret), K(event_item));         \
+         \
     }                                                                          \
     else {                                                                     \
-      STORAGE_LOG(DEBUG, "success to add event", K(ret), K(event_item));       \
+       \
     }                                                                          \
     return ret;                                                                \
   }

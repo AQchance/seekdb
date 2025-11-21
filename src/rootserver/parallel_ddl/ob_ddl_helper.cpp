@@ -611,7 +611,7 @@ int ObDDLHelper::lock_objects_in_map_(
           lock_arg.lock_mode_ = it->get_lock_mode();
           lock_arg.op_type_ = ObTableLockOpType::IN_TRANS_COMMON_LOCK;
           lock_arg.timeout_us_ = timeout;
-          LOG_INFO("try lock object", KR(ret), K(lock_arg));
+
           if (OB_FAIL(ObInnerConnectionLockUtil::lock_obj(tenant_id_, lock_arg, conn))) {
             LOG_WARN("lock obj failed", KR(ret), K_(tenant_id), K(lock_arg));
           }
@@ -638,7 +638,7 @@ int ObDDLHelper::add_lock_object_by_database_name_(
     if (OB_FAIL(add_lock_object_to_map_(lock_obj_id, lock_mode, lock_database_name_map_))) {
       LOG_WARN("fail to add lock object to map", KR(ret), K(lock_obj_id), K(lock_mode));
     }
-    LOG_INFO("add lock object by database name", KR(ret), K(database_name), K(lock_mode), K(lock_obj_id));
+
   }
   return ret;
 }
@@ -690,7 +690,7 @@ int ObDDLHelper::add_lock_object_by_id_(
   } else if (OB_FAIL(add_lock_object_to_map_(lock_obj_id, lock_mode, lock_object_id_map_))) {
     LOG_WARN("fail to add lock object to map", KR(ret), K(lock_obj_id), K(lock_mode));
   }
-  LOG_INFO("add lock object by id", KR(ret), K(lock_obj_id), K(schema_type), K(lock_mode));
+
   return ret;
 }
 

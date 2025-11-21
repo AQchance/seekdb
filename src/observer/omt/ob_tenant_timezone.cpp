@@ -43,7 +43,7 @@ int ObTenantTimezone::init()
   } else {
     is_inited_ = true;
   }
-  LOG_INFO("tenant timezone init", K(ret), K(tenant_id_), K(sizeof(ObTimeZoneInfoManager)));
+
   return ret;
 }
 

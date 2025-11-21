@@ -83,7 +83,7 @@ int ObMediumLoop::loop()
       LOG_WARN("ls is null", K(ret), K(ls));
     } else if (FALSE_IT(ls_id = ls->get_ls_id())) {
     } else if (OB_TMP_FAIL(loop_in_ls(ls_handle, func))) {
-      LOG_TRACE("failed to loop ls", KR(ret), KPC(ls), K(func));
+
       ls_tablet_iter_.skip_cur_ls(); // for any errno, skip cur ls
       ls_tablet_iter_.update_merge_finish(false);
       if (OB_SIZE_OVERFLOW == tmp_ret) {
@@ -96,12 +96,12 @@ int ObMediumLoop::loop()
       // loop tablet_meta table to update smaller report_scn because of migration
       tmp_ret = update_report_scn_as_ls_leader(*ls, func);
 #ifndef ERRSIM
-      LOG_INFO("try to update report scn as ls leader", K(tmp_ret), K(ls_id)); // low printing frequency
+ // low printing frequency
 #endif
     }
   } // while
   add_event_and_diagnose(func);
-  LOG_TRACE("finish schedule ls medium merge", K(tmp_ret), K(ret), K_(ls_tablet_iter), K(ls_id));
+
   return ret;
 }
 
@@ -187,7 +187,7 @@ void ObMediumLoop::add_event_and_diagnose(const ObScheduleTabletFunc &func)
   const int64_t merged_version = ObBasicMergeScheduler::get_merge_scheduler()->get_merged_version();
   if (ls_tablet_iter_.tenant_merge_finish() && merge_version_ > merged_version) {
     ObBasicMergeScheduler::get_merge_scheduler()->update_merged_version(merge_version_);
-    LOG_INFO("all tablet major merge finish", K(merged_version), K_(loop_cnt));
+
 
     DEL_SUSPECT_INFO(MEDIUM_MERGE, UNKNOW_LS_ID, UNKNOW_TABLET_ID, share::ObDiagnoseTabletType::TYPE_MEDIUM_MERGE);
     if (OB_TMP_FAIL(MTL(ObTenantCompactionProgressMgr *)->finish_progress(merge_version_))) {
@@ -261,7 +261,7 @@ int ObScheduleNewMediumLoop::loop()
     if (OB_FAIL(ret)) {
     } else if (!func.get_ls_status().is_leader_) {
       // not leader, can't schedule
-      LOG_TRACE("not ls leader, can't schedule medium", K(ret), K(ls_id), K(tablet_id), K(func));
+
     } else if (OB_FAIL(ls_handle.get_ls()->get_tablet_svr()->get_tablet(
                  tablet_id, tablet_handle, 0 /*timeout_us*/))) {
       LOG_WARN("get tablet failed", K(ret), K(ls_id), K(tablet_id));
@@ -270,7 +270,7 @@ int ObScheduleNewMediumLoop::loop()
     }
   } // end of for
   ret = OB_SUCCESS;
-  LOG_INFO("end of ObScheduleNewMediumLoop", KR(ret), K(func));
+
   return ret;
 }
 

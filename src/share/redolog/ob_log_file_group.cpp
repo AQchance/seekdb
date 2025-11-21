@@ -129,12 +129,12 @@ int ObLogFileGroup::get_file_id_range(int64_t &min_file_id, int64_t &max_file_id
         if (OB_INVALID_FILE_ID == min_file_id || OB_INVALID_FILE_ID == max_file_id) {
           ret = OB_ENTRY_NOT_EXIST;
           if (REACH_TIME_INTERVAL(10 * 1000 * 1000L)) {
-            LOG_INFO("log dir is empty", K(ret), K_(log_dir));
+
           }
         } else {
           update_min_file_id(min_file_id);
           update_max_file_id(max_file_id);
-          LOG_INFO("get min/max file id from IO", K_(log_dir), K(min_file_id), K(max_file_id), K(lbt()));
+
         }
       }
     }

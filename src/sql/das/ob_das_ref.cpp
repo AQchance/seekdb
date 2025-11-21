@@ -42,7 +42,7 @@ void DASRefCountContext::inc_concurrency_limit_with_signal()
   ObThreadCondGuard guard(cond_);
   if (__sync_add_and_fetch(&das_task_concurrency_limit_, 1) == max_das_task_concurrency_) {
     cond_.signal();
-    LOG_TRACE("inc currency with signal", K(get_current_concurrency()));
+
   }
 }
 
@@ -192,7 +192,7 @@ int ObDASRef::create_task_map()
         LOG_WARN("task is null", KR(ret), KP(task));
       } else if (task->is_write_buff_full() ||
           task->get_agg_task()->start_status_ != DAS_AGG_TASK_UNSTART) {
-        LOG_TRACE("this task is submitted or write_buffer is full", K(ret));
+
       } else {
         DasRefKey key(task->get_tablet_loc(), task->get_type());
         if (OB_FAIL(task_map_.set_refactored(key, task))) {
@@ -269,7 +269,7 @@ int ObDASRef::pick_del_task_to_first()
     }
   }
 #if !defined(NDEBUG)
-  LOG_DEBUG("print all das_task after sort");
+
   print_all_das_task();
 #endif
   return ret;
@@ -308,7 +308,7 @@ int ObDASRef::parallel_submit_agg_task(ObDasAggregatedTask *agg_task)
   } else if (OB_FAIL(MTL(ObDataAccessService *)->parallel_submit_das_task(*this, *agg_task))) {
     LOG_WARN("fail to execute parallel_das_task", K(ret));
   } else {
-    LOG_TRACE("succeed submit parallel task", K(ret), K(agg_task));
+
   }
   return ret;
 }
@@ -370,13 +370,13 @@ int ObDASRef::execute_all_task(DasAggregatedTaskList &agg_task_list)
           if (OB_FAIL(MTL(ObDataAccessService *)->execute_das_task(*this, *agg_task, async))) {
             LOG_WARN("failed to execute aggregated das task", K(ret), KPC(agg_task), K(async));
           } else {
-            LOG_DEBUG("successfully executing aggregated task", "server", agg_task->server_);
+
           }
         } else {
           if (OB_FAIL(parallel_submit_agg_task(agg_task))) {
             LOG_WARN("failed to execute aggregated das task", K(ret), KPC(agg_task));
           } else {
-            LOG_DEBUG("successfully parallel submit agg_task", KPC(agg_task));
+
           }
         }
       }
@@ -416,7 +416,7 @@ int ObDASRef::execute_all_task(DasAggregatedTaskList &agg_task_list)
         }
       } else {
         ++finished_cnt;
-        LOG_DEBUG("check finish agg_task print agg_list", K(finished_cnt), K(agg_task_list.get_size()), KPC(aggregated_task));
+
       }
     }
   }

@@ -361,29 +361,29 @@ int run_test() {
   ObSchemaGetterGuard *schema_guard = NULL;
   MockSchemaService *schema_service = NULL;
   if (OB_FAIL(restore_schema.init())) {
-    STORAGE_LOG(WARN, "fail to init schema service", K(ret));
+
   } else if (OB_FAIL(restore_schema.parse_from_file(schema_file, schema_guard))) {
-    STORAGE_LOG(WARN, "fail to parse schema from file", K(ret));
+
   } else if(OB_FAIL(FileDirectoryUtils::create_full_path(const_cast<char *>(config.get_perf_root_dir())))){
-    STORAGE_LOG(WARN, "fail to mkdir", K(config.get_perf_root_dir()));
+
     ret = OB_ERR_UNEXPECTED;
   } else if(OB_FAIL(FileDirectoryUtils::create_full_path(const_cast<char *>(config.get_slog_dir())))){
-    STORAGE_LOG(WARN, "fail to mkdir", K(config.get_slog_dir()));
+
     ret = OB_ERR_UNEXPECTED;
   } else if(OB_FAIL(FileDirectoryUtils::create_full_path(const_cast<char *>(config.get_sstable_meta_dir())))){
-    STORAGE_LOG(WARN, "fail to mkdir", K(config.get_sstable_meta_dir()));
+
     ret = OB_ERR_UNEXPECTED;
   } else if(OB_FAIL(FileDirectoryUtils::create_full_path(const_cast<char *>(config.get_sstable_data_dir())))){
-    STORAGE_LOG(WARN, "fail to mkdir", K(config.get_sstable_data_dir()));
+
     ret = OB_ERR_UNEXPECTED;
   } else if(OB_FAIL(FileDirectoryUtils::create_full_path(const_cast<char *>(config.get_perf_log_dir())))){
-    STORAGE_LOG(WARN, "fail to mkdir", K(config.get_perf_log_dir()));
+
     ret = OB_ERR_UNEXPECTED;
   } else {
     int n = snprintf(log_name, OB_MAX_FILE_NAME_LENGTH, "%s/storage_perf.log", config.get_perf_log_dir());
     if(n < 0 || n > OB_MAX_FILE_NAME_LENGTH) {
       ret = OB_BUF_NOT_ENOUGH;
-      STORAGE_LOG(WARN, "fail to create log name", K(config.get_perf_root_dir()), K(OB_MAX_FILE_NAME_LENGTH));
+
     } else {
       if (NULL == config.log_level_) {
         config.log_level_ = "ERROR";
@@ -401,22 +401,22 @@ int run_test() {
     obrpc::ObSrvRpcProxy rpc_proxy;
     if(!self.set_ip_addr("127.0.0.1", 8086)){
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "fail to set ipv4");
+
     } else if (OB_FAIL(ObDeviceManager::get_instance().init_devices_env())) {
-      STORAGE_LOG(WARN, "fail to init device manager", K(ret));
+
     } else if (OB_SUCCESS != (ret = ObTenantManager::get_instance().init(self, rpc_proxy,
                                       &req_transport, &ObServerConfig::get_instance()))){
-      STORAGE_LOG(WARN, "fail to init tenant manager", K(ret));
+
     } else if (OB_SUCCESS != (ret = ObTenantManager::get_instance().add_tenant(tenant_id))){
-      STORAGE_LOG(WARN, "fail to add tenant_id", K(ret), K(tenant_id));
+
     } else if (OB_SUCCESS != (ret =  ObTenantManager::get_instance().set_tenant_mem_limit(tenant_id,
         config.get_tenant_cache_size() * 1024L * 1024L/2,
         config.get_tenant_cache_size() * 1024L * 1024L))) {
-      STORAGE_LOG(WARN, "fail to set tenant memory", K(ret));
+
     } else  if(OB_FAIL(ObIOManager::get_instance().init(1L * 1024L * 1024L * 1024L))) {
-      STORAGE_LOG(WARN, "fail to init ObIOMananger", K(ret));
+
     } else if(OB_SUCCESS != (ret = ObKVGlobalCache::get_instance().init())){
-      STORAGE_LOG(WARN, "fail to init global kv cache", K(ret));
+
     } else {
       lib::set_memory_limit(10L * 1024L * 1024L * 1024L);//40GB
       lib::ob_set_reserved_memory(1024L * 1024L * 1024L);//1GB
@@ -426,18 +426,18 @@ int run_test() {
   if (OB_SUCC(ret)) {
     //multi write thread speed test
     if(!config.is_test_write()) {
-      STORAGE_LOG(WARN, "no thread, cannot start write bench");
+
     } else {
       const int thread_no = config.get_total_partition_num();//one partition one write thread
       MultiThreadWrite write(thread_no);
       if(OB_FAIL(write.init(schema_service, &restore_schema, config))){
-        STORAGE_LOG(WARN, "fail to init query", K(ret));
+
       } else {
         const int64_t begin = ObTimeUtility::current_time();
         int64_t pos = 0;
         char time_string_buf[max_time_string_length+1];
         if (OB_FAIL(ObTimeUtility::usec_format_to_str(begin, bianque_format, &time_string_buf[0], max_time_string_length, pos))) {
-          STORAGE_LOG(WARN, "failed to convert bianque format string", K(ret));
+
         } else {
           time_string_buf[pos] = '\0';
           _OB_LOG(ERROR, "write_begin_time: %s", time_string_buf);
@@ -445,11 +445,11 @@ int run_test() {
           write.wait();
           const int64_t end = ObTimeUtility::current_time();
           if (OB_FAIL(write.get_first_error())) {
-            STORAGE_LOG(WARN, "failed to run write test", K(ret));
+
           } else {
             pos = 0;
             if (OB_FAIL(ObTimeUtility::usec_format_to_str(end, bianque_format, &time_string_buf[0], max_time_string_length, pos))) {
-              STORAGE_LOG(WARN, "failed to convert bianque format string", K(ret));
+
             } else {
               time_string_buf[pos] = '\0';
               _OB_LOG(ERROR, "write_end_time: %s", time_string_buf);
@@ -469,14 +469,14 @@ int run_test() {
     const int partition_num = config.get_total_partition_num();
     const int thread_no = config.get_single_get_thread_count() * partition_num;
     if(thread_no <= 0) {
-      STORAGE_LOG(WARN, "no thread, cannot start single get bench");
+
     } else {
       MultiThreadSingleGet single_get(thread_no);
       if (NULL != u_schema) {
         single_get.set_update_schema(u_schema);
       }
       if(OB_FAIL(single_get.init(schema_service, &restore_schema, config))){
-        STORAGE_LOG(WARN, "fail to init query", K(ret));
+
       } else {
         single_get.assign_read_cols(read_cols);
         const int64_t begin = ObTimeUtility::current_time();
@@ -484,7 +484,7 @@ int run_test() {
         single_get.wait();
         const int64_t end = ObTimeUtility::current_time();
         if (OB_FAIL(single_get.get_first_error())) {
-          STORAGE_LOG(WARN, "failed to run single get test", K(ret));
+
         } else {
           const int64_t duration = end - begin;
           const int64_t total_get_row = thread_no * config.get_total_single_row_count();
@@ -500,14 +500,14 @@ int run_test() {
     const int partition_num = config.get_total_partition_num();
     int thread_no = config.get_multi_get_thread_count() * partition_num;
     if(thread_no <= 0) {
-      STORAGE_LOG(WARN, "no thread, cannot start multi get bench");
+
     } else {
       MultiThreadMultiGet multi_get(thread_no);
       if (NULL != u_schema) {
         multi_get.set_update_schema(u_schema);
       }
       if(OB_FAIL(multi_get.init(schema_service, &restore_schema, config))){
-        STORAGE_LOG(WARN, "fail to init query", K(ret));
+
       } else {
         multi_get.assign_read_cols(read_cols);
         const int64_t begin = ObTimeUtility::current_time();
@@ -515,7 +515,7 @@ int run_test() {
         multi_get.wait();
         const int64_t end = ObTimeUtility::current_time();
         if (OB_FAIL(multi_get.get_first_error())) {
-          STORAGE_LOG(WARN, "failed to run multi get test", K(ret));
+
         } else {
           const int64_t duration = end - begin;
           const int64_t total_get_row = thread_no * config.get_total_multi_row_count();
@@ -531,21 +531,21 @@ int run_test() {
     const int partition_num = config.get_total_partition_num();
     int thread_no = config.get_scan_thread_count() * partition_num;
     if(thread_no <= 0) {
-      STORAGE_LOG(WARN, "no thread, cannot start scan speed bench");
+
     } else {
       MultiThreadScan scan(thread_no);
       if (NULL != u_schema) {
         scan.set_update_schema(u_schema);
       }
       if(OB_FAIL(scan.init(schema_service, &restore_schema, config))){
-        STORAGE_LOG(WARN, "fail to init query", K(ret));
+
       } else {
         scan.assign_read_cols(read_cols);
         //every thread has different num of row count, no need to cal total speed
         scan.start();
         scan.wait();
         if (OB_FAIL(scan.get_first_error())) {
-          STORAGE_LOG(WARN, "failed to run scan test", K(ret));
+
         }
       }
     }
@@ -555,7 +555,7 @@ int run_test() {
   if (config.unittest_mode_) {
     ObStoragePerfWrite write;
     if(OB_FAIL(write.init(&config, 0, &restore_schema, schema_service))){
-      STORAGE_LOG(WARN, "fail to init", K(ret));
+
     } else {
       write.cleanup_sstable();
     }
@@ -600,7 +600,7 @@ int main(int argc, char *argv[])
   print_args(argc, argv);
   ObOptions opts;
   if(OB_FAIL(config.init("./storage_perf.conf"))){
-    STORAGE_LOG(WARN, "fail to get config file", K(ret));
+
     exit(1);
   }
   parse_opts(argc, argv, opts, config);

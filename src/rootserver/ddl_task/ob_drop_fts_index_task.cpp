@@ -359,7 +359,7 @@ int ObDropFTSIndexTask::check_switch_succ()
   } else if (OB_FAIL(ObDDLUtil::check_tenant_status_normal(GCTX.sql_proxy_, tenant_id_))) {
     if (OB_TENANT_HAS_BEEN_DROPPED == ret || OB_STANDBY_READ_ONLY == ret) {
       need_retry_ = false;
-      LOG_INFO("tenant status is abnormal, exit anyway", K(ret), K(tenant_id_));
+
     } else {
       LOG_WARN("check tenant status failed", K(ret), K(tenant_id_));
     }
@@ -502,7 +502,7 @@ int ObDropFTSIndexTask::check_drop_index_finish(
 
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("the drop index task not completed", K(ret), K(tenant_id), K(task_id), K(table_id), K(has_finished));
+
     } else {
       LOG_WARN("fail to get ddl error message", K(ret), K(tenant_id), K(task_id), K(table_id));
     }
@@ -512,7 +512,7 @@ int ObDropFTSIndexTask::check_drop_index_finish(
     if (OB_SUCCESS == ret && OB_FAIL(update_task_message(*GCTX.sql_proxy_))) {
       LOG_WARN("fail to update drop fulltext index task message", K(ret));
     }
-    LOG_INFO("wait drop index finish", K(ret), K(tenant_id), K(task_id), K(table_id), K(has_finished));
+
   }
   return ret;
 }
@@ -528,7 +528,7 @@ int ObDropFTSIndexTask::wait_drop_child_task_finish(
   } else if (OB_FAIL(check_drop_index_finish(tenant_id_, child_task_info.task_id_, child_task_info.table_id_, has_finished))) {
     LOG_WARN("fail to check fts index child task finish", K(ret));
   } else if (!has_finished) {
-    LOG_INFO("the child task hasn't been finished", K(ret), K(tenant_id_), K(child_task_info));
+
   }
   return ret;
 }
@@ -704,7 +704,7 @@ int ObDropFTSIndexTask::cleanup_impl()
   } else {
     need_retry_ = false;      // clean succ, stop the task
   }
-  LOG_INFO("clean task finished", K(ret), K(*this));
+
   return ret;
 }
 } // end namespace rootserver

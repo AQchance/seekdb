@@ -107,7 +107,7 @@ int ObDASDomainIdMergeIter::do_table_scan()
       }
     }
   }
-  LOG_INFO("do table scan", K(ret), K(data_table_iter_->get_scan_param()));
+
   return ret;
 }
 
@@ -133,7 +133,7 @@ int ObDASDomainIdMergeIter::rescan()
       }
     }
   }
-  LOG_INFO("rescan", K(ret), K(data_table_iter_->get_scan_param()));
+
   return ret;
 }
 
@@ -325,7 +325,7 @@ int ObDASDomainIdMergeIter::inner_get_next_row()
       LOG_WARN("fail to sorted merge join data table and rowkey domain row", K(ret));
     }
   }
-  LOG_TRACE("inner get next row", K(ret));
+
   return ret;
 }
 
@@ -346,7 +346,7 @@ int ObDASDomainIdMergeIter::inner_get_next_rows(int64_t &count, int64_t capacity
   } else if (OB_FAIL(sorted_merge_join_rows(count, capacity))) {
     LOG_WARN("fail to sorted merge join data table and rowkey domain rows", K(ret));
   }
-  LOG_TRACE("inner get next rows", K(ret), K(count), K(capacity));
+
   return ret;
 }
 
@@ -453,7 +453,7 @@ int ObDASDomainIdMergeIter::build_rowkey_domain_range()
             scan_param.need_switch_param_ = false;
           }
           is_no_sample_ = (scan_param.sample_info_.method_ == common::SampleInfo::NO_SAMPLE);
-          LOG_INFO("build rowkey domain range", K(ret), K(scan_param.key_ranges_), K(scan_param.ss_key_ranges_), K(scan_param.sample_info_));
+
         }
       }
     }
@@ -466,7 +466,7 @@ int ObDASDomainIdMergeIter::build_rowkey_domain_range()
       need_filter_rowkey_domain_ = true;
     }
   }
-  LOG_INFO("finish build rowkey domain ranges", K(ret), K(need_filter_rowkey_domain_), K(is_no_sample_), K(is_need_multi_get_));
+
   return ret;
 }
 
@@ -549,7 +549,7 @@ int ObDASDomainIdMergeIter::init_rowkey_domain_scan_param(
     }
   }
 
-  LOG_INFO("init rowkey domain table scan param finished", K(scan_param), K(ret));
+
   return ret;
 }
 
@@ -807,7 +807,7 @@ int ObDASDomainIdMergeIter::sorted_merge_join_rows(int64_t &count, int64_t capac
                 } else {
                   --remain_cnt;
                   ++k;
-                  LOG_TRACE("find domain id in rowkey domain", K(rowkeys_in_rowkey_domain.at(j)), K(remain_cnt), K(k), K(data_table_cnt));
+
                 }
               }
             }
@@ -870,7 +870,7 @@ int ObDASDomainIdMergeIter::get_rowkey(
           LOG_WARN("unexpected error, expr is nullptr", K(ret), K(i), K(j), KPC(ctdef));
         } else if (T_PSEUDO_GROUP_ID == expr->type_ || T_PSEUDO_ROW_TRANS_INFO_COLUMN == expr->type_) {
           // nothing to do.
-          LOG_TRACE("skip expr", K(i), K(j), KPC(expr));
+
         } else {
           ObDatum &datum = expr->locate_expr_datum(*rtdef->eval_ctx_);
           if (OB_FAIL(datum.to_obj(obj_ptr[j], expr->obj_meta_, expr->obj_datum_map_))) {
@@ -887,7 +887,7 @@ int ObDASDomainIdMergeIter::get_rowkey(
             K(rowkey_cnt), KPC(ctdef));
       } else {
         rowkey.assign(obj_ptr, rowkey_cnt);
-        LOG_TRACE("get one rowkey", K(rowkey), K(output_cnt), K(j), K(rowkey_cnt));
+
       }
     }
   }
@@ -1032,7 +1032,7 @@ int ObDASDomainIdMergeIter::get_and_fill_domain_id_in_data_table(
             LOG_WARN("fail to fill domain id datum", K(ret), K(domain_type));
           } else {
             domain_id_expr->set_evaluated_projected(*data_table_rtdef_->eval_ctx_);
-            LOG_TRACE("Domain id merge fill a domain id", K(domain_type), KP(domain_id_expr), KPC(domain_id_expr));
+
           }
         }
       }
@@ -1107,7 +1107,7 @@ int ObDASDomainIdMergeIter::fill_domain_ids_in_data_table(
           LOG_WARN("fail to fill domain id datum", K(ret), K(domain_type));
         } else {
           domain_id_expr->set_evaluated_projected(*data_table_rtdef_->eval_ctx_);
-          LOG_TRACE("Domain id merge fill a domain id", K(domain_type), KP(domain_id_expr), KPC(domain_id_expr));
+
         }
       }
     }
@@ -1412,7 +1412,7 @@ int ObDASDomainIdMergeIter::check_is_emb_vec_domain(int64_t iter_idx, bool &is_e
         break;
       }
     }
-    LOG_DEBUG("check is emb_vec domain", K(ret), K(iter_idx), K(current_domain_tid), K(is_emb_vec));
+
   }
   return ret;
 }
@@ -1495,7 +1495,7 @@ int ObDASDomainIdMergeIter::fill_null_domain_id_in_data_table(
           ObDatum &datum = domain_id_expr->locate_expr_datum(*data_table_rtdef_->eval_ctx_);
           datum.set_null();
           domain_id_expr->set_evaluated_projected(*data_table_rtdef_->eval_ctx_);
-          LOG_TRACE("Domain id merge fill null domain id", K(domain_type), KP(domain_id_expr), KPC(domain_id_expr));
+
         }
       }
     }

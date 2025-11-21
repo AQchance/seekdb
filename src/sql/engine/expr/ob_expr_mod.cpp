@@ -170,7 +170,7 @@ int ObExprMod::mod_double(ObObj &res,
     res.set_null();
   } else {
     res.set_double(fmod(left.get_double(), right.get_double()));
-    LOG_DEBUG("succ to mod double", K(res), K(left), K(right));
+
   }
   UNUSED(allocator);
   UNUSED(scale);
@@ -341,7 +341,7 @@ int ObExprMod::mod_double(const ObExpr &expr, ObEvalCtx &ctx, ObDatum &datum)
       }
     } else {
       datum.set_double(fmod(left_d, right_d));
-      LOG_DEBUG("succ to mod double", K(datum), K(left_d), K(right_d));
+
     }
   }
   return ret;
@@ -454,7 +454,7 @@ int ObExprMod::cg_expr(ObExprCGCtx &op_cg_ctx,
   const ObObjTypeClass right_tc = ob_obj_type_class(right);
 
   rt_expr.inner_functions_ = NULL;
-  LOG_DEBUG("arrive here cg_expr", K(ret), K(rt_expr));
+
   switch (rt_expr.datum_meta_.type_) {
     case ObTinyIntType:
     case ObSmallIntType:

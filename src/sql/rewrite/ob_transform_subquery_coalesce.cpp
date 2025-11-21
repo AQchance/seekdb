@@ -50,7 +50,7 @@ int ObTransformSubqueryCoalesce::transform_one_stmt(common::ObIArray<ObParentDML
       LOG_WARN("failed to transform for coalesce update set.", K(ret));
     } else {
       trans_happened |= is_happened;
-      LOG_TRACE("succeed to transform for coalesce update set", K(is_happened), K(ret));
+
     }
   } else if (OB_FAIL(transform_same_exprs(
                       stmt, static_cast<ObSelectStmt*>(stmt)->get_having_exprs(), is_happened))) {
@@ -1651,7 +1651,7 @@ int ObTransformSubqueryCoalesce::coalesce_update_assignment(ObDMLStmt *stmt, boo
     } else if (OB_FAIL(remove_invalid_coalesce_info(coalesce_infos))) {
       LOG_WARN("failed to remove invalid infos", K(ret));
     } else {
-      LOG_TRACE("succeed to get coalesce infos", K(subqueries), K(coalesce_infos));
+
     }
     //coalesce earch group subquery
     for (int64_t i = 0; OB_SUCC(ret) && i < coalesce_infos.count(); ++i) {

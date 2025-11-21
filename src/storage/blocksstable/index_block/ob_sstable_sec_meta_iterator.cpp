@@ -88,7 +88,7 @@ int ObSSTableSecMetaIterator::open(
   } else if (sstable.is_empty()) {
     set_iter_end();
     is_inited_ = true;
-    LOG_DEBUG("Empty sstable secondary meta", K(ret), K(meta_type), K(sstable));
+
   } else if (OB_FAIL(sstable.get_meta(sstable_meta_hdl_))) {
     LOG_WARN("get meta handle fail", K(ret), K(sstable));
   } else {
@@ -193,7 +193,7 @@ int ObSSTableSecMetaIterator::open(
   } else if (!is_meta_root && OB_FAIL(prefetch_micro_block(1 /* fetch first micro block */))) {
     LOG_WARN("Fail to prefetch next micro block", K(ret), K_(is_prefetch_end));
   } else if (OB_FAIL(row_.init(allocator, request_col_cnt))) {
-    STORAGE_LOG(WARN, "Failed to init datum row", K(ret));
+
   } else {
     if (sample_step != 0) {
       // is sample scan
@@ -405,7 +405,7 @@ int ObSSTableSecMetaIterator::open_meta_root_block()
         LOG_WARN("Fail to locate range", K(ret), KPC(query_range_));
       }
     }
-    LOG_DEBUG("Open next micro block", K(ret), K(begin_idx), K(end_idx), K(is_index_scan));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -547,7 +547,7 @@ int ObSSTableSecMetaIterator::get_micro_block(
     } else {
       data_handle.block_state_ = ObSSTableMicroBlockState::IN_BLOCK_CACHE;
     }
-    LOG_DEBUG("get cache block", K(ret), K(key), K(macro_id), K(idx_row_header));
+
   }
 
   if (OB_SUCC(ret)) {

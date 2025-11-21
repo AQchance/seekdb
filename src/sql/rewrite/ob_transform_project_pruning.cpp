@@ -56,7 +56,7 @@ int ObTransformProjectPruning::transform_one_stmt_with_outline(ObIArray<ObParent
     //do nothing
   } else {
     trans_happened = true;
-    LOG_TRACE("succeed to do project prune with outline", K(ctx_->src_qb_name_));
+
   }
   return ret;
 }

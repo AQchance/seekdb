@@ -87,7 +87,7 @@ int ObHTableFilterParser::parse_filter(const ObString &filter_string, hfilter::F
   YY_BUFFER_STATE bp = ob_hfilter__scan_bytes(buf, len, scanner_);
   ob_hfilter__switch_to_buffer(bp, scanner_);
   ret = ob_hfilter_parse(this);  // the bison parser
-  LOG_DEBUG("parse filter", K(ret), K(filter_string));
+
   if (OB_SUCC(ret)) {
     filter = result_filter_;
   } else {

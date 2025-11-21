@@ -71,7 +71,7 @@ int ObMajorFreezeService::switch_to_leader()
 int ObMajorFreezeService::switch_to_follower_gracefully()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("switch_to_follower_gracefully", K_(tenant_id));
+
   if (OB_FAIL(inner_switch_to_follower())) {
     LOG_WARN("fail to switch to follower", KR(ret));
   }
@@ -81,7 +81,7 @@ int ObMajorFreezeService::switch_to_follower_gracefully()
 void ObMajorFreezeService::switch_to_follower_forcedly()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("switch_to_follower_forcedly", K_(tenant_id));
+
   if (OB_FAIL(inner_switch_to_follower())) {
     LOG_WARN("fail to switch to follower", KR(ret));
   }
@@ -160,7 +160,7 @@ int ObMajorFreezeService::delete_tenant_major_freeze()
   } else if (OB_FAIL(tenant_major_freeze_->destroy())) {
     LOG_WARN("fail to destroy", KR(ret), K_(tenant_id));
   } else {
-    LOG_INFO("succ to delete tenant_major_freeze", K_(tenant_id));
+
   }
 
   // ignore ret
@@ -169,7 +169,7 @@ int ObMajorFreezeService::delete_tenant_major_freeze()
     tenant_major_freeze_ = nullptr;
   }
 
-  LOG_INFO("finish to delete tenant_major_freeze", KR(ret), K_(tenant_id));
+
 
   return ret;
 }
@@ -255,44 +255,44 @@ int ObMajorFreezeService::check_inner_stat()
 
 void ObMajorFreezeService::stop()
 {
-  LOG_INFO("major_freeze_service start to stop", K_(tenant_id));
+
   ObRecursiveMutexGuard guard(lock_);
   SpinRLockGuard r_guard(rw_lock_);
   if (OB_NOT_NULL(tenant_major_freeze_)) {
-    LOG_INFO("tenant_major_freeze_ start to stop", K_(tenant_id));
+
     tenant_major_freeze_->stop();
   }
-  LOG_INFO("major_freeze_service finish to stop", K_(tenant_id));
+
 }
 
 void ObMajorFreezeService::wait()
 {
-  LOG_INFO("major_freeze_service start to wait", K_(tenant_id));
+
   ObRecursiveMutexGuard guard(lock_);
   SpinRLockGuard r_guard(rw_lock_);
   int ret = OB_SUCCESS;
   if (OB_NOT_NULL(tenant_major_freeze_)) {
-    LOG_INFO("tenant_major_freeze_ start to wait", K_(tenant_id));
+
     if (OB_FAIL(tenant_major_freeze_->wait())) {
       LOG_WARN("fail to wait", KR(ret), K_(tenant_id));
     }
   }
-  LOG_INFO("major_freeze_service finish to wait", K_(tenant_id));
+
 }
 
 void ObMajorFreezeService::destroy()
 {
-  LOG_INFO("major_freeze_service start to destroy", K_(tenant_id));
+
   ObRecursiveMutexGuard guard(lock_);
   SpinRLockGuard r_guard(rw_lock_);
   int ret = OB_SUCCESS;
   if (OB_NOT_NULL(tenant_major_freeze_)) {
-    LOG_INFO("tenant_major_freeze_ start to destroy", K_(tenant_id));
+
     if (OB_FAIL(tenant_major_freeze_->destroy())) {
       LOG_WARN("fail to destroy", KR(ret), K_(tenant_id));
     }
   }
-  LOG_INFO("major_freeze_service finish to destroy", K_(tenant_id));
+
 }
 
 bool ObMajorFreezeService::is_paused() const

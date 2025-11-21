@@ -397,7 +397,7 @@ int ObPushdownFilterConstructor::is_white_mode(const ObRawExpr* raw_expr, bool &
   if (OB_SUCC(ret)) {
     if (raw_expr->has_flag(IS_AUTO_PART_EXPR)) {
       is_white = false;
-      LOG_DEBUG("has flag: is_auto_part_expr, dont go white filter");
+
     }
   }
   return ret;
@@ -458,7 +458,7 @@ int ObPushdownFilterConstructor::create_black_filter_node(
   }
   if (OB_SUCC(ret)) {
     black_filter_node->tmp_expr_ = expr;
-    LOG_DEBUG("[PUSHDOWN] black_filter_node", K(*raw_expr), K(*expr), K(black_filter_node->col_ids_));
+
   }
   return ret;
 }
@@ -491,7 +491,7 @@ int ObPushdownFilterConstructor::get_black_filter_monotonicity(
     } else if (OB_FAIL(static_cg_.generate_rt_exprs(tmp_exprs, black_filter_node->assist_exprs_))) {
       LOG_WARN("Failed to generate rt exprs", K(ret), K(tmp_exprs));
     }
-    LOG_TRACE("[PUSHDOWN] check black filter monotonicity", K(ret), KPC(raw_expr), K(column_exprs), KPC(black_filter_node));
+
   }
   return ret;
 }
@@ -562,7 +562,7 @@ int ObPushdownFilterConstructor::create_white_or_dynamic_filter_node(
 
   if (OB_SUCC(ret)) {
     white_filter_node->expr_ = expr;
-    LOG_DEBUG("[PUSHDOWN] white_filter_node", K(*raw_expr), K(*expr), K(white_filter_node->col_ids_));
+
   }
   return ret;
 }
@@ -614,7 +614,7 @@ int ObPushdownFilterConstructor::merge_filter_node(
         LOG_WARN("failed to push back", K(ret));
       }
       merged = true;
-      LOG_DEBUG("[PUSHDOWN] merged filter", K(dst->get_col_ids()));
+
     }
   }
   return ret;
@@ -1432,10 +1432,10 @@ int ObPushdownFilterExecutor::init_co_filter_param(const ObTableIterParam &iter_
           } else if (OB_FAIL(default_datums_.push_back(default_datum))) {
             LOG_WARN("Fail to push back default datum", K(ret));
           }
-          LOG_DEBUG("[COLUMNSTORE] extract one cg idx", K(ret), KPC(read_info), K(col_pos), K(cg_idx), KPC(cg_col_param));
+
         }
       }
-      LOG_DEBUG("[COLUMNSTORE] cons cg idxs", K(ret), K_(cg_idxs), K(col_ids), K_(col_params), K_(col_offsets), K_(cg_col_offsets));
+
     }
   } else {
     // TODO: @yuxiaozhe.yxz rewrite cg_col_exprs_ in rescan
@@ -1977,7 +1977,7 @@ int ObWhiteFilterExecutor::init_evaluated_datums(bool &is_valid)
       LOG_WARN("Failed to init eval datums for compare white filter", K(ret));
     }
   }
-  LOG_DEBUG("[PUSHDOWN], white pushdown filter inited datum params", K(is_valid), K(datum_params_));
+
   return ret;
 }
 
@@ -2293,7 +2293,7 @@ int ObBlackFilterExecutor::judge_greater_or_less(
     } else {
       assist_expr->get_eval_info(eval_ctx).clear_evaluated_flag();
     }
-    LOG_DEBUG("check judge greater or less status", K(expr_datum), K(datum), KPC(column_expr), KPC(assist_expr), K(is_greater));
+
   }
   return ret;
 }

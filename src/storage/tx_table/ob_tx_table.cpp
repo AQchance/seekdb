@@ -52,7 +52,7 @@ int ObTxTable::init(ObLS *ls)
     kv_cache_hit_cnt_ = 0;
     read_tx_data_table_cnt_ = 0;
     recycle_record_.reset();
-    LOG_INFO("init tx table successfully", K(ret), K(ls->get_ls_id()));
+
     calc_upper_trans_is_disabled_ = false;
     is_inited_ = true;
   }
@@ -67,7 +67,7 @@ void ObTxTable::stop()
 {
   ATOMIC_STORE(&state_, TxTableState::OFFLINE);
   tx_data_table_.stop();
-  LOG_INFO("tx table stop finish", KPC(this));
+
 }
 
 int ObTxTable::prepare_offline()
@@ -111,9 +111,9 @@ int ObTxTable::offline_tx_data_table_()
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "tx table is not init", KR(ret));
+
   } else if (OB_FAIL(tx_data_table_.offline())) {
-    STORAGE_LOG(WARN, "tx data table offline failed", KR(ret), K(ls_id_));
+
   }
   return ret;
 }
@@ -136,7 +136,7 @@ int ObTxTable::offline()
     recycle_record_.reset();
     (void)disable_upper_trans_calculation();
     ATOMIC_STORE(&state_, TxTableState::OFFLINE);
-    LOG_INFO("tx table offline succeed", K(ls_id_), KPC(this));
+
   }
 
   return ret;
@@ -161,7 +161,7 @@ int ObTxTable::online()
     (void)reset_ctx_min_start_scn_info_();
     ATOMIC_STORE(&state_, ObTxTable::ONLINE);
     ATOMIC_STORE(&calc_upper_trans_is_disabled_, false);
-    LOG_INFO("tx table online succeed", K(ls_id_), KPC(this));
+
   }
 
   return ret;
@@ -655,10 +655,10 @@ int ObTxTable::check_with_tx_data(ObReadTxDataArg &read_tx_data_arg, ObITxDataCh
   if (read_tx_data_arg.skip_cache_) {
   } else if (OB_TMP_FAIL(check_tx_data_in_mini_cache_(read_tx_data_arg, fn))) {
     if (OB_TRANS_CTX_NOT_EXIST != tmp_ret) {
-      STORAGE_LOG(WARN, "check tx data in mini cache failed", KR(tmp_ret), K(read_tx_data_arg));
+
     }
   } else {
-    STORAGE_LOG(DEBUG, "check tx data in mini cache success", K(read_tx_data_arg), K(fn));
+
     find_tx_data_in_cache = true;
   }
 
@@ -668,10 +668,10 @@ int ObTxTable::check_with_tx_data(ObReadTxDataArg &read_tx_data_arg, ObITxDataCh
     // already find tx data and do function with mini cache
   } else if (OB_TMP_FAIL(check_tx_data_in_kv_cache_(read_tx_data_arg, fn))) {
     if (OB_TRANS_CTX_NOT_EXIST != tmp_ret) {
-      STORAGE_LOG(WARN, "check tx data in kv cache failed", KR(tmp_ret), K(read_tx_data_arg));
+
     }
   } else {
-    STORAGE_LOG(DEBUG, "check tx data in kv cache success", K(read_tx_data_arg), K(fn));
+
     find_tx_data_in_cache = true;
   }
 
@@ -680,7 +680,7 @@ int ObTxTable::check_with_tx_data(ObReadTxDataArg &read_tx_data_arg, ObITxDataCh
     // already find tx data and do function with cache
   } else if (OB_FAIL(check_tx_data_in_tables_(read_tx_data_arg, fn))) {
     if (OB_TRANS_CTX_NOT_EXIST != ret) {
-      STORAGE_LOG(WARN, "check tx data in tables failed", KR(ret), K(ls_id_), K(read_tx_data_arg));
+
     }
   }
 
@@ -699,12 +699,12 @@ int ObTxTable::check_tx_data_in_mini_cache_(ObReadTxDataArg &read_tx_data_arg, O
     if (OB_LIKELY(OB_TRANS_CTX_NOT_EXIST == ret)) {
       // do nothing when get tx data from mini cache failed
     } else {
-      STORAGE_LOG(WARN, "check tx data in mini cache failed", KR(ret), K(read_tx_data_arg), K(tx_data));
+
     }
   } else {
     EVENT_INC(ObStatEventIds::TX_DATA_HIT_MINI_CACHE_COUNT);
     if (OB_FAIL(fn(tx_data))) {
-      STORAGE_LOG(WARN, "check tx data in mini cache failed", KR(ret), K(read_tx_data_arg), K(tx_data));
+
     }
   }
   return ret;
@@ -720,7 +720,7 @@ int ObTxTable::check_tx_data_in_kv_cache_(ObReadTxDataArg &read_tx_data_arg, ObI
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_TRANS_CTX_NOT_EXIST;
     } else {
-      STORAGE_LOG(WARN, "get row from tx data kv cache failed", KR(ret), K(read_tx_data_arg));
+
     }
   } else {
     // get tx data from kv cache succeed. fetch tx data from cache value and do functor
@@ -728,17 +728,17 @@ int ObTxTable::check_tx_data_in_kv_cache_(ObReadTxDataArg &read_tx_data_arg, ObI
     const ObTxData *tx_data = nullptr;
     if (OB_ISNULL(cache_val)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(ERROR, "cache value is nullptr", KR(ret), K(read_tx_data_arg), K(ls_id_), K(val_handle));
+
     } else if (OB_ISNULL(tx_data = cache_val->get_tx_data())) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(ERROR, "tx data in cache value is nullptr", KR(ret), K(read_tx_data_arg), K(ls_id_), KPC(cache_val));
+
     } else {
       EVENT_INC(ObStatEventIds::TX_DATA_HIT_KV_CACHE_COUNT);
       ret = fn(*tx_data);
 
       if (ObTxData::RUNNING == tx_data->state_) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(ERROR, "read an unexpected state tx data from kv cache");
+
       } else if (!tx_data->op_guard_.is_valid()) {
         // put into mini cache only if this tx data do not have undo actions
         read_tx_data_arg.tx_data_mini_cache_.set(*tx_data);
@@ -784,7 +784,7 @@ int ObTxTable::check_tx_data_in_tables_(ObReadTxDataArg &read_tx_data_arg, ObITx
 
         int tmp_ret = OB_SUCCESS;
         if (OB_TMP_FAIL(put_tx_data_into_kv_cache_(*tx_data))) {
-          STORAGE_LOG(WARN, "put tx data into kv cache failed", KR(tmp_ret), KPC(tx_data));
+
         }
       }
     }
@@ -800,11 +800,11 @@ int ObTxTable::put_tx_data_into_kv_cache_(const ObTxData &tx_data)
   ObTxDataCacheValue cache_value;
 
   if (OB_FAIL(cache_value.init(tx_data))) {
-    STORAGE_LOG(WARN, "init tx data cache value failed", KR(ret), K(key), K(cache_value));
+
   } else if (OB_FAIL(OB_TX_DATA_KV_CACHE.put_row(key, cache_value))) {
-    STORAGE_LOG(WARN, "put tx data cache value failed", KR(ret), K(key), K(cache_value));
+
   } else {
-    STORAGE_LOG(INFO, "finish put tx data into kv cache", K(key), K(cache_value));
+
     // put tx data into cache succeed
   }
 
@@ -854,7 +854,7 @@ int ObTxTable::check_row_locked(ObReadTxDataArg &read_tx_data_arg,
 {
   CheckRowLockedFunctor fn(read_tx_id, read_tx_data_arg.tx_id_, sql_sequence, lock_state);
   int ret = check_with_tx_data(read_tx_data_arg, fn);
-  LOG_DEBUG("finish check row locked", K(read_tx_data_arg), K(read_tx_id), K(sql_sequence), K(lock_state));
+
   return ret;
 }
 
@@ -864,7 +864,7 @@ int ObTxTable::check_sql_sequence_can_read(ObReadTxDataArg &read_tx_data_arg,
 {
   CheckSqlSequenceCanReadFunctor fn(sql_sequence, can_read);
   int ret = check_with_tx_data(read_tx_data_arg, fn);
-  LOG_DEBUG("finish check sql sequence can read", K(read_tx_data_arg), K(sql_sequence), K(can_read));
+
   return ret;
 }
 
@@ -875,7 +875,7 @@ int ObTxTable::get_tx_state_with_scn(ObReadTxDataArg &read_tx_data_arg,
 {
   GetTxStateWithSCNFunctor fn(scn, state, trans_version);
   int ret = check_with_tx_data(read_tx_data_arg, fn);
-  LOG_DEBUG("finish get tx state with scn", K(read_tx_data_arg), K(scn), K(state), K(trans_version));
+
   return ret;
 }
 
@@ -916,7 +916,7 @@ int ObTxTable::lock_for_read(ObReadTxDataArg &read_tx_data_arg,
                         cleanout_op,
                         recheck_op);
   int ret = check_with_tx_data(read_tx_data_arg, fn);
-  LOG_DEBUG("finish lock for read", K(lock_for_read_arg), K(can_read), K(trans_version));
+
   return ret;
 }
 
@@ -1011,7 +1011,7 @@ void ObTxTable::update_min_start_scn_info(const SCN &max_decided_scn)
 {
   if (true == ATOMIC_LOAD(&calc_upper_trans_is_disabled_)) {
     // quit updating if calculate upper trans versions disabled
-    STORAGE_LOG(INFO, "skip update min start scn", K(max_decided_scn), KPC(this));
+
     return;
   }
 
@@ -1040,20 +1040,20 @@ void ObTxTable::update_min_start_scn_info(const SCN &max_decided_scn)
         tmp_min_start_scn_info.min_start_scn_in_ctx_ = min_start_scn;
       } else {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(ERROR, "invalid min start scn status", K(min_start_scn), K(keep_alive_scn), K(status));
+
       }
 
       if (OB_FAIL(ret)) {
       } else if (tmp_min_start_scn_info.min_start_scn_in_ctx_ < ctx_min_start_scn_info_.min_start_scn_in_ctx_) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "invalid min start scn", K(tmp_min_start_scn_info), K(ctx_min_start_scn_info_));
+
       } else {
         ctx_min_start_scn_info_ = tmp_min_start_scn_info;
       }
     }
   }
 
-  STORAGE_LOG(INFO, "finish update min start scn", K(max_decided_scn), K(ctx_min_start_scn_info_));
+
 }
 
 void ObTxTable::recycle_tx_data_finish(const share::SCN current_recycle_scn)
@@ -1080,7 +1080,7 @@ int ObTxTable::get_upper_trans_version_before_given_scn(const SCN sstable_end_sc
   if (ATOMIC_LOAD(&calc_upper_trans_is_disabled_)) {
     // cannot calculate upper trans version right now
     if (REACH_TIME_INTERVAL(1LL * 1000LL * 1000LL)) {
-      STORAGE_LOG(INFO, "calc upper trans version is disabled", K(calc_upper_trans_is_disabled_), K(sstable_end_scn));
+
     }
   } else {
     ret = tx_data_table_.get_upper_trans_version_before_given_scn(sstable_end_scn, upper_trans_version);
@@ -1147,7 +1147,7 @@ int ObTxTable::generate_virtual_tx_data_row(const transaction::ObTransID tx_id, 
 int ObTxTable::dump_single_tx_data_2_text(const int64_t tx_id_int, const char *fname)
 {
   int ret = OB_SUCCESS;
-  STORAGE_LOG(INFO, "start dump single tx data");
+
   char real_fname[OB_MAX_FILE_NAME_LENGTH];
   FILE *fd = NULL;
 
@@ -1156,15 +1156,15 @@ int ObTxTable::dump_single_tx_data_2_text(const int64_t tx_id_int, const char *f
     LOG_WARN("tx table is not init.", KR(ret), K(tx_id_int));
   } else if (OB_ISNULL(fname)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "fanme is NULL");
+
   } else if (snprintf(
                  real_fname, sizeof(real_fname), "%s.%ld", fname, ::oceanbase::common::ObTimeUtility::current_time()) >=
              (int64_t)sizeof(real_fname)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "fname too long", K(fname));
+
   } else if (NULL == (fd = fopen(real_fname, "w"))) {
     ret = OB_IO_ERROR;
-    STORAGE_LOG(WARN, "open file fail:", K(fname));
+
   } else {
     int64_t ls_id = ls_->get_ls_id().id();
     int64_t tenant_id = MTL_ID();
@@ -1182,7 +1182,7 @@ int ObTxTable::dump_single_tx_data_2_text(const int64_t tx_id_int, const char *f
     fd = NULL;
   }
   if (OB_FAIL(ret)) {
-    STORAGE_LOG(WARN, "dump single tx data fail", K(fname), KR(ret));
+
   }
 
   return ret;

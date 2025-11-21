@@ -300,9 +300,9 @@ int ObCreateIndexExecutor::sync_check_index_status(sql::ObSQLSessionInfo &my_ses
       LOG_WARN("wait build index finish failed", K(ret), K(tenant_id), K(res.task_id_));
     } else if (!is_finish) {
       ob_usleep(CHECK_INTERVAL);
-      LOG_INFO("index status is not final", K(index_table_id));
+
     } else {
-      LOG_INFO("index status is final", K(ret), K(index_table_id));
+
     }
   }
 

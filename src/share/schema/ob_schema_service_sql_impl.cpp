@@ -194,7 +194,7 @@ int ObSchemaServiceSQLImpl::retrieve_schema_version(T &result, int64_t &schema_v
     if (OB_FAIL(ret)) {
       LOG_WARN("fail to get schema_version: ", K(ret));
     } else {
-      LOG_TRACE("retrieve schema, ", "newest schema_version", schema_version, "host", static_cast<const char*>(svr_ip), K(myport));
+
       //check if this is only one
       if (OB_ITER_END != (ret = result.next())) {
         LOG_WARN("fail to get all table schema. iter quit. ", K(ret));
@@ -363,7 +363,7 @@ int ObSchemaServiceSQLImpl::get_batch_table_schema(
     ObArray<ObTableSchema *> &table_schema_array)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("fetch batch table schema begin.");
+
   const int64_t start_ts = ObTimeUtility::current_time();
   if (!check_inner_stat()) {
     ret = OB_NOT_INIT;
@@ -433,7 +433,7 @@ int ObSchemaServiceSQLImpl::gen_new_schema_version(
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("new schema version", K(tenant_id), K(schema_version));
+
   }
   return ret;
 }
@@ -1449,7 +1449,7 @@ int ObSchemaServiceSQLImpl::get_sys_variable_schema(
       sql.reuse();
       // While cluster is in upgradation, __all_sys_variable_history may not be modified yet,
       // so we try to use __all_sys_variable to fetch system variable schema.
-      LOG_INFO("__all_sys_variable_history is empty, get system variable from __all_sys_variable");
+
       if (OB_FAIL(sql.append_fmt("select *, 0 as is_deleted, 0 as schema_version from %s where tenant_id=%lu",
                                  OB_ALL_SYS_VARIABLE_TNAME,
                                  fill_extract_tenant_id(schema_status, tenant_id)))) {
@@ -1801,7 +1801,7 @@ int ObSchemaServiceSQLImpl::fetch_all_column_group_mapping(
                     tenant_id, check_deleted, *result, table_schema))) {
             LOG_WARN("fail to retrieve column group mapping", KR(ret), K(table_id), K(check_deleted), K(sql));
           } else {
-            LOG_DEBUG("fetch all column group mapping", KR(ret), K(table_id), K(check_deleted), K(table_schema));
+
           }
         }
       }
@@ -2091,7 +2091,7 @@ int ObSchemaServiceSQLImpl::fetch_all_part_info(
         }
       }
       if (OB_SUCC(ret)) {
-        LOG_TRACE("fetch all part history", KR(ret), K(exec_tenant_id), K(sql));
+
         const bool check_deleted = (INT64_MAX != schema_version);
         DEFINE_SQL_CLIENT_RETRY_WEAK_WITH_SNAPSHOT(sql_client, snapshot_timestamp);
         if (OB_FAIL(sql_client_retry_weak.read(res, exec_tenant_id, sql.ptr()))) {
@@ -2170,7 +2170,7 @@ int ObSchemaServiceSQLImpl::fetch_all_def_subpart_info(
         }
       }
       if (OB_SUCC(ret)) {
-        LOG_TRACE("fetch all def subpart history", KR(ret), K(exec_tenant_id), K(sql));
+
         const bool check_deleted = (INT64_MAX != schema_version);
         DEFINE_SQL_CLIENT_RETRY_WEAK_WITH_SNAPSHOT(sql_client, snapshot_timestamp);
         if (OB_FAIL(sql_client_retry_weak.read(res, exec_tenant_id, sql.ptr()))) {
@@ -2247,7 +2247,7 @@ int ObSchemaServiceSQLImpl::fetch_all_subpart_info(
         }
       }
       if (OB_SUCC(ret)) {
-        LOG_TRACE("fetch all subpart history", KR(ret), K(exec_tenant_id), K(sql));
+
         const bool check_deleted = (INT64_MAX != schema_version);
         DEFINE_SQL_CLIENT_RETRY_WEAK_WITH_SNAPSHOT(sql_client, snapshot_timestamp);
         if (OB_FAIL(sql_client_retry_weak.read(res, exec_tenant_id, sql.ptr()))) {
@@ -2425,10 +2425,10 @@ int ObSchemaServiceSQLImpl::fetch_all_partition_info(
       LOG_WARN("fail to gen batch fetch array", K(ret),
                K(schema_status), K(tenant_id), K(schema_version));
     } else {
-      LOG_TRACE("table_ids:", K(table_ids_size), "table_ids", ObArrayWrap<uint64_t>(table_ids, table_ids_size));
-      LOG_TRACE("part_tables:", K(part_tables), K(part_idxs));
-      LOG_TRACE("subpart_tables:", K(subpart_tables), K(subpart_idxs));
-      LOG_TRACE("def_subpart_tables:", K(def_subpart_tables), K(def_subpart_idxs));
+
+
+
+
     }
 
     //fetch part info
@@ -3240,7 +3240,7 @@ int ObSchemaServiceSQLImpl::get_increment_schema_operations(
             ret = OB_ERR_UNEXPECTED;
             LOG_WARN("invalid table operation type: ", K(schema_operation), K(ret));
           } else {
-            LOG_DEBUG("schema operation:", K(schema_operation));
+
             if (OB_FAIL(schema_operations.push_back(schema_operation))) {
               LOG_WARN("failed to push back operation", K(ret));
               will_break = true;
@@ -3357,7 +3357,7 @@ int ObSchemaServiceSQLImpl::fetch_schema_version(
         LOG_WARN("fail to get result. ", K(ret));
       } else {
         int64_t end_time = ::oceanbase::common::ObTimeUtility::current_time();
-        LOG_TRACE("get_schema_version time.", "cost us", end_time - begin_time);
+
         if (OB_FAIL(retrieve_schema_version(*result, schema_version))) {
           LOG_WARN("failed to retrive schema version: ", K(sql), K(ret));
         }
@@ -3399,7 +3399,7 @@ int ObSchemaServiceSQLImpl::get_batch_tenants(
       begin = end;
     }
   }
-  LOG_INFO("get batch tenants finish", K(ret));
+
   return ret;
 }
 #define GET_BATCH_SCHEMAS_WITH_ALLOCATOR_FUNC_DEFINE(SCHEMA, SCHEMA_TYPE)       \
@@ -3413,7 +3413,7 @@ int ObSchemaServiceSQLImpl::get_batch_tenants(
   {                                                                \
     int ret = OB_SUCCESS;                                          \
     schema_array.reset();                                          \
-    LOG_INFO("get batch "#SCHEMA"s", K(schema_version), K(schema_keys));\
+\
     if (!check_inner_stat()) {                                     \
       ret = OB_NOT_INIT;                                           \
       LOG_WARN("check inner stat fail", KR(ret));                  \
@@ -3466,7 +3466,7 @@ GET_BATCH_SCHEMAS_WITH_ALLOCATOR_FUNC_DEFINE(table, ObSimpleTableSchemaV2);
   {                                                                \
     int ret = OB_SUCCESS;                                          \
     schema_array.reset();                                          \
-    LOG_INFO("get batch "#SCHEMA"s", K(schema_version), K(schema_keys));\
+\
     if (!check_inner_stat()) {                                     \
       ret = OB_NOT_INIT;                                           \
       LOG_WARN("check inner stat fail", KR(ret));                  \
@@ -3502,7 +3502,7 @@ GET_BATCH_SCHEMAS_WITH_ALLOCATOR_FUNC_DEFINE(table, ObSimpleTableSchemaV2);
                   "total_count", schema_keys.count());                          \
         begin = end;                                                            \
       }                                                                         \
-      LOG_TRACE("finish fetch batch "#SCHEMA"s", KR(ret), K(schema_array));     \
+     \
     }                                                                           \
     return ret;                                                                 \
   }
@@ -3667,7 +3667,7 @@ int ObSchemaServiceSQLImpl::get_batch_tenants(
     }
     begin = end;
   }
-  LOG_INFO("get batch tenants info finish", K(schema_version), K(ret));
+
   return ret;
 }
 
@@ -3681,7 +3681,7 @@ int ObSchemaServiceSQLImpl::get_batch_databases(
   int ret = OB_SUCCESS;
   const uint64_t tenant_id = schema_status.tenant_id_;
   db_schema_array.reserve(db_ids.count());
-  LOG_DEBUG("fetch batch database schema begin.");
+
   if (!check_inner_stat()) {
     ret = OB_NOT_INIT;
     LOG_WARN("check inner stat fail");
@@ -3705,7 +3705,7 @@ int ObSchemaServiceSQLImpl::get_batch_databases(
       }
       begin = end;
     }
-    LOG_INFO("get batch database schema finish", K(schema_version), K(ret));
+
   }
   return ret;
 }
@@ -3787,7 +3787,7 @@ int ObSchemaServiceSQLImpl::get_batch_outlines(
   int ret = OB_SUCCESS;
   const uint64_t tenant_id = schema_status.tenant_id_;
   outline_info_array.reserve(tenant_outline_ids.count());
-  LOG_DEBUG("fetch batch outlines begin.");
+
   if (schema_version <= 0) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(schema_version), K(ret));
@@ -3811,7 +3811,7 @@ int ObSchemaServiceSQLImpl::get_batch_outlines(
     }
     begin = end;
   }
-  LOG_INFO("get batch outline info finish", K(schema_version), K(ret));
+
   return ret;
 }
 
@@ -3825,7 +3825,7 @@ int ObSchemaServiceSQLImpl::get_batch_routines(
   int ret = OB_SUCCESS;
   const uint64_t tenant_id = schema_status.tenant_id_;
   routine_info_array.reserve(tenant_routine_ids.count());
-  LOG_DEBUG("fetch batch routines begin.");
+
   if (schema_version <= 0) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(schema_version), K(ret));
@@ -3852,7 +3852,7 @@ int ObSchemaServiceSQLImpl::get_batch_routines(
     }
     begin = end;
   }
-  LOG_INFO("get batch routine info finish", K(schema_version), K(ret));
+
   return ret;
 }
 
@@ -3866,7 +3866,7 @@ int ObSchemaServiceSQLImpl::get_batch_users(
   int ret = OB_SUCCESS;
   const uint64_t tenant_id = schema_status.tenant_id_;
   user_info_array.reserve(tenant_user_ids.count());
-  LOG_DEBUG("fetch batch users begin.");
+
   if (schema_version <= 0) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(schema_version), K(ret));
@@ -3890,7 +3890,7 @@ int ObSchemaServiceSQLImpl::get_batch_users(
     }
     begin = end;
   }
-  LOG_INFO("get batch user privileges finish", K(schema_version), K(ret));
+
   return ret;
 }
 
@@ -3965,7 +3965,7 @@ int ObSchemaServiceSQLImpl::get_batch_packages(const ObRefreshSchemaStatus &sche
   int ret = OB_SUCCESS;
   const uint64_t tenant_id = schema_status.tenant_id_;
   package_info_array.reserve(tenant_package_ids.count());
-  LOG_DEBUG("fetch batch packages begin.");
+
   if (schema_version <= 0) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(schema_version), K(ret));
@@ -3989,7 +3989,7 @@ int ObSchemaServiceSQLImpl::get_batch_packages(const ObRefreshSchemaStatus &sche
     }
     begin = end;
   }
-  LOG_INFO("get batch package info finish", K(schema_version), K(ret));
+
   return ret;
 }
 
@@ -4003,7 +4003,7 @@ int ObSchemaServiceSQLImpl::get_batch_mock_fk_parent_tables(
   int ret = OB_SUCCESS;
   const uint64_t tenant_id = schema_status.tenant_id_;
   mock_fk_parent_table_schema_array.reserve(tenant_mock_fk_parent_table_ids.count());
-  LOG_DEBUG("fetch batch mock_fk_parent_table begin.");
+
   if (schema_version <= 0) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(schema_version), K(ret));
@@ -4026,7 +4026,7 @@ int ObSchemaServiceSQLImpl::get_batch_mock_fk_parent_tables(
     }
     begin = end;
   }
-  LOG_INFO("get batch mock_fk_parent_table info finish", K(schema_version), K(ret));
+
   return ret;
 }
 
@@ -4039,7 +4039,7 @@ int ObSchemaServiceSQLImpl::get_batch_triggers(const ObRefreshSchemaStatus &sche
   int ret = OB_SUCCESS;
   const uint64_t tenant_id = schema_status.tenant_id_;
   trigger_info_array.reserve(tenant_trigger_ids.count());
-  LOG_DEBUG("fetch batch triggers begin.");
+
   if (schema_version <= 0) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(schema_version), K(ret));
@@ -4063,7 +4063,7 @@ int ObSchemaServiceSQLImpl::get_batch_triggers(const ObRefreshSchemaStatus &sche
     }
     begin = end;
   }
-  LOG_INFO("get batch trigger info finish", K(schema_version), K(ret));
+
   return ret;
 }
 
@@ -4683,13 +4683,13 @@ int ObSchemaServiceSQLImpl::fetch_tables(
       }
     }
     if (OB_SUCC(ret) && table_ids.count() > 0) {
-      LOG_TRACE("build table_ids", KR(ret), K(orig_cnt), "table_ids_cnt", table_ids.count(), K(table_ids));
+
       const int64_t BATCH_FETCH_NUM = 100;
       int64_t begin = 0;
       int64_t end = min(begin + BATCH_FETCH_NUM, table_ids.count());
       // fetch table schema from the range [begin, end) of table_ids.
       while (OB_SUCC(ret) && end - begin > 0 && end <= table_ids.count()) {
-        LOG_TRACE("batch table_ids", KR(ret), K(begin), K(end), K(schema_version), K(table_ids.at(begin)));
+
         if (OB_FAIL(fetch_all_partition_info(
                     schema_status, schema_version, tenant_id, sql_client,
                     tables, &table_ids.at(begin), end - begin))) {
@@ -4766,7 +4766,7 @@ int ObSchemaServiceSQLImpl::fetch_tables(
         } else if (OB_FAIL(ObSchemaRetrieveUtils::retrieve_##SCHEMA##_schema(tenant_id, *result, schema_array))) {   \
           LOG_WARN("failed to retrieve "#SCHEMA" schema", K(ret));                                        \
         } else {                                                                                          \
-          LOG_DEBUG("finish fetch schema", K(sql.string()), K(tenant_id), K(schema_array));               \
+               \
         }                                                                                                 \
       }                                                                                                   \
     }                                                                                                     \
@@ -5358,7 +5358,7 @@ int ObSchemaServiceSQLImpl::get_table_schema(
                                           table_schema))) {
       LOG_WARN("alloc table schema failed", K(ret));
     } else {
-      LOG_INFO("get all core table schema succeed", K(table_schema->get_table_name_str()));
+
     }
   } else {
     // normal_table(contain core table)
@@ -5741,7 +5741,7 @@ int ObSchemaServiceSQLImpl::sort_table_partition_info(
       LOG_WARN("failed to sort subpartition array", KR(ret), K(table_schema));
     }
   }
-  LOG_TRACE("fetch partition info", KR(ret), K(table_schema));
+
   return ret;
 }
 
@@ -5812,7 +5812,7 @@ int ObSchemaServiceSQLImpl::sort_tablegroup_partition_info(ObTablegroupSchema &t
       LOG_WARN("failed to sort subpartition array", KR(ret), K(tablegroup_schema));
     }
   }
-  LOG_TRACE("fetch partition info", KR(ret), K(tablegroup_schema));
+
   return ret;
 }
 
@@ -6397,7 +6397,7 @@ int ObSchemaServiceSQLImpl::fetch_foreign_key_info(
       } else if (OB_FAIL(sql_client_retry_weak.read(res, exec_tenant_id, sql.ptr()))) {
         LOG_WARN("failed to execute sql", K(sql), K(ret));
         if (-ER_NO_SUCH_TABLE == ret && ObSchemaService::g_liboblog_mode_) {
-          LOG_INFO("liboblog mode, ignore");
+
           ret = OB_SUCCESS;
           has_error = true;
         }
@@ -6525,7 +6525,7 @@ int ObSchemaServiceSQLImpl::fetch_trigger_list(const ObRefreshSchemaStatus &sche
     } else if (OB_FAIL(sql_client_retry_weak.read(res, exec_tenant_id, sql.ptr()))) {
       LOG_WARN("failed to execute sql", K(sql), K(ret));
       if (-ER_NO_SUCH_TABLE == ret && ObSchemaService::g_liboblog_mode_) {
-        LOG_INFO("liboblog mode, ignore");
+
         ret = OB_SUCCESS;
       }
     } else if (OB_ISNULL(result = res.get_result())) {
@@ -6535,7 +6535,7 @@ int ObSchemaServiceSQLImpl::fetch_trigger_list(const ObRefreshSchemaStatus &sche
                                                                     schema.get_trigger_list()))) {
       LOG_WARN("failed to retrieve trigger list", K(ret));
     } else {
-      LOG_DEBUG("TRIGGER", K(schema.get_trigger_list()));
+
     }
   }
   return ret;
@@ -6651,7 +6651,7 @@ int ObSchemaServiceSQLImpl::get_ori_schema_version(
         LOG_WARN("fail to get last_schema_version", K(ret));
       } else {
         EXTRACT_INT_FIELD_MYSQL(*result, "ori_schema_version", ori_schema_version, int64_t);
-        LOG_TRACE("Get last_schema_version", K(ori_schema_version), K(tenant_id), K(table_id));
+
         int tmp_ret = OB_SUCCESS;
         if (0 >= ori_schema_version) {
           ret = OB_ERR_UNEXPECTED;
@@ -6723,7 +6723,7 @@ int ObSchemaServiceSQLImpl::get_batch_sequences(
   int ret = OB_SUCCESS;
   const uint64_t tenant_id = schema_status.tenant_id_;
   sequence_info_array.reserve(tenant_sequence_ids.count());
-  LOG_DEBUG("fetch batch sequences begin.", K(tenant_sequence_ids));
+
   if (schema_version <= 0) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(schema_version), K(ret));
@@ -6747,7 +6747,7 @@ int ObSchemaServiceSQLImpl::get_batch_sequences(
     }
     begin = end;
   }
-  LOG_INFO("get batch sequence info finish", K(schema_version), K(ret));
+
   return ret;
 }
 
@@ -6821,7 +6821,7 @@ int ObSchemaServiceSQLImpl::get_batch_sys_variables(
   UNUSED(sql_client);
   int ret = OB_SUCCESS;
   sys_variable_array.reserve(sys_variable_keys.count());
-  LOG_DEBUG("fetch batch sys variables begin.");
+
   if (schema_version <= 0) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(schema_version), K(ret));
@@ -6858,7 +6858,7 @@ int ObSchemaServiceSQLImpl::get_batch_udfs(
   int ret = OB_SUCCESS;
   const uint64_t tenant_id = schema_status.tenant_id_;
   udf_info_array.reserve(tenant_udf_ids.count());
-  LOG_DEBUG("fetch batch udfs begin.");
+
   if (schema_version <= 0) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(schema_version), K(ret));
@@ -6882,7 +6882,7 @@ int ObSchemaServiceSQLImpl::get_batch_udfs(
     }
     begin = end;
   }
-  LOG_INFO("get batch udf info finish", K(schema_version), K(ret));
+
   return ret;
 }
 
@@ -6955,7 +6955,7 @@ int ObSchemaServiceSQLImpl::get_batch_ccl_rules(
   int ret = OB_SUCCESS;
   const uint64_t tenant_id = schema_status.tenant_id_;
   ccl_rule_info_array.reserve(tenant_ccl_ids.count());
-  LOG_DEBUG("fetch batch ccl_rule begin.", K(lbt()), K(tenant_ccl_ids));
+
   if (OB_UNLIKELY(schema_version <= 0)) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(schema_version), K(ret));
@@ -6979,7 +6979,7 @@ int ObSchemaServiceSQLImpl::get_batch_ccl_rules(
     }
     begin = end;
   }
-  LOG_INFO("get batch ccl_rule info finish", K(schema_version), K(ret));
+
   return ret;
 }
 
@@ -7045,7 +7045,7 @@ int ObSchemaServiceSQLImpl::fetch_all_ccl_rule_info(
         if (OB_FAIL(schema.split_strings_with_escape(';', '\\'))) {
           LOG_WARN("fail to split strings with escape", K(ret));
         }
-        LOG_TRACE("[CCL] after retrieve: ", K(schema));
+
       }
 
     }
@@ -7258,7 +7258,7 @@ int ObSchemaServiceSQLImpl::set_refresh_schema_info(const ObRefreshSchemaInfo &s
   schema_info_.set_tenant_id(schema_info.get_tenant_id());
   schema_info_.set_schema_version(schema_info.get_schema_version());
   schema_info_.set_sequence_id(sequence_id_);
-  LOG_INFO("set refresh schema info", K(ret), K(schema_info_));
+
   return ret;
 }
 
@@ -7487,7 +7487,7 @@ int ObSchemaServiceSQLImpl::query_tenant_status(
       } else if (OB_FAIL(result->next())) {
         if (ret == OB_ITER_END) { //no record
           ret = OB_SUCCESS;
-          LOG_INFO("query_tenant_status: TENANT_NOT_CREATE", K(tenant_id));
+
           tenant_status = TENANT_NOT_CREATE;
         } else {
           LOG_WARN("fail to query. iter quit", K(ret), K(sql));
@@ -7506,7 +7506,7 @@ int ObSchemaServiceSQLImpl::query_tenant_status(
           ret = OB_SUCCESS;
           tenant_status = is_deleted ? TENANT_DELETED : TENANT_EXIST;
           if (is_deleted) {
-            LOG_INFO("query_tenant_status: TENANT_HAS_BEEN_DELETED", K(tenant_id));
+
           }
         }
       }
@@ -7600,7 +7600,7 @@ int ObSchemaServiceSQLImpl::get_schema_version_by_timestamp(
     if (OB_SUCCESS != tmp_ret) {
       LOG_WARN("fail to query tenant status", K(tmp_ret), K(ret), K(tenant_id));
     } else if (TENANT_DELETED == tenant_status) {
-      LOG_INFO("tenant has been dropped, no need retry", K(tmp_ret), K(tenant_id));
+
       ret = OB_TENANT_HAS_BEEN_DROPPED; //overwrite ret
     }
   }
@@ -7656,7 +7656,7 @@ int ObSchemaServiceSQLImpl::get_first_trans_end_schema_version(
     if (OB_SUCCESS != tmp_ret) {
       LOG_WARN("fail to query tenant status", K(tmp_ret), K(ret), K(tenant_id));
     } else if (TENANT_DELETED == tenant_status) {
-      LOG_INFO("tenant has been dropped, no need retry", K(tmp_ret), K(tenant_id));
+
       ret = OB_TENANT_HAS_BEEN_DROPPED; //overwrite ret
     }
   }
@@ -7689,7 +7689,7 @@ int ObSchemaServiceSQLImpl::sort_table_partition_info_v2(
       LOG_WARN("failed to sort subpartition array", KR(ret), K(table_schema));
     }
   }
-  LOG_TRACE("fetch partition info", KR(ret), K(table_schema));
+
   return ret;
 }
 
@@ -9014,7 +9014,7 @@ int ObSchemaServiceSQLImpl::get_table_index_infos(
     }// end while
     }// end smart_var
   }
-  LOG_TRACE("get table index name", KR(ret), K(tenant_id), K(database_id), K(data_table_id));
+
   return ret;
 }
 

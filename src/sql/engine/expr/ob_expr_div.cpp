@@ -379,7 +379,7 @@ struct ObFloatDivFunc
       LOG_WARN("float out of range", K(ret), K(left_f), K(right_f));
     } else {
       res.set_float(result_f);
-      LOG_DEBUG("succ to div float", K(left_f), K(right_f), K(result_f));
+
     }
     return ret;
   }
@@ -410,7 +410,7 @@ struct ObFloatVectorDivFunc
       LOG_WARN("float out of range", K(ret), K(left_f), K(right_f));
     } else {
       res_vec.set_float(idx, result_f);
-      LOG_DEBUG("succ to div float", K(left_f), K(right_f), K(result_f));
+
     }
     return ret;
   }
@@ -470,7 +470,7 @@ struct ObDoubleDivFunc
       } else {
         res.set_double(result_d);
       }
-      LOG_DEBUG("succ to div double", K(left_d), K(right_d), K(result_d));
+
     }
     return ret;
   }
@@ -511,7 +511,7 @@ struct ObDoubleVectorDivFunc
       } else {
         res_vec.set_double(idx, result_d);
       }
-      LOG_DEBUG("succ to div double", K(left_d), K(right_d), K(result_d));
+
     }
     return ret;
   }
@@ -561,7 +561,7 @@ struct ObNumberDivFunc
         ret = OB_DIVISION_BY_ZERO;
       } else {
         res.set_null();
-        LOG_DEBUG("divisor is equal to zero", K(l), K(ret));
+
       }
     } else {
       number::ObNumber lnum(l.get_number());
@@ -619,7 +619,7 @@ struct ObNumberVectorDivFunc
         ret = OB_DIVISION_BY_ZERO;
       } else {
         res_vec.set_null(idx);
-        LOG_DEBUG("divisor is equal to zero", K(idx), K(ret));
+
       }
     } else {
       number::ObNumber lnum(l_vec.get_number(idx));
@@ -797,7 +797,7 @@ struct ObDecintDivWrap : public ObArithOpWrap<Base>
         ret = OB_DIVISION_BY_ZERO;
       } else {
         res.set_null();
-        LOG_DEBUG("divisor is equal to zero", K(l), K(ret));
+
       }
     } else if (*reinterpret_cast<const typename Base::L_RAW_TYPE *>(l.ptr_) == 0) {
       *const_cast<typename Base::RES_RAW_TYPE *>(
@@ -989,7 +989,7 @@ int ObExprDiv::cg_expr(ObExprCGCtx &op_cg_ctx,
   rt_expr.inner_functions_ = NULL;
   rt_expr.may_not_need_raw_check_ = false;
   rt_expr.div_calc_scale_ = raw_expr.get_extra_calc_scale();
-  LOG_DEBUG("arrive here cg_expr", K(ret), K(raw_expr), K(rt_expr), K(rt_expr.div_calc_scale_));
+
   switch (rt_expr.datum_meta_.type_) {
     case ObFloatType: {
       SET_DIV_FUNC_PTR(div_float);

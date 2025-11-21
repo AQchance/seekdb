@@ -55,7 +55,7 @@ void ObAdaptiveByPassCtrl::gby_process_state(int64_t probe_cnt,
       state_ = STATE_PROCESS_HT;
       set_max_rebuild_times();
       int ret = OB_SUCCESS;//no use, just for LOG_TRACE.
-      LOG_TRACE("STATE_MAX_MEM_INSERT goto STATE_PROCESS_HT", K(ret), K(probe_cnt), K(row_cnt));
+
     }
   } else if (STATE_ANALYZE == state_) {
     double ratio = MIN_RATIO_FOR_L3;

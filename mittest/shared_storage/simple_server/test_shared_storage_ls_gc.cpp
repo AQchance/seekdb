@@ -133,30 +133,30 @@ TEST_F(ObSharedStorageTest, test_tablet_gc_for_private_dir)
   int64_t tablet_version2;
   int64_t tablet_version3;
   EXE_SQL("create table test_table (a int)");
-  LOG_INFO("create_table finish");
+
 
   set_ls_and_tablet_id_for_run_ctx();
 
 
   get_tablet_version(tablet_version1);
   EXE_SQL("insert into test_table values (1)");
-  LOG_INFO("insert data finish");
+
 
   EXE_SQL("alter system minor freeze tenant tt1;");
   wait_minor_finish();
   get_tablet_version(tablet_version2);
-  LOG_INFO("get tablet version", K(tablet_version1), K(tablet_version2));
+
   ASSERT_LT(tablet_version1, tablet_version2);
 
 
   EXE_SQL("insert into test_table values (1)");
-  LOG_INFO("insert data finish");
+
 
   EXE_SQL("alter system minor freeze tenant tt1;");
   wait_minor_finish();
 
   get_tablet_version(tablet_version3);
-  LOG_INFO("get tablet version", K(tablet_version2), K(tablet_version3));
+
   ASSERT_LT(tablet_version2, tablet_version3);
 
   check_block_for_private_dir(tablet_version3);
@@ -195,7 +195,7 @@ TEST_F(ObSharedStorageTest, test_ls_gc)
   set_ls_and_tablet_id_for_run_ctx();
 
   EXE_SQL("insert into test_table values (1)");
-  LOG_INFO("insert data finish");
+
 
   EXE_SQL("alter system minor freeze tenant tt1;");
   wait_minor_finish();
@@ -210,7 +210,7 @@ void ObSharedStorageTest::wait_ls_gc_finish(const ObLSID &ls_id, const int64_t l
   do {
     ASSERT_EQ(OB_SUCCESS, OB_DIR_MGR.get_ls_id_dir(dir_path, sizeof(dir_path), RunCtx.tenant_id_, RunCtx.tenant_epoch_, ls_id.id(), ls_epoch));
     ASSERT_EQ(OB_SUCCESS, ObIODeviceLocalFileOp::exist(dir_path, is_exist));
-    LOG_INFO("wait_ls_gc_finish", K(dir_path), K(is_exist));
+
     usleep(100 *1000);
   } while (is_exist);
 }
@@ -218,7 +218,7 @@ void ObSharedStorageTest::wait_ls_gc_finish(const ObLSID &ls_id, const int64_t l
 void ObSharedStorageTest::wait_minor_finish()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("wait minor begin");
+
   common::ObMySQLProxy &sql_proxy = get_curr_simple_server().get_sql_proxy2();
 
   ObSqlString sql;
@@ -235,9 +235,9 @@ void ObSharedStorageTest::wait_minor_finish()
       ASSERT_EQ(OB_SUCCESS, result->get_int("row_cnt", row_cnt));
     }
     usleep(100 * 1000);
-    LOG_INFO("minor result", K(row_cnt));
+
   } while (row_cnt > 0);
-  LOG_INFO("minor finished", K(row_cnt));
+
 }
 
 void ObSharedStorageTest::set_ls_and_tablet_id_for_run_ctx()
@@ -277,7 +277,7 @@ void ObSharedStorageTest::set_ls_and_tablet_id_for_run_ctx()
   RunCtx.ls_id_ = ls->get_ls_id();
   RunCtx.ls_epoch_ = ls->get_ls_epoch();
   RunCtx.tenant_epoch_ = MTL_EPOCH_ID();
-  LOG_INFO("finish set run ctx", K(RunCtx.tenant_epoch_), K(RunCtx.ls_id_), K(RunCtx.ls_epoch_), K(RunCtx.tablet_id_));
+
 }
 
 TEST_F(ObSharedStorageTest, end)
@@ -300,7 +300,7 @@ void ObSharedStorageTest::get_tablet_version(
     if (!is_old_version_empty) continue;
 
     ObPrivateBlockGCHandler handler(RunCtx.ls_id_, RunCtx.ls_epoch_, RunCtx.tablet_id_, current_tablet_version, current_tablet_trans_seq);
-    LOG_INFO("wait old tablet version delete", K(current_tablet_version), K(is_old_version_empty), K(RunCtx.ls_id_), K(RunCtx.ls_epoch_), K(handler));
+
     ASSERT_EQ(OB_SUCCESS, handler.list_tablet_meta_version(tablet_versions));
     usleep(100 * 1000);
   } while (1 != tablet_versions.count());
@@ -338,7 +338,7 @@ void ObSharedStorageTest::check_block_for_shared_dir()
 
   do {
     ASSERT_EQ(OB_SUCCESS, handler.list_tablet_meta_version(tablet_meta_versions));
-    LOG_INFO("tablet meta versions", K(tablet_meta_versions));
+
   } while (1 != tablet_meta_versions.count());
 
   int64_t tablet_version = tablet_meta_versions.at(0);
@@ -350,7 +350,7 @@ void ObSharedStorageTest::check_block_for_shared_dir()
   ASSERT_EQ(OB_SUCCESS, get_block_ids_from_dir(RunCtx.tablet_id_, ObMacroType::DATA_MACRO, block_ids_in_dir));
   ASSERT_EQ(OB_SUCCESS, get_block_ids_from_dir(RunCtx.tablet_id_, ObMacroType::META_MACRO, block_ids_in_dir));
   ASSERT_EQ(OB_SUCCESS, op_for_check(block_ids_in_dir, empty_block_ids));
-  LOG_INFO("check block", K(tablet_meta_versions), K(tablet_version), K(empty_block_ids), K(block_ids_in_tablet), K(block_ids_in_dir));
+
   ASSERT_EQ(block_ids_in_tablet.count(), block_ids_in_dir.count());
   ASSERT_EQ(0, empty_block_ids.count());
 }
@@ -379,7 +379,7 @@ void ObSharedStorageTest::check_block_for_private_dir(
   ASSERT_EQ(OB_SUCCESS, op_for_check(block_ids_in_dir, empty_block_ids));
   ASSERT_EQ(0, empty_block_ids.count());
 
-  LOG_INFO("check block finish", K(tablet_version), K(empty_block_ids), K(block_ids_in_tablet), K(block_ids_in_dir));
+
 }
 
 int ObSharedStorageTest::get_block_ids_from_dir(
@@ -457,7 +457,7 @@ int main(int argc, char **argv)
   GCONF.memory_limit.set_value("20G");
   GCONF.system_memory.set_value("5G");
 
-  LOG_INFO("main>>>");
+
   oceanbase::unittest::RunCtx.time_sec_ = time_sec;
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

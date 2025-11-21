@@ -193,7 +193,7 @@ int ObBackupTabletGroupFuseCtx::do_fuse()
   } else if (OB_FAIL(fuser_.do_fuse())) {
     LOG_WARN("failed to do fuse", K(ret));
   } else {
-    LOG_INFO("backup tablet group do fuse", K_(param));
+
   }
   return ret;
 }
@@ -209,7 +209,7 @@ int ObBackupTabletGroupFuseCtx::get_next_tablet_item(
     LOG_WARN("group fuse ctx do not init", K(ret));
   } else if (OB_FAIL(fuser_.get_next_tablet_item(tablet_item))) {
     if (OB_ITER_END == ret) {
-      LOG_INFO("no next tablet item", K(ret));
+
     } else {
       LOG_WARN("failed to get next tablet id", K(ret));
     }

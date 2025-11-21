@@ -1259,7 +1259,7 @@ bool ObIORequest::is_local_clog_not_isolated()
   } else if (clog_io_isolation_mode == 2) {
   }
   if (REACH_TIME_INTERVAL(60 * 1000L * 1000L)) { // 60s
-    LOG_INFO("clog_not_isolated", K(clog_not_isolated), K(clog_io_isolation_mode), K(group_key), K(func_type));
+
   }
   return clog_not_isolated;
 }
@@ -1492,7 +1492,7 @@ int ObIORequest::prepare(char *next_buffer, int64_t next_size, int64_t next_offs
   }
   if (OB_UNLIKELY(tg.get_diff() > 100000)) {// 100ms
     //print req
-    LOG_INFO("prepare_request cost too much time", K(ret), K(tg), K(*this));
+
   }
   return ret;
 }
@@ -1548,13 +1548,13 @@ int ObIORequest::try_alloc_buf_until_timeout(char *&io_buf)
         const int64_t remain_time = timeout_ts() - current_ts;
         const int64_t sleep_time = min(remain_time, 1000L);
         if (TC_REACH_TIME_INTERVAL(1000L * 1000L)) {
-          LOG_INFO("alloc memory failed, retry later", K(ret), K(remain_time), K(sleep_time), K(retry_alloc_count));
+
         }
         ob_usleep((useconds_t)sleep_time);
         ret = OB_SUCCESS;
       }
     } else {
-      LOG_INFO("retry alloc io_buf success", K(retry_alloc_count));
+
       break;
     }
   }
@@ -2268,7 +2268,7 @@ int64_t ObTenantIOConfig::get_callback_thread_count() const
   int64_t memory_benchmark = 4L * 1024L * 1024L * 1024L; //4G memory
   //Based on 4G memory, one thread will be added for each additional 4G of memory, and the maximum number of callback_thread_count is 16
   int64_t callback_thread_num = 0 == param_config_.callback_thread_count_? min(16, (param_config_.memory_limit_ / memory_benchmark) + 1) : param_config_.callback_thread_count_;
-  LOG_INFO("get callback thread by memory success", K(param_config_.memory_limit_), K(callback_thread_num));
+
   return callback_thread_num;
 }
 

@@ -94,7 +94,7 @@ public:
       }
     }
     if (OB_SUCC(ret)) {
-      LOG_INFO("success to get tablet ids", KR(ret), K(tablet_cnt));
+
     }
     return ret;
   }
@@ -111,7 +111,7 @@ public:
     } else if (OB_FAIL(tablet_map_.set_refactored(pair, touch_cnt, 1/*overwrite*/))) {
       LOG_WARN("failed to set refactor", KR(ret), K(tablet_id), K(touch_cnt));
     } else {
-      LOG_INFO("success to set refactor", KR(ret), K(tablet_id), K(pair), K(touch_cnt));
+
     }
     return ret;
   }
@@ -228,7 +228,7 @@ void TestCompactionIter::test_iter(
   const int64_t error_tablet_idx,
   const int input_errno)
 {
-  LOG_INFO("test_iter", K(ls_cnt), K(max_batch_tablet_cnt), K(tablet_cnt_per_ls), K(error_tablet_idx), K(input_errno));
+
   MockObCompactionScheduleIterator iter(max_batch_tablet_cnt);
   if (OB_ISNULL(tablet_cnt_in_ls_array)) {
     ASSERT_TRUE(ls_cnt > 0 && tablet_cnt_per_ls > 0);

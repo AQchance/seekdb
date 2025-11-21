@@ -49,7 +49,7 @@ int ObDbmsStatsExecutor::gather_table_stats(ObExecContext &ctx,
                                             ObOptStatRunningMonitor &running_monitor)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("begin to gather table stats", K(param));
+
   PartitionIdBlockMap partition_id_block_map;
   PartitionIdSkipRateMap partition_id_skip_rate_map;
   GatherHelper gather_helper(running_monitor);
@@ -123,7 +123,7 @@ int ObDbmsStatsExecutor::gather_partition_stats(ObExecContext &ctx,
                                                 ObIArray<int64_t> &failed_part_ids)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("begin to gather table stats", K(param));
+
   typedef ObSEArray<TaskColumnParam, 2> TaskColumnParamInfo;
   typedef ObSEArray<GatherPartInfos, 2> BatchTaskPartInfo;
   SMART_VARS_2((BatchTaskPartInfo, batch_part_infos),(TaskColumnParamInfo, batch_task_col_infos))
@@ -742,7 +742,7 @@ int ObDbmsStatsExecutor::prepare_gather_stats(ObExecContext &ctx,
   } else if (OB_FAIL(check_need_split_gather(param, gather_helper))) {
     LOG_WARN("failed to check need split gather", K(ret));
   } else {
-    LOG_TRACE("succeed to prepare gather stats", K(param), K(gather_helper));
+
   }
   return ret;
 }
@@ -907,9 +907,9 @@ int ObDbmsStatsExecutor::check_need_split_gather(const ObTableStatParam &param, 
                                        gather_helper.maximum_gather_col_cnt_ != origin_column_cnt;
     }
     if (gather_helper.is_split_gather_) {
-      LOG_TRACE("stat gather will use split gather", K(param.degree_), K(gather_helper));
+
     }
-    LOG_TRACE("succeed to get the maximum num of part and column for stat gather", K(param), K(gather_helper));
+
   }
   else {
     gather_helper.maximum_gather_part_cnt_ = partition_cnt;
@@ -972,7 +972,7 @@ int ObDbmsStatsExecutor::set_table_stats(ObExecContext &ctx,
                                              param.table_param_.is_index_stat_))) {
       LOG_WARN("failed to update table stats", K(ret));
     } else {
-      LOG_TRACE("end set table stats", K(param), K(table_stat));
+
     }
     if (OB_SUCC(ret)) {
       if (OB_FAIL(trans.end(true))) {
@@ -1057,7 +1057,7 @@ int ObDbmsStatsExecutor::set_column_stats(ObExecContext &ctx,
                                                   CREATE_OBJ_PRINT_PARAM(ctx.get_my_session())))) {
           LOG_WARN("failed to update column stats", K(ret));
         } else {
-          LOG_TRACE("end set column stats", K(param), K(*col_stat));
+
         }
         if (OB_SUCC(ret)) {
           if (OB_FAIL(trans.end(true))) {
@@ -1106,7 +1106,7 @@ int ObDbmsStatsExecutor::do_set_table_stats(const ObSetTableStatParam &param,
       table_stat->set_micro_block_num(param.nummicroblks_);
     }
     //other options support later.
-    LOG_TRACE("succeed to do set table stats", K(*table_stat));
+
   }
   return ret;
 }
@@ -1161,7 +1161,7 @@ int ObDbmsStatsExecutor::do_set_column_stats(ObIAllocator &allocator,
 
     //6.set hist_param TODO @jiangxiu.wt
     //other options support later.
-    LOG_TRACE("succeed to do set column stats", K(param), K(*column_stat));
+
   }
   return ret;
 }
@@ -1334,7 +1334,7 @@ int ObDbmsStatsExecutor::reset_table_locked_state(ObExecContext &ctx,
   } else if (OB_FAIL(mysql_proxy->write(param.tenant_id_, insert_sql.ptr(), affected_rows))) {
     LOG_WARN("fail to exec sql", K(insert_sql), K(ret));
   } else {
-    LOG_TRACE("Succeed to reset table locked state", K(insert_sql), K(param));
+
   }
   return ret;
 }
@@ -1354,7 +1354,7 @@ int ObDbmsStatsExecutor::gather_index_stats(ObExecContext &ctx,
   PartitionIdBlockMap partition_id_block_map;
   bool use_column_store = false;
   ObSEArray<ObOptColumnStat*, 4> copy_stats;
-  LOG_TRACE("begin gather index stats", K(param));
+
   if (OB_FAIL(partition_id_block_map.create(10000,
                                             ObModIds::OB_HASH_BUCKET_TABLE_STATISTICS,
                                             ObModIds::OB_HASH_BUCKET_TABLE_STATISTICS,
@@ -1584,7 +1584,7 @@ int ObDbmsStatsExecutor::update_online_stat(ObExecContext &ctx,
       }
       if (ret == OB_ERR_EXCLUSIVE_LOCK_CONFLICT || ret == OB_ERR_SHARED_LOCK_CONFLICT) {
         ret = OB_SUCCESS;
-        LOG_INFO("update online stats occur lock conflict, just skip");
+
       }
       //release source
       //guard.~CompatModeGuard();
@@ -1759,7 +1759,7 @@ int ObDbmsStatsExecutor::fetch_gather_table_snapshot_read(common::sqlclient::ObI
       }
     }
   }
-  LOG_TRACE("succeed to fetch gather table snapshot read", K(current_scn));
+
   return ret;
 }
 
@@ -1860,7 +1860,7 @@ int ObDbmsStatsExecutor::fetch_gather_task_addr(ObCommonSqlProxy *sql_proxy,
               } else {
                 MEMSET(svr_ip, 0, str.length() + 1);
                 MEMCPY(svr_ip, str.ptr(), str.length());
-                LOG_TRACE("succeed to fetch gather task addr", K(str), K(svr_port));
+
               }
             }
           }
@@ -1955,7 +1955,7 @@ int ObDbmsStatsExecutor::set_system_stats(ObExecContext &ctx, const ObSetSystemS
                                             &system_stat))) {
     LOG_WARN("failed to update system stats", K(ret));
   } else {
-    LOG_TRACE("end set system stats", K(param), K(system_stat));
+
   }
   return ret;
 }
@@ -2073,7 +2073,7 @@ int ObDbmsStatsExecutor::check_use_single_partition_gather(const PartitionIdBloc
                                                            bool &need_single_part)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("begin to adjsut gather param", K(param));
+
   if (param.part_level_ == share::schema::ObPartitionLevel::PARTITION_LEVEL_ZERO) {
     // do nohting
   } else {
@@ -2130,7 +2130,7 @@ int ObDbmsStatsExecutor::check_use_single_partition_gather(const PartitionIdBloc
       }
     }
   }
-  LOG_TRACE("end to adjsut auto gather param", K(param), K(need_single_part));
+
   return ret;
 }
 
@@ -2190,7 +2190,7 @@ int ObDbmsStatsExecutor::get_stats_collect_batch_size(ObMySQLProxy *mysql_proxy,
       ret = OB_ERR_DBMS_STATS_PL;
       LOG_WARN("Illegal auto gather stats batch size must greater than 0", K(ret), K(batch_part_size));
     } else {
-      LOG_TRACE("Succeed to get table gather stats batch size", K(batch_part_size));
+
     }
   }
   return ret;

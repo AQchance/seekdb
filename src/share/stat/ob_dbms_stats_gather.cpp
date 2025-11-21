@@ -35,7 +35,7 @@ int ObDbmsStatsGather::gather_stats(ObExecContext &ctx,
                                     ObIArray<ObOptStat> &opt_stats)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("begin to gather table stats", K(param));
+
   if (OB_ISNULL(param.allocator_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get unexpected error", K(ret), K(param.allocator_));
@@ -154,7 +154,7 @@ int ObDbmsStatsGather::gather_stats(ObExecContext &ctx,
         } else if (OB_FALSE_IT(start_time = ObTimeUtility::current_time())) {
         } else if (OB_FAIL(refine_est.estimate(new_param, opt_stats.at(i)))) {
           if (ret == OB_TIMEOUT) {
-            LOG_INFO("refine column stats min/max occur timeout");
+
             ret = OB_SUCCESS;
             if (new_param.partition_infos_.empty()) {
               if (OB_FAIL(audit.add_failed_refine_parts(new_param.table_id_))) {
@@ -362,7 +362,7 @@ int ObDbmsStatsGather::gather_index_stats(ObExecContext &ctx,
                                           ObIArray<ObOptColumnStat *> &all_column_stats)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("begin to gather index stats", K(param));
+
   if (OB_ISNULL(param.allocator_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get unexpected error", K(ret), K(param.allocator_));
@@ -397,10 +397,10 @@ int ObDbmsStatsGather::adjust_sample_param(const ObIArray<ObOptStat> &opt_stats,
           param.sample_info_.set_percent(sample_ratio);
           param.sample_info_.set_is_block_sample(true);
         }
-        LOG_TRACE("decide auto gather stats need sample", K(param), K(opt_stats));
+
       }
     } else if (!param.sample_info_.is_specify_sample() && opt_stats.count() > 1) {
-      LOG_TRACE("use full scan for collect multi part", K(ret));
+
     }
   }
   return ret;

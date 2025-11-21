@@ -158,7 +158,7 @@ int ObExprAdd::calc_result_type2(ObExprResType &type,
       }
     }
   }
-  LOG_DEBUG("calc_result_type2", K(scale), K(type1), K(type2), K(type), K(precision));
+
   return ret;
 }
 
@@ -333,7 +333,7 @@ int ObExprAdd::add_double(ObObj &res,
       LOG_WARN("double out of range", K(res), K(left), K(right), K(res));
       res.set_null();
     }
-    LOG_DEBUG("succ to add double", K(res), K(left), K(right));
+
   }
   UNUSED(allocator);
   UNUSED(scale);
@@ -354,7 +354,7 @@ int ObExprAdd::add_double_no_overflow(ObObj &res,
     double left_d = left.get_double();
     double right_d = right.get_double();
     res.set_double(left_d + right_d);
-    LOG_DEBUG("succ to add double", K(res), K(left), K(right));
+
   }
   return ret;
 }
@@ -409,7 +409,7 @@ int ObExprAdd::add_datetime(ObObj &res, const ObObj &left, const ObObj &right,
       LOG_USER_ERROR(OB_OPERATE_OVERFLOW, "DATE", expr_str);
     }
   }
-  LOG_DEBUG("add datetime", K(left), K(right), K(scale), K(res));
+
   UNUSED(allocator);
   UNUSED(scale);
   return ret;
@@ -883,7 +883,7 @@ int ObExprAdd::add_number_number(EVAL_FUNC_ARG_DECL)
 
 int ObExprAdd::add_number_number_batch(BATCH_EVAL_FUNC_ARG_DECL)
 {
-  LOG_DEBUG("add_number_number_batch begin");
+
   int ret = OB_SUCCESS;
   ObDatumVector l_datums;
   ObDatumVector r_datums;
@@ -940,7 +940,7 @@ int ObExprAdd::add_number_number_batch(BATCH_EVAL_FUNC_ARG_DECL)
       }
     }
   }
-  LOG_DEBUG("add_number_number_batch done");
+
   return ret;
 }
 

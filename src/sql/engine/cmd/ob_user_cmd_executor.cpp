@@ -80,7 +80,7 @@ int ObCreateUserExecutor::check_user_valid(ObSchemaGetterGuard& schema_guard,
                         user_name.length(), user_name.ptr(), host_name.length(), host_name.ptr());
     }
   }
-  LOG_DEBUG("check user valid status", K(priv_set), K(ret));
+
   return ret;
 }
 
@@ -222,7 +222,7 @@ int ObCreateUserExecutor::execute(ObExecContext &ctx, ObCreateUserStmt &stmt)
             if (OB_FAIL(arg.user_infos_.push_back(user_info))) {
               LOG_WARN("Add user info to array error", K(ret));
             } else {
-              LOG_DEBUG("Add user info to array", K(user_info));
+
             }
           }
         }

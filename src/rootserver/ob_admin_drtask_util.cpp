@@ -484,7 +484,7 @@ int ObAdminDRTaskUtil::execute_remove_paxos_task_(
     LOG_WARN("invalid argument", KR(ret), K(command_arg), K(remove_paxos_arg));
   } else {
     // do not need to send rpc, just execute locally
-    LOG_INFO("start to remove member from member_list", K(remove_paxos_arg));
+
     MTL_SWITCH(remove_paxos_arg.tenant_id_) {
       if (OB_FAIL(observer::ObService::do_remove_ls_paxos_replica(remove_paxos_arg))) {
         LOG_WARN("fail to execute remove paxos replica rpc locally", KR(ret), K(remove_paxos_arg));
@@ -516,7 +516,7 @@ int ObAdminDRTaskUtil::execute_remove_nonpaxos_task_(
     LOG_WARN("invalid argument", KR(ret), K(command_arg), K(remove_non_paxos_arg));
   } else {
     // do not need to send rpc, just execute locally
-    LOG_INFO("start to remove learner from learner_list", K(remove_non_paxos_arg));
+
     MTL_SWITCH(remove_non_paxos_arg.tenant_id_) {
       if (OB_FAIL(observer::ObService::do_remove_ls_nonpaxos_replica(remove_non_paxos_arg))) {
         LOG_WARN("fail to execute remove non-paxos replica rpc locally", KR(ret), K(remove_non_paxos_arg));
@@ -569,7 +569,7 @@ int ObAdminDRTaskUtil::parse_params_from_obadmin_command_arg(
   } else if (OB_FAIL(split_on(admin_command_after_trim, ',', command_params_array))) {
     LOG_WARN("fail to split string", KR(ret), K(admin_command_after_trim), K(admin_command_before_trim));
   } else {
-    LOG_INFO("start to parse parameters from command", K(command_arg), K(command_params_array));
+
     ObSqlString data_source_string("DtStr");
     for (int64_t param_index = 0;
          param_index < command_params_array.count() && OB_SUCC(ret);

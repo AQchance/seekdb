@@ -4461,7 +4461,7 @@ int ObPLCodeGenerator::generate_sql(const ObPLSqlStmt &s, ObLLVMValue &ret_err)
     OZ (get_helper().get_int8(is_rollback, is_rollback_value));
     OZ (args.push_back(is_rollback_value));
     OZ (get_helper().create_call(ObString("spi_end_trans"), get_spi_service().spi_end_trans_, args, ret_err));
-    LOG_DEBUG("explicit end trans in pl", K(ret), K(s.get_sql()));
+
   } else {
     ObSEArray<ObLLVMValue, 16> args;
     ObLLVMValue str;
@@ -6773,7 +6773,7 @@ int ObPLCodeGenerator::generate(ObPLPackage &pl_package)
 
   if (OB_SUCC(ret)) {
 #ifndef NDEBUG
-    LOG_INFO("================Original LLVM Module================");
+
     helper_.dump_module();
 #endif
 
@@ -7005,7 +7005,7 @@ int ObPLCodeGenerator::generate_normal(ObPLFunction &pl_func)
 
   if (OB_SUCC(ret)) {
 #ifndef NDEBUG
-    LOG_INFO("================Original================", K(pl_func));
+
     helper_.dump_module();
 #endif
 

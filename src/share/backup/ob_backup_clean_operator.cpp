@@ -47,7 +47,7 @@ int ObBackupCleanJobOperator::insert_job(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", K(ret), K(affected_rows), K(sql), K(job_attr));
   } else {
-    LOG_INFO("[BACKUP_CLEAN]success insert one backup clean job", K(job_attr), K(sql));
+
   }
   return ret;
 }
@@ -709,7 +709,7 @@ int ObBackupCleanTaskOperator::check_backup_clean_task_exist(
         if (OB_ITER_END == ret) {
           is_exist = false;
           ret = OB_SUCCESS;
-          LOG_INFO("[BACKUP_CLEAN]task is not exist", K(ret), K(sql));
+
         } else {
           LOG_WARN("failed to iterate result", K(ret));
         }
@@ -925,7 +925,7 @@ int ObBackupCleanTaskOperator::check_current_task_exist(common::ObISQLClient &pr
         if (OB_ITER_END == ret) {
           is_exist = false;
           ret = OB_SUCCESS;
-          LOG_INFO("[BACKUP_CLEAN]current task is not exist", K(ret), K(sql));
+
         } else {
           LOG_WARN("failed to iterate result", K(ret));
         }
@@ -989,7 +989,7 @@ int ObBackupCleanLSTaskOperator::insert_ls_task(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", K(ret), K(affected_rows), K(sql));
   } else {
-    LOG_INFO("[BACKUP_CLEAN]insert one ls task", K(ls_attr), K(sql));
+
   }
   return ret;
 }
@@ -1067,7 +1067,7 @@ int ObBackupCleanLSTaskOperator::get_ls_tasks_from_task_id(
       } else if (OB_FAIL(parse_ls_result_(*result, ls_attrs))) {
         LOG_WARN("failed to parse result", K(ret));
       } else {
-        LOG_INFO("[BACKUP_CLEAN]success get ls tasks from task id", K(ret), K(ls_attrs)); 
+ 
       }
     }
   }
@@ -1135,7 +1135,7 @@ int ObBackupCleanLSTaskOperator::parse_ls_result_(
     } else if (OB_FAIL(ls_attrs.push_back(ls_attr))) {
       LOG_WARN("failed to push back ls", K(ret));
     } else {
-      LOG_INFO("[BACKUP_CLEAN]success parse ls result", K(ret), K(ls_attrs), K(ls_attr));   
+   
     }
   }
  
@@ -1191,7 +1191,7 @@ int ObBackupCleanLSTaskOperator::do_parse_ls_result_(ObMySQLResult &result, ObBa
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("[BACKUP_CLEAN]success to read ls attr", K(ls_attr));
+
   }
   return ret;
 }
@@ -1254,7 +1254,7 @@ int ObBackupCleanLSTaskOperator::redo_ls_task(
     ret = OB_ERR_UNEXPECTED;
     LOG_ERROR("invalid affected_rows", K(ret), K(affected_rows), K(sql), K(ls_attr));
   } else {
-    LOG_INFO("[BACKUP_CLEAN]success redo ls status", K(ls_attr), K(sql));
+
   }
   return ret;
 }
@@ -1359,7 +1359,7 @@ int ObDeletePolicyOperator::insert_delete_policy(common::ObISQLClient &proxy, co
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", K(ret), K(affected_rows), K(sql), K(delete_policy));
   } else {
-    LOG_INFO("[BACKUP_CLEAN]success insert one backup delete policy", K(delete_policy), K(sql));
+
   }
   return ret;
 }
@@ -1407,7 +1407,7 @@ int ObDeletePolicyOperator::get_default_delete_policy(common::ObISQLClient &prox
         int64_t real_length = 0;
         EXTRACT_INT_FIELD_MYSQL(*result, OB_STR_TENANT_ID, delete_policy.tenant_id_, uint64_t);
         EXTRACT_STRBUF_FIELD_MYSQL(*result, OB_STR_RECOVERY_WINDOW, delete_policy.recovery_window_, sizeof(delete_policy.recovery_window_), real_length);
-        LOG_INFO("get value", K(ret), K(delete_policy));
+
       }
     }
   }

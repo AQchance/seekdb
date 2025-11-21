@@ -102,7 +102,7 @@ int ObTableLSExecuteP::LSExecuteIter::init_tb_ctx(ObTableSingleOp &single_op,
   tb_ctx.set_simple_table_schema(table_schema);
   tb_ctx.set_sess_guard(&outer_exectute_process_.sess_guard_);
   if (tb_ctx.is_init()) {
-    LOG_INFO("tb ctx has been inited", K(tb_ctx));
+
   } else if (OB_FAIL(tb_ctx.init_common(outer_exectute_process_.credential_,
                                         tablet_id_,
                                         outer_exectute_process_.get_timeout_ts()))) {
@@ -607,7 +607,7 @@ int ObTableLSExecuteP::HTableLSExecuteIter::get_next_ctx(ObIArray<table::ObTable
     LOG_WARN("invalid null tablet ops", K(ret));
   } else if (curr_op_index_ >= tablet_ops_->count()) {
     ret = OB_ITER_END;
-    LOG_DEBUG("this tablet_ops_ has no more op", K(ret), K(curr_op_index_));
+
   } else {
     ObTableSingleOp &curr_single_op = tablet_ops_->at(curr_op_index_++);
     ObTableOperationType::Type first_op_type = curr_single_op.get_op_type();
@@ -1235,10 +1235,10 @@ int ObTableLSExecuteP::try_process()
 
 #ifndef NDEBUG
   // debug mode
-  LOG_INFO("[TABLE] execute ls batch operation", K(ret), K_(retry_count));
+
 #else
   // release mode
-  LOG_TRACE("[TABLE] execute ls batch operation", K(ret), K_(retry_count), "receive_ts", get_receive_timestamp());
+
 #endif
   return ret;
 }
@@ -1591,10 +1591,10 @@ int ObTableLSExecuteP::execute_tablet_op(const ObTableTabletOp &tablet_op,
 
 #ifndef NDEBUG
   // debug mode
-  LOG_INFO("[TABLE] execute ls batch tablet operation", K(ret), K(tablet_op), K(tablet_result), K_(retry_count));
+
 #else
   // release mode
-  LOG_TRACE("[TABLE] execute ls batch tablet operation", K(ret), K(tablet_op), K(tablet_result), K_(retry_count), "receive_ts", get_receive_timestamp());
+
 #endif
 
   return ret;
@@ -1775,7 +1775,7 @@ int ObTableLSExecuteP::init_tb_ctx(const table::ObTableTabletOp &tablet_op,
   tb_ctx.set_simple_table_schema(table_schema);
   tb_ctx.set_sess_guard(&sess_guard_);
   if (tb_ctx.is_init()) {
-    LOG_INFO("tb ctx has been inited", K(tb_ctx));
+
   } else if (OB_FAIL(tb_ctx.init_common(credential_, tablet_op.get_tablet_id(), get_timeout_ts()))) {
     LOG_WARN("fail to init table ctx common part", K(ret), K(tablet_op.get_tablet_id()));
   } else {
@@ -2100,10 +2100,10 @@ int ObTableLSExecuteP::execute_single_query_and_mutate(const uint64_t table_id,
 
   #ifndef NDEBUG
     // debug mode
-    LOG_INFO("[TABLE] execute ls batch single operation", K(ret), K(single_op), K_(result));
+
   #else
     // release mode
-    LOG_TRACE("[TABLE] execute ls batch single operation", K(ret), K(single_op), K_(result));
+
   #endif
 
   return ret;

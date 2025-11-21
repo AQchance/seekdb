@@ -355,7 +355,7 @@ int ObArchivePersistHelper::del_dest(common::ObISQLClient &proxy, const int64_t 
   } else if (OB_FAIL(proxy.write(get_exec_tenant_id(), sql.ptr(), affected_rows))) {
     LOG_WARN("failed to exec sql", K(ret), K(sql));
   } else {
-    LOG_INFO("del dest succeed", K(dest_no), K(get_exec_tenant_id()));
+
   }
   return ret;
 }
@@ -822,7 +822,7 @@ int ObArchivePersistHelper::get_pieces(
       } else if (OB_FAIL(parse_piece_result_(*result, piece_list))) {
         LOG_WARN("failed to parse result", K(ret));
       } else {
-        LOG_INFO("success get piece", K(sql), K(piece_list));
+
       }
     }
   }
@@ -860,7 +860,7 @@ int ObArchivePersistHelper::get_frozen_pieces(
       } else if (OB_FAIL(parse_piece_result_(*result, piece_list))) {
         LOG_WARN("failed to parse result", K(ret));
       } else {
-        LOG_INFO("success get piece", K(sql), K(piece_list));
+
       }
     }
   }
@@ -1177,7 +1177,7 @@ int ObArchivePersistHelper::get_pieces_by_range(common::ObISQLClient &proxy, con
       } else if (OB_FAIL(parse_piece_result_(*result, pieces))) {
         LOG_WARN("failed to parse result", K(ret));
       } else {
-        LOG_INFO("success get piece", K(sql));
+
       }
     }
   }
@@ -1339,7 +1339,7 @@ int ObArchivePersistHelper::do_parse_ls_archive_piece_summary_result_(sqlclient:
       piece.max_lsn_ = 0;
       piece.input_bytes_ = 0;
       piece.output_bytes_ = 0;
-      LOG_INFO("encounter a log stream not started.", K(ret), K(piece));
+
     }
   }
 

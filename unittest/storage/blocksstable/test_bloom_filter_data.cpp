@@ -152,7 +152,7 @@ int TestBloomFilterDataReaderWriter::prepare_rowkey(ObDatumRowkey &rowkey, const
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(row_generate_.get_next_row(row_))) {
-    STORAGE_LOG(WARN, "fail to get next row", K(ret));
+
   } else {
     rowkey.assign(row_.storage_datums_, rowkey_column_cnt);
   }
@@ -170,17 +170,17 @@ int TestBloomFilterDataReaderWriter::prepare_bloom_filter_cache(ObBloomFilterCac
   ObDataStoreDesc desc;
   desc.init(table_schema_, 1, MINOR_MERGE);
   if (OB_FAIL(bf_cache_value.init(rowkey_column_cnt, max_row_count))) {
-    STORAGE_LOG(WARN, "Failed to init bloomfilter cache value", K(ret));
+
   } else {
     ObDatumRowkey rowkey;
     for (int64_t i = 0; OB_SUCC(ret) && i < row_count; i++) {
       uint64_t key_hash = 0;
       if (OB_FAIL(prepare_rowkey(rowkey, rowkey_column_cnt))) {
-        STORAGE_LOG(WARN, "Failed to prepare rowkey", K(ret));
+
       } else if (OB_FAIL(rowkey.murmurhash(0, desc.datum_utils_, key_hash))) {
-        STORAGE_LOG(WARN, "Failed to calc rowkey hash ", K(ret), K(rowkey));
+
       } else if (OB_FAIL(bf_cache_value.insert(key_hash))) {
-        STORAGE_LOG(WARN, "Failed to insert rowkey to bloom filter cache", K(rowkey), K(ret));
+
       }
     }
   }
@@ -198,9 +198,9 @@ int TestBloomFilterDataReaderWriter::prepare_bloom_filter_cache(ObBloomFilterDat
   desc.init(table_schema_, 1, MINOR_MERGE);
   for (int64_t i = 0; OB_SUCC(ret) && i < row_count; i++) {
     if (OB_FAIL(prepare_rowkey(rowkey))) {
-      STORAGE_LOG(WARN, "Failed to prepare rowkey", K(ret));
+
     } else if (OB_FAIL(bf_writer.append(rowkey, desc.datum_utils_))) {
-      STORAGE_LOG(WARN, "Failed to insert rowkey to bloom filter cache", K(rowkey), K(ret));
+
     }
   }
 
@@ -214,22 +214,22 @@ int TestBloomFilterDataReaderWriter::check_bloom_filter_cache(const ObBloomFilte
 
   if (!bf_cache_value.is_valid() || !bf_cache_value2.is_valid()) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "invalid bloom filter cache", K(bf_cache_value), K(bf_cache_value2), K(ret));
+
   } else if (!bf_cache_value.could_merge_bloom_filter(bf_cache_value2)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "invalid bloom filter cache", K(bf_cache_value), K(bf_cache_value2), K(ret));
+
   } else if (bf_cache_value.get_prefix_len() != bf_cache_value2.get_prefix_len()
       || bf_cache_value.get_row_count() != bf_cache_value2.get_row_count()
       || bf_cache_value.get_nhash() != bf_cache_value2.get_nhash()
       || bf_cache_value.get_nbit() != bf_cache_value2.get_nbit()) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "invalid bloom filter cache", K(bf_cache_value), K(bf_cache_value2), K(ret));
+
   } else {
     int64_t nbytes = bf_cache_value.get_nbytes();
     for (int64_t i = 0; OB_SUCC(ret) && i < nbytes; i++) {
       if (bf_cache_value.get_bloom_filter_bits()[i] != bf_cache_value2.get_bloom_filter_bits()[i]) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "invalid bloom filter cache", K(i), K(nbytes), K(bf_cache_value), K(bf_cache_value2), K(ret));
+
       }
     }
   }
@@ -245,33 +245,33 @@ int TestBloomFilterDataReaderWriter::check_bloom_filter_cache(const ObBloomFilte
 
   if (!new_bf_cache_value.is_valid() || !bf_cache_value.is_valid() || !bf_cache_value2.is_valid()) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "invalid bloom filter cache", K(new_bf_cache_value), K(bf_cache_value), K(bf_cache_value2), K(ret));
+
   } else if (!new_bf_cache_value.could_merge_bloom_filter(bf_cache_value)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "invalid bloom filter cache", K(new_bf_cache_value), K(bf_cache_value), K(bf_cache_value2), K(ret));
+
   } else if (!bf_cache_value.could_merge_bloom_filter(bf_cache_value2)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "invalid bloom filter cache", K(new_bf_cache_value), K(bf_cache_value), K(bf_cache_value2), K(ret));
+
   } else if (new_bf_cache_value.get_prefix_len() != bf_cache_value.get_prefix_len()
       || new_bf_cache_value.get_nhash() != bf_cache_value.get_nhash()
       || new_bf_cache_value.get_nbit() != bf_cache_value.get_nbit()) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "invalid bloom filter cache", K(new_bf_cache_value), K(bf_cache_value), K(bf_cache_value2), K(ret));
+
   } else if (bf_cache_value.get_prefix_len() != bf_cache_value2.get_prefix_len()
       || bf_cache_value.get_nhash() != bf_cache_value2.get_nhash()
       || bf_cache_value.get_nbit() != bf_cache_value2.get_nbit()) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "invalid bloom filter cache", K(new_bf_cache_value), K(bf_cache_value), K(bf_cache_value2), K(ret));
+
   } else if (new_bf_cache_value.get_row_count() != bf_cache_value.get_row_count() + bf_cache_value2.get_row_count()) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "invalid bloom filter cache", K(new_bf_cache_value), K(bf_cache_value), K(bf_cache_value2), K(ret));
+
   } else {
     int64_t nbytes = new_bf_cache_value.get_nbytes();
     for (int64_t i = 0; OB_SUCC(ret) && i < nbytes; i++) {
       if (new_bf_cache_value.get_bloom_filter_bits()[i] !=
             (bf_cache_value.get_bloom_filter_bits()[i] | bf_cache_value2.get_bloom_filter_bits()[i])) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "invalid bloom filter cache", K(i), K(nbytes), K(new_bf_cache_value.get_bloom_filter_bits()[i]), K(bf_cache_value.get_bloom_filter_bits()[i]), K(bf_cache_value2.get_bloom_filter_bits()[i]), K(ret));
+
       }
     }
   }

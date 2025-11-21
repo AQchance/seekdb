@@ -1783,7 +1783,7 @@ int ObOptimizerUtil::generate_rowkey_exprs(const ObDMLStmt* cstmt,
             // for virtual table, we have HASH index which offers no ordering on index keys
             LOG_WARN("failed to push back index ordering expr", K(ret));
           } else {
-            LOG_TRACE("add index key expr", K(expr), K(column_id));
+
           }
         }
       }
@@ -3413,7 +3413,7 @@ int ObOptimizerUtil::convert_subplan_scan_fd_parent_exprs(ObRawExprFactory &expr
     } else { /*do nothing*/ }
   }
   if (OB_SUCC(ret)) {
-    LOG_TRACE("succeed to convert subplan scan expr skip const", K(input_exprs), K(output_exprs));
+
   }
   return ret;
 }
@@ -3785,7 +3785,7 @@ int ObOptimizerUtil::create_interesting_merge_key(const ObDMLStmt *stmt,
                                              equal_sets, sort_exprs, directions, sort_map))) {
       LOG_WARN("failed to create interesting key", K(ret));
     } else {
-      LOG_TRACE("succeed to create merge key use order by items", K(sort_exprs), K(directions));
+
     }
   }
 
@@ -4745,7 +4745,7 @@ int ObOptimizerUtil::compute_stmt_interesting_order(const ObIArray<OrderItem> &o
       } else if (group_match) {
         max_prefix_count = std::max(max_prefix_count, prefix_count);
         match_info |= OrderingFlag::GROUP_MATCH;
-        LOG_TRACE("ordering is math group by", K(max_prefix_count), K(prefix_count));
+
       }
     } else if (has_winfunc && check_winfunc) {
       prefix_count = 0;
@@ -4755,7 +4755,7 @@ int ObOptimizerUtil::compute_stmt_interesting_order(const ObIArray<OrderItem> &o
       } else if (winfunc_match) {
         max_prefix_count = std::max(max_prefix_count, prefix_count);
         match_info |= OrderingFlag::WINFUNC_MATCH;
-        LOG_TRACE("ordering is match window function", K(max_prefix_count), K(prefix_count));
+
       }
     }
     if (OB_SUCC(ret) && (!check_group || !has_group) && !winfunc_require_sort) {
@@ -4768,7 +4768,7 @@ int ObOptimizerUtil::compute_stmt_interesting_order(const ObIArray<OrderItem> &o
         } else if (distinct_match) {
           max_prefix_count = std::max(max_prefix_count, prefix_count);
           match_info |= OrderingFlag::DISTINCT_MATCH;
-          LOG_TRACE("ordering is math distinct", K(max_prefix_count), K(prefix_count));
+
         }
       } else if (check_set) {
         // Without distinct, only consider set(union/intersection)
@@ -4780,7 +4780,7 @@ int ObOptimizerUtil::compute_stmt_interesting_order(const ObIArray<OrderItem> &o
           } else if (set_match) {
             max_prefix_count = std::max(max_prefix_count, prefix_count);
             match_info |= OrderingFlag::SET_MATCH;
-            LOG_TRACE("ordering is match set", K(max_prefix_count), K(prefix_count));
+
           }
         }
       }
@@ -4795,7 +4795,7 @@ int ObOptimizerUtil::compute_stmt_interesting_order(const ObIArray<OrderItem> &o
         } else if (orderby_match) {
           max_prefix_count = std::max(max_prefix_count, prefix_count);
           match_info |= OrderingFlag::ORDERBY_MATCH;
-          LOG_TRACE("ordering is math order by", K(max_prefix_count), K(prefix_count));
+
         }
       }
     }
@@ -4868,7 +4868,7 @@ int ObOptimizerUtil::compute_stmt_interesting_order(const ObIArray<OrderItem> &o
       }
       if (OB_SUCC(ret) && is_match) {
         match_info |= OrderingFlag::GROUP_MATCH;
-        LOG_TRACE("ordering is math group by");
+
       }
     } else if (has_winfunc && check_winfunc) {
       bool winfunc_require_sort = false;
@@ -4876,7 +4876,7 @@ int ObOptimizerUtil::compute_stmt_interesting_order(const ObIArray<OrderItem> &o
         LOG_WARN("failed to check is winfunc match", K(ret));
       } else if (is_match) {
         match_info |= OrderingFlag::WINFUNC_MATCH;
-        LOG_TRACE("ordering is match window function");
+
       }
     } else if (has_distinct && check_distinct) {
       ObSEArray<ObRawExpr *, 4> select_exprs;
@@ -4887,7 +4887,7 @@ int ObOptimizerUtil::compute_stmt_interesting_order(const ObIArray<OrderItem> &o
         LOG_WARN("check is covered by ordering failed", K(ret));
       } else if (is_match) {
         match_info |= OrderingFlag::DISTINCT_MATCH;
-        LOG_TRACE("ordering is math distinct");
+
       }
     } else if (check_set && NULL != select_stmt && is_parent_set_distinct) {
       ObSEArray<ObRawExpr *, 4> select_exprs;
@@ -4898,7 +4898,7 @@ int ObOptimizerUtil::compute_stmt_interesting_order(const ObIArray<OrderItem> &o
         LOG_WARN("check is covered by ordering failed", K(ret));
       } else if (is_match) {
         match_info |= OrderingFlag::SET_MATCH;
-        LOG_TRACE("ordering is match set");
+
       }
     } else if (has_orderby && check_order) {
       if (OB_FAIL(is_order_by_match(stmt->get_order_items(), ordering,
@@ -4906,7 +4906,7 @@ int ObOptimizerUtil::compute_stmt_interesting_order(const ObIArray<OrderItem> &o
         LOG_WARN("failed to check is order by match", K(ret));
       } else if (is_match) {
         match_info |= OrderingFlag::ORDERBY_MATCH;
-        LOG_TRACE("ordering is math order by");
+
       }
     } else if (in_subplan_scan) {
       match_info |= OrderingFlag::POTENTIAL_MATCH;
@@ -5295,7 +5295,7 @@ int ObOptimizerUtil::is_order_by_match(const ObIArray<OrderItem> &ordering,
     sort_match = true;
     match_prefix = match_count;
   }
-  LOG_TRACE("is_orderby match", K(ret), K(match_prefix), K(sort_match));
+
   return ret;
 }
 
@@ -7189,7 +7189,7 @@ int ObOptimizerUtil::check_basic_sharding_info(const ObAddr &local_addr,
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_TRACE("succeed to check basic sharding info", K(is_basic), K(is_remote));
+
   }
   return ret;
 }
@@ -7340,7 +7340,7 @@ int ObOptimizerUtil::compute_basic_sharding_info(const ObAddr &local_addr,
     }
   }
   if (OB_SUCC(ret) && NULL != result_sharding) {
-    LOG_TRACE("succeed to compute basic sharding info", K(*result_sharding), K(input_shardings));
+
   }
   return ret;
 }
@@ -7494,7 +7494,7 @@ int ObOptimizerUtil::check_pushdown_filter_to_base_table(ObLogPlan &plan,
       LOG_WARN("failed to check is match index", K(ret));
     }
   }
-  LOG_TRACE("check pushdown filter to tables", K(table_id), K(can_pushdown));
+
   return ret;
 }
 
@@ -9515,7 +9515,7 @@ int ObOptimizerUtil::is_implicit_collation_range_valid(ObItemType cmp_type,
              r_collation == CS_TYPE_BINARY) {
     is_valid = true;
   } else {
-    LOG_TRACE("unsupport implicit collation range", K(l_collation), K(r_collation));
+
   }
   return ret;  
 }

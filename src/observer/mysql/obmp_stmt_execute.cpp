@@ -849,7 +849,7 @@ int ObMPStmtExecute::parse_request_param_value(ObIAllocator &alloc,
                                          idx))) {
       LOG_WARN("get param value failed", K(param));
     } else {
-      LOG_DEBUG("resolve execute with param", K(param));
+
     }
   }
   return ret;
@@ -1061,7 +1061,7 @@ int ObMPStmtExecute::request_params(ObSQLSessionInfo *session,
                                                               bitmap))) {
           LOG_WARN("fail to parse request param values", K(ret), K(i));
         } else {
-          LOG_DEBUG("after parser param", K(param), K(i));
+
         }
         if (OB_SUCC(ret) && is_arraybinding_) {
           OZ (check_param_value_for_arraybinding(param));
@@ -1085,7 +1085,7 @@ int ObMPStmtExecute::request_params(ObSQLSessionInfo *session,
                                                 bitmap))) {
             LOG_WARN("fail to parse request returning into param values", K(ret), K(i));
           } else {
-            LOG_DEBUG("after parser resolve returning into", K(param), K(i));
+
             if (param.is_pl_extend()) {
               int ret = ObUserDefinedType::destruct_obj(param, nullptr);
               if (OB_SUCCESS != ret) {
@@ -1764,7 +1764,7 @@ int ObMPStmtExecute::is_arraybinding_returning(sql::ObSQLSessionInfo &session, b
     LOG_WARN("get stmt info is null", K(ret));
   } else if (ps_info->get_num_of_returning_into() > 0) {
     is_ab_return = true;
-    LOG_TRACE("is arraybinding returning", K(ret), KPC(ps_info));
+
   }
   return ret;
 }
@@ -1789,22 +1789,22 @@ int ObMPStmtExecute::try_batch_multi_stmt_optimization(ObSQLSessionInfo &session
 
   if (!enable_batch_opt) {
     // Does not support batch execution
-    LOG_TRACE("not open the batch optimization");
+
   } else if (!use_plan_cache) {
-    LOG_TRACE("not enable the plan_cache", K(use_plan_cache));
+
     // plan_cache switch is not turned on
   } else if (!is_prexecute()) {
     // Only enable batch optimization for the combined protocol
   } else if (is_pl_stmt(stmt_type_)) {
-    LOG_TRACE("is pl execution, can't do the batch optimization");
+
   } else if (1 == arraybinding_size_) {
-    LOG_TRACE("arraybinding size is 1, not need d batch");
+
   } else if (get_save_exception()) {
-    LOG_TRACE("is save exception mode, not supported batch optimization");
+
   } else if (OB_FAIL(is_arraybinding_returning(session, is_ab_returning))) {
     LOG_WARN("failed to check is arraybinding returning", K(ret));
   } else if (is_ab_returning) {
-    LOG_TRACE("returning not support the batch optimization");
+
   } else if (OB_FAIL(ObSQLUtils::transform_pl_ext_type(*arraybinding_params_,
                                                        arraybinding_size_,
                                                        alloc,
@@ -1815,7 +1815,7 @@ int ObMPStmtExecute::try_batch_multi_stmt_optimization(ObSQLSessionInfo &session
     if (THIS_WORKER.need_retry()) {
       // just go back to large query queue and retry
     } else if (OB_BATCHED_MULTI_STMT_ROLLBACK == ret) {
-      LOG_TRACE("batched multi_stmt needs rollback", K(ret));
+
       ret = OB_SUCCESS;
     } else {
       // Regardless of the error, execute once per line for fault tolerance
@@ -1860,7 +1860,7 @@ int ObMPStmtExecute::process_execute_stmt(const ObMultiStmtItem &multi_stmt_item
       bool optimization_done = false;
       if (ctx_.can_reroute_sql_) {
         ctx_.can_reroute_sql_ = false;
-        LOG_INFO("arraybinding not support reroute sql.");
+
       }
       ObSEArray<ObSavedException, 4> exception_array;
       if (OB_UNLIKELY(arraybinding_size_ <= 0)) {
@@ -2020,7 +2020,7 @@ int ObMPStmtExecute::process()
       LOG_WARN("failed to init flt extra info", K(ret));
     } else if (OB_FAIL(session.check_tenant_status())) {
       need_disconnect = false;
-      LOG_INFO("unit has been migrated, need deny new request", K(ret), K(MTL_ID()));
+
     } else if (OB_FAIL(session.gen_configs_in_pc_str())) {
       LOG_WARN("fail to generate configuration string that can influence execution plan", K(ret));
     } else if (is_arraybinding_ && OB_FAIL(check_precondition_for_arraybinding(session))) {
@@ -2077,7 +2077,7 @@ int ObMPStmtExecute::process()
                   piece_cache->get_piece_key(stmt_id_, i), session))) {
             if (OB_HASH_NOT_EXIST == ret) {
               ret = OB_SUCCESS;
-              LOG_INFO("piece hash not exist", K(ret), K(stmt_id_), K(i));
+
             } else {
               need_disconnect = true;
               LOG_WARN("remove piece fail", K(ret), K(need_disconnect), K(stmt_id_), K(i));
@@ -2085,7 +2085,7 @@ int ObMPStmtExecute::process()
           }
         }
       } else {
-        LOG_DEBUG("piece_cache_ is null");
+
       }
       ret = upper_scope_ret;
     }
@@ -2415,7 +2415,7 @@ int ObMPStmtExecute::parse_basic_param_value(ObIAllocator &allocator,
             ObLobLocatorV2 lobv2(str);
             param.set_lob_value(ObLongTextType, dst.ptr(), dst.length());
             param.set_has_lob_header();
-            LOG_TRACE("get lob locator v2", K(lobv2), K(cs_type), K(type));
+
           } else if (MYSQL_TYPE_TINY_BLOB == type
                     || MYSQL_TYPE_MEDIUM_BLOB == type
                     || MYSQL_TYPE_BLOB == type
@@ -2515,7 +2515,7 @@ int ObMPStmtExecute::parse_param_value(ObIAllocator &allocator,
     // if piece cache is null, it must not be send piece protocol
     bool is_null = ObSMUtils::update_from_bitmap(param, bitmap, param_id);
     if (is_null) {
-      LOG_DEBUG("param is null", K(param_id), K(param), K(type));
+
       if (ob_is_accuracy_length_valid_tc(param.get_param_meta().get_type())) {
         const_cast<ObObjMeta &>(param.get_param_meta()).set_collation_type(cs_type);
         const_cast<ObObjMeta &>(param.get_param_meta()).set_collation_level(CS_LEVEL_COERCIBLE);
@@ -2557,7 +2557,7 @@ int ObMPStmtExecute::parse_param_value(ObIAllocator &allocator,
       // this must be array bounding.
       bool is_null = ObSMUtils::update_from_bitmap(param, bitmap, param_id);
       if (is_null) {
-        LOG_DEBUG("param is null", K(param_id), K(param), K(type));
+
       } else {
         // 1. read count
         PS_DEFENSE_CHECK(1)
@@ -2936,7 +2936,7 @@ int ObMPStmtExecute::parse_mysql_timestamp_value(const EMySQLFieldType field_typ
       param.set_date(static_cast<int32_t>(value));
     }
   }
-  LOG_DEBUG("get datetime", K(length), K(year), K(month), K(day), K(hour), K(min),K(second),  K(microsecond), K(value));
+
   return ret;
 }
 
@@ -3040,7 +3040,7 @@ int ObMPStmtExecute::parse_mysql_time_value(const char *&data, ObObj &param, ObP
   if (OB_SUCC(ret)) {
     param.set_time(value);
   }
-  LOG_INFO("get time", K(length), K(year), K(month), K(day), K(hour), K(min),K(second),  K(microsecond), K(value));
+
   return ret;
 }
 

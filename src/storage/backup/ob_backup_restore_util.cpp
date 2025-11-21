@@ -160,7 +160,7 @@ int ObLSBackupRestoreUtil::read_macro_block_id_mapping_metas(const common::ObStr
     } else {
       for (int64_t i = 0; i < id_mappings_meta.sstable_count_; ++i) {
         const ObBackupMacroBlockIDMapping *mapping = id_mappings_meta.id_map_list_[i];
-        LOG_DEBUG("read macro block id mapping metas", K(path), K(meta_index), KPC(mapping));
+
       }
     }
   }
@@ -207,7 +207,7 @@ int ObLSBackupRestoreUtil::read_macro_block_data(const common::ObString &path, c
         LOG_WARN("failed to set pos", K(ret), K(*common_header), K(path), K(macro_index), K(read_buffer), K(data_buffer), K(macro_block_size));
       } else {
         MEMCPY(dest, read_buffer.current(), macro_block_size);
-        LOG_DEBUG("read macro block data", K(path), K(macro_index), K(data_buffer));
+
       }
     }
   }
@@ -226,7 +226,7 @@ int ObLSBackupRestoreUtil::read_macro_block_data_with_retry(const common::ObStri
       LOG_WARN("fail to inner read macro block data", K(ret), K(path), K(macro_index),  K(align_size));
       if (is_io_error(ret) && ++io_retry_cnt <= max_retry_cnt) {
         ret = OB_SUCCESS;
-        LOG_INFO("read macro block data retry", K(io_retry_cnt), K(max_retry_cnt));
+
         ob_usleep(READ_MACRO_BLOCK_RETRY_INTERVAL);
       }
     } else {
@@ -319,9 +319,9 @@ int ObLSBackupRestoreUtil::pread_file(const ObString &path, const share::ObBacku
 
   if (OB_UNLIKELY(0 == path.length() || !mod.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "path is invalid", K(path), K(mod), K(ret));
+
   } else if (OB_UNLIKELY(read_size <= 0)) {  // no data need read
-    STORAGE_LOG(INFO, "read data len is zero", K(path), K(read_size));
+
   } else if (OB_FAIL(util.read_part_file(path,
                                          storage_info,
                                          buf,
@@ -329,10 +329,10 @@ int ObLSBackupRestoreUtil::pread_file(const ObString &path, const share::ObBacku
                                          offset,
                                          real_read_size,
                                          mod))) {
-    STORAGE_LOG(WARN, "fail to pread file", K(ret), K(path), K(offset));
+
   } else if (OB_UNLIKELY(real_read_size != read_size)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "not read enough file buffer", K(ret), K(read_size), K(real_read_size), K(path));
+
   }
   return ret;
 }

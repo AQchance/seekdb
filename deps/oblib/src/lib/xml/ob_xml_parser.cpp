@@ -502,7 +502,7 @@ static int parse_name_value(const char* str,
           idx += 1;
         } else {
           ret = OB_INVALID_ARGUMENT;
-          LOG_DEBUG("not match", K(idx), K(name));
+
         }
       } else if (idx < length && str[idx] == '\'') {
         // 'xxx'
@@ -514,15 +514,15 @@ static int parse_name_value(const char* str,
           idx += 1;
         } else {
           ret = OB_INVALID_ARGUMENT;
-          LOG_DEBUG("not match", K(idx), K(name));
+
         }
       } else {
         ret = OB_INVALID_ARGUMENT;
-        LOG_DEBUG("not match", K(idx), K(name));
+
       }
     } else {
       ret = OB_INVALID_ARGUMENT;
-      LOG_DEBUG("not match", K(idx), K(name));
+
     }
 
     // has name, but length is zero

@@ -43,7 +43,7 @@ int ObODPSTableRowIterator::init_tunnel(const sql::ObODPSGeneralFormat &odps_for
     } else if (need_decrypt && OB_FAIL(odps_format_.decrypt())) {
       LOG_WARN("failed to decrypt odps format", K(ret));
     } else {
-      LOG_TRACE("init tunnel format", K(ret));
+
       if (0 == odps_format_.access_type_.case_compare("aliyun") || 
           odps_format_.access_type_.empty()) {
         account_ = apsara::odps::sdk::Account(std::string(apsara::odps::sdk::ACCOUNT_ALIYUN), 
@@ -75,7 +75,7 @@ int ObODPSTableRowIterator::init_tunnel(const sql::ObODPSGeneralFormat &odps_for
       conf_.SetAccount(account_);
       conf_.SetEndpoint(std::string(odps_format_.endpoint_.ptr(), odps_format_.endpoint_.length()));
       if (!odps_format_.tunnel_endpoint_.empty()) {
-        LOG_TRACE("set tunnel endpoint", K(ret), K(odps_format_.tunnel_endpoint_));
+
         conf_.SetTunnelEndpoint(std::string(odps_format_.tunnel_endpoint_.ptr(), odps_format_.tunnel_endpoint_.length()));
       }
       conf_.SetUserAgent("OB_ACCESS_ODPS");
@@ -225,7 +225,7 @@ int ObODPSTableRowIterator::next_task()
   int ret = OB_SUCCESS;
   ObEvalCtx &eval_ctx = scan_param_->op_->get_eval_ctx();
   int64_t task_idx = state_.task_idx_;
-  LOG_TRACE("going to get new task", K(ret), K(batch_size_), K(state_), K(total_count_), K(task_idx), K(scan_param_->key_ranges_.count()));
+
   int64_t start = 0;
   int64_t step = 0;
   if (++task_idx >= scan_param_->key_ranges_.count()) {
@@ -261,7 +261,7 @@ int ObODPSTableRowIterator::next_task()
                                                              download_id,
                                                              schema);
             state_.is_from_gi_pump_ = false;
-            LOG_TRACE("succ to create downloader handle without GI", K(ret), K(part_id), KP(sqc), K(state_.is_from_gi_pump_));
+
           } else {
             ObOdpsPartitionDownloaderMgr::OdpsMgrMap& odps_map = sqc->get_sqc_ctx().gi_pump_.get_odps_map();
             state_.is_from_gi_pump_ = true;
@@ -286,7 +286,7 @@ int ObODPSTableRowIterator::next_task()
                     if (OB_FAIL(sqc->get_sqc_ctx().gi_pump_.get_odps_downloader(part_id, state_.download_handle_))) {
                       LOG_WARN("failed to get from odps_map", K(part_id), K(ret));
                     } else {
-                      LOG_TRACE("succ to get downloader handle from GI", K(ret), K(part_id), K(state_.is_from_gi_pump_));
+
                     }
                   } else {
                     LOG_WARN("fail to set refactored", K(ret));
@@ -307,7 +307,7 @@ int ObODPSTableRowIterator::next_task()
                   } else {
                     state_.download_handle_ = temp_downloader->odps_partition_downloader_;
                     temp_downloader->downloader_init_status_ = 1; // 1 is temp_downloader was initialized successfully
-                    LOG_TRACE("succ to create downloader handle and set it to GI", K(ret), K(part_id), K(state_.is_from_gi_pump_), KP(temp_downloader));
+
                   }
                   temp_downloader->tunnel_ready_cond_.broadcast(); // wake other threads that temp_downloader has finished initializing. The initialization result may be failure or success.
                   temp_downloader->tunnel_ready_cond_.unlock();
@@ -316,7 +316,7 @@ int ObODPSTableRowIterator::next_task()
                 LOG_WARN("failed to get from odps_map", K(part_id), K(ret));
               }
             } else {
-              LOG_TRACE("succ to get downloader handle from GI", K(ret), K(part_id), K(state_.is_from_gi_pump_));
+
             }
           }
         }
@@ -350,10 +350,10 @@ int ObODPSTableRowIterator::next_task()
           if (start >= real_time_partition_row_count) {
             start = real_time_partition_row_count;
             step = 0;
-            LOG_TRACE("start is overflow", K(ret), K(part_id), K(state_.start_), K(task_idx), K(real_time_partition_row_count));
+
           } else if (INT64_MAX == step || start + step > real_time_partition_row_count) {
             step = real_time_partition_row_count - start;
-            LOG_TRACE("refine odps step", K(real_time_partition_row_count), K(step), K(start), K(part_id));
+
           }
           if (OB_SUCC(ret)) {
             state_.task_idx_ = task_idx;
@@ -383,7 +383,7 @@ int ObODPSTableRowIterator::next_task()
                 ret = OB_ERR_UNEXPECTED;
                 LOG_WARN("unexpected null ptr", K(ret));
               } else {
-                LOG_TRACE("odps record_ inited", K(ret), K(batch_size_));
+
               }
             } else {
               for (int64_t i = 0; OB_SUCC(ret) && i < batch_size_; ++i) {
@@ -392,7 +392,7 @@ int ObODPSTableRowIterator::next_task()
                   LOG_WARN("unexpected null ptr", K(ret), K(i));
                 }
               }
-              LOG_TRACE("odps records_ inited", K(ret), K(batch_size_));
+
             }
           }
         }
@@ -742,7 +742,7 @@ int ObODPSTableRowIterator::pull_partition_info()
   partition_list_.reset();
   std::vector<std::string> part_specs;
   try {
-    LOG_TRACE("get partition names start", K(ret));
+
     if (OB_ISNULL(table_handle_.get())) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("unexcepted null ptr", K(ret));
@@ -750,7 +750,7 @@ int ObODPSTableRowIterator::pull_partition_info()
       table_handle_->GetPartitionNames(part_specs);
       is_part_table_ = true;
     }
-    LOG_TRACE("get partition names end", K(ret), K(is_part_table_));
+
   } catch (apsara::odps::sdk::OdpsException& ex) {
     std::string ex_msg = ex.what();
     if (std::string::npos != ex_msg.find("ODPS-0110031")) { // ODPS-0110031 means table is not a partitional table
@@ -990,7 +990,7 @@ int ObODPSTableRowIterator::retry_read_task()
 {
   int ret = OB_SUCCESS;
   try {
-    LOG_TRACE("before retry read task", K(ret), K(state_), K(total_count_));
+
     if (OB_NOT_NULL(state_.record_reader_handle_.get())) {
       state_.record_reader_handle_->Close();
       state_.record_reader_handle_.reset();
@@ -1004,7 +1004,7 @@ int ObODPSTableRowIterator::retry_read_task()
       LOG_WARN("unexcepted null ptr", K(ret));
     } else {
       state_.download_id_ = state_.download_handle_->GetDownloadId();
-      LOG_TRACE("retry odps task success", K(ret), K(state_), K(total_count_));
+
     }
   } catch (apsara::odps::sdk::OdpsException& ex) {
     if (OB_SUCC(ret)) {
@@ -1216,7 +1216,7 @@ int ObODPSTableRowIterator::get_next_rows(int64_t &count, int64_t capacity)
     if (OB_ITER_END != ret) {
       LOG_WARN("get next task failed", K(ret));
     } else {
-      LOG_TRACE("get next task end", K(ret), K(state_));
+
     }
     count = 0;
   } else {
@@ -1235,12 +1235,12 @@ int ObODPSTableRowIterator::get_next_rows(int64_t &count, int64_t capacity)
       if (OB_SUCC(ret)) {
         std::string ex_msg = ex.what();
         if (std::string::npos != ex_msg.find("EOF")) { //EOF
-          LOG_TRACE("odps eof", K(ret), K(total_count_), K(returned_row_cnt), K(ex.what()));
+
           if (0 == returned_row_cnt && (INT64_MAX == state_.step_ || state_.count_ == state_.step_)) {
             state_.step_ = state_.count_; // goto get next task
             count = 0;
           } else if (0 == returned_row_cnt) {
-            LOG_TRACE("unexpected returned_row_cnt, going to retry read task", K(total_count_), K(returned_row_cnt), K(state_), K(ret));
+
             if (OB_FAIL(THIS_WORKER.check_status())) {
               LOG_WARN("failed to check status", K(ret));
             } else if (OB_FAIL(retry_read_task())) {
@@ -1248,7 +1248,7 @@ int ObODPSTableRowIterator::get_next_rows(int64_t &count, int64_t capacity)
             }
           }
         } else {
-          LOG_TRACE("unexpected read error exception, going to retry read task", K(OB_ODPS_ERROR), K(total_count_), K(returned_row_cnt), K(state_), K(ret), K(ex.what()));
+
           if (OB_FAIL(THIS_WORKER.check_status())) {
             LOG_WARN("failed to check status", K(ret));
           } else if (OB_FAIL(retry_read_task())) {
@@ -1275,7 +1275,7 @@ int ObODPSTableRowIterator::get_next_rows(int64_t &count, int64_t capacity)
       count = 0;
     } else if (0 == returned_row_cnt) {
       // do nothing
-      LOG_TRACE("expected result: already retried reading task successfully", K(total_count_), K(returned_row_cnt), K(state_), K(ret));
+
       count = 0;
     } else {
       int64_t data_idx = 0;
@@ -1865,12 +1865,12 @@ int ObODPSTableRowIterator::inner_get_next_row(bool &need_retry)
     if (OB_SUCC(ret)) {
       std::string ex_msg = ex.what();
       if (std::string::npos != ex_msg.find("EOF")) { // EOF
-        LOG_TRACE("odps eof", K(ret), K(total_count_), K(state_), K(ex.what()));
+
         if (INT64_MAX == state_.step_ || state_.count_ == state_.step_) {
           get_next_task_ = true; // goto get next task
           state_.step_ = state_.count_;
         } else {
-          LOG_TRACE("unexpected end, going to retry read task", K(total_count_), K(state_), K(ret));
+
           if (OB_FAIL(retry_read_task())) {
             LOG_WARN("failed to retry read task", K(ret), K(state_));
           } else {
@@ -2669,7 +2669,7 @@ int ObOdpsPartitionDownloaderMgr::init_uploader(const ObString &properties,
     inited_ = true;
     is_download_ = false;
     ATOMIC_STORE(&ref_, parallel);
-    LOG_TRACE("succ to init odps uploader", K(ret), K(ref_));
+
   }
   return ret;
 }
@@ -2697,7 +2697,7 @@ int ObOdpsPartitionDownloaderMgr::get_odps_downloader(int64_t part_id, apsara::o
       if (OB_FAIL(THIS_WORKER.check_status())) {
         LOG_WARN("failed to check status", K(part_id));
       } else if (0 == ++wait_times % 10) { // print every 10s
-        LOG_INFO("waiting odps_downloader to initialize", K(wait_times), K(part_id), KP(odps_downloader));
+
       }
     }
     if (OB_SUCC(ret) && odps_downloader->downloader_init_status_ < 0) { // odps_downloader failed to initialize
@@ -2711,7 +2711,7 @@ int ObOdpsPartitionDownloaderMgr::get_odps_downloader(int64_t part_id, apsara::o
     LOG_WARN("unexpected value", K(ret), K(part_id), K(value));
   } else {
     downloader = odps_downloader->odps_partition_downloader_;
-    LOG_TRACE("succ to get odps_downloader from map", K(ret), K(part_id));
+
   }
   return ret;
 }

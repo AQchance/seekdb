@@ -231,7 +231,7 @@ int ObLogWindowFunction::est_window_function_part_cnt()
   }
   if (OB_SUCC(ret)) {
     estimated_part_cnt_ = MAX(1.0, estimated_part_cnt);
-    LOG_TRACE("est_window_function_part_cnt success", K(ret), K(estimated_part_cnt));
+
   }
   return ret;
 }
@@ -267,7 +267,7 @@ int ObLogWindowFunction::est_width()
   } else if (OB_FAIL(est_input_rows_mem_bound_ratio())) {
     LOG_WARN("estimate input rows mem bound ratio failed", K(ret));
   } else {
-    LOG_TRACE("est_width for winfunc", K(output_exprs), K(width));
+
   }
   return ret;
 }

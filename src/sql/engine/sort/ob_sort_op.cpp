@@ -533,7 +533,7 @@ int ObSortOp::inner_get_next_row()
       }
     } else {
       ++ret_row_count_;
-      LOG_DEBUG("finish ObSortOp::inner_get_next_row", K(ObToStringExprRow(eval_ctx_, MY_SPEC.output_)), K(ret_row_count_), K(MY_SPEC.output_));
+
     }
   }
   return ret;

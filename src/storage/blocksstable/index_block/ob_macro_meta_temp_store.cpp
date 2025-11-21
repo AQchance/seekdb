@@ -163,7 +163,7 @@ void ObMacroMetaTempStore::reset()
     if (OB_FAIL(FILE_MANAGER_INSTANCE_WITH_MTL_SWITCH.remove(MTL_ID(), io_.fd_))) {
       LOG_WARN("remove tmp file failed", K(ret), K_(io));
     } else {
-      LOG_INFO("remove tmp file success", K(ret), K_(io));
+
     }
     io_.reset();
   }

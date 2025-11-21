@@ -139,7 +139,7 @@ int ObServerStorageMetaReplayer::apply_replay_result_(const TENANT_META_MAP &ten
     GCTX.omt_->set_synced();
   }
 
-  LOG_INFO("finish replay create tenants", K(ret), K(tenant_count));
+
 
   return ret;
 }

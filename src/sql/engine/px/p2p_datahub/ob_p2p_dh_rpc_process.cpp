@@ -58,7 +58,7 @@ int ObPxP2pDhClearMsgP::process()
     key.px_sequence_id_ = arg_.px_seq_id_;
     bool is_erased = false;
     if (OB_FAIL(PX_P2P_DH.erase_msg_if(key, msg, is_erased)) || !is_erased) {
-      LOG_TRACE("fail to erase msg", K(ret));
+
     }
   }
   return ret;

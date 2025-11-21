@@ -230,7 +230,7 @@ int ObMViewMaintenanceTask::gc_mview()
           ++mview_idx_;
           if (!is_exist) {
             gc_mview_id_ = mview_id;
-            LOG_INFO("gc one mview", K_(tenant_id), K(mview_id));
+
           }
         }
       } else {

@@ -147,7 +147,7 @@ int ObLogSubPlanScan::check_output_dependance(ObIArray<ObRawExpr *> &child_outpu
 {
   int ret = OB_SUCCESS;
   ObSEArray<ObRawExpr*, 8> exprs;
-  LOG_TRACE("start to check output exprs", K(type_), K(child_output), K(deps));
+
   ObRawExprCheckDep dep_checker(child_output, deps, false);
   if (OB_FAIL(append(exprs, filter_exprs_))) {
     LOG_WARN("failed to append exprs", K(ret));
@@ -156,7 +156,7 @@ int ObLogSubPlanScan::check_output_dependance(ObIArray<ObRawExpr *> &child_outpu
   } else if (OB_FAIL(dep_checker.check(exprs))) {
     LOG_WARN("failed to check op_exprs", K(ret));
   } else {
-    LOG_TRACE("succeed to check output exprs", K(exprs), K(type_), K(deps));
+
   }
   return ret;
 }

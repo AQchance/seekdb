@@ -106,7 +106,7 @@ void ObLockTableBeforeRestartTest::insert_data(SCN c1, SCN c2)
 
 TEST_F(ObLockTableBeforeRestartTest, observer_start)
 {
-  LOG_INFO("observer_start succ");
+
 }
 
 TEST_F(ObLockTableBeforeRestartTest, add_tenant)
@@ -122,31 +122,31 @@ TEST_F(ObLockTableBeforeRestartTest, add_tenant)
 
 TEST_F(ObLockTableBeforeRestartTest, create_table)
 {
-  LOG_INFO("ObTableLockServiceTest::create_table");
+
   common::ObMySQLProxy &sql_proxy = get_curr_simple_server().get_sql_proxy2();
   {
-    LOG_INFO("create_table start");
+
     ObSqlString sql;
     int64_t affected_rows = 0;
     EXE_SQL("create table t_one_part (c1 bigint, c2 bigint, primary key(c1))");
     EXE_SQL("create table t_persist (c1 bigint, c2 bigint, primary key(c1))");
-    LOG_INFO("create_table succ");
+
   }
 }
 
 TEST_F(ObLockTableBeforeRestartTest, minor_freeze)
 {
-  LOG_INFO("minor_freeze start");
+
   common::ObMySQLProxy &sql_proxy = get_curr_simple_server().get_sql_proxy();
   int64_t affected_rows = 0;
   ObSqlString sql;
   EXE_SQL("alter system minor freeze tenant tt1;");
-  LOG_INFO("minor_freeze finish");
+
 }
 
 TEST_F(ObLockTableBeforeRestartTest, test_commit_log)
 {
-  LOG_INFO("ObLockTableBeforeRestartTest::test_commit_log");
+
   // switch tenant
   share::ObTenantSwitchGuard tenant_guard;
   ASSERT_EQ(OB_SUCCESS, tenant_guard.switch_to(RunCtx.tenant_id_));
@@ -173,14 +173,14 @@ TEST_F(ObLockTableBeforeRestartTest, test_commit_log)
   ASSERT_NE(nullptr, ls_svr);
   // 1. LOCK TABLE
   // 1.1 lock table
-  LOG_INFO("ObLockTableBeforeRestartTest::test_commit_log 1.1");
+
   get_table_id("t_one_part", table_id);
   ret = table_lock_svr->lock_table(table_id,
                                    lock_mode,
                                    OWNER_ONE);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 1.2 check exist
-  LOG_INFO("ObLockTableBeforeRestartTest::test_commit_log 1.2");
+
   ASSERT_EQ(OB_SUCCESS, ls_svr->get_ls(ls_id, handle, ObLSGetMod::TABLELOCK_MOD));
   ASSERT_NE(nullptr, ls = handle.get_ls());
   checkpoint_executor = ls->get_checkpoint_executor();
@@ -194,16 +194,16 @@ TEST_F(ObLockTableBeforeRestartTest, test_commit_log)
   ASSERT_EQ(OB_SUCCESS, table_handle.get_lock_memtable(lock_memtable));
 
   lock_memtable->obj_lock_map_.print();
-  LOG_INFO("ObLockTableBeforeRestartTest::test_commit_log 1.2 wait tablelock committed");
+
   // after the commit process return, the tablelock bottom may not committed yet.
   while (lock_memtable->get_rec_scn() == SCN::max_scn()) {
     usleep(100 * 1000);
   }
   SCN rec_scn = lock_memtable->get_rec_scn();
-  LOG_INFO("ObLockTableBeforeRestartTest::test_commit_log 1.2 rec scn after tablelock committed", K(rec_scn));
+
 
   // 1.3 dump tx ctx table/ tx data table
-  LOG_INFO("ObLockTableBeforeRestartTest::test_commit_log 1.3");
+
   tx_ctx_memtable
     = dynamic_cast<ObTxCtxMemtable *>(dynamic_cast<ObLSTxService *>(checkpoint_executor
         ->handlers_[logservice::TRANS_SERVICE_LOG_BASE_TYPE])
@@ -216,15 +216,15 @@ TEST_F(ObLockTableBeforeRestartTest, test_commit_log)
   while (OB_EAGAIN == tx_ctx_memtable->flush(SCN::max_scn(), true)) {
     usleep(100 * 1000);
   }
-  LOG_INFO("ObLockTableBeforeRestartTest::test_commit_log 1.3 tx_ctx_memtable flush finished");
+
   while (OB_EAGAIN == tx_data_mgr->flush(SCN::max_scn(), true)) {
     usleep(100 * 1000);
   }
-  LOG_INFO("ObLockTableBeforeRestartTest::test_commit_log 1.3 tx_data_mgr flush finished");
+
 
   // 1.4 update ls checkpoint(should be the lock op commit scn)
   // wait until ls checkpoint updated.
-  LOG_INFO("ObLockTableBeforeRestartTest::test_commit_log 1.4");
+
   // freeze data, make sure other type flushed.
   ASSERT_EQ(OB_SUCCESS, ls->logstream_freeze(checkpoint::INVALID_TRACE_ID,
                                              false, /*is_sync*/
@@ -233,7 +233,7 @@ TEST_F(ObLockTableBeforeRestartTest, test_commit_log)
   while (ls->get_clog_checkpoint_scn() < rec_scn) {
     usleep(100 * 1000); // sleep 100 ms
     if (REACH_TIME_INTERVAL(10 * 1000 * 1000)) {
-      LOG_INFO("ls checkpoint smaller than expected", K(ls->get_clog_checkpoint_scn()), K(rec_scn));
+
     }
   }
   // 1.5 record lock table rec_scn and ls clog checkpoint scn
@@ -292,7 +292,7 @@ TEST_F(ObLockTableAfterRestartTest, test_recover_lock_table)
 {
   // ============================== restart successfully ==============================
   //switch tenant
-  LOG_INFO("ObLockTableAfterRestartTest::test_recover_lock_table");
+
   uint64_t tenant_id = 0;
   ASSERT_EQ(OB_SUCCESS, get_tenant_id(tenant_id));
   share::ObTenantSwitchGuard tenant_guard;
@@ -327,7 +327,7 @@ TEST_F(ObLockTableAfterRestartTest, test_recover_lock_table)
   lock_memtable->obj_lock_map_.print();
   ASSERT_EQ(lock_memtable->get_rec_scn(), lock_scn);
   ASSERT_EQ(lock_memtable->max_committed_scn_, lock_scn);
-  LOG_INFO("ObLockTableAfterRestartTest::test_recover_lock_table finish");
+
 }
 
 } //unitest

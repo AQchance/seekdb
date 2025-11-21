@@ -90,7 +90,7 @@ void TestDagWarningHistory::calc_info_cnt_per_page(ObIDag &dag, int64_t &info_me
   info_mem_size = tmp_info.get_deep_copy_size();
   info_cnt_per_page = (INFO_PAGE_SIZE - sizeof(ObFIFOAllocator::NormalPageHeader))
     / (info_mem_size + sizeof(ObFIFOAllocator::AllocHeader));
-  STORAGE_LOG(INFO, "size", K(info_mem_size), K(info_cnt_per_page));
+
 }
 
 class ObBasicDag : public ObIDag
@@ -175,7 +175,7 @@ TEST_F(TestDagWarningHistory, simple_add)
   dag.init();
   dag.set_dag_ret(ObBasicDag::DAG_RET_START);
   dag.set_dag_status(ObBasicDag::ObDagStatus::DAG_STATUS_ABORT);
-  STORAGE_LOG(DEBUG, "hash print", K(dag.hash()));
+
 
   //not init
   ret = MTL(ObDagWarningHistoryManager *)->add_dag_warning_info(&dag);
@@ -194,7 +194,7 @@ TEST_F(TestDagWarningHistory, simple_add)
   ret = MTL(ObDagWarningHistoryManager *)->get_with_param(ObBasicDag::KEY_START, ret_info, allocator);
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(TRUE, ret_info.dag_ret_ == ObBasicDag::DAG_RET_START);
-  STORAGE_LOG(DEBUG, "", K(ret_info));
+
 
   char comment[common::OB_DAG_WARNING_INFO_LENGTH];
   memset(comment, '\0', sizeof(comment));
@@ -204,7 +204,7 @@ TEST_F(TestDagWarningHistory, simple_add)
   ASSERT_EQ (TRUE, ret_info.dag_ret_ == ObBasicDag::DAG_RET_START);
   memset(comment, '\0', sizeof(comment));
   ASSERT_EQ(OB_SUCCESS, ret_info.info_param_->fill_comment(comment, sizeof(comment)));
-  STORAGE_LOG(DEBUG, "comment", K(comment));
+
 }
 
 TEST_F(TestDagWarningHistory, simple_del)
@@ -336,7 +336,7 @@ TEST_F(TestDagWarningHistory, resize)
   ASSERT_EQ(OB_SUCCESS, ret);
   const int64_t new_size = MTL(ObDagWarningHistoryManager *)->size();
   const int64_t gc_cnt = max_cnt - new_size;
-  STORAGE_LOG(INFO, "new size", K(new_size));
+
   ASSERT_TRUE(new_size * info_mem_size  < ObIDiagnoseInfoMgr::GC_LOW_PERCENTAGE * new_mem_max / 100.0);
 
   ret = MTL(ObDagWarningHistoryManager *)->set_max(3 * INFO_PAGE_SIZE);

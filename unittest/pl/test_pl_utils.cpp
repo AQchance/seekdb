@@ -97,7 +97,7 @@ void TestPLUtils::resolve_pl(const char* pl_str, std::ofstream &of_result)
   of_result << std::endl;
   ObString sql = ObString::make_string(pl_str);
   of_result << "SQL: " << pl_str << std::endl;
-  LOG_INFO("Case query", K_(case_id), K(pl_str));
+
   ObPLFunctionAST func(allocator_);
   sql::ObRawExprFactory expr_factory(allocator_);
   OK(do_resolve(pl_str, expr_factory, func));
@@ -119,7 +119,7 @@ void TestPLUtils::compile_pl(const char* pl_str, std::ofstream &of_result)
   of_result << std::endl;
   ObString sql = ObString::make_string(pl_str);
   of_result << "SQL: " << std::endl << pl_str << std::endl;
-  LOG_INFO("Case query", K_(case_id), K(pl_str));
+
   FILE *tmp = freopen("tmp", "w+", stderr);
   ObPLFunction func(allocator_);
   OK(do_compile(pl_str, func));

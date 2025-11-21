@@ -131,7 +131,7 @@ int TestNewRowReader::init_read_columns(
           lib::is_oracle_mode(),
           cols_desc,
           &projector))) {
-    STORAGE_LOG(WARN, "failed to init column map");
+
   }
 
   return ret;
@@ -167,7 +167,7 @@ int TestNewRowReader::init_read_columns(
   if (OB_FAIL(read_info_.init(allocator_, writer_row.count_,
           row_generate_.get_schema().get_rowkey_column_num(), lib::is_oracle_mode(),
           cols_desc))) {
-    STORAGE_LOG(WARN, "failed to init column map");
+
   }
   return ret;
 }
@@ -353,14 +353,14 @@ void TestNewRowReader::check_read_datums(const char* buf, const int64_t buf_len,
   ASSERT_EQ(row_header->get_column_count(), writer_row.count_);
   ret = row_reader.read_row(buf, buf_len, nullptr, datum_row); // current datums is compressed for int
   ASSERT_EQ(OB_SUCCESS, ret);
-  STORAGE_LOG(INFO, "check_read_datums, read datums");
+
   // need write datums and read out with ObTableReadInfo
   char * extra_buf = 0;
   int64_t len = 0;
   ObRowWriter row_writer;
   ret = row_writer.write(rowkey_cnt, datum_row, extra_buf, len);
   ASSERT_EQ(OB_SUCCESS, ret);
-  STORAGE_LOG(INFO, "check_read_datums, write datums", K(datum_row));
+
 
   // read with ObTableReadInfo
   ObRowReader row_reader2;
@@ -464,13 +464,13 @@ TEST_F(TestNewRowReader, test_long_varchar)
   char long_char[long_char_len];
   MEMSET(long_char, 'a', sizeof(long_char));
   writer_row.storage_datums_[writer_row.count_++].set_string(ObString(long_char_len, long_char));
-  STORAGE_LOG(INFO, "write_row", K(writer_row));
+
   build_column_read_info(rowkey_column_count, writer_row);
   int64_t pos = 0;
   ObRowWriter row_writer;
   char *buf = get_serialize_buf();
   ret = row_writer.write(1, writer_row, buf, 2 * 1024 * 1024, pos);
-  STORAGE_LOG(INFO, "write_row", K(writer_row), K(pos));
+
 
   check_reader_row(buf, pos, 1, writer_row);
 }
@@ -492,12 +492,12 @@ TEST_F(TestNewRowReader, test_row_with_nop)
     writer_row.storage_datums_[nop_idx[i]].set_nop();
     writer_row.storage_datums_[null_idx[i]].set_null();
   }
-  STORAGE_LOG(INFO, "write_row", K(writer_row));
+
   int64_t pos = 0;
   ObRowWriter row_writer;
   char *buf = get_serialize_buf();
   ret = row_writer.write(1, writer_row, buf, 2 * 1024 * 1024, pos);
-  STORAGE_LOG(INFO, "write_row", K(writer_row), K(pos));
+
 
   check_reader_row(buf, pos, 1, writer_row);
 }
@@ -518,12 +518,12 @@ TEST_F(TestNewRowReader, test_sparse_row)
   }
   writer_row.storage_datums_[3].set_null();
 
-  STORAGE_LOG(INFO, "write_row", K(writer_row));
+
   int64_t pos = 0;
   ObRowWriter row_writer;
   char *buf = get_serialize_buf();
   ret = row_writer.write(1, writer_row, buf, 2 * 1024 * 1024, pos);
-  STORAGE_LOG(INFO, "write_row", K(writer_row), K(pos));
+
 
   check_reader_row(buf, pos, 1, writer_row);
 }
@@ -541,12 +541,12 @@ TEST_F(TestNewRowReader, test_delete_row)
   for (int i = 1; i < writer_row.count_ - 1; ++i) {
     writer_row.storage_datums_[i].set_nop();
   }
-  STORAGE_LOG(INFO, "write_row", K(writer_row));
+
   int64_t pos = 0;
   ObRowWriter row_writer;
   char *buf = get_serialize_buf();
   ret = row_writer.write(1, writer_row, buf, 2 * 1024 * 1024, pos);
-  STORAGE_LOG(INFO, "write_row", K(writer_row), K(pos));
+
 
   check_reader_row(buf, pos, 1, writer_row);
 }
@@ -565,12 +565,12 @@ TEST_F(TestNewRowReader, test_sparse_row_without_cluster)
   for (int i = 0; i < writer_row.count_ - 1; ++i) {
     writer_row.storage_datums_[i].set_nop();
   }
-  STORAGE_LOG(INFO, "write_row", K(writer_row));
+
   int64_t pos = 0;
   ObRowWriter row_writer;
   char *buf = get_serialize_buf();
   ret = row_writer.write(1, writer_row, buf, 2 * 1024 * 1024, pos);
-  STORAGE_LOG(INFO, "write_row", K(writer_row), K(pos));
+
 
   check_reader_row(buf, pos, 1, writer_row);
 }
@@ -697,7 +697,7 @@ TEST_F(TestNewRowReader, test_read_row_in_random_order)
         buf,
         2 * 1024 * 1024,
         pos);
-    STORAGE_LOG(INFO, "row col count", K(writer_row));
+
     ASSERT_EQ(OB_SUCCESS, ret);
 
     int64_t column_idx_array[] = {0, 1, 20, 17, 5, 2, 10, 11, 12};
@@ -719,7 +719,7 @@ TEST_F(TestNewRowReader, test_read_row_in_random_order)
       ASSERT_TRUE(writer_row.storage_datums_[column_idx_array[j]] == reader_row.storage_datums_[j]);
     }
 
-    STORAGE_LOG(INFO, "projector2");
+
 
     int64_t column_idx_array2[] = {0, 1, 2, 20, 17, 5, 10, 11, 12, 30, 29};
     projector.reuse();
@@ -735,9 +735,9 @@ TEST_F(TestNewRowReader, test_read_row_in_random_order)
     reader_row.count_ = num;
     ret = row_reader.read_row(buf, pos, &read_info_, reader_row);
     ASSERT_EQ(OB_SUCCESS, ret);
-    STORAGE_LOG(INFO, "projector2", K(reader_row), K(writer_row));
+
     for (int i = 0; i < reader_row.count_; ++i) {
-      STORAGE_LOG(INFO, "projector2", K(i), K(column_idx_array2[i]), K(reader_row.storage_datums_[i]));
+
       ObStorageDatum datum;
       ASSERT_TRUE(writer_row.storage_datums_[column_idx_array2[i]] == reader_row.storage_datums_[i]);
     }
@@ -781,7 +781,7 @@ TEST_F(TestNewRowReader, test_read_sparse_row_in_random_order)
         buf,
         2 * 1024 * 1024,
         pos);
-    STORAGE_LOG(INFO, "row col count", K(writer_row));
+
     ASSERT_EQ(OB_SUCCESS, ret);
 
     int64_t column_idx_array[] = {0, 1, 20, 17, 5, 2, 10, 11, 12};
@@ -799,12 +799,12 @@ TEST_F(TestNewRowReader, test_read_sparse_row_in_random_order)
     ret = row_reader.read_row(buf, pos, &read_info_, reader_row);
     ASSERT_EQ(OB_SUCCESS, ret);
 
-    STORAGE_LOG(INFO, "chaser debug datum", K(writer_row), K(reader_row));
+
     for (int i = 0; i < reader_row.count_; ++i) {
       ASSERT_TRUE(writer_row.storage_datums_[column_idx_array[i]] == reader_row.storage_datums_[i]);
     }
 
-    STORAGE_LOG(INFO, "projector2");
+
 
     int64_t column_idx_array2[] = {0, 1, 2, 3, 20, 17, 5, 10, 11, 12, 30, 29};
     projector.reuse();
@@ -849,12 +849,12 @@ TEST_F(TestNewRowReader, test_write_border_int_val)
 
   writer_row.count_ = idx;
 
-  STORAGE_LOG(INFO, "write_row", K(writer_row));
+
   int64_t pos = 0;
   ObRowWriter row_writer;
   char *buf = get_serialize_buf();
   ret = row_writer.write(1, writer_row, buf, 2 * 1024 * 1024, pos);
-  STORAGE_LOG(INFO, "write_row", K(writer_row), K(pos));
+
   build_column_read_info(rowkey_column_count, writer_row);
   check_reader_row(buf, pos, rowkey_column_count, writer_row);
 }
@@ -869,14 +869,14 @@ TEST_F(TestNewRowReader, test_rowkey_and_col_independent_cluster)
   ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(writer_row));
   append_col(writer_row);
 
-  STORAGE_LOG(INFO, "write_row", K(writer_row));
+
   int64_t pos = 0;
   ObRowWriter row_writer;
   char *buf = get_serialize_buf();
   const int64_t rowkey_cnt = 40;
   build_column_read_info(rowkey_cnt, writer_row);
   ret = row_writer.write(rowkey_cnt, writer_row, buf, 2 * 1024 * 1024, pos);
-  STORAGE_LOG(INFO, "write_row", K(writer_row), K(pos));
+
 
   check_reader_row(buf, pos, rowkey_cnt, writer_row);
 }
@@ -897,7 +897,7 @@ TEST_F(TestNewRowReader, test_rowkey_independent_cluster)
   const int64_t rowkey_cnt = 40;
   build_column_read_info(rowkey_cnt, writer_row);
   ret = row_writer.write(rowkey_cnt, writer_row, buf, 2 * 1024 * 1024, pos);
-  STORAGE_LOG(INFO, "write_row", K(writer_row), K(pos));
+
 
   check_reader_row(buf, pos, rowkey_cnt, writer_row);
 }
@@ -922,7 +922,7 @@ TEST_F(TestNewRowReader, test_rowkey_independent_cluster_2)
 
   build_column_read_info(rowkey_cnt, writer_row);
   ret = row_writer.write(rowkey_cnt, writer_row, buf, 2 * 1024 * 1024, pos);
-  STORAGE_LOG(INFO, "write_row", K(writer_row), K(pos));
+
 
   ObRowReader row_reader;
   ObStorageDatum read_datum;
@@ -958,7 +958,7 @@ TEST_F(TestNewRowReader, test_rowkey_independent_cluster_sparse)
 
 
   ret = row_writer.write(rowkey_cnt, writer_row, buf, 2 * 1024 * 1024, pos);
-  STORAGE_LOG(INFO, "write_row", K(writer_row), K(pos));
+
 
   check_reader_row(buf, pos, rowkey_cnt, writer_row);
 }
@@ -999,7 +999,7 @@ TEST_F(TestNewRowReader, test_rowkey_independent_cluster_read_column)
          column_idx_array[i],
          datum);
      ASSERT_EQ(OB_SUCCESS, ret);
-     STORAGE_LOG(INFO, "chaser debug get datum", K(column_idx_array[i]), K(datum), K(writer_row.storage_datums_[column_idx_array[i]]));
+
      ASSERT_TRUE(datum == writer_row.storage_datums_[column_idx_array[i]]);
   }
 }
@@ -1020,7 +1020,7 @@ TEST_F(TestNewRowReader, test_only_rowkey)
     writer_row.storage_datums_[i].set_nop();
   }
 
-  STORAGE_LOG(INFO, "write_row", K(writer_row));
+
   int64_t pos = 0;
   ObRowWriter row_writer;
   char *buf = get_serialize_buf();
@@ -1030,7 +1030,7 @@ TEST_F(TestNewRowReader, test_only_rowkey)
     writer_row.storage_datums_[4].set_int(100 + i);
     ret = row_writer.write(5, writer_row, buf, 2 * 1024 * 1024, pos);
     row_end_pos[i] = pos;
-    STORAGE_LOG(INFO, "write_row", K(writer_row), K(pos));
+
   }
 
 
@@ -1043,7 +1043,7 @@ TEST_F(TestNewRowReader, test_only_rowkey)
     ret = row_reader.read_row(
         buf + (i == 0 ? 0 : row_end_pos[i - 1]),
         row_end_pos[i] - (i == 0 ? 0 : row_end_pos[i - 1]), &read_info_, reader_row);
-    STORAGE_LOG(INFO, "reader_row", K(reader_row), K(i), K(pos), K(row_end_pos[i]));
+
     ASSERT_EQ(OB_SUCCESS, ret);
     ASSERT_EQ(reader_row.count_, writer_row.count_);
     for (int j = 0; j < reader_row.count_; ++j) {
@@ -1078,7 +1078,7 @@ TEST_F(TestNewRowReader, test_write_lock_rowkey)
   ObStoreRowkey rowkey;
   rowkey.assign(writer_row.row_val_.cells_, rowkey_cnt);
   ret = row_writer.write_lock_rowkey(rowkey, buf, pos);
-  STORAGE_LOG(INFO, "write_row", K(writer_row), K(pos));
+
 
   ObDatumRow reader_row;
   ASSERT_EQ(OB_SUCCESS, reader_row.init(allocator_, num));
@@ -1087,10 +1087,10 @@ TEST_F(TestNewRowReader, test_write_lock_rowkey)
 
   ObRowReader row_reader;
   ret = row_reader.read_row(buf, pos, &read_info_, reader_row);
-  STORAGE_LOG(INFO, "reader_row", K(reader_row), K(pos));
+
   ASSERT_EQ(OB_SUCCESS, ret);
   for (int j = 0; j < rowkey_cnt; ++j) {
-    STORAGE_LOG(INFO, "obj xxxxx", K(j), K(reader_row.storage_datums_[j]), K(writer_row.row_val_.cells_[j]));
+
     ASSERT_TRUE(reader_row.storage_datums_[j] == writer_row.row_val_.cells_[j]) << j;
   }
 
@@ -1136,7 +1136,7 @@ TEST_F(TestNewRowReader, test_write_update_row)
   writer_row.storage_datums_[array[4]].set_int(0);
   build_column_read_info(rowkey_cnt, writer_row);
 
-  STORAGE_LOG(INFO, "write_row", K(writer_row));
+
 
   ObArray<int64_t> update_idx;
   for (int i = 0; i < ARRAYSIZEOF(array); ++i) {
@@ -1160,7 +1160,7 @@ TEST_F(TestNewRowReader, test_write_update_row)
     ObRowReader row_reader;
     const ObRowHeader *row_header = nullptr;
     ret = row_reader.read_memtable_row(buf, len, read_info_, reader_row, nop_bitmap, read_finished, row_header);
-    STORAGE_LOG(INFO, "chaser check read_row row", K(reader_row));
+
     ASSERT_EQ(ret, OB_SUCCESS);
 
     if (i == 4) {
@@ -1170,7 +1170,7 @@ TEST_F(TestNewRowReader, test_write_update_row)
     }
   }
 
-  STORAGE_LOG(INFO, "chaser check writer row", K(read_info_));
+
   int update_pos = 0;
   for (int i = 0; i < writer_row.count_; ++i) {
     bool check_cell_flag = false;
@@ -1181,7 +1181,7 @@ TEST_F(TestNewRowReader, test_write_update_row)
       ++update_pos;
     }
     if (check_cell_flag) {
-      STORAGE_LOG(INFO, "check", K(i), K(update_pos), K(reader_row.storage_datums_[i]));
+
       if (i == array[2] || i == array[4]) {
         ASSERT_TRUE(reader_row.storage_datums_[i].get_int() == 0);
       } else {
@@ -1231,9 +1231,9 @@ TEST_F(TestNewRowReader, test_write_write_nop_val)
   ObRowReader row_reader;
   ret = row_reader.read_row(buf, len, &read_info_, reader_row);
 
-  STORAGE_LOG(INFO, "chaser check writer row", K(read_info_), K(reader_row));
+
   for (int i = 0; i < writer_row.count_; ++i) {
-    STORAGE_LOG(INFO, "check", K(i), K(reader_row.storage_datums_[i]));
+
     ASSERT_TRUE(reader_row.storage_datums_[i] == writer_row.storage_datums_[i]);
   }
 }
@@ -1269,7 +1269,7 @@ TEST_F(TestNewRowReader, test_read_sparse_datums)
     }
   }
 
-  STORAGE_LOG(INFO, "write_row", K(writer_row));
+
 
   ObRowWriter row_writer;
   char *buf = get_serialize_buf();
@@ -1305,7 +1305,7 @@ TEST_F(TestNewRowReader, test_update_idx_with_rowkey)
     }
   }
 
-  STORAGE_LOG(INFO, "write_row", K(writer_row), K(update_idx));
+
 
   ObRowWriter row_writer;
   char *buf = nullptr;
@@ -1363,10 +1363,10 @@ public:
     row_writer.rowkey_column_cnt_ = rowkey_cnt;
     row_writer.loop_cells(writer_row.storage_datums_, column_cnt, row_writer.cluster_cnt_, row_writer.use_sparse_row_);
 
-    STORAGE_LOG(INFO, "after loop cell", K(row_writer.cluster_cnt_), K(rowkey_cnt), K(writer_row));
+
     ASSERT_TRUE(cluster_cnt == row_writer.cluster_cnt_);
     for (int i = 0; i < sparse_array_cnt; ++i) {
-      STORAGE_LOG(INFO, "cluster sparse", K(i), K(row_writer.use_sparse_row_[i]), K(sparse_array[i]));
+
       ASSERT_TRUE(row_writer.use_sparse_row_[i] == sparse_array[i]);
     }
   }

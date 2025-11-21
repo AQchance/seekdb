@@ -53,7 +53,7 @@ struct ObPartitionMergeLoserTreeItem
     int ret = OB_SUCCESS;
     if (iter_ == nullptr) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "unexpected null iter", K(ret));
+
     } else {
       ret = iter_->get_curr_range(range);
     }

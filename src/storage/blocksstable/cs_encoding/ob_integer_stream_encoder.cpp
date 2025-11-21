@@ -39,7 +39,7 @@ struct ConvertDatumToUint_T
     StoreIntType *store_int_arr = nullptr;
     if (OB_ISNULL(store_int_arr = static_cast<StoreIntType*>(ctx.info_.allocator_->alloc(alloc_size)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "fail to alloc", KR(ret), K(alloc_size));
+
     } else {
       int64_t i = 0;
       uint64_t curr = 0;

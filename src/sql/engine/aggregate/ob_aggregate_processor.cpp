@@ -563,7 +563,7 @@ void ObAggregateProcessor::HashBasedDistinctExtraResult::reuse()
   brs_holder_.reset();
   ExtraResult::reuse();
   int ret = OB_SUCCESS;
-  LOG_TRACE("extra result reuse");
+
 }
 
 int ObAggregateProcessor::HashBasedDistinctExtraResult::rewind()
@@ -578,7 +578,7 @@ int ObAggregateProcessor::HashBasedDistinctExtraResult::rewind()
   } else if (nullptr != unique_sort_op_ && need_rewind_) {
     unique_sort_op_->rewind();
   }
-  LOG_TRACE("extra result rewind");
+
   return ret;
 }
 
@@ -682,7 +682,7 @@ int ObAggregateProcessor::HashBasedDistinctExtraResult::insert_row(
   } else if (OB_FAIL(hp_infras_->insert_row(exprs, exists, inserted))) {
     LOG_WARN("failed to insert row", K(ret));
   } else {
-    LOG_DEBUG("succ to insert row", K(exists), K(inserted));
+
   }
   return ret;
 }
@@ -746,7 +746,7 @@ int ObAggregateProcessor::HashBasedDistinctExtraResult::build_distinct_data(
       } else if (OB_FAIL(hp_infras_->close_cur_part(InputSide::LEFT))) {
         LOG_WARN("failed to close cur part", K(ret));
       } else {
-        LOG_TRACE("trace break out of the loop");
+
         break;
       }
     } else if (OB_FAIL(ret)) {
@@ -782,7 +782,7 @@ int ObAggregateProcessor::HashBasedDistinctExtraResult::build_distinct_data_for_
       } else if (OB_FAIL(hp_infras_->close_cur_part(InputSide::LEFT))) {
         LOG_WARN("failed to close cur part", K(ret));
       } else {
-        LOG_TRACE("trace break out of the loop");
+
         break;
       }
     } else if (OB_FAIL(ret)) {
@@ -1513,7 +1513,7 @@ int ObAggregateProcessor::init()
       LOG_WARN("init failed", K(ret));
     }
   }
-  LOG_DEBUG("succ to init ObAggregateProcessor", K(ret));
+
   return ret;
 }
 
@@ -1583,7 +1583,7 @@ OB_INLINE int ObAggregateProcessor::clone_number_cell(const ObNumber &src_number
     SQL_LOG(WARN, "failed to clone cell", K(ret));
   } else {
     aggr_cell.get_iter_result().set_number(src_number);
-    LOG_DEBUG("succ to clone cell", K(src_number), K(aggr_cell.get_iter_result()));
+
   }
   return ret;
 }
@@ -1861,7 +1861,7 @@ int ObAggregateProcessor::inner_process_batch(
 {
   int ret = OB_SUCCESS;
   // process aggregate columns
-  LOG_DEBUG("begin inner_process_batch batch size", K(group_rows));
+
   for (int64_t i = start_idx; OB_SUCC(ret) && i < end_idx; ++i) {
     ObAggrInfo &aggr_info = aggr_infos_.at(i);
     AggrCell &aggr_cell = group_rows.aggr_cells_[i];
@@ -1899,7 +1899,7 @@ int ObAggregateProcessor::inner_process_batch(
           &aggr_info.param_exprs_, ad_result, nullptr, eval_ctx_))) {
         LOG_WARN("add row to distinct set failed", K(ret));
       } else {
-        LOG_DEBUG("batch process disticnt", K(ret));
+
       }
     }
   } // end for
@@ -1911,7 +1911,7 @@ int ObAggregateProcessor::inner_process_three_stage_batch(GroupRow &group_row, T
 {
   int ret = OB_SUCCESS;
   // process aggregate columns
-  LOG_DEBUG("begin inner_process_three_stage_batch batch size", K(group_row));
+
   int64_t aggr_code = distinct_aggr_count_;
   int64_t start_idx = 0;
   int64_t end_idx = group_row.n_cells_;
@@ -2061,7 +2061,7 @@ int ObAggregateProcessor::advance_collect_result(int64_t group_id)
             aggr_info.expr_->locate_expr_datum(eval_ctx_), aggr_alloc_))) {
           LOG_WARN("failed to deep copy datum", K(ret));
         } else {
-          LOG_TRACE("finish collect", K(group_id), K(aggr_cell), K(aggr_cell.get_advance_collect_result()));
+
         }
       }
       aggr_cell.set_is_advance_evaluated();
@@ -2141,7 +2141,7 @@ int ObAggregateProcessor::collect_result_batch(const ObIArray<ObExpr *> &group_e
         ObDatum &datum = rollup_id_expr_->locate_datum_for_write(eval_ctx_);
         datum.set_int(*reinterpret_cast<int64_t *>(group_row->groupby_store_row_->get_extra_payload()));
         rollup_id_expr_->set_evaluated_projected(eval_ctx_);
-        LOG_DEBUG("debug grouping_id expr", K(ret));
+
       }
     } else {
       LOG_DEBUG("debug group by exprs", K(ret), K(ROWEXPR2STR(eval_ctx_, group_exprs)),
@@ -2155,7 +2155,7 @@ int ObAggregateProcessor::collect_result_batch(const ObIArray<ObExpr *> &group_e
   cur_group_id += loop_cnt;
   output_brs.size_ += loop_cnt;
 
-  LOG_DEBUG("debug group by exprs2", K(ret), K(ROWEXPR2STR(eval_ctx_, group_exprs)));
+
   return ret;
 }
 
@@ -2243,7 +2243,7 @@ int ObAggregateProcessor::precompute_distinct_aggr_result(
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("Unexpected status: the count of read rows is 0", K(ret));
       } else {
-        LOG_DEBUG("get row from distinct set", K(read_rows), K(max_cnt));
+
         ObBatchRows brs;
         brs.skip_ = skip_;
         brs.size_ = read_rows;
@@ -2259,7 +2259,7 @@ int ObAggregateProcessor::precompute_distinct_aggr_result(
       && OB_FAIL(ad_result->brs_holder_.restore())) {
       LOG_WARN("restore datum failed", K(ret));
     }
-    LOG_DEBUG("debug precompute distinct");
+
   }
   return ret;
 }
@@ -2573,7 +2573,7 @@ int ObAggregateProcessor::generate_group_row(GroupRow *&new_group_row,
                   if (OB_FAIL((*separator_datum)->deep_copy(*separator_result, buf, len, pos))) {
                     LOG_WARN("failed to deep copy datum", K(ret), K(pos), K(len));
                   } else {
-                    LOG_DEBUG("succ to calc separator", K(ret), KP(*separator_datum));
+
                   }
                 }
               }
@@ -2789,7 +2789,7 @@ int ObAggregateProcessor::fill_group_row(GroupRow *new_group_row,
                   if (OB_FAIL((*separator_datum)->deep_copy(*separator_result, buf, len, pos))) {
                     LOG_WARN("failed to deep copy datum", K(ret), K(pos), K(len));
                   } else {
-                    LOG_DEBUG("succ to calc separator", K(ret), KP(*separator_datum));
+
                   }
                 }
               }
@@ -2928,7 +2928,7 @@ int ObAggregateProcessor::init_one_group(const int64_t group_id,
   } else if (OB_FAIL(group_rows_.push_back(group_row))) {
     LOG_WARN("push_back failed", K(group_id), K(group_row), K(ret));
   } else {
-    LOG_DEBUG("succ init group_row", K(group_id), KPC(group_row), K(ret));
+
   }
   return ret;
 }
@@ -2957,7 +2957,7 @@ int ObAggregateProcessor::rollup_process(
   } else if (OB_FAIL(rollup_base_process(group_row, rollup_row, diff_expr, group_id, max_group_cnt))) {
     LOG_WARN("failed to rollup process", K(ret));
   }
-  LOG_DEBUG("debug rollup process", K(group_id), K(rollup_group_id), K(max_group_cnt));
+
   return ret;
 }
 
@@ -3081,17 +3081,17 @@ int ObAggregateProcessor::rollup_aggregation(AggrCell &aggr_cell, AggrCell &roll
       } else {
         if (diff_expr != NULL && diff_expr == aggr_info.param_exprs_.at(0)) {
           aggr_cell.set_tiny_num_int(1);
-          LOG_DEBUG("rollup grouping", K(aggr_info.rollup_idx_), K(aggr_cell.get_tiny_num_int()));
+
         }
         if (-1 == cur_rollup_group_idx) {
           rollup_cell.set_tiny_num_int(aggr_cell.get_tiny_num_int());
-          LOG_DEBUG("rollup grouping", K(aggr_info.rollup_idx_), K(aggr_cell.get_tiny_num_int()));
+
         } else if (INT64_MAX == aggr_info.rollup_idx_) {
           rollup_cell.set_tiny_num_int(aggr_cell.get_tiny_num_int());
-          LOG_DEBUG("rollup grouping", K(aggr_info.rollup_idx_), K(aggr_cell.get_tiny_num_int()));
+
         } else if (aggr_info.rollup_idx_ >= cur_rollup_group_idx) {
           rollup_cell.set_tiny_num_int(1);
-          LOG_DEBUG("rollup grouping", K(aggr_info.rollup_idx_), K(cur_rollup_group_idx));
+
         } else {
           rollup_cell.set_tiny_num_int(aggr_cell.get_tiny_num_int());
         }
@@ -3246,7 +3246,7 @@ int ObAggregateProcessor::rollup_aggregation(AggrCell &aggr_cell, AggrCell &roll
                 if (OB_FAIL((*separator_datum)->deep_copy(*separator_result, buf, len, pos))) {
                   LOG_WARN("failed to deep copy datum", K(ret), K(pos), K(len));
                 } else {
-                  LOG_TRACE("succ to calc separator", K(ret), KPC(*separator_datum));
+
                 }
               }
             }
@@ -3262,7 +3262,7 @@ int ObAggregateProcessor::rollup_aggregation(AggrCell &aggr_cell, AggrCell &roll
                 if (OB_FAIL((*separator_datum)->deep_copy(*separator_result, buf, len, pos))) {
                   LOG_WARN("failed to deep copy datum", K(ret), K(pos), K(len));
                 } else {
-                  LOG_TRACE("succ to calc separator", K(ret), KPC(*separator_datum));
+
                 }
               }
             }
@@ -3589,12 +3589,12 @@ int ObAggregateProcessor::prepare_aggr_result(const ObChunkDatumStore::StoredRow
                 if (OB_FAIL((*separator_datum)->deep_copy(*separator_result, buf, len, pos))) {
                   LOG_WARN("failed to deep copy datum", K(ret), K(pos), K(len));
                 } else {
-                  LOG_TRACE("succ to calc separator", K(ret), KPC(*separator_datum));
+
                 }
               }
             }
           }
-          LOG_DEBUG("succ to add row", K(stored_row), KPC(extra));
+
         }
       }
       break;
@@ -3611,7 +3611,7 @@ int ObAggregateProcessor::prepare_aggr_result(const ObChunkDatumStore::StoredRow
         } else if (param_exprs != NULL && OB_FAIL(extra->add_sort_row(*param_exprs, eval_ctx_))) {
           LOG_WARN("fail to add row");
         } else {
-          LOG_DEBUG("succ to add row", K(stored_row), KPC(extra));
+
         }
       }
       break;
@@ -4124,7 +4124,7 @@ int ObAggregateProcessor::process_aggr_result(const ObChunkDatumStore::StoredRow
       } else if (param_exprs != NULL && OB_FAIL(extra->add_row(*param_exprs, eval_ctx_))) {
         LOG_WARN("fail to add row", K(ret));
       } else {
-        LOG_DEBUG("succ to add row", K(stored_row), KPC(extra));
+
       }
       break;
     }
@@ -4138,7 +4138,7 @@ int ObAggregateProcessor::process_aggr_result(const ObChunkDatumStore::StoredRow
       } else if (param_exprs != NULL && OB_FAIL(extra->add_sort_row(*param_exprs, eval_ctx_))) {
         LOG_WARN("fail to add row");
       } else {
-        LOG_DEBUG("succ to add row", K(stored_row), KPC(extra));
+
       }
       break;
     }
@@ -4347,11 +4347,11 @@ int ObAggregateProcessor::collect_aggr_result(
           null_result = true;
         }
       } else {
-        LOG_DEBUG("debug grouping", K(new_value), KP(diff_expr));
+
         if (diff_expr != NULL && diff_expr == aggr_info.param_exprs_.at(0)) {
           new_value = 1;
           aggr_cell.set_tiny_num_int(new_value);
-          LOG_DEBUG("debug grouping", K(new_value), KP(diff_expr));
+
         }
       }
       if (OB_FAIL(ret)) {
@@ -4665,7 +4665,7 @@ int ObAggregateProcessor::collect_aggr_result(
               } else if (0 < append_len) {
                 MEMCPY(concat_str_buf_ + pos, sep_str.ptr(), append_len);
                 pos += append_len;
-                LOG_DEBUG("group concat iter append", K(sep_str), K(append_len), K(pos));
+
               }
             }
             for (int64_t i = 0; OB_SUCC(ret) && !buf_is_full && i < group_concat_param_count; ++i) {
@@ -4681,7 +4681,7 @@ int ObAggregateProcessor::collect_aggr_result(
               } else if (0 < append_len) {
                 MEMCPY(concat_str_buf_ + pos, cell_string.ptr(), append_len);
                 pos += append_len;
-                LOG_DEBUG("group concat iter append", K(i), K(cell_string), K(append_len), K(pos));
+
               }
             }//end of for
 
@@ -5107,7 +5107,7 @@ int ObAggregateProcessor::collect_aggr_result(
       if (OB_FAIL(get_pl_agg_udf_result(aggr_info, extra, result))) {
         LOG_WARN("failed to get_pl_agg_udf_result", K(ret));
       } else {
-        LOG_TRACE("succeed to get pl agg udf result");
+
       }
       break;
     }
@@ -5116,7 +5116,7 @@ int ObAggregateProcessor::collect_aggr_result(
       if (OB_FAIL(compute_hybrid_hist_result(aggr_info, extra, result))) {
         LOG_WARN("failed to compute_hybrid_hist_result", K(ret));
       } else {
-        LOG_TRACE("succeed to get pl agg udf result");
+
       }
       break;
     }
@@ -5568,7 +5568,7 @@ int ObAggregateProcessor::add_calc(
       int64_t right_int = iter_value.get_int();
       int64_t sum_int = left_int + right_int;
       if (ObExprAdd::is_int_int_out_of_range(left_int, right_int, sum_int)) {
-        LOG_DEBUG("int64_t add overflow, will use number", K(left_int), K(right_int));
+
         if (ob_is_decimal_int(aggr_info.expr_->datum_meta_.type_)) {
           const int64_t precision = aggr_info.expr_->datum_meta_.precision_;
           ret = calc_overflow_res_to_decimal_int<int64_t>(result_datum, aggr_cell, precision,
@@ -5590,7 +5590,7 @@ int ObAggregateProcessor::add_calc(
         }
         aggr_cell.set_tiny_num_int(0);
       } else {
-        LOG_DEBUG("int64_t add does not overflow", K(left_int), K(right_int), K(sum_int));
+
         aggr_cell.set_tiny_num_int(sum_int);
       }
       aggr_cell.set_tiny_num_used();
@@ -5601,7 +5601,7 @@ int ObAggregateProcessor::add_calc(
       uint64_t right_uint = iter_value.get_uint();
       uint64_t sum_uint = left_uint + right_uint;
       if (ObExprAdd::is_uint_uint_out_of_range(left_uint, right_uint, sum_uint)) {
-        LOG_DEBUG("uint64_t add overflow, will use number", K(left_uint), K(right_uint));
+
         if (ob_is_decimal_int(aggr_info.expr_->datum_meta_.type_)) {
           const int64_t precision = aggr_info.expr_->datum_meta_.precision_;
           ret = calc_overflow_res_to_decimal_int<uint64_t>(result_datum, aggr_cell, precision,
@@ -5623,7 +5623,7 @@ int ObAggregateProcessor::add_calc(
         }
         aggr_cell.set_tiny_num_uint(0);
       } else {
-        LOG_DEBUG("uint64_t add does not overflow", K(left_uint), K(right_uint), K(sum_uint));
+
         aggr_cell.set_tiny_num_uint(sum_uint);
       }
       aggr_cell.set_tiny_num_used();
@@ -5770,7 +5770,7 @@ int ObAggregateProcessor::sub_calc(
       int64_t right_int = iter_value.get_int();
       int64_t dif_int = left_int - right_int;
       if (ObExprMinus::is_int_int_out_of_range(left_int, right_int, dif_int)) {
-        LOG_DEBUG("int64_t sub overflow, will use number", K(left_int), K(right_int));
+
         if (ob_is_decimal_int(aggr_info.expr_->datum_meta_.type_)) {
           const int64_t precision = aggr_info.expr_->datum_meta_.precision_;
           ret = calc_overflow_res_to_decimal_int<int64_t, false>(result_datum, aggr_cell, precision,
@@ -5798,7 +5798,7 @@ int ObAggregateProcessor::sub_calc(
           }
         }
       } else {
-        LOG_DEBUG("int64_t sub does not overflow", K(left_int), K(right_int), K(dif_int));
+
         aggr_cell.set_tiny_num_int(dif_int);
       }
       aggr_cell.set_tiny_num_used();
@@ -5812,7 +5812,7 @@ int ObAggregateProcessor::sub_calc(
       uint64_t right_uint = iter_value.get_uint();
       uint64_t dif_uint = left_uint - right_uint;
       if (ObExprMinus::is_uint_uint_out_of_range(left_uint, right_uint, dif_uint)) {
-        LOG_DEBUG("uint64_t sub overflow, will use number", K(left_uint), K(right_uint));
+
         if (ob_is_decimal_int(aggr_info.expr_->datum_meta_.type_)) {
           const int64_t precision = aggr_info.expr_->datum_meta_.precision_;
           const uint64_t uint_max = (uint64_t)ULONG_MAX;
@@ -5845,7 +5845,7 @@ int ObAggregateProcessor::sub_calc(
         }
         aggr_cell.set_tiny_num_uint((uint64_t)ULONG_MAX - right_uint + left_uint);
       } else {
-        LOG_DEBUG("uint64_t sub does not overflow", K(left_uint), K(right_uint), K(dif_uint));
+
         aggr_cell.set_tiny_num_uint(dif_uint);
       }
       aggr_cell.set_tiny_num_used();
@@ -5945,7 +5945,7 @@ int ObAggregateProcessor::init_group_extra_aggr_info(
             if (OB_FAIL((*separator_datum)->deep_copy(*separator_result, buf, len, pos))) {
               LOG_WARN("failed to deep copy datum", K(ret), K(pos), K(len));
             } else {
-              LOG_DEBUG("succ to calc separator", K(ret), KP(*separator_datum));
+
             }
           }
         }
@@ -5970,7 +5970,7 @@ int ObAggregateProcessor::init_group_extra_aggr_info(
             if (OB_FAIL((*separator_datum)->deep_copy(*separator_result, buf, len, pos))) {
               LOG_WARN("failed to deep copy datum", K(ret), K(pos), K(len));
             } else {
-              LOG_TRACE("succ to calc separator", K(ret), KPC(*separator_datum));
+
             }
           }
         }
@@ -6242,7 +6242,7 @@ int ObAggregateProcessor::approx_count_calc_batch(
       }
     }
     if (OB_SUCC(ret)) {
-      LOG_DEBUG("debug approx_count_calc_batch", K(has_null_cell), K(dst));
+
       if (!has_null_cell) {
         ret = llc_add_value(hash_value, dst.get_string());
       }
@@ -6270,7 +6270,7 @@ int ObAggregateProcessor::add_calc_batch(
       for (auto it = selector.begin(); OB_SUCC(ret) && it < selector.end(); selector.next(it)) {
         i = selector.get_batch_index(it);
         if (src.at(i)->is_null()) {
-          LOG_DEBUG("debug null", K(i));
+
           continue;
         }
         left_int  = aggr_cell.get_tiny_num_int();
@@ -6278,7 +6278,7 @@ int ObAggregateProcessor::add_calc_batch(
         sum_int   = left_int + right_int;
         ObNumber result_nmb;
         if (ObExprAdd::is_int_int_out_of_range(left_int, right_int, sum_int)) {
-          LOG_DEBUG("int64_t add overflow, will use number", K(left_int), K(right_int));
+
           if (ob_is_decimal_int(aggr_info.expr_->datum_meta_.type_)) {
             const int64_t precision = aggr_info.expr_->datum_meta_.precision_;
             ret = calc_overflow_res_to_decimal_int<int64_t>(result_datum, aggr_cell, precision,
@@ -6299,7 +6299,7 @@ int ObAggregateProcessor::add_calc_batch(
           }
           aggr_cell.set_tiny_num_int(0);
         } else {
-          LOG_DEBUG("int64_t add does not overflow", K(left_int), K(right_int), K(sum_int), K(i));
+
           aggr_cell.set_tiny_num_int(sum_int);
           aggr_cell.set_tiny_num_used();
         }
@@ -6323,7 +6323,7 @@ int ObAggregateProcessor::add_calc_batch(
         right_uint = src.at(i)->get_uint();
         sum_uint   = left_uint + right_uint;
         if (ObExprAdd::is_uint_uint_out_of_range(left_uint, right_uint, sum_uint)) {
-          LOG_DEBUG("uint64_t add overflow, will use number", K(left_uint), K(right_uint));
+
           if (ob_is_decimal_int(aggr_info.expr_->datum_meta_.type_)) {
             const int64_t precision = aggr_info.expr_->datum_meta_.precision_;
             ret = calc_overflow_res_to_decimal_int<uint64_t>(result_datum, aggr_cell, precision,
@@ -6344,7 +6344,7 @@ int ObAggregateProcessor::add_calc_batch(
           }
           aggr_cell.set_tiny_num_uint(0);
         } else {
-          LOG_DEBUG("uint64_t add does not overflow", K(left_uint), K(right_uint), K(sum_uint));
+
           aggr_cell.set_tiny_num_uint(sum_uint);
           aggr_cell.set_tiny_num_used();
         }
@@ -6420,7 +6420,7 @@ int ObAggregateProcessor::add_calc_batch(
       } else if (!all_skip) {
         ret = clone_number_cell(result_nmb, aggr_cell);
       }
-      LOG_DEBUG("number result", K(result_nmb));
+
       break;
     }
     case ObDecimalIntTC: {
@@ -6629,7 +6629,7 @@ int ObAggregateProcessor::rollup_add_calc(
         int64_t right_int = rollup_cell.get_tiny_num_int();
         int64_t sum_int = left_int + right_int;
         if (ObExprAdd::is_int_int_out_of_range(left_int, right_int, sum_int)) {
-          LOG_DEBUG("int64_t add overflow, will use number", K(left_int), K(right_int));
+
           if (ob_is_decimal_int(aggr_info.expr_->datum_meta_.type_)) {
             const int64_t precision = aggr_info.expr_->datum_meta_.precision_;
             ret = calc_overflow_res_to_decimal_int<int64_t>(rollup_result, rollup_cell, precision,
@@ -6650,7 +6650,7 @@ int ObAggregateProcessor::rollup_add_calc(
           }
           rollup_cell.set_tiny_num_int(0);
         } else {
-          LOG_DEBUG("int64_t add does not overflow", K(left_int), K(right_int), K(sum_int));
+
           rollup_cell.set_tiny_num_int(sum_int);
           rollup_cell.set_tiny_num_used();
         }
@@ -6670,7 +6670,7 @@ int ObAggregateProcessor::rollup_add_calc(
         uint64_t right_uint = rollup_cell.get_tiny_num_uint();
         uint64_t sum_uint = left_uint + right_uint;
         if (ObExprAdd::is_uint_uint_out_of_range(left_uint, right_uint, sum_uint)) {
-          LOG_DEBUG("uint64_t add overflow, will use number", K(left_uint), K(right_uint));
+
           if (ob_is_decimal_int(aggr_info.expr_->datum_meta_.type_)) {
             const int64_t precision = aggr_info.expr_->datum_meta_.precision_;
             ret = calc_overflow_res_to_decimal_int<uint64_t>(rollup_result, rollup_cell, precision,
@@ -6691,7 +6691,7 @@ int ObAggregateProcessor::rollup_add_calc(
           }
           rollup_cell.set_tiny_num_uint(0);
         } else {
-          LOG_DEBUG("uint64_t add does not overflow", K(left_uint), K(right_uint), K(sum_uint));
+
           rollup_cell.set_tiny_num_uint(sum_uint);
           rollup_cell.set_tiny_num_used();
         }
@@ -6831,7 +6831,7 @@ int ObAggregateProcessor::llc_init(AggrCell &aggr_cell)
   ObDatum src_datum;
   src_datum.set_string(llc_bitmap_buf, sizeof(char ) * LLC_NUM_BUCKETS);
   ret = clone_aggr_cell(aggr_cell, src_datum);
-  LOG_DEBUG("llc init", K(aggr_cell));
+
   return ret;
 }
 
@@ -6967,7 +6967,7 @@ int ObAggregateCalcFunc::add_calc(const ObDatum &left_value, const ObDatum &righ
           int64_t right_int = right_value.get_int();
           int64_t sum_int = left_int + right_int;
           if (ObExprAdd::is_int_int_out_of_range(left_int, right_int, sum_int)) {
-            LOG_DEBUG("int64_t add overflow, will use number", K(left_int), K(right_int));
+
             char buf_alloc[ObNumber::MAX_CALC_BYTE_LEN];
             ObDataBuffer allocator(buf_alloc, ObNumber::MAX_CALC_BYTE_LEN);
             ObNumber result_nmb;
@@ -6982,7 +6982,7 @@ int ObAggregateCalcFunc::add_calc(const ObDatum &left_value, const ObDatum &righ
               LOG_WARN("clone_number_cell failed", K(ret));
             }
           } else {
-            LOG_DEBUG("int64_t add does not overflow", K(left_int), K(right_int), K(sum_int));
+
             result_datum.set_int(sum_int);
           }
         }
@@ -6998,7 +6998,7 @@ int ObAggregateCalcFunc::add_calc(const ObDatum &left_value, const ObDatum &righ
           uint64_t right_uint = right_value.get_uint();
           uint64_t sum_uint = left_uint + right_uint;
           if (ObExprAdd::is_uint_uint_out_of_range(left_uint, right_uint, sum_uint)) {
-            LOG_DEBUG("uint64_t add overflow, will use number", K(left_uint), K(right_uint));
+
             char buf_alloc[ObNumber::MAX_CALC_BYTE_LEN];
             ObDataBuffer allocator(buf_alloc, ObNumber::MAX_CALC_BYTE_LEN);
             ObNumber result_nmb;
@@ -7013,7 +7013,7 @@ int ObAggregateCalcFunc::add_calc(const ObDatum &left_value, const ObDatum &righ
               LOG_WARN("clone_number_cell failed", K(ret));
             }
           } else {
-            LOG_DEBUG("uint64_t add does not overflow", K(left_uint), K(right_uint), K(sum_uint));
+
             result_datum.set_uint(sum_uint);
           }
         }
@@ -7120,7 +7120,7 @@ int ObAggregateCalcFunc::clone_number_cell(const ObNumber &src_number,
   if (OB_SUCC(ret)) {
     target_cell.ptr_ = buff_ptr;
     target_cell.set_number(src_number);
-    LOG_DEBUG("succ to clone cell", K(src_number), K(target_cell));
+
   }
   return ret;
 }
@@ -7409,7 +7409,7 @@ int ObAggregateProcessor::get_pl_agg_udf_result(const ObAggrInfo &aggr_info,
         LOG_WARN("adjust lob datum failed", K(ret), K(result_obj.get_meta()),
                  K(aggr_info.expr_->obj_meta_));                                   
       } else {
-        LOG_TRACE("succeed to get pl agg udf result", K(result_obj), K(result));
+
       }
       if (result_obj.is_pl_extend()) {
         int tmp_ret = OB_SUCCESS;
@@ -7461,12 +7461,12 @@ int ObAggregateProcessor::get_top_k_fre_hist_result(ObTopKFrequencyHistograms &t
         ObString lob_loc_str;
         new_tmp_lob.get_result_buffer(lob_loc_str);
         result_datum.set_string(lob_loc_str);
-        LOG_TRACE("succeed to get topK fre hist result", K(result_datum),K(top_k_fre_hist));
+
       }
     }
   } else {
     result_datum.set_null();
-    LOG_TRACE("succeed to get topK fre hist result", K(result_datum), K(top_k_fre_hist));
+
   }
   return ret;
 }
@@ -7652,7 +7652,7 @@ int ObAggregateProcessor::shadow_truncate_string_for_hist(const ObObjMeta obj_me
         if (origin_str_len != NULL && static_cast<int32_t>(truncated_str_len) < str.length()) {
           *origin_str_len = str.length();
         }
-        LOG_TRACE("Succeed to shadow truncate string for hist", K(datum));
+
       }
     }
   }
@@ -7684,11 +7684,11 @@ int ObAggregateProcessor::get_hybrid_hist_result(ObHybridHistograms *hybrid_hist
       ObString lob_loc_str;
       new_tmp_lob.get_result_buffer(lob_loc_str);
       result_datum.set_string(lob_loc_str);
-      LOG_TRACE("succeed to get hybrid hist result", K(result_datum), KPC(hybrid_hist));
+
     }
   } else {
     result_datum.set_null();
-    LOG_TRACE("succeed to get hybrid hist result", K(result_datum), KPC(hybrid_hist));
+
   }
   return ret;
 }
@@ -8939,7 +8939,7 @@ int ObAggregateProcessor::get_rb_calc_agg_result(const ObAggrInfo &aggr_info,
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get unpexcted null", K(ret), K(extra));
   } else if (OB_UNLIKELY(extra->empty())) {
-    LOG_TRACE("is empty", K(ret), KPC(extra), K(lbt()));
+
   } else if (extra->is_iterated() && OB_FAIL(extra->rewind())) {
     // Group concat row may be iterated in rollup_process(), rewind here.
     LOG_WARN("rewind failed", KPC(extra), K(ret));

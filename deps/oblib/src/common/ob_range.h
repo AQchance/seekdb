@@ -621,7 +621,7 @@ public:
     int ret = OB_SUCCESS;
     int64_t prefix_len = 0;
     if (OB_FAIL(ObRowkey::get_common_prefix_length(start_key_, end_key_, prefix_len))) {
-      STORAGE_LOG(WARN, "fail to get common prefix length", K(ret));
+
     } else {
       rowkey.assign(const_cast<ObObj *>(start_key_.get_obj_ptr()), prefix_len);
     }

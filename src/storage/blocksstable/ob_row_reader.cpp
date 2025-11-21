@@ -165,7 +165,7 @@ int ObClusterColumnReader::read_storage_datum(const int64_t column_idx, ObStorag
       if (OB_FAIL(read_datum(idx, datum))) {
         LOG_WARN("read datum fail", K(ret), KP(cluster_buf_), K(cell_end_pos_), K(idx), K(column_idx));
       } else {
-        LOG_DEBUG("read_storage_datum", K(idx), K(datum));
+
       }
     } else {
       ret = OB_ERR_UNEXPECTED;
@@ -239,7 +239,7 @@ int ObClusterColumnReader::sequence_deep_copy_datums_of_sparse(
         } else { // cur cell is the last cell
           next_pos = cell_end_pos_;
         }
-        LOG_DEBUG("sequence_deep_copy_datums_of_sparse", K(col_idx), K(tmp_pos), K(next_pos), K(cell_end_pos_));
+
         if (OB_FAIL(read_column_from_buf(tmp_pos, next_pos, special_val, datums[col_idx]))) {
           LOG_WARN("failed to read column from buf", K(ret), K(tmp_pos), K(next_pos), K(special_val));
         }
@@ -278,7 +278,7 @@ int ObClusterColumnReader::sequence_deep_copy_datums_of_dense(const int64_t star
       } else { // cur cell is the last cell
         next_pos = cell_end_pos_;
       }
-      LOG_DEBUG("sequence_deep_copy_datums_of_dense", K(cur_idx), K(tmp_pos), K(next_pos));
+
       if (OB_FAIL(read_column_from_buf(tmp_pos, next_pos, special_val, datums[cur_idx]))) {
         LOG_WARN("failed to read column from buf", K(ret), K(tmp_pos), K(next_pos), K(special_val));
       }
@@ -318,7 +318,7 @@ int ObClusterColumnReader::read_8_bytes_column(
   if (OB_SUCC(ret)) {
     datum.reuse();
     datum.set_uint(value);
-    LOG_DEBUG("ObClusterColumnReader read 8 bytes column ", K(value));
+
   }
   return ret;
 }
@@ -390,7 +390,7 @@ inline int ObRowReader::setup_row(
       is_setuped_ = true;
     }
   }
-  LOG_DEBUG("ObRowReaderV2::setup_row", K(ret), KPC(row_header_), KPC(this));
+
   return ret;
 }
 
@@ -450,7 +450,7 @@ int ObRowReader::read_memtable_row(
       || row_header_->get_row_flag().is_insert()) {
     read_finished = true;
   }
-  LOG_DEBUG("chaser debug read memtable row", K(nop_bitmap.get_nop_cnt()), KPC(row_header_), K(datum_row));
+
   return ret;
 }
 
@@ -554,10 +554,10 @@ int ObRowReader::read_row(
     }
     if (datum_row.is_valid()) {
       if (OB_FAIL(datum_row.reserve(column_cnt))) {
-        STORAGE_LOG(WARN, "Failed to reserve datum row", K(ret), K(column_cnt));
+
       }
     } else if (OB_FAIL(datum_row.init(column_cnt))) {
-      STORAGE_LOG(WARN, "Failed to init datum row", K(ret), K(column_cnt));
+
     }
     if (OB_SUCC(ret)) {
       SET_ROW_BASIC_INFO(datum_row);  // set flag/row_type_flag/trans_id
@@ -647,7 +647,7 @@ int ObRowReader::read_specific_column_in_cluster(
     cluster_idx = ObRowHeader::calc_cluster_idx(idx) + 1;
     col_idx_in_cluster = ObRowHeader::calc_column_idx_in_cluster(idx);
   }
-  LOG_DEBUG("DEBUG cluster reader", K(cluster_idx), K(col_idx_in_cluster), K(cur_read_cluster_idx_));
+
   if (OB_FAIL(analyze_info_and_init_reader(cluster_idx))) {
     LOG_WARN("failed to init cluster column reader", K(ret), KPC(row_header_),
         K(cluster_idx), K(col_idx_in_cluster));
@@ -700,9 +700,9 @@ int ObRowReader::compare_meta_rowkey(
             if (OB_FAIL(cluster_reader_.sequence_read_datum(i, datum))) {
               LOG_WARN("Fail to read column", K(ret), K(i), K(idx), K(datum_utils));
             } else if (OB_FAIL(datum_utils.get_cmp_funcs().at(idx).compare(datum, rhs.datums_[idx], cmp_result))) {
-              STORAGE_LOG(WARN, "Failed to compare datums", K(ret), K(idx), K(datum), K(rhs.datums_[idx]));
+
             }
-            LOG_DEBUG("chaser debug compare rowkey", K(datum), K(idx), K(datum), K(rhs.datums_[idx]));
+
           }
         }
       }

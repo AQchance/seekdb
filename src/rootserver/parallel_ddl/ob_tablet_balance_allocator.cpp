@@ -52,7 +52,7 @@ void ObNonPartitionedTableTabletCache::inner_reset_cache_()
   cache_.reset();
   allocator_.reset();
   loaded_timestamp_ = OB_INVALID_TIMESTAMP;
-  LOG_INFO("[NON PARTITIONED TABLET CACHE] reset cache", K_(tenant_id));
+
 }
 
 // In the following cases, cache will be reload first:
@@ -72,10 +72,10 @@ bool ObNonPartitionedTableTabletCache::should_reload_cache_(
   }
   if (loaded_timestamp_ < 0) {
     bret = true; // case 1
-    LOG_INFO("[NON PARTITIONED TABLET CACHE] failure/non parallel ddl occur or cache is empty, should be reloaded", K_(tenant_id));
+
   } else if (ObTimeUtility::current_time() - loaded_timestamp_ >= interval) {
     bret = true; // case 2
-    LOG_INFO("[NON PARTITIONED TABLET CACHE] cache is expire, should be reloaded", K_(tenant_id));
+
   } else {
     // case 3
     if (avaliable_ls_ids.count() != cache_.count()) {
@@ -89,7 +89,7 @@ bool ObNonPartitionedTableTabletCache::should_reload_cache_(
       } // end for
     }
     if (bret) {
-      LOG_INFO("[NON PARTITIONED TABLET CACHE] ls is changed, should be reloaded", K_(tenant_id));
+
     }
   }
   return bret;

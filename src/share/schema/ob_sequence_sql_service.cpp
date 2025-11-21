@@ -270,7 +270,7 @@ int ObSequenceSqlService::clean_and_write_back_cache(common::ObISQLClient *sql_c
       if (OB_FAIL(sql.assign_fmt("SELECT NEXT_VALUE FROM %s "
                                  "WHERE SEQUENCE_ID = %lu FOR UPDATE",
                                  tname, sequence_id))) {
-        STORAGE_LOG(WARN, "fail format sql", K(ret));
+
       } else if (OB_FAIL(sql_client_retry_weak.read(res, exec_tenant_id, sql.ptr()))) {
         LOG_WARN("fail to execute sql", K(sql), K(ret));
       } else if (NULL == (result = res.get_result())) {
@@ -579,7 +579,7 @@ int ObSequenceSqlService::add_sequence(common::ObISQLClient &sql_client,
     if (only_history && 0 == STRCMP(tname[i], OB_ALL_SEQUENCE_OBJECT_TNAME)) {
       continue;
     } else if (OB_FAIL(sql.assign_fmt("INSERT INTO %s (", tname[i]))) {
-      STORAGE_LOG(WARN, "append table name failed, ", K(ret));
+
     } else {
       SQL_COL_APPEND_VALUE(sql, values, ObSchemaUtils::get_extract_tenant_id(
                                         exec_tenant_id, sequence_schema.get_tenant_id()), "tenant_id", "%lu");

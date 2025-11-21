@@ -88,7 +88,7 @@ int ObTableLoginP::process()
     } else if (OB_FAIL(verify_password(login.tenant_name_, login.user_name_,
                                        login.pass_secret_, login.pass_scramble_,
                                        login.database_name_, user_token))) {
-      LOG_DEBUG("failed to verify password", K(ret), K(login));
+
     } else if (OB_FAIL(generate_credential(result_.tenant_id_, result_.user_id_, result_.database_id_,
                                            login.ttl_us_, user_token, result_.credential_))) {
       LOG_WARN("failed to generate credential", K(ret), K(login));
@@ -115,7 +115,7 @@ int ObTableLoginP::process()
     LOG_WARN("[TABLE] login require rerouting", K(ret), "require_rerouting", ObRpcProcessor::require_rerouting_);
   }
 #ifndef NDEBUG
-    LOG_INFO("[TABLE] login", K(ret), K_(arg), K_(result), "timeout", rpc_pkt_->get_timeout());
+
 #else
     // @todo LOG_DEBUG
     LOG_INFO("[TABLE] login", K(ret), K_(arg), K_(result), "timeout", rpc_pkt_->get_timeout(),
@@ -434,7 +434,7 @@ int ObTableApiProcessorBase::check_user_access(const ObString &credential_str)
     LOG_WARN("fail to check mode", K(ret));
   } else {
     enable_query_response_time_stats_ = TABLEAPI_OBJECT_POOL_MGR->is_enable_query_response_time_stats();
-    LOG_DEBUG("user can access", K_(credential));
+
   }
   return ret;
 }
@@ -625,7 +625,7 @@ int ObTableApiProcessorBase::process_with_retry(const ObString &credential, cons
             // throw to queue and retry
             if (retry_policy_.allow_rpc_retry() && THIS_WORKER.can_retry()) {
               THIS_WORKER.set_need_retry();
-              LOG_DEBUG("set retry flag and retry later when lock available");
+
               need_retry_in_queue_ = true;
             } else {
               // retry in current thread
@@ -705,9 +705,9 @@ int ObTableRpcProcessor<T>::process()
       ObString request(audit_ctx_.req_buf_len_, audit_ctx_.req_buf_);
       LOG_WARN("fail to process table_api request", K(ret), K_(stat_process_type), K(request), K(audit_ctx_.exec_timestamp_));
     } else if (had_do_response()) { // req_ may be freed
-      LOG_INFO("fail to process table_api request", K(ret), K_(stat_process_type), K(audit_ctx_.exec_timestamp_));
+
     } else {
-      LOG_INFO("fail to process table_api request", K(ret), K_(stat_process_type), "request", RpcProcessor::arg_, K(audit_ctx_.exec_timestamp_));
+
     }
     // whether the client should refresh location cache and retry
     if (ObTableRpcProcessorUtil::is_require_rerouting_err(ret)) {

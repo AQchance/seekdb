@@ -87,7 +87,7 @@ int ObDumpTaskGenerator::generate_task_from_file()
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("nullptr", K(cmd), K(ret));
   } else {
-    LOG_INFO("read command", K(cmd));
+
     if (SET_LEAK_MOD == node->value_) {
       char str[lib::AOBJECT_LABEL_SIZE + 1];
       snprintf(str, sizeof(str), "%.*s",
@@ -130,7 +130,7 @@ int ObDumpTaskGenerator::generate_task_from_file()
                    (int32_t)node->children_[0]->str_len_, node->children_[0]->str_value_);
           task->p_chunk_ = (void*)std::stoll(atoi_buf, nullptr, 0);
         }
-        LOG_INFO("task info", K(*task));
+
         if (OB_FAIL(mem_dump.push(task))) {
           LOG_WARN("push task failed", K(ret));
           mem_dump.free_task(task);

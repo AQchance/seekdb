@@ -120,7 +120,7 @@ int ObPLInterfaceImpl::call(sql::ObExecContext &ctx, sql::ParamStore &params, Ob
   UNUSED(ctx);
   int ret = OB_SUCCESS;
   for (int64_t i = 0; OB_SUCC(ret) && i < params.count(); ++i) {
-    LOG_DEBUG("========>>>>>>>>ryan.ly interface test", K(params.at(i)), K(ret));
+
   }
   OX (result.set_int32(42));
   return ret;

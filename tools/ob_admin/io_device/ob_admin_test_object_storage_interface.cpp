@@ -66,21 +66,21 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_()
   TestObjectStorageInterfaceContext ctx;  
 
   if (OB_FAIL(test_object_storage_interface_prepare_(ctx))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to prepare envionment for test object storage interface", K(ret));
+
   } else if (OB_FAIL(test_object_storage_interface_is_exist_(ctx))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to test object storage interface is exist", K(ret));
+
   } else if (OB_FAIL(test_object_storage_interface_list_file_(ctx))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to test object storage interface list file", K(ret));
+
   } else if (OB_FAIL(test_object_storage_interface_list_directories_(ctx))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to test object storage interface list directories", K(ret));
+
   } else if (OB_FAIL(test_object_storage_interface_get_file_length_(ctx))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to test object storage interface get file length", K(ret));
+
   } else if (OB_FAIL(test_object_storage_interface_read_(ctx))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to test object storage interface read", K(ret));
+
   } else if (!(ctx.storage_info_.is_enable_worm() 
                 && ObStorageDeleteMode::STORAGE_DELETE_MODE == ctx.storage_info_.get_delete_mode()) 
                 && OB_FAIL(test_object_storage_interface_del_(ctx))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to test object storage interface del", K(ret));
+
   } 
   return ret; 
 }
@@ -89,35 +89,35 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_prepare_(TestObje
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(ctx.storage_info_.set(backup_path_, storage_info_))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to set storage info", K(ret), K_(backup_path), K_(storage_info));
+
   } else if (OB_FAIL(databuff_printf(ctx.test_dir_path_, OB_MAX_URI_LENGTH, "%s/%s", 
                      backup_path_, ctx.test_dir_name_))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to set test dir path", K(ret), K_(backup_path), K(ctx.test_dir_name_));
+
   } else if (OB_FAIL(databuff_printf(ctx.single_file_path_, OB_MAX_URI_LENGTH, "%s/%s", 
                      ctx.test_dir_path_, ctx.single_file_name_))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to set single file path", K(ret), K(ctx.test_dir_path_), K(ctx.single_file_name_)); 
+ 
   } else if (OB_FAIL(generate_random_str_(ctx.single_file_content_, ctx.SINGLE_FILE_LENGTH))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to generate random str", K(ret), K(ctx.SINGLE_FILE_LENGTH));
+
   } else if (OB_FAIL(ctx.util_.mk_parent_dir(ctx.single_file_path_, &ctx.storage_info_))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to make parent dir for full clog file", K(ret), K(ctx.single_file_path_), K(ctx.storage_info_));
+
   } else if (OB_FAIL(databuff_printf(ctx.appendable_file_path_, OB_MAX_URI_LENGTH, "%s/%s", 
                      ctx.test_dir_path_, ctx.appendable_file_name_))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to set appendable file path", K(ret), K(ctx.test_dir_path_), K(ctx.appendable_file_name_));
+
   } else if (OB_FAIL(generate_random_str_(ctx.appendable_file_content_, ctx.APPENDABLE_FILE_LENGTH))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to generate random str", K(ret), K(ctx.APPENDABLE_FILE_LENGTH));
+
   } else if (OB_FAIL(ctx.util_.write_single_file(ctx.single_file_path_, &ctx.storage_info_, 
                      ctx.single_file_content_, ctx.SINGLE_FILE_LENGTH, ObStorageIdMod::get_default_id_mod()))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to write single file", K(ret), K(ctx.SINGLE_FILE_LENGTH), K(ctx.storage_info_));
+
   } else if (OB_FAIL(test_multi_step_write_appendable_file_(ctx))) {
     STORAGE_LOG_FILTER(ERROR, "failed to write appendable file", 
         K(ret), K(ctx.appendable_file_path_), K(ctx.APPENDABLE_FILE_LENGTH), K(ctx.storage_info_));
   } else if (OB_FAIL(databuff_printf(ctx.upload_file_path_, OB_MAX_URI_LENGTH, "%s/%s", 
                                      ctx.test_dir_path_, ctx.upload_file_name_))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to set upload file path", K(ret), K(ctx.test_dir_path_), K(ctx.upload_file_name_));
+
   } else if (OB_FAIL(generate_random_str_(ctx.upload_file_content_, ctx.UPLOAD_FILE_LENGTH))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to generate random str", K(ret), K(ctx.UPLOAD_FILE_LENGTH));
+
   } else if (OB_FAIL(test_object_storage_interface_async_upload_(ctx))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to exec async upload", K(ret), K(ctx.upload_file_path_), K(ctx.UPLOAD_FILE_LENGTH));
+
   }
   return ret;
 }
@@ -134,7 +134,7 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_async_upload_(Tes
   if (OB_FAIL(ctx.util_.open_with_access_type(device_handle, fd, &ctx.storage_info_,
                                              ctx.upload_file_path_, access_type,
                                              ObStorageIdMod::get_default_id_mod()))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to open device with access type", K(ret), K(ctx.upload_file_path_), K(access_type), K(ctx.storage_info_)); 
+ 
   } else if (OB_FAIL(ctx.util_.async_upload_data(*device_handle, fd, ctx.upload_file_content_, 
                                                  0, ctx.UPLOAD_FILE_LENGTH, io_handle))) {
     STORAGE_LOG_FILTER(ERROR, "failed to start async upload task!", K(ret), K(ctx.storage_info_), 
@@ -146,18 +146,18 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_async_upload_(Tes
 
   if (OB_SUCC(ret)) {
     if (OB_FAIL(ctx.util_.complete(*device_handle, fd))) {
-      STORAGE_LOG_FILTER(ERROR, "failed to complete", K(ret));
+
     }
   }
   if (OB_FAIL(ret)) {
     if (OB_TMP_FAIL(ctx.util_.abort(*device_handle, fd))) {
       ret = COVER_SUCC(tmp_ret);
-      STORAGE_LOG_FILTER(ERROR, "failed to abort", K(ret), K(tmp_ret));
+
     } 
   }
   if (OB_TMP_FAIL(ctx.util_.close_device_and_fd(device_handle, fd))) {
     ret = COVER_SUCC(tmp_ret);
-    STORAGE_LOG_FILTER(ERROR, "failed to close file and release device!", K(ret), K(ctx.appendable_file_path_), K(ctx.storage_info_)); 
+ 
   }
 
   return ret;
@@ -176,10 +176,10 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_is_exist_(TestObj
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(ctx.util_.is_exist(ctx.single_file_path_, &ctx.storage_info_, ctx.single_file_is_exist_))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to check if single file is exist", K(ret), K(ctx.single_file_path_), K(ctx.storage_info_));
+
   } else if (OB_UNLIKELY(!ctx.single_file_is_exist_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG_FILTER(ERROR, "single file does not exist!", K(ret), K(ctx.single_file_path_), K(ctx.storage_info_));
+
   } else if (OB_FAIL(ctx.util_.is_exist(ctx.appendable_file_path_, &ctx.storage_info_, ctx.appendable_file_is_exist_))) {
     STORAGE_LOG_FILTER(ERROR, "failed to check if appendable file is exist", 
         K(ret), K(ctx.appendable_file_path_), K(ctx.storage_info_));
@@ -208,7 +208,7 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_is_exist_(TestObj
         K(ret), K(ctx.appendable_file_path_), K(ctx.storage_info_));
   } else if (OB_UNLIKELY(!ctx.appendable_file_is_exist_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG_FILTER(ERROR, "appendable file does not exist!", K(ret), K(ctx.appendable_file_path_), K(ctx.storage_info_));
+
   } 
   
   return ret;
@@ -221,7 +221,7 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_list_file_(TestOb
   ObFileListArrayOp file_list_array_op(file_names, allocator_);
 
   if (OB_FAIL(ctx.util_.list_files(ctx.test_dir_path_, &ctx.storage_info_, file_list_array_op))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to list test dir path", K(ret), K(ctx.test_dir_path_), K(ctx.storage_info_));
+
   } else if (adaptive_append_mode(ctx.storage_info_)
              && OB_UNLIKELY(file_names.size() != ctx.S3_FILE_COUNT)) {
     ret = OB_ERR_UNEXPECTED;
@@ -234,10 +234,10 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_list_file_(TestOb
         K(ret), K(ctx.test_dir_path_), K(file_names.size()), K(ctx.storage_info_)); 
   } else if (FALSE_IT(file_names.reuse())) {
   } else if (OB_FAIL(ctx.util_.adaptively_list_files(ctx.test_dir_path_, &ctx.storage_info_, file_list_array_op))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to list test dir path", K(ret), K(ctx.test_dir_path_), K(ctx.storage_info_));
+
   } else if (OB_UNLIKELY(file_names.count() != ctx.OTHER_FILE_COUNT)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG_FILTER(ERROR, "the length of file_names does not equal to 2", K(ret), K(file_names.count()), K(ctx.storage_info_)); 
+ 
   }
 
   return ret;
@@ -250,7 +250,7 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_list_directories_
   ObFileListArrayOp dir_list_array_op(dir_names, allocator_); 
 
   if (OB_FAIL(ctx.util_.list_directories(ctx.test_dir_path_, &ctx.storage_info_, dir_list_array_op))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to list directories", K(ret), K(ctx.test_dir_path_), K(ctx.storage_info_));
+
   } else if (adaptive_append_mode(ctx.storage_info_)
              && (OB_UNLIKELY(dir_names.size() != 1) || OB_UNLIKELY(dir_names[0] != ObString(ctx.appendable_file_name_)))) {
     ret = OB_ERR_UNEXPECTED;
@@ -274,7 +274,7 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_get_file_length_(
 
   // test get_file_length
   if (OB_FAIL(ctx.util_.get_file_length(ctx.single_file_path_, &ctx.storage_info_, single_file_length_query))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to get single file length", K(ret), K(ctx.single_file_path_), K(ctx.storage_info_));
+
   } else if (OB_UNLIKELY(single_file_length_query != ctx.SINGLE_FILE_LENGTH)) {
     ret = OB_ERR_UNEXPECTED;
     STORAGE_LOG_FILTER(ERROR, "get single file length not equal to real length", 
@@ -306,14 +306,14 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_get_file_length_(
   // test adaptively_get_file_length
   if (FAILEDx(ctx.util_.adaptively_get_file_length(ctx.single_file_path_, &ctx.storage_info_, 
                      single_file_length_query))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to get single file length", K(ret), K(ctx.single_file_path_), K(ctx.storage_info_));
+
   } else if (OB_UNLIKELY(single_file_length_query != ctx.SINGLE_FILE_LENGTH)) {
     ret = OB_ERR_UNEXPECTED;
     STORAGE_LOG_FILTER(ERROR, "get single file length not equal to real length", 
         K(ret), K(ctx.single_file_path_), K(ctx.SINGLE_FILE_LENGTH), K(single_file_length_query), K(ctx.storage_info_));
   } else if (OB_FAIL(ctx.util_.adaptively_get_file_length(ctx.appendable_file_path_, &ctx.storage_info_, 
                      appendable_file_length_query))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to get appendable file length", K(ret), K(ctx.appendable_file_path_), K(ctx.storage_info_));
+
   } else if (OB_UNLIKELY(appendable_file_length_query != ctx.APPENDABLE_FILE_LENGTH)) {
     ret = OB_ERR_UNEXPECTED;
     STORAGE_LOG_FILTER(ERROR, "get appendable file length not equal to real length", 
@@ -352,10 +352,10 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_read_(TestObjectS
   // test read_single_text_file
   if (OB_ISNULL(single_file_buf = static_cast<char *>(allocator_.alloc(ctx.SINGLE_FILE_LENGTH + 1)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG_FILTER(ERROR, "failed to allocate buf", K(ret), K(ctx.single_file_path_), K(ctx.SINGLE_FILE_LENGTH), K(ctx.storage_info_));
+
   } else if (OB_FAIL(ctx.util_.read_single_text_file(ctx.single_file_path_, &ctx.storage_info_, 
                      single_file_buf, ctx.SINGLE_FILE_LENGTH + 1, ObStorageIdMod::get_default_id_mod()))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to read single file text", K(ret), K(ctx.single_file_path_), K(ctx.SINGLE_FILE_LENGTH), K(ctx.storage_info_));
+
   } else if (OB_UNLIKELY(strlen(single_file_buf) != ctx.SINGLE_FILE_LENGTH)) {
     ret = OB_ERR_UNEXPECTED;
     STORAGE_LOG_FILTER(ERROR, "read single file length not equal to real length", K(ret), K(ctx.single_file_path_), 
@@ -366,7 +366,7 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_read_(TestObjectS
   if (OB_FAIL(ret)) {
   } else if (OB_ISNULL(appendable_file_buf = static_cast<char *>(allocator_.alloc(ctx.APPENDABLE_FILE_LENGTH + 1)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG_FILTER(ERROR, "failed to allocate buf", K(ret), K(ctx.appendable_file_path_), K(ctx.APPENDABLE_FILE_LENGTH), K(ctx.storage_info_));
+
   } else if (OB_FAIL(ctx.util_.adaptively_read_single_text_file(ctx.appendable_file_path_, 
                      &ctx.storage_info_, appendable_file_buf, ctx.APPENDABLE_FILE_LENGTH + 1, ObStorageIdMod::get_default_id_mod()))) {
     STORAGE_LOG_FILTER(ERROR, "failed to read appendable text file", 
@@ -381,7 +381,7 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_read_(TestObjectS
   if (OB_FAIL(ret)) {
   } else if (OB_ISNULL(single_file_read_part_buf = static_cast<char *>(allocator_.alloc(read_part_size)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG_FILTER(ERROR, "failed to allocate buf", K(ret), K(ctx.single_file_path_), K(ctx.SINGLE_FILE_LENGTH), K(ctx.storage_info_));
+
   } else if (OB_FAIL(ctx.util_.read_part_file(ctx.single_file_path_, &ctx.storage_info_, single_file_read_part_buf, 
                      read_part_size, single_file_read_part_offset, read_part_read_size, ObStorageIdMod::get_default_id_mod()))) {
     STORAGE_LOG_FILTER(ERROR, "failed to read part file", 
@@ -397,7 +397,7 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_read_(TestObjectS
   if (OB_FAIL(ret)) {
   } else if (OB_ISNULL(appendable_file_read_part_buf = static_cast<char *>(allocator_.alloc(read_part_size)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG_FILTER(ERROR, "failed to allocate buf", K(ret), K(ctx.appendable_file_path_), K(read_part_size), K(ctx.storage_info_));
+
   } else if (OB_FAIL(ctx.util_.adaptively_read_part_file(ctx.appendable_file_path_, &ctx.storage_info_, 
                      appendable_file_read_part_buf, read_part_size, appendable_file_read_part_offset, read_part_read_size, ObStorageIdMod::get_default_id_mod()))) {
     STORAGE_LOG_FILTER(ERROR, "failed to adaptively read part file", 
@@ -412,25 +412,25 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_read_(TestObjectS
   if (OB_FAIL(ret)) {
   } else if (OB_ISNULL(pread_buf = static_cast<char *>(allocator_.alloc(read_part_size)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG_FILTER(ERROR, "failed to allocate buf", K(ret), K(read_part_size), K(ctx.storage_info_));
+
   } else if (OB_FAIL(ctx.util_.pread(ctx.single_file_path_, &ctx.storage_info_,
                                      pread_buf, read_part_size, pread_offset,
                                      pread_read_size, ObStorageIdMod::get_default_id_mod()))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to pread single file", K(ret), K(ctx.storage_info_), K(ctx.single_file_path_), K(pread_offset), K(read_part_size)); 
+ 
   } else if (OB_UNLIKELY(pread_read_size != read_part_size)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG_FILTER(ERROR, "pread size is inaccurate", K(ret), K(ctx.storage_info_), K(ctx.single_file_path_), K(pread_offset), K(read_part_size)); 
+ 
   }
 
   // test async_pread
   if (OB_SUCC(ret)) {
     if (OB_ISNULL(async_pread_buf = static_cast<char *>(allocator_.alloc(async_pread_read_size)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG_FILTER(ERROR, "failed to allocate buf", K(ret), K(async_pread_read_size));
+
     } else if (OB_FAIL(ctx.util_.open_with_access_type(device_handle, fd, &ctx.storage_info_,
             ctx.appendable_file_path_, access_type, 
             ObStorageIdMod::get_default_id_mod()))) {
-      STORAGE_LOG_FILTER(ERROR, "failed to open device with access type", K(ret), K(ctx.storage_info_), K(ctx.appendable_file_path_), K(access_type));
+
     } else if (OB_FAIL(ctx.util_.async_pread(*device_handle, fd, async_pread_buf, 
             async_pread_read_offset, async_pread_read_size, 
             io_handle))) {
@@ -452,7 +452,7 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_read_(TestObjectS
     int tmp_ret = OB_SUCCESS;
     if (OB_TMP_FAIL(ctx.util_.close_device_and_fd(device_handle, fd))) {
       ret = COVER_SUCC(tmp_ret);
-      STORAGE_LOG_FILTER(ERROR, "failed to close the file and release device!", K(ret)); 
+ 
     }
   }
   return ret;
@@ -462,23 +462,23 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_del_(TestObjectSt
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(ctx.util_.del_file(ctx.single_file_path_, &ctx.storage_info_))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to del single file", K(ret), K(ctx.single_file_path_), K(ctx.storage_info_));
+
   } else if (FALSE_IT(ctx.single_file_is_exist_ = true)) {
   } else if (OB_FAIL(ctx.util_.is_exist(ctx.single_file_path_, &ctx.storage_info_, ctx.single_file_is_exist_))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to check if single file is exist", K(ret), K(ctx.single_file_path_), K(ctx.storage_info_));
+
   } else if (OB_UNLIKELY(ctx.single_file_is_exist_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG_FILTER(ERROR, "failed to del single file", K(ret), K(ctx.single_file_path_), K(ctx.single_file_is_exist_), K(ctx.storage_info_));
+
   } else if (OB_FAIL(ctx.util_.adaptively_del_file(ctx.appendable_file_path_, &ctx.storage_info_))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to del appendable file path", K(ret), K(ctx.appendable_file_path_), K(ctx.storage_info_));
+
   } else if (FALSE_IT(ctx.appendable_file_is_exist_ = true)) {
   } else if (OB_FAIL(ctx.util_.adaptively_is_exist(ctx.appendable_file_path_, &ctx.storage_info_, ctx.appendable_file_is_exist_))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to check if appendable file is exist", K(ret), K(ctx.appendable_file_path_), K(ctx.storage_info_));
+
   } else if (OB_UNLIKELY(ctx.appendable_file_is_exist_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG_FILTER(ERROR, "failed to del appendable file", K(ret), K(ctx.appendable_file_path_), K(ctx.appendable_file_is_exist_), K(ctx.storage_info_));
+
   } else if (OB_FAIL(ctx.util_.del_dir(ctx.test_dir_path_, &ctx.storage_info_, true))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to del dir", K(ret), K(ctx.test_dir_path_), K(ctx.storage_info_));
+
   } else if (FALSE_IT(ctx.upload_file_is_exist_ = true)) {
   } else if (OB_FAIL(ctx.util_.adaptively_is_exist(ctx.upload_file_path_,
                                                   &ctx.storage_info_,
@@ -490,7 +490,7 @@ int ObAdminTestIODeviceExecutor::test_object_storage_interface_del_(TestObjectSt
     STORAGE_LOG_FILTER(ERROR, "failed to del upload file", K(ret), K(ctx.upload_file_path_),
         K(ctx.storage_info_), K(ctx.upload_file_is_exist_));
   } else if (OB_FAIL(ctx.util_.del_dir(ctx.test_dir_path_, &ctx.storage_info_))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to del dir", K(ret), K(ctx.test_dir_path_), K(ctx.storage_info_));
+
   }
   return ret;
 }
@@ -526,15 +526,15 @@ int ObAdminTestIODeviceExecutor::test_multi_step_write_appendable_file_(TestObje
         K(ret), K(ctx.appendable_file_path_), K(access_type), K(ctx.storage_info_)); 
   } else if (OB_ISNULL(device_handle)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG_FILTER(ERROR, "device handle is null", K(ret), K(device_handle), K_(backup_path), K(ctx.storage_info_));
+
   } else {
     for (int i = 0; OB_SUCC(ret) && i < STEP_COUNT; i++) {
       if (OB_FAIL(ctx.util_.pwrite(*device_handle, fd, ctx.appendable_file_content_ + offset, offset, 
                                    STEP_LEN, single_write_size, false/*is_can_seal*/))) {
-        STORAGE_LOG_FILTER(ERROR, "failed to pwrite", K(ret), K(offset), K(ctx.storage_info_));
+
       } else if (OB_UNLIKELY(single_write_size != STEP_LEN)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG_FILTER(ERROR, "write_size not equal to STEP_LEN", K(ret), K(single_write_size), K(STEP_LEN), K(ctx.storage_info_));
+
       } else {
         offset += single_write_size;
         writed_len += single_write_size;
@@ -544,7 +544,7 @@ int ObAdminTestIODeviceExecutor::test_multi_step_write_appendable_file_(TestObje
     if (OB_SUCC(ret)) {
       // test list_files, adaptively_list_files and list_directories before seal
       if (OB_FAIL(ctx.util_.list_files(ctx.test_dir_path_, &ctx.storage_info_, file_list_array_op))) {
-        STORAGE_LOG_FILTER(ERROR, "failed to list test dir path", K(ret), K(ctx.test_dir_path_), K(ctx.storage_info_));
+
       } else if (adaptive_append_mode(ctx.storage_info_)
                  && OB_UNLIKELY(file_names.size() != 7)) {
         ret = OB_ERR_UNEXPECTED;
@@ -557,12 +557,12 @@ int ObAdminTestIODeviceExecutor::test_multi_step_write_appendable_file_(TestObje
             K(ret), K(ctx.test_dir_path_), K(file_names.size()), K(ctx.storage_info_));
       } else if (FALSE_IT(file_names.reuse())){
       } else if (OB_FAIL(ctx.util_.adaptively_list_files(ctx.test_dir_path_, &ctx.storage_info_, file_list_array_op))) {
-        STORAGE_LOG_FILTER(ERROR, "failed to list test dir path", K(ret), K(ctx.test_dir_path_), K(ctx.storage_info_));
+
       } else if (OB_UNLIKELY(file_names.size() != 2)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG_FILTER(ERROR, "the length of file_names does not equal to 2", K(ret), K(file_names.size()), K(ctx.storage_info_));
+
       } else if (OB_FAIL(ctx.util_.list_directories(ctx.test_dir_path_, &ctx.storage_info_, dir_list_array_op))) {
-        STORAGE_LOG_FILTER(ERROR, "failed to list directories", K(ret), K(ctx.test_dir_path_), K(ctx.storage_info_));
+
       } else if (adaptive_append_mode(ctx.storage_info_)
                  && OB_UNLIKELY(dir_names.size() != 1 || dir_names[0] != ObString(ctx.appendable_file_name_))) {
         ret = OB_ERR_UNEXPECTED;
@@ -581,15 +581,15 @@ int ObAdminTestIODeviceExecutor::test_multi_step_write_appendable_file_(TestObje
       } else if (OB_FAIL(ctx.util_.pwrite(ctx.appendable_file_path_, &ctx.storage_info_,
                                           ctx.appendable_file_content_ + offset, offset, remain_len, 
                                           access_type, write_size, true, ObStorageIdMod::get_default_id_mod()))) {
-        STORAGE_LOG_FILTER(ERROR, "failed to pwrite", K(ret), K(offset), K(remain_len), K(ctx.storage_info_));
+
       } else if (OB_FAIL(device_handle->seal_file(fd))) {
-        STORAGE_LOG_FILTER(ERROR, "failed to seal file", K(ret), K(ctx.appendable_file_path_), K(ctx.storage_info_));
+
       } 
     }
 
     if (OB_TMP_FAIL(ctx.util_.close_device_and_fd(device_handle, fd))) {
       ret = COVER_SUCC(tmp_ret);
-      STORAGE_LOG_FILTER(ERROR, "failed to close file and release device!", K(ret), K(ctx.appendable_file_path_), K(ctx.storage_info_)); 
+ 
     }
   }
   return ret;
@@ -616,47 +616,47 @@ int ObAdminTestIODeviceExecutor::test_list_before_complete_multipart_write_()
   ObFileListArrayOp file_list_array_op(file_names, allocator_);
   
   if (OB_FAIL(storage_info.set(backup_path_, storage_info_))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to set storage info", K(ret), K_(backup_path), K_(storage_info));
+
   } else if (OB_FAIL(databuff_printf(file_path, OB_MAX_URI_LENGTH, "%s/%s", backup_path_, file_name))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to set file path", K(ret), K_(backup_path), K(file_name), K(storage_info));
+
   } else if (OB_FAIL(generate_random_str_(file_content, file_length))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to generate content for file", K(ret), K(file_length), K(storage_info));  
+  
   } else if (OB_FAIL(util.open_with_access_type(device_handle, fd, &storage_info,
           file_path, access_type, ObStorageIdMod::get_default_id_mod()))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to open device with access type", K(ret), K(file_path), K(access_type), K(storage_info));
+
   } else if (OB_ISNULL(device_handle)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG_FILTER(ERROR, "device handle is null", K(ret), K(device_handle), K_(backup_path), K(storage_info));
+
   } else if (OB_FAIL(device_handle->write(fd, file_content, file_length, write_size))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to write file", K(ret), K(file_length), K(storage_info));
+
   } else if (OB_FAIL(util.adaptively_list_files(backup_path_, &storage_info, file_list_array_op))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to list files in dir", K(ret), K_(backup_path), K(storage_info));
+
   } else if (OB_UNLIKELY(std::find(file_names.begin(), file_names.end(), file_name) != file_names.end())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG_FILTER(ERROR, "uncompleted multipart file are invisible!", K(ret), K(file_path), K(storage_info));
+
   } else if (OB_FAIL(device_handle->complete(fd))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to complete multipart upload", K(ret), K(device_handle), K(fd), K(storage_info));
+
   } else if (OB_FAIL(util.adaptively_list_files(backup_path_, &storage_info, file_list_array_op))) {
-    STORAGE_LOG_FILTER(ERROR, "failed to list files in dir", K(ret), K_(backup_path), K(storage_info));
+
   } else if (OB_UNLIKELY(std::find(file_names.begin(), file_names.end(), file_name) == file_names.end())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG_FILTER(ERROR, "completed multipart file are visible!", K(ret), K(file_path), K(storage_info));
+
   } else if (!(storage_info.is_enable_worm() 
                 && ObStorageDeleteMode::STORAGE_DELETE_MODE == storage_info.get_delete_mode())
                 && OB_FAIL(util.del_file(file_path, &storage_info)) ) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG_FILTER(ERROR, "failed to del file", K(ret), K(file_path), K(storage_info));
+
   }
   
   if (OB_FAIL(ret)) {
     if (OB_TMP_FAIL(device_handle->abort(fd))) {
       ret = COVER_SUCC(tmp_ret);
-      STORAGE_LOG_FILTER(ERROR, "failed to abort multipart upload", K(ret), K(tmp_ret), K(device_handle), K(fd), K(storage_info));
+
     }
   }
   if (OB_TMP_FAIL(util.close_device_and_fd(device_handle, fd))) {
     ret = COVER_SUCC(tmp_ret);
-    STORAGE_LOG_FILTER(ERROR, "failed to close device and fd", K(ret), K(tmp_ret), K(device_handle), K(fd), K(storage_info));
+
   }
   
   return ret;

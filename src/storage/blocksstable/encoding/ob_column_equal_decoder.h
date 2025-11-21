@@ -79,7 +79,7 @@ OB_INLINE int ObColumnEqualDecoder::init(
   // performance critical, don't check params
   if (inited_) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init twice", K(ret));
+
   } else {
     meta_header_ = reinterpret_cast<const ObColumnEqualMetaHeader *>
         (block_data + column_header.offset_);

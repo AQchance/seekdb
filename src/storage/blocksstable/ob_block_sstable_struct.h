@@ -414,7 +414,7 @@ struct ObPreviousEncodingArray<2>
         ++size_;
       } else {
         ret = common::OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected size", K_(size));
+
       }
     }
     return ret;
@@ -694,7 +694,7 @@ public:
     int ret = OB_SUCCESS;
     if (OB_UNLIKELY(!is_valid_offset_type(column_offset_type))) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "invalid column ofset bytes", K(column_offset_type));
+
     } else {
       offset_type_ = column_offset_type;
     }
@@ -705,7 +705,7 @@ public:
     int ret = OB_SUCCESS;
     if (OB_UNLIKELY(!is_valid_col_idx_type(column_idx_type))) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "invalid column idx bytes", K(column_idx_type));
+
     } else {
       column_idx_type_ = column_idx_type;
     }
@@ -790,7 +790,7 @@ public:
     int ret = OB_SUCCESS;
     if (OB_UNLIKELY(!ObColClusterInfoMask::is_valid_offset_type(column_offset_type))) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "invalid column offset bytes", K(column_offset_type));
+
     } else {
       offset_type_ = column_offset_type;
     }

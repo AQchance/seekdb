@@ -100,7 +100,7 @@ void ObDDLTransController::run1()
       }
     }
     if (OB_SUCC(ret) && tenant_ids.count() > 0) {
-      LOG_INFO("refresh_schema tenants", K(tenant_ids));
+
       ObUnitTableOperator ut_operator;
       if (OB_ISNULL(GCTX.root_service_) || OB_ISNULL(GCTX.sql_proxy_)) {
         ret = OB_INVALID_ARGUMENT;
@@ -128,7 +128,7 @@ void ObDDLTransController::run1()
             LOG_WARN("fail to broadcast consensus version", KR(ret), K(tenant_id), K(schema_version));
           } else {
             int64_t end_time = ObTimeUtility::current_time();
-            LOG_INFO("refresh_schema", KR(ret), K(tenant_id), K(end_time - start_time), K(schema_version));
+
           }
          }
       }
@@ -191,7 +191,7 @@ int ObDDLTransController::broadcast_consensus_version(const int64_t tenant_id,
       // don't use arg/dest here beacause call() may has failure.
     }
   }
-  LOG_INFO("broadcast consensus version finished", KR(ret), K(schema_version), K(arg), K(server_list));
+
   return ret;
 }
 
@@ -273,7 +273,7 @@ int ObDDLTransController::create_task_and_assign_schema_version(
       }
     }
   }
-  LOG_INFO("create_task_and_assign_schema_version", KR(ret), K(tenant_id), K(task_id));
+
   return ret;
 }
 
@@ -312,7 +312,7 @@ int ObDDLTransController::check_task_ready_(
           && tasks_.at(0).task_end_
           && !(tasks_.at(0).tenant_id_ == tenant_id
                && tasks_.at(0).task_id_ == task_id)) {
-        LOG_INFO("gc parallel ddl task", K(tasks_.at(0)));
+
         int tmp_ret = OB_SUCCESS;
         if (OB_TMP_FAIL(tasks_.remove(0))) {
           LOG_WARN("check_task_ready", KR(tmp_ret));
@@ -366,7 +366,7 @@ int ObDDLTransController::remove_task(const uint64_t tenant_id, const int64_t ta
         && tasks_.at(i).task_id_ == task_id) {
       tasks_.at(i).task_end_ = true;
       idx = i;
-      LOG_INFO("remove parallel ddl task", K(tasks_.at(i)));
+
       if (OB_FAIL(tasks_.remove(i))) {
         LOG_WARN("remove_task fail", KR(ret), K(tenant_id), K(task_id));
       } else if (OB_FAIL(tenants_.set_refactored(tenant_id, 1, 0, 1))) {

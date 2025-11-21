@@ -62,12 +62,12 @@ int MockObTableReadInfo::init(common::ObIAllocator &allocator,
   init_basic_info(schema_column_count, schema_rowkey_cnt, is_oracle_mode, is_cg_sstable,
     false /*is_cs_replica_compat*/, false /*is_delete_insert_table*/, false/*is_global_index_table*/); // init basic info
   if (OB_FAIL(prepare_arrays(allocator, cols_desc, out_cols_cnt))) {
-    STORAGE_LOG(WARN, "failed to prepare arrays", K(ret), K(out_cols_cnt));
+
   } else if (nullptr != cols_param && OB_FAIL(cols_param_.init_and_assign(*cols_param, allocator))) {
-    STORAGE_LOG(WARN, "Fail to assign cols_param", K(ret));
+
   } else if (OB_UNLIKELY(cols_index_.rowkey_mode_ || memtable_cols_index_.rowkey_mode_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "cols index is unexpected rowkey_mode", K(ret), K(cols_index_), K(memtable_cols_index_));
+
   } else {
     int32_t col_index = OB_INVALID_INDEX;
     for (int64_t i = 0; i < out_cols_cnt; i++) {
@@ -76,7 +76,7 @@ int MockObTableReadInfo::init(common::ObIAllocator &allocator,
       memtable_cols_index_.array_[i] = col_index;
     }
     if (FAILEDx(init_datum_utils(allocator, false/*is_cg_sstable*/))) {
-      STORAGE_LOG(WARN, "failed to init sequence read info & datum utils", K(ret));
+
     } else {
       is_inited_ = true;
     }

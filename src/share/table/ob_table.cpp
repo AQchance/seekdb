@@ -468,7 +468,7 @@ int ObTableEntity::get_property(const ObString &prop_name, ObObj &prop_value) co
       prop_value = properties_values_.at(idx);
     } else {
       ret = OB_SEARCH_NOT_FOUND;
-      LOG_DEBUG("property name not exists in properties", K(ret), K(prop_name));
+
     }
   }
   return ret;
@@ -2289,10 +2289,10 @@ bool ObTableQueryResult::reach_batch_size_or_result_size(const int32_t batch_cou
 {
   bool reach_size = false;
   if (batch_count > 0 && this->get_row_count() >= batch_count) {
-    LOG_DEBUG("[yzfdebug] reach batch limit", K(batch_count));
+
     reach_size = true;
   } else if (max_result_size > 0 && this->get_result_size() >= max_result_size) {
-    LOG_DEBUG("[yzfdebug] reach size limit", K(max_result_size));
+
     reach_size = true;
   }
   return reach_size;
@@ -2533,7 +2533,7 @@ bool ObTableQueryIterableResult::reach_batch_size_or_result_size(const int32_t b
 {
   bool reach_size = false;
   if (batch_count > 0 && this->get_row_count() >= batch_count) {
-    LOG_DEBUG("reach batch limit", K(batch_count));
+
     reach_size = true;
   } 
   return reach_size;
@@ -2718,7 +2718,7 @@ bool ObTableQueryDListResult::reach_batch_size_or_result_size(const int32_t batc
 {
   bool reach_size = false;
   if (batch_count > 0 && this->get_row_count() >= batch_count) {
-    LOG_DEBUG("reach batch limit", K(batch_count));
+
     reach_size = true;
   } 
   return reach_size;

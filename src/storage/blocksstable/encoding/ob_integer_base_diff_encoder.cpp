@@ -200,7 +200,7 @@ int ObIntegerBaseDiffEncoder::traverse(bool &suitable)
         if (!bit_packing) {
           delta_size *= CHAR_BIT;
         }
-        LOG_DEBUG("integer base diff size", K_(column_index), K(delta_size), K(orig_size));
+
         if ((orig_size - delta_size) * rows_->count()
             > (sizeof(*header_) + type_store_size_) * CHAR_BIT) {
           suitable = true;
@@ -248,7 +248,7 @@ int ObIntegerBaseDiffEncoder::store_meta(ObBufferWriter &buf_writer)
       LOG_WARN("advance meta store size failed", K(ret), K_(type_store_size));
     } else {
       const uint64_t base = integer_data_->base();
-      LOG_DEBUG("integer base", K(base));
+
       MEMCPY(data, &base, type_store_size_);
     }
   }

@@ -57,10 +57,10 @@ int ObAllVirtualCompactionDiagnoseInfo::inner_get_next_row(common::ObNewRow *&ro
     SERVER_LOG(WARN, "ObAllVirtualCompactionDiagnoseInfo has been inited", K(ret));
   } else if (OB_FAIL(diagnose_info_iter_.get_next_info(diagnose_info_))) {
     if (OB_ITER_END != ret) {
-      STORAGE_LOG(WARN, "Fail to get next suggestion info", K(ret));
+
     }
   } else if (OB_FAIL(fill_cells())) {
-    STORAGE_LOG(WARN, "Fail to fill cells", K(ret), K(diagnose_info_));
+
   } else {
     row = &cur_row_;
   }

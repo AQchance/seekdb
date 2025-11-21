@@ -48,7 +48,7 @@ int ObRecoveryLSService::init()
 
 void ObRecoveryLSService::destroy()
 {
-  LOG_INFO("recovery ls service destory", KPC(this));
+
   ObTenantThreadHelper::destroy();
 }
 

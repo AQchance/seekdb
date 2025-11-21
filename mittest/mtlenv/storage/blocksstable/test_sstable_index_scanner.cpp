@@ -156,7 +156,7 @@ TEST_F(TestSSTableIndexScanner, test_basic_scan_functionality)
       ASSERT_TRUE(nullptr != index_row);
       ASSERT_EQ(index_row->skip_index_row_.get_column_count(), scan_param.skip_index_projector_->count());
       iter_cnt++;
-      LOG_INFO("print index row", KPC(index_row->endkey_), K(index_row->skip_index_row_));
+
     }
   }
   ASSERT_TRUE(iter_cnt > 0);
@@ -174,7 +174,7 @@ TEST_F(TestSSTableIndexScanner, test_basic_scan_functionality)
     } else {
       ASSERT_TRUE(nullptr != index_row);
       iter_cnt++;
-      LOG_INFO("print index row", KPC(index_row->endkey_), K(index_row->skip_index_row_));
+
     }
   }
   ASSERT_TRUE(iter_cnt > 0);
@@ -237,7 +237,7 @@ TEST_F(TestSSTableIndexScanner, test_range_with_advance)
 
   // test advance to interface
   // normal advance
-  LOG_INFO("start test advance to interface");
+
 
   ObDatumRowkey advance_key;
   const ObSSTableIndexRow *index_row = nullptr;
@@ -251,7 +251,7 @@ TEST_F(TestSSTableIndexScanner, test_range_with_advance)
   ASSERT_EQ(OB_SUCCESS, index_scanner.advance_to(advance_key, true));
   ASSERT_EQ(OB_SUCCESS, index_scanner.get_next(index_row));
   ASSERT_EQ(OB_SUCCESS, index_row->endkey_->compare(advance_key, read_info_.get_datum_utils(), cmp_ret));
-  LOG_INFO("print advance key", K(advance_key), KPC(index_row->endkey_));
+
   ASSERT_TRUE(cmp_ret >= 0);
 
   generate_key(max_row_seed_, advance_key);

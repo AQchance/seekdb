@@ -285,7 +285,7 @@ int ObLogSort::est_width()
     if (OB_FAIL(est_sort_key_width())) {
       LOG_WARN("failed to est sort key width", K(ret));
     }
-    LOG_TRACE("est width for non-final sort", K(output_exprs), K(width));
+
   } else if (OB_FAIL(get_sort_output_exprs(output_exprs))) {
     LOG_WARN("failed to get sort output exprs", K(ret));
   } else if (OB_FAIL(ObOptEstCost::estimate_width_for_exprs(get_plan()->get_basic_table_metas(),
@@ -297,7 +297,7 @@ int ObLogSort::est_width()
     LOG_WARN("failed to est sort key width", K(ret));
   } else {
     set_width(width);
-    LOG_TRACE("est width for final sort", K(output_exprs), K(width));
+
   }
   return ret;
 }

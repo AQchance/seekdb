@@ -72,7 +72,7 @@ int ObDropTableHelper::init_()
 int ObDropTableHelper::lock_objects_()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start to lock objects", KR(ret));
+
   DEBUG_SYNC(BEFORE_PARALLEL_DDL_LOCK);
   if (OB_FAIL(check_inner_stat_())) {
     LOG_WARN("fail to check inner stat", KR(ret));
@@ -125,7 +125,7 @@ int ObDropTableHelper::lock_tables_()
     lib::ob_sort(sorted_table_ids.begin(), sorted_table_ids.end());
     for (int64_t i = 0; OB_SUCC(ret) && i < sorted_table_ids.count(); i++) {
       const uint64_t table_id = sorted_table_ids.at(i);
-      LOG_INFO("lock table", KR(ret), K(table_id), K_(tenant_id));
+
       if (OB_FAIL(ObInnerConnectionLockUtil::lock_table(tenant_id_,
                                                         table_id,
                                                         EXCLUSIVE,
@@ -215,7 +215,7 @@ int ObDropTableHelper::calc_schema_version_cnt_()
             ret = OB_ERR_UNEXPECTED;
             LOG_WARN("aux table schema is null", KR(ret));
           } else if (to_recyclebin && aux_table_schema->is_in_recyclebin()) {
-            LOG_INFO("aux table is already in recyclebin");
+
           } else if (OB_FAIL(calc_schema_version_cnt_for_table_(*aux_table_schema, to_recyclebin))) {
             LOG_WARN("calc schema version cnt drop table failed", KR(ret));
           }
@@ -298,7 +298,7 @@ int ObDropTableHelper::calc_schema_version_cnt_()
     schema_version_cnt_++;
   }
 
-  LOG_INFO("finish calc schema version cnt", KR(ret), K_(schema_version_cnt));
+
   return ret;
 }
 
@@ -452,7 +452,7 @@ int ObDropTableHelper::operate_schemas_()
             new_aux_table_schema.set_in_offline_ddl_white_list(table_schema->get_in_offline_ddl_white_list());
             if (is_to_recyclebin_(*table_schema)) {
               if (new_aux_table_schema.is_in_recyclebin()) {
-                LOG_INFO("aux table is already in recyclebin");
+
               } else if (OB_FAIL(drop_table_to_recyclebin_(new_aux_table_schema, NULL/*ddl_stmt_str*/))) {
                 LOG_WARN("fail to drop aux table to recyclebin", KR(ret));
               }

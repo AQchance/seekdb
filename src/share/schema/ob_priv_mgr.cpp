@@ -604,7 +604,7 @@ int ObPrivMgr::get_sys_priv(const ObSysPrivKey &key,
   if (OB_FAIL(get_sys_priv_iter(key, target_iter))) {
     LOG_WARN("get sys priv iter failed", K(ret), K(key));
   } else if (OB_ISNULL(target_iter)) {
-    LOG_INFO("get sys priv return NULL", K(key));
+
   } else {
     const ObSysPriv *tmp_priv = NULL;
     if (OB_ISNULL(tmp_priv = *target_iter)) {
@@ -827,7 +827,7 @@ int ObPrivMgr::del_column_priv(const ObColumnPrivIdKey &column_priv_key)
     if (OB_ENTRY_NOT_EXIST == ret) {
       // if item does not exist, regard it as succeeded, may be rebuilded later.
       ret = OB_SUCCESS;
-      LOG_INFO("failed to remove column priv schema, item may not exist", K(ret));
+
     } else {
       LOG_WARN("failed to remove column priv schema", K(ret));
     }
@@ -852,7 +852,7 @@ int ObPrivMgr::del_column_priv(const ObColumnPrivIdKey &column_priv_key)
     if (OB_ENTRY_NOT_EXIST == ret) {
       // if item does not exist, regard it as succeeded, may be rebuilded later.
       ret = OB_SUCCESS;
-      LOG_INFO("failed to remove column priv schema, item may not exist", K(ret));
+
     } else {
       LOG_WARN("failed to remove column priv schema", K(ret));
     }
@@ -1062,7 +1062,7 @@ int ObPrivMgr::get_obj_priv(const ObObjPrivSortKey &obj_priv_key,
   int hash_ret = obj_priv_map_.get_refactored(obj_priv_key, tmp_obj_priv);
   if (OB_SUCCESS == hash_ret) {
     if (OB_ISNULL(tmp_obj_priv)) {
-      LOG_INFO("get obj priv return NULL", K(obj_priv_key));
+
     } else {
       obj_priv = tmp_obj_priv;
     }
@@ -1081,7 +1081,7 @@ int ObPrivMgr::get_table_priv(const ObTablePrivSortKey &table_priv_key,
   int hash_ret = table_priv_map_.get_refactored(table_priv_key, tmp_table_priv);
   if (OB_SUCCESS == hash_ret) {
     if (OB_ISNULL(tmp_table_priv)) {
-      LOG_INFO("get table priv return NULL", K(table_priv_key));
+
     } else {
       table_priv = tmp_table_priv;
     }

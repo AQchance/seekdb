@@ -76,9 +76,9 @@ int ObDynamicThreadPool::init(const char* thread_name)
   } else if (OB_FAIL(task_queue_.init(MAX_TASK_NUM))) {
     COMMON_LOG(WARN, "failed to init task queue", K(ret));
   } else if (OB_FAIL(cond_.init(ObWaitEventIds::DYNAMIC_THREAD_POOL_COND_WAIT))) {
-    STORAGE_LOG(WARN, "failed to init cond", K(ret));
+
   } else if (OB_FAIL(task_thread_cond_.init(ObWaitEventIds::DYNAMIC_THREAD_POOL_COND_WAIT))) {
-    STORAGE_LOG(WARN, "failed to init cond", K(ret));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -144,7 +144,7 @@ void ObDynamicThreadPool::task_thread_idle()
   ObThreadCondGuard guard(task_thread_cond_);
   if (OB_SUCCESS != (tmp_ret = task_thread_cond_.wait(DEFAULT_CHECK_TIME_MS))) {
     if (OB_TIMEOUT != tmp_ret) {
-      STORAGE_LOG_RET(WARN, tmp_ret, "failed to idle", K(tmp_ret));
+
     }
   }
 }
@@ -165,7 +165,7 @@ void ObDynamicThreadPool::run1()
     if (need_idle_) {
       if (OB_SUCCESS != (tmp_ret = cond_.wait(DEFAULT_CHECK_TIME_MS))) {
         if (OB_TIMEOUT != tmp_ret) {
-          STORAGE_LOG_RET(WARN, tmp_ret, "failed to idle", K(tmp_ret));
+
         }
       }
     }

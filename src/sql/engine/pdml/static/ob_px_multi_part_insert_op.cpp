@@ -54,7 +54,7 @@ int ObPxMultiPartInsertOp::inner_open()
     LOG_WARN("direct-insert plan should not use pdml op",
         KR(ret), K(GET_PHY_PLAN_CTX(ctx_)->get_is_direct_insert_plan()));
   }
-  LOG_TRACE("pdml static insert op", K(ret), K_(MY_SPEC.row_desc), K_(MY_SPEC.ins_ctdef));
+
   return ret;
 }
 
@@ -69,7 +69,7 @@ int ObPxMultiPartInsertOp::inner_get_next_row()
       if (OB_ITER_END != ret) {
         LOG_WARN("failed get next row from data driver", K(ret));
       } else {
-        LOG_TRACE("data driver has been iterated to end");
+
       }
     } else {
       clear_evaluated_flag();
@@ -82,7 +82,7 @@ int ObPxMultiPartInsertOp::inner_get_next_row()
         if (OB_ITER_END != ret) {
           LOG_WARN("failed get next row from data driver", K(ret));
         } else {
-          LOG_TRACE("data driver has been iterated to end");
+
         }
       } else {
         clear_evaluated_flag();
@@ -146,14 +146,14 @@ int ObPxMultiPartInsertOp::read_row(ObExecContext &ctx,
         ObExpr *expr = child_->get_spec().output_.at(part_id_idx);
         ObDatum &expr_datum = expr->locate_expr_datum(get_eval_ctx());
         tablet_id = expr_datum.get_int();
-        LOG_DEBUG("get the part id", K(ret), K(expr_datum));
+
       }
     } else {
       op_monitor_info_.otherstat_4_value_++;
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_TRACE("read row from pdml cache", "read_row", ROWEXPR2STR(eval_ctx_, *row), K(tablet_id), K(is_skipped));
+
   }
   return ret;
 }

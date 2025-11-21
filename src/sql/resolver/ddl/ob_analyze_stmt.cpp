@@ -155,7 +155,7 @@ int ObAnalyzeTableInfo::fill_table_stat_param(ObExecContext &ctx, common::ObTabl
     }
   }
 
-  LOG_TRACE("link bug", K(param));
+
   return ret;
 }
 

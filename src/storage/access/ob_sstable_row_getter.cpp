@@ -139,7 +139,7 @@ int ObSSTableRowGetter::inner_get_next_row(const ObDatumRow *&store_row)
         EVENT_INC(ObStatEventIds::MAJOR_SSSTORE_READ_ROW_COUNT);
       }
     }
-    LOG_DEBUG("inner get next row", KPC(store_row), KPC(read_handle_.rowkey_));
+
   }
   return ret;
 }
@@ -164,7 +164,7 @@ int ObSSTableRowGetter::fetch_row(ObSSTableReadHandle &read_handle, const ObDatu
       LOG_WARN("Fail to allocate macro block reader", K(ret));
     }
   }
-  LOG_DEBUG("start to fetch row", KPC(read_handle_.rowkey_), K(read_handle));
+
 
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(micro_getter_->get_row(

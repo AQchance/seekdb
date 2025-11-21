@@ -329,7 +329,7 @@ int ObAutoSplitTaskCache::pop_tasks(const int64_t num_tasks_to_pop, ObArray<ObAu
     LOG_WARN("invalid argument", K(ret), K(num_tasks_to_pop));
   } else if (OB_UNLIKELY(min_heap_.count() <= 0 || max_heap_.count() <= 0)) {
     ret = OB_ENTRY_NOT_EXIST;
-    LOG_DEBUG("no element to pop", K(ret), K(min_heap_.count()), K(max_heap_.count()));
+
   } else {
     int ret = OB_SUCCESS;
     int64_t num_tasks_can_pop = min(get_tasks_num(), num_tasks_to_pop);
@@ -730,7 +730,7 @@ int ObServerAutoSplitScheduler::check_and_fetch_tablet_split_info(const storage:
     LOG_WARN("pointer to tablet is nullptr", K(ret), KP(tablet));
   } else if ((GCTX.is_shared_storage_mode())) {
     ret = OB_NOT_SUPPORTED;
-    LOG_DEBUG("split in shared storage mode not supported", K(ret));
+
   } else if (OB_FAIL(tablet->ObITabletMdsCustomizedInterface::get_latest_split_data(
       split_data, writer, trans_stat, trans_version))) {
     if (OB_EMPTY_RESULT == ret) {
@@ -818,7 +818,7 @@ int ObServerAutoSplitScheduler::push_task(const storage::ObTabletHandle &tablet_
     ObArray<ObArray<ObAutoSplitTask>> tenant_task_arrays;
     if (OB_FAIL(polling_manager_.pop_tasks(ObServerAutoSplitScheduler::MAX_SPLIT_RPC_IN_BATCH, tenant_task_arrays))) {
       if (OB_ENTRY_NOT_EXIST == ret) {
-        LOG_DEBUG("tree pop task fail", K(ret) ,K(task_array));
+
         //overwrite ret
         ret = OB_SUCCESS;
       } else {
@@ -1020,7 +1020,7 @@ int ObAutoSplitTaskPollingMgr::pop_tasks_from_tenant_cache(const int64_t num_tas
     if (OB_FALSE_IT(cache_total_task_old = tenant_cache->get_tasks_num())) {
     } else if (OB_FAIL(tenant_cache->pop_tasks(num_tasks_to_pop, task_array))) {
       if (OB_ENTRY_NOT_EXIST == ret) {
-        LOG_DEBUG("trying to pop from empty tenant cache", K(ret));
+
         //overwrite ret
         ret = OB_SUCCESS;
       } else {
@@ -1053,7 +1053,7 @@ int ObAutoSplitTaskPollingMgr::pop_tasks(const int64_t num_tasks_can_pop, ObArra
     LOG_WARN("invalid argument", K(ret), K(num_tasks_can_pop));
   } else if (OB_UNLIKELY(get_total_tenants() == 0)) {
     ret = OB_ENTRY_NOT_EXIST;
-    LOG_DEBUG("no task exist", K(ret));
+
   } else if ((!is_root_server_) &&
       OB_TMP_FAIL(pop_tasks_from_tenant_cache(1/*num_tasks_can_pop*/, tmp_array, MTL(ObAutoSplitTaskCache*)))) {
     LOG_WARN("pop tasks from tenant cache failed", K(tmp_ret));
@@ -1860,7 +1860,7 @@ int ObSplitSampler::query_ranges(const uint64_t tenant_id,
                                                            K(range_num), K(used_disk_space),
                                                            K(ranges));
   }
-  LOG_DEBUG("query range result", K(ret), K(ranges));
+
   return ret;
 }
 
@@ -1921,7 +1921,7 @@ int ObSplitSampler::query_ranges(const uint64_t tenant_id,
                                                            K(used_disk_space),
                                                            K(ranges));
   }
-  LOG_DEBUG("query range result", K(ret), K(column_ranges), K(ranges));
+
   return ret;
 }
 

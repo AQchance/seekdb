@@ -208,7 +208,7 @@ int ObExprNvlUtil::calc_nvl_expr_batch(const ObExpr &expr,
                                       ObEvalCtx &ctx,
                                       const ObBitVector &skip,
                                       const int64_t batch_size) {
-  LOG_DEBUG("eval nvl batch mode", K(batch_size));
+
   int ret = OB_SUCCESS;
   ObDatum* results = expr.locate_batch_datums(ctx);
   ObBitVector &eval_flags = expr.get_evaluated_flags(ctx);

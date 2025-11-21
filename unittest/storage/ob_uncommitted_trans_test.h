@@ -58,7 +58,7 @@ public:
   {
     int ret = OB_SUCCESS;
     if (OB_FAIL(trans_status_map_.create(10, ObModIds::OB_HASH_BUCKET_DAG_MAP))) {
-      STORAGE_LOG(WARN, "failed to create hash map", K(ret));
+
     } else {
       trans_status_map_.clear();
       state_ = State::F_WORKING;
@@ -96,7 +96,7 @@ public:
       } else {
         trans_version = INT64_MAX;
       }
-      STORAGE_LOG(INFO, "get trans status", K(data_trans_id), KPC(trans_status), K(cluster_version), K(this));
+
     }
     return ret;
   }
@@ -113,7 +113,7 @@ public:
     trans_status->commit_trans_version_ = trans_version;
     if (OB_FAIL(trans_status_map_.set_refactored(
         ObMockIteratorBuilder::trans_id_list_[input_idx_], trans_status))) {
-      STORAGE_LOG(WARN, "push error", K(ret), K(status), K(trans_version));
+
     } else {
       STORAGE_LOG(INFO, "push success", K(ObMockIteratorBuilder::trans_id_list_[input_idx_]),
           K(status), K(trans_version), K(this));
@@ -134,9 +134,9 @@ public:
     trans_status->commit_trans_version_ = trans_version;
     if (OB_FAIL(trans_status_map_.set_refactored(
         default_trans_id_, trans_status, 1/*over write*/))) {
-      STORAGE_LOG(WARN, "push error", K(status), K(trans_version));
+
     } else {
-      STORAGE_LOG(INFO, "push success", K(default_trans_id_), K(status), K(trans_version), K(this));
+
     }
     return ret;
   }
@@ -172,7 +172,7 @@ public:
     transaction::ObTransID data_trans_id = lock_for_read_arg.data_trans_id_;
     int32_t data_sql_sequence = lock_for_read_arg.data_sql_sequence_;
     if (OB_FAIL(get_transaction_status_with_log_ts(data_trans_id, 0, status, trans_version, cluster_version))) {
-      STORAGE_LOG(WARN, "failed to clear trans status map", K(ret));
+
     } else if (ROLLBACK_SQL_SEQUENCE != data_sql_sequence
         && ROLLBACK_SQL_SEQUENCE_2 != data_sql_sequence
         && ROLLBACK_SQL_SEQUENCE_3 != data_sql_sequence) {
@@ -189,7 +189,7 @@ public:
   {
     int ret = OB_SUCCESS;
     if (OB_FAIL(trans_status_map_.clear())) {
-      STORAGE_LOG(WARN, "failed to clear trans status map", K(ret));
+
     }
     input_idx_ = 0;
     peek_flag_ = false;

@@ -96,7 +96,7 @@ public:
     int64_t pos = 0;
     char time_string_buf[max_time_string_length+1];
     if (OB_FAIL(ObTimeUtility::usec_format_to_str(cur_time, bianque_format, &time_string_buf[0], max_time_string_length, pos))) {
-      STORAGE_LOG(WARN, "failed to convert bianque format string", K(ret));
+
     } else {
       time_string_buf[pos] = '\0';
       fprintf(fp, "PerfStat: %s: %s\n", prefix, time_string_buf);

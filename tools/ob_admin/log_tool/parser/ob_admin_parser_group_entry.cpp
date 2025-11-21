@@ -37,13 +37,13 @@ int ObAdminParserGroupEntry::get_next_log_entry(palf::LogEntry &log_entry)
   int ret = OB_SUCCESS;
   if (curr_pos_ >= end_pos_) {
     ret = OB_ITER_END;
-    LOG_TRACE("parse one LogGroupEntry finished");
+
   } else if (OB_FAIL(do_parse_one_log_entry_(log_entry))) {
     LOG_WARN("parse one LogEntry failed", K(ret));
   } else {
     curr_pos_ += log_entry.get_serialize_size();
 
-    LOG_TRACE("parse one LogEntry success", K(log_entry));
+
   }
   return ret;
 }
@@ -56,7 +56,7 @@ int ObAdminParserGroupEntry::do_parse_one_log_entry_(palf::LogEntry &log_entry)
     LOG_WARN("LogEntry deserialize failed", K(ret), K(curr_pos_), K(pos), K(end_pos_));
   } else {
     ob_assert(pos <= end_pos_);
-    LOG_TRACE("do_parse_one_log_entry_ success", K(log_entry));
+
   }
   return ret;
 }

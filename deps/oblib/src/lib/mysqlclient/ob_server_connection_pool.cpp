@@ -102,7 +102,7 @@ int ObServerConnectionPool::acquire(ObMySQLConnection *&conn, uint32_t sessid)
       conn->set_connection_version(connection_version_);
       conn->close();
     } else if (sessid != conn->get_sessid()) {
-      LOG_TRACE("get connection from other session, close it", K(ret), K(sessid), K(conn->get_sessid()));
+
       conn->close();
     } else if (false == conn->is_closed()) {
       if (OB_SUCCESS != conn->ping()) {
@@ -111,7 +111,7 @@ int ObServerConnectionPool::acquire(ObMySQLConnection *&conn, uint32_t sessid)
     }
     conn->set_sessid(sessid);
   }
-  LOG_TRACE("acquire connection from server conn pool", KP(this), K(busy_conn_count_), K(free_conn_count_), KP(connection), K(ret), K(sessid), K(lbt()));
+
   return ret;
 }
 
@@ -128,10 +128,10 @@ int ObServerConnectionPool::release(common::sqlclient::ObISQLConnection *conn, c
       connection->succ_times_++;
       if (!get_dblink_reuse_connection_cfg()) {
         connection->close();
-        LOG_TRACE("close dblink connection when release it", K(ret), K(succ), KP(conn));
+
       }
     } else {
-      LOG_TRACE("release oci connection, close it caused by err", K(succ));
+
       connection->error_times_++;
       connection->close();
     }
@@ -168,7 +168,7 @@ int ObServerConnectionPool::init(ObMySQLConnectionPool *root,
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("fail to init server connection pool. root=NULL", K(ret));
   } else {
-    LOG_DEBUG("init server for connection pool", K(server));
+
     this->root_ = root;
     this->server_ = server;
     this->last_renew_timestamp_ = ::oceanbase::common::ObTimeUtility::current_time();

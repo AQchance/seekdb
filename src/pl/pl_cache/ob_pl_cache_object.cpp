@@ -138,7 +138,7 @@ int ObPLCacheObject::set_params_info(const ParamStore &params, bool is_anonymous
           param_info.scale_ = data_type.get_scale();
         }
       }
-      LOG_DEBUG("ext params info", K(data_type), K(param_info), K(params.at(i)));
+
     } else {
       param_info.scale_ = params.at(i).get_scale();
       if (is_anonymous) {

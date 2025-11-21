@@ -67,7 +67,7 @@ private:
     }
 
     set_configs();
-    LOG_INFO("Testing config is: ", K(*this));
+
   }
 
   void tokenize(std::string const &str, const char delim, std::vector<std::string> &out)

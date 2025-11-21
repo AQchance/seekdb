@@ -95,7 +95,7 @@ int ObTriggerStorageCacheResolver::resolve(const ParseNode &parse_tree)
           } else {
             stmt->set_tenant_id(specified_tenant_id);
           }
-          LOG_TRACE("[SCP]trigger storage cache", K(ret), K(op), K(tenant_name));
+
         }
       }
     } else { // OB_SYS_TENANT_ID != tenant_id

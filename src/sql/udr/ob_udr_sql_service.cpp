@@ -161,7 +161,7 @@ int ObUDRSqlService::insert_rule(ObUDRInfo &arg)
   int64_t rule_id = OB_INVALID_ID;
   int64_t rule_version = OB_INVALID_VERSION;
   UDR_START_TRANS(arg.tenant_id_);
-  LOG_INFO("insert rule", K(arg));
+
   ObDMLExecHelper exec(trans, arg.tenant_id_);
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(fetch_new_rule_version(arg.tenant_id_, rule_version))) {
@@ -190,7 +190,7 @@ int ObUDRSqlService::alter_rule_status(ObUDRInfo &arg)
   int64_t affected_rows = 0;
   ObDMLExecHelper exec(trans, arg.tenant_id_);
   int64_t rule_version = OB_INVALID_VERSION;
-  LOG_INFO("alter rule status", K(arg));
+
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(fetch_new_rule_version(arg.tenant_id_, rule_version))) {
     LOG_WARN("failed to fetch new rule version", K(ret));
@@ -278,7 +278,7 @@ int ObUDRSqlService::clean_up_items_marked_for_deletion(const uint64_t tenant_id
   } else if (OB_FAIL(trans.write(tenant_id, sql.ptr(), affected_rows))) {
     LOG_WARN("fail to exec sql", K(ret));
   } else {
-    LOG_INFO("affected rows", K(affected_rows));
+
   }
   UDR_END_TRANS;
   return ret;

@@ -916,7 +916,7 @@ int ObRowkeyVector::deep_copy_rowkey(const int64_t row_idx, ObDatumRowkey &dest,
     int64_t pos = sizeof(ObStorageDatum) * col_cnt_;
     for (int64_t i = 0; OB_SUCC(ret) && i < col_cnt_; i++) {
       if (OB_FAIL(columns_[i].get_column_datum(row_idx, datums[i], buf, buf_size, pos))) {
-        STORAGE_LOG(WARN, "Failed to get column datum", K(ret), K(i), K(*this));
+
       }
     }
     if (OB_SUCC(ret)) {

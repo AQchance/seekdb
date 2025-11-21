@@ -200,7 +200,7 @@ int ObMySQLUtil::store_str_v(char *buf, int64_t len, const char *str,
         LOG_WARN("invalid args", "str", ObString(length, str), K(length));
       }
     } else {
-      LOG_INFO("=========== store_str_v ====", K(len), K(length), K(pos), K(pos_bk));
+
       pos = pos_bk;        // roll back
       ret = OB_SIZE_OVERFLOW;
     }
@@ -854,7 +854,7 @@ int ObMySQLUtil::float_cell_str(char *buf, const int64_t len, float val,
                                 NULL, TRUE);
         }
         ObString tmp_str(0, length, buf + pos + 1);
-        LOG_DEBUG("float_cell_str", K(val), K(scale), K(zerofill), K(zflength), K(tmp_str));
+
         if (length < 251) {
           int64_t zero_cnt = 0;
           if (zerofill && (zero_cnt = zflength - length) > 0) {
@@ -913,7 +913,7 @@ int ObMySQLUtil::double_cell_str(char *buf, const int64_t len, double val,
                                 NULL, TRUE);
         }
         ObString tmp_str(0, length, buf + pos + 1);
-        LOG_DEBUG("double_cell_str", K(val), K(scale), K(zerofill), K(zflength), K(tmp_str));
+
 
         if (length <= DBL_LEN) { //OB_ASSERT(length <= DBL_LEN);
           int64_t zero_cnt = 0;

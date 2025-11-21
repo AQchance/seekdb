@@ -46,7 +46,7 @@ struct ObDecintMySQLDivDatumFunc
         ret = OB_DIVISION_BY_ZERO;
       } else {
         res.set_null();
-        LOG_DEBUG("divisor is equal to zero", K(l), K(r), K(ret));
+
       }
     } else {
       quo = numerator / denominator;

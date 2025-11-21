@@ -45,7 +45,7 @@ int ObDtlBufEncoder::switch_writer(const ObDtlMsg &msg)
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("unkown msg writer", K(msg.get_type()), K(msg_writer_->type()));
       }
-      LOG_TRACE("msg writer", K(px_row.get_data_type()), K(msg_writer_->type()));
+
     } else {
       if (DtlWriterType::CONTROL_WRITER == msg_writer_map[msg.get_type()]) {
         msg_writer_ = &ctl_msg_writer_;
@@ -272,7 +272,7 @@ int ObDtlChanAgent::init(dtl::ObDtlFlowControl &dfc,
       if (OB_FAIL(local_channels_.push_back((ObDtlLocalChannel *)data_ch))) {
         LOG_WARN("failed to push back server_ch", K(ret));
       }
-      LOG_DEBUG("channel info by server", KP(data_ch->get_id()), K(data_ch->get_channel_type()));
+
     } else {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("unexpected channel type", K(ret));
@@ -287,7 +287,7 @@ int ObDtlChanAgent::init(dtl::ObDtlFlowControl &dfc,
     }
   }
 
-  LOG_TRACE("use shared broadcast msg optimizer", K(bc_services_), K(local_channels_.count()), K(rpc_channels_.count()), KP(bcast_channel_->get_id()));
+
   return ret;
 }
 
@@ -297,7 +297,7 @@ int ObDtlChanAgent::inner_broadcast_row(
   int ret = OB_SUCCESS;
   int64_t need_size = 0;
   bool need_new = false;
-  LOG_DEBUG("[DTL BROADCAST] broadcast", K(is_eof), K(msg.get_type()));
+
   if (OB_FAIL(dtl_buf_encoder_.switch_writer(msg))) {
     LOG_WARN("failed to switch msg writer", K(ret));
   } else if (OB_FAIL(dtl_buf_encoder_.need_new_buffer(msg, eval_ctx, need_size, need_new))) {
@@ -343,7 +343,7 @@ int ObDtlChanAgent::switch_buffer(int64_t need_size)
   ObDtlBasicChannel *bcast_ch = bcast_channel_;
   ObDtlLinkedBuffer *last_buffer = dtl_buf_encoder_.get_buffer();
   current_buffer_ = dtl_buf_allocator_.alloc_buf(*bcast_ch, std::max(sys_dtl_buf_size_, need_size));
-  LOG_DEBUG("[DTL BROADCAST] encoder need a new buffer", KP(bcast_ch->get_id()), K(need_size));
+
   if (nullptr == current_buffer_) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     LOG_WARN("failed to allocate memory", K(ret));

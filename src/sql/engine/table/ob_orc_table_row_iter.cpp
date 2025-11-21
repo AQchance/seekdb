@@ -179,7 +179,7 @@ int ObOrcTableRowIterator::next_stripe()
     int64_t cur_stripe = (state_.cur_stripe_idx_++) - 1;
     CK (cur_stripe < stripes_.count());
     if (OB_SUCC(ret)) {
-      LOG_TRACE("show current stripe info", K(stripes_.at(cur_stripe)));
+
       try {
         // for (int i = 0; OB_SUCC(ret) && i < column_readers_.count(); i++) {
         //   if (column_readers_.at(i)) {
@@ -253,7 +253,7 @@ int ObOrcTableRowIterator::next_file()
             file_url_lens_.at(i) = expr_file_url.length();
           }
         }
-        LOG_DEBUG("current external file", K(url_), K(file_size));
+
       }
     } while (OB_SUCC(ret) && OB_UNLIKELY(0 >= file_size)); //skip not exist or empty file
 
@@ -283,7 +283,7 @@ int ObOrcTableRowIterator::next_file()
           throw std::bad_exception();
         }
         int64_t nstripes = reader->getNumberOfStripes();
-        LOG_TRACE("read file access: number of stipes", K(nstripes), K(url_));
+
         OZ (stripes_.allocate_array(allocator_, static_cast<size_t>(nstripes)));
         state_.end_stripe_idx_ = std::min(nstripes, state_.end_stripe_idx_);
         std::unique_ptr<orc::StripeInformation> stripe;
@@ -446,7 +446,7 @@ int64_t ObOrcTableRowIterator::DataLoader::calc_tz_adjust_us()
       res = SEC_TO_USEC(tmp_offset) * (is_utc_src ? 1 : -1);
     }
   }
-  LOG_DEBUG("tz adjust", K(is_utc_src), K(is_utc_dst), K(res), K(file_col_expr_->datum_meta_));
+
   return res;
 }
 
@@ -551,7 +551,7 @@ ObOrcTableRowIterator::DataLoader::LOAD_FUNC ObOrcTableRowIterator::DataLoader::
       // over TIMESTAMP type.
       case orc::TypeKind::TIMESTAMP:
       case orc::TypeKind::TIMESTAMP_INSTANT:
-        LOG_DEBUG("show type kind", K(type_kind), K(orc::TypeKind::TIMESTAMP_INSTANT));
+
         if (ob_is_date_or_mysql_date(datum_type.type_) ||
              ob_is_datetime_or_mysql_datetime(datum_type.type_) ||
              ob_is_time_tc(datum_type.type_) || 
@@ -831,7 +831,7 @@ int ObOrcTableRowIterator::DataLoader::load_int64_vec()
       }
     }
   }
-  LOG_DEBUG("load int64 vec", K(ret), K(row_count_));
+
   return ret;
 }
 
@@ -897,7 +897,7 @@ int ObOrcTableRowIterator::DataLoader::load_year_vec()
       }
     }
   }
-  LOG_DEBUG("load year vec", K(ret), K(row_count_));
+
   return ret;
 }
 
@@ -963,7 +963,7 @@ int ObOrcTableRowIterator::DataLoader::load_int32_vec()
       }
     }
   }
-  LOG_DEBUG("load int32 vec", K(ret), K(row_count_));
+
   return ret;
 }
 
@@ -1064,7 +1064,7 @@ int ObOrcTableRowIterator::DataLoader::load_timestamp_vec()
   if (OB_SUCC(ret)) {
     ObFixedLengthBase *dec_vec = static_cast<ObFixedLengthBase *>(file_col_expr_->get_vector(eval_ctx_));
     int64_t adjust_us = calc_tz_adjust_us();
-    LOG_DEBUG("adjust value", K(adjust_us));
+
     CK (OB_NOT_NULL(dec_vec));
     if (OB_SUCC(ret)) {
       if (batch_) {
@@ -1153,7 +1153,7 @@ int ObOrcTableRowIterator::DataLoader::load_date_to_time_or_stamp()
   if (OB_SUCC(ret)) {
     ObFixedLengthBase *dec_vec = static_cast<ObFixedLengthBase *>(file_col_expr_->get_vector(eval_ctx_));
     int64_t adjust_us = calc_tz_adjust_us();
-    LOG_DEBUG("show adjust value in date to ts", K(adjust_us));
+
     if (OB_SUCC(ret)) {
       if (batch_) {
         row_count_ = batch_->numElements;
@@ -1395,7 +1395,7 @@ int ObOrcTableRowIterator::DataLoader::load_int64_to_number_vec()
       }
     }
   }
-  LOG_DEBUG("load int64 to number vec", K(ret), K(row_count_));
+
   return ret;
 }
 

@@ -350,7 +350,7 @@ int ObKvSchemaCacheGuard::get_or_create_cache_obj(ObSchemaGetterGuard &schema_gu
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("lib cache is NULL", K(ret));
   } else if (OB_FAIL(lib_cache_->get_cache_obj(cache_ctx_, &cache_key_, cache_guard_))) {
-    LOG_TRACE("fail to get cache obj, try create cache obj", K(ret), K(cache_key_));
+
     is_use_cache_ = false;
     if (OB_FAIL(create_schema_cache_obj(schema_guard))) {
       LOG_WARN("fail to create schema cache obj", K(ret));

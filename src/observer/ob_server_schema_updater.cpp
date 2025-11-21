@@ -300,7 +300,7 @@ int ObServerSchemaUpdater::process_refresh_task(const ObServerSchemaTask &task)
   bool skip_refresh = false;
   ObTaskController::get().switch_task(share::ObTaskType::SCHEMA);
   THIS_WORKER.set_timeout_ts(INT64_MAX);
-  LOG_INFO("[REFRESH_SCHEMA] start to process schema refresh task", KR(ret), K(schema_info));
+
   if (OB_ISNULL(schema_mgr_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("schema_mgr_ is NULL", KR(ret));
@@ -324,7 +324,7 @@ int ObServerSchemaUpdater::process_refresh_task(const ObServerSchemaTask &task)
               KR(ret), K(local_schema_info), K(schema_info));
   } else {
     int64_t begin_time = ::oceanbase::common::ObTimeUtility::current_time();
-    LOG_INFO("[REFRESH_SCHEMA] begin refresh schema, ", K(begin_time), K(tenant_ids), K(schema_info));
+
     bool check_bootstrap = GCTX.in_bootstrap_;
     // GCTX.in_bootstrap_ = false only when sys full schema version is refreshed
     // check bootstrap to avoid refreshing schema too early
@@ -373,7 +373,7 @@ int ObServerSchemaUpdater::process_release_task()
   } else if (OB_FAIL(schema_mgr_->try_eliminate_schema_mgr())) {
     LOG_WARN("fail to eliminate schema mgr", KR(ret));
   }
-  LOG_INFO("try to release schema", KR(ret));
+
   return ret;
 }
 
@@ -432,7 +432,7 @@ int ObServerSchemaUpdater::process_async_refresh_tasks(
       }
     }
   }
-  LOG_INFO("try to async refresh schema", KR(ret));
+
   return ret;
 }
 
@@ -468,7 +468,7 @@ int ObServerSchemaUpdater::try_reload_schema(
         LOG_WARN("schedule fetch new schema task failed", KR(ret), K(schema_info));
       }
     } else {
-      LOG_INFO("schedule fetch new schema task", KR(ret), K(schema_info));
+
     }
   }
   return ret;
@@ -486,7 +486,7 @@ int ObServerSchemaUpdater::try_release_schema()
       LOG_WARN("schedule release schema task failed", KR(ret));
     }
   } else {
-    LOG_INFO("schedule release schema task", KR(ret));
+
   }
   return ret;
 }

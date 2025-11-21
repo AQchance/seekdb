@@ -221,7 +221,7 @@ TEST_F(TestSchemaMemMgr, simulate_increment_refresh_schema)
       LOG_INFO("debug", K(tmp_ptr), K(eli_pos), K(eli_ptr), K(alloc_cnt),
                K(mem_mgr.ptrs_[0].count()), K(mem_mgr.ptrs_[1].count()));
       if (can_switch && alloc_cnt > min_switch_alloc_cnt) {
-        LOG_INFO("switch allocator");
+
         ++switch_cnt;
         // overwrite schema_mgr_for_cache
         void *tmp_ptr = NULL;

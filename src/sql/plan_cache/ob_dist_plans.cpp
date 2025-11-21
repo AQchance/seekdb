@@ -42,7 +42,7 @@ int ObDistPlans::get_plan(ObPlanCacheCtx &pc_ctx,
   plan = NULL;
   bool is_matched = false;
 
-  LOG_DEBUG("Get Plan", K(dist_plans_.count()));
+
   //need to clear all location info before calculate candi tablet locations
   //because get_phy_locations will build the related_tablet_map in ObDASCtx
   //and add candi table location into DASCtx
@@ -57,7 +57,7 @@ int ObDistPlans::get_plan(ObPlanCacheCtx &pc_ctx,
     // single table should just return plan, do not match
     if (0 == dist_plans_.count()) {
       ret = OB_SQL_PC_NOT_EXIST;
-      LOG_DEBUG("dist plan list is empty", K(ret), K(dist_plans_.count()));
+
     } else if (OB_ISNULL(dist_plans_.at(0))) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("get an unexpected null plan", K(ret), K(dist_plans_.at(0)));

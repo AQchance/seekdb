@@ -93,7 +93,7 @@ int ObIModel::prepare(ObTableExecCtx &ctx,
     LOG_WARN("fail to calc tablet_id", K(ret), K(ctx), K(req.query_.get_scan_ranges()));
   } else if (tablet_ids.empty()) {
     ret = OB_ITER_END;
-    LOG_DEBUG("all partitions are clipped", K(ret), K(req.query_));
+
   } else if (OB_FAIL(check_same_ls(tablet_ids, is_same_ls, ls_id))) {
     LOG_WARN("fail to check same ls", K(ret), K(tablet_ids));
   } else {
@@ -101,7 +101,7 @@ int ObIModel::prepare(ObTableExecCtx &ctx,
       ctx.set_ls_id(ls_id);
     }
   }
-  LOG_DEBUG("ObIModel::prepare", K(ret), K(ctx), K(req.query_), K(tablet_ids));
+
 
   return ret;
 }
@@ -209,7 +209,7 @@ int ObIModel::init_tablet_id_ops_map(ObTableExecCtx &ctx,
             LOG_WARN("fail to calc tablet_id", K(ret), K(ctx), K(query->get_scan_ranges()));
           } else if (tablet_ids.empty()) {
             // maybe all partitions are clipped
-            LOG_DEBUG("tablet ids is empty", KPC(query));
+
           } else {
             all_parts_are_clipped = false;
             tablet_id = tablet_ids.at(0);
@@ -250,7 +250,7 @@ int ObIModel::init_tablet_id_ops_map(ObTableExecCtx &ctx,
 
     if (OB_SUCC(ret) && all_parts_are_clipped) {
       ret = OB_ITER_END;
-      LOG_DEBUG("all paritions are clipped", K(req));
+
     }
 
     if (OB_SUCC(ret)) {
@@ -286,7 +286,7 @@ int ObIModel::calc_single_op_tablet_id(ObTableExecCtx &ctx,
         LOG_WARN("fail to calc tablet_id", K(ret), K(ctx), K(query->get_scan_ranges()));
       } else if (tablet_ids.empty()) {
         // maybe all partitions are clipped
-        LOG_DEBUG("tablet ids is empty", KPC(query));
+
       } else {
         tablet_id = tablet_ids.at(0);
       }
@@ -869,7 +869,7 @@ int ObIModel::prepare(ObTableExecCtx &arg_ctx,
           LOG_WARN("fail to calc tablet_id", K(ret), K(ctx), K(req.query_.get_scan_ranges()));
         } else if (tablet_ids.empty()) {
           ret = OB_ITER_END;
-          LOG_DEBUG("all paritions are clipped", K(ret), K(req.query_));
+
         } else if (OB_FAIL(check_same_ls(tablet_ids, is_same_ls, ls_id))) {
           LOG_WARN("fail to check same ls", K(ret), K(tablet_ids));
         } else {

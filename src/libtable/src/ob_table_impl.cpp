@@ -45,7 +45,7 @@ int ObTableImpl::init(ObTableServiceClient &client, const ObString &table_name)
   } else {
     client_ = &client;
     sql_client_ = &client.get_user_sql_client();
-    LOG_DEBUG("init table succ", K_(table_name), K_(rowkey_columns));
+
     inited_ = true;
   }
   return ret;
@@ -276,7 +276,7 @@ int ObTableImpl::fill_get_result(const ObTableOperation &operation, sqlclient::O
   if (OB_FAIL(sql_result.next())) {
     if (OB_ITER_END == ret) {
       ret = OB_EMPTY_RESULT;
-      LOG_DEBUG("result set is empty", K(ret));
+
     } else {
       LOG_WARN("failed to iterate result", K(ret));
     }
@@ -331,7 +331,7 @@ int ObTableImpl::execute(const ObTableOperation &table_operation, const ObTableR
           } else if (OB_FAIL(fill_get_result(table_operation, *sql_result, result))) {
             LOG_WARN("failed to fill result", K(ret));
           } else {
-            LOG_DEBUG("execute sql query succ", K(sql));
+
           }
         }
         result.set_errno(ret);
@@ -339,7 +339,7 @@ int ObTableImpl::execute(const ObTableOperation &table_operation, const ObTableR
         if (OB_FAIL(sql_client_->write(sql.ptr(), affected_rows))) {
           LOG_WARN("execute sql failed", K(sql), K(ret));
         } else {
-          LOG_DEBUG("execute sql dml succ", K(sql));
+
         }
         result.set_type(table_operation.type());
         result.set_errno(ret);
@@ -463,7 +463,7 @@ int ObTableImpl::fill_multi_get_result(const ObTableBatchOperation &batch_operat
           } else if (OB_FAIL(result_entity->add_rowkey_value(obj))) {
             LOG_WARN("failed to add rowkey value", K(ret), K(obj));
           } else {
-            LOG_DEBUG("rowkey cell", K(i), K(obj));
+
           }
         }
         int64_t prop_num = properties.count();
@@ -497,7 +497,7 @@ int ObTableImpl::fill_multi_get_result(const ObTableBatchOperation &batch_operat
         EntityRowkeyAdaptor rowkey_wrapper(&batch_operation.at(i).entity());
         if (OB_FAIL(rowkey_entity_map.get_refactored(rowkey_wrapper, result_entity))) {
           if (OB_HASH_NOT_EXIST == ret) {
-            LOG_DEBUG("row not exists", "entity", batch_operation.at(i).entity());
+
             table_result.set_errno(OB_ENTRY_NOT_EXIST);
             ret = OB_SUCCESS;
           } else {
@@ -550,7 +550,7 @@ int ObTableImpl::batch_execute_multi_get(const ObTableBatchOperation &batch_oper
       } else if (OB_FAIL(fill_multi_get_result(batch_operation, *sql_result, result))) {
         LOG_WARN("failed to fill result", K(ret));
       } else {
-        LOG_DEBUG("execute sql query succ", K(sql));
+
       }
     }
   }
@@ -590,7 +590,7 @@ int ObTableImpl::batch_execute_insert(const ObTableBatchOperation &batch_operati
   } else if (OB_FAIL(sql_client_->write(sql.ptr(), affected_rows))) {
     LOG_WARN("execute sql failed", K(sql), K(ret));
   } else {
-    LOG_DEBUG("execute sql dml succ", K(sql));
+
   }
   table_result.set_type(ObTableOperationType::INSERT);
   table_result.set_errno(ret);
@@ -634,7 +634,7 @@ int ObTableImpl::batch_execute_del(const ObTableBatchOperation &batch_operation,
   } else if (OB_FAIL(sql_client_->write(sql.ptr(), affected_rows))) {
     LOG_WARN("execute sql failed", K(sql), K(ret));
   } else {
-    LOG_DEBUG("execute sql dml succ", K(sql));
+
   }
   table_result.set_type(ObTableOperationType::DEL);
   table_result.set_errno(ret);
@@ -662,7 +662,7 @@ int ObTableImpl::batch_execute_insert_or_update(const ObTableBatchOperation &bat
   } else if (OB_FAIL(sql_client_->write(sql.ptr(), affected_rows))) {
     LOG_WARN("execute sql failed", K(sql), K(ret));
   } else {
-    LOG_DEBUG("execute sql dml succ", K(sql));
+
   }
   table_result.set_type(ObTableOperationType::INSERT_OR_UPDATE);
   table_result.set_errno(ret);
@@ -690,7 +690,7 @@ int ObTableImpl::batch_execute_replace(const ObTableBatchOperation &batch_operat
   } else if (OB_FAIL(sql_client_->write(sql.ptr(), affected_rows))) {
     LOG_WARN("execute sql failed", K(sql), K(ret));
   } else {
-    LOG_DEBUG("execute sql dml succ", K(sql));
+
   }
   table_result.set_type(ObTableOperationType::REPLACE);
   table_result.set_errno(ret);

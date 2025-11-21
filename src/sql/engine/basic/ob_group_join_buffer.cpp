@@ -208,7 +208,7 @@ int ObGroupJoinBufffer::has_next_left_row(bool &has_next)
       has_next = true;
     }
   } else {
-    LOG_TRACE("Left child operator has no left rows for read,and the join buffer has no left row, needs to return iter_end_");
+
   }
   return ret;
 }

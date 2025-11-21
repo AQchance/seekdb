@@ -2552,7 +2552,7 @@ int ObTransformUtils::is_null_reject_condition(const ObRawExpr *condition,
     LOG_WARN("failed to check is simple null reject", K(ret));
   }
   if (OB_SUCC(ret) && is_null_reject) {
-    LOG_TRACE("find null reject condition", K(*condition), K(lbt()));
+
   }
   return ret;
 }
@@ -2677,7 +2677,7 @@ int ObTransformUtils::is_null_propagate_expr(const ObRawExpr *expr,
     }
   }
   if (OB_SUCC(ret) && bret) {
-    LOG_TRACE("find null propagate expr", K(*expr));
+
   }
   return ret;
 }
@@ -3194,7 +3194,7 @@ int ObTransformUtils::check_column_match_index(const ObDMLStmt *root_stmt,
   } else if (OB_ISNULL(table_item = stmt->get_table_item_by_id(
                          col_expr->get_table_id()))) {
     // Not the column expr of the current stmt, do nothing
-    LOG_TRACE("table item not exists in this stmt", K(ret), K(*col_expr), K(table_item));
+
   } else if (table_item->is_basic_table()) {
     ObSEArray<ObColumnRefRawExpr*, 8> col_exprs;
     if (OB_FAIL(get_filter_columns(root_stmt,
@@ -4092,7 +4092,7 @@ int ObTransformUtils::check_exprs_unique_on_table_items(const ObDMLStmt *stmt,
     } else {
       fd_item_factory.destory();
       expr_factory.destory();
-      LOG_TRACE("get is unique result", K(exprs), K(table_items), K(is_unique));
+
     }
   }
   return ret;
@@ -4210,7 +4210,7 @@ int ObTransformUtils::check_stmt_unique(const ObSelectStmt *stmt,
     } else {
       fd_item_factory.destory();
       expr_factory.destory();
-      LOG_TRACE("get is unique result", K(ret), K(is_unique));
+
     }
   }
   return ret;
@@ -4277,7 +4277,7 @@ int ObTransformUtils::compute_stmt_property(const ObSelectStmt *stmt,
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_TRACE("get stmt in compute stmt property", K(*stmt));
+
     LOG_TRACE("get stmt property", K(res_info.const_exprs_), K(res_info.equal_sets_),
                                    K(res_info.fd_sets_), K(res_info.candi_fd_sets_));
   }
@@ -5149,7 +5149,7 @@ int ObTransformUtils::get_table_joined_exprs(const ObSqlBitSet<> &source_ids,
                                                                   is_valid))) {
           LOG_WARN("failed to check expr is equivalent", K(ret));
         } else if (!is_valid) {
-          LOG_TRACE("can not use child1 expr type as the (child1, child2) compare type");
+
         } else if (OB_FAIL(target_exprs.push_back(child2))) {
           LOG_WARN("failed to push target expr", K(ret));
         } else if (OB_FAIL(join_source_ids.add_members2(child1->get_relation_ids()))) {
@@ -5165,7 +5165,7 @@ int ObTransformUtils::get_table_joined_exprs(const ObSqlBitSet<> &source_ids,
                                                                   is_valid))) {
           LOG_WARN("failed to check expr is equivalent", K(ret));
         } else if (!is_valid) {
-          LOG_TRACE("can not use child2 expr type as the (child2, child1) compare type");
+
         } else if (OB_FAIL(target_exprs.push_back(child1))) {
           LOG_WARN("failed to push target expr", K(ret));
         } else if (OB_FAIL(join_source_ids.add_members2(child2->get_relation_ids()))) {
@@ -5181,7 +5181,7 @@ int ObTransformUtils::get_table_joined_exprs(const ObSqlBitSet<> &source_ids,
                                                                   is_valid))) {
           LOG_WARN("failed to check expr is equivalent", K(ret));
         } else if (!is_valid) {
-          LOG_TRACE("can not use child2 expr type as the (child2, child1) compare type");
+
         } else if (OB_FAIL(join_target_ids.add_members2(child2->get_relation_ids()))) {
           LOG_WARN("failed to add member to join target ids.", K(ret));
         } else if (OB_FAIL(join_target_ids.add_members2(child1->get_relation_ids()))) {
@@ -5195,7 +5195,7 @@ int ObTransformUtils::get_table_joined_exprs(const ObSqlBitSet<> &source_ids,
                                                                   is_valid))) {
           LOG_WARN("failed to check expr is equivalent", K(ret));
         } else if (!is_valid) {
-          LOG_TRACE("can not use child2 expr type as the (child2, child1) compare type");
+
         } else if (OB_FAIL(join_source_ids.add_members2(child2->get_relation_ids()))) {
           LOG_WARN("failed to add member to join source ids.", K(ret));
         } else if (OB_FAIL(join_source_ids.add_members2(child1->get_relation_ids()))) {
@@ -5269,7 +5269,7 @@ int ObTransformUtils::is_equal_correlation(const ObIArray<ObExecParamRawExpr *> 
     } else if ((left_is_correlated && left->has_generalized_column()) ||
                (right_is_correlated && right->has_generalized_column())) {
       // simultaneously references this layer's columns and the upper layer's columns
-      LOG_TRACE("expr used both inner and outer block columns", K(is_valid));
+
     } else {
       is_valid = true;
       // left is the expr from the outer stmt
@@ -5289,7 +5289,7 @@ int ObTransformUtils::is_equal_correlation(const ObIArray<ObExecParamRawExpr *> 
         // be careful about two cases
         // 1. varchar = varchar (but collation is not the same)
         // 2. varchar = int (cast is required)
-        LOG_TRACE("cast is required to transform equal as group/partition by", K(is_valid));
+
       } else {
         if (OB_NOT_NULL(outer_param)) {
           *outer_param = left;
@@ -5784,7 +5784,7 @@ int ObTransformUtils::check_table_item_containment(ObDMLStmt *source_stmt,
     } else if (QueryRelation::QUERY_LEFT_SUBSET == relation ||
                QueryRelation::QUERY_EQUAL == relation) {
       is_contain = true;
-      LOG_TRACE("succeed to check table item containment", K(is_contain));
+
     } else {
       /*do nothing*/
     }
@@ -5802,10 +5802,10 @@ int ObTransformUtils::check_table_item_containment(ObDMLStmt *source_stmt,
     } else if (QueryRelation::QUERY_LEFT_SUBSET == relation ||
                QueryRelation::QUERY_EQUAL == relation) {
       is_contain = true;
-      LOG_TRACE("succeed to check table item containment", K(is_contain));
+
     } else {
       is_contain = false;
-      LOG_TRACE("succeed to check table item containment", K(is_contain));
+
     }
   } else {
     /*
@@ -5814,7 +5814,7 @@ int ObTransformUtils::check_table_item_containment(ObDMLStmt *source_stmt,
      * case 2: source_table is a generated table and target_table is a basic table
      */
     is_contain = false;
-    LOG_TRACE("succeed to check table item containment", K(is_contain));
+
   }
   return ret;
 }
@@ -5868,7 +5868,7 @@ int ObTransformUtils::extract_lossless_join_columns(ObDMLStmt *stmt,
     } else { /*do nothing*/ }
   }
   if (OB_SUCC(ret)) {
-    LOG_TRACE("succeed to extract lossless columns", K(source_exprs), K(target_exprs));
+
   }
   if (NULL == input_equal_sets) {
     equal_sets->reuse();
@@ -8114,7 +8114,7 @@ int ObTransformUtils::merge_limit_offset(ObTransformerCtx *ctx,
                                           upper_offset, limit_expr, offset_expr, is_valid_zero))) {
     LOG_WARN("merge limit as zero failed", K(ret));
   } else if (is_valid_zero) {
-    LOG_TRACE("trans to zero limit", K(ret));
+
   } else {
     if (NULL == view_offset) { //merge offset
       offset_expr = upper_offset;
@@ -10864,7 +10864,7 @@ int ObTransformUtils::create_spj_and_pullup_correlated_exprs(const ObIArray<ObEx
     if (OB_FAIL(subquery->formalize_stmt(session_info, false))) {
       LOG_WARN("failed to formalize stmt", K(ret));
     } else {
-      LOG_TRACE("succeed to create spj", K(*subquery));
+
     }
   }
   return ret;
@@ -13203,7 +13203,7 @@ int ObTransformUtils::generate_view_stmt_from_query_string(const ObString &query
     LOG_WARN("failed to do transform pre processing", K(ret));
   } else {
     view_stmt = static_cast<ObSelectStmt*>(dml_stmt);
-    LOG_DEBUG("generate mv stmt", KPC(view_stmt));
+
   }
   return ret;
 }

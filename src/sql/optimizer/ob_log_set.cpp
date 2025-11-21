@@ -156,7 +156,7 @@ int ObLogSet::get_equal_set_conditions(ObIArray<ObRawExpr*> &equal_conds)
                                                                 stmt, set_exprs, equal_conds))) {
     LOG_WARN("failed to get equal set conditions", K(ret));
   } else {
-    LOG_TRACE("succeed to get equal set conditions for set op", K(equal_conds));
+
   }
   return ret;
 }
@@ -525,7 +525,7 @@ int ObLogSet::do_re_est_cost(EstimateCostInfo &param, double &card, double &op_c
     cost = child_cost + op_cost;
     card = param.need_row_count_ >= 0 && param.need_row_count_ < tmp_card
            ? param.need_row_count_ : tmp_card;
-    LOG_TRACE("succeed to re-estimate cost for set op", K(op_cost), K(cost));
+
   }
   return ret;
 }
@@ -549,7 +549,7 @@ int ObLogSet::allocate_granule_pre(AllocGIContext &ctx)
 {
   int ret = OB_SUCCESS;
   if (!ctx.exchange_above()) {
-    LOG_TRACE("no exchange above, do nothing", K(ctx));
+
   } else if (!ctx.is_in_partition_wise_state()
              && !ctx.is_in_pw_affinity_state()
              && DistAlgo::DIST_PARTITION_WISE == set_dist_algo_) {
@@ -569,7 +569,7 @@ int ObLogSet::allocate_granule_pre(AllocGIContext &ctx)
      *   reset the state of gi-allocate ctx.
      */
     ctx.set_in_partition_wise_state(this);
-    LOG_TRACE("in find partition wise state", K(ctx));
+
   } else if (ctx.is_in_partition_wise_state()) {
     /**
      *       (partition wise join below)
@@ -619,7 +619,7 @@ int ObLogSet::allocate_granule_post(AllocGIContext &ctx)
    *   so JOIN(2) can not reset this state.
    */
   if (!ctx.exchange_above()) {
-    LOG_TRACE("no exchange above, do nothing");
+
   } else if (ctx.is_in_partition_wise_state()) {
     if (ctx.is_op_set_pw(this)) {
       ctx.alloc_gi_ = true;
@@ -640,12 +640,12 @@ int ObLogSet::allocate_granule_post(AllocGIContext &ctx)
     if (OB_FAIL(set_granule_nodes_affinity(ctx, 0))) {
       LOG_WARN("set granule nodes affinity failed", K(ret));
     }
-    LOG_TRACE("set left child gi to affinity");
+
   } else if (DIST_PARTITION_NONE == set_dist_algo_) {
     if (OB_FAIL(set_granule_nodes_affinity(ctx, 1))) {
       LOG_WARN("set granule nodes affinity failed", K(ret));
     }
-    LOG_TRACE("set right child gi to affinity");
+
   } else { /*do nothing*/ }
 
   return ret;

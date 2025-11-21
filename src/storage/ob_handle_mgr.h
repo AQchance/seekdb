@@ -56,19 +56,19 @@ public:
     void *buf = NULL;
     if (OB_UNLIKELY(is_inited_)) {
       ret = common::OB_INIT_TWICE;
-      STORAGE_LOG(WARN, "handle mgr is inited twice", K(ret));
+
     } else if (is_multi) {
       if (is_ordered) {
         if (OB_ISNULL(buf = allocator.alloc(sizeof(Handle)))) {
           ret = common::OB_ALLOCATE_MEMORY_FAILED;
-          STORAGE_LOG(WARN, "failed to allocate last handle");
+
         } else {
           last_handle_ = new (buf) Handle();
         }
       } else {
         if (OB_ISNULL(buf = allocator.alloc(sizeof(HandleCache)))) {
           ret = common::OB_ALLOCATE_MEMORY_FAILED;
-          STORAGE_LOG(WARN, "failed to allocate last handle");
+
         } else {
           handle_cache_ = new (buf) HandleCache();
         }

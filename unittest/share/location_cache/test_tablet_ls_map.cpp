@@ -38,15 +38,15 @@ public:
   virtual ~TestTabletLSMap() {};
   virtual void SetUp()
   {
-    LOG_INFO("init begin");
+
     (void)tablet_ls_map.init();
-    LOG_INFO("init finish");
+
   };
   virtual void TearDown()
   { 
-    LOG_INFO("destroy begin");
+
     tablet_ls_map.destroy();
-    LOG_INFO("destroy finish");
+
   };
 private:
   // disallow copy
@@ -85,7 +85,7 @@ TEST_F(TestTabletLSMap, test_single)
   ASSERT_EQ(OB_ENTRY_NOT_EXIST, ret);
   size = tablet_ls_map.size();
   ASSERT_EQ(0, size);
-  LOG_INFO("test_single finished");
+
 }
 
 class ObStressThread : public lib::ThreadPool
@@ -97,7 +97,7 @@ public:
     assert(NULL != tablet_ls_map);
     int ret = OB_SUCCESS;
     uint64_t tid = get_thread_idx();
-    LOG_INFO("thread start", K(tid), K(tablet_ls_map->size()));
+
 
     // generate data
     ObArray<ObTabletLSCache> data;
@@ -123,7 +123,7 @@ public:
       ASSERT_EQ(OB_SUCCESS, ret);
     }
     ASSERT_EQ(BATCH_COUNT, tablet_ls_map->size());
-    LOG_INFO("update finished", K(tid), K(tablet_ls_map->size()));
+
 
     print_bucket_count();
 
@@ -135,7 +135,7 @@ public:
       if (OB_FAIL(ret)) { LOG_WARN("fail to get", KR(ret), K(cache), K(value)); }
       ASSERT_EQ(OB_SUCCESS, ret);
     }
-    LOG_INFO("get finished", K(tid), K(tablet_ls_map->size()));
+
 
     // get_all
     ObArray<ObTabletLSCache> cache_array;
@@ -144,7 +144,7 @@ public:
     ret = tablet_ls_map->get_all(cache_array);
     ASSERT_EQ(OB_SUCCESS, ret);
     ASSERT_EQ(cache_array.count(), tablet_ls_map->size());
-    LOG_INFO("get_all finished", K(tid), K(tablet_ls_map->size()));
+
 
     sleep(5); // a simple way to wait all threads finish get_all
 
@@ -155,7 +155,7 @@ public:
       bool bret = OB_SUCCESS == ret || OB_ENTRY_NOT_EXIST == ret;
       ASSERT_TRUE(bret);
     }
-    LOG_INFO("delete finished", K(tid), K(tablet_ls_map->size()));
+
     ASSERT_EQ(0, tablet_ls_map->size());
   }
 
@@ -174,10 +174,10 @@ public:
       }
       ++count_map[cache_count_on_bucket];
     }
-    LOG_INFO("test_cache_distribution", "set size", count_map.size());
+
     std::map<int64_t, int64_t>::iterator it;
     for (it = count_map.begin(); it != count_map.end(); ++it) {
-      LOG_INFO("bucket ", "count", it->first, "number", it->second);
+
     }
   }
 

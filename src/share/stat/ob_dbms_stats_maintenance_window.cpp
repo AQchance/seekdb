@@ -354,7 +354,7 @@ int ObDbmsStatsMaintenanceWindow::is_stats_maintenance_window_attr(sql::ObExecCo
           LOG_WARN("failed to add column", K(ret));
         } else {
           is_window_attr = true;
-          LOG_TRACE("succeed to set next date", K(specify_time));
+
         }
       }
     } else if (0 == attr_name.case_compare("duration")) {
@@ -373,7 +373,7 @@ int ObDbmsStatsMaintenanceWindow::is_stats_maintenance_window_attr(sql::ObExecCo
         LOG_WARN("fail to add column", K(ret));
       } else {
         is_window_attr = true;
-        LOG_TRACE("succeed to set max_run_duration", K(val_name));
+
       }
     } else {/*do nothing*/
       ret = OB_ERR_DBMS_STATS_PL;
@@ -587,7 +587,7 @@ int ObDbmsStatsMaintenanceWindow::get_next_job_id_and_exec_env(common::ObMySQLPr
         }
       }
     }
-    LOG_INFO("succeed to get next job id and exec env", K(ret), K(select_sql), K(job_id), K(exec_env));
+
   }
   return ret;
 }
@@ -641,7 +641,7 @@ int ObDbmsStatsMaintenanceWindow::check_job_exists(common::ObMySQLProxy *sql_pro
         }
       }
     }
-    LOG_INFO("succeed to check job exists", K(ret), K(select_sql), K(is_join_exists), K(row_count));
+
   }
   return ret;
 }

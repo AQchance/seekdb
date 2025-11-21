@@ -66,7 +66,7 @@ int ObTabletLocationProxy::get_tablet_location(const ObString &tenant,
                 table.length(), table.ptr(), tablet_id.id()))) {
       LOG_WARN("failed to format query text", K(ret), K(tenant), K(table));
     } else {
-      LOG_INFO("query partition location", K(query_text));
+
       if (OB_FAIL(sql_client_->read(res, query_text.ptr()))) {
         LOG_WARN("execute sql failed", K(query_text), K(ret));
       } else if (NULL == (result = res.get_result())) {
@@ -127,7 +127,7 @@ int ObTabletLocationProxy::cons_replica_location(const sqlclient::ObMySQLResult 
 ////////////////////////////////////////////////////////////////
 ObTabletLocationCache::~ObTabletLocationCache()
 {
-  LOG_INFO("destruct ObTabletLocationCache");
+
 }
 
 
@@ -167,12 +167,12 @@ int ObTabletLocationCache::get_from_cache(const uint64_t tenant_id,
         ret = OB_CACHE_NOT_HIT;
         LOG_WARN("get location from user cache failed", KR(ret), K(cache_key));
       } else {
-        LOG_INFO("[LOCATION] cache miss", K(cache_key), KR(ret));
+
       }
     } else if (OB_FAIL(location.assign(*cache_value))) {
       LOG_WARN("assign tablet location failed", KR(ret), KP(cache_value), K(location));
     } else {
-      LOG_TRACE("location hit in user cache", KR(ret), K(cache_key), K(location));
+
     }
   }
   return ret;
@@ -194,7 +194,7 @@ int ObTabletLocationCache::put_to_cache(const uint64_t tenant_id,
     LOG_WARN("put location to user location cache failed",
               K(cache_key), K(location), K(ret));
   } else {
-    LOG_TRACE("renew location in user_cache succeed", K(cache_key), K(location));
+
   }
   return ret;
 }
@@ -241,13 +241,13 @@ int ObTabletLocationCache::renew_get_tablet_location(const common::ObString &ten
       if (OB_FAIL(location_proxy_->get_tablet_location(tenant, tenant_id, db, table, table_id, tablet_id, true, location))) {
         LOG_WARN("failed to get location from proxy", K(ret));
       } else {
-        LOG_INFO("[LOCATION] get from proxy", K(location));
+
         if (OB_FAIL(put_to_cache(tenant_id, tablet_id, location))) {
           LOG_WARN("failed to put to cache", K(ret), K(location));
           // ignore error
           ret = OB_SUCCESS;
         } else {
-          LOG_DEBUG("[LOCATION] put to cache", K(location));
+
         }
       }
     }

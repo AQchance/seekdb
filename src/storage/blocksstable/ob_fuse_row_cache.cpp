@@ -50,9 +50,9 @@ int ObFuseRowCacheKeyBase::hash(uint64_t &hash_val) const
   if (rowkey_.is_valid()) {
     if (OB_ISNULL(datum_utils_)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "Unexpected error for null datum utils", K(ret), K(*this));
+
     } else if (OB_FAIL(rowkey_.hash(*datum_utils_, hash_val))) {
-      STORAGE_LOG(WARN, "Failed to calc hash value for datum rowkey", K(ret), K(rowkey_));
+
     }
   }
   return ret;
@@ -69,9 +69,9 @@ int ObFuseRowCacheKeyBase::equal(const ObFuseRowCacheKeyBase &other, bool &equal
     const ObStorageDatumUtils *datum_utils = (nullptr != datum_utils_) ? datum_utils_ : other.datum_utils_;
     if (OB_ISNULL(datum_utils)) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "Invalid argument to compare row cachekey", K(ret), K(*this), K(other));
+
     } else if (OB_FAIL(rowkey_.equal(other.rowkey_, *datum_utils, equal))) {
-      STORAGE_LOG(WARN, "Failed to check rowkey cache key equal", K(ret), K(rowkey_), K(other));
+
     }
   }
   return ret;
@@ -234,7 +234,7 @@ int ObFuseRowCacheValue::deep_copy(char *buf, const int64_t buf_len, ObIKVCacheV
     pos = sizeof(*this) + sizeof(ObStorageDatum) * column_cnt_;
     for (int64_t i = 0; OB_SUCC(ret) && i < column_cnt_; ++i) {
       if (OB_FAIL(pfuse_value->datums_[i].deep_copy(datums_[i], buf, buf_len, pos))) {
-        STORAGE_LOG(WARN, "Failed to deep copy datum", K(ret), K(i));
+
       }
     }
 

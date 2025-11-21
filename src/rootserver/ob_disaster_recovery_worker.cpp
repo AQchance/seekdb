@@ -259,7 +259,7 @@ int ObDRWorker::LocalityAlignment::build_locality_stat_map()
   if (OB_FAIL(dr_ls_info_.get_ls_id(tenant_id, ls_id))) {
     LOG_WARN("fail to get ls id", KR(ret));
   } else {
-    LOG_INFO("build ls locality stat map", K(tenant_id), K(ls_id));
+
     for (int64_t i = 0; OB_SUCC(ret) && i < dr_ls_info_.get_locality().count(); ++i) {
       ReplicaDescArray *zone_replica_desc = nullptr;
       const ObZoneReplicaAttrSet &zone_locality = dr_ls_info_.get_locality().at(i);
@@ -364,7 +364,7 @@ int ObDRWorker::LocalityAlignment::build_locality_stat_map()
           }
         }
       }
-      LOG_INFO("ls zone locality map info", K(zone), KPC(zone_replica_desc));
+
     }
   }
   return ret;
@@ -407,7 +407,7 @@ int ObDRWorker::LocalityAlignment::build_replica_stat_map()
         LOG_WARN("fail to push back", KR(ret));
       }
     }
-    LOG_INFO("ls replica stat", "replica_stat_map", replica_stat_map_);
+
   }
   return ret;
 }
@@ -476,7 +476,7 @@ int ObDRWorker::LocalityAlignment::try_remove_match(
             || replica->get_server() != unit_in_group_stat_info->get_unit().server_
             || !unit_stat_info->get_unit().is_active_status()) {
           // this replica is migrating or unit is deleting, check whether has a correct dest replica
-          LOG_TRACE("try to check whether has dest replica", KPC(replica), KPC(unit_stat_info), KPC(unit_in_group_stat_info));
+
           const int64_t map_count = replica_stat_map_.count();
           for (int64_t i = map_count - 1; OB_SUCC(ret) && i >= 0; --i) {
             // A replica is a correct dest replica if following conditions all satisfied
@@ -923,7 +923,7 @@ int ObDRWorker::LocalityAlignment::try_generate_locality_task_from_locality_map(
         if (OB_FAIL(generate_add_replica_task(iter->first, replica_desc_array->at(i)))) {
           LOG_WARN("fail to generate add replica task", KR(ret));
         } else {
-          LOG_INFO("success generate add replica task from locality", KR(ret));
+
         }
       }
     }
@@ -1007,12 +1007,12 @@ void ObDRWorker::LocalityAlignment::print_locality_information()
        iter != locality_map_.end();
        ++iter) {
     if (nullptr == iter->second) {
-      LOG_INFO("zone locality ptr is null", "zone", iter->first);
+
     } else {
-      LOG_INFO("zone locality", "zone", iter->first, "locality_info", *iter->second);
+
     }
   }
-  LOG_INFO("replica stat map not empty", K(replica_stat_map_));
+
 }
 
 int ObDRWorker::LocalityAlignment::do_generate_locality_task()
@@ -1130,7 +1130,7 @@ int ObDRWorker::LocalityAlignment::generate_remove_replica_task(
       if (OB_FAIL(task_array_.push_back(task))) {
         LOG_WARN("fail to push back", KR(ret), KPC(task));
       } else {
-        LOG_INFO("success to push a remove replica task to task_array", KR(ret), KPC(task));
+
       }
     }
     // btw: no need to free memory when failed for arena, just destruct
@@ -1178,7 +1178,7 @@ int ObDRWorker::LocalityAlignment::generate_type_transform_task(
       if (OB_FAIL(task_array_.push_back(task))) {
         LOG_WARN("fail to push back", KR(ret));
       } else {
-        LOG_INFO("success to push a type transform task to task_array", KR(ret), KPC(task));
+
       }
     }
     // btw: no need to free memory when failed for arena, just destruct
@@ -1211,10 +1211,10 @@ int ObDRWorker::LocalityAlignment::generate_add_replica_task(
       if (OB_FAIL(task_array_.push_back(task))) {
         LOG_WARN("fail to push back", KR(ret));
       } else {
-        LOG_INFO("success to push a add replica task to task_array", KR(ret), KPC(task));
+
       }
     }
-    LOG_INFO("finish generate task from locality", KPC(task), K(replica_desc));
+
     // btw: no need to free memory when failed for arena, just destruct
     if (OB_FAIL(ret) && nullptr != task) {
       task->~AddReplicaLATask();
@@ -1239,7 +1239,7 @@ int ObDRWorker::LocalityAlignment::generate_modify_paxos_replica_number_task()
     if (OB_FAIL(task_array_.push_back(task))) {
       LOG_WARN("fail to push back", KR(ret));
     } else {
-        LOG_INFO("success to push a modify paxos replica number task to task_array", KR(ret), KPC(task));
+
       }
   }
   // btw: no need to free memory when failed for arena, just destruct
@@ -1495,7 +1495,7 @@ int ObDRWorker::LocalityAlignment::try_get_normal_locality_alignment_task(
                 found))) {
           LOG_WARN("fail to try review remove replica task", KR(ret), KPC(this_task), K(found));
         } else {
-          LOG_INFO("success to try review remove replica task", KR(ret), KPC(this_task), K(found));
+
         }
         break;
       case ObDRTaskType::LS_ADD_REPLICA:
@@ -1506,7 +1506,7 @@ int ObDRWorker::LocalityAlignment::try_get_normal_locality_alignment_task(
                 found))) {
           LOG_WARN("fail to try review add replica task", KR(ret), KPC(this_task), K(found));
         } else {
-          LOG_INFO("success to try review add replica task", KR(ret), KPC(this_task), K(found));
+
         }
         break;
       case ObDRTaskType::LS_TYPE_TRANSFORM:
@@ -1517,7 +1517,7 @@ int ObDRWorker::LocalityAlignment::try_get_normal_locality_alignment_task(
                 found))) {
           LOG_WARN("fail to try review type transform task", KR(ret), KPC(this_task), K(found));
         } else {
-          LOG_INFO("success to try review type transform task", KR(ret), KPC(this_task), K(found));
+
         }
         break;
       case ObDRTaskType::LS_MODIFY_PAXOS_REPLICA_NUMBER:
@@ -1528,7 +1528,7 @@ int ObDRWorker::LocalityAlignment::try_get_normal_locality_alignment_task(
                 found))) {
           LOG_WARN("fail to try review modify paxos replica number task", KR(ret), KPC(this_task), K(found));
         } else {
-          LOG_INFO("success to try review modify paxos replica number task", KR(ret), KPC(this_task), K(found));
+
         }
         break;
       default:
@@ -1618,7 +1618,7 @@ int ObDRWorker::LocalityAlignment::get_next_locality_alignment_task(
       LOG_WARN("fail to get normal locality alignment task", KR(ret));
     } else if (nullptr != task) {
       // got one
-      LOG_INFO("success to get a normal task", KPC(task));
+
     } else if (OB_FAIL(try_get_readonly_or_columnstore_all_server_locality_alignment_task(
             unit_provider_,
             task))) {
@@ -1626,7 +1626,7 @@ int ObDRWorker::LocalityAlignment::get_next_locality_alignment_task(
     } else if (nullptr == task) {
       ret = OB_ITER_END;
     } else {
-      LOG_INFO("success to get a readonly all server task", KPC(task));
+
     }
   }
   return ret;
@@ -1875,7 +1875,7 @@ int ObDRWorker::check_tenant_locality_match(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("lst operator ptr is null", KR(ret));
   } else {
-    LOG_INFO("start try check tenant locality match", K(tenant_id));
+
     share::ObLSStatusOperator ls_status_operator;
     common::ObArray<share::ObLSStatusInfo> ls_status_info_array;
     if (OB_FAIL(ls_status_operator.get_all_ls_status_by_order(tenant_id, ls_status_info_array, *GCTX.sql_proxy_))) {
@@ -1923,7 +1923,7 @@ int ObDRWorker::check_ls_locality_match_(
   int ret = OB_SUCCESS;
   int tmp_ret = OB_SUCCESS;
   locality_is_matched = false;
-  LOG_INFO("start to check ls locality match", K(dr_ls_info));
+
   LocalityAlignment locality_alignment(dr_ls_info, OB_SERVER_TENANT_ID);
   if (!dr_ls_info.has_leader()) {
     LOG_WARN("has no leader, maybe not report yet",
@@ -1993,9 +1993,9 @@ int ObDRWorker::try_tenant_disaster_recovery(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("lst operator ptr or sql proxy is null", KR(ret), KP(GCTX.sql_proxy_));
   } else if (OB_FAIL(check_whether_the_tenant_role_can_exec_dr_(tenant_id))) {
-    LOG_INFO("fail to check_whether_the_tenant_role_can_exec_dr_", KR(ret), K(tenant_id));
+
   } else {
-    LOG_INFO("start try tenant disaster recovery", K(tenant_id), K(only_for_display));
+
     share::ObLSStatusOperator ls_status_operator;
     common::ObArray<share::ObLSStatusInfo> ls_status_info_array;
     if (OB_FAIL(ls_status_operator.get_all_ls_status_by_order(tenant_id, ls_status_info_array, *GCTX.sql_proxy_))) {
@@ -2036,14 +2036,14 @@ int ObDRWorker::try_ls_disaster_recovery(
               KR(ret), KP(GCTX.sql_proxy_), KP(GCTX.schema_service_), KP(GCTX.lst_operator_));
   } else if (ls_status_info.ls_is_creating()) {
     // skip, ls is creating
-    LOG_TRACE("ls is creating", K(ls_status_info), K(tenant_id));
+
   } else {
     share::ObLSInfo ls_info;
     // this structure is used to generate migrtion/locality alignment/shrink unit tasks
     DRLSInfo dr_ls_info_without_flag(gen_user_tenant_id(tenant_id), GCTX.schema_service_);
     // this structure is used to generate permanent offline tasks
     DRLSInfo dr_ls_info_with_flag(gen_user_tenant_id(tenant_id), GCTX.schema_service_);
-    LOG_INFO("start try ls disaster recovery", K(ls_status_info));
+
     if (OB_FAIL(GCTX.lst_operator_->get(GCONF.cluster_id,
                                         ls_status_info.tenant_id_,
                                         ls_status_info.ls_id_,
@@ -2065,7 +2065,7 @@ int ObDRWorker::try_ls_disaster_recovery(
       LOG_WARN("fail to try log stream disaster recovery", KR(ret), K(only_for_display));
     } else if (only_for_display || is_zero_row(dr_tasks_.count())) {
       // skip
-      LOG_INFO("skip persist dr_task", K(only_for_display), "task_count", dr_tasks_.count());
+
     } else if (OB_FAIL(persist_tasks_into_inner_table_(dr_tasks_, tenant_id, ls_status_info.ls_id_, false/*is_manual*/))) {
       LOG_WARN("fail to do end generated dr tasks", KR(ret), K(tenant_id), K(ls_status_info));
     }
@@ -2211,7 +2211,7 @@ int ObDRWorker::persist_tasks_into_inner_table_(
           ret = OB_ENTRY_EXIST;
           LOG_USER_ERROR(OB_ENTRY_EXIST, "LS has task executing, current operation is not allowed");
         }
-        LOG_INFO("ls disaster recovery task conflict in list", KR(ret), K(*task));
+
       } else if (OB_FAIL(SVR_TRACER.get_server_info(task->get_dst_server(), server_info))) {
         LOG_WARN("fail to get server_info", KR(ret), K(*task));
       } else if (server_info.is_permanent_offline()) {
@@ -2229,7 +2229,7 @@ int ObDRWorker::persist_tasks_into_inner_table_(
   }
   COMMIT_DISASTER_RECOVERY_WORKER_TRANS
   const int64_t cost = ObTimeUtility::fast_current_time() - start_time;
-  LOG_INFO("finish persist tasks into inner table", KR(ret), K(cost), K(tenant_id), K(ls_id));
+
   return ret;
 }
 
@@ -2320,7 +2320,7 @@ int ObDRWorker::check_whether_task_conflict_(
           is_conflict = true;
         }
         if (is_conflict) {
-          LOG_INFO("conflict with existing tasks", K(task_key), K(task_key_in_array), K(enable_parallel_migration));
+
           break;
         }
       } // end if
@@ -2353,7 +2353,7 @@ int ObDRWorker::check_clone_status_and_insert_task_(
   } else if (OB_FAIL(table_operator_.insert_task(trans, task, false/*record_history*/))) {
     LOG_WARN("failed to insert task", KR(ret), K(task));
   } else {
-    LOG_INFO("succeed to insert task", K(task));
+
   }
   return ret;
 }
@@ -2589,7 +2589,7 @@ int ObDRWorker::add_task_(
     LOG_WARN("failed to push task key in array", KR(ret), K(task));
   } else {
     acc_dr_task++;
-    LOG_INFO("success to add a task to dr tasks array", KR(ret), K(task));
+
   }
   if (OB_FAIL(ret)) {
     if (OB_NOT_NULL(new_task)) {
@@ -3176,7 +3176,7 @@ int ObDRWorker::check_data_source_available_and_init_(
   common::ObReplicaType provide_replica_type = REPLICA_TYPE_INVALID;
   if (!arg.get_data_source().is_valid()) {
     // passed
-    LOG_INFO("data_source is not valid", KR(ret), K(arg));
+
   } else if (OB_UNLIKELY(!arg.is_valid()
           || OB_UNLIKELY(!ObReplicaTypeCheck::is_replica_type_valid(replica_type)))) {
     ret = OB_INVALID_ARGUMENT;
@@ -3345,7 +3345,7 @@ int ObDRWorker::check_majority_for_remove_(
     LOG_USER_ERROR(OB_OP_NOT_ALLOW, "Current operation may result in no leader, while is");
     LOG_WARN("not satisfy majority", KR(ret), K(new_p), K(arb_replica_number), K(inactive_count));
   }
-  LOG_INFO("check majority for remove over", KR(ret), K(server_addr), K(new_p), K(arb_replica_number));
+
   return ret;
 }
 
@@ -3535,7 +3535,7 @@ int ObDRWorker::check_can_generate_task(
     // in order to implement parallel migration, when the task of the first replica of LS is generated or a conflict
     // in the migration of the first replica is detected, it is necessary to continue to generate the migration task of the next replica.
     can_generate = false;
-    LOG_INFO("can not generate task because another task is generated", K(dr_ls_info), K(task_type), K(acc_dr_task));
+
   } else if (need_check_has_leader_while_remove_replica) {
     if (OB_FAIL(check_has_leader_while_remove_replica(
                          server_addr,
@@ -3544,7 +3544,7 @@ int ObDRWorker::check_can_generate_task(
       LOG_WARN("fail to check has leader while member change", KR(ret), K(dr_ls_info), K(server_addr));
     } else if (!has_leader_while_remove_replica) {
       can_generate = false;
-      LOG_INFO("can not generate task because has no leader", K(dr_ls_info), K(task_type), K(acc_dr_task), K(has_leader_while_remove_replica));
+
     }
   }
   return ret;
@@ -3702,7 +3702,7 @@ int ObDRWorker::do_single_replica_permanent_offline_(
     if (OB_SERVER_NOT_IN_WHITE_LIST == ret) {
       is_offline = true;
       ret = OB_SUCCESS;
-      LOG_INFO("found not in __all_server replica", K(tenant_id), K(ls_id), K(member_to_remove));
+
     } else {
       LOG_WARN("fail to get server info", KR(ret), K(member_to_remove));
     }
@@ -3759,7 +3759,7 @@ int ObDRWorker::do_single_replica_permanent_offline_(
       } else if (OB_FAIL(add_display_info(display_info))) {
         LOG_WARN("fail to add display info", KR(ret), K(display_info));
       } else {
-        LOG_INFO("success to add display info", KR(ret), K(display_info));
+
       }
     } else if (OB_FAIL(generate_task_key(dr_ls_info, leader_addr, task_type, task_key))) {
       LOG_WARN("fail to generate task key", KR(ret), K(dr_ls_info), K(leader_addr), K(task_type));
@@ -3828,7 +3828,7 @@ int ObDRWorker::check_need_generate_replicate_to_unit(
              && unit_stat_info->get_server_stat()->is_alive()
              && !unit_stat_info->get_server_stat()->is_block()) {
     need_generate = true;
-    LOG_INFO("found replicate to unit replica", KPC(ls_replica));
+
   }
   return ret;
 }
@@ -3931,7 +3931,7 @@ int ObDRWorker::try_replicate_to_unit(
       }
     }
   }
-  LOG_INFO("finish try replicate to unit", KR(ret), K(acc_dr_task));
+
   return ret;
 }
 
@@ -3986,7 +3986,7 @@ int ObDRWorker::generate_migrate_ls_task(
       } else if (OB_FAIL(add_display_info(display_info))) {
         LOG_WARN("fail to add display info", KR(ret), K(display_info));
       } else {
-        LOG_INFO("success to add display info", KR(ret), K(display_info));
+
       }
     } else if (OB_FAIL(generate_task_key(dr_ls_info, dst_member.get_server(), ObDRTaskType::LS_MIGRATE_REPLICA, task_key))) {
       LOG_WARN("fail to generate task key", KR(ret), K(dr_ls_info), K(dst_member));
@@ -4053,7 +4053,7 @@ int ObDRWorker::try_generate_remove_replica_locality_alignment_task(
             has_leader))) {
       LOG_WARN("fail to check has leader while member change", KR(ret), K(dr_ls_info));
     } else if (!has_leader) {
-      LOG_INFO("may has no leader while member change", K(dr_ls_info));
+
     } else if (OB_FAIL(dr_ls_info.get_leader(leader_addr))) {
       LOG_WARN("fail to get leader", KR(ret));
     } else if (OB_FAIL(generate_task_key(dr_ls_info, leader_addr, task->get_task_type(), task_key))) {
@@ -4173,7 +4173,7 @@ int ObDRWorker::try_generate_type_transform_locality_alignment_task(
             has_leader))) {
       LOG_WARN("fail to check has leader while member change", KR(ret), K(dr_ls_info));
     } else if (!has_leader) {
-      LOG_INFO("may has no leader while member change", K(dr_ls_info));
+
     } else if (OB_FAIL(dr_ls_info.get_default_data_source(data_source, data_size))) {
       LOG_WARN("fail to get data_size", KR(ret), K(dr_ls_info));
     } else if (OB_FAIL(generate_task_key(dr_ls_info, my_task->dst_server_, task->get_task_type(), task_key))) {
@@ -4445,7 +4445,7 @@ int ObDRWorker::try_locality_alignment(
 {
   int ret = OB_SUCCESS;
   DEBUG_SYNC(BEFORE_TRY_LOCALITY_ALIGNMENT);
-  LOG_INFO("try locality alignment", K(dr_ls_info), K(only_for_display));
+
   LocalityAlignment locality_alignment(dr_ls_info, MTL_ID());
   const LATask *task = nullptr;
   if (OB_ISNULL(GCTX.config_)) {
@@ -4472,7 +4472,7 @@ int ObDRWorker::try_locality_alignment(
         if (OB_FAIL(record_task_plan_for_locality_alignment(dr_ls_info, task))) {
           LOG_WARN("fail to record task plan", KR(ret), KPC(task));
         } else {
-          LOG_INFO("success to record task plan", KR(ret), KPC(task));
+
         }
       } else if (OB_FAIL(check_can_generate_task(
                                acc_dr_task,
@@ -4494,7 +4494,7 @@ int ObDRWorker::try_locality_alignment(
     }
   }
   // no need to print task key, since the previous log contains that
-  LOG_INFO("finish try locality alignment", KR(ret), K(acc_dr_task));
+
   return ret;
 }
 
@@ -4642,7 +4642,7 @@ int ObDRWorker::try_shrink_resource_pools(
       }
     }//end for each ls replica
   }
-  LOG_INFO("finish try shrink resource pool", KR(ret), K(acc_dr_task));
+
   return ret;
 }
 
@@ -4706,7 +4706,7 @@ int ObDRWorker::try_remove_non_paxos_replica_for_deleting_unit_(
       } else if (OB_FAIL(add_display_info(display_info))) {
         LOG_WARN("fail to add display info", KR(ret), K(display_info));
       } else {
-        LOG_INFO("success to add display info", KR(ret), K(display_info));
+
       }
     } else if (OB_FAIL(generate_task_key(dr_ls_info, leader_addr, task_type, task_key))) {
       LOG_WARN("fail to generate task key", KR(ret), K(dr_ls_info), K(leader_addr), K(task_type));
@@ -4897,7 +4897,7 @@ int ObDRWorker::try_gen_type_transform_task_(
       } else if (OB_FAIL(add_display_info(display_info))) {
         LOG_WARN("fail to add display info", KR(ret), K(display_info));
       } else {
-        LOG_INFO("success to add display info", KR(ret), K(display_info));
+
       }
     } else if (OB_FAIL(generate_task_key(dr_ls_info, target_replica.get_server(), ObDRTaskType::LS_TYPE_TRANSFORM, task_key))) {
       LOG_WARN("fail to generate task key", KR(ret), K(dr_ls_info), K(target_replica));
@@ -4911,7 +4911,7 @@ int ObDRWorker::try_gen_type_transform_task_(
       LOG_WARN("fail to check whether can generate task", KR(ret), K(acc_dr_task),
                K(target_replica), K(dr_ls_info));
     } else if (!can_generate) {
-      LOG_INFO("can not generate type transform task");
+
     } else if (OB_FAIL(generate_type_transform_task_(
                            task_key,
                            task_id,
@@ -5309,7 +5309,7 @@ int ObDRWorker::try_cancel_unit_migration(
           } else if (OB_FAIL(add_display_info(display_info))) {
             LOG_WARN("fail to add display info", KR(ret), K(display_info));
           } else {
-            LOG_INFO("success to add display info", KR(ret), K(display_info));
+
           }
         } else if (OB_FAIL(generate_task_key(dr_ls_info, leader_addr, task_type, task_key))) {
           LOG_WARN("fail to generate task key", KR(ret), K(dr_ls_info), K(leader_addr), K(task_type));
@@ -5338,7 +5338,7 @@ int ObDRWorker::try_cancel_unit_migration(
     }
   }
   // no need to print task key, since the previous log contains that
-  LOG_INFO("finish try cancel migrate unit", KR(ret), K(acc_dr_task));
+
   return ret;
 }
 
@@ -5526,7 +5526,7 @@ int ObDRWorker::try_migrate_to_unit(
     } // end for
   }
   // no need to print task key, since the previous log contains that
-  LOG_INFO("finish try migrate to unit", KR(ret), K(acc_dr_task));
+
   return ret;
 }
 
@@ -5608,7 +5608,7 @@ int ObDRWorker::try_migrate_replica_for_migrate_to_unit_(
       } else if (OB_FAIL(add_display_info(display_info))) {
         LOG_WARN("fail to add display info", KR(ret), K(display_info));
       } else {
-        LOG_INFO("success to add display info", KR(ret), K(display_info));
+
       }
     } else if (OB_FAIL(generate_task_key(dr_ls_info, dst_member.get_server(), ObDRTaskType::LS_MIGRATE_REPLICA, task_key))) {
       LOG_WARN("fail to generate task key", KR(ret), K(dr_ls_info), K(dst_member));

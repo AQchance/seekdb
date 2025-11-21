@@ -45,11 +45,11 @@ int main(int argc, char **argv)
   logger.set_file_name("test_storage.log", true);
   logger.set_log_level(OB_LOG_LEVEL_INFO);
 
-    STORAGE_LOG(WARN, "init memory pool error", "ret", tmp_ret);
+
   } else if (OB_SUCCESS != (tmp_ret = ob_server.init(schema_file))) {
-    STORAGE_LOG(WARN, "init ob server error", "ret", tmp_ret, K(schema_file));
+
   } else {
-    STORAGE_LOG(INFO, "init ob server success", K(schema_file));
+
   }
   if (OB_SUCCESS != tmp_ret) {
     ret = EXIT_FAILURE;

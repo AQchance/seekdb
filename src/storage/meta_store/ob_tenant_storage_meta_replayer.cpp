@@ -133,7 +133,7 @@ int ObTenantStorageMetaReplayer::ss_replay_create_ls_(
       } else if (OB_FAIL(MTL(ObLSService *)->replay_create_ls_commit(item.ls_id_))) {
         LOG_WARN("fail to replay create ls commit", K(ret), K(item));
       } else {
-        LOG_INFO("successfully replay create ls commit", K(ls_meta));
+
       }
       break;
     }
@@ -145,20 +145,20 @@ int ObTenantStorageMetaReplayer::ss_replay_create_ls_(
         if (OB_FAIL(persister_->abort_create_ls(item.ls_id_, item.epoch_))) {
           LOG_ERROR("fail to abort creat ls", K(ret), K(item));
         } else {
-          LOG_INFO("abort create ls when replay", K(ret), K(item));
+
         }
       } else if (OB_FAIL(ObStorageMetaIOUtil::read_storage_meta_object(
           opt, allocator, MTL_ID(), item.epoch_, ls_meta))) {
       } else if (OB_FAIL(MTL(ObLSService *)->replay_create_ls(item.epoch_, ls_meta))) {
         LOG_WARN("fail to replay create ls", K(ret), K(ls_meta));
       } else {
-        LOG_INFO("replay a creating ls", K(ret), K(item));
+
       }
       break;
     }
     case ObLSItemStatus::CREATE_ABORT:
     case ObLSItemStatus::DELETED: {
-      LOG_INFO("skip invalid ls item", K(item));
+
       break;
     }
     default: {
@@ -238,20 +238,20 @@ int ObTenantStorageMetaReplayer::ss_replay_ls_tablets_for_trans_info_tmp_(
       if (OB_FAIL(ObStorageMetaIOUtil::read_storage_meta_object(current_version_opt, allocator, MTL_ID(), item.epoch_, latest_addr))) {
         if (OB_NO_SUCH_FILE_OR_DIRECTORY == ret) {
           ret = OB_SUCCESS;
-          LOG_INFO("this tablet has been deleted and current_version has been deleted", K(ret), K(item), K(current_version_opt));
+
         } else {
           LOG_WARN("fail to read cur version", K(ret), K(item), K(current_version_opt));
         }
       } else if (ObStorageObjectOpt::INVALID_TABLET_VERSION != deleted_tablet_meta_version 
               && latest_addr.tablet_addr_.block_id().meta_version_id() <= deleted_tablet_meta_version) {
         ret = OB_ERR_UNEXPECTED;
-        LOG_INFO("this tablet has been deleted, but current_version has not been deleted", K(ret), K(item), K(current_version_opt), K(latest_addr), K(deleted_tablet_meta_version));
+
       } else if (OB_FAIL(ls_tablet_svr->ss_replay_create_tablet_for_trans_info_tmp(latest_addr.tablet_addr_, ls_handle, ObTabletID(tablet_id)))) {
         LOG_WARN("fail to replay create tablet", K(ret), K(tablet_id), K(latest_addr.tablet_addr_));
       }
     }
   } else {
-    LOG_INFO("item status need not replay", K(ret), K(item));
+
   }
 
   return ret;

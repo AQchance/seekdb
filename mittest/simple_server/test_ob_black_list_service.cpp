@@ -40,7 +40,7 @@ public:
 
 TEST_F(TestObBlackListService, black_list_inner_func)
 {
-  LOG_INFO("called", "func", test_info_->name());
+
 
   // init, bl_service already inited in ObServer::init()
   int ret = OB_SUCCESS;
@@ -67,12 +67,12 @@ TEST_F(TestObBlackListService, black_list_inner_func)
       ASSERT_EQ(OB_SUCCESS, bl_service.get_info_from_result_(*result, bl_key, ls_info));
       ASSERT_EQ(true, bl_key.is_valid());
       ASSERT_EQ(true, ls_info.is_valid());
-      LOG_INFO("get_info_from_result_ ", K(bl_key), K(ls_info));
+
     }
 
     // get max_stale_time_for_weak_consistency
     int64_t max_stale_time = bl_service.get_tenant_max_stale_time_(bl_key.get_tenant_id());
-    LOG_INFO("get_tenant_max_stale_time_ ", K(bl_key), K(max_stale_time));
+
 
     // do blacklist check
     ASSERT_EQ(OB_SUCCESS, bl_service.check_in_black_list(bl_key, check));

@@ -131,7 +131,7 @@ int ObUnitInfoGetter::ObTenantConfig::divide_meta_tenant(ObTenantConfig& meta_te
     actual_data_disk_size_ = actual_data_disk_size_ - meta_tenant_config.actual_data_disk_size_;
   }
 
-  LOG_INFO("divide meta tenant finish", KR(ret), K(meta_tenant_config), "user_config", *this);
+
   return ret;
 }
 
@@ -256,7 +256,7 @@ int ObUnitInfoGetter::get_server_tenant_configs(const common::ObAddr &server,
   } else if (OB_FAIL(build_unit_infos(units, configs, pools, unit_infos))) {
     LOG_WARN("build_unit_infos failed", K(units), K(configs), K(pools), KR(ret));
   } else {
-    LOG_INFO("get_server_tenant_configs", K(unit_infos));
+
 
     ObTenantConfig tenant_config;
     ObTenantConfig meta_tenant_config;
@@ -361,7 +361,7 @@ int ObUnitInfoGetter::get_tenant_server_configs(const uint64_t tenant_id,
     LOG_WARN("get_pools_of_tenant failed", K(tenant_id), K(ret));
   } else if (pools.count() <= 0) {
     // don't need to set ret, just return empty result
-    LOG_DEBUG("tenant doesn't own any pool, maybe tenant has been deleted", K(tenant_id));
+
   } else if (OB_FAIL(get_units_of_pools(pools, units))) {
     LOG_WARN("get_units_of_pools failed", K(pools), K(ret));
   } else if (OB_FAIL(get_configs_of_pools(pools, configs))) {
@@ -847,7 +847,7 @@ int ObUnitInfoGetter::get_compat_mode(const int64_t tenant_id, lib::Worker::Comp
       }
     }
     if (OB_SUCC(ret)) {
-      LOG_INFO("jx_debug: get tenant compatibility mode", K(tenant_id), K(compat_mode));
+
     }
   }
   return ret;

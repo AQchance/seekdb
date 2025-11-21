@@ -262,7 +262,7 @@ int ObRootBlockInfo::transform_root_block_extra_buf(common::ObArenaAllocator &al
       }
     } else {
       block_data_.type_ = ObMicroBlockData::INDEX_BLOCK;
-      LOG_DEBUG("succeed to transform root block data", K(addr_), KPC(this));
+
     }
   }
   return ret;

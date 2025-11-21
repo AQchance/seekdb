@@ -177,7 +177,7 @@ class TaskRunner : public share::ObThreadPool
 public:
   void run1()
   {
-    LOG_INFO("start thread", K(thread));
+
     run_task(arg);
   }
 };

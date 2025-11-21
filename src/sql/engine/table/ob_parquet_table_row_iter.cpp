@@ -75,7 +75,7 @@ int ObParquetTableRowIterator::init(const storage::ObTableScanParam *scan_param)
       OZ (column_readers_.allocate_array(allocator_, file_column_exprs_.count()));
       OZ (load_funcs_.allocate_array(allocator_, file_column_exprs_.count()));
     }
-    LOG_DEBUG("check exprs", K(file_column_exprs), K(file_meta_column_exprs), KPC(scan_param->ext_file_column_exprs_));
+
   }
 
   if (OB_SUCC(ret) && OB_ISNULL(bit_vector_cache_)) {
@@ -198,7 +198,7 @@ int ObParquetTableRowIterator::next_file()
         END_CATCH_EXCEPTIONS
       }
 
-      LOG_DEBUG("current external file", K(url_), K(ret));
+
     }
   } while (OB_OBJECT_NOT_EXIST == ret || (OB_INVALID_EXTERNAL_FILE == ret && status.IsInvalid())); //skip not exist or empty file
 

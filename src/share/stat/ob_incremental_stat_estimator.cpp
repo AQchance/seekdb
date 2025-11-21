@@ -117,7 +117,7 @@ int ObIncrementalStatEstimator::derive_split_gather_stats(ObExecContext &ctx,
         LOG_WARN("failed to add flush stats audit", K(ret));
       }
     }
-    LOG_TRACE("succeed to derive split gather stats", K(param), K(derive_part_stat), K(part_opt_stats), K(derive_opt_stats));
+
   }
   return ret;
 }
@@ -365,7 +365,7 @@ int ObIncrementalStatEstimator::do_derive_global_stat(ObExecContext &ctx,
                                             global_opt_stat))) {
     LOG_WARN("failed to derive global col stat from part col stat", K(ret));
   } else {
-    LOG_TRACE("Succeed to derive global stat", K(part_opt_stats));
+
   }
   return ret;
 }
@@ -421,7 +421,7 @@ int ObIncrementalStatEstimator::derive_global_tbl_stat(ObIAllocator &alloc,
         table_stat->set_macro_block_num(global_tstat.get_macro_block_count());
         table_stat->set_micro_block_num(global_tstat.get_micro_block_count());
         table_stat->set_stattype_locked(param.stattype_);
-        LOG_TRACE("succeed to derive global tbl stat", K(*table_stat));
+
       }
     }
   }
@@ -570,7 +570,7 @@ int ObIncrementalStatEstimator::derive_global_col_stat(ObExecContext &ctx,
                 col_stat->get_histogram().set_type(ObHistType::TOP_FREQUENCY);
               }
             }
-            LOG_TRACE("succeed to derive global col stat", K(*col_stat), K(need_gather_hist));
+
           }
         }
       }
@@ -629,7 +629,7 @@ int ObIncrementalStatEstimator::derive_global_col_stat(ObExecContext &ctx,
                                                                      tmp_opt_stats))) {
         LOG_WARN("failed to check all cols range skew", K(ret));
       } else {
-        LOG_TRACE("succeed to gather hist", K(gather_param), K(global_opt_stat));
+
       }
     }
   }
@@ -741,7 +741,7 @@ int ObIncrementalStatEstimator::get_no_regather_partition_stats(
                                            part_opt_stats))) {
     LOG_WARN("failed to generate all opt stat", K(ret));
   } else {
-    LOG_TRACE("Succeed to get locked partition stats", K(no_regather_partition_ids));
+
   }
   return ret;
 }
@@ -850,7 +850,7 @@ int ObIncrementalStatEstimator::gen_opt_stat_param_by_direct_load(ObExecContext 
         param.part_infos_.reset();
       }
     }
-    LOG_TRACE("succeed to gen opt stat param by direct load", K(param));
+
   }
   return ret;
 }
@@ -890,7 +890,7 @@ int ObIncrementalStatEstimator::get_all_part_opt_stats(
                                            part_opt_stats))) {
     LOG_WARN("failed to generate all opt stat", K(ret));
   } else {
-    LOG_TRACE("Succeed get all part opt stats", K(param), K(part_tab_stats));
+
   }
   return ret;
 }
@@ -983,7 +983,7 @@ int ObIncrementalStatEstimator::derive_global_index_stat_by_part_index_stats(
     } else if (OB_FAIL(all_index_stats.push_back(global_opt_stat.table_stat_))) {
       LOG_WARN("failed to push back", K(ret));
     } else {
-      LOG_TRACE("succeed to derive global index stat by part index stats", K(param), K(all_index_stats));
+
     }
   }
   return ret;
@@ -1112,7 +1112,7 @@ int ObIncrementalStatEstimator::derive_global_index_column_stat_by_part_index(Ob
                                            global_opt_stat))) {
     LOG_WARN("Failed to derive global stat from part stat", K(ret));
   } else {
-    LOG_TRACE("Succeed to derive global stat from part stats", K(global_opt_stat), K(param));
+
   }
   return ret;
 }

@@ -211,7 +211,7 @@ int ObRestoreSourceServiceAttr::set_service_user(const char *user, const char *t
   } else if (OB_FAIL(databuff_printf(user_.tenant_name_, sizeof(user_.tenant_name_), "%s", tenant))) {
     LOG_WARN("fail to print tenant name", K(tenant));
   }
-  LOG_DEBUG("set service user", K(user), K(tenant), K(user_));
+
   return ret;
 }
 
@@ -265,7 +265,7 @@ int ObRestoreSourceServiceAttr::set_service_passwd_to_encrypt(const char *passwd
   } else if (OB_FAIL(databuff_printf(encrypt_passwd_, sizeof(encrypt_passwd_), "%s", passwd))) {
     LOG_WARN("fail to print encrypt password");
   }
-  LOG_INFO("set service password success");
+
   return ret;
 }
 
@@ -500,7 +500,7 @@ int ObRestoreSourceServiceAttr::get_ip_list_str_(ObSqlString &str) const
       }
     }
   }
-  LOG_DEBUG("get ip list str", K(str));
+
   return ret;
 }
 
@@ -698,7 +698,7 @@ int ObRestoreSourceServiceAttr::check_restore_source_is_self_(bool &is_self, uin
     is_self = true;
     LOG_WARN("set standby itself as log restore source is not allowed");
   }
-  LOG_INFO("check restore is self succ", K(tenant_id), K(user_.tenant_id_), K(curr_cluster_id), K(user_.cluster_id_));
+
   return ret;
 }
 

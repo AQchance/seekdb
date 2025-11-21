@@ -205,7 +205,7 @@ TEST_F(TestSplitTaskScheduler, single_tenant_hard_push_and_pop)
     total_tasks -= task_arr_len;
     ASSERT_EQ(total_tasks, polling_mgr_.total_tasks_);
     ASSERT_TRUE(tenants_task_array.at(0).count() >= 4);
-    LOG_INFO("tenants_task_array", K(tenants_task_array));
+
     for (int64_t i = 0; i < tenants_task_array.at(0).count(); ++i) {
       ObAutoSplitTask &task = tenants_task_array.at(0).at(i);
       ASSERT_EQ(expect_hightest_prio_tablet_id--, task.tablet_id_.id_);

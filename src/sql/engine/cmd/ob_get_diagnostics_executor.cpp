@@ -413,7 +413,7 @@ int ObGetDiagnosticsExecutor::execute(ObExecContext &ctx, ObGetDiagnosticsStmt &
       LOG_USER_WARN(OB_ERR_INVALID_CONDITION_NUMBER);
     } else if (OB_ERR_USER_VARIABLE_UNKNOWN == ret || OB_OBJ_TYPE_ERROR == ret) {
       ret = OB_SUCCESS;
-      LOG_TRACE("condition num is invalid");
+
       LOG_USER_WARN(OB_ERR_INVALID_CONDITION_NUMBER);
     } else if (OB_ERR_BAD_FIELD_ERROR == ret) {
       ret = OB_SUCCESS;
@@ -425,7 +425,7 @@ int ObGetDiagnosticsExecutor::execute(ObExecContext &ctx, ObGetDiagnosticsStmt &
     } else if (OB_FAIL(ret)) {
       LOG_WARN("unexpected error", K(ret));
     } else if (warning_count < restored_arg || restored_arg < 1) {
-      LOG_TRACE("condition num is invalid");
+
       LOG_USER_WARN(OB_ERR_INVALID_CONDITION_NUMBER);
     } else {
       int err_ret;
@@ -468,7 +468,7 @@ int ObGetDiagnosticsExecutor::execute(ObExecContext &ctx, ObGetDiagnosticsStmt &
       LOG_USER_WARN(OB_ERR_INVALID_CONDITION_NUMBER);
     } else if (OB_ERR_USER_VARIABLE_UNKNOWN == ret || OB_OBJ_TYPE_ERROR == ret) {
       ret = OB_SUCCESS;
-      LOG_TRACE("condition num is invalid");
+
       LOG_USER_WARN(OB_ERR_INVALID_CONDITION_NUMBER);
     } else if (OB_ERR_BAD_FIELD_ERROR == ret) {
       ret = OB_SUCCESS;
@@ -480,7 +480,7 @@ int ObGetDiagnosticsExecutor::execute(ObExecContext &ctx, ObGetDiagnosticsStmt &
     } else if (OB_FAIL(ret)) {
       LOG_WARN("unexpected error", K(ret));
     } else if (restored_arg > 1) { /* todo:hr-the current stack diagnostic area only supports storing one piece of information */
-      LOG_TRACE("type ok but out of range", K(restored_arg));
+
       LOG_USER_WARN(OB_ERR_INVALID_CONDITION_NUMBER);
     } else {
       int err_ret;

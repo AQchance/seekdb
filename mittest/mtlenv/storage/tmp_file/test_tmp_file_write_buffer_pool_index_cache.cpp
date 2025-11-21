@@ -584,7 +584,7 @@ TEST_F(TestTmpFileWBPIndexCache, test_push_and_pop)
   ret = mock_cache.compare(wbp_index_cache_);
   ASSERT_EQ(OB_SUCCESS, ret);
 
-  LOG_INFO("test_push_and_pop");
+
 }
 
 TEST_F(TestTmpFileWBPIndexCache, test_expand_and_sparsify)
@@ -664,7 +664,7 @@ TEST_F(TestTmpFileWBPIndexCache, test_expand_and_sparsify)
   ASSERT_EQ(wbp_index_cache_.capacity_ / 2 + 1, bucket_num);
   ASSERT_EQ(actual_write_page_num % BUCKET_CAPACITY, wbp_index_cache_.page_buckets_->at(wbp_index_cache_.right_)->size_);
 
-  LOG_INFO("test_expand_and_sparsify");
+
 }
 
 TEST_F(TestTmpFileWBPIndexCache, test_shrink)
@@ -719,7 +719,7 @@ TEST_F(TestTmpFileWBPIndexCache, test_shrink)
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(INIT_BUCKET_ARRAY_CAPACITY, wbp_index_cache_.capacity_);
 
-  LOG_INFO("test_shrink");
+
 }
 
 int mock_circle_bucket(ObTmpFileWBPIndexCache::ObTmpFilePageIndexBucket &bucket)
@@ -867,7 +867,7 @@ TEST_F(TestTmpFileWBPIndexCache, test_search)
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(page_virtual_id1, res_virtual_id);
 
-  LOG_INFO("test_search");
+
 }
 
 } // namespace oceanbase

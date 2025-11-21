@@ -60,7 +60,7 @@ void ObTableRedisEndTransCb::callback(int cb_param)
     // overwrite ret
     LOG_WARN("failed to send redis response", K(ret), K(cb_param));
   } else {
-    LOG_DEBUG("async send redis response", K(cb_param));
+
   }
 
   this->destroy_cb_if_no_ref();

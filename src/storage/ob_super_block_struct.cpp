@@ -182,7 +182,7 @@ int ObServerSuperBlock::serialize(char *buf, const int64_t buf_size, int64_t &po
       LOG_WARN("failed to encode super block content", K(ret), K(buf_size), K(new_pos), K(*this));
     } else {
       pos = new_pos;
-      LOG_INFO("succeed to serialize super block buf", K(buf_size), K(pos), K(*this));
+
     }
   }
   return ret;
@@ -210,7 +210,7 @@ int ObServerSuperBlock::deserialize(const char *buf, const int64_t buf_size, int
     ret = OB_INVALID_DATA;
     LOG_WARN("invalid data, ", K(ret), K(*this));
   } else {
-    LOG_INFO("load server superblock success.", K(buf_size), K(pos), K(*this));
+
   }
   return ret;
 }
@@ -271,7 +271,7 @@ int ObServerSuperBlock::format_startup_super_block(
     if (OB_FAIL(construct_header())) {
       LOG_WARN("fail to construct super block header", K(ret), K_(body));
     } else {
-      LOG_INFO("success to format super block", K(*this));
+
     }
   }
   return ret;

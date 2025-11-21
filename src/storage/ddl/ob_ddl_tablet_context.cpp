@@ -330,7 +330,7 @@ int ObDDLTabletContext::init(
         LOG_WARN("init vector index context failed", K(ret));
       } else {
         is_inited_ = true;
-        LOG_INFO("[CS-Replica] init tablet context", K(tablet_id), K(direct_load_type), K(tablet_param_));
+
       }
     }
   }

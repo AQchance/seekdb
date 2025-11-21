@@ -108,7 +108,7 @@ inline int ObMysqlCompressProtocolProcessor::decode_compressed_body(ObICSMemPool
     cmdpkt = new (cmdpkt) ObMySQLCompressedPacket();
     cmdpkt->set_content(pkt_body, comp_pktlen, comp_pktseq, pktlen_before_compress);
     pkt = cmdpkt;
-    LOG_DEBUG("decompresse packet succ", KPC(cmdpkt));
+
   }
   return ret;
 }

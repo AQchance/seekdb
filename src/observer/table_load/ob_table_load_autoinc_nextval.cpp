@@ -138,7 +138,7 @@ int ObTableLoadAutoincNextval::generate_autoinc_value(ObAutoincrementService &au
       if (OB_SUCC(ret)) {
         // get auto-increment value
         if (OB_FAIL(cache_handle->next_value(value))) {
-          LOG_DEBUG("failed to get auto_increment value", KR(ret), K(value));
+
           // release handle No.1
           auto_service.release_handle(cache_handle);
           // invalid cache handle; record count

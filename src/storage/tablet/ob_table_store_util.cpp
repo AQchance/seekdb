@@ -372,7 +372,7 @@ int ObSSTableArray::deserialize(
     reset();
   } else {
     is_inited_ = true;
-    LOG_DEBUG("deserialize sstable array", K(ret), K(is_compat_deserialize), KPC(this));
+
   }
   return ret;
 }
@@ -737,7 +737,7 @@ int ObSSTableArray::inc_meta_ref_cnt(bool &inc_success) const
         LOG_ERROR("fail to increase ref cnt for sstable meta's macro block", K(ret), K(macro_id));
       } else {
         sstable_cnt++;
-        LOG_DEBUG("inc sstable meta's macro ref", K(ret), K(macro_id), KPC(sstable));
+
       }
     }
   }
@@ -762,7 +762,7 @@ int ObSSTableArray::inc_meta_ref_cnt(bool &inc_success) const
         } else if (OB_TMP_FAIL(OB_STORAGE_OBJECT_MGR.dec_ref(macro_id))) {
           LOG_ERROR("fail to decrease ref cnt for sstable meta's macro block", K(tmp_ret), K(macro_id));
         } else {
-          LOG_DEBUG("decrease sstable meta's macro ref", K(tmp_ret), K(addr), K(macro_id), KPC(sstable));
+
         }
       }
     }
@@ -772,7 +772,7 @@ int ObSSTableArray::inc_meta_ref_cnt(bool &inc_success) const
     inc_success = true;
   }
 
-  LOG_DEBUG("the number of sstables that increase meta ref cnt", K(ret), K(sstable_cnt), K(lbt()));
+
 
   return ret;
 }
@@ -797,7 +797,7 @@ int ObSSTableArray::inc_data_ref_cnt(bool &inc_success) const
       } else {
         sstable_cnt++;
       }
-      LOG_DEBUG("increase sstable data macro ref", K(ret), KPC(sstable));
+
     }
   }
 
@@ -811,7 +811,7 @@ int ObSSTableArray::inc_data_ref_cnt(bool &inc_success) const
       } else {
         ObSSTable *sstable = reinterpret_cast<ObSSTable *>(table);
         sstable->dec_macro_ref();
-        LOG_DEBUG("decrease sstable data macro ref", K(tmp_ret), KPC(sstable));
+
       }
     }
   }
@@ -851,12 +851,12 @@ void ObSSTableArray::dec_meta_ref_cnt() const
         LOG_ERROR("fail to decrease ref cnt for sstable meta's macro block", K(ret), K(macro_id));
       } else {
         sstable_cnt++;
-        LOG_DEBUG("decrease sstable meta's macro ref", K(ret), K(macro_id), KPC(sstable));
+
       }
     }
   }
 
-  LOG_DEBUG("the number of sstables that decrease meta ref cnt", K(ret), K(sstable_cnt), K(lbt()));
+
 }
 
 void ObSSTableArray::dec_data_ref_cnt() const
@@ -874,7 +874,7 @@ void ObSSTableArray::dec_data_ref_cnt() const
       sstable_cnt++;
       ObSSTable *sstable = reinterpret_cast<ObSSTable *>(table);
       sstable->dec_macro_ref();
-      LOG_DEBUG("decrease sstable data's macro ref", K(ret), KPC(sstable));
+
     }
   }
 }

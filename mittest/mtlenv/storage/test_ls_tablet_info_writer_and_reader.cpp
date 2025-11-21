@@ -202,7 +202,7 @@ TEST_F(TestLSTabletInfoWR, testTabletInfoWriterAndReader)
   int ret = OB_SUCCESS;
   ObInOutBandwidthThrottle bandwidth_throttle;
   ASSERT_EQ(OB_SUCCESS, bandwidth_throttle.init(1024 * 1024 * 60));
-  LOG_INFO("test tablet info", K(tablet_metas.count()), K(backup_set_dest_));
+
   const bool is_final_fuse = false;
   backup::ObExternTabletMetaWriter writer;
   backup::ObExternTabletMetaReader reader;

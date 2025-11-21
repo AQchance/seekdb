@@ -171,7 +171,7 @@ void ObServerLocalityCache::destroy()
     server_cid_map_.destroy();
     server_region_map_.destroy();
     server_idc_map_.destroy();
-    LOG_INFO("ObServerLocalityCache destroy finished");
+
   }
 }
 
@@ -300,7 +300,7 @@ int ObServerLocalityCache::get_server_region(const common::ObAddr &server,
       // if its locality is not found or its region is empty, we will try
       // get region from region_map.
       ret = get_server_region_from_map_(server, region);
-      LOG_TRACE("not found server in server_locality_array_", K(ret), K(server), K(region));
+
     }
   }
   return ret;
@@ -346,7 +346,7 @@ int ObServerLocalityCache::set_server_locality_array(
       LOG_WARN("fail to assign server_locality_array_", K(ret), K(server_locality_array));
     } else {
       has_readonly_zone_ = has_readonly_zone;
-      LOG_INFO("set_server_locality_array success", K(server_locality_array), K(has_readonly_zone));
+
     }
   }
   return ret;
@@ -398,7 +398,7 @@ int ObServerLocalityCache::record_server_region(const common::ObAddr &server,
     } else if (OB_FAIL(server_region_map_.insert_or_update(server, region))) {
       LOG_WARN("server_region_map_.get failed", K(ret), K(server), K(region));
     } else {
-      LOG_INFO("record server region success", K(server), K(region));
+
     }
   }
   return ret;
@@ -452,7 +452,7 @@ int ObServerLocalityCache::record_server_cluster_id(const common::ObAddr &server
     } else if (OB_FAIL(server_cid_map_.insert_or_update(server, cluster_id))) {
       LOG_WARN("server_cid_map_.get failed", K(ret), K(server), K(cluster_id));
     } else {
-      LOG_INFO("record server cluster_id success", K(server), K(cluster_id));
+
     }
   }
   return ret;
@@ -504,7 +504,7 @@ int ObServerLocalityCache::record_server_idc(const common::ObAddr &server,
     } else if (OB_FAIL(server_idc_map_.insert_or_update(server, idc))) {
       LOG_WARN("server_idc_map_.get failed", K(ret), K(server), K(idc));
     } else {
-      LOG_INFO("record server idc success", K(server), K(idc));
+
     }
   }
   return ret;

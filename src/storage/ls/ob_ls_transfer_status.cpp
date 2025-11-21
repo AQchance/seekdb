@@ -29,11 +29,11 @@ int ObLSTransferStatus::init(ObLS *ls)
   int ret = OB_SUCCESS;
   if (is_inited_) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObLSTransferStatus init twice", K(ret), K(is_inited_));
+
   } else {
     ls_ = ls;
     is_inited_ = true;
-    STORAGE_LOG(INFO, "ObLSTransferStatus init success", K(*this));
+
   }
   return ret;
 }
@@ -81,9 +81,9 @@ int ObLSTransferStatus::online()
   ObSpinLockGuard guard(lock_);
   if (!is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLSTransferStatus not init", K(ret), K(*this));
+
   } else {
-    STORAGE_LOG(INFO, "ObLSTransferStatus online", K(*this));
+
   }
   return ret;
 }
@@ -94,7 +94,7 @@ int ObLSTransferStatus::offline()
   ObSpinLockGuard guard(lock_);
   reset_prepare_op();
   reset_move_tx_op();
-  STORAGE_LOG(INFO, "ObLSTransferStatus offline", K(*this));
+
   return ret;
 }
 
@@ -110,20 +110,20 @@ int ObLSTransferStatus::update_status(const transaction::ObTransID tx_id,
   common::ObRole ls_role = common::ObRole::INVALID_ROLE;
   if (!is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLSTransferStatus not init", K(ret), K(*this));
+
   } else if (!tx_id.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "tx_id is invalid", K(ret), K(*this));
+
   } else if (op_type != NotifyType::REGISTER_SUCC && op_type != NotifyType::ON_ABORT && !op_scn.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "op_scn is invalid", K(ret), K(*this));
+
   // mds frame not pass replay flag, get it from log handler
   } else if (OB_FAIL(ls_->get_log_handler()->get_role(ls_role, proposal_id))) {
-    STORAGE_LOG(WARN, "get ls role fail", K(ret), K(*this));
+
   } else if (ObTxDataSourceType::TRANSFER_DEST_PREPARE != mds_type &&
       ObTxDataSourceType::TRANSFER_MOVE_TX_CTX != mds_type) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid mds_type", K(ret), K(*this), K(mds_type));
+
   } else if (common::ObRole::FOLLOWER == ls_role) {
     is_follower = true;
   }
@@ -131,11 +131,11 @@ int ObLSTransferStatus::update_status(const transaction::ObTransID tx_id,
     ObSpinLockGuard guard(lock_);
     if (is_follower) {
       if (OB_FAIL(replay_status_inner_(tx_id, task_id, op_scn, op_type, mds_type))) {
-        STORAGE_LOG(WARN, "update transfer status", KR(ret), K(*this), K(tx_id), K(task_id));
+
       }
     } else {
       if (OB_FAIL(update_status_inner_(tx_id, task_id, op_scn, op_type, mds_type))) {
-        STORAGE_LOG(WARN, "update transfer status", KR(ret), K(*this), K(tx_id), K(task_id));
+
       }
     }
     FLOG_INFO("update_transfer_status", K(ret), K(tx_id), K(task_id), K(op_scn), K(op_type), K(mds_type), K(*this));

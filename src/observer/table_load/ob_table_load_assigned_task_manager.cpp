@@ -74,7 +74,7 @@ int ObTableLoadAssignedTaskManager::add_assigned_task(ObDirectLoadResourceApplyA
       }
     }
   }
-  LOG_INFO("ObTableLoadAssignedTaskManager::add_assigned_task", KR(ret), K(arg));
+
 
   return ret;
 }
@@ -96,7 +96,7 @@ int ObTableLoadAssignedTaskManager::delete_assigned_task(ObTableLoadUniqueKey &t
       }
     }
   }
-  LOG_INFO("ObTableLoadAssignedTaskManager::delete_assigned_task", KR(ret), K(task_key));
+
 
   return ret;
 }

@@ -172,7 +172,7 @@ int ObRawEncoder::traverse(const bool force_var_store, bool &suitable)
       }
     }
   }
-  LOG_DEBUG("data desc", K_(desc), K(*this));
+
 
   return ret;
 }

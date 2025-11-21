@@ -484,7 +484,7 @@ int ObDynamicSamplePieceMsgCtx::build_whole_msg(ObDynamicSampleWholeMsg &whole_m
         } else if (OB_FAIL(whole_msg.part_ranges_.assign(ddl_slice_info.part_ranges_))) {
           LOG_WARN("assign part ranges failed", K(ret), K(tenant_id_), K(ddl_task_id), K(ddl_slice_info.part_ranges_));
         }
-        LOG_TRACE("build whole msg with ddl task record", K(ret), K(tenant_id_), K(ddl_task_id), K(ddl_slice_info));
+
       }
     }
   }
@@ -583,7 +583,7 @@ int ObDynamicSamplePieceMsgCtx::sort_row_store(ObChunkDatumStore &row_store)
         } else if (OB_FAIL(sort_impl_.add_stored_row(*sr))) {
           LOG_WARN("add stored row failed", K(ret));
         } else {
-          LOG_DEBUG("sort row store", K(*sr));
+
         }
       }
       if (OB_SUCC(ret)) {
@@ -617,7 +617,7 @@ int ObDynamicSamplePieceMsgCtx::on_message(
     LOG_WARN("process piece message failed", K(ret), K(piece));
   }
   received_ += piece.piece_count_;
-  LOG_DEBUG("process a sample picece msg", K(piece), "all_got", received_, "expected", task_cnt_);
+
   // send whole message when all piece received
   if (OB_SUCC(ret) && received_ == task_cnt_) {
     if (OB_FAIL(send_whole_msg(sqcs))) {

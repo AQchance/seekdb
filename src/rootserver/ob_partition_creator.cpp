@@ -57,7 +57,7 @@ int ObPartitionCreator::init(ObBootstrap* bootstrap, common::ObIArray<share::sch
   } else {
     bootstrap_ = bootstrap;
     table_schemas_ = table_schemas;
-    LOG_INFO("ObPartitionCreator init success", "table_schemas_count", table_schemas_->count());
+
   }
 
   return ret;
@@ -73,7 +73,7 @@ void ObPartitionCreator::destroy()
   task_submitted_ = false;
   task_completed_ = false;
   task_result_ = OB_SUCCESS;
-  LOG_INFO("ObPartitionCreator destroyed");
+
 }
 
 int ObPartitionCreator::submit_create_partitions_task()
@@ -110,7 +110,7 @@ int ObPartitionCreator::wait_task_completion(int& ret)
 
     if (task_completed_) {
       ret = task_result_;
-      LOG_INFO("task completed", K(ret));
+
     } else {
       wait_ret = OB_TIMEOUT;
       LOG_WARN("wait task completion timeout", K(wait_ret));
@@ -129,14 +129,14 @@ void ObPartitionCreator::run(int64_t idx)
 {
   UNUSED(idx);
   int ret = OB_SUCCESS;
-  LOG_INFO("ObPartitionCreator started", K(idx));
+
   while (!has_set_stop()) {
     if (task_submitted_ && !task_completed_) {
       if (OB_FAIL(process_create_partitions_task())) {
         LOG_WARN("failed to process create partitions task", K(ret));
         task_result_ = ret;
       } else {
-        LOG_INFO("create partitions task executed successfully");
+
       }
       task_completed_ = true;
       break;
@@ -144,7 +144,7 @@ void ObPartitionCreator::run(int64_t idx)
       ob_usleep(100 * 1000); // 100ms
     }
   }
-  LOG_INFO("ObPartitionCreator stopped", K(idx));
+
 }
 
 int ObPartitionCreator::process_create_partitions_task()
@@ -157,7 +157,7 @@ int ObPartitionCreator::process_create_partitions_task()
   } else if (OB_FAIL(bootstrap_->create_sys_table_partitions(*table_schemas_))) {
     LOG_WARN("create partitions failed", K(ret));
   } else {
-    LOG_INFO("create partitions successfully");
+
   }
 
   return ret;

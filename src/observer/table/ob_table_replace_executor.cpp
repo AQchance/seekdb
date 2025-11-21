@@ -358,7 +358,7 @@ int ObTableApiReplaceExecutor::get_next_row()
     } else if (OB_FAIL(post_das_task())) {
       LOG_WARN("fail to post all das task", K(ret));
     } else if (!is_duplicated()) {
-      LOG_DEBUG("try insert is not duplicated", K(ret));
+
     } else if (OB_FAIL(cache_insert_row())) {
       LOG_WARN("fail to cache insert row", K(ret));
     } else if (OB_FAIL(fetch_conflict_rowkey(conflict_checker_))) {

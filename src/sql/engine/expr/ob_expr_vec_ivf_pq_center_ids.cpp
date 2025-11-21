@@ -106,7 +106,7 @@ int ObExprVecIVFPQCenterIds::calc_pq_center_ids(
   int ret = OB_SUCCESS;
   if (expr.arg_cnt_ == 1) {
     expr_datum.set_null();
-    LOG_DEBUG("[vec index debug]succeed to genearte empty pq scenter id", KP(&expr), K(expr), K(expr_datum), K(eval_ctx));
+
   } else if (expr.arg_cnt_ == 2 || expr.arg_cnt_ == 4) {
     char *vb_buf = nullptr;
     int64_t res_len = 0;

@@ -211,7 +211,7 @@ int ObTenantMetaObjPool<T>::alloc_obj(void *&obj)
   int ret = OB_SUCCESS;
   T *t = nullptr;
   if (OB_FAIL(acquire(t))) {
-    STORAGE_LOG(WARN, "fail to acquire object", K(ret));
+
   } else {
     obj = static_cast<void *>(t);
   }
@@ -236,7 +236,7 @@ int ObTenantMetaObjPool<T>::acquire(T *&t)
       void *free_obj = nullptr;
       if (OB_FAIL((*wash_func_)(typeid(T), free_obj))) {
         if (OB_ITER_END != ret) {
-          STORAGE_LOG(WARN, "wash function fail", K(ret));
+
         }
       } else if (OB_NOT_NULL(free_obj)) {
         t = static_cast<T *>(free_obj);
@@ -245,7 +245,7 @@ int ObTenantMetaObjPool<T>::acquire(T *&t)
     if (OB_SUCC(ret) || OB_ITER_END == ret) {
       if (OB_ISNULL(t)) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(DEBUG, "no object could be acquired", K(ret));
+
       }
     }
   }
@@ -298,10 +298,10 @@ ObTenantMetaObjPool<T>::ObTenantMetaObjPool(
   const int64_t mem_limit = tenant_config.is_valid()
       ? tenant_config->_storage_meta_memory_limit_percentage : OB_DEFAULT_META_OBJ_PERCENTAGE_LIMIT;
   if (ObCtxIds::META_OBJ_CTX_ID == ctx_id && OB_FAIL(lib::set_meta_obj_limit(tenant_id, mem_limit))) {
-    STORAGE_LOG(WARN, "fail to set meta object memory limit", K(ret), K(tenant_id), K(mem_limit));
+
   } else if (OB_FAIL(allocator_.init(lib::ObMallocAllocator::get_instance(), common::OB_MALLOC_MIDDLE_BLOCK_SIZE,
       lib::ObMemAttr(tenant_id, label, ctx_id)))) {
-    STORAGE_LOG(WARN, "fail to initialize pool FIFO allocator", K(ret));
+
   }
   abort_unless(OB_SUCCESS == ret);
 }

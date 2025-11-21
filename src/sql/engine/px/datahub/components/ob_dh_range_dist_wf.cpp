@@ -252,7 +252,7 @@ int ObRDWFPieceMsgCtx::send_whole_msg(common::ObIArray<ObPxSqcMeta> &sqcs)
     } else if (OB_FAIL(formalize_store_row())) {
       LOG_WARN("formalize store row failed", K(ret));
     } else {
-      LOG_DEBUG("after formalize", K(infos_));
+
     }
   }
   ObRDWFWholeMsg *responses = NULL;
@@ -328,7 +328,7 @@ int ObRDWFPieceMsgListener::on_message(ObRDWFPieceMsgCtx &ctx,
   CK(ctx.received_ < ctx.task_cnt_);
   if (OB_SUCC(ret)) {
     ctx.received_ += 1;
-    LOG_TRACE("get range distribution window function piece msg", K(pkt.info_));
+
     ObRDWFPartialInfo *info = pkt.info_.dup(ctx.arena_alloc_);
     OV(NULL != info, OB_ALLOCATE_MEMORY_FAILED);
     OZ(ctx.infos_.push_back(info));

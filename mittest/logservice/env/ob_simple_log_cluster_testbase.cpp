@@ -160,7 +160,7 @@ int ObSimpleLogClusterTestBase::start()
   } else if (OB_FAIL(G_RES_MGR.init())) {
     SERVER_LOG(ERROR, "init ObResourceManager failed", K(ret));
   } else if (OB_FAIL(ObDeviceManager::get_instance().init_devices_env())) {
-    STORAGE_LOG(WARN, "init device manager failed", KR(ret));
+
   } else if (OB_FAIL(ObIOManager::get_instance().init(mittest_memory))) {
     SERVER_LOG(ERROR, "init ObIOManager failed");
   } else if (OB_FAIL(ObIOManager::get_instance().start())) {

@@ -385,7 +385,7 @@ void ObSSTablePrinter::print_pre_agg_row(const int64_t column_cnt, ObAggRowReade
       bool is_min_max_prefix = false;
       ObSkipIndexColMeta skp_idx_meta(col_idx, static_cast<ObSkipIndexColType>(meta_type));
       if (OB_FAIL(agg_row_reader.read(skp_idx_meta, agg_datum, is_min_max_prefix))) {
-        STORAGE_LOG(WARN, "Failed to read agg datum", K(ret), K(skp_idx_meta), K(agg_datum));
+
         P_VALUE_STR_B("error: read agg datum failed");
       } else if (!agg_datum.is_null()) {
         P_NAME("skp_idx_type=");
@@ -522,9 +522,9 @@ void ObSSTablePrinter::print_store_row(
         ObTxData tx_data;
         tx_data.tx_id_ = tx_id;
         if (OB_FAIL(tx_data_allocator->init("PRINT_TX_DATA_SST"))) {
-          STORAGE_LOG(WARN, "init tx data allocator failed", KR(ret), K(str));
+
         } else if (OB_FAIL(tx_data.deserialize(str.ptr(), str.length(), pos, *tx_data_allocator))) {
-          STORAGE_LOG(WARN, "deserialize tx data failed", KR(ret), K(str));
+
           hex_dump(str.ptr(), str.length(), true, OB_LOG_LEVEL_WARN);
         } else {
           ObTxData::print_to_stderr(tx_data);
@@ -536,7 +536,7 @@ void ObSSTablePrinter::print_store_row(
       ObCommitVersionsArray *commit_versions = new (p) ObCommitVersionsArray();
 
       if (OB_FAIL(commit_versions->deserialize(str.ptr(), str.length(), pos))) {
-        STORAGE_LOG(WARN, "deserialize commit versions failed", KR(ret), K(str));
+
         hex_dump(str.ptr(), str.length(), true, OB_LOG_LEVEL_WARN);
       } else {
         ObCommitVersionsArray::print_to_stderr(*commit_versions);
@@ -580,9 +580,9 @@ void ObSSTablePrinter::print_store_row_hex(const ObDatumRow *row, const ObObjMet
     for (int64_t i = 0; i < row->get_column_count(); ++i) {
       int64_t pos = 0;
       if (OB_FAIL(row->storage_datums_[i].to_obj_enhance(obj, obj_metas[i]))) {
-        STORAGE_LOG(WARN, "Fail to transform storage datum to obj", K(ret), K(i), K(obj_metas[i]), KPC(row));
+
       } else if (OB_FAIL(obj.print_smart(hex_print_buf, buf_size, pos))) {
-        STORAGE_LOG(WARN, "Failed to print obj to hex buf", K(ret), K(i), K(obj));
+
       } else {
         P_VALUE_STR_B(hex_print_buf);
       }

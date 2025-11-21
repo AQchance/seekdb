@@ -363,7 +363,7 @@ int ObSSTable::copy_from_old_sstable(const ObSSTable &src, common::ObArenaAlloca
 
 void ObSSTable::reset()
 {
-  LOG_DEBUG("reset sstable.", KP(this), K(key_), K(is_tmp_sstable_));
+
   // dec ref first, then reset sstable meta
   if (is_tmp_sstable_) {
     ObSSTable::dec_macro_ref(); // dec the used_size added by sstable::init()
@@ -416,7 +416,7 @@ int ObSSTable::scan(
     if (OB_SUCC(ret)) {
       if (OB_ISNULL(row_scanner)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected error, row_scanner is nullptr", K(ret), KP(row_scanner));
+
       } else if (OB_FAIL(row_scanner->init(param, context, this, &key_range))) {
         LOG_WARN("Fail to open row scanner", K(ret), K(param), K(context), K(key_range), K(*this));
       }
@@ -470,7 +470,7 @@ int ObSSTable::get(
     if (OB_SUCC(ret)) {
       if (OB_ISNULL(row_getter)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected error, row_getter is nullptr", K(ret), KP(row_getter));
+
       } else if (OB_FAIL(row_getter->init(param, context, this, &rowkey))) {
         LOG_WARN("Fail to open row scanner", K(ret), K(param), K(context), K(rowkey), K(*this));
       }
@@ -523,7 +523,7 @@ int ObSSTable::multi_scan(
     if (OB_SUCC(ret)) {
       if (OB_ISNULL(row_scanner)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected error, row_scanner is nullptr", K(ret), KP(row_scanner));
+
       } else if (OB_FAIL(row_scanner->init(param, context, this, &ranges))) {
         LOG_WARN("Fail to open row scanner", K(ret), K(param), K(context), K(ranges), K(*this));
       }
@@ -585,7 +585,7 @@ int ObSSTable::multi_get(
       if (OB_SUCC(ret)) {
         if (OB_ISNULL(row_getter)) {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(WARN, "unexpected error, row_getter is nullptr", K(ret), KP(row_getter));
+
         } else if (OB_FAIL(row_getter->init(param, context, this, &rowkeys))) {
           LOG_WARN("Fail to open row scanner", K(ret), K(param), K(context), K(rowkeys), K(*this));
         }
@@ -746,10 +746,10 @@ int ObSSTable::bf_may_contain_rowkey(const ObDatumRowkey &rowkey, bool &contain)
 
   if (OB_UNLIKELY(!is_valid())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "The ObSSTable has not been inited", K(ret));
+
   } else if (OB_UNLIKELY(!rowkey.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to check bloomfilter", K(ret));
+
   } else {
     // pass sstable without bf macro
     contain = true;
@@ -937,10 +937,10 @@ int ObSSTable::get_last_rowkey(
   const ObDatumRowkey *last_rowkey;
 
   if (OB_FAIL(get_last_rowkey(last_rowkey))) {
-    STORAGE_LOG(WARN, "Failed to get datum rowkey", K(ret));
+
   } else if (OB_ISNULL(last_rowkey)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected null datum rowkey", K(ret));
+
   } else if (OB_FAIL(last_rowkey->deep_copy(endkey, allocator))) {
     LOG_WARN("Fail to copuy last rowkey", K(ret));
   }
@@ -997,7 +997,7 @@ int ObSSTable::deep_copy(char *buf, const int64_t buf_len, ObIStorageMetaObj *&v
     }
     if (OB_SUCC(ret)) {
       value = static_cast<ObIStorageMetaObj *>(pvalue);
-      LOG_DEBUG("succeed to deep copy sstable", K(ret), K(deep_copy_size), K(buf_len), K(pos), KPC(pvalue), KPC(this));
+
     }
   }
   return ret;
@@ -1107,7 +1107,7 @@ int ObSSTable::serialize(char *buf, const int64_t buf_len, int64_t &pos) const
     } else if (status.with_meta() && OB_FAIL(meta_->serialize(buf, buf_len, pos))) {
       LOG_WARN("fail to serialize sstable meta", K(ret), K(buf_len), K(pos));
     } else if (!lib::is_log_reduction()) {
-      LOG_INFO("succeed to serialize sstable", K(status.pack_), KPC(this), K(lbt()));
+
     }
   }
   return ret;
@@ -1167,7 +1167,7 @@ int ObSSTable::deserialize(common::ObArenaAllocator &allocator,
   }
 
   if (OB_SUCC(ret)) {
-    LOG_DEBUG("succeed to deserialize sstable", K(status.pack_), KPC(this), K(data_len), K(pos), K(orig_pos));
+
   } else {
     pos = orig_pos;
     LOG_WARN("fail to deserialize sstable", K(ret), K(status.pack_), KPC(this), K(data_len), K(pos), K(orig_pos));
@@ -1358,7 +1358,7 @@ void ObSSTable::dec_macro_ref() const
         if (OB_FAIL(OB_STORAGE_OBJECT_MGR.dec_ref(macro_id))) {
           LOG_ERROR("fail to dec data block ref cnt", K(ret), K(macro_id));
         } else {
-          LOG_DEBUG("barry debug decrease data ref cnt", K(macro_id), KPC(this), K(lbt()));
+
         }
       }
     }
@@ -1375,7 +1375,7 @@ void ObSSTable::dec_macro_ref() const
           // overwrite ret
           LOG_ERROR("fail to dec other block ref cnt", K(ret), K(macro_id));
         } else {
-          LOG_DEBUG("barry debug decrease other ref cnt", K(macro_id), KPC(this), K(lbt()));
+
         }
       }
     }
@@ -1388,7 +1388,7 @@ void ObSSTable::dec_macro_ref() const
         if (OB_FAIL(OB_STORAGE_OBJECT_MGR.dec_ref(macro_id))) {
           LOG_ERROR("fail to dec other block ref cnt", K(ret), K(macro_id));
         } else {
-          LOG_DEBUG("barry debug decrease link ref cnt", K(macro_id), KPC(this), K(lbt()));
+
         }
       }
     }
@@ -1429,7 +1429,7 @@ int ObSSTable::inc_macro_ref(bool &inc_success) const
       } else {
         ++data_blk_cnt;
       }
-      LOG_DEBUG("barry debug increase data ref cnt", K(ret), K(macro_id), KPC(this), K(lbt()));
+
     }
     iter.reset();
   }
@@ -1451,7 +1451,7 @@ int ObSSTable::inc_macro_ref(bool &inc_success) const
       } else {
         ++other_blk_cnt;
       }
-      LOG_DEBUG("barry debug increase other ref cnt", K(ret), K(macro_id), KPC(this), K(lbt()));
+
     }
     iter.reset();
   }
@@ -1473,7 +1473,7 @@ int ObSSTable::inc_macro_ref(bool &inc_success) const
       } else {
         ++linked_blk_cnt;
       }
-      LOG_DEBUG("barry debug increase link ref cnt", K(ret), K(macro_id), KPC(this), K(lbt()));
+
     }
     iter.reset();
   }
@@ -1499,7 +1499,7 @@ int ObSSTable::inc_macro_ref(bool &inc_success) const
         } else if (OB_TMP_FAIL(OB_STORAGE_OBJECT_MGR.dec_ref(macro_id))) {
           LOG_ERROR("fail to dec data block ref cnt", K(ret), K(tmp_ret), K(macro_id));
         } else {
-          LOG_DEBUG("barry debug decrease data ref cnt", K(macro_id), KPC(this), K(lbt()));
+
         }
       }
       iter.reset();
@@ -1513,7 +1513,7 @@ int ObSSTable::inc_macro_ref(bool &inc_success) const
         } else if (OB_TMP_FAIL(OB_STORAGE_OBJECT_MGR.dec_ref(macro_id))) {
           LOG_ERROR("fail to dec other block ref cnt", K(ret), K(tmp_ret), K(macro_id));
         } else {
-          LOG_DEBUG("barry debug decrease other ref cnt", K(macro_id), KPC(this), K(lbt()));
+
         }
       }
       iter.reset();
@@ -1527,7 +1527,7 @@ int ObSSTable::inc_macro_ref(bool &inc_success) const
         } else if (OB_TMP_FAIL(OB_STORAGE_OBJECT_MGR.dec_ref(macro_id))) {
           LOG_ERROR("fail to dec linked block ref cnt", K(ret), K(tmp_ret), K(macro_id));
         } else {
-          LOG_DEBUG("barry debug decrease link ref cnt", K(macro_id), KPC(this), K(lbt()));
+
         }
       }
       iter.reset();
@@ -1613,7 +1613,7 @@ int ObSSTable::get_index_tree_root(
     index_data.type_ = ObMicroBlockData::DDL_MERGE_INDEX_BLOCK;
     index_data.buf_ = DDL_EMPTY_SSTABLE_DUMMY_INDEX_DATA_BUF;
     index_data.size_ = DDL_EMPTY_SSTABLE_DUMMY_INDEX_DATA_SIZE;
-    LOG_INFO("empty ddl merge sstable", K(index_data));
+
   } else if (OB_UNLIKELY(!meta_->get_root_info().get_addr().is_valid()
                       || !meta_->get_root_info().get_block_data().is_valid())) {
     ret = OB_STATE_NOT_MATCH;
@@ -1630,7 +1630,7 @@ int ObSSTable::get_index_tree_root(
   }
   if (OB_SUCC(ret) && is_ddl_merge_sstable()) {
     index_data.type_ = ObMicroBlockData::DDL_MERGE_INDEX_BLOCK;
-    LOG_INFO("ddl merge sstable get root", K(index_data));
+
   }
   return ret;
 }
@@ -1981,7 +1981,7 @@ int ObSSTable::inner_deep_copy_and_inc_macro_ref(
     }
   } else {
     sstable = table;
-    LOG_INFO("succeeded to copy sstable and increase macro reference count", K(ret), KPC(sstable));
+
   }
 
 return ret;

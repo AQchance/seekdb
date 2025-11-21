@@ -105,7 +105,7 @@ int ObSQLCCLRuleManager::mtl_init(ObSQLCCLRuleManager* &sql_ccl_rule_mgr)
     } else {
       // do nothing
     }
-    LOG_INFO("mtl init finish", K(tenant_id), K(ret));
+
   }
   if (OB_FAIL(ret) && sql_ccl_rule_mgr != nullptr) {
     // cleanup
@@ -342,7 +342,7 @@ int ObSQLCCLRuleManager::match_ccl_rule(
   bool &match) const
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("match ccl rule schema:", K(ccl_rule));
+
   // 0. username and dml
   match = ccl_rule.get_affect_user_name() == "%" || ccl_rule.get_affect_user_name() == username;
   if (match) {
@@ -429,9 +429,9 @@ int ObSQLCCLRuleManager::match_ccl_rule_with_sql(ObIAllocator &alloc,
                                                  uint64_t &limited_by_ccl_rule_id)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("current ccl instrest : ", K(user_name), K(sql), K(is_ps_mode), K(format_sqlid), K(contians_info), K(sql_dml_type));
-  LOG_TRACE("current sql relate database ids: ", K(sql_relate_databases));
-  LOG_TRACE("current sql relate table ids: ", K(sql_relate_tables));
+
+
+
 
   ObCCLRuleMgr::CCLRuleInfos *candidate_ccl_rules = NULL;
   if (OB_ISNULL(sql_ctx.schema_guard_)) {
@@ -453,8 +453,8 @@ int ObSQLCCLRuleManager::match_ccl_rule_with_sql(ObIAllocator &alloc,
         } else if (OB_FAIL(ob_write_string(alloc, reconstruct_sql.string(), sql_ctx.reconstruct_ps_sql_))) {
           LOG_WARN("fail to write construct ps sql in sql_ctx", K(ret));
         } else {
-          LOG_TRACE("orignal ps sql:", K(sql));
-          LOG_TRACE("after ccl reconstruct: ", K(reconstruct_sql));
+
+
         }
       } else {
         reconstruct_sql.assign(sql_ctx.reconstruct_ps_sql_);

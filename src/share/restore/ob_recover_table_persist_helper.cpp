@@ -157,7 +157,7 @@ int ObRecoverTablePersistHelper::force_cancel_recover_job(common::ObISQLClient &
   } else if (OB_FAIL(proxy.write(get_exec_tenant_id(), sql.ptr(), affected_rows))) {
     LOG_WARN("failed to exec sql", K(ret), K(sql));
   } else {
-    LOG_INFO("success cancel recover job", K(tenant_id_));
+
   }
   return ret;
 }
@@ -199,7 +199,7 @@ int ObRecoverTablePersistHelper::get_all_recover_table_job(
       }
     }
   }
-  LOG_INFO("get targets", K(ret), K(jobs), K(exec_tenant_id), K(sql));
+
   return ret;
 }
 
@@ -238,7 +238,7 @@ int ObRecoverTablePersistHelper::get_recover_table_job_by_initiator(common::ObIS
       }
     }
   }
-  LOG_INFO("get recover table job", K(ret), K(target_job), K(sql));
+
   return ret;
 }
 
@@ -311,6 +311,6 @@ int ObRecoverTablePersistHelper::get_recover_table_job_history_by_initiator(comm
       }
     }
   }
-  LOG_INFO("get recover table job history", K(ret), K(target_job), K(sql));
+
   return ret;
 }

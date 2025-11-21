@@ -57,7 +57,7 @@ int ObTabletObjLoadHelper::alloc_and_new(common::ObIAllocator &allocator, T *&pt
 
   if (OB_ISNULL(buffer)) {
     ret = common::OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to allocate memory", K(ret), "size", sizeof(T));
+
   } else {
     ptr = new (buffer) T();
   }

@@ -501,7 +501,7 @@ int ObTableApiInsertUpExecutor::get_next_row()
     LOG_WARN("fail to try insert row", K(ret));
   } else if (!is_duplicated()) {
     insert_rows_ = 1;
-    LOG_TRACE("try insert is not duplicated", K(ret), K(insert_rows_));
+
   } else if (OB_FAIL(cache_insert_row())) {
     LOG_WARN("fail to cache insert row", K(ret));
   } else if (OB_FAIL(fetch_conflict_rowkey(conflict_checker_))) {

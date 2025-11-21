@@ -1030,7 +1030,7 @@ TEST_F(ObDatumRowkeyVectorTest, rowkey_vector_deep_copy)
   ObRowkeyVector new_vector;
   int64_t pos = 0;
   ret = new_vector.deep_copy((char*)buf, pos, buf_size, rowkey_vector);
-  STORAGE_LOG(INFO, "deep copy", K(ret), K(new_vector));
+
   ASSERT_EQ(ret, OB_SUCCESS);
 
   const ObDatumRowkey *last_rowkey = new_vector.get_last_rowkey();

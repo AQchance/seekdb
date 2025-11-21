@@ -59,15 +59,15 @@ int ObBackupIndexBlockCompressor::init(const int64_t block_size, const ObCompres
 
   if (IS_INIT) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "backup index block compressor init twice", K(ret));
+
   } else if (OB_UNLIKELY(block_size <= 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument, ", K(ret), K(block_size), K(comp_type));
+
   } else if (comp_type == NONE_COMPRESSOR) {
     is_none_ = true;
     block_size_ = block_size;
   } else if (OB_FAIL(ObCompressorPool::get_instance().get_compressor(comp_type, compressor_))) {
-    STORAGE_LOG(WARN, "Fail to get compressor, ", K(ret), K(comp_type));
+
   } else {
     is_none_ = false;
     block_size_ = block_size;
@@ -86,15 +86,15 @@ int ObBackupIndexBlockCompressor::compress(
   int64_t max_overflow_size = 0;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "compressor is not init", K(ret));
+
   } else if (is_none_) {
     out = in;
     out_size = in_size;
   } else if (OB_ISNULL(compressor_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "compressor is unexpected null", K(ret), K_(compressor));
+
   } else if (OB_FAIL(compressor_->get_max_overflow_size(in_size, max_overflow_size))) {
-    STORAGE_LOG(WARN, "fail to get max_overflow_size, ", K(ret), K(in_size));
+
   } else {
     int64_t comp_size = 0;
     int64_t max_comp_size = max_overflow_size + in_size;
@@ -128,14 +128,14 @@ int ObBackupIndexBlockCompressor::decompress(
   decomp_buf_.reuse();
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "compressor is not init", K(ret));
+
   } else if (is_none_ || in_size == uncomp_size) {
     out = in;
     out_size = in_size;
   } else if (OB_FAIL(decomp_buf_.ensure_space(uncomp_size))) {
-    STORAGE_LOG(WARN, "failed to ensure decomp space", K(ret), K(uncomp_size));
+
   } else if (OB_FAIL(compressor_->decompress(in, in_size, decomp_buf_.data(), uncomp_size, decomp_size))) {
-    STORAGE_LOG(WARN, "failed to decompress data", K(ret), K(in_size), K(uncomp_size));
+
   } else {
     out = decomp_buf_.data();
     out_size = decomp_size;

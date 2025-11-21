@@ -1518,13 +1518,13 @@ int ObIDag::inner_create_task(bool need_add, ObITask *parent, T *&task, Args&&..
   int ret = common::OB_SUCCESS;
   task = nullptr;
   if (OB_FAIL(alloc_task(task))) {
-    STORAGE_LOG(WARN, "fail to alloc task", KR(ret));
+
   } else if (OB_FAIL(task->init(args...))) {
-    STORAGE_LOG(WARN, "failed to init task", KR(ret));
+
   } else if (nullptr != parent && OB_FAIL(parent->add_child(*task))) {
-    STORAGE_LOG(WARN, "failed to add child for parent", KR(ret), KPC(parent), KPC(task));
+
   } else if (need_add && OB_FAIL(add_task(*task))) {
-    STORAGE_LOG(WARN, "fail to add task", KR(ret), KPC(task));
+
   }
   if (OB_FAIL(ret) && nullptr != task) {
     task->reset_node();
@@ -1553,7 +1553,7 @@ int ObTenantDagScheduler::alloc_dag(T *&dag)
     const bool is_ha_dag = tmp_dag.is_ha_dag();
     ObIAllocator &allocator = get_allocator(is_ha_dag);
     if (OB_FAIL(alloc_dag(allocator, is_ha_dag, dag))) {
-      STORAGE_LOG(WARN, "fail to alloc dag", K(ret));
+
     }
   }
   return ret;

@@ -85,7 +85,7 @@ bool TestObLogDlist::is_dlist_correct(const int64_t start_value, DeriveDlistNode
 		if (expect_val != head->value_) {
 			bool_ret = false;
 		}
-		LOG_DEBUG("is_dlist_correct", K(expect_val));
+
 	} else {                                 // multi node
 		DeriveDlistNode *current_node = head;
 		DeriveDlistNode *next_node = current_node->get_next();
@@ -95,7 +95,7 @@ bool TestObLogDlist::is_dlist_correct(const int64_t start_value, DeriveDlistNode
 					|| (expect_val != next_node->get_prev()->value_)) {
 				bool_ret = false;
 			}
-			LOG_DEBUG("is_dlist_correct", K(expect_val));
+
 			current_node = next_node;
 			next_node = current_node->get_next();
 			expect_val--;
@@ -103,7 +103,7 @@ bool TestObLogDlist::is_dlist_correct(const int64_t start_value, DeriveDlistNode
 		// last node
 		if ((expect_val == current_node->value_)
 				 && OB_ISNULL(current_node->get_next())) {
-			LOG_DEBUG("is_dlist_correct", K(expect_val));
+
 		} else {
 			bool_ret = false;
 		}

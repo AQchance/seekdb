@@ -152,18 +152,18 @@ bool ObMviewCompactionValidation::need_do_validation()
   if (!need) {
     if (false == ATOMIC_VCAS(&first_validated_, false, true)) {
       need = true;
-      LOG_INFO("[MVIEW COMPACTION]: need do validation for first task");
+
     } else {
       bool choice = rand() % RANDOM_SELECT_BASE == 0;
       if (choice && false == ATOMIC_VCAS(&second_validated_, false, true)) {
         need = true;
-        LOG_INFO("[MVIEW COMPACTION]: need do validation for second random task");
+
       }
     }
   }
   if (!need && EN_VALIDATE_COLLECT_MV_REFRESH) {
     need = true;
-    LOG_INFO("[MVIEW COMPACTION]: need do validation for trace point");
+
   }
   return need;
 }
@@ -246,7 +246,7 @@ int ObMviewCompactionHelper::generate_mview_refresh_sql(
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("Unexpected number of refresh sql", K(ret), K(mv_ops->count()));
     } else {
-      LOG_INFO("[MVIEW COMPACTION] yuanzhe debug", K(part_idx), K(sub_part_idx), K(sql_range), K(merge_range));
+
     }
     int64_t i = 0;
     for (; OB_SUCC(ret) && i < mview_param.refresh_sql_count_; ++i) {
@@ -318,7 +318,7 @@ int ObMviewCompactionHelper::create_inner_session(
     session->get_ddl_info().set_refreshing_mview(true);
     session->set_database_id(database_id);
     session->set_query_start_time(ObTimeUtil::current_time());
-    LOG_INFO("[MVIEW COMPACTION]: Succ to create inner session", K(ret), K(tenant_id), K(database_id), KP(session));
+
   }
   if (OB_FAIL(ret)) {
     release_inner_session(free_session_ctx, session);
@@ -329,7 +329,7 @@ int ObMviewCompactionHelper::create_inner_session(
 void ObMviewCompactionHelper::release_inner_session(sql::ObFreeSessionCtx &free_session_ctx, sql::ObSQLSessionInfo *&session)
 {
   if (nullptr != session) {
-    LOG_INFO("[MVIEW COMPACTION]: Release inner session", KP(session));
+
     session->get_ddl_info().set_major_refreshing_mview(false);
     session->get_ddl_info().set_refreshing_mview(false);
     session->set_session_sleep();
@@ -347,7 +347,7 @@ int ObMviewCompactionHelper::create_inner_connection(sql::ObSQLSessionInfo *sess
   if (OB_FAIL(conn_pool->acquire(session, connection))) {
     LOG_WARN("Failed to acquire conn_", K(ret));
   } else {
-    LOG_INFO("[MVIEW COMPACTION]: Succ to create inner connection", K(ret), KP(session), KP(connection));
+
   }
   return ret;
 }
@@ -355,7 +355,7 @@ int ObMviewCompactionHelper::create_inner_connection(sql::ObSQLSessionInfo *sess
 void ObMviewCompactionHelper::release_inner_connection(common::sqlclient::ObISQLConnection *&connection)
 {
   if (nullptr != connection) {
-    LOG_INFO("[MVIEW COMPACTION]: Release inner connection", KP(connection));
+
     GCTX.sql_proxy_->get_pool()->release(connection, true);
     connection = nullptr;
   }
@@ -380,12 +380,12 @@ int ObMviewCompactionHelper::set_params_to_session(const bool is_oracle_mode, sq
     if (OB_FAIL(session->get_sys_variable(SYS_VAR_OB_QUERY_TIMEOUT, result_val))) {
       LOG_WARN("Failed to get sys var", K(ret));
     } else {
-      LOG_INFO("[MVIEW COMPACTION]: SYS_VAR_OB_QUERY_TIMEOUT=", K(result_val));
+
     }
     if (FAILEDx(session->get_sys_variable(SYS_VAR_OB_READ_CONSISTENCY, result_val))) {
       LOG_WARN("Failed to get sys var", K(ret));
     } else {
-      LOG_INFO("[MVIEW COMPACTION]: SYS_VAR_OB_READ_CONSISTENCY=", K(result_val));
+
     }
   }
   return ret;
@@ -427,7 +427,7 @@ int ObMviewCompactionHelper::validate_row_count(const ObMergeParameter &merge_pa
         } else if (merge_param.get_schema()->is_oracle_mode()) {
           const number::ObNumber nmb(new_row->get_cell(0).get_number());
           if (OB_FAIL(nmb.extract_valid_int64_with_trunc(join_row_count))) {
-            STORAGE_LOG(WARN, "Failed to cast number to int64", K(ret), K(new_row->get_cell(0)));
+
           }
         } else {
           join_row_count = new_row->get_cell(0).get_int();

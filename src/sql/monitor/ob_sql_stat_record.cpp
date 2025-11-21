@@ -309,7 +309,7 @@ int ObExecutingSqlStatRecord::move_to_sqlstat_cache(
   if (is_px_remote_exec) {
     key.set_source_addr(session_info.get_peer_addr());
   }
-  LOG_DEBUG("view sqlstat cache key and query_sql", K(ret), K(key), K(cur_sql));
+
 
   if (key.is_valid()) {
     if (OB_ISNULL(plan)) {
@@ -620,7 +620,7 @@ int ObSqlStatRecordUtil::get_cache_obj(ObSqlStatRecordKey &key, ObCacheObjGuard&
     LOG_WARN("failed to get plan cache", K(ret));
   } else if (OB_FAIL(lib_cache->get_cache_obj(cache_ctx, &key, guard))) {
     if (ret == OB_SQL_PC_NOT_EXIST) {
-      LOG_INFO("sql stat record not found",K(ret), K(key));
+
     } else {
       LOG_WARN("fail to get cache obj", K(ret), K(key));
     }

@@ -389,7 +389,7 @@ int OMPKOK::serialize(char *buffer, const int64_t length, int64_t &pos) const
       LOG_ERROR("serialize", K(ret),"result_len", pos - orig_pos, "calc_len", get_serialize_size());
     } else {
       ObString tmp_str(pos - orig_pos, buffer + orig_pos);
-      LOG_DEBUG("serialize", K(ret),"result_len", pos - orig_pos, "calc_len", get_serialize_size(), K(message_), K(tmp_str), KPC(this));
+
     }
   }
   return ret;

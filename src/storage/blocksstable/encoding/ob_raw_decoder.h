@@ -361,7 +361,7 @@ int ObRawDecoder::locate_cell_data(const char *&cell_data, int64_t &cell_len,
   int ret = common::OB_SUCCESS;
   if (NULL == data || len < 0) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(data), K(len));
+
   } else {
     if (col_header.is_fix_length()) {
       cell_data = data + header.offset_;
@@ -376,7 +376,7 @@ int ObRawDecoder::locate_cell_data(const char *&cell_data, int64_t &cell_len,
         var_data += sizeof(col_idx_byte);
         ObIntegerArrayGenerator gen;
         if (OB_FAIL(gen.init(var_data, col_idx_byte))) {
-          STORAGE_LOG(WARN, "init integer array generator failed", K(ret), K(header));
+
         } else {
           var_data += (micro_block_header.var_column_count_ - 1) * col_idx_byte;
           int64_t offset = 0;
@@ -405,7 +405,7 @@ int ObRawDecoder::batch_locate_cell_data(
   int ret = common::OB_SUCCESS;
   if (OB_ISNULL(datas) || OB_ISNULL(datums)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument", K(ret), KP(datas), KP(datums));
+
   } else {
     if (col_header.is_fix_length()) {
       for (int64_t i = 0; i < row_cap; ++i) {
@@ -434,7 +434,7 @@ int ObRawDecoder::batch_locate_cell_data(
             col_idx_byte = *var_data;
             var_data += sizeof(col_idx_byte);
             if (OB_FAIL(gen.init(var_data - col_idx_byte, col_idx_byte))) {
-              STORAGE_LOG(WARN, "init integer array generator failed", K(ret), K(header));
+
             } else {
               var_data += (micro_block_header_.var_column_count_ - 1) * col_idx_byte;
               // 0 if header.length_ == 0
@@ -455,7 +455,7 @@ int ObRawDecoder::batch_locate_cell_data(
             col_idx_byte = *var_data;
             var_data += sizeof(col_idx_byte);
             if (OB_FAIL(gen.init(var_data - col_idx_byte, col_idx_byte))) {
-              STORAGE_LOG(WARN, "init integer array generator failed", K(ret), K(header));
+
             } else {
               var_data += (micro_block_header_.var_column_count_ - 1) * col_idx_byte;
               // 0 if header.length_ == 0
@@ -481,7 +481,7 @@ OB_INLINE int ObRawDecoder::init(
   int ret = common::OB_SUCCESS;
   if (is_inited()) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init twice", K(ret));
+
   } else {
     const ObObjType store_type = column_header.get_store_obj_type();
     const common::ObObjTypeClass type_class = ob_obj_type_class(store_type);

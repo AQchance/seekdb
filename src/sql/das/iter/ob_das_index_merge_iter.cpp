@@ -348,7 +348,7 @@ int ObDASIndexMergeIter::prepare_scan_ranges(ObTableScanParam &scan_param, const
     LOG_WARN("failed to assign mbr filters", K(ret));
   }
 
-  LOG_TRACE("index merge iter prepare scan ranges", K(scan_param), KPC(rtdef), K(ret));
+
   return ret;
 }
 
@@ -589,7 +589,7 @@ int ObDASIndexMergeIter::inner_get_next_rows(int64_t &count, int64_t capacity)
       LOG_WARN("index merge iter failed to get next rows", K(ret));
     }
   }
-  LOG_TRACE("[DAS ITER] index merge iter get next rows", K(count), K(capacity), K(ret));
+
   const ObBitVector *skip = nullptr;
   PRINT_VECTORIZED_ROWS(SQL, DEBUG, *eval_ctx_, *output_, count, skip);
 

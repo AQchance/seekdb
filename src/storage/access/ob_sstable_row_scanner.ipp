@@ -292,7 +292,7 @@ inline int ObSSTableRowScanner<PrefetchType>::open_cur_data_block(ObSSTableReadH
         ++access_ctx_->table_store_stat_.pushdown_micro_access_cnt_;
         EVENT_INC(ObStatEventIds::BLOCKSCAN_BLOCK_CNT);
         EVENT_ADD(ObStatEventIds::BLOCKSCAN_ROW_CNT, micro_scanner_->get_access_cnt());
-        LOG_TRACE("[PUSHDOWN] pushdown for block scan", K(prefetcher_.cur_micro_data_fetch_idx_), K(micro_info), KPC(block_row_store_));
+
       }
       if (OB_SUCC(ret)) {
         access_ctx_->inc_micro_access_cnt();
@@ -374,9 +374,9 @@ inline int ObSSTableRowScanner<PrefetchType>::inner_get_next_row(const ObDatumRo
         EVENT_INC(ObStatEventIds::MAJOR_SSSTORE_READ_ROW_COUNT);
       }
     }
-    LOG_DEBUG("[INDEX BLOCK] inner get next row", KPC(store_row), KPC(this));
+
   }
-  LOG_DEBUG("chaser debug", K(ret), KPC(store_row), KPC(this));
+
   return ret;
 }
 
@@ -390,7 +390,7 @@ inline int ObSSTableRowScanner<PrefetchType>::fetch_row(ObSSTableReadHandle &rea
   } else if (-1 == read_handle.micro_begin_idx_) {
     // empty range
     ret = OB_ITER_END;
-    LOG_DEBUG("[INDEX BLOCK] scan empty read handle", K(prefetcher_), K(read_handle));
+
   } else {
     bool need_open_micro = false;
     if (-1 == prefetcher_.cur_micro_data_fetch_idx_ ||
@@ -504,7 +504,7 @@ inline int ObSSTableRowScanner<PrefetchType>::fetch_rows(ObSSTableReadHandle &re
   if (-1 == read_handle.micro_begin_idx_) {
     // empty range
     ret = OB_ITER_END;
-    LOG_DEBUG("[INDEX BLOCK] scan empty read handle", K(prefetcher_), K(read_handle));
+
   } else {
     bool need_open_micro = false;
     if (-1 == prefetcher_.cur_micro_data_fetch_idx_ ||
@@ -763,7 +763,7 @@ template<typename PrefetchType>
 inline int ObSSTableRowScanner<PrefetchType>::update_border_rowid_for_column_store()
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("update_border_rowid_for_column_store start");
+
   // Fetch the last data mirco block of current range, get the border rowid
   // and check whether we can continue to block scan.
   ObCOPrefetcher* co_prefetcher = reinterpret_cast<ObCOPrefetcher*>(&prefetcher_);

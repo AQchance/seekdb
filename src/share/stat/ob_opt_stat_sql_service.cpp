@@ -527,7 +527,7 @@ int ObOptStatSqlService::update_table_stat(const uint64_t tenant_id,
     } else {/*do nothing*/}
   }
   if (OB_SUCC(ret)) {
-    LOG_TRACE("sql string of table stat update", K(table_stat_sql));
+
     if (OB_FAIL(conn->execute_write(tenant_id, table_stat_sql.ptr(), affected_rows))) {
       LOG_WARN("failed to write", K(ret));
     }
@@ -628,7 +628,7 @@ int ObOptStatSqlService::construct_column_stat_sql(share::schema::ObSchemaGetter
       LOG_WARN("failed to append sql", K(ret));
     } else {/*do nothing*/}
   }
-  LOG_TRACE("OPT:Succeed to construct column stat sql", K(column_stats_sql));
+
   return ret;
 }
 
@@ -664,7 +664,7 @@ int ObOptStatSqlService::construct_delete_column_histogram_sql(const uint64_t te
                                                 where_str.string().ptr()))) {
       LOG_WARN("fail to append SQL where string.", K(ret));
     } else {
-      LOG_TRACE("Succeed to construct delete column histogram sql", K(delete_histogram_sql));
+
     }
   }
   return ret;
@@ -713,7 +713,7 @@ int ObOptStatSqlService::construct_histogram_insert_sql(share::schema::ObSchemaG
     if (OB_FAIL(insert_histogram_sql.append(";"))) {
       LOG_WARN("failed to append", K(ret));
     } else {
-      LOG_TRACE("Succeed to construct histogram insert sql", K(insert_histogram_sql));
+
     }
   }
   return ret;
@@ -877,7 +877,7 @@ int ObOptStatSqlService::delete_column_stat(const uint64_t exec_tenant_id,
   }
 
   if (OB_SUCC(ret)) {
-    LOG_DEBUG("sql string of stat update", K(write_cstat), K(delete_histogram));
+
     if (OB_FAIL(trans.start(mysql_proxy_, exec_tenant_id))) {
       LOG_WARN("fail to start transaction", K(ret));
     } else if (OB_FAIL(trans.write(exec_tenant_id, delete_histogram.ptr(), affected_rows))) {
@@ -1288,7 +1288,7 @@ int ObOptStatSqlService::fill_column_stat(ObIAllocator &allocator,
       if (OB_FAIL(key_index_map.get_refactored(dst_key_info, dst_idx))) {
         if (ret == OB_HASH_NOT_EXIST) {
           ret = OB_SUCCESS;
-          LOG_TRACE("the column stat doesn't process, have been get", K(dst_key_info));
+
         } else {
           LOG_WARN("failed to get refactored", K(ret), K(dst_key_info));
         }
@@ -1579,7 +1579,7 @@ int ObOptStatSqlService::get_valid_obj_str(const ObObj &src_obj,
         ret = OB_SUCCESS;
         dst_obj.set_string(dst_column_meta.get_type(), incorrect_string, static_cast<int32_t>(strlen(incorrect_string)));
         dst_obj.set_meta_type(dst_column_meta);
-        LOG_TRACE("invalid string for charset", K(ret), K(src_obj), K(dst_column_meta));
+
       } else {
         LOG_WARN("failed to type", K(ret));
       }
@@ -1587,7 +1587,7 @@ int ObOptStatSqlService::get_valid_obj_str(const ObObj &src_obj,
     if (OB_SUCC(ret) && OB_FAIL(get_obj_str(dst_obj, allocator, dest_str, print_params))) {
       LOG_WARN("fail to get obj str", K(ret));
     } else {
-      LOG_TRACE("succeed to get valid obj str", K(src_obj), K(dst_obj), K(dest_str));
+
     }
   } else if (OB_FAIL(get_obj_str(src_obj, allocator, dest_str, print_params))) {
     LOG_WARN("failed to get obj str", K(ret), K(src_obj));
@@ -1671,7 +1671,7 @@ int ObOptStatSqlService::generate_specified_keys_list_str_for_column(const uint6
                                             column_list_str.string().ptr()))) {
         LOG_WARN("failed to append fmt", K(ret));
       } else {
-        LOG_TRACE("succeed to generate specified keys list str", K(key_col_stats), K(keys_list_str));
+
       }
     }
   }
@@ -1922,7 +1922,7 @@ int ObOptStatSqlService::batch_update_online_col_state(const uint64_t tenant_id,
     } else if (OB_FAIL(trans.write(tenant_id, col_stat_sql.ptr(), affected_rows))) {
       LOG_WARN("failed to exec sql", K(ret));
     } else {
-      LOG_TRACE("Success to write column stats", K(ret));
+
     }
     if (OB_SUCC(ret)) {
       if (OB_FAIL(trans.end(true))) {
@@ -2010,7 +2010,7 @@ int ObOptStatSqlService::fetch_table_rowcnt(const uint64_t tenant_id,
             }
           }
         }
-        LOG_TRACE("succeed to fetch table rowcnt", K(tstats), K(raw_sql));
+
       }
     }
   }
@@ -2064,7 +2064,7 @@ int ObOptStatSqlService::update_opt_stat_task_stat(const ObOptStatTaskInfo &task
     LOG_WARN("failed to append fmt", K(ret), K(raw_sql));
   } else {
     ObMySQLTransaction trans;
-    LOG_TRACE("sql string of update opt stat task stat", K(raw_sql));
+
     if (OB_FAIL(trans.start(mysql_proxy_, tenant_id))) {
       LOG_WARN("fail to start transaction", K(ret), K(tenant_id));
     } else if (OB_FAIL(trans.write(tenant_id, raw_sql.ptr(), affected_rows))) {
@@ -2101,7 +2101,7 @@ int ObOptStatSqlService::update_opt_stat_gather_stat(const ObOptStatGatherStat &
     LOG_WARN("failed to append fmt", K(ret), K(raw_sql));
   } else {
     ObMySQLTransaction trans;
-    LOG_TRACE("sql string of update opt stat gather stat", K(raw_sql));
+
     if (OB_FAIL(trans.start(mysql_proxy_, tenant_id))) {
       LOG_WARN("fail to start transaction", K(ret), K(tenant_id));
     } else if (OB_FAIL(trans.write(tenant_id, raw_sql.ptr(), affected_rows))) {
@@ -2142,9 +2142,9 @@ int ObOptStatSqlService::update_table_stat_failed_count(
     LOG_WARN("failed to append fmt", K(ret), K(raw_sql));
   } else {
     ObMySQLTransaction trans;
-    LOG_TRACE("sql string of update failed count ", K(raw_sql));
+
     if (OB_FAIL(trans.start(mysql_proxy_, tenant_id))) {
-      LOG_INFO("fail to start transaction", K(ret), K(tenant_id));
+
     } else if (OB_FAIL(trans.write(tenant_id, raw_sql.ptr(), affected_rows))) {
       LOG_WARN("failed to exec insert failed count sql", K(ret));
     }
@@ -2252,7 +2252,7 @@ int ObOptStatSqlService::update_system_stats(const uint64_t tenant_id,
     LOG_WARN("failed to append system stat sql", K(ret));
   } else {
     ObMySQLTransaction trans;
-    LOG_TRACE("sql string of system stat update", K(system_stat_sql));
+
     if (OB_FAIL(trans.start(mysql_proxy_, tenant_id))) {
       LOG_WARN("fail to start transaction", K(ret), K(tenant_id));
     } else if (OB_FAIL(trans.write(tenant_id, system_stat_sql.ptr(), affected_rows))) {
@@ -2356,7 +2356,7 @@ int ObOptStatSqlService::delete_system_stats(const uint64_t tenant_id)
     LOG_WARN("failed to append sql", K(ret));
   } else {
     ObMySQLTransaction trans;
-    LOG_TRACE("sql string of system stat delete", K(system_stat_sql));
+
     if (OB_FAIL(trans.start(mysql_proxy_, tenant_id))) {
       LOG_WARN("fail to start transaction", K(ret), K(tenant_id));
     } else if (OB_FAIL(trans.write(tenant_id, system_stat_sql.ptr(), affected_rows))) {

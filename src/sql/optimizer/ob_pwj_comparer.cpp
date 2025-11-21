@@ -381,7 +381,7 @@ int ObStrictPwjComparer::add_table(PwjTable &table, bool &is_match_pwj)
   if (OB_ISNULL(table.phy_table_loc_info_)) {
     // sharding to check partition wise join maybe reset
     is_match_pwj = false;
-    LOG_TRACE("sharding to check partition wise is invalid", K(table));
+
   } else if (OB_FAIL(pwj_tables_.push_back(table))) {
     LOG_WARN("failed to push back pwj table", K(ret));
   } else if (pwj_tables_.count() <= 1) {
@@ -529,7 +529,7 @@ int ObStrictPwjComparer::check_logical_equal_and_calc_match_map(const PwjTable &
   subpart_tablet_id_map_.reuse();
   phy_part_map_.reuse();
 
-  LOG_TRACE("start to check logical equal for l_table and r_table", K(l_table), K(r_table));
+
 
   if (l_table.part_level_ != r_table.part_level_ ||
       l_table.is_partition_single_ != r_table.is_partition_single_ ||
@@ -740,7 +740,7 @@ int ObStrictPwjComparer::is_sub_partition_logically_equal(const PwjTable &l_tabl
       }
     }
   }
-  LOG_TRACE("succeed to check is sub partition logical equal", K(is_equal), K(l_table), K(r_table));
+
   return ret;
 }
 
@@ -1079,7 +1079,7 @@ int ObNonStrictPwjComparer::add_table(PwjTable &table, bool &is_match_nonstrict_
   is_match_nonstrict_pw = true;
   if (table.server_list_.empty()) {
     is_match_nonstrict_pw = false;
-    LOG_DEBUG("invalid non strict pwj input", K(table));
+
   } else if (OB_FAIL(pwj_tables_.push_back(table))) {
     LOG_WARN("failed to push back pwj table", K(ret));
   } else if (pwj_tables_.count() <= 1) {

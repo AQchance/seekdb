@@ -220,7 +220,7 @@ int ObUDFMgr::get_udf_schema_with_name(const uint64_t tenant_id,
     if (OB_FAIL(udf_map_.get_refactored(hash_wrap, tmp_schema))) {
       if (OB_HASH_NOT_EXIST == ret) {
         ret = OB_SUCCESS;
-        LOG_DEBUG("udf is not exist", K(tenant_id), K(name));
+
       }
     } else {
       udf_schema = tmp_schema;

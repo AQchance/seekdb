@@ -70,7 +70,7 @@ int ObSkipIndexFilterExecutor::read_aggregate_data(const uint32_t col_idx,
              OB_FAIL(pad_column(obj_meta, col_param, is_padding_mode, allocator, max_datum))){
     LOG_WARN("Failed to pad column on max datum", K(ret));
   }
-  LOG_DEBUG("[SKIP INDEX] read aggregate row", K(ret), K(null_count), K(min_datum), K(max_datum));
+
   return ret;
 }
 
@@ -569,7 +569,7 @@ int ObSkipIndexFilterExecutor::in_operator(const sql::ObWhiteFilterExecutor &fil
         fal_desc.set_uncertain(); // min_datum != max_datum and max_datum == datums[pos]
       }
     }
-    LOG_DEBUG("check filter in in skip index", K(ret), K(cmp_res), K(equal), K(pos), K(fal_desc));
+
   }
   return ret;
 }

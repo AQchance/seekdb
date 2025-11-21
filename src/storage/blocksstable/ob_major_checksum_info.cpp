@@ -125,7 +125,7 @@ int ObMajorChecksumInfo::init_from_merge_result(
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("after init from merge result, major checksum info is not valid", KR(ret), KPC(this));
     } else {
-      LOG_INFO("success to init ckm info from merge result", KR(ret), KPC(this));
+
     }
   }
   return ret;
@@ -162,7 +162,7 @@ int ObMajorChecksumInfo::init_from_sstable(
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("after init from sstable, major checksum info is not valid", KR(ret), KPC(this));
     } else {
-      LOG_INFO("success to init ckm info from sstable", KR(ret), KPC(this));
+
     }
   }
   return ret;

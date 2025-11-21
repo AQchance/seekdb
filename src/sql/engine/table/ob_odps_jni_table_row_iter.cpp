@@ -90,7 +90,7 @@ int ObODPSJNITableRowIterator::init_jni_schema_scanner(const ObODPSGeneralFormat
 
   if (OB_SUCC(ret)) {
     odps_jni_schema_scanner_ = create_odps_jni_scanner(true);
-    LOG_TRACE("timer init schema scanner and open connection");
+
     if (OB_FAIL(odps_jni_schema_scanner_->do_init(odps_params_map_))) {
       LOG_WARN("failed to init odps jni scanner", K(ret));
     } else if (OB_FAIL(odps_jni_schema_scanner_->do_open())) {
@@ -98,7 +98,7 @@ int ObODPSJNITableRowIterator::init_jni_schema_scanner(const ObODPSGeneralFormat
       LOG_WARN("failed to open odps jni schema scanner", K(ret));
     } else { /* do nothing */
     }
-    LOG_TRACE("timer init schema scanner and end open connection");
+
   }
   // Successful branch revert_scan_iter fallback
   // Failure branch failure or temporary variable handling destructor fallback
@@ -154,14 +154,14 @@ int ObODPSJNITableRowIterator::init_jni_meta_scanner(const ObODPSGeneralFormat &
           }
         }
         if (predicate_buf_ != nullptr) {
-          LOG_INFO("show storage api pushdown filter", "filter", ObString(predicate_buf_len_, predicate_buf_));
+
         }
       }
     }
   }
 
   if (OB_SUCC(ret)) {
-    LOG_TRACE("timer init meta scanner and open connection");
+
     odps_jni_schema_scanner_ = create_odps_jni_scanner(true);
     if (OB_FAIL(odps_jni_schema_scanner_->do_init(odps_params_map_))) {
       LOG_WARN("failed to init odps jni scanner", K(ret));
@@ -170,7 +170,7 @@ int ObODPSJNITableRowIterator::init_jni_meta_scanner(const ObODPSGeneralFormat &
       LOG_WARN("failed to open odps jni schema scanner", K(ret));
     } else { /* do nothing */
     }
-    LOG_TRACE("timer init schema scanner and end connection");
+
   }
   // Successful branch revert_scan_iter fallback
   // Failure branch failure or temporary variable handling destructor fallback
@@ -456,7 +456,7 @@ int ObODPSJNITableRowIterator::prepare_partition_expr(const ExprFixedArray &ext_
     }
   }
   lib::ob_sort(sorted_column_ids_.begin(), sorted_column_ids_.end(), ExternalPair::Compare());
-  LOG_DEBUG("sorted column ids", K(sorted_column_ids_));
+
   return ret;
 }
 
@@ -961,7 +961,7 @@ int ObODPSJNITableRowIterator::next_task_storage_row_without_data_getter(const i
   ++task_idx;
   if (task_idx >= scan_param_->key_ranges_.count()) {
     ret = OB_ITER_END;
-    LOG_INFO("odps table iter end", K(ret), K(state_), K(task_idx), K_(read_rounds));
+
   } else {
     // do nothing
     int64_t start = scan_param_->key_ranges_.at(task_idx)
@@ -976,7 +976,7 @@ int ObODPSJNITableRowIterator::next_task_storage_row_without_data_getter(const i
                                     .get_string();
     if (part_spec.compare("#######DUMMY_FILE#######") == 0) {
       ret = OB_ITER_END;
-      LOG_INFO("iterator of odps jni scanner is end with dummy file", K(ret));
+
     } else {
       state_.count_ = 0;
       state_.start_ = start;
@@ -1200,7 +1200,7 @@ int ObODPSJNITableRowIterator::next_task_storage(const int64_t capacity)
         K(task_idx));
     if (part_spec.compare("#######DUMMY_FILE#######") == 0) {
       ret = OB_ITER_END;
-      LOG_TRACE("iterator of odps jni scanner is end with dummy file", K(ret));
+
       int tmp_ret = OB_SUCCESS;
       if (OB_NOT_NULL(state_.odps_jni_scanner_)) {
         int tmp_ret = state_.odps_jni_scanner_->do_close();
@@ -1230,7 +1230,7 @@ int ObODPSJNITableRowIterator::build_storage_task_state(int64_t task_idx, int64_
     LOG_WARN("failed to close previous scanner", K(ret));
   } else {
     state_.odps_jni_scanner_ = create_odps_jni_scanner();
-    LOG_TRACE("timer build storage reader init and open connection");
+
     if (OB_ISNULL(state_.odps_jni_scanner_.get())) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("unexcepted null ptr", K(ret), K(state_.is_from_gi_pump_));
@@ -1257,7 +1257,7 @@ int ObODPSJNITableRowIterator::build_storage_task_state(int64_t task_idx, int64_
           K(session_id));
     } else { /* do nothing */
     }
-    LOG_TRACE("timer build storage reader end open connection");
+
   }
   return ret;
 }
@@ -1413,7 +1413,7 @@ int ObODPSJNITableRowIterator::get_next_rows_tunnel(int64_t &count, int64_t capa
         }
       } else {
         state_.count_ += should_read_rows;
-        LOG_DEBUG("current read rows", K(ret), K(eof), K(state_));
+
       }
       if (OB_FAIL(ret)) {
       } else if (eof) {
@@ -1427,7 +1427,7 @@ int ObODPSJNITableRowIterator::get_next_rows_tunnel(int64_t &count, int64_t capa
             LOG_WARN("failed to release table", K(ret), K(should_read_rows));
           }
         }
-        LOG_DEBUG("current read rows", K(ret), K(eof), K(state_), K(should_read_rows));
+
       } else {
         // fill ob expr with odps data
         // if transfer mode is off heap table, then we need to fill column exprs
@@ -1514,7 +1514,7 @@ int ObODPSJNITableRowIterator::next_task_tunnel_without_data_getter(const int64_
   ++task_idx;
   if (task_idx >= scan_param_->key_ranges_.count()) {
     ret = OB_ITER_END;
-    LOG_INFO("odps table iter end", K(ret), K(state_), K(task_idx), K_(read_rounds));
+
   } else {
     int64_t part_id = scan_param_->key_ranges_.at(task_idx)
                           .get_start_key()
@@ -1533,7 +1533,7 @@ int ObODPSJNITableRowIterator::next_task_tunnel_without_data_getter(const int64_
         scan_param_->key_ranges_.at(task_idx).get_end_key().get_obj_ptr()[ObExternalTableUtils::LINE_NUMBER].get_int();
     if (part_spec.compare("#######DUMMY_FILE#######") == 0) {
       ret = OB_ITER_END;
-      LOG_INFO(" iterator of odps jni scanner is end with dummy file", K(ret));
+
     } else {
       int64_t real_time_partition_row_count = 0;
       if (OB_ISNULL(odps_jni_schema_scanner_)) {
@@ -1584,7 +1584,7 @@ int ObODPSJNITableRowIterator::next_task_tunnel_without_data_getter(const int64_
             }
           }
         }
-        LOG_TRACE("get a new task of odps jni iterator", K(ret), K(state_));
+
       }
     }
   }
@@ -1635,7 +1635,7 @@ int ObODPSJNITableRowIterator::next_task_tunnel(const int64_t capacity)
           ret = tmp_ret;  // OB_ITER_END is overwritten, an error occurs here, stop
         }
       }
-      LOG_TRACE("iterator of odps jni scanner is end with dummy file", K(ret));
+
     } else if (OB_FAIL(build_tunnel_partition_task_state(task_idx, part_id, part_spec, start, step, capacity))) {
       LOG_WARN("failed to build tunnel task");
     }
@@ -1706,13 +1706,13 @@ int ObODPSJNITableRowIterator::build_tunnel_partition_task_state(
       if (OB_ISNULL(sqc) || !sqc->get_sqc_ctx().gi_pump_.is_odps_scanner_mgr_inited()) {
         state_.odps_jni_scanner_ = create_odps_jni_scanner();
         state_.is_from_gi_pump_ = false;
-        LOG_TRACE("succ to create jni scanner without GI", K(ret), K(part_id), KP(sqc), K(state_.is_from_gi_pump_));
+
       } else {
         state_.odps_jni_scanner_ = create_odps_jni_scanner();
         // NOTE: mock as px mode
         state_.is_from_gi_pump_ = true;
       }
-      LOG_TRACE("timer build tunnel reader and open connection");
+
       if (OB_ISNULL(state_.odps_jni_scanner_.get())) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("unexcepted null ptr", K(ret), K(state_.is_from_gi_pump_));
@@ -1733,7 +1733,7 @@ int ObODPSJNITableRowIterator::build_tunnel_partition_task_state(
       } else { /* do nothing */
         state_.odps_jni_scanner_->total_read_rows_ = step;
       }
-      LOG_TRACE("timer build tunnel reader and open connection");
+
     }  // two branch 1 select count(*) 2 select col
   }
   return ret;
@@ -1753,7 +1753,7 @@ int ObODPSJNITableRowIterator::init_data_tunnel_reader_params(int64_t start, int
     ObString start_offset_str = ObString::make_string(fsf.str());
     ObString split_size_str = ObString::make_string(fss.str());
 
-    LOG_INFO("display variables of odps jni iterator", K(ret), K(start_offset_str), K(split_size_str));
+
 
     ObString temp_partition_spec = ObString::make_string("partition_spec");
     ObString temp_start_offset = ObString::make_string("start_offset");
@@ -2133,7 +2133,7 @@ int ObODPSJNITableRowIterator::get_serilize_session(ObIAllocator &alloc, ObStrin
 
 void ObODPSJNITableRowIterator::reset()
 {
-  LOG_INFO("show read rows", K(read_rows_));
+
   state_.reuse();  // reset state_ to initial values for rescan
   // Sometimes state_.odps_jni_scanner_ maybe not inited correctly
   task_alloc_.clear();
@@ -3632,7 +3632,7 @@ int ObODPSJNITableRowIterator::init_access_exprs(const ObDASScanCtDef &das_ctdef
       if (T_PSEUDO_EXTERNAL_FILE_COL != ori_expr->type_ &&
           T_PSEUDO_PARTITION_LIST_COL != ori_expr->type_) {
         is_valid = false;
-        LOG_TRACE("pushdown is disabled because dependent expr has non pseudo expr", K(ori_expr->type_));
+
       }
     }
   }
@@ -4119,7 +4119,7 @@ int ObOdpsPartitionJNIScannerMgr::fetch_storage_api_total_task(ObExecContext &ex
   } else if (OB_FAIL(odps_driver.get_serilize_session(range_allocator, session_str))) {
     LOG_WARN("failed to get session id ", K(ret));
   } else {
-    LOG_INFO("show storage api total task", K(parallel), K(split_count));
+
   }
 
   return ret;
@@ -4156,7 +4156,7 @@ int ObOdpsPartitionJNIScannerMgr::fetch_storage_api_split_by_row(ObExecContext &
   } else if (OB_FAIL(odps_driver.get_serilize_session(range_allocator, session_str))) {
     LOG_WARN("failed to get session id ", K(ret));
   } else {
-    LOG_INFO("show storage api total task", K(parallel), K(row_count));
+
   }
   return ret;
 }
@@ -4293,7 +4293,7 @@ int ObOdpsJniUploaderMgr::init_writer_params_in_px(
       inited_ = true;
       init_parallel_ = parallel;
       ATOMIC_STORE(&ref_, parallel);
-      LOG_TRACE("succ to init odps uploader", K(ret), K(ref_));
+
     }
   }
   //  After success, it will be destructed by ObSelectIntoOp::destroy when the upper layer exits

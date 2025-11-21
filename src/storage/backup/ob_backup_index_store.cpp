@@ -184,7 +184,7 @@ int ObIBackupIndexStore::decode_index_from_block_(const int64_t data_zlength, co
       } else if (OB_FAIL(index_list.push_back(index))) {
         LOG_WARN("failed to push back", K(ret), K(index));
       } else {
-        LOG_DEBUG("decode index", K(index), K(index_list));
+
       }
     }
   }
@@ -214,7 +214,7 @@ int ObIBackupIndexStore::fetch_block_(const ObBackupFileType &backup_file_type, 
       } else {
         const int64_t hit_cnt = index_kv_cache_->get_hit_cnt();
         const int64_t miss_cnt = index_kv_cache_->get_miss_cnt();
-        LOG_DEBUG("do on cache miss", K(offset), K(length), K(hit_cnt), K(miss_cnt));
+
       }
     } else {
       LOG_WARN("failed to get value from kv cache", K(ret), K(key));
@@ -502,7 +502,7 @@ int ObBackupMetaIndexStore::get_tablet_meta_index_(const ObBackupMetaKey &meta_k
             LOG_WARN("failed to find lower bound", K(ret), K(index_header), K(meta_key), K(index_list));
           } else {
             output = index;
-            LOG_DEBUG("find tablet meta index", K(meta_key), K(index));
+
             break;
           }
         } else {
@@ -513,7 +513,7 @@ int ObBackupMetaIndexStore::get_tablet_meta_index_(const ObBackupMetaKey &meta_k
           } else {
             offset = index_index.offset_;
             length = index_index.length_;
-            LOG_DEBUG("find tablet meta index index", K(meta_key), K(index_index), K(index_index_list));
+
           }
         }
       }
@@ -540,7 +540,7 @@ int ObBackupMetaIndexStore::find_index_lower_bound_(
         LOG_WARN("meta key do not exist", K(meta_key), K(index_list));
       } else {
         index = *iter;
-        LOG_DEBUG("found key succeed", K(meta_key), K(index_list), K(index));
+
       }
     } else {
       ret = OB_ENTRY_NOT_EXIST;
@@ -963,7 +963,7 @@ int ObBackupMacroBlockIndexStore::get_macro_block_index_(const blocksstable::ObL
       }
     }
     if (OB_SUCC(ret) && found) {
-      LOG_INFO("found macro block index success", K(macro_id), K(range_index), K(macro_id));
+
     } else {
       ret = OB_ENTRY_NOT_EXIST;
       LOG_WARN("no macro block index exist", K(ret), K(macro_id), K(range_index), K(index_list));
@@ -1018,7 +1018,7 @@ int ObBackupMacroBlockIndexStore::fill_backup_set_descs_(
       }
     }
   }
-  LOG_INFO("fill backup set descs", K(backup_set_file_desc), K(backup_set_id), K_(backup_set_desc_list));
+
   return ret;
 }
 
@@ -1129,7 +1129,7 @@ int ObBackupMetaIndexStoreWrapper::get_backup_meta_index(const share::ObBackupDa
   } else if (OB_FAIL(index_store->get_backup_meta_index(tablet_id, meta_type, meta_index))) {
     LOG_WARN("failed to get macro block index", K(ret), K(backup_data_type), K(tablet_id), K(meta_type));
   } else {
-    LOG_INFO("get meta index", K(tablet_id), K(meta_index));
+
   }
   return ret;
 }
@@ -1441,7 +1441,7 @@ int ObBackupTenantIndexRetryIDGetter::find_largest_id_(const common::ObIArray<in
       LOG_WARN("no entry exist", K(ret), K(id_list));
     } else {
       largest_id = tmp_largest_id;
-      LOG_INFO("get largest id", K_(backup_dest), K_(backup_data_type), K_(turn_id), K(largest_id));
+
     }
   }
   return ret;
@@ -1626,7 +1626,7 @@ int ObBackupOrderedMacroBlockIndexStore::find_index_lower_bound_(const blockssta
       LOG_WARN("logic id do not exist", K(logic_id), K(index_list));
     } else {
       macro_index = *iter;
-      LOG_INFO("success to find key", K(logic_id), K(index_list), K(macro_index));
+
     }
   } else {
     ret = OB_ENTRY_NOT_EXIST;

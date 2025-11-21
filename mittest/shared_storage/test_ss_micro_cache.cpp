@@ -244,7 +244,7 @@ int TestSSMicroCache::TestSSMicroCacheThread::parallel_add_micro_block(int64_t i
 TEST_F(TestSSMicroCache, test_get_micro_block)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_get_micro_block");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSReleaseCacheTask &arc_task = micro_cache->task_runner_.release_cache_task_;
   arc_task.is_inited_ = false;
@@ -343,7 +343,7 @@ TEST_F(TestSSMicroCache, test_get_micro_block)
 TEST_F(TestSSMicroCache, test_parallel_get_micro_block)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_parallel_get_micro_block");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSReleaseCacheTask &arc_task = micro_cache->task_runner_.release_cache_task_;
   arc_task.is_inited_ = false;
@@ -364,7 +364,7 @@ TEST_F(TestSSMicroCache, test_parallel_get_micro_block)
 TEST_F(TestSSMicroCache, test_get_micro_block_cache)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_get_micro_block_cache");
+
   ObSSPhysicalBlockManager &phy_blk_mgr = MTL(ObSSMicroCache *)->phy_blk_mgr_;
   const int64_t total_data_blk_cnt = 5;
   const int32_t block_size = phy_blk_mgr.block_size_;
@@ -515,7 +515,7 @@ TEST_F(TestSSMicroCache, test_get_micro_block_cache)
 TEST_F(TestSSMicroCache, test_add_micro_block_cache)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_add_micro_block_cache");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSMicroMetaManager &micro_meta_mgr = micro_cache->micro_meta_mgr_;
   ObSSPhysicalBlockManager &phy_blk_mgr = micro_cache->phy_blk_mgr_;
@@ -563,7 +563,7 @@ TEST_F(TestSSMicroCache, test_add_micro_block_cache)
 TEST_F(TestSSMicroCache, test_parallel_add_micro_block_randomly)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_parallel_add_micro_block_randomly");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSMicroMetaManager &micro_meta_mgr = micro_cache->micro_meta_mgr_;
   ObSSPhysicalBlockManager &phy_blk_mgr = micro_cache->phy_blk_mgr_;
@@ -603,7 +603,7 @@ TEST_F(TestSSMicroCache, test_parallel_add_micro_block_randomly)
 TEST_F(TestSSMicroCache, test_add_micro_block_cache_for_prewarm)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_add_micro_block_cache_for_prewarm");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSMicroMetaManager &micro_meta_mgr = micro_cache->micro_meta_mgr_;
 
@@ -641,7 +641,7 @@ TEST_F(TestSSMicroCache, test_add_micro_block_cache_for_prewarm)
 TEST_F(TestSSMicroCache, test_get_not_exist_micro_blocks)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_get_not_exist_micro_blocks");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSMicroMetaManager &micro_meta_mgr = micro_cache->micro_meta_mgr_;
   ObSSReleaseCacheTask &arc_task = micro_cache->task_runner_.release_cache_task_;
@@ -719,7 +719,7 @@ TEST_F(TestSSMicroCache, test_get_not_exist_micro_blocks)
 TEST_F(TestSSMicroCache, test_update_micro_block_heat)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_update_micro_block_heat");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSMicroMetaManager &micro_meta_mgr = micro_cache->micro_meta_mgr_;
   const int64_t micro_size = 128;
@@ -775,7 +775,7 @@ TEST_F(TestSSMicroCache, test_get_available_space_for_prewarm)
 TEST_F(TestSSMicroCache, test_free_space_for_prewarm)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_free_space_for_prewarm");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSARCInfo &arc_info = micro_cache->micro_meta_mgr_.arc_info_;
 
@@ -799,7 +799,7 @@ TEST_F(TestSSMicroCache, test_free_space_for_prewarm)
 TEST_F(TestSSMicroCache, test_get_batch_la_micro_keys)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_get_batch_la_micro_keys");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   // mock ls and tablet is inited
   const uint64_t tablet_id = 88888888;
@@ -843,7 +843,7 @@ TEST_F(TestSSMicroCache, test_get_batch_la_micro_keys)
 TEST_F(TestSSMicroCache, test_divide_phy_block_range)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_divide_phy_block_range");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSPhysicalBlockManager &phy_blk_mgr = micro_cache->phy_blk_mgr_;
   ObLSID ls_id(100);
@@ -911,7 +911,7 @@ TEST_F(TestSSMicroCache, test_divide_phy_block_range)
 TEST_F(TestSSMicroCache, test_private_macro_cache_miss_cnt)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_private_macro_cache_miss_cnt");
+
   uint64_t tablet_id = 200001;
   uint64_t server_id = 1;
 
@@ -980,7 +980,7 @@ TEST_F(TestSSMicroCache, test_private_macro_cache_miss_cnt)
 TEST_F(TestSSMicroCache, test_disable_micro_cache)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_disable_micro_cache");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ASSERT_NE(nullptr, micro_cache);
   ObSSMicroMetaManager &micro_meta_mgr = micro_cache->micro_meta_mgr_;
@@ -1146,7 +1146,7 @@ TEST_F(TestSSMicroCache, test_disable_micro_cache)
 TEST_F(TestSSMicroCache, test_clear_micro_cache)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_clear_micro_cache");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSMicroCacheStat &cache_stat = micro_cache->cache_stat_;
   ObSSMicroMetaManager &micro_meta_mgr = micro_cache->micro_meta_mgr_;

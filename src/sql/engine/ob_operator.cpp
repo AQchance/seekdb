@@ -300,7 +300,7 @@ int ObOpSpec::create_op_input(ObExecContext &exec_ctx) const
   } else if (OB_FAIL(create_op_input_recursive(exec_ctx))) {
     LOG_WARN("create operator recursive failed", K(ret));
   }
-  LOG_TRACE("trace create input", K(ret), K(lbt()));
+
   return ret;
 }
 
@@ -316,7 +316,7 @@ int ObOpSpec::create_op_input_recursive(ObExecContext &exec_ctx) const
              K(ret), KP(kit), K(id_), KP(children_), K(create_child_cnt), K(type_));
   } else {
     kit->spec_ = this;
-    LOG_TRACE("trace create input", K(ret), K(id_), K(type_), K(lbt()));
+
   }
 
   // create operator input
@@ -331,7 +331,7 @@ int ObOpSpec::create_op_input_recursive(ObExecContext &exec_ctx) const
         LOG_WARN("NULL input returned", K(ret));
       } else {
         kit->input_->set_deserialize_allocator(&exec_ctx.get_allocator());
-        LOG_TRACE("trace create input", K(ret), K(id_), K(type_));
+
       }
     }
   }
@@ -368,7 +368,7 @@ int ObOpSpec::create_operator(ObExecContext &exec_ctx, ObOperator *&op) const
   } else if (OB_FAIL(create_exec_feedback_node_recursive(exec_ctx))) {
     LOG_WARN("fail to create exec feedback node", K(ret));
   }
-  LOG_DEBUG("trace create operator", K(ret), K(lbt()));
+
   return ret;
 }
 
@@ -387,7 +387,7 @@ int ObOpSpec::create_operator_recursive(ObExecContext &exec_ctx, ObOperator *&op
               K(ret), K(id_), KP(kit), KP(children_), K(create_child_cnt), K(type_));
     } else {
       kit->spec_ = this;
-      LOG_DEBUG("trace create spec", K(ret), K(id_), K(type_));
+
       for (int64_t i = 0; OB_SUCC(ret) && i < child_cnt_; i++) {
         if (NULL == children_[i]) {
           // Here if there is a child but it is nullptr, it means it is a receive operator
@@ -416,7 +416,7 @@ int ObOpSpec::create_operator_recursive(ObExecContext &exec_ctx, ObOperator *&op
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("NULL input returned", K(ret));
         } else {
-          LOG_DEBUG("trace create input", K(ret), K(id_), K(type_));
+
         }
       }
     }
@@ -483,7 +483,7 @@ int ObOpSpec::create_exec_feedback_node_recursive(ObExecContext &exec_ctx) const
     LOG_WARN("phy plan or ctx is null", K(ret), K(plan_), K(physical_ctx));
   } else if (!physical_ctx->get_check_pdml_affected_rows() && !plan_->need_record_plan_info()) {
   } else if (OB_ISNULL(kit)) {
-    LOG_TRACE("operator kit is NULL", K(ret));
+
   } else {
     ObExecFeedbackInfo &fb_info = exec_ctx.get_feedback_info();
     ObExecFeedbackNode node(id_);
@@ -922,7 +922,7 @@ int ObOperator::open()
       }
     }
 
-    LOG_DEBUG("open op", K(ret), "op_type", op_name(), "op_id", spec_.id_, K(open_order));
+
   }
   return ret;
 }
@@ -1252,7 +1252,7 @@ int ObOperator::submit_op_monitor_node()
                       - ctx_.get_plan_start_time()
                       > MONITOR_RUNNING_TIME_THRESHOLD)))) {
         IGNORE_RETURN list->submit_node(op_monitor_info_);
-        LOG_DEBUG("debug monitor", K(spec_.id_));
+
       }
     }
   }
@@ -1480,7 +1480,7 @@ int ObOperator::get_next_batch(const int64_t max_row_cnt, const ObBatchRows *&ba
           if (OB_FAIL(inner_get_next_batch(op_max_row_cnt))) {
             LOG_WARN("get next batch failed", K(ret),  K_(eval_ctx), "id", spec_.get_id(), "op_name", op_name());
           } else {
-            LOG_DEBUG("inner get next batch", "id", spec_.get_id(), "op_name", op_name(), K(brs_));
+
           }
           if (OB_SUCC(ret)) {
             // FIXME bin.lb: accumulate bit count is CPU consuming, disable in perf mode?
@@ -1600,7 +1600,7 @@ int ObOperator::get_next_batch(const int64_t max_row_cnt, const ObBatchRows *&ba
       if (OB_UNLIKELY(spec_.need_check_output_datum_) && brs_checker_ && !brs_.end_ && brs_.size_ > 0) {
         OZ(brs_checker_->save(brs_.size_));
       }
-      LOG_DEBUG("get next batch", "id", spec_.get_id(), "op_name", op_name(), K(brs_));
+
     }
   }
 
@@ -1625,7 +1625,7 @@ int ObOperator::convert_vector_format()
     // old operator -> new operator
     FOREACH_CNT_X(e, spec_.output_, OB_SUCC(ret)) {
       VectorFormat format = (*e)->is_batch_result() ? VEC_UNIFORM : VEC_UNIFORM_CONST;
-      LOG_TRACE("init vector", K(format), K(*e));
+
       VectorFormat expr_fmt = (*e)->get_format(eval_ctx_);
       if (expr_fmt == VEC_UNIFORM || expr_fmt == VEC_UNIFORM_CONST) {
         continue;
@@ -1640,7 +1640,7 @@ int ObOperator::convert_vector_format()
                    NULL != spec_.get_parent() && !spec_.get_parent()->use_rich_format_)) {
     // new operator -> old operator
     FOREACH_CNT_X(e, spec_.output_, OB_SUCC(ret)) {
-      LOG_TRACE("cast to uniform", K(*e));
+
       if (OB_FAIL((*e)->cast_to_uniform(brs_.size_, eval_ctx_, brs_.skip_))) {
         LOG_WARN("expr evaluate failed", K(ret), KPC(*e), K_(eval_ctx));
       }
@@ -1735,7 +1735,7 @@ int ObOperator::filter_vector_rows(const ObExprPtrIArray &exprs,
       } else {
         output_rows++;
       }
-      LOG_DEBUG("const vector filter", K(bsize));
+
     } else if (OB_LIKELY(VEC_FIXED == vec->get_format())) {
       ObFixedLengthBase *fixed_vec = static_cast<ObFixedLengthBase *>(vec);
       ObBitVector *nulls = fixed_vec->get_nulls();
@@ -1751,7 +1751,7 @@ int ObOperator::filter_vector_rows(const ObExprPtrIArray &exprs,
           return OB_SUCCESS;
         }
       );
-      LOG_DEBUG("fixed vector filter", K(bsize));
+
     } else if (VEC_UNIFORM == vec->get_format()) {
       ObUniformBase *uniform_vec = static_cast<ObUniformBase *>(vec);
       const ObDatum *datums = uniform_vec->get_datums();
@@ -1766,7 +1766,7 @@ int ObOperator::filter_vector_rows(const ObExprPtrIArray &exprs,
         }
       }
       // FIXME bin.lb: add output_rows to ObBatchRows?
-      LOG_DEBUG("uniform vector filter", K(bsize));
+
     }
     all_filtered = (0 == output_rows);
     all_active &= tmp_all_active;
@@ -2027,7 +2027,7 @@ int ObBatchRowIter::get_next_row(ObEvalCtx &eval_ctx, const ObOpSpec &spec)
 {
   const int64_t max_row_cnt = INT64_MAX;
   int ret = OB_SUCCESS;
-  LOG_DEBUG("debug batch to row transform ", K(idx_));
+
   if (NULL == brs_) {
     if (OB_FAIL(op_->get_next_batch(max_row_cnt, brs_))) {
       LOG_WARN("get next batch failed", K(ret));
@@ -2035,7 +2035,7 @@ int ObBatchRowIter::get_next_row(ObEvalCtx &eval_ctx, const ObOpSpec &spec)
       LOG_WARN("backup datumss[0] failed", K(ret));
     }
     // backup datums[0]
-    LOG_DEBUG("batch to row transform ", K(idx_), KPC(brs_));
+
   }
   while (OB_SUCC(ret)) {
     if (idx_ >= brs_->size_ && brs_->end_) {
@@ -2054,7 +2054,7 @@ int ObBatchRowIter::get_next_row(ObEvalCtx &eval_ctx, const ObOpSpec &spec)
         } else {
           idx_ = 0;
           if (0 == brs_->size_ && brs_->end_) {
-            LOG_DEBUG("get empty batch ", K(brs_));
+
             ret = OB_ITER_END;
             break;
           } else if (OB_FAIL(brs_holder_.save(1))) {

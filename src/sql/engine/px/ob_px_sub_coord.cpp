@@ -53,11 +53,11 @@ int ObPxSubCoord::pre_process()
   // 8. Report results to QC
   // 9. Unregister interrupt
 
-  LOG_TRACE("begin ObPxSubCoord process", K(ret));
+
   int64_t dfo_id = sqc_arg_.sqc_.get_dfo_id();
   int64_t sqc_id = sqc_arg_.sqc_.get_sqc_id();
   ObPhysicalPlanCtx *phy_plan_ctx = NULL;
-  LOG_TRACE("TIMERECORD ", "reserve:=0 name:=SQC dfoid:", dfo_id,"sqcid:", sqc_id,"taskid:=-1 start:", ObTimeUtility::current_time());
+
 
   NG_TRACE(tag1);
   if (OB_ISNULL(sqc_arg_.exec_ctx_)
@@ -139,7 +139,7 @@ void ObPxSubCoord::notify_dispatched_task_exit(int64_t dispatched_worker_count)
       }
       // If it has not exited after 10s, then print a log. According to the design, this situation should not occur
       if (tick++ % 10000 == 0) {
-        LOG_INFO("waiting for task exit", K(idx), K(dispatched_worker_count), K(tick));
+
       }
       ob_usleep(1000);
     }
@@ -497,7 +497,7 @@ int ObPxSubCoord::setup_op_input(ObExecContext &ctx,
     } else if (hj_spec->is_shared_ht_ && OB_FAIL(hj_input->init_shared_hj_info(ctx.get_allocator(), sqc.get_task_count()))) {
       LOG_WARN("failed to init shared hash join info", K(ret));
     } else {
-      LOG_TRACE("debug hj input", K(hj_spec->is_shared_ht_));
+
     }
   } else if (root.get_type() == PHY_VEC_HASH_JOIN) {
     ObPxSqcMeta &sqc = sqc_arg_.sqc_;
@@ -513,7 +513,7 @@ int ObPxSubCoord::setup_op_input(ObExecContext &ctx,
                                                         sqc.get_task_count()))) {
       LOG_WARN("failed to init shared hash join info", K(ret));
     } else {
-      LOG_TRACE("debug hj input", K(hj_spec->is_shared_ht_));
+
     }
 
   } else if (root.get_type() == PHY_WINDOW_FUNCTION) {
@@ -737,7 +737,7 @@ int ObPxSubCoord::dispatch_task_to_local_thread(ObPxRpcInitSqcArgs &sqc_arg,
   } else if (OB_FAIL(worker->run(args))) {
     LOG_WARN("fail run task", K(sqc), K(ret));
   } else {
-    LOG_TRACE("success execute local root task", K(task_idx), "task", args.task_);
+
   }
   return ret;
 }
@@ -788,7 +788,7 @@ int ObPxSubCoord::dispatch_task_to_thread_pool(ObPxRpcInitSqcArgs &sqc_arg,
               K(sqc),
               K(ret));
   } else {
-    LOG_TRACE("success issue one task", K(task_idx), K(sqc));
+
   }
   return ret;
 }
@@ -852,7 +852,7 @@ void ObPxSubCoord::destroy_shared_rf_msgs()
 // the last worker will invoke this function
 int ObPxSubCoord::end_process()
 {
-  LOG_TRACE("start sqc end process");
+
   int ret = OB_SUCCESS;
   int64_t dfo_id = sqc_arg_.sqc_.get_dfo_id();
   int64_t sqc_id = sqc_arg_.sqc_.get_sqc_id();
@@ -872,8 +872,8 @@ int ObPxSubCoord::end_process()
   void destroy_shared_rf_msgs();
 
   NG_TRACE(tag3);
-  LOG_TRACE("exit ObPxSubCoord process", K(ret));
-  LOG_TRACE("TIMERECORD ", "reserve:=0 name:=SQC dfoid:", dfo_id,"sqcid:", sqc_id,"taskid:=-1 end:", ObTimeUtility::current_time());
+
+
   return ret;
 }
 

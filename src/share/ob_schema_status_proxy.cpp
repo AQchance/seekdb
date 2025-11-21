@@ -52,7 +52,7 @@ int ObSchemaStatusUpdater::operator() (common::hash::HashMapPair<uint64_t, share
     }
     entry.second = schema_status_;
   } else {
-    LOG_INFO("[SCHEMA_STATUS] schema_status less than the old value, just ignore", K(entry), K(schema_status_));
+
   }
   return ret;
 }
@@ -261,7 +261,7 @@ int ObSchemaStatusProxy::load_refresh_schema_status()
     }
   }
   
-  LOG_INFO("[SCHEMA_STATUS] load refreshed schema status", K(ret));
+
   return ret;
 }
 
@@ -328,7 +328,7 @@ int ObSchemaStatusProxy::set_tenant_schema_status(
     }
   } else {
 
-    LOG_INFO("[SCHEMA_STATUS] set create status", K(refresh_schema_status));
+
   }
   return ret;
 }
@@ -373,7 +373,7 @@ int ObSchemaStatusProxy::del_tenant_schema_status(
       }
     }
   }
-  LOG_INFO("[SCHEMA_STATUS] del schema status", K(ret), K(tenant_id));
+
   return ret;
 }
 

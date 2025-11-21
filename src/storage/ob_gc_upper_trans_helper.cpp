@@ -44,7 +44,7 @@ int ObGCUpperTransHelper::try_get_sstable_upper_trans_version(
       new_upper_trans_version = MAX(max_trans_version, sstable.get_max_merged_trans_version());
       FLOG_INFO("success to get new upper trans version", K(ret), K(ls_id), K(tablet_id), K(max_trans_version), K(sstable));
     } else {
-      LOG_TRACE("can not get upper trans version", K(ret), K(ls_id), K(tablet_id));
+
     }
   }
   return ret;
@@ -70,7 +70,7 @@ int ObGCUpperTransHelper::check_need_gc_or_update_upper_trans_version(
     LOG_WARN("new_upper_trans is nullpr or empty", K(ret), K(ls_id), K(tablet_id), K(new_upper_trans));
   } else if (is_paused) {
     ret = OB_EAGAIN;
-    LOG_INFO("paused, cannot update trans version now", K(ret), K(ls_id), K(tablet_id));
+
   } else if (OB_FAIL(tablet.fetch_table_store(table_store_wrapper))) {
     LOG_WARN("fail to fetch table store", K(ret));
   } else if (tablet.get_tablet_meta().ha_status_.is_data_status_complete()) {

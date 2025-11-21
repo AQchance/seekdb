@@ -131,7 +131,7 @@ int ObTableGroupCommitMgr::ObTableGroupTriggerTask::trigger_other_group()
         LOG_WARN("group is null", K(ret));
       } else if (!group->has_executable_batch()) {
         // do nothing
-        LOG_DEBUG("[group commit debug] group is empty");
+
       } else {
         ObTableGroupTriggerRequest request;
         ObTableGroupMeta &group_meta = static_cast<ObTableGroupValue*>(group)->group_meta_;
@@ -141,7 +141,7 @@ int ObTableGroupCommitMgr::ObTableGroupTriggerTask::trigger_other_group()
         } else if (OB_FAIL(ObTableGroupUtils::trigger(request))) {
           LOG_WARN("fail to trigger", K(ret), K(request));
         }
-        LOG_DEBUG("[group commit debug] trigger other group", K(ret), K(request), K(credential));
+
       }
     }
   }
@@ -169,7 +169,7 @@ int ObTableGroupCommitMgr::ObTableGroupTriggerTask::trigger_expire_group()
           LOG_WARN("fail to trigger", K(ret), KPC(request));
         }
       }
-      LOG_DEBUG("[group commit debug] trigger expired group", K(ret), K(trigger_requests.count()));
+
     }
   }
   return ret;
@@ -197,7 +197,7 @@ int ObTableGroupCommitMgr::ObTableGroupTriggerTask::trigger_failed_group()
           LOG_WARN("fail to trigger", K(ret), KPC(request));
         }
       }
-      LOG_DEBUG("[group commit debug] trigger failed group", K(ret), K(trigger_requests.count()));
+
     }
   }
 
@@ -238,7 +238,7 @@ void ObTableGroupCommitMgr::ObTableGroupUpdateTask::clean_expired_group_task()
           group_mgr_.allocator_.free(key);
           key = nullptr;
         }
-        LOG_DEBUG("[group commit debug] add expired group", K(group_mgr_.expired_groups_.get_expired_groups().size()));
+
       }
     } // end for
   }
@@ -256,7 +256,7 @@ void ObTableGroupCommitMgr::ObTableGroupUpdateTask::clean_expired_group_task()
       group_mgr_.allocator_.free(group);
       group = nullptr;
     }
-    LOG_DEBUG("[group commit debug] free clean group", K(group_mgr_.expired_groups_.get_clean_group_counts()));
+
   } // end while
 }
 
@@ -305,11 +305,11 @@ void ObTableGroupCommitMgr::ObTableGroupOpsTask::update_ops_task()
     if (TABLEAPI_GROUP_COMMIT_MGR->get_last_ops() >= enable_threshold &&
         TABLEAPI_GROUP_COMMIT_MGR->is_group_commit_disable()) {
       TABLEAPI_GROUP_COMMIT_MGR->set_group_commit_disable(false);
-      LOG_INFO("enable group commit", K(TABLEAPI_GROUP_COMMIT_MGR->get_last_ops()), K(enable_threshold));
+
     } else if (TABLEAPI_GROUP_COMMIT_MGR->get_last_ops() < enable_threshold &&
               !TABLEAPI_GROUP_COMMIT_MGR->is_group_commit_disable()) {
       TABLEAPI_GROUP_COMMIT_MGR->set_group_commit_disable(true);
-      LOG_INFO("disable group commit", K(TABLEAPI_GROUP_COMMIT_MGR->get_last_ops()), K(enable_threshold));
+
     }
     if (TABLEAPI_GROUP_COMMIT_MGR->get_failed_groups().count() >= DEFAULT_DISABLE_MAX_FAILED_GROUP_SIZE) {
        TABLEAPI_GROUP_COMMIT_MGR->set_group_commit_disable(true);
@@ -342,7 +342,7 @@ int ObTableGroupCommitMgr::start_timer()
                                        true))) {
       LOG_WARN("fail to schedule group commit update task", KR(ret));
     } else {
-      LOG_INFO("successfully schedule kv group commit timer");
+
     }
   }
 
@@ -385,7 +385,7 @@ int ObTableGroupCommitMgr::start()
                                      true))) {
     LOG_WARN("fail to schedule group ops task", K(ret));
   } else {
-    LOG_INFO("successfully to start ObTableGroupCommitMgr");
+
   }
   return ret;
 }
@@ -469,7 +469,7 @@ int ObTableGroupCommitMgr::clean_expired_groups()
           LOG_WARN("fail to get executable queue", K(ret));
         } else if (ops.count() == 0) {
           // do nothing
-          LOG_DEBUG("ops count is 0");
+
         } else {
           ObTableGroupMeta &group_meta = static_cast<ObTableGroupValue *>(group)->group_meta_;
           ObTableGroup *exec_group = nullptr;
@@ -508,7 +508,7 @@ int ObTableGroupCommitMgr::clean_expired_groups()
 int ObTableGroupCommitMgr::clean_failed_groups()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("clean failed groups:", K(failed_groups_.get_failed_groups().size()));
+
   while (!failed_groups_.empty()) {
     ObTableGroup *group = failed_groups_.get();
     if (OB_NOT_NULL(group)) {
@@ -550,7 +550,7 @@ void ObTableGroupCommitMgr::destroy()
     group_factory_.free_all();
     op_factory_.free_all();
     is_inited_ = false;
-    LOG_INFO("ObTableGroupCommitMgr destroy successfully");
+
   }
 }
 

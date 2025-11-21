@@ -226,7 +226,7 @@ void ObSimpleBackupStatMgr::print_stat()
         "macro_block_count", stat.macro_block_count_,
         "reused_macro_block_count", stat.reused_macro_block_count_,
         "meta_count", stat.tablet_meta_count_ + stat.sstable_meta_count_);
-    LOG_INFO("BACKUP STAT", K_(tenant_id), K_(ls_id), K(stat));
+
   }
 }
 
@@ -330,7 +330,7 @@ int ObBackupDataCtx::write_backup_file_header(const ObBackupFileHeader &file_hea
     LOG_WARN("failed to append buffer", K(ret), K(buffer_reader));
   } else {
     file_offset_ += buf_len;
-    LOG_INFO("write backup file header", K(file_header));
+
   }
   return ret;
 }
@@ -352,7 +352,7 @@ int ObBackupDataCtx::write_macro_block_data(const blocksstable::ObBufferReader &
   } else if (OB_FAIL(append_macro_block_index_(macro_index))) {
     LOG_WARN("failed to append macro block index", K(ret), K(macro_index));
   } else {
-    LOG_DEBUG("write macro block data", K(macro_index));
+
   }
   return ret;
 }
@@ -373,7 +373,7 @@ int ObBackupDataCtx::write_meta_data(const blocksstable::ObBufferReader &meta, c
   } else if (OB_FAIL(append_meta_index_(meta_index))) {
     LOG_WARN("failed to append meta index", K(ret), K(meta_index));
   } else {
-    LOG_DEBUG("write meta data", K(meta), K(tablet_id));
+
   }
   return ret;
 }
@@ -433,7 +433,7 @@ int ObBackupDataCtx::open_file_writer_(const share::ObBackupPath &backup_path)
                                                 mod))) {
     LOG_WARN("failed to open with access type", K(ret), K(param_), K(backup_path));
   } else {
-    LOG_INFO("open file writer", K(ret), K(backup_path));
+
   }
   return ret;
 }
@@ -548,7 +548,7 @@ int ObBackupDataCtx::write_other_block(const blocksstable::ObBufferReader &reade
       offset = file_offset_;
       length = tmp_buffer_.length();
       file_offset_ += length;
-      LOG_INFO("write other block", K(offset), K(length), K_(file_offset));
+
     }
   }
   return ret;
@@ -618,7 +618,7 @@ int ObBackupDataCtx::append_index_(const IndexType &index, ObBackupIndexBufferNo
   } else if (OB_FAIL(buffer_node.put_backup_index(index))) {
     LOG_WARN("failed to put backup index", K(ret), K(index));
   } else {
-    LOG_DEBUG("append index", K(index));
+
   }
   return ret;
 }
@@ -645,7 +645,7 @@ int ObBackupDataCtx::flush_index_list_()
   } else if (OB_FAIL(flush_meta_index_list_())) {
     LOG_WARN("failed to flush meta index list", K(ret));
   } else {
-    LOG_INFO("flush index list", K_(param), K_(file_id));
+
   }
   return ret;
 }
@@ -902,11 +902,11 @@ int ObBackupRetryCtx::recover_last_retry_ctx()
   } else if (OB_FAIL(check_and_sort_retry_list_(cur_turn_id, cur_retry_id, retry_list))) {
     LOG_WARN("failed to check and sort retry list", K(ret), K_(param));
   } else if (retry_list.empty()) {
-    LOG_INFO("no need recover ctx", K_(param));
+
   } else if (OB_FAIL(do_recover_last_retry_ctx_(retry_list))) {
     LOG_WARN("failed to recover last retry ctx", K(ret), K(retry_list));
   } else {
-    LOG_INFO("recover last retry ctx", K(retry_list));
+
   }
   return ret;
 }
@@ -945,7 +945,7 @@ int ObBackupRetryCtx::do_recover_last_retry_ctx_(common::ObArray<ObBackupRetryDe
     if (OB_FAIL(recover_need_reuse_macro_block_(retry_list))) {
       LOG_WARN("failed to recover need reuse macro block", K(ret), K(retry_list));
     } else {
-      LOG_INFO("recover need reuse macro block", KPC(this), K(retry_list));
+
     }
   }
   if (FAILEDx(add_recover_retry_ctx_event_(retry_list))) {
@@ -1148,7 +1148,7 @@ int ObBackupRetryCtx::inner_recover_need_reuse_macro_block_(
       } else if (OB_FAIL(iter.fetch_macro_index_list_(file_id, index_list))) {
         LOG_WARN("failed to fetch macro index list", K(ret), K(file_id));
       } else if (index_list.empty()) {
-        LOG_INFO("index list is empty", K(file_id), K(index_list));
+
         continue;
       } else {
         ARRAY_FOREACH_X(index_list, idx, cnt, OB_SUCC(ret)) {
@@ -1183,7 +1183,7 @@ int ObBackupRetryCtx::check_need_stop_recover_file_(const ObBackupRetryDesc &cur
   } else {
     need_stop = cur_file_id < last_file.last_file_id_;
   }
-  LOG_INFO("check stop recover file", K(need_stop), K(cur_retry_desc), KPC(this), K(cur_file_id));
+
   return ret;
 }
 
@@ -1191,7 +1191,7 @@ int ObBackupRetryCtx::add_recover_retry_ctx_event_(
     const common::ObIArray<ObBackupRetryDesc> &retry_list)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("recover last retry ctx", K_(param), K(retry_list));
+
   SERVER_EVENT_ADD("backup", "recover_retry_ctx",
       "tenant_id", param_.tenant_id_,
       "backup_set_id", param_.backup_set_desc_.backup_set_id_,
@@ -1328,7 +1328,7 @@ int ObLSBackupCtx::next(common::ObTabletID &tablet_id)
   } else if (OB_FAIL(inner_do_next_(tablet_id))) {
     LOG_WARN("failed to inner do next", K(ret));
   } else {
-    LOG_INFO("get next tablet", K(tablet_id));
+
   }
   return ret;
 }
@@ -1378,7 +1378,7 @@ int ObLSBackupCtx::set_tablet(const common::ObTabletID &tablet_id, ObBackupTable
   } else if (OB_FAIL(tablet_holder_.set_tablet(tablet_id, tablet_handle))) {
     LOG_WARN("failed to hold tablet", K(ret), K(tablet_id), KPC(tablet_handle));
   } else {
-    LOG_DEBUG("backup set tablet", K(tablet_id), KP(tablet_handle));
+
   }
   return ret;
 }
@@ -1393,7 +1393,7 @@ int ObLSBackupCtx::get_tablet(const common::ObTabletID &tablet_id, ObBackupTable
   } else if (OB_FAIL(tablet_holder_.get_tablet(tablet_id, tablet_handle))) {
     LOG_WARN("failed to get tablet", K(ret), K(tablet_id));
   } else {
-    LOG_DEBUG("backup get tablet", K(tablet_id), KP(tablet_handle));
+
   }
   return ret;
 }
@@ -1408,7 +1408,7 @@ int ObLSBackupCtx::release_tablet(const common::ObTabletID &tablet_id)
   } else if (OB_FAIL(tablet_holder_.release_tablet(tablet_id))) {
     LOG_WARN("failed to release tablet", K(ret), K(tablet_id));
   } else {
-    LOG_DEBUG("release tablet", K(tablet_id));
+
   }
   return ret;
 }
@@ -1423,7 +1423,7 @@ void ObLSBackupCtx::set_result_code(const int64_t result, bool &is_set)
   } else {
     is_set = false;
   }
-  LOG_INFO("set result code", K(result), K(result_code_), K(is_set));
+
 }
 
 int64_t ObLSBackupCtx::get_result_code() const
@@ -1471,7 +1471,7 @@ int ObLSBackupCtx::get_prefetch_task_id(int64_t &prefetch_task_id)
   ObMutexGuard guard(mutex_);
   prefetch_task_id = prefetch_task_id_;
   prefetch_task_id_++;
-  LOG_INFO("get prefetch task id", K(prefetch_task_id));
+
   return ret;
 }
 
@@ -1482,7 +1482,7 @@ int ObLSBackupCtx::wait_task(const int64_t file_id)
   while (OB_SUCC(ret) && file_id != ATOMIC_LOAD(&finished_file_id_)) {
     ObThreadCondGuard guard(cond_);
     if (OB_SUCCESS != result_code_) {
-      LOG_INFO("ls backup ctx already failed", K(result_code_), K(file_id), K(finished_file_id_));
+
       break;
     } else if (OB_FAIL(cond_.wait_us(DEFAULT_WAIT_TIME))) {
       if (OB_TIMEOUT == ret) {
@@ -1498,7 +1498,7 @@ int ObLSBackupCtx::finish_task(const int64_t file_id)
 {
   int ret = OB_SUCCESS;
   if (OB_SUCCESS != result_code_) {
-    LOG_INFO("already failed, do nothing for finish task", K(ret));
+
   } else if (OB_UNLIKELY(file_id != ATOMIC_LOAD(&finished_file_id_))) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("finish task order unexpected", K(ret), K(file_id), K_(max_file_id));
@@ -1508,7 +1508,7 @@ int ObLSBackupCtx::finish_task(const int64_t file_id)
     if (OB_FAIL(cond_.broadcast())) {
       LOG_WARN("failed to broadcast condition", K(ret));
     } else {
-      LOG_INFO("finish task", K(file_id), K_(finished_file_id));
+
     }
   }
   return ret;
@@ -1552,7 +1552,7 @@ int ObLSBackupCtx::recover_last_retry_ctx_()
   } else if (OB_FAIL(backup_retry_ctx_.recover_last_retry_ctx())) {
     LOG_WARN("failed to recover last retry ctx", K(ret), K_(param));
   } else {
-    LOG_INFO("recover last retry ctx success", K_(param));
+
   }
   return ret;
 }
@@ -1594,7 +1594,7 @@ int ObLSBackupCtx::get_all_tablet_id_list_(
   } else if (OB_FAIL(reader->get_tablet_id_list(backup_data_type_, turn_id, ls_id, tablet_list))) {
     LOG_WARN("failed to get all tablet id list", K(ret), K_(param));
   } else {
-    LOG_INFO("get all tablet id list", K_(param), K(tablet_list));
+
   }
   return ret;
 }
@@ -1618,7 +1618,7 @@ int ObLSBackupCtx::get_backup_scn_(const ObLSBackupParam &param,
     LOG_WARN("failed to read ls attr info", K(ret));
   } else {
     backup_scn = ls_info.backup_scn_;
-    LOG_INFO("get backup scn", K(param), K(backup_data_type), K(backup_scn));
+
   }
   return ret;
 }
@@ -1662,7 +1662,7 @@ int ObLSBackupCtx::check_mview_tablet_set_(const uint64_t tenant_id, common::ObM
   if (OB_FAIL(ObAllTenantInfoProxy::load_tenant_info(tenant_id, &sql_proxy, false/*for update*/, tenant_info))) {
     LOG_WARN("failed to get tenant info", K(ret), K(tenant_id));
   } else if (tenant_info.is_primary()) {
-    LOG_INFO("tenant is primary", K(tenant_id), K(tenant_info));
+
   } else if (!mview_dep_tablet_map_.empty()) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("tenant not primary but mview dep tablet is not empty", K(tenant_id), K(tenant_info));
@@ -1721,7 +1721,7 @@ int ObLSBackupCtx::check_need_skip_(const common::ObTabletID &tablet_id, bool &n
       LOG_WARN("failed to check need skip major", K(ret), K(tablet_id));
     }
   }
-  LOG_INFO("tablet need skip", K_(backup_data_type), K(need_skip), K(tablet_id), K_(backup_retry_ctx));
+
   return ret;
 }
 
@@ -1761,7 +1761,7 @@ int ObLSBackupCtx::get_next_tablet_(common::ObTabletID &tablet_id)
     LOG_WARN("meet end", K(ret), K(task_idx_));
   } else { 
     tablet_id = list_ptr->at(task_idx_);
-    LOG_INFO("get next tablet", K(tablet_id), K(task_idx_));
+
     task_idx_++;
   }
   return ret;

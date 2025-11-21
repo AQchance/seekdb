@@ -163,7 +163,7 @@ void ObTmpWriteBufferPoolEntryArray::pop_back()
       allocator_.free(buckets_[bucket_idx]);
       buckets_[bucket_idx] = nullptr;
       buckets_.pop_back();
-      LOG_DEBUG("pop back a bucket", K(buckets_.size()), K(size_));
+
     }
   }
 }

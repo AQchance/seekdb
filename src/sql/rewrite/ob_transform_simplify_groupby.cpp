@@ -32,7 +32,7 @@ int ObTransformSimplifyGroupby::transform_one_stmt(common::ObIArray<ObParentDMLS
   } else {
     trans_happened |= is_happened;
     OPT_TRACE("convert count aggr contain const:", is_happened);
-    LOG_TRACE("succeed to convert count aggr contain const", K(is_happened));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -41,7 +41,7 @@ int ObTransformSimplifyGroupby::transform_one_stmt(common::ObIArray<ObParentDMLS
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("remove group by:", is_happened);
-      LOG_TRACE("succeed to stmt remove group by", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -50,7 +50,7 @@ int ObTransformSimplifyGroupby::transform_one_stmt(common::ObIArray<ObParentDMLS
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("remove group by duplicates:", is_happened);
-      LOG_TRACE("succeed to remove group by duplicates", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -59,7 +59,7 @@ int ObTransformSimplifyGroupby::transform_one_stmt(common::ObIArray<ObParentDMLS
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("remove redundant by group by expr:", is_happened);
-      LOG_TRACE("succeed to remove redundant by group by expr", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -68,7 +68,7 @@ int ObTransformSimplifyGroupby::transform_one_stmt(common::ObIArray<ObParentDMLS
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("remove aggr distinct:", is_happened);
-      LOG_TRACE("succeed to remove aggr distinct", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -77,7 +77,7 @@ int ObTransformSimplifyGroupby::transform_one_stmt(common::ObIArray<ObParentDMLS
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("remove redundent group by:", is_happened);
-      LOG_TRACE("succeed to remove redundent group by", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -86,7 +86,7 @@ int ObTransformSimplifyGroupby::transform_one_stmt(common::ObIArray<ObParentDMLS
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("transform const aggr:", is_happened);
-      LOG_TRACE("succeed to transform const aggr", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -95,7 +95,7 @@ int ObTransformSimplifyGroupby::transform_one_stmt(common::ObIArray<ObParentDMLS
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("prune group by rollup:", is_happened);
-      LOG_TRACE("succeed to prune group by rollup", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -104,7 +104,7 @@ int ObTransformSimplifyGroupby::transform_one_stmt(common::ObIArray<ObParentDMLS
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("convert group by to distinct:", is_happened);
-      LOG_TRACE("succeed to convert group by to distinct", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -113,7 +113,7 @@ int ObTransformSimplifyGroupby::transform_one_stmt(common::ObIArray<ObParentDMLS
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("rewrite agg by associative rule", is_happened);
-      LOG_TRACE("success to rewrite agg by associative rule", K(is_happened));
+
     }
   }
 
@@ -349,7 +349,7 @@ int ObTransformSimplifyGroupby::get_upper_column_exprs(ObSelectStmt &upper_stmt,
                                       static_cast<ObAggFunRawExpr*>(stmt_select_expr),
                                       &idx)) {
         is_valid = false;
-        LOG_DEBUG("cannot find aggr in stmt aggr item", K(ret), K(stmt), K(*stmt_select_expr));
+
       } else if (OB_FAIL(aggr_column_exprs.push_back(column_item->expr_))
                  || OB_FAIL(child_aggr_exprs.push_back(stmt.get_aggr_items().at(idx)))) {
         LOG_WARN("failed to push back aggr", K(ret));

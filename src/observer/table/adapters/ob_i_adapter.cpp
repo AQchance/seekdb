@@ -51,7 +51,7 @@ int ObIHbaseAdapter::init_table_ctx(ObTableExecCtx &exec_ctx,
     tb_ctx.set_sess_guard(&exec_ctx.get_sess_guard());
     tb_ctx.set_audit_ctx(exec_ctx.get_audit_ctx());
     if (tb_ctx.is_init()) {
-      LOG_INFO("tb ctx has been inited", K(tb_ctx));
+
     } else if (OB_FAIL(tb_ctx.init_common_without_check(exec_ctx.get_credential(), cell.get_tablet_id(), exec_ctx.get_timeout_ts()))) {
       LOG_WARN("fail to init table ctx common", K(ret), K(cell.get_tablet_id()));
     } else if (OB_FAIL(tb_ctx.check_tablet_id_valid())) {
@@ -115,7 +115,7 @@ int ObIHbaseAdapter::init_scan(ObTableExecCtx &exec_ctx,
   tb_ctx.set_audit_ctx(exec_ctx.get_audit_ctx());
   if (tb_ctx.is_init()) {
     ret = OB_INIT_TWICE;
-    LOG_INFO("tb ctx has been inited", K(tb_ctx));
+
   } else if (OB_NOT_NULL(exec_ctx.get_simple_schema()) && 
              exec_ctx.get_table_id() == exec_ctx.get_simple_schema()->get_table_id()) {
     table_schema = exec_ctx.get_simple_schema();

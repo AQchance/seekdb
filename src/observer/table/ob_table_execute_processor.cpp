@@ -42,7 +42,7 @@ int ObTableRpcProcessorUtil::negate_htable_timestamp(table::ObITableEntity &enti
       if (OB_FAIL(entity.set_rowkey_value(2, T_val))) {
         LOG_WARN("fail to negate T value", K(ret));
       } else {
-        LOG_DEBUG("[yzfdebug] nenative T value", K(ret), K(T_val));
+
       }
     }
   }
@@ -129,7 +129,7 @@ int ObTableApiExecuteP::init_tb_ctx()
   tb_ctx_.set_sess_guard(&sess_guard_);
   tb_ctx_.set_audit_ctx(&audit_ctx_);
   if (tb_ctx_.is_init()) {
-    LOG_INFO("tb ctx has been inited", K_(tb_ctx));
+
   } else if (OB_FAIL(tb_ctx_.init_common(credential_,
                                          arg_.tablet_id_,
                                          get_timeout_ts()))) {
@@ -476,7 +476,7 @@ int ObTableApiExecuteP::try_process()
 
 #ifndef NDEBUG
   // debug mode
-  LOG_INFO("[TABLE] execute operation", K(ret), K_(result), K_(retry_count));
+
 #else
   // release mode
   LOG_TRACE("[TABLE] execute operation", K(ret), K_(result),

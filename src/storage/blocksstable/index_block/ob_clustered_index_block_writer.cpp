@@ -174,7 +174,7 @@ int ObClusteredIndexBlockWriter::append_row(const ObIndexBlockRowDesc &row_desc)
   } else if (OB_FAIL(row_desc.row_key_.deep_copy(last_rowkey_, row_allocator_))) {
     LOG_WARN("fail to deep copy last rowkey", K(ret), K(row_desc));
   } else {
-    LOG_DEBUG("clustered writer succeed to append row", K(ret), K(row_desc));
+
   }
   return ret;
 }
@@ -225,7 +225,7 @@ int ObClusteredIndexBlockWriter::build_clustered_index_micro_block(
     LOG_WARN("fail to build clustered index micro block", K(ret));
   } else {
     clustered_index_micro_block_desc.last_rowkey_ = last_rowkey_;
-    LOG_DEBUG("succeed to build clustered index micro block", K(ret), K(clustered_index_micro_block_desc));
+
   }
   return ret;
 }
@@ -247,7 +247,7 @@ int ObClusteredIndexBlockWriter::reuse_clustered_micro_block(
                  macro_id))) {
     LOG_WARN("fail to make clustered index micro block", K(ret));
   } else {
-    LOG_DEBUG("succeed to reuse clustered micro block", K(ret), K(macro_id));
+
   }
   return ret;
 }
@@ -379,7 +379,7 @@ int ObClusteredIndexBlockWriter::close()
           root_ctx_->clustered_index_write_ctx_->get_macro_block_list();
       for (int64_t i = 0; i < clustered_index_macro_ids.count(); ++i) {
         auto & macro_block_id = clustered_index_macro_ids.at(i);
-        LOG_INFO("clustered index macro block id", K(macro_block_id));
+
       }
       LOG_INFO("close clustered index block writer",
                K(clustered_index_macro_ids.count()),
@@ -535,7 +535,7 @@ int ObClusteredIndexBlockWriter::make_clustered_index_micro_block_with_rewrite(
     } else if (OB_FAIL(build_and_append_clustered_index_micro_block())) {
       LOG_WARN("fail to build and append clustered index micro block", K(ret));
     } else {
-      LOG_DEBUG("succeed to make clustered index micro block with rewrite", K(ret), K(macro_id));
+
     }
   }
   return ret;
@@ -647,7 +647,7 @@ int ObClusteredIndexBlockWriter::make_clustered_index_micro_block_with_reuse(
   } else if (OB_FAIL(build_and_append_clustered_index_micro_block())) {
     LOG_WARN("fail to build and append clustered index micro block", K(ret));
   } else {
-    LOG_DEBUG("succeed to make clustered index micro block with reuse", K(ret), K(macro_id));
+
   }
 
   return ret;

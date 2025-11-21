@@ -176,10 +176,10 @@ void TestSortTempMacroBlockReaderWriter::check_data(const char *buf, const int64
   while (data_pos < data_len - sizeof(int64_t)) {
     ret = lhs_row.deserialize(data, data_len, data_pos);
     ASSERT_EQ(OB_SUCCESS, ret);
-    STORAGE_LOG(INFO, "", K(data_pos), K(data_len));
+
     ret = row_generate_.get_next_row(i, rhs_row);
     ASSERT_EQ(OB_SUCCESS, ret);
-    STORAGE_LOG(INFO, "", K(lhs_row.row_val_), K(rhs_row.row_val_));
+
     ASSERT_TRUE(lhs_row.row_val_ == rhs_row.row_val_);
     ++i;
   }

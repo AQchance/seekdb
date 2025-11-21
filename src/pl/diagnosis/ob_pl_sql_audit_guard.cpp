@@ -85,7 +85,7 @@ ObPLSqlAuditGuard::~ObPLSqlAuditGuard()
   max_wait_guard_->~ObMaxWaitGuard();
   total_wait_guard_->~ObTotalWaitGuard();
 
-  LOG_TRACE("Start PL/Sql Audit Record"/*, KPC(this)*/ );
+
 
   if (OB_NOT_NULL(spi_result_.get_result_set())) {
     if (spi_result_.get_result_set()->is_inited()) {
@@ -115,7 +115,7 @@ ObPLSqlAuditGuard::~ObPLSqlAuditGuard()
       session_info_.get_raw_audit_record().try_cnt_ = try_cnt;
       session_info_.get_raw_audit_record().pl_trace_id_.reset();
     } else {
-      LOG_DEBUG("result set is not inited, do not process record", K(ret_), K(ps_sql_));
+
     }
   } else {
     if (OB_SUCCESS == ret_) {

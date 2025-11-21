@@ -714,7 +714,7 @@ int ObSQLSessionInfo::close_ps_stmt(ObPsStmtId client_stmt_id)
         LOG_WARN("remove ps session info failed", K(client_stmt_id),
                   "session_id", get_server_sid(), K(ret));
       }
-      LOG_TRACE("close ps stmt", K(ret), K(client_stmt_id), K(inner_stmt_id), K(lbt()));
+
     }
   }
   return ret;
@@ -796,7 +796,7 @@ int ObSQLSessionInfo::drop_temp_tables(const bool is_disconn,
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("rpc proxy is null", K(ret));
       } else {
-        LOG_INFO("temporary tables dropped due to connection disconnected", K(is_sess_disconn), K(drop_table_arg));
+
       }
     }
   }
@@ -838,12 +838,12 @@ void ObSQLSessionInfo::refresh_temp_tables_sess_active_time()
         } else if (OB_FAIL(common_rpc_proxy->alter_table(alter_table_arg, res))) {
           LOG_WARN("failed to alter temporary table session active time", K(alter_table_arg), K(ret), K(is_obproxy_mode()));
         } else {
-          LOG_DEBUG("session active time of temporary tables refreshed", K(ret), "last refresh time", get_last_refresh_temp_table_time());
+
           set_last_refresh_temp_table_time(now);
         }
       }
     } else {
-      LOG_DEBUG("no need to refresh session active time of temporary tables", "last refresh time", get_last_refresh_temp_table_time());
+
     }
   }
 }
@@ -1081,7 +1081,7 @@ int ObSQLSessionInfo::add_prepare(const ObString &ps_name, ObPsStmtId ps_id)
       LOG_WARN("fail to search ps name hash id map", K(stored_name), K(ret));
     }
   } else if (ps_id != exist_ps_id) {
-    LOG_DEBUG("exist ps id is diff", K(ps_id), K(exist_ps_id), K(ps_name), K(stored_name));
+
     if (OB_FAIL(remove_prepare(stored_name))) {
       LOG_WARN("failed to remove prepare", K(stored_name), K(ret));
     } else if (OB_FAIL(remove_ps_session_info(exist_ps_id))) {
@@ -1117,7 +1117,7 @@ int ObSQLSessionInfo::remove_ps_session_info(const ObPsStmtId stmt_id)
 {
   int ret = OB_SUCCESS;
   ObPsSessionInfo *session_info = NULL;
-  LOG_TRACE("remove ps session info", K(ret), K(stmt_id), K(get_server_sid()), K(lbt()));
+
   if (OB_UNLIKELY(!ps_session_info_map_.created())) {
     ret = OB_HASH_NOT_EXIST;
     LOG_WARN("map not created before insert any element", K(ret));
@@ -1127,7 +1127,7 @@ int ObSQLSessionInfo::remove_ps_session_info(const ObPsStmtId stmt_id)
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("session_info is null", K(ret));
   } else {
-    LOG_TRACE("remove ps session info", K(ret), K(stmt_id), K(get_server_sid()));
+
     session_info->~ObPsSessionInfo();
     ps_session_info_allocator_.free(session_info);
     session_info = NULL;
@@ -1254,7 +1254,7 @@ int ObSQLSessionInfo::prepare_ps_stmt(const ObPsStmtId inner_stmt_id,
           // OB_HASH_EXIST cannot be here, no need to handle
           LOG_WARN("push back ps_session info failed", K(ret), K(client_stmt_id));
         } else {
-          LOG_TRACE("add ps session info success", K(client_stmt_id), K(get_server_sid()));
+
         }
       }
       if (OB_FAIL(ret) && OB_NOT_NULL(session_info)) {
@@ -1292,7 +1292,7 @@ ObPLCursorInfo *ObSQLSessionInfo::get_cursor(int64_t cursor_id)
 {
   ObPLCursorInfo *cursor = NULL;
   if (OB_SUCCESS != pl_cursor_cache_.pl_cursor_map_.get_refactored(cursor_id, cursor)) {
-    LOG_TRACE("get cursor info failed", K(cursor_id), K(get_server_sid()));
+
   }
   return cursor;
 }
@@ -1347,7 +1347,7 @@ int ObSQLSessionInfo::add_cursor(pl::ObPLCursorInfo *cursor)
         cursor->set_id(id);
         add_cursor_success = true;
         inc_session_cursor();
-        LOG_DEBUG("ps cursor: add cursor", K(ret), K(id), K(get_server_sid()));
+
       }
     }
   }
@@ -1371,9 +1371,9 @@ int ObSQLSessionInfo::close_cursor(ObPLCursorInfo *&cursor)
     cursor->~ObPLCursorInfo();
     get_cursor_allocator().free(cursor);
     cursor = NULL;
-    LOG_DEBUG("close cursor", K(ret), K(id), K(get_server_sid()));
+
   } else {
-    LOG_DEBUG("close cursor is null", K(get_server_sid()));
+
   }
   return ret;
 }
@@ -1382,7 +1382,7 @@ int ObSQLSessionInfo::close_cursor(int64_t cursor_id)
 {
   int ret = OB_SUCCESS;
   ObPLCursorInfo *cursor = NULL;
-  LOG_INFO("ps cursor : remove cursor", K(ret), K(cursor_id), K(get_server_sid()));
+
   // when select GV$OPEN_CURSOR, we will add get_thread_data_lock to fetch pl_cursor_map_
   // so we need get_thread_data_lock there
   ObSQLSessionInfo::LockGuard lock_guard(get_thread_data_lock());
@@ -1392,7 +1392,7 @@ int ObSQLSessionInfo::close_cursor(int64_t cursor_id)
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("session_info is null", K(ret));
   } else {
-    LOG_DEBUG("close cursor", K(ret), K(cursor_id), K(get_server_sid()));
+
     OZ (cursor->close(*this));
     cursor->~ObPLCursorInfo();
     get_cursor_allocator().free(cursor);
@@ -1461,7 +1461,7 @@ int ObSQLSessionInfo::print_all_cursor()
       }
     }
   }
-  LOG_DEBUG("CURSOR DEBUG: may illegal cursors in cursor map: ",  K(open_cnt), K(unexpected_cnt));
+
   return ret;
 }
 
@@ -1683,7 +1683,7 @@ int ObSQLSessionInfo::get_collation_type_of_names(
 
 int ObSQLSessionInfo::kill_query()
 {
-  LOG_INFO("kill query", K(get_server_sid()), K(get_proxy_sessid()), K(get_current_query_string()));
+
   ObSQLSessionInfo::LockGuard lock_guard(get_thread_data_lock());
   update_last_active_time();
   set_session_state(QUERY_KILLED);
@@ -1692,7 +1692,7 @@ int ObSQLSessionInfo::kill_query()
 
 int ObSQLSessionInfo::set_query_deadlocked()
 {
-  LOG_INFO("set query deadlocked", K(get_server_sid()), K(get_proxy_sessid()), K(get_current_query_string()));
+
   ObSQLSessionInfo::LockGuard lock_guard(get_thread_data_lock());
   update_last_active_time();
   set_session_state(QUERY_DEADLOCKED);
@@ -2046,7 +2046,7 @@ int ObSQLSessionInfo::set_package_variables(
   ObExecContext &ctx, const ObSessionValMap &user_var_map)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("set package variables now!");
+
   const sql::ObSessionValMap::VarNameValMap &new_map = user_var_map.get_val_map();
   common::hash::ObHashSet<common::ObString> sync_pkg_vars;
   OZ (sync_pkg_vars.create(32));
@@ -2063,7 +2063,7 @@ int ObSQLSessionInfo::set_package_variables(
       OZ (set_package_variable(ctx, key, value));
     }
   }
-  LOG_DEBUG("set package variables end!!!", K(ret));
+
   pl_sync_pkg_vars_ = NULL;
   return ret;
 }
@@ -2130,7 +2130,7 @@ int ObSQLSessionInfo::set_package_variable(
                                                   from_proxy));
             }
           } else {
-            LOG_INFO("PLPACKAGE:disable package var", K(name.package_id_), K(from_proxy));
+
             OZ (ObPLPackageState::disable_expired_user_variables(*this, key));
           }
           if (value_map.created()) {
@@ -2154,7 +2154,7 @@ int ObSQLSessionInfo::set_package_variable(
                     K(name.state_version_.package_body_version_));
         } else {
           OZ (ObPLPackageState::disable_expired_user_variables(*this, key));
-          LOG_INFO("set package variable failed", K(ret), K(match), K(name), K(value));
+
         }
       }
     }
@@ -2207,7 +2207,7 @@ int ObSQLSessionInfo::drop_sequence_value_if_exists(uint64_t seq_id)
     LOG_WARN("invalid args", K(seq_id), K(ret));
   } else if (OB_FAIL(sequence_currval_map_.erase_refactored(seq_id))) {
     if (OB_HASH_NOT_EXIST == ret) {
-      LOG_INFO("drop sequence value not exists", K(ret), K(seq_id));
+
       ret = OB_SUCCESS;
     } else {
       LOG_WARN("drop sequence value failed", K(ret), K(seq_id));
@@ -2464,7 +2464,7 @@ int ObSQLSessionInfo::begin_nested_session(StmtSavedValue &saved_value, bool ski
   OZ (ObBasicSessionInfo::begin_nested_session(saved_value, skip_cur_stmt_tables));
   OZ (save_sql_session(saved_value));
   OX (nested_count_++);
-  LOG_DEBUG("begin_nested_session", K(ret), K_(nested_count));
+
   return ret;
 }
 
@@ -2511,7 +2511,7 @@ void ObSQLSessionInfo::ObCachedTenantConfigInfo::refresh()
     // Cache data version for performance optimization
     uint64_t data_version = 0;
     if (!is_valid_tenant_id(effective_tenant_id)) {
-      LOG_DEBUG("invalid tenant id", K_(saved_tenant_info), K(effective_tenant_id));
+
     } else if (OB_TMP_FAIL(GET_MIN_DATA_VERSION(effective_tenant_id, data_version))) {
       LOG_WARN_RET(tmp_ret, "get data version fail", "ret", tmp_ret, K(effective_tenant_id));
     } else {
@@ -2584,7 +2584,7 @@ int ObSQLSessionInfo::ps_use_stream_result_set(bool &use_stream) {
   if (OB_SUCC(ret) && OB_INVALID_SIZE == size) {
     use_stream = true;
 #if !defined(NDEBUG)
-    LOG_INFO("cursor use stream result.");
+
 #endif
   }
   return ret;
@@ -2823,7 +2823,7 @@ int ObSQLSessionInfo::update_sess_sync_info(const SessionSyncInfoType sess_sync_
                                           const char *buf, const int64_t length, int64_t &pos)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("deserialize encode buf", KPHEX(buf+pos, length-pos), K(length-pos), K(pos));
+
   if (OB_ISNULL(buf)) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid buf", K(ret), K(buf));
@@ -2838,7 +2838,7 @@ int ObSQLSessionInfo::update_sess_sync_info(const SessionSyncInfoType sess_sync_
   } else if (FALSE_IT(sess_encoders_[sess_sync_info_type]->is_changed_ = false)) {
   } else {
     // do nothing
-    LOG_DEBUG("get app info", K(client_app_info_.module_name_), K(client_app_info_.action_name_), K(client_app_info_.client_info_));
+
   }
   return ret;
 }
@@ -2872,7 +2872,7 @@ int ObErrorSyncSysVarEncoder::deserialize(ObSQLSessionInfo &sess, const char *bu
     LOG_WARN("failed to deserialize sys var delta", K(ret), K(deserialize_sys_var_count),
                                     KPHEX(buf+pos, length-pos), K(length-pos), K(pos));
   } else {
-    LOG_DEBUG("success deserialize sys var delta", K(ret), K(deserialize_sys_var_count));
+
   }
   return ret;
 }
@@ -2885,7 +2885,7 @@ int ObErrorSyncSysVarEncoder::get_serialize_size(ObSQLSessionInfo& sess, int64_t
   } else if (OB_FAIL(sess.get_sync_sys_vars_size(sys_var_delta_ids, len))) {
     LOG_WARN("failed to serialize size sys var delta", K(ret));
   } else {
-    LOG_DEBUG("success serialize size sys var delta", K(ret), K(sys_var_delta_ids.count()), K(len));
+
   }
   return ret;
 }
@@ -2932,7 +2932,7 @@ int ObErrorSyncSysVarEncoder::compare_sess_info(ObSQLSessionInfo &sess,
     LOG_WARN("fail to compare session info", K(ret), K(current_sess_length), K(last_sess_length),
       KPHEX(current_sess_buf, current_sess_length), KPHEX(last_sess_buf, last_sess_length));
   } else if (memcmp(current_sess_buf, last_sess_buf, current_sess_length) == 0) {
-    LOG_TRACE("success to compare session info", K(ret));
+
   } else {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("fail to compare buf session info", K(ret),
@@ -3020,7 +3020,7 @@ int ObSysVarEncoder::deserialize(ObSQLSessionInfo &sess, const char *buf,
     LOG_WARN("failed to deserialize sys var delta", K(ret), K(deserialize_sys_var_count),
                                     KPHEX(buf+pos, length-pos), K(length-pos), K(pos));
   } else {
-    LOG_DEBUG("success deserialize sys var delta", K(ret), K(deserialize_sys_var_count));
+
   }
   return ret;
 }
@@ -3033,7 +3033,7 @@ int ObSysVarEncoder::get_serialize_size(ObSQLSessionInfo& sess, int64_t &len) co
   } else if (OB_FAIL(sess.get_sync_sys_vars_size(sys_var_delta_ids, len))) {
     LOG_WARN("failed to serialize size sys var delta", K(ret));
   } else {
-    LOG_DEBUG("success serialize size sys var delta", K(ret), K(sys_var_delta_ids.count()), K(len));
+
   }
   return ret;
 }
@@ -3101,7 +3101,7 @@ int ObSysVarEncoder::compare_sess_info(ObSQLSessionInfo &sess, const char *curre
     LOG_WARN("fail to compare session info", K(ret), K(current_sess_length), K(last_sess_length),
       KPHEX(current_sess_buf, current_sess_length), KPHEX(last_sess_buf, last_sess_length));
   } else if (memcmp(current_sess_buf, last_sess_buf, current_sess_length) == 0) {
-    LOG_TRACE("success to compare session info", K(ret));
+
   } else {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("fail to compare buf session info", K(ret),
@@ -3190,8 +3190,8 @@ int ObAppInfoEncoder::serialize(ObSQLSessionInfo &sess, char *buf, const int64_t
   if (OB_FAIL(sess.get_client_app_info().serialize(buf, length, pos))) {
     LOG_WARN("failed to serialize application info.", K(ret), K(pos), K(length));
   } else {
-    LOG_DEBUG("serialize encode buf", KPHEX(buf+org_pos, pos-org_pos), K(pos-org_pos));
-    LOG_DEBUG("serialize buf", KPHEX(buf, pos));
+
+
   }
   return ret;
 }
@@ -3199,7 +3199,7 @@ int ObAppInfoEncoder::serialize(ObSQLSessionInfo &sess, char *buf, const int64_t
 int ObAppInfoEncoder::deserialize(ObSQLSessionInfo &sess, const char *buf, const int64_t length, int64_t &pos)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("app info buf", KPHEX(buf, length), K(pos), K(length), KPHEX(buf+pos, length-pos));
+
   sess.get_client_app_info().reset();
   ObSQLSessionInfo::ApplicationInfo app_info;
   if (OB_FAIL(app_info.deserialize(buf, length, pos))) {
@@ -3250,7 +3250,7 @@ int ObAppInfoEncoder::compare_sess_info(ObSQLSessionInfo &sess, const char* curr
     LOG_WARN("fail to compare session info", K(ret), K(current_sess_length), K(last_sess_length),
       KPHEX(current_sess_buf, current_sess_length), KPHEX(last_sess_buf, last_sess_length));
   } else if (memcmp(current_sess_buf, last_sess_buf, current_sess_length) == 0) {
-    LOG_TRACE("success to compare session info", K(ret));
+
   } else {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("fail to compare buf session info", K(ret),
@@ -3389,7 +3389,7 @@ int ObClientIdInfoEncoder::compare_sess_info(ObSQLSessionInfo &sess, const char 
     LOG_WARN("fail to compare session info", K(ret), K(current_sess_length), K(last_sess_length),
       KPHEX(current_sess_buf, current_sess_length), KPHEX(last_sess_buf, last_sess_length));
   } else if (memcmp(current_sess_buf, last_sess_buf, current_sess_length) == 0) {
-    LOG_TRACE("success to compare session info", K(ret));
+
   } else {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("fail to compare buf session info", K(ret),
@@ -3496,7 +3496,7 @@ int ObAppCtxInfoEncoder::compare_sess_info(ObSQLSessionInfo &sess, const char *c
     LOG_WARN("fail to compare session info", K(ret), K(current_sess_length), K(last_sess_length),
       KPHEX(current_sess_buf, current_sess_length), KPHEX(last_sess_buf, last_sess_length));
   } else if (memcmp(current_sess_buf, last_sess_buf, current_sess_length) == 0) {
-    LOG_TRACE("success to compare session info", K(ret));
+
   } else {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("fail to compare buf session info", K(ret),
@@ -3548,7 +3548,7 @@ int ObAppCtxInfoEncoder::display_sess_info(ObSQLSessionInfo &sess, const char* c
 
   if (OB_FAIL(ret)) {
   } else {
-    LOG_TRACE("success to verify app ctx info", K(ret));
+
   }
 
   return ret;
@@ -3630,7 +3630,7 @@ int ObSequenceCurrvalEncoder::compare_sess_info(ObSQLSessionInfo &sess,
     LOG_WARN("fail to compare session info", K(ret), K(current_sess_length), K(last_sess_length),
       KPHEX(current_sess_buf, current_sess_length), KPHEX(last_sess_buf, last_sess_length));
   } else if (memcmp(current_sess_buf, last_sess_buf, current_sess_length) == 0) {
-    LOG_TRACE("success to compare session info", K(ret));
+
   } else {
     bool found_mismatch = false;
     if (OB_FAIL(cmp_display_sess_info_helper<false>(sess, current_sess_buf, current_sess_length,
@@ -3638,7 +3638,7 @@ int ObSequenceCurrvalEncoder::compare_sess_info(ObSQLSessionInfo &sess,
                                                    found_mismatch))) {
       LOG_WARN("cmp_display_sess_info_helper fail", K(ret));
     } else if (!found_mismatch) {
-      LOG_TRACE("success to compare session info", K(ret));
+
     } else {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("fail to compare buf session info", K(ret),
@@ -3764,7 +3764,7 @@ int ObQueryInfoEncoder::compare_sess_info(ObSQLSessionInfo &sess, const char *cu
     LOG_WARN("fail to compare session info", K(ret), K(current_sess_length), K(last_sess_length),
       KPHEX(current_sess_buf, current_sess_length), KPHEX(last_sess_buf, last_sess_length));
   } else if (memcmp(current_sess_buf, last_sess_buf, current_sess_length) == 0) {
-    LOG_TRACE("success to compare session info", K(ret));
+
   } else {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("fail to compare buf session info", K(ret),
@@ -3792,7 +3792,7 @@ int ObQueryInfoEncoder::display_sess_info(ObSQLSessionInfo &sess, const char* cu
       "last_affected_rows", affected_rows);
   } else {
     share::ObTaskController::get().allow_next_syslog();
-    LOG_INFO("success to verify VariousInfo", K(ret));
+
   }
   return ret;
 }
@@ -3872,7 +3872,7 @@ int ObControlInfoEncoder::serialize(ObSQLSessionInfo &sess, char *buf, const int
   } else if (OB_FAIL(ObProtoTransUtil::store_int1(buf, buf_len, pos, sess.is_coninfo_set_by_sess(), CONINFO_BY_SESS))) {
     LOG_WARN("failed to store control info set by sess", K(sess.is_coninfo_set_by_sess()), K(pos));
   } else {
-    LOG_TRACE("serialize control info", K(sess.get_server_sid()), K(sess.get_control_info()));
+
   }
   return ret;
 }
@@ -3909,7 +3909,7 @@ int ObControlInfoEncoder::deserialize(ObSQLSessionInfo &sess, const char *buf, c
       sess.get_control_info_encoder().is_changed_ = false;
     }
 
-    LOG_TRACE("deserialize control info", K(sess.get_server_sid()), K(sess.get_control_info()));
+
   }
   return ret;
 }

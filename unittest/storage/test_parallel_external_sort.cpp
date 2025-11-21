@@ -664,7 +664,7 @@ void TestParallelExternalSort::test_multi_task_sort(const int64_t buf_mem_limit,
     ret = external_sort[i].do_sort(false);
     ASSERT_EQ(OB_SUCCESS, ret);
     std::sort(task_items.begin(), task_items.end());
-    STORAGE_LOG(INFO, "task i items", K(i), K(task_items));
+
   }
 
   ret = combine_sort.init(buf_mem_limit / task_cnt, file_buf_size, expire_timestamp, OB_SYS_TENANT_ID, &compare);
@@ -673,11 +673,11 @@ void TestParallelExternalSort::test_multi_task_sort(const int64_t buf_mem_limit,
     ret = external_sort[i].transfer_final_sorted_fragment_iter(combine_sort);
     ASSERT_EQ(OB_SUCCESS, ret);
   }
-  STORAGE_LOG(INFO, "combine sort begin");
+
   ret = combine_sort.do_sort(true);
   ASSERT_EQ(OB_SUCCESS, ret);
   std::sort(total_items.begin(), total_items.end(), compare);
-  STORAGE_LOG(INFO, "combine get_next_item begin");
+
   for (int64_t i = 0; OB_SUCC(ret) && i < total_items.size(); ++i) {
     ret = combine_sort.get_next_item(item);
     ASSERT_EQ(OB_SUCCESS, ret);

@@ -303,7 +303,7 @@ public:
   {
     UNUSED(arg);
     //TestPlanCache *test_pc = reinterpret_cast<TestPlanCache *>(arg);
-    LOG_INFO("start thread", K(thread));
+
 
     // alter schema
     if (WITH_SCHEMA_ALTER) {
@@ -359,7 +359,7 @@ TEST_F(TestPlanCache, basic)
     plan_cache->cache_evict_all();
   }
 
-  LOG_INFO("ref_count:", K(plan_cache->ref_count_));
+
   EXPECT_TRUE(plan_cache->get_ref_count() == 1);
   plan_cache->dec_ref_count();
 

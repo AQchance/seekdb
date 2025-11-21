@@ -455,7 +455,7 @@ public:
   void wakeup() { if (ATOMIC_BCAS(&is_sleeping_, true, false)) { cond_.signal(); }}
   template <typename Function> int replay_all(Function& fn)
   {
-    LOG_INFO("replay all begin");
+
     int ret = OB_SUCCESS;
 
     for (int64_t i = 0; i < TASK_QUEUE_CNT; ++i) {
@@ -471,7 +471,7 @@ public:
         }
       }
     }
-    LOG_INFO("replay all end", K(ret));
+
     return ret;
   }
 

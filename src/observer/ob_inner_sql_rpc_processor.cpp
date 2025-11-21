@@ -176,7 +176,7 @@ int ObInnerSqlRpcP::process_read(
                   obrpc::OB_INNER_SQL_SYNC_TRANSMIT> >::flush(THIS_WORKER.get_timeout_remain(), &arg_.get_ctrl_svr()))) {
                 LOG_WARN("fail to flush", K(ret));
               } else {
-                LOG_DEBUG("flush scanner successfully", K(scanner), K(scanner.get_found_rows()));
+
                 if (need_reset_field_columns) { // field columns info only need to be returned once
                   transmit_result.reset_field_columns();
                   need_reset_field_columns = false;

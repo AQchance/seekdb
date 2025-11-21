@@ -104,10 +104,10 @@ int ObRestoreCompatibilityUtil::is_tablet_restore_phase_done_(
           LOG_WARN("failed to check tablet is deleted", K(ret), K(tablet_meta));
         } else if (is_deleted) {
           is_finish = true;
-          LOG_INFO("UNDEFINED tablet is deleted", K(tablet_meta));
+
         } else {
           is_finish = false;
-          LOG_INFO("UNDEFINED tablet is not deleted", K(tablet_meta));
+
         }
       } else {
         is_finish = ha_status.is_restore_status_remote();
@@ -192,10 +192,10 @@ int ObRestoreCompatibilityUtil::is_tablet_restore_phase_done_prev_v4_(
           LOG_WARN("failed to check tablet is deleted", K(ret), K(tablet_meta));
         } else if (is_deleted) {
           is_finish = true;
-          LOG_INFO("UNDEFINED tablet is deleted", K(tablet_meta));
+
         } else {
           is_finish = false;
-          LOG_INFO("UNDEFINED tablet is not deleted", K(tablet_meta));
+
         }
       } else {
         is_finish = ha_status.is_restore_status_minor_and_major_meta();
@@ -219,7 +219,7 @@ int ObRestoreCompatibilityUtil::is_tablet_restore_phase_done_prev_v4_(
           LOG_WARN("failed to check tablet is deleted", K(ret), K(tablet_meta));
         } else {
           is_finish = is_deleted;
-          LOG_INFO("skip tablet restore major when it has been deleted", K(tablet_meta), K(is_deleted));          
+          
         }
       }
       break;

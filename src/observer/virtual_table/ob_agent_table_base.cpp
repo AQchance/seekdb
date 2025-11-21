@@ -402,7 +402,7 @@ int ObAgentTableBase::append_sql_condition(common::ObSqlString &sql)
   if (OB_FAIL(ret)) {
   } else if (info.get_size() <= 0) {
     // no keys, it will not add contitions. like __tenant_virtual_session_variable, no primary key
-    LOG_DEBUG("no row keys", K(ret), K(info));
+
   } else if (ranges.count() == 1 && ranges.at(0).start_key_.is_max_row()
       && ranges.at(0).end_key_.is_min_row()) {
     if (OB_FAIL(sql.append(" AND 0=1 "))) {
@@ -413,7 +413,7 @@ int ObAgentTableBase::append_sql_condition(common::ObSqlString &sql)
     ObSqlString vals;
     bool cond_added = false;
     FOREACH_CNT_X(r, ranges, OB_SUCC(ret)) {
-      LOG_DEBUG("convert range to condition", K(*r));
+
       if (r->table_id_ != index_table_->get_table_id()) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("unexpected index table id", K(*r), K(*index_table_));

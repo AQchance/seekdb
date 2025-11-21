@@ -128,13 +128,13 @@ void ObTabletCreateDeleteMdsUserData::on_redo(const share::SCN &redo_scn)
 void ObTabletCreateDeleteMdsUserData::start_transfer_out_on_redo_(const share::SCN &redo_scn)
 {
   transfer_scn_ = redo_scn;
-  LOG_INFO("[TRANSFER] start transfer out on redo", KPC(this));
+
 }
 
 void ObTabletCreateDeleteMdsUserData::finish_transfer_in_on_redo_(const share::SCN &redo_scn)
 {
   transfer_scn_ = redo_scn;
-  LOG_INFO("[TRANSFER] finish transfer in on redo", KPC(this));
+
 }
 
 void ObTabletCreateDeleteMdsUserData::on_commit(const share::SCN &commit_version, const share::SCN &commit_scn)
@@ -192,7 +192,7 @@ void ObTabletCreateDeleteMdsUserData::create_tablet_on_commit_(
 {
   create_commit_scn_ = commit_scn;
   create_commit_version_ = commit_version.get_val_for_tx();
-  LOG_INFO("create tablet commit", KPC(this));
+
 }
 
 void ObTabletCreateDeleteMdsUserData::delete_tablet_on_commit_(
@@ -201,21 +201,21 @@ void ObTabletCreateDeleteMdsUserData::delete_tablet_on_commit_(
 {
   delete_commit_scn_ = commit_scn;
   delete_commit_version_ = commit_version.get_val_for_tx();
-  LOG_INFO("delete tablet commit", KPC(this));
+
 }
 
 void ObTabletCreateDeleteMdsUserData::start_transfer_in_on_commit_(
     const share::SCN &commit_version)
 {
   start_transfer_commit_version_ = commit_version.get_val_for_tx();
-  LOG_INFO("[TRANSFER] start transfer in on commit", KPC(this));
+
 }
 
 void ObTabletCreateDeleteMdsUserData::start_transfer_out_on_commit_(
     const share::SCN &commit_version)
 {
   start_transfer_commit_version_ = commit_version.get_val_for_tx();
-  LOG_INFO("[TRANSFER] start transfer out on commit", KPC(this));
+
 }
 
 void ObTabletCreateDeleteMdsUserData::finish_transfer_out_on_commit_(
@@ -224,21 +224,21 @@ void ObTabletCreateDeleteMdsUserData::finish_transfer_out_on_commit_(
 {
   delete_commit_scn_ = commit_scn;
   delete_commit_version_ = commit_version.get_val_for_tx();
-  LOG_INFO("[TRANSFER] finish transfer out on commit", KPC(this));
+
 }
 
 void ObTabletCreateDeleteMdsUserData::start_split_src_on_commit_(
     const share::SCN &commit_version)
 {
   start_split_commit_version_ = commit_version.get_val_for_tx();
-  LOG_INFO("start split src on commit", KPC(this));
+
 }
 
 void ObTabletCreateDeleteMdsUserData::start_split_dst_on_commit_(
     const share::SCN &commit_version)
 {
   start_split_commit_version_ = commit_version.get_val_for_tx();
-  LOG_INFO("start split dst on commit", KPC(this));
+
 }
 
 void ObTabletCreateDeleteMdsUserData::finish_split_src_on_commit_(
@@ -247,7 +247,7 @@ void ObTabletCreateDeleteMdsUserData::finish_split_src_on_commit_(
 {
   delete_commit_scn_ = commit_scn;
   delete_commit_version_ = commit_version.get_val_for_tx();
-  LOG_INFO("split src delete tablet commit", KPC(this));
+
 }
 
 int ObTabletCreateDeleteMdsUserData::set_tablet_gc_trigger(
@@ -282,7 +282,7 @@ int ObTabletCreateDeleteMdsUserData::set_tablet_empty_shell_trigger(
     LOG_WARN("ls is null", K(ret), K(ls_id), K(ls_handle));
   } else {
     ls->get_tablet_empty_shell_handler()->set_empty_shell_trigger(true);
-    LOG_INFO("set tablet empty shell trigger", K(ret), K(ls_id), "handler", ls->get_tablet_empty_shell_handler());
+
   }
   return ret;
 }

@@ -69,7 +69,7 @@ int ObDDLIncLogHandle::wait(const int64_t timeout)
           LOG_WARN("write ddl redo log timeout", K(ret), K(current_time), K(start_time));
         } else {
           if (REACH_TIME_INTERVAL(10L * 1000L * 1000L)) { //10s
-            LOG_INFO("wait ddl redo log callback", K(ret), K(finish), K(current_time), K(start_time));
+
           }
           ob_usleep(CHECK_DDL_INC_LOG_FINISH_INTERVAL);
         }
@@ -387,7 +387,7 @@ int ObDDLIncRedoLogWriter::switch_to_remote_write()
       LOG_WARN("get leader failed", K(ret), K(leader_ls_id_));
   } else {
     remote_write_ = true;
-    LOG_INFO("switch to remote write", K(ret), K_(tablet_id), K_(leader_ls_id), K_(leader_addr));
+
   }
   return ret;
 }

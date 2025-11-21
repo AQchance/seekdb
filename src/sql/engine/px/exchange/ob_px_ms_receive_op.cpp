@@ -180,7 +180,7 @@ int ObPxMSReceiveOp::inner_close()
 
   release_channel_ret = erase_dtl_interm_result();
   if (release_channel_ret != common::OB_SUCCESS) {
-    LOG_TRACE("release interm result failed", KR(release_channel_ret));
+
   }
   sql_mem_processor_.unregister_profile();
   return ret;
@@ -430,7 +430,7 @@ int ObPxMSReceiveOp::GlobalOrderInput::get_row(
   if (OB_SUCC(ret)) {
     if (is_empty()) {
       ret = OB_ITER_END;
-      LOG_TRACE("finish to fetch all data from one input", K(ret));
+
       if (!finish_) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("fetch last row but merge input isn't finish", K(ret));
@@ -559,7 +559,7 @@ int ObPxMSReceiveOp::GlobalOrderInput::add_row(
       if (OB_FAIL(reset_add_row_store(reset))) {
         LOG_WARN("fail to switch add row store", K(ret));
       } else if (reset) {
-        LOG_TRACE("reset add row store", K(add_row_reader_), K(*add_row_store_));
+
         int64_t mem_limit = 0;
         add_row_reader_->reset();
         add_row_store_->reset();
@@ -659,7 +659,7 @@ int ObPxMSReceiveOp::inner_get_next_row()
                                                        eval_ctx_))) {
           LOG_WARN("failed to convert store row", K(ret));
         } else {
-          LOG_TRACE("trace output row", K(ret), K(ObToStringExprRow(eval_ctx_, MY_SPEC.all_exprs_)));
+
         }
         metric_.count();
         metric_.mark_first_out();
@@ -800,7 +800,7 @@ int ObPxMSReceiveOp::get_all_rows_from_channels(
                     LOG_WARN("fail to add row to row store", K(got_channel_idx), K(ret));
                   } else {
                     last_store_row_array.at(got_channel_idx) = last_store_row;
-                    LOG_DEBUG("get new row and new group", K(ret), K(got_channel_idx), K(ObToStringExprRow(eval_ctx_, MY_SPEC.all_exprs_)));
+
                   }
                 }
               } else if (nullptr == cur_chunk_store) {
@@ -829,7 +829,7 @@ int ObPxMSReceiveOp::get_all_rows_from_channels(
                       LOG_WARN("fail to add row to row store", K(got_channel_idx), K(ret));
                     } else {
                       last_store_row_array.at(got_channel_idx) = last_store_row;
-                      LOG_DEBUG("get new row and new group", K(ret), K(got_channel_idx), K(ObToStringExprRow(eval_ctx_, MY_SPEC.all_exprs_)));
+
                     }
                   }
                 } else if (OB_FAIL(process_dump(full_dump_array, chunk_store_array))) {
@@ -838,7 +838,7 @@ int ObPxMSReceiveOp::get_all_rows_from_channels(
                   LOG_WARN("fail to add row to row store", K(got_channel_idx), K(ret));
                 } else {
                   last_store_row_array.at(got_channel_idx) = last_store_row;
-                  LOG_DEBUG("get new row", K(ret), K(got_channel_idx), K(ObToStringExprRow(eval_ctx_, MY_SPEC.all_exprs_)), K(is_new_group));
+
                 }
               }
             }

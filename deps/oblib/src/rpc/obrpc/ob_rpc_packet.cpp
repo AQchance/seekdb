@@ -197,7 +197,7 @@ int ObRpcPacketHeader::deserialize(const char* buf, const int64_t data_len, int6
 
     }
     ObSequence::update_max_seq_no(seq_no_);
-    LOG_DEBUG("rpc receive seq_no ", K_(seq_no), K(ObSequence::get_max_seq_no()));
+
     // for RPC response, if the src_cluster_id is the same as current cluster id, we set the
     // data_version here. for RPC request, the failure of setting data_version may cause
     // disconnection, to avoid it, we delay setting to the RPC process phase.
@@ -214,7 +214,7 @@ int ObRpcPacketHeader::deserialize(const char* buf, const int64_t data_len, int6
                 K_(src_cluster_id), K(ObRpcNetHandler::CLUSTER_ID));
     }
     if (OB_ARB_GC_NOTIFY == pcode_ && REACH_TIME_INTERVAL(5000000)) {
-      LOG_TRACE("receive arb rpc", K_(src_cluster_id), K_(pcode));
+
     }
   }
 

@@ -150,7 +150,7 @@ TEST_F(TestStorageOss, test_del)
   for (int64_t i = 0; i < file_names_del.count(); ++i) {
     ASSERT_EQ(OB_SUCCESS, databuff_printf(uri_del, sizeof(uri_del), "%s/%s/%s", test_oss_bucket_, dir_name, file_names_del.at(i).ptr()));
     util.del_file(uri_del, storage_info);
-    STORAGE_LOG(INFO, "del file ", K(uri_del));
+
   }
   
   ASSERT_EQ(OB_SUCCESS, util.write_single_file(uri, storage_info, test_content, strlen(test_content),
@@ -161,7 +161,7 @@ TEST_F(TestStorageOss, test_del)
   TestListFileOss1 op(file_names);
   ASSERT_EQ(OB_SUCCESS, util.list_files(dir_uri, storage_info, op));
   for (int64_t i = 0; i < file_names.count(); ++i) {
-    STORAGE_LOG(INFO, "dump", K(read_size), K(i), K(file_names.at(i)));
+
   }
   bool is_exist = false;
   util.is_exist(uri, storage_info, is_exist);

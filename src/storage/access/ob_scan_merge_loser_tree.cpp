@@ -57,17 +57,17 @@ int ObScanMergeLoserTreeCmp::compare_rowkey(const ObDatumRow &l_row, const ObDat
     LOG_WARN("invalid argument", K(ret), K(l_row), K(r_row), KP(datum_utils_));
   } else if (OB_UNLIKELY(l_row.get_column_count() < rowkey_size_ || r_row.get_column_count() < rowkey_size_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected row column cnt", K(ret), K(l_row), K(r_row), K_(rowkey_size));
+
   } else {
     ObDatumRowkey l_key;
     ObDatumRowkey r_key;
     int temp_cmp_ret = 0;
     if (OB_FAIL(l_key.assign(l_row.storage_datums_, rowkey_size_))) {
-      STORAGE_LOG(WARN, "Failed to assign store rowkey", K(ret), K(l_row), K_(rowkey_size));
+
     } else if (OB_FAIL(r_key.assign(r_row.storage_datums_, rowkey_size_))) {
-      STORAGE_LOG(WARN, "Failed to assign store rowkey", K(ret), K(r_row), K_(rowkey_size));
+
     } else if (OB_FAIL(l_key.compare(r_key, *datum_utils_, temp_cmp_ret))) {
-      STORAGE_LOG(WARN, "Failed to compare rowkey", K(ret), K(l_key), K(r_key), KPC(datum_utils_));
+
     } else {
       cmp_result = temp_cmp_ret;
     }

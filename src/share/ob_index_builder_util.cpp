@@ -901,7 +901,7 @@ int ObIndexBuilderUtil::adjust_ordinary_index_column_args(
         LOG_WARN("store new sort item failed", K(ret), K(new_sort_item));
       } else if (data_schema.get_column_count() > old_cnt) {
         //A new generated column has been created, and the new generated column needs to be saved
-        LOG_INFO("column info", KPC(gen_col), K(old_cnt), K(data_schema.get_column_count()));
+
         if (OB_FAIL(gen_columns.push_back(gen_col))) {
           LOG_WARN("store generated column failed", K(ret));
         }

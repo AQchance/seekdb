@@ -97,11 +97,11 @@ int ObLobMetaScanIter::get_next_row_local(ObLobMetaInfo &row)
             ret = OB_ERR_UNEXPECTED;
             LOG_WARN("unexpected situation", K(ret), K(byte_size_), KPC(this), K(row));
           } else if (not_calc_char_len()) {
-            LOG_DEBUG("not_calc_char_len", KPC(this), K(row));
+
           } else {
             // char len has not been calc, just calc char len here
             row.char_len_ = ObCharset::strlen_char(coll_type_, row.lob_data_.ptr(), row.lob_data_.length());
-            LOG_DEBUG("calc_char_len", K(coll_type_), KPC(this), K(row));
+
           }
         }
         if (is_range_over(row)) {
@@ -121,7 +121,7 @@ int ObLobMetaScanIter::get_next_row_local(ObLobMetaInfo &row)
           if (OB_FAIL(cur_info_.deep_copy(*allocator_, info))) {
             LOG_WARN("fail to do deep copy for cur info", K(info), K(row), KPC(this));
           } else {
-            LOG_DEBUG("deep_copy last info", K(cur_info_));
+
           }
         }
       }
@@ -589,7 +589,7 @@ int ObLobMetaWriteIter::get_last_meta_info(ObLobAccessParam &param, ObLobMetaMan
   bool save_is_reverse = param.scan_backward_;
   param.scan_backward_ = true;
   if (OB_ISNULL(meta_manager)) {
-    LOG_DEBUG("not scan last info", K(ret), K(param));
+
   } else if (OB_FAIL(meta_manager->scan(param, scan_iter_))) {
     LOG_WARN("do lob meta scan failed.", K(ret), K(param));
   } else {
@@ -753,7 +753,7 @@ int ObLobMetaWriteIter::try_fill_data(ObLobWriteBuffer &write_buffer, ObLobQuery
       ret = OB_SUCCESS;
     }
   } else if (data.length() == 0) {
-    LOG_INFO("[LOB] get empty result");
+
   } else if (write_buffer.use_buffer()) {
     // already use buffer
   } else if (data.length() + max_bytes_in_char >= piece_block_size_ || inner_buffer_.ptr() == nullptr) {
@@ -938,7 +938,7 @@ int ObLobMetaWriteIter::get_next_row(ObLobMetaWriteResult &row)
         LOG_WARN("result data over piece_block_size", K(ret), K(piece_block_size_), K(row.info_), K(row.is_update_));
       } else {
         row.data_ = row.info_.lob_data_;
-        LOG_DEBUG("to_lob_meta_info", K(row.info_), K(write_buffer), K(offset_));
+
       }
     }
 
@@ -1016,13 +1016,13 @@ int ObLobMetaWriteIter::update_disk_lob_locator(ObLobMetaWriteResult &result)
 
     if (OB_FAIL(ret)) {
     } else if (lob_outrow_ctx->seq_no_st_ == 0) {
-      LOG_DEBUG("non incremental_direct_load does not have seq_no, so skip", KPC(lob_common_), KPC(lob_outrow_ctx), KPC(lob_data), K(result));
+
     } else {
       transaction::ObTxSEQ cur_seq = transaction::ObTxSEQ::cast_from_int(lob_outrow_ctx->seq_no_st_) + lob_outrow_ctx->seq_no_cnt_;
       result.seq_no_ = cur_seq.cast_to_int();
       // update seq_no_cnt
       lob_outrow_ctx->seq_no_cnt_++;
-      LOG_DEBUG("disk lob locator info", K(cur_seq), KPC(lob_common_), KPC(lob_outrow_ctx), KPC(lob_data), K(result));
+
     }
   }
   return ret;

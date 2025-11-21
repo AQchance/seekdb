@@ -44,7 +44,7 @@ int ObCCLRuleSqlService::insert_ccl_rule(const ObCCLRuleSchema &ccl_rule_schema,
   }
   for (int64_t i = THE_SYS_TABLE_IDX; OB_SUCC(ret) && i < ARRAYSIZEOF(CCL_RULE_TABLES); ++i) {
     if (OB_FAIL(sql.assign_fmt("INSERT INTO %s(", CCL_RULE_TABLES[i]))) {
-      STORAGE_LOG(WARN, "append table name failed", K(ret));
+
     } else if (OB_FAIL(gen_sql(sql, values, ccl_rule_schema))) {
       LOG_WARN("fail to gen sql", K(ret));
     } else if (i == THE_HISTORY_TABLE_IDX) {
@@ -64,7 +64,7 @@ int ObCCLRuleSqlService::insert_ccl_rule(const ObCCLRuleSchema &ccl_rule_schema,
       }
     }
     values.reset();
-    LOG_INFO("[CCL_RULE][SqlService] insert sql: ", K(sql));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -154,7 +154,7 @@ int ObCCLRuleSqlService::delete_ccl_rule(const ObCCLRuleSchema &ccl_rule_schema,
   }
   for (int64_t i = THE_HISTORY_TABLE_IDX; OB_SUCC(ret) && i < ARRAYSIZEOF(CCL_RULE_TABLES); ++i) {
     if (OB_FAIL(sql.assign_fmt("INSERT INTO %s(", CCL_RULE_TABLES[i]))) {
-      STORAGE_LOG(WARN, "append table name failed", K(ret));
+
     } else if (OB_FAIL(gen_sql(sql, values, ccl_rule_schema))) {
       LOG_WARN("fail to gen sql", K(ret));
     } else if (i == THE_HISTORY_TABLE_IDX) {

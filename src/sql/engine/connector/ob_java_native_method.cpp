@@ -31,14 +31,14 @@ jlong JavaNativeMethods::memory_malloc(JNIEnv *env, jclass clazz, jlong bytes) {
   int64_t lbytes = reinterpret_cast<int64_t>(bytes);
   oceanbase::lib::ObMallocHookAttrGuard guard(ObMemAttr(MTL_ID(), "JniAllocator"));
   long address = reinterpret_cast<long>(malloc(lbytes));
-  LOG_TRACE("allocate bytes of memory address", K(ret), K(lbytes), K(address));
+
   return address;
 }
 
 void JavaNativeMethods::memory_free(JNIEnv *env, jclass clazz, jlong address) {
   int ret = OB_SUCCESS;
   free(reinterpret_cast<void *>(address));
-  LOG_TRACE("free memory address", K(ret), K(address));
+
 }
 
 } // namespace sql

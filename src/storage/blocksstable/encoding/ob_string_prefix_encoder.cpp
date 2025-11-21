@@ -264,7 +264,7 @@ int ObStringPrefixEncoder::store_meta(ObBufferWriter &buf_writer)
       meta_header_->count_ = static_cast<uint8_t>(prefix_count_);
       meta_header_->max_string_size_ = static_cast<uint32_t>(ctx_->max_string_size_);
     }
-    LOG_DEBUG("debug: header", K_(*meta_header), K_(column_header), K(size));
+
   }
   return ret;
 }

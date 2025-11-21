@@ -609,7 +609,7 @@ int ObRLEDecoder::get_distinct_count(int64_t &distinct_count) const
 {
   int ret = OB_SUCCESS;
   distinct_count = dict_decoder_.get_dict_header()->count_;
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(dict_decoder_.get_dict_header()->count_));
+
   return ret;
 }
 

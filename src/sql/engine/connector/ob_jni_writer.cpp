@@ -31,7 +31,7 @@ namespace sql {
 int JniWriter::init_params(const common::hash::ObHashMap<ObString, ObString> &params) {
   int ret = OB_SUCCESS;
   if (is_params_created()) {
-    LOG_INFO("jni writer is already inited, skip to re-init", K(ret));
+
   } else if (OB_FAIL(detect_java_runtime())) {
     ret = OB_JNI_JAVA_HOME_NOT_FOUND_ERROR;
     LOG_WARN("failed to detect java runtime", K(ret));
@@ -50,7 +50,7 @@ int JniWriter::init_params(const common::hash::ObHashMap<ObString, ObString> &pa
     common::hash::ObHashMap<ObString, ObString>::const_iterator params_iter;
     for (params_iter = params.begin();
          OB_SUCC(ret) && params_iter != params.end(); ++params_iter) {
-      LOG_TRACE("scanner params", K(ret), K(params_iter->first), K(params_iter->second));
+
       // init scanner params
       if (OB_FAIL(writer_params_.set_refactored(params_iter->first,
                                                 params_iter->second))) {
@@ -68,7 +68,7 @@ int JniWriter::do_open() {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("writer params is not created", K(ret));
   } else if (is_open()) {
-    LOG_INFO("jni scanner is already opend, skip get jni env");
+
   } else {
     JNIEnv *env = nullptr;
     if (OB_FAIL(get_jni_env(env))) {

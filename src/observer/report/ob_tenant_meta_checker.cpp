@@ -281,7 +281,7 @@ int ObTenantMetaChecker::schedule_ls_meta_check_task()
       false/*repeat*/))) {
     LOG_WARN("TG_SCHEDULE ls meta check task failed", KR(ret), K_(ls_checker_tg_id), K(CHECK_INTERVAL));
   } else {
-    LOG_TRACE("schedule ls meta check task success", K_(tenant_id), K_(ls_checker_tg_id));
+
   }
   return ret;
 }
@@ -304,7 +304,7 @@ int ObTenantMetaChecker::schedule_tablet_meta_check_task()
     LOG_WARN("TG_SCHEDULE tablet meta check task failed",
         KR(ret), K_(tablet_checker_tg_id), K(CHECK_INTERVAL));
   } else {
-    LOG_TRACE("schedule tablet meta check task success", K_(tenant_id), K_(tablet_checker_tg_id));
+
   }
   return ret;
 }
@@ -609,7 +609,7 @@ int ObTenantMetaChecker::check_report_replicas_(
             LOG_WARN("fail to submit ls update task", KR(ret), K_(tenant_id), K(ls_id));
           } else {
             ++report_count;
-            LOG_INFO("modify replica success", KR(ret), K(local_replica), K(table_replica));
+
           }
         }
       }
@@ -719,7 +719,7 @@ int ObTenantMetaChecker::check_report_replicas_(
                   KR(ret), K_(tenant_id), K(ls_id), K(tablet_id));
             } else {
               ++report_count;
-              LOG_INFO("modify replica success", KR(ret), K(local_replica), K(table_replica));
+
             }
           }
         } // end while for tablet_iter

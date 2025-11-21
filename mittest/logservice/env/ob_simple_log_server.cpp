@@ -253,12 +253,12 @@ int ObSimpleLogServer::add_ls_to_ls_map_(const int64_t palf_id)
 
   if (OB_SUCCESS == ls_service_->get_ls(ObLSID(palf_id), ls_handle, mod)) {
     ls = ls_handle.get_ls();
-    LOG_INFO("ls exists", K(palf_id));
+
   } else if (OB_ISNULL(buf = ls_service_->ls_allocator_.alloc(sizeof(ObLS)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     LOG_WARN("failed to alloc ls", K(ret));
   } else {
-    LOG_INFO("ls not exists", K(palf_id));
+
     ls = new (buf) ObLS();
     ls->ls_meta_.ls_id_ = ObLSID(palf_id);
     if (OB_FAIL(ls_service_->add_ls_to_map_(ls))) {
@@ -273,7 +273,7 @@ int ObSimpleLogServer::add_ls_to_ls_map_(const int64_t palf_id)
     // don't release ObLS when add it into map failed, the destroy function of ObLS
     // depend too many modules.
   } else {
-    LOG_INFO("add ls success", K(ret), K(palf_id));
+
   }
   return ret;
 }
@@ -508,7 +508,7 @@ int ObSimpleLogServer::init_ls_service_(const bool is_bootstrap)
     if (OB_FAIL(add_ls_to_ls_map_(palf_id))) {
       LOG_WARN("failed to add_ls_to_map_", K(ret));
     } else {
-      LOG_INFO("add ls success", K(ret), K(palf_id));
+
     }
     return ret;
   };
@@ -1176,7 +1176,7 @@ int ObSimpleLogServer::create_ls(const int64_t palf_id,
   } else if (OB_FAIL(add_ls_to_ls_map_(palf_id))) {
     CLOG_LOG(WARN, "add_ls_to_ls_map_ failed", K(ret), K(palf_id));
   } else {
-    LOG_INFO("add ls success", K(ret), K(palf_id));
+
   }
   return ret;
 }

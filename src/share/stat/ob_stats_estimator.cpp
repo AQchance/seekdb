@@ -114,7 +114,7 @@ int ObStatsEstimator::pack(ObSqlString &raw_sql_str)
                                             group_by_string_.ptr()))) {
     LOG_WARN("failed to build query sql stmt", K(ret));
   } else {
-    LOG_TRACE("OptStat: basic stat query sql", K(raw_sql_str));
+
   }
   return ret;
 }
@@ -142,7 +142,7 @@ int ObStatsEstimator::fill_sample_info(common::ObIAllocator &alloc,
         LOG_WARN("get unexpected error", K(ret), K(real_len));
       } else {
         sample_hint_.assign_ptr(buf, real_len);
-        LOG_TRACE("succeed to add sample string", K(buf), K(real_len));
+
       }
     }
   }
@@ -188,7 +188,7 @@ int ObStatsEstimator::fill_specify_scn_info(common::ObIAllocator &alloc,
         LOG_WARN("get unexpected error", K(ret), K(real_len));
       } else {
         current_scn_string_.assign_ptr(buf, real_len);
-        LOG_TRACE("succeed to fill specify scn info", K(current_scn_string_));
+
       }
     }
   }
@@ -217,7 +217,7 @@ int ObStatsEstimator::fill_parallel_info(common::ObIAllocator &alloc,
         if (OB_FAIL(add_hint(degree_str, alloc))) {
           LOG_WARN("failed to add hint", K(ret));
         } else {
-          LOG_TRACE("succeed to add degree string", K(degree_str));
+
         }
       }
     }
@@ -247,7 +247,7 @@ int ObStatsEstimator::fill_query_timeout_info(common::ObIAllocator &alloc,
         if (OB_FAIL(add_hint(query_timeout_str, alloc))) {
           LOG_WARN("failed to add hint", K(ret));
         } else {
-          LOG_TRACE("succeed to add query timeout string", K(query_timeout_str));
+
         }
       }
     }
@@ -286,7 +286,7 @@ int ObStatsEstimator::add_hint(const ObString &hint_str,
       MEMCPY(buf + len, other_hints_.ptr() + other_hints_.length() - 2, 2);
       len += 2;
       other_hints_.assign_ptr(buf, len);
-      LOG_TRACE("Succeed to add hint", K(other_hints_));
+
     }
   }
   return ret;
@@ -391,7 +391,7 @@ int ObStatsEstimator::fill_group_by_info(ObIAllocator &allocator,
         const int64_t len_group_by = strlen("GROUP BY ");
         calc_part_id_str.assign_ptr(group_by_string_.ptr() + len_group_by,
                                     group_by_string_.length() - len_group_by);
-        LOG_TRACE("Succeed to fill group by info", K(group_by_string_), K(calc_part_id_str));
+
       }
     }
   }
@@ -548,7 +548,7 @@ int ObStatsEstimator::copy_basic_opt_stat(ObOptStat &src_opt_stat,
       } else {/*do nothing*/}
     }
     if (OB_SUCC(ret) && !find_it) {
-      LOG_TRACE("this partition id isn't in needed partition ids, no need gather stats",K(partition_id));
+
     }
   }
   return ret;
@@ -598,7 +598,7 @@ int ObStatsEstimator::copy_basic_col_stats(const int64_t cur_row_cnt,
                  src_col_stats.at(i)->get_llc_bitmap(),
                  src_col_stats.at(i)->get_llc_bitmap_size());
           dst_col_stats.at(i)->set_llc_bitmap_size(src_col_stats.at(i)->get_llc_bitmap_size());
-          LOG_TRACE("Succeed to copy basic col stats", K(*dst_col_stats.at(i)), K(*src_col_stats.at(i)));
+
         }
       }
     }

@@ -267,7 +267,7 @@ int ObUnitManager::load()
   DEBUG_SYNC(BEFORE_RELOAD_UNIT);
   int ret = OB_SUCCESS;
   SpinWLockGuard guard(lock_);
-  LOG_INFO("unit manager load start", K(ret));
+
   if (!inited_) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", K(ret));
@@ -414,7 +414,7 @@ int ObUnitManager::load()
       loaded_ = true;
     }
   }
-  LOG_INFO("unit manager load finish", K(ret));
+
   return ret;
 }
 
@@ -438,7 +438,7 @@ int ObUnitManager::inner_create_unit_config_(const ObUnitConfig &unit_config, co
   const ObUnitResource &rpc_ur = unit_config.unit_resource();
   ObUnitResource ur = rpc_ur;
 
-  LOG_INFO("start create unit config", K(name), K(rpc_ur), K(if_not_exist));
+
 
   if (OB_FAIL(check_inner_stat_())) {
     LOG_WARN("check_inner_stat failed", K(inited_), K(loaded_), K(ret));
@@ -455,7 +455,7 @@ int ObUnitManager::inner_create_unit_config_(const ObUnitConfig &unit_config, co
     } else if (if_not_exist) {
       ObCStringHelper helper;
       LOG_USER_NOTE(OB_RESOURCE_UNIT_EXIST, helper.convert(name));
-      LOG_INFO("unit config already exist", K(name));
+
     } else {
       ret = OB_RESOURCE_UNIT_EXIST;
       ObCStringHelper helper;
@@ -486,7 +486,7 @@ int ObUnitManager::inner_create_unit_config_(const ObUnitConfig &unit_config, co
       new_config = NULL;
     }
   }
-  LOG_INFO("finish create unit config", KR(ret), K(name), K(rpc_ur), K(if_not_exist), KPC(new_config));
+
   return ret;
 }
 
@@ -606,7 +606,7 @@ int ObUnitManager::check_unit_config_exist(const share::ObUnitConfigName &unit_c
 int ObUnitManager::drop_unit_config(const ObUnitConfigName &name, const bool if_exist)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start drop unit config", K(name));
+
   SpinWLockGuard guard(lock_);
   ObUnitConfig *config = NULL;
   int64_t ref_count = 0;
@@ -624,7 +624,7 @@ int ObUnitManager::drop_unit_config(const ObUnitConfigName &name, const bool if_
         ret = OB_SUCCESS;
         ObCStringHelper helper;
         LOG_USER_NOTE(OB_RESOURCE_UNIT_NOT_EXIST, helper.convert(name));
-        LOG_INFO("unit config not exist, no need to delete it", K(name));
+
       } else {
         ret = OB_RESOURCE_UNIT_NOT_EXIST;
         ObCStringHelper helper;
@@ -655,7 +655,7 @@ int ObUnitManager::drop_unit_config(const ObUnitConfigName &name, const bool if_
     config_allocator_.free(config);
     config = NULL;
   }
-  LOG_INFO("finish drop unit config", K(name), K(ret));
+
   return ret;
 }
 
@@ -843,7 +843,7 @@ int ObUnitManager::clone_resource_pool(
     const uint64_t source_tenant_id)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start clone_resource_pool", K(resource_pool), K(unit_config_name), K(source_tenant_id));
+
   SpinWLockGuard guard(lock_);
   bool if_not_exist = false;
   common::ObArray<share::ObUnitInfo> source_units;
@@ -863,7 +863,7 @@ int ObUnitManager::clone_resource_pool(
     LOG_WARN("fail to inner create resource pool for clone tenant", KR(ret), K(resource_pool),
              K(unit_config_name), K(if_not_exist), K(source_tenant_id), K(source_units));
   }
-  LOG_INFO("finish clone_resource_pool", KR(ret), K(resource_pool), K(unit_config_name), K(source_tenant_id));
+
   return ret;
 }
 
@@ -930,7 +930,7 @@ int ObUnitManager::inner_create_resource_pool_(
     } else if (if_not_exist) {
       ObCStringHelper helper;
       LOG_USER_NOTE(OB_RESOURCE_POOL_EXIST, helper.convert(resource_pool.name_));
-      LOG_INFO("resource_pool already exist, no need to create", K(resource_pool.name_));
+
     } else {
       ret = OB_RESOURCE_POOL_EXIST;
       ObCStringHelper helper;
@@ -1170,7 +1170,7 @@ int ObUnitManager::construct_server_resources_info_(
     if (OB_FAIL(ret)) {
     } else if (0 >= server_infos.count()) {
       // just ignore, let snapshot creation decide whether to raise error
-      LOG_INFO("[CLONE_TENANT_UNIT] zone may have no valid servers to hold unit", K(zone), K(source_units));
+
     } else if (OB_FAIL(get_servers_resource_info_via_rpc(server_infos, active_servers_resource_info_result))) {
       LOG_WARN("fail to get server resource info via rpc", KR(ret), K(server_infos));
     } else if (OB_FAIL(build_server_resources_(active_servers_resource_info_result, server_resources))) {
@@ -1371,7 +1371,7 @@ int ObUnitManager::split_resource_pool(
     const common::ObIArray<common::ObZone> &split_zone_list)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start split resource pool", K(pool_name), K(split_pool_list), K(split_zone_list));
+
   SpinWLockGuard guard(lock_);
   share::ObResourcePool *pool = NULL;
   common::ObArray<share::ObResourcePoolName> split_pool_name_list;
@@ -2516,7 +2516,7 @@ int ObUnitManager::alter_resource_tenant(
     const common::ObString &sql_text)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start to alter resource tenant", K(tenant_id));
+
   SpinWLockGuard guard(lock_);
   // related variables
   common::ObArray<share::ObResourcePool *> *pools = nullptr;
@@ -2583,7 +2583,7 @@ int ObUnitManager::merge_resource_pool(
     const common::ObIArray<common::ObString> &new_pool_list)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start merge resource pool", K(old_pool_list), K(new_pool_list));
+
   SpinWLockGuard guard(lock_);
   common::ObArray<share::ObResourcePoolName> old_pool_name_list;
   share::ObResourcePoolName merge_pool_name;
@@ -3120,7 +3120,7 @@ int ObUnitManager::alter_resource_pool(const share::ObResourcePool &alter_pool,
                                        const common::ObIArray<uint64_t> &delete_unit_id_array)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start alter resource pool", K(alter_pool), K(config_name));
+
   SpinWLockGuard guard(lock_);
   share::ObResourcePool *pool = NULL;
   share::ObResourcePool  pool_bak;
@@ -3204,14 +3204,14 @@ int ObUnitManager::alter_resource_pool(const share::ObResourcePool &alter_pool,
     ROOTSERVICE_EVENT_ADD("unit", "alter_resource_pool",
                           "name", pool_bak.name_);
   }
-  LOG_INFO("finish alter resource pool", K(alter_pool), K(config_name), K(ret));
+
   return ret;
 }
 
 int ObUnitManager::drop_resource_pool(const uint64_t pool_id, const bool if_exist)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start drop resource pool", K(pool_id));
+
   SpinWLockGuard guard(lock_);
   share::ObResourcePool *pool = NULL;
   if (OB_FAIL(check_inner_stat_())) {
@@ -3227,7 +3227,7 @@ int ObUnitManager::drop_resource_pool(const uint64_t pool_id, const bool if_exis
       if (if_exist) {
         ret = OB_SUCCESS;
         LOG_USER_NOTE(OB_RESOURCE_POOL_NOT_EXIST, helper.convert(pool_id));
-        LOG_INFO("resource_pool not exist, but no need drop it", K(pool_id));
+
       } else {
         ret = OB_RESOURCE_POOL_NOT_EXIST;
         LOG_USER_ERROR(OB_RESOURCE_POOL_NOT_EXIST, helper.convert(pool_id));
@@ -3237,14 +3237,14 @@ int ObUnitManager::drop_resource_pool(const uint64_t pool_id, const bool if_exis
   } else if (OB_FAIL(inner_drop_resource_pool(pool))) {
     LOG_WARN("fail to inner drop resource pool", KR(ret), K(pool_id));
   }
-  LOG_INFO("finish drop resource pool", K(pool_id), K(ret));
+
   return ret;
 }
 
 int ObUnitManager::drop_resource_pool(const ObResourcePoolName &name, const bool if_exist)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start drop resource pool", K(name));
+
   SpinWLockGuard guard(lock_);
   share::ObResourcePool *pool = NULL;
   if (OB_FAIL(check_inner_stat_())) {
@@ -3261,7 +3261,7 @@ int ObUnitManager::drop_resource_pool(const ObResourcePoolName &name, const bool
         ret = OB_SUCCESS;
         ObCStringHelper helper;
         LOG_USER_NOTE(OB_RESOURCE_POOL_NOT_EXIST, helper.convert(name));
-        LOG_INFO("resource_pool not exist, but no need drop it", K(name));
+
       } else {
         ret = OB_RESOURCE_POOL_NOT_EXIST;
         ObCStringHelper helper;
@@ -3272,7 +3272,7 @@ int ObUnitManager::drop_resource_pool(const ObResourcePoolName &name, const bool
   } else if (OB_FAIL(inner_drop_resource_pool(pool))) {
     LOG_WARN("fail to inner drop resource pool", KR(ret), K(name));
   }
-  LOG_INFO("finish drop resource pool", K(name), K(ret));
+
   return ret;
 }
 
@@ -3365,7 +3365,7 @@ int ObUnitManager::check_server_enough(const uint64_t tenant_id,
           if (OB_FAIL(total_unit_infos.push_back(unit_infos.at(j)))) {
             LOG_WARN("fail to push back unit", K(ret), K(total_unit_infos), K(j), K(unit_infos));
           } else {
-            LOG_DEBUG("add unit infos", K(ret), K(total_unit_infos), K(unit_infos));
+
           }
         }
       } //end else
@@ -3927,7 +3927,7 @@ int ObUnitManager::grant_pools(common::ObMySQLTransaction &trans,
     LOG_WARN("do grant pools failed", KR(ret), K(grant), K(pool_names), K(tenant_id),
                                          K(compat_mode), K(is_bootstrap), K(source_tenant_id));
   }
-  LOG_INFO("grant resource pools to tenant", KR(ret), K(pool_names), K(tenant_id), K(is_bootstrap));
+
   return ret;
 }
 
@@ -3962,7 +3962,7 @@ int ObUnitManager::revoke_pools(common::ObMySQLTransaction &trans,
   } else if (OB_FAIL(do_revoke_pools_(trans, new_unit_group_id_array, pool_names, tenant_id))) {
     LOG_WARN("do revoke pools failed", KR(ret), K(grant), K(pool_names), K(tenant_id));
   }
-  LOG_INFO("revoke resource pools from tenant", K(pool_names), K(ret));
+
   return ret;
 }
 
@@ -3980,10 +3980,10 @@ int ObUnitManager::inner_get_pool_ids_of_tenant(const uint64_t tenant_id,
     ObArray<share::ObResourcePool  *> *pools = NULL;
     if (OB_FAIL(get_pools_by_tenant_(tenant_id, pools))) {
       if (OB_ENTRY_NOT_EXIST != ret) {
-        LOG_DEBUG("get_pools_by_tenant failed", K(tenant_id), K(ret));
+
       } else {
         // just return empty pool_ids
-        LOG_INFO("tenant doesn't own any pool", K(tenant_id), KR(ret));
+
         ret = OB_SUCCESS;
       }
     } else if (NULL == pools) {
@@ -4326,7 +4326,7 @@ int ObUnitManager::cancel_migrate_out_units(const ObAddr &server)
       }
     }
   }
-  LOG_INFO("cancel migrate out units", K(server), K(ret));
+
   return ret;
 }
 
@@ -4458,7 +4458,7 @@ int ObUnitManager::finish_migrate_unit(const uint64_t unit_id)
       LOG_WARN("end_migrate_unit failed", K(unit_id), K(op), K(ret));
     }
   }
-  LOG_INFO("finish migrate unit", K(unit_id), K(ret));
+
   return ret;
 }
 
@@ -4729,7 +4729,7 @@ int ObUnitManager::get_deleting_units_of_pool(
         LOG_WARN("unexpected unit status", K(ret), "unit_status", this_unit->status_);
       }
     }
-    LOG_INFO("get deleting units of pool", K(ret), K(resource_pool_id), K(units));
+
   }
   return ret;
 }
@@ -5148,7 +5148,7 @@ int ObUnitManager::do_notify_unit_resource_(
     if (OB_FAIL(omt::ObTenantNodeBalancer::get_instance().handle_notify_unit_resource(notify_arg))) {
       LOG_WARN("fail to handle_notify_unit_resource", K(ret), K(notify_arg));
     } else {
-      LOG_INFO("call notify resource to server (locally)", KR(ret), "dst", server, K(notify_arg));
+
     }
   } else {
     int64_t start = ObTimeUtility::current_time();
@@ -5474,7 +5474,7 @@ int ObUnitManager::get_excluded_servers(
       server_resource_info.reset();
       if (!server_info.can_migrate_in()) {
         is_exclude = true;
-        LOG_INFO("server can't migrate in, push into excluded_array", K(server_info), K(module));
+
       } else if (OB_FAIL(ObRootUtils::get_server_resource_info(
           report_servers_resource_info,
           server,
@@ -5881,7 +5881,7 @@ int ObUnitManager::do_choose_server_for_unit_(const ObUnitResource &config,
                                               ObAddr &choosed_server,
                                               std::string &resource_not_enough_reason) const
 {
-  LOG_INFO("[CHOOSE_SERVER_FOR_UNIT] begin", K(module), K(zone), K(excluded_servers), K(config));
+
 
   int ret = OB_SUCCESS;
   double hard_limit = 1.0;
@@ -9052,7 +9052,7 @@ int ObUnitManager::admin_migrate_unit(
     LOG_USER_ERROR(OB_OP_NOT_ALLOW, "migrate a unit which is in deleting status");
   } else if (dst == unit_info.unit_.server_) {
     // nothing need to do
-    LOG_INFO("migration dst same to src", KR(ret), K(dst), K(unit_info));
+
   } else if (dst == unit_info.unit_.migrate_from_server_ || is_cancel) {
     // cancel migrate unit
     bool can_migrate_in = false;
@@ -9133,7 +9133,7 @@ int ObUnitManager::cancel_migrate_unit(
     if (OB_FAIL(end_migrate_unit(unit.unit_id_, op))) {
       LOG_WARN("end_migrate_unit failed", "unit_id", unit.unit_id_, K(op), K(ret));
     } else {
-      LOG_INFO("cancel migrate unit", K(unit));
+
     }
   }
   return ret;
@@ -9166,7 +9166,7 @@ int ObUnitManager::try_cancel_migrate_unit(const share::ObUnit &unit, bool &is_c
       LOG_WARN("end_migrate_unit failed", "unit_id", unit.unit_id_, K(op), K(ret));
     } else {
       is_canceled = true;
-      LOG_INFO("reverse unit migrate success", K(ret), "unit_id", unit.unit_id_, K(op));
+
     }
   }
   return ret;
@@ -9233,7 +9233,7 @@ int ObUnitManager::try_migrate_unit(const uint64_t unit_id,
 int ObUnitManager::migrate_unit_(const uint64_t unit_id, const ObAddr &dst, const bool is_manual)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start to migrate unit", KR(ret), K(unit_id), K(dst), K(is_manual));
+
   ObUnit *unit = NULL;
   share::ObResourcePool *pool = NULL;
   ObZone zone;
@@ -9277,7 +9277,7 @@ int ObUnitManager::migrate_unit_(const uint64_t unit_id, const ObAddr &dst, cons
     new_unit.migrate_from_server_ = granted ? src : ObAddr();
     new_unit.is_manual_migrate_ = is_manual;
 
-    LOG_INFO("do migrate unit", KPC(unit), K(new_unit), KPC(pool), K(granted));
+
 
     // STEP 1: try notify unit persistence on destination ObServer
     if (OB_FAIL(do_migrate_unit_notify_resource_(*pool, new_unit, is_manual, granted))) {
@@ -9312,7 +9312,7 @@ int ObUnitManager::migrate_unit_(const uint64_t unit_id, const ObAddr &dst, cons
           "manual_migrate", is_manual ? "YES" : "NO");
     }
   }
-  LOG_INFO("finish migrate unit", KR(ret), K(unit_id), K(dst), K(is_manual));
+
   return ret;
 }
 
@@ -9512,7 +9512,7 @@ int ObUnitManager::inner_try_delete_migrate_unit_resource(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unit ptr is null", K(ret), KP(unit));
   } else if (!migrate_from_server.is_valid()) {
-    LOG_INFO("unit not in migrating, no need to delete src resource", K(unit_id));
+
   } else if (OB_FAIL(SVR_TRACER.check_server_alive(migrate_from_server, is_alive))) {
     LOG_WARN("fail to check server alive", K(ret), "server", migrate_from_server);
   } else if (!is_alive) {
@@ -9529,7 +9529,7 @@ int ObUnitManager::inner_try_delete_migrate_unit_resource(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unit config is null", K(ret), "unit_config_id", pool->unit_config_id_);
   } else if (!pool->is_granted_to_tenant()) {
-    LOG_INFO("unit is not granted to any tenant", K(ret), "tenant_id", pool->tenant_id_);
+
   } else if (OB_FAIL(ObCompatModeGetter::get_tenant_mode(pool->tenant_id_, compat_mode))) {
     LOG_WARN("fail to get tenant compat mode", K(ret),
              "tenant_id", pool->tenant_id_, K(unit_id), "pool", *pool);
@@ -9553,7 +9553,7 @@ int ObUnitManager::inner_try_delete_migrate_unit_resource(
     }
     if (OB_SUCC(ret)) {
       // arg/dest/result can be used here.
-      LOG_INFO("notify resource to server succeed", "unit", *unit, "dest", migrate_from_server);
+
     }
   }
   return ret;
@@ -9681,7 +9681,7 @@ int ObUnitManager::end_migrate_unit(const uint64_t unit_id, const EndMigrateOp e
     }
   }
 
-  LOG_INFO("end migrate unit", K(unit_id), K(end_migrate_op), K(ret));
+
   return ret;
 }
 
@@ -9914,7 +9914,7 @@ int ObUnitManager::insert_unit(ObUnit *unit)
   int ret = OB_SUCCESS;
   if (!inited_) {
     ret = OB_NOT_INIT;
-    LOG_INFO("not init", K(ret));
+
   } else if (NULL == unit) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("unit is null", KP(unit), K(ret));

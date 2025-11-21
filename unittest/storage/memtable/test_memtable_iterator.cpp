@@ -98,7 +98,7 @@ int ObMockStoreRowIterator::get_next_row(const ObStoreRow *&row)
      is_first_scan_ = false;
    }
    if (OB_FAIL(row_generate_.get_next_row(cur_row_index_, cur_row_))) {
-     STORAGE_LOG(WARN, "fail to get_next_row", K(ret));
+
    } else {
      cur_row_.scan_index_ = cur_range_index_;
      cur_row_.is_get_ = range_start_.at(cur_range_index_) == range_end_.at(cur_range_index_);

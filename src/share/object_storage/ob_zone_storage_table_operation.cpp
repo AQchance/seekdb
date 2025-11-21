@@ -71,7 +71,7 @@ int ObStorageInfoOperator::insert_storage(common::ObISQLClient &proxy,
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", KR(ret), K(affected_rows));
   } else {
-    LOG_INFO("succ insert zone storage table", K(sql), K(storage_id));
+
   }
   return ret;
 }
@@ -109,7 +109,7 @@ int ObStorageOperationOperator::insert_storage_operation(common::ObISQLClient &p
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", KR(ret), K(affected_rows));
   } else {
-    LOG_INFO("succ insert zone storage operation table", K(sql), K(storage_id));
+
   }
 
   return ret;
@@ -141,7 +141,7 @@ int ObStorageInfoOperator::remove_storage_info(common::ObISQLClient &proxy,
   } else if (OB_FAIL(proxy.write(sql.ptr(), affected_rows))) {
     LOG_WARN("failed to execute sql", KR(ret));
   } else {
-    LOG_INFO("succ delete zone storage info", K(sql), K(storage_path));
+
   }
   return ret;
 }
@@ -660,7 +660,7 @@ int ObStorageInfoOperator::update_storage_authorization(common::ObISQLClient &pr
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", KR(ret), K(affected_rows));
   } else {
-    LOG_INFO("update storage authorization in zone storage table", K(sql), K(storage_dest));
+
   }
   return ret;
 }
@@ -695,7 +695,7 @@ int ObStorageInfoOperator::update_storage_iops(common::ObISQLClient &proxy,
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", KR(ret), K(affected_rows));
   } else {
-    LOG_INFO("update storage max_iops in zone storage table", K(sql), K(max_iops));
+
   }
   return ret;
 }
@@ -730,7 +730,7 @@ int ObStorageInfoOperator::update_storage_bandwidth(common::ObISQLClient &proxy,
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", KR(ret), K(affected_rows));
   } else {
-    LOG_INFO("update storage max_bandwidth in zone storage table", K(sql), K(max_bandwidth));
+
   }
   return ret;
 }
@@ -765,7 +765,7 @@ int ObStorageInfoOperator::update_storage_state(common::ObISQLClient &proxy,
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", KR(ret), K(affected_rows));
   } else {
-    LOG_INFO("update storage state in zone storage table", K(sql), K(storage_dest));
+
   }
   return ret;
 }
@@ -804,7 +804,7 @@ int ObStorageInfoOperator::update_storage_state(common::ObISQLClient &proxy,
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", KR(ret), K(affected_rows));
   } else {
-    LOG_INFO("update storage state in zone storage table", K(sql), K(storage_path));
+
   }
   return ret;
 }
@@ -838,7 +838,7 @@ int ObStorageInfoOperator::update_storage_op_id(common::ObISQLClient &proxy,
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", KR(ret), K(affected_rows));
   } else {
-    LOG_INFO("update storage op id in zone storage table", K(sql), K(storage_dest));
+
   }
   return ret;
 }
@@ -876,7 +876,7 @@ int ObStorageInfoOperator::update_storage_op_id(common::ObISQLClient &proxy,
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", KR(ret), K(affected_rows));
   } else {
-    LOG_INFO("update storage op id in zone storage table", K(sql), K(storage_path));
+
   }
   return ret;
 }

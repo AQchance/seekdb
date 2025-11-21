@@ -107,7 +107,7 @@ int ObTenantCloneService::get_clone_job_(ObArray<ObCloneJob>& clone_jobs)
     LOG_WARN("fail to get all clone jobs", KR(ret));
   } else if (clone_jobs.empty()) {
     ret = OB_ENTRY_NOT_EXIST;
-    LOG_INFO("clone jobs in inner table not exist", KR(ret));
+
   } else if (clone_jobs.count() != 1) {
     ret = OB_ERR_UNEXPECTED;
     LOG_ERROR("clone job count not validate", KR(ret), K(clone_jobs));
@@ -115,7 +115,7 @@ int ObTenantCloneService::get_clone_job_(ObArray<ObCloneJob>& clone_jobs)
     ret = OB_ERR_UNEXPECTED;
     LOG_ERROR("clone job is not valid", KR(ret), K(clone_jobs.at(0)));
   } else {
-    LOG_INFO("get clone jobs succ", K(clone_jobs));
+
   }
 
   return ret;
@@ -181,16 +181,16 @@ void ObTenantCloneService::try_clone_one_ls_(const ObCloneJob& job, ObLS* ls)
         LOG_WARN("fail to get_restore_status", KR(ret), KPC(ls));
       } else if (!restore_status.is_in_clone()) {
         if (restore_status.is_none()) {
-          LOG_INFO("the ls is in none status", KR(ret), KPC(ls));
+
         } else {
           LOG_WARN("the ls is in unexpected restore status", KR(ret), KPC(ls), K(restore_status));
         }
       } else if (OB_FAIL(ls->get_migration_status(migration_status))) {
         LOG_WARN("fail to get migration status", KR(ret), KPC(ls));
       } else if (OB_MIGRATION_STATUS_NONE != migration_status) {
-        LOG_INFO("the ls is in migrate status, will not be executed", KR(ret), KPC(ls));
+
       } else {
-        LOG_INFO("the ls is in clone status", KR(ret), KPC(ls), K(restore_status));
+
 
         share::ObLSRestoreStatus next_status = restore_status;
         drive_clone_ls_sm_(job, restore_status, ls, next_status, next_loop);
@@ -224,7 +224,7 @@ int ObTenantCloneService::advance_status_(ObLS* ls, const share::ObLSRestoreStat
   } else if (OB_FAIL(ls->set_restore_status(next_status, ls->get_rebuild_seq()))) {
     LOG_WARN("failed to update restore status", KR(ret), KPC(ls), K(next_status));
   } else {
-    LOG_INFO("advance clone status success", "ls_id", ls->get_ls_id(), K(next_status));
+
   }
 
   return ret;
@@ -283,9 +283,9 @@ int ObTenantCloneService::check_ls_status_valid_(const ObLSID& ls_id)
              !status_info.ls_is_normal() &&
              !status_info.ls_is_dropping()) {
     ret = OB_STATE_NOT_MATCH;
-    LOG_INFO("ls status info is not valid", KR(ret), K(ls_id), K(status_info));
+
   } else {
-    LOG_INFO("ls status info is valid", K(ls_id), K(status_info));
+
   }
   return ret;
 }
@@ -303,7 +303,7 @@ void ObTenantCloneService::handle_clone_start_(const ObCloneJob& job,
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("ls is unexpected nullptr", KR(ret));
   } else if (OB_FAIL(check_ls_status_valid_(ls->get_ls_id()))) {
-    LOG_INFO("fail to check_ls_status_valid_", KR(ret), KPC(ls));
+
   } else {
     next_status = ObLSRestoreStatus::Status::CLONE_COPY_ALL_TABLET_META;
     next_loop = true;
@@ -434,7 +434,7 @@ void ObTenantCloneService::handle_copy_ls_meta_(const ObCloneJob& job,
           LOG_WARN("ls_meta_package is not valid",
               KR(ret), K(ls_meta_package), K(job.get_tenant_snapshot_id()), K(ls_id));
         } else {
-          LOG_INFO("acquire_clone_ls_meta_package succ", K(job), K(ls_id), K(ls_meta_package.ls_meta_));
+
         }
       }
 
@@ -486,7 +486,7 @@ void ObTenantCloneService::handle_clog_replay_(const ObCloneJob& job,
       if (OB_EAGAIN != ret) {
         LOG_WARN("fail to check log restore done", KR(ret), K(job), KPC(ls), K(restore_clog_done));
       } else {
-        LOG_INFO("fail to check log restore done", KR(ret), K(job), KPC(ls), K(restore_clog_done));
+
       }
     } else {
       next_status = ObLSRestoreStatus::Status::NONE;
@@ -507,14 +507,14 @@ void ObTenantCloneService::run()
     if (OB_FAIL(get_clone_job_(clone_jobs))) {
       LOG_WARN("fail to get_clone_job_", KR(ret));
     } else {
-      LOG_INFO("get clone job succ", K(clone_jobs));
+
     }
   }
 
   if (OB_SUCC(ret)) {
     ObCloneJob &job = clone_jobs.at(0);
     if (OB_FAIL(try_clone_(job))) {
-      LOG_INFO("fail to try_clone_", KR(ret), K(job));
+
     }
   }
 

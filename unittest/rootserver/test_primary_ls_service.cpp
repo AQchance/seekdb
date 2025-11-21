@@ -58,51 +58,51 @@ TEST_F(TestPrimaryLSService, LS_FLAG)
   ASSERT_EQ(ret, OB_SUCCESS);
   ASSERT_EQ(empty_str, str);
   ASSERT_EQ(0, flag.flag_);
-  LOG_INFO("test", K(flag), K(str));
+
 
   flag.set_block_tablet_in();
   ASSERT_EQ(2, flag.flag_);
   ret = flag.flag_to_str(str);
   ASSERT_EQ(str3, str);
-  LOG_INFO("test", K(flag), K(str));
+
 
   flag.clear_block_tablet_in();
   ASSERT_EQ(0, flag.flag_);
   ret = flag.flag_to_str(str);
   ASSERT_EQ(ret, OB_SUCCESS);
   ASSERT_EQ(empty_str, str);
-  LOG_INFO("test", K(flag), K(str));
+
 
   flag.set_duplicate();
   ASSERT_EQ(1, flag.flag_);
   ret = flag.flag_to_str(str);
   ASSERT_EQ(ret, OB_SUCCESS);
   ASSERT_EQ(str0, str);
-  LOG_INFO("test", K(flag), K(str));
+
 
   flag.set_block_tablet_in();
   ASSERT_EQ(3, flag.flag_);
   ret = flag.flag_to_str(str);
   ASSERT_EQ(ret, OB_SUCCESS);
   ASSERT_EQ(str6, str);
-  LOG_INFO("test", K(flag), K(str));
+
 
   flag.clear_block_tablet_in();
   ASSERT_EQ(1, flag.flag_);
   ret = flag.flag_to_str(str);
   ASSERT_EQ(ret, OB_SUCCESS);
   ASSERT_EQ(str0, str);
-  LOG_INFO("test", K(flag), K(str));
+
 
   ret = flag.str_to_flag(empty_str.str());
   ASSERT_EQ(ret, OB_SUCCESS);
   ASSERT_EQ(0, flag.flag_);
-  LOG_INFO("test", K(flag));
+
 
   ret = flag.str_to_flag(str0.str());
   ASSERT_EQ(ret, OB_SUCCESS);
   ASSERT_EQ(1, flag.flag_);
-  LOG_INFO("test", K(flag));
+
 
   ret = flag.str_to_flag(str1.str());
   ASSERT_EQ(OB_ERR_UNEXPECTED, ret);
@@ -113,7 +113,7 @@ TEST_F(TestPrimaryLSService, LS_FLAG)
   ret = flag.str_to_flag(str3.str());
   ASSERT_EQ(ret, OB_SUCCESS);
   ASSERT_EQ(2, flag.flag_);
-  LOG_INFO("test", K(flag));
+
 
   ret = flag.str_to_flag(str4.str());
   ASSERT_EQ(OB_ERR_UNEXPECTED, ret);
@@ -121,17 +121,17 @@ TEST_F(TestPrimaryLSService, LS_FLAG)
   ret = flag.str_to_flag(str5.str());
   ASSERT_EQ(ret, OB_SUCCESS);
   ASSERT_EQ(3, flag.flag_);
-  LOG_INFO("test", K(flag));
+
 
   ret = flag.str_to_flag(str6.str());
   ASSERT_EQ(ret, OB_SUCCESS);
   ASSERT_EQ(3, flag.flag_);
 
-  LOG_INFO("test", K(flag));
+
   ret = flag.str_to_flag(str7.str());
   ASSERT_EQ(OB_ERR_UNEXPECTED, ret);
 
-  LOG_INFO("test", K(flag));
+
 
   ret = flag.str_to_flag(str8.str());
   ASSERT_EQ(OB_ERR_UNEXPECTED, ret);

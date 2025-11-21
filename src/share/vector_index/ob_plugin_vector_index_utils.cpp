@@ -229,7 +229,7 @@ int ObPluginVectorIndexUtils::read_object_from_vid_rowkey_table_iter(ObObj *inpu
         LOG_WARN("failed to get next row from next table.", K(ret));
       } else {
         // do nothing
-        LOG_INFO("vid is removed", K(ret), K(rowkey));
+
       }
     } else {
       const ObIArray<share::schema::ObColumnParam *> *out_col_param 
@@ -515,7 +515,7 @@ int ObPluginVectorIndexUtils::read_vector_info(ObPluginVectorIndexAdaptor *adapt
       void *buf = nullptr;
       ObObj *obj_ptr =  nullptr;
       int32_t data_table_rowkey_count = vid_table_param.get_output_projector().count() - 1;
-      LOG_INFO("data_table_rowkey_count", K(data_table_rowkey_count));
+
       if (data_table_rowkey_count <= 0) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("get data table rowkey count invalid.", K(ret), K(data_table_rowkey_count));
@@ -833,10 +833,10 @@ int ObPluginVectorIndexUtils::try_sync_snapshot_memdata(ObLSID &ls_id,
             //  adapter->get_allocator()->free(snap_memdata->mem_ctx_);
             //  snap_memdata->mem_ctx_ = nullptr;
             //}
-            LOG_INFO("memdata sync snapshot index complement no data", K(index_count), K(ls_id), K(index_type), KPC(new_adapter));
+
           } else { // index_count > 0
             new_adapter->close_snap_data_rb_flag();
-            LOG_INFO("memdata sync snapshot index complement data", K(index_count), K(ls_id), K(index_type), KPC(new_adapter));
+
           }
         }
       }
@@ -844,7 +844,7 @@ int ObPluginVectorIndexUtils::try_sync_snapshot_memdata(ObLSID &ls_id,
   }
   // free adapter memory when failed
   if ((OB_FAIL(ret) || index_count == 0) && OB_NOT_NULL(new_adapter) && create_new_adp) {
-    LOG_INFO("release new adapter memory in failure", K(ret));
+
     new_adapter->~ObPluginVectorIndexAdaptor();
     vector_index_service->get_allocator().free(adpt_buff);
     adpt_buff = nullptr;
@@ -1005,7 +1005,7 @@ int ObPluginVectorIndexUtils::refresh_memdata(ObLSID &ls_id,
           }
         }
         if (OB_FAIL(ret)) {
-          LOG_INFO("release new vector index adapter on failed", K(ret), K(new_adapter));
+
           new_adapter->~ObPluginVectorIndexAdaptor();
           void *adpt_buff  = reinterpret_cast<void*>(new_adapter);
           vector_index_service->get_allocator().free(adpt_buff);
@@ -1085,7 +1085,7 @@ int ObPluginVectorIndexUtils::read_local_tablet(ObLSID &ls_id,
   }
 
   if (OB_SUCC(ret)) {
-    LOG_INFO("read table tablet", K(ls_id), K(tablet_id), K(table_id), K(type), K(target_scn));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -1671,7 +1671,7 @@ int ObPluginVectorIndexUtils::get_special_index_aux_table_column_count(
     col_cnt = column_ids.count();
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("get_special_index_aux_table_column_count", K(type), K(col_cnt), K(column_ids), K(tenant_id)); // remove after debug;
+ // remove after debug;
   }
   return ret;
 }
@@ -1697,7 +1697,7 @@ int ObPluginVectorIndexUtils::get_non_shared_index_aux_table_rowkey_colum_count(
     LOG_WARN("unexpected index type", KR(ret), K(type));
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("get_non_shared_index_aux_table_rowkey_colum_count", K(type), K(col_cnt)); // remove after debug;
+ // remove after debug;
   }
   return ret;  
 }
@@ -1727,7 +1727,7 @@ int ObPluginVectorIndexUtils::get_shared_table_rowkey_colum_count(schema::ObInde
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("get_non_shared_index_aux_table_rowkey_colum_count", K(type), K(col_cnt), K(column_ids)); // remove after debug;
+ // remove after debug;
   }
   return ret;
 }
@@ -1858,7 +1858,7 @@ int ObPluginVectorIndexUtils::get_vector_index_prefix(const ObTableSchema &index
     }
     if (OB_SUCC(ret)) {
       prefix.assign_ptr(tmp_table_name.ptr(), prefix_len);
-      LOG_INFO("get_index_prefix", K(prefix), K(tmp_table_name));
+
     }
   }
   return ret;
@@ -1943,7 +1943,7 @@ void ObPluginVectorIndexUtils::set_ls_leader_flag(const ObLSID &ls_id, const boo
     LOG_WARN("unexpected nullptr", K(ret), KP(index_ls_mgr));
   } else {
     index_ls_mgr->set_ls_leader(is_leader);
-    LOG_INFO("success to set ls leader", K(ls_id), K(is_leader));
+
   }
 }
 
@@ -1959,7 +1959,7 @@ int ObPluginVectorIndexUtils::get_ls_leader_flag(const ObLSID &ls_id, bool &is_l
     LOG_WARN("unexpected nullptr", K(ret));
   } else {
     is_leader = index_ls_mgr->get_ls_leader();
-    LOG_TRACE("success to set ls leader", K(ls_id), K(is_leader));
+
   }
   return ret;
 }

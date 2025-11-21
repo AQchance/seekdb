@@ -315,7 +315,7 @@ int ObRepartSliceIdxCalc::get_tablet_id<false>(ObEvalCtx &eval_ctx, int64_t &tab
   if (OB_SUCC(ret)) {
     tablet_id_ = tablet_id;
   }
-  LOG_DEBUG("repart partition id", K(tablet_id));
+
 
   return ret;
 }
@@ -353,7 +353,7 @@ int ObRepartSliceIdxCalc::get_tablet_id<true>(ObEvalCtx &eval_ctx, int64_t &tabl
   if (OB_SUCC(ret)) {
     tablet_id_ = tablet_id;
   }
-  LOG_DEBUG("repart partition id", K(tablet_id));
+
 
   return ret;
 }
@@ -476,14 +476,14 @@ int ObSlaveMapRepartIdxCalcBase::init(uint64_t tenant_id)
   ARRAY_FOREACH_X(part_ch_array, idx, cnt, OB_SUCC(ret)) {
     int64_t tablet_id = part_ch_array.at(idx).first_;
     int64_t task_idx = part_ch_array.at(idx).second_;
-    LOG_DEBUG("get one channel relationship", K(idx), K(cnt), "key", tablet_id, "val", task_idx);
+
 
     if (OB_ISNULL(part_to_task_array_map_.get(tablet_id))) {
       TaskIdxArray task_idx_array;
       if (OB_FAIL(part_to_task_array_map_.set_refactored(tablet_id, task_idx_array))) {
         LOG_WARN("push partition id and task idx array to map failed", K(ret), K(tablet_id));
       } else {
-        LOG_TRACE("add task idx array successfully", K(ret), K(tablet_id));
+
       }
     }
 
@@ -624,7 +624,7 @@ int ObSlaveMapPkeyRandomIdxCalc::get_task_idx_by_tablet_id(int64_t tablet_id,
       static const int64_t max = INT64_MAX;
       int64_t rand_idx = common::ObRandom::rand(min, max) % task_idx_array->count();
       task_idx = task_idx_array->at(rand_idx);
-      LOG_TRACE("get task_idx/slice_idx by random way", K(tablet_id), K(task_idx));
+
     }
   }
   return ret;
@@ -867,7 +867,7 @@ int ObSlaveMapBcastIdxCalc::get_slice_indexes_inner(const ObIArray<ObExpr*> &exp
         if (OB_FAIL(slice_idx_array.push_back(part_ch_array.at(idx).second_))) {
           LOG_WARN("failed to push back slice idx", K(ret));
         }
-        LOG_DEBUG("find slice id to trans", K(tablet_id), K(part_ch_array.at(idx).second_));
+
       }
     }
   }
@@ -1113,7 +1113,7 @@ int ObHashSliceIdCalc::calc_slice_idx<true>(ObEvalCtx &eval_ctx, int64_t slice_s
   EvalBound eval_bound(batch_size, batch_idx, batch_idx + 1, all_rows_active);
   for (int64_t i = 0; OB_SUCC(ret) && i < n_keys_; ++i) {
     const ObExpr* dist_expr = hash_dist_exprs_->at(i);
-    LOG_DEBUG("[VEC2.0 PX]calc hash slice idx", KPC(dist_expr));
+
     if (OB_FAIL(dist_expr->eval_vector(eval_ctx, *skip, eval_bound))) {
       LOG_WARN("eval vector failed", K(ret));
     } else {
@@ -1404,7 +1404,7 @@ int ObHashSliceIdCalc::get_slice_idx_batch_inner<true>(const ObIArray<ObExpr*> &
         }
       }
       indexes = slice_indexes_;
-      LOG_TRACE("[VEC2.0] hash slice calc", K(ObArrayWrap<int64_t>(indexes, batch_size)));
+
     }
   }
   return ret;
@@ -1786,7 +1786,7 @@ int ObSlaveMapPkeyHashIdxCalc::get_task_idx_by_tablet_id(ObEvalCtx &eval_ctx,
       task_idx = ObSliceIdxCalc::DEFAULT_CHANNEL_IDX_TO_DROP_ROW;
     } else {
       task_idx = task_idx_array->at(hash_idx);
-      LOG_TRACE("get task_idx/slice_idx by hash way", K(tablet_id), K(hash_idx), K(task_idx));
+
     }
   }
   return ret;
@@ -1810,7 +1810,7 @@ int ObSlaveMapPkeyHashIdxCalc::build_affi_hash_map(hash::ObHashMap<int64_t, ObPx
       if (OB_FAIL(affi_hash_map.set_refactored(tablet_id, item))) {
         LOG_WARN("failed to set refactored", K(ret));
       }
-      LOG_DEBUG("build affi hash map", K(tablet_id), K(item));
+
       tablet_id = part_ch_array.at(idx).first_;
       item.first_ = idx;
     }
@@ -1820,7 +1820,7 @@ int ObSlaveMapPkeyHashIdxCalc::build_affi_hash_map(hash::ObHashMap<int64_t, ObPx
     if (OB_FAIL(affi_hash_map.set_refactored(tablet_id, item))) {
       LOG_WARN("failed to set refactored", K(ret));
     }
-    LOG_DEBUG("build affi hash map", K(tablet_id), K(item));
+
   }
   return ret;
 }

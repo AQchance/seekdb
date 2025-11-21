@@ -293,7 +293,7 @@ int ObLocationService::external_table_get(
     } else if (0 == locations.count() && OB_FAIL(locations.assign(all_active_locations))) {
       LOG_WARN("failed to assign locations", K(ret));
     }
-    LOG_TRACE("locations for external table", K(locations), K(ret));
+
   }
   return ret;
 }
@@ -602,7 +602,7 @@ int ObLocationService::check_ls_exist(
       } else {
         state = ObLSExistState(ObLSExistState::State(ls_state));
       }
-      LOG_INFO("check ls exist finished", KR(ret), K(tenant_id), K(ls_id), K(ls_state), K(state), K(sql));
+
     }
   }
   return ret;

@@ -406,7 +406,7 @@ int ObTabletMajorMergeCtx::prepare_schema()
     }
   } else if (!MERGE_SCHEDULER_PTR->could_major_merge_start()) {
     ret = OB_CANCELED;
-    LOG_INFO("Merge has been paused", KR(ret), "param", get_dag_param());
+
   } else {
     ObArenaAllocator allocator("GetMediumInfo", OB_MALLOC_NORMAL_BLOCK_SIZE, MTL_ID());
     ObMediumCompactionInfo *medium_info = nullptr;
@@ -477,7 +477,7 @@ int ObSSMergeCtx::check_exec_mode()
     ls_obj_hdl.get_obj()->get_broadcast_info(info);
     if (get_exec_mode() != info.get_exec_mode()) {
       ret = OB_NO_NEED_MERGE;
-      LOG_INFO("exec mode is not equal, no need merge now", KR(ret), K(get_exec_mode()), K(info));
+
     }
   }
   return ret;
@@ -613,7 +613,7 @@ int ObTabletMajorCalcCkmMergeCtx::update_tablet_after_merge()
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("get unexpected null new tablet", K(ret), K(get_tablet_id()));
     } else {
-      LOG_INFO("success to init tablet", "tablet_id", get_tablet_id(), K(param), KPC(new_tablet));
+
 
       ObTabletCompactionState tmp_state;
       tmp_state.set_calc_ckm_scn(get_merge_version());

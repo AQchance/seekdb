@@ -218,7 +218,7 @@ int ObExprCase::eval_case_batch(const ObExpr &expr,
   int64_t loop = (has_else) ? expr.arg_cnt_ - 1 : expr.arg_cnt_;
   bool match_when = false;
   ObDatum *results = expr.locate_batch_datums(ctx);
-  LOG_DEBUG("eval_case_batch", K(expr.arg_cnt_));
+
   if (OB_ISNULL(results)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("results frame is not init", K(ret));
@@ -440,7 +440,7 @@ static int inner_eval_case_vector(const ObExpr &expr,
   if (bound.end() > bound.start()) {
     const bool has_else = (expr.arg_cnt_ % 2 != 0);
     int64_t loop = (has_else) ? expr.arg_cnt_ - 1 : expr.arg_cnt_;
-    LOG_DEBUG("eval_case_vector", K(expr.arg_cnt_));
+
     // Record the number of skips in a batch,
     // end when all parameters are skipped.
     const int64_t total_cnt = bound.end() - bound.start();

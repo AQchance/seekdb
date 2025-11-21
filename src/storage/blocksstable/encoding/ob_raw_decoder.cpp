@@ -436,7 +436,7 @@ int ObRawDecoder::batch_decode_fast(
         base_data, row_idx_data, ctx.col_header_->offset_, ctx.col_header_->length_,
         ctx.micro_block_header_->var_column_count_, row_ids, row_cap, datums);
   }
-  LOG_DEBUG("[batch_decode] Run var raw fast batch decode", K(ret), K(store_class), K(ctx));
+
   return ret;
 }
 

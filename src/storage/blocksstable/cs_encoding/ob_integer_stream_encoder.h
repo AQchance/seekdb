@@ -58,7 +58,7 @@ public:
 
     if (OB_ISNULL(int_arr) || (arr_len <= 0) || (!ctx.is_valid())) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "invalid argument", KP(int_arr), K(arr_len), K(ctx), KR(ret));
+
     } else {
       ctx_ = &ctx;
       // gcc will use SIMD
@@ -68,7 +68,7 @@ public:
         }
       }
       if (OB_FAIL(inner_encode<T>(int_arr, arr_len, writer))) {
-        STORAGE_LOG(WARN, "fail to ineer encode", KPC(ctx_), K(arr_len));
+
       }
     }
   
@@ -112,7 +112,7 @@ private:
                   "uint width", ctx_->meta_.width_,
                   "attr", ctx_->meta_.attr_);
       if (OB_FAIL(buf_writer.advance(char_len))) {
-        STORAGE_LOG(ERROR, "unexpected out_len", KR(ret), K(char_len), K(remain_len), K(buf_writer));
+
         abort();
       }
     }
@@ -129,49 +129,49 @@ private:
         ObSimpleBitPacking codec;
         codec.set_uint_packing_bits(ctx_->meta_.get_uint_width_size() * CHAR_BIT);
         if (OB_FAIL((do_encode<T>(codec, uint_arr, arr_count, buf_writer, is_detected)))) {
-          STORAGE_LOG(WARN, "fail to do raw encode", KR(ret), KPC_(ctx));
+
         }
         break;
       }
       case ObIntegerStream::EncodingType::SIMD_FIXEDPFOR: {
         ObCompositeCodec<ObSIMDFixedPFor, ObSimpleBitPacking> codec;
         if (OB_FAIL((do_encode<T>(codec, uint_arr, arr_count, buf_writer, is_detected)))) {
-          STORAGE_LOG(WARN, "fail to do simd fixedpfor encode", KR(ret), KPC(ctx_));
+
         }
         break;
       }
       case ObIntegerStream::EncodingType::DOUBLE_DELTA_ZIGZAG_RLE: {
         ObDoubleDeltaZigzagRle codec;
         if (OB_FAIL((do_encode<T>(codec, uint_arr, arr_count, buf_writer, is_detected)))) {
-          STORAGE_LOG(WARN, "fail to do double delta zigzig rle encode", KR(ret), KPC(ctx_));
+
         }
         break;
       }
       case ObIntegerStream::EncodingType::DOUBLE_DELTA_ZIGZAG_PFOR: {
         ObDoubleDeltaZigzagPFor codec;
         if (OB_FAIL((do_encode<T>(codec, uint_arr, arr_count, buf_writer, is_detected)))) {
-          STORAGE_LOG(WARN, "fail to do double delta zigzag pfor encode", KR(ret), KPC(ctx_));
+
         }
         break;
       }
       case ObIntegerStream::EncodingType::DELTA_ZIGZAG_RLE: {
         ObDeltaZigzagRle codec;
         if (OB_FAIL((do_encode<T>(codec, uint_arr, arr_count, buf_writer, is_detected)))) {
-          STORAGE_LOG(WARN, "fail to do delta zigzag pfor encode", KR(ret), KPC(ctx_));
+
         }
         break;
       }
       case ObIntegerStream::EncodingType::DELTA_ZIGZAG_PFOR: {
         ObDeltaZigzagPFor codec;
         if (OB_FAIL((do_encode<T>(codec, uint_arr, arr_count, buf_writer, is_detected)))) {
-          STORAGE_LOG(WARN, "fail to do delta zigzag pfor encode", KR(ret), KPC(ctx_));
+
         }
         break;
       }
       case ObIntegerStream::EncodingType::XOR_FIXED_PFOR: {
         ObXorFixedPfor codec;
         if (OB_FAIL((do_encode<T>(codec, uint_arr, arr_count, buf_writer, is_detected)))) {
-          STORAGE_LOG(WARN, "fail to do delta zigzag pfor encode", KR(ret), KPC(ctx_));
+
         }
         break;
       }
@@ -180,13 +180,13 @@ private:
         codec.set_allocator(*ctx_->info_.allocator_);
         codec.set_compressor_type(ctx_->info_.compressor_type_);
         if (OB_FAIL((do_encode<T>(codec, uint_arr, arr_count, buf_writer, is_detected)))) {
-          STORAGE_LOG(WARN, "fail to do universal compression", KR(ret), KPC(ctx_));
+
         }
         break;
       }
       default : {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected encoding type", KR(ret), KPC(ctx_));
+
         break;
       }
     }
@@ -201,7 +201,7 @@ private:
 
     if (OB_ISNULL(int_arr)) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "invalid argument", K(ret));
+
     } else if (!ctx_->meta_.is_unspecified_encoding()) {
       if (ctx_->meta_.is_universal_compress_encoding()) {
         if (ctx_->info_.compressor_type_ == ObCompressorType::INVALID_COMPRESSOR ||
@@ -214,11 +214,11 @@ private:
     } else if (arr_count < ObCSEncodingUtil::ENCODING_ROW_COUNT_THRESHOLD) {
       ctx_->meta_.set_raw_encoding();
     } else if (OB_FAIL(ctx_->try_use_previous_encoding(is_previous_used))) {
-      STORAGE_LOG(WARN, "fail to try_use_previous_encoding", K(ret), KPC(ctx_));
+
     } else if (is_previous_used) {
-      STORAGE_LOG(DEBUG, "use previous encoding", K(ret), KPC(ctx_));
+
     } else if (OB_FAIL(dectect_candidate_codec((T*)int_arr, arr_count, buf_writer))) {
-      STORAGE_LOG(WARN, "fail to choose_codec_from_candidate", K(ret));
+
     }
     return ret;
   }
@@ -235,29 +235,29 @@ private:
     bool need_encode_with_raw = false;
     if (OB_UNLIKELY(remain_size < raw_encoding_len)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(ERROR, "remain size is not enough", KR(ret), K(remain_size), K(raw_encoding_len));
+
     } else if (test_seed > 0) { // just for test
       int64_t type = test_seed % (ObIntegerStream::EncodingType::MAX_TYPE - 1) + 1;
       ctx_->meta_.set_encoding_type((ObIntegerStream::EncodingType)type);
       if (OB_FAIL(encode_stream_meta(buf_writer))) {
-        STORAGE_LOG(WARN,"fail to encode_stream_header", KR(ret));
+
       } else if (OB_FAIL(do_codec_encode<T>((T*)int_arr, arr_count, buf_writer, false))) {
         if (OB_BUF_NOT_ENOUGH != ret) {
-          STORAGE_LOG(WARN, "fail to do codec encode", KR(ret), KPC(ctx_), K(arr_count));
+
         } else {
           ret = OB_SUCCESS;
           need_encode_with_raw = true;
         }
       }
     } else if (OB_FAIL(choose_stream_codec<T>(int_arr, arr_count, buf_writer))) {
-      STORAGE_LOG(WARN, "fail to choose stream codec", KR(ret), KP(int_arr), K(arr_count));
+
     } else if (OB_FAIL(encode_stream_meta(buf_writer))) {
-      STORAGE_LOG(WARN, "fail to encode_stream_header", KR(ret));
+
     } else {
       const int64_t data_start_pos = buf_writer.length();
       if (OB_FAIL(do_codec_encode<T>((T*)int_arr, arr_count, buf_writer, false))) {
         if (OB_BUF_NOT_ENOUGH != ret) {
-          STORAGE_LOG(WARN, "fail to do codec encode", KR(ret), KPC(ctx_), K(arr_count));
+
         } else {
           ret = OB_SUCCESS;
           need_encode_with_raw = true;
@@ -268,18 +268,18 @@ private:
     }
 
     if (OB_SUCC(ret) && need_encode_with_raw) {
-      STORAGE_LOG(INFO, "need encode with raw", K(remain_size), K(raw_encoding_len), K(curr_encoding_len), K(ctx_->meta_));
+
       if (OB_UNLIKELY(ObIntegerStream::EncodingType::RAW == ctx_->meta_.type_)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "the previously choosed type must be not RAW", KR(ret), KPC(ctx_));
+
       } else if (OB_FAIL(buf_writer.set_length(orig_pos))) {
-        STORAGE_LOG(WARN, "fail to set pos", KR(ret), K(orig_pos), K(buf_writer));
+
       } else {
         ctx_->meta_.set_raw_encoding();
         if (OB_FAIL(encode_stream_meta(buf_writer))) {
-          STORAGE_LOG(WARN,"fail to encode_stream_header", KR(ret));
+
         } else if (OB_FAIL(do_codec_encode<T>((T*)int_arr, arr_count, buf_writer, false))) {
-          STORAGE_LOG(WARN,"fail to do codec encode", KR(ret), KPC(ctx_), K(arr_count));
+
         }
       }
     }
@@ -288,7 +288,7 @@ private:
       // if failed, reset writer buffer's pos
       int tmp_ret = OB_SUCCESS;
       if (OB_SUCCESS != (tmp_ret = buf_writer.set_length(orig_pos))) {
-        STORAGE_LOG(WARN,"fail to set pos", KR(ret), KR(tmp_ret), K(orig_pos), K(buf_writer));
+
       }
     }
 
@@ -330,7 +330,7 @@ private:
 
     if (candidate_count == 1) {
       ctx_->meta_.set_encoding_type(candidate_list[0]);
-      STORAGE_LOG(INFO, "only one codec enabled", K(ret), "type", candidate_list[0]);
+
     } else {
       int64_t sample_count = 0;
       if (arr_count < min_sample_count) {
@@ -344,7 +344,7 @@ private:
 
       if (OB_UNLIKELY(remain_size < raw_encoding_len)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(ERROR, "remain size is not enough", KR(ret), K(remain_size), K(raw_encoding_len));
+
       } else {
         int64_t start_time_us = 0;
         int64_t end_time_us = 0;
@@ -377,10 +377,10 @@ private:
 
           if (OB_SUCC(ret)) {
             if (OB_FAIL(buf_writer.set_length(orig_pos))) {
-              STORAGE_LOG(WARN,"fail to set pos", K(ret), K(orig_pos));
+
             }
           } else if (OB_SUCCESS != (tmp_ret = buf_writer.set_length(orig_pos))) {
-            STORAGE_LOG(WARN,"fail to set pos", K(ret), KR(tmp_ret), K(orig_pos));
+
           }
         }
 

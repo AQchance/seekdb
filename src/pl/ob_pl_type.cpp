@@ -551,7 +551,7 @@ int ObPLDataType::get_serialize_size(
   char *src = reinterpret_cast<char*>(&obj);
   size = 8; // for MIN_CLUSTER_VERSION
   OZ (get_serialize_size(resolve_ctx, src, size));
-  LOG_DEBUG("get serialize size", K(ret), K(obj), K(size));
+
   return ret;
 }
 
@@ -601,7 +601,7 @@ int ObPLDataType::deserialize(
     resolve_ctx, allocator, src, src_len, src_pos, dst));
 
 
-  LOG_DEBUG("deserialize pl package variable obj", K(ret), K(result));
+
   return ret;
 }
 
@@ -1140,7 +1140,7 @@ void ObPLEnumSetCtx::reset() {
     enum_type_info_reverse_map_.destroy();
     is_inited_ = false;
     used_type_info_id_ = 0;
-    LOG_DEBUG("enum type info ctx reset", KP(this), K(lbt()));
+
   }
 }
 
@@ -1612,11 +1612,11 @@ do {  \
       const ObObjAccessIdx& access_idx = access_idxs.at(i);
       if (ObObjAccessIdx::IS_PKG_NS == access_idx.access_type_) {
         package_id = access_idx.var_index_;
-        LOG_DEBUG("success to get package id", K(package_id), K(access_idxs), K(i));
+
       } else if (ObObjAccessIdx::IS_LABEL_NS == access_idx.access_type_) {
         CK (OB_NOT_NULL(access_idx.label_ns_));
         OX (package_id = access_idx.label_ns_->get_package_id());
-        LOG_DEBUG("success to get package id from label ns", K(package_id), K(access_idxs), K(i));
+
       } else if (ObObjAccessIdx::IS_PKG == access_idx.access_type_) {
         var_idx = access_idx.var_index_;
         LOG_DEBUG("success to get package variable index",
@@ -1655,7 +1655,7 @@ int ObObjAccessIdx::get_package_id(
       CK (c_expr2->get_value().is_int());
       OX (*p_var_idx = c_expr2->get_value().get_int());;
     }
-    LOG_DEBUG("success to get package id", K(ret), K(package_id));
+
   } else if (expr->is_obj_access_expr()) {
     uint64_t var_idx = OB_INVALID_ID;
     const ObObjAccessRawExpr *access_expr = static_cast<const ObObjAccessRawExpr *>(expr);
@@ -1932,7 +1932,7 @@ int ObPLCursorInfo::deep_copy(ObPLCursorInfo &src, common::ObIAllocator *allocat
 int ObPLCursorInfo::close(sql::ObSQLSessionInfo &session, bool is_reuse)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("close cursor", K(isopen()), K(id_), K(this), K(*this), K(session.get_server_sid()));
+
   if (isopen()) { //If the cursor is already open, resources need to be released
     if (!is_server_cursor()) {   // delete cursor from cursor map first, then release resource
       session.del_non_session_cursor(this);
@@ -1965,7 +1965,7 @@ int ObPLCursorInfo::close(sql::ObSQLSessionInfo &session, bool is_reuse)
       }
     }
   } else {
-    LOG_INFO("NOTICE: cursor is closed without openning", K(*this), K(ret));
+
   }
   is_reuse ? reuse() : reset();
   return ret;

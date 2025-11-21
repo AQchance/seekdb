@@ -168,7 +168,7 @@ void TestBlockCacheWorkingSet::io_handle_reset_before_io_submit()
   int64_t micro_block_count = 1;
   block_id = block_ids_.at(0);
   get_micro_infos_and_datas(micro_block_count, block_infos, block_datas);
-  STORAGE_LOG(INFO, "xxx", K(block_infos.at(0)));
+
   ret = block_cache_ws.prefetch(table_id_, block_id, block_infos.at(0).offset_, block_infos.at(0).size_, NULL, false, io_handle);
   ASSERT_EQ(OB_SUCCESS, ret);
 }
@@ -214,7 +214,7 @@ TEST_F(TestBlockCacheWorkingSet, put_get)
   ObArray<ObMicroBlockData> block_datas;
   int64_t micro_block_count = 1;
   get_micro_infos_and_datas(micro_block_count, block_infos, block_datas);
-  STORAGE_LOG(INFO, "xxx", K(block_infos.at(0)));
+
   ret = block_cache_ws_.prefetch(table_id_, block_id, block_infos.at(0).offset_, block_infos.at(0).size_, NULL, false, io_handle);
   ASSERT_EQ(OB_SUCCESS, ret);
   ret = io_handle.wait(DEFAULT_IO_WAIT_TIME_MS);
@@ -286,7 +286,7 @@ TEST_F(TestBlockCacheWorkingSet, io_handle_reset_before_io_submit)
   io_handle_reset_before_io_submit();
   char buf[128 * 1024];
   memset(buf, 0, sizeof(buf));
-  STORAGE_LOG(INFO, "xxx");
+
   usleep(3 * 1000 * 1000);
 }
 }//end namespace unittest

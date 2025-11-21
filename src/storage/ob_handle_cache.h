@@ -83,10 +83,10 @@ public:
       }
     }
     if (-1 == idx) {
-      STORAGE_LOG(DEBUG, "get handle from handle cache failed", K(key));
+
       ret = common::OB_ENTRY_NOT_EXIST;
     } else {
-      STORAGE_LOG(DEBUG, "get handle from handle cache succeed", K(key));
+
       lru_list_.remove(&nodes_[idx]);
       lru_list_.add_first(&nodes_[idx]);
     }
@@ -110,7 +110,7 @@ public:
       if (OB_UNLIKELY(-1 == idx)) {
         ret = common::OB_ERR_UNEXPECTED;
         lru_list_.add_last(node);
-        STORAGE_LOG(WARN, "idx can not be -1, the entry must exist", K(ret), K(key), K(node->bucket_idx_));
+
       } else {
         *idx_ptr = chain_[idx];
         chain_[idx] = -1;
@@ -126,7 +126,7 @@ public:
       chain_[node_idx] = *idx_ptr;
       *idx_ptr = node_idx;
       lru_list_.add_first(node);
-      STORAGE_LOG(DEBUG, "put handle succeed", K(key));
+
     }
     return ret;
   }

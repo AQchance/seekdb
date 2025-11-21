@@ -150,10 +150,10 @@ int ObMicroBlockCacheKey::deep_copy(char *buf, const int64_t buf_len, ObIKVCache
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(NULL == buf || buf_len < size())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument, ", K(ret));
+
   } else if (OB_UNLIKELY(!is_valid())) {
     ret = OB_INVALID_DATA;
-    STORAGE_LOG(WARN, "The micro block cache key is invalid, ", K(*this), K(ret));
+
   } else {
     ObMicroBlockCacheKey *cache_key = new (buf) ObMicroBlockCacheKey();
     is_logic_key() ?
@@ -892,13 +892,13 @@ int ObIMicroBlockCache::get_cache_block(
   BaseBlockCache *cache = NULL;
   if (OB_UNLIKELY(!key.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), K(key));
+
   } else if (OB_FAIL(get_cache(cache))) {
-    STORAGE_LOG(WARN, "get_cache failed", K(ret));
+
   } else {
     if (OB_FAIL(cache->get(key, handle.micro_block_, handle.handle_))) {
       if (OB_ENTRY_NOT_EXIST != ret) {
-        STORAGE_LOG(WARN, "Fail to get micro block from block cache, ", K(ret));
+
       }
       EVENT_INC(ObStatEventIds::BLOCK_CACHE_MISS);
       inc_cache_miss();
@@ -986,7 +986,7 @@ int ObIMicroBlockCache::prefetch(
     }
 
     if (OB_FAIL(ObObjectManager::async_read_object(read_info, macro_handle))) {
-      STORAGE_LOG(WARN, "Fail to async read block, ", K(ret), K(read_info));
+
       if (OB_NOT_NULL(callback.get_allocator())) { //Avoid double_free with io_handle
         ObIAllocator *allocator = callback.get_allocator();
         callback.~ObIMicroBlockIOCallback();
@@ -1036,7 +1036,7 @@ int ObIMicroBlockCache::prefetch(
   read_info.is_major_macro_preread_ = true;
 
   if (OB_FAIL(ObObjectManager::async_read_object(read_info, macro_handle))) {
-    STORAGE_LOG(WARN, "Fail to async read block, ", K(ret), K(read_info));
+
     if (OB_NOT_NULL(callback.get_allocator())) { //Avoid double_free with io_handle
       ObIAllocator *allocator = callback.get_allocator();
       callback.~ObIMicroBlockIOCallback();
@@ -1152,9 +1152,9 @@ int ObDataMicroBlockCache::init(const char *cache_name, const int64_t priority)
   const int64_t mem_limit = 4 * 1024 * 1024 * 1024LL;
   if (OB_SUCCESS != (ret = common::ObKVCache<ObMicroBlockCacheKey, ObMicroBlockCacheValue>::init(
       cache_name, priority))) {
-    STORAGE_LOG(WARN, "Fail to init kv cache, ", K(ret));
+
   } else if (OB_FAIL(allocator_.init(mem_limit, OB_MALLOC_MIDDLE_BLOCK_SIZE, OB_MALLOC_MIDDLE_BLOCK_SIZE))) {
-    STORAGE_LOG(WARN, "Fail to init io allocator, ", K(ret));
+
   } else {
     allocator_.set_attr(SET_USE_500(ObMemAttr(OB_SERVER_TENANT_ID, ObModIds::OB_SSTABLE_MICRO_BLOCK_ALLOCATOR)));
   }

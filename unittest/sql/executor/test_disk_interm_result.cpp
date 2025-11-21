@@ -96,7 +96,7 @@ TEST_F(TestDiskIntermResult, disk_write_read)
         row_cnt++;
         break;
       } else {
-        LOG_INFO("write progress", K(row_cnt), K(size));
+
       }
     }
   }

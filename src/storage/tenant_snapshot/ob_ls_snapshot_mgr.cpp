@@ -47,7 +47,7 @@ int ObLSSnapshotMgr::init(ObTenantMetaSnapshotHandler* meta_handler)
   } else {
     meta_handler_ = meta_handler;
     is_inited_ = true;
-    LOG_INFO("ObLSSnapshotMgr init succ", KPC(this));
+
   }
 
   return ret;
@@ -67,7 +67,7 @@ void ObLSSnapshotMgr::destroy()
     if (0 == map_cnt) {
       ls_snapshot_map_.destroy();
       build_ctx_allocator_.destroy();
-      LOG_INFO("ls snapshot mgr destroy succ");
+
     } else {
       ret = OB_ERR_UNEXPECTED;
       LOG_ERROR("ls snapshot map cnt is not zero", KR(ret), K(map_cnt));

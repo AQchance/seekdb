@@ -115,7 +115,7 @@ int ObMockRowkeyRanges::add_range(int64_t start, int64_t end)
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(start >= end)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K(start), K(end));
+
   } else {
     bool need_push_back = true;
 
@@ -123,7 +123,7 @@ int ObMockRowkeyRanges::add_range(int64_t start, int64_t end)
       ObMockRowkeyRange &last_range = ranges_.at(ranges_.count() - 1);
       if (last_range.end_ > start) {
         ret = OB_INVALID_ARGUMENT;
-        STORAGE_LOG(WARN, "invalid argument", KR(ret), K(start), K(end), K(last_range));
+
       } else if (last_range.end_ == start) {
         last_range.end_ = end;
         need_push_back = false;
@@ -135,7 +135,7 @@ int ObMockRowkeyRanges::add_range(int64_t start, int64_t end)
       range.start_ = start;
       range.end_ = end;
       if (OB_FAIL(ranges_.push_back(range))) {
-        STORAGE_LOG(WARN, "failed to push ranges", KR(ret));
+
       }
     }
   }
@@ -147,29 +147,29 @@ int ObMockRowkeyRanges::from(const ObString &str)
   int ret = OB_SUCCESS;
   if (str.empty()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument empty str", KR(ret));
+
   } else {
     ranges_.reset();
     const char *pos1 = str.ptr(), *pos2 = nullptr;
     int64_t num1 = 0, num2 = 0;
     while (OB_SUCC(ret) && *pos1 != '\0') {
       if (OB_FAIL(get_number(pos1, pos2, num1))) {
-        STORAGE_LOG(WARN, "failed to get number", KR(ret), K(pos1));
+
       } else {
         if (*pos2 == ',' || *pos2 == '\0') {
           if (OB_FAIL(add_range(num1, num1 + 1))) {
-            STORAGE_LOG(WARN, "failed to add range", KR(ret), K(num1));
+
           }
         } else if (strncmp(pos2, "...", 3) == 0) {
           pos1 = pos2 + 3;
           if (OB_FAIL(get_number(pos1, pos2, num2))) {
-            STORAGE_LOG(WARN, "failed to get number", KR(ret), K(pos1));
+
           } else if (OB_FAIL(add_range(num1, num2 + 1))) {
-            STORAGE_LOG(WARN, "failed to add range", KR(ret), K(num1), K(num2));
+
           }
         } else {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(WARN, "unexpected str", KR(ret), K(pos2));
+
         }
 
         if (OB_SUCC(ret)) {
@@ -338,7 +338,7 @@ int ObMockSSTableSecMetaIterator::get_next(ObDataMacroBlockMeta &macro_meta)
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", KR(ret));
+
   } else if (macro_block_idx_ >= sstable_->endkeys_.count()) {
     ret = OB_ITER_END;
   } else {
@@ -371,7 +371,7 @@ int ObMockSSTableV2::add_macro_block_meta(const int64_t endkey)
       ret = OB_INVALID_ARGUMENT;
       LOG_WARN("invalid argument", KR(ret), K(last), K(endkey));
     }
-    LOG_INFO("judge last key", KR(ret), K(endkey), K(last));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -379,7 +379,7 @@ int ObMockSSTableV2::add_macro_block_meta(const int64_t endkey)
     if (OB_FAIL(endkeys_.push_back(new_rowkey))) {
       LOG_WARN("failed to push endkey", KR(ret));
     }
-    LOG_INFO("add macro block", KR(ret), K(endkey), K(new_rowkey));
+
   }
   return ret;
 }
@@ -389,16 +389,16 @@ int ObMockSSTableV2::from(const ObString &str)
   int ret = OB_SUCCESS;
   if (str.empty()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument empty str", KR(ret));
+
   } else {
     endkeys_.reset();
     const char *pos1 = str.ptr(), *pos2 = nullptr;
     int64_t num = 0;
     while (OB_SUCC(ret) && *pos1 != '\0') {
       if (OB_FAIL(get_number(pos1, pos2, num))) {
-        STORAGE_LOG(WARN, "failed to get number", KR(ret), K(pos1));
+
       } else if (OB_FAIL(add_macro_block_meta(num))) {
-        STORAGE_LOG(WARN, "failed to add macro meta", KR(ret), K(num));
+
       } else {
         while (*pos2 != '\0' && (*pos2 == ' ' || *pos2 == ','))
           ++pos2;
@@ -417,10 +417,10 @@ int ObMockSSTableV2::scan_secondary_meta(ObIAllocator &allocator, ObSSTableSecMe
   ObMockSSTableSecMetaIterator *iter = nullptr;
   if (OB_ISNULL(buf = allocator.alloc(sizeof(ObMockSSTableSecMetaIterator)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "Fail to allocate memory", KR(ret));
+
   } else if (OB_ISNULL(iter = new (buf) ObMockSSTableSecMetaIterator())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected null pointer of secondary meta iterator", KR(ret));
+
   } else {
     iter->sstable_ = this;
     iter->is_inited_ = true;
@@ -475,7 +475,7 @@ int ObMockIncrementalIterator::init()
   int ret = OB_SUCCESS;
   if (IS_INIT) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init twice", KR(ret));
+
   } else {
     share::schema::ObColDesc col_desc;
     col_desc.col_id_ = 1;
@@ -483,9 +483,9 @@ int ObMockIncrementalIterator::init()
     col_desc.col_order_ = ASC;
 
     if (row_.init(allocator_, ObMockDatumRowkey::COLUMN_NUM)) {
-      STORAGE_LOG(WARN, "failed to init datum row", KR(ret));
+
     } else if (OB_FAIL(out_cols_.push_back(col_desc))) {
-      STORAGE_LOG(WARN, "failed to push back col desc", KR(ret));
+
     } else {
       is_inited_ = true;
     }
@@ -499,7 +499,7 @@ int ObMockIncrementalIterator::get_next_row(const ObDatumRow *&row)
   row = nullptr;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", KR(ret));
+
   } else {
     while (OB_SUCC(ret)) {
       if (cur_range_pos_ >= ranges_.count()) {
@@ -514,7 +514,7 @@ int ObMockIncrementalIterator::get_next_row(const ObDatumRow *&row)
           ObObj obj;
           obj.set_int(range.start_ + cur_rowkey_pos_);
           if (OB_FAIL(row_.storage_datums_[0].from_obj(obj))) {
-            STORAGE_LOG(WARN, "failed to datum from obj", KR(ret));
+
           } else {
             row = &row_;
             ++cur_rowkey_pos_;
@@ -550,7 +550,7 @@ int ObMockPartitionIncrementalRangeSpliter::init_incremental_iter()
   ObMockIncrementalIterator *iter = nullptr;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", KR(ret));
+
   } else if (nullptr != iter_) {
     iter = dynamic_cast<ObMockIncrementalIterator *>(iter_);
     iter->reset();
@@ -558,9 +558,9 @@ int ObMockPartitionIncrementalRangeSpliter::init_incremental_iter()
     ObMockIncrementalIterator *iter = nullptr;
     if (OB_ISNULL(iter = OB_NEWx(ObMockIncrementalIterator, allocator_, *merge_ctx_, *allocator_))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed to allocate memory", KR(ret), "size", sizeof(ObMockIncrementalIterator));
+
     } else if (OB_FAIL(iter->init())) {
-      STORAGE_LOG(WARN, "failed to init incremental iterator", KR(ret));
+
     } else {
       iter_ = iter;
     }
@@ -574,7 +574,7 @@ int ObMockPartitionIncrementalRangeSpliter::get_incremental_iter(ObMockIncrement
   iter = nullptr;
   if (iter_ == nullptr) {
     if (OB_FAIL(init_incremental_iter())) {
-      STORAGE_LOG(WARN, "failed to init incremental iter", KR(ret));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -589,9 +589,9 @@ int ObMockPartitionIncrementalRangeSpliter::get_major_sstable_end_rowkey(ObDatum
   ObMockSSTableV2 *sstable = dynamic_cast<ObMockSSTableV2 *>(major_sstable_);
   if (OB_ISNULL(sstable)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected null sstable", KR(ret));
+
   } else if (OB_FAIL(sstable->get_last_rowkey(rowkey))) {
-    STORAGE_LOG(WARN, "failed to get major sstable last rowkey", KR(ret), K(*major_sstable_));
+
   }
   return ret;
 }
@@ -604,9 +604,9 @@ int ObMockPartitionIncrementalRangeSpliter::scan_major_sstable_secondary_meta(
   ObMockSSTableV2 *sstable = dynamic_cast<ObMockSSTableV2 *>(major_sstable_);
   if (OB_ISNULL(sstable)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected null sstable", KR(ret));
+
   } else if (OB_FAIL(sstable->scan_secondary_meta(*allocator_, meta_iter))) {
-    STORAGE_LOG(WARN, "Failed to scan secondary meta", KR(ret), K(*major_sstable_));
+
   }
   return ret;
 }
@@ -778,7 +778,7 @@ int TestPartitionIncrementalRangeSliter::set_major_sstable_macro_blocks(const Ob
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(major_sstable_.from(str))) {
-    STORAGE_LOG(WARN, "failed to get macro blocks from str", KR(ret), K(str));
+
   }
   return ret;
 }
@@ -788,12 +788,12 @@ int TestPartitionIncrementalRangeSliter::set_ranges(const ObString &str)
   int ret = OB_SUCCESS;
   ObMockIncrementalIterator *iter = nullptr;
   if (OB_FAIL(range_spliter_.get_incremental_iter(iter))) {
-    STORAGE_LOG(WARN, "failed to get incremental iter", KR(ret));
+
   } else if (OB_ISNULL(iter)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected null iter", KR(ret));
+
   } else if (OB_FAIL(iter->ranges_.from(str))) {
-    STORAGE_LOG(WARN, "failed to get ranges from str", KR(ret), K(str));
+
   }
   return ret;
 }
@@ -812,7 +812,7 @@ int TestPartitionIncrementalRangeSliter::set_default_noisy_row_num_skipped(int64
   int ret = OB_SUCCESS;
   if (num < 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K(num));
+
   } else {
     range_spliter_.default_noisy_row_num_skipped_ = num;
   }
@@ -824,7 +824,7 @@ int TestPartitionIncrementalRangeSliter::set_default_row_num_per_range(int64_t n
   int ret = OB_SUCCESS;
   if (num < 1) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K(num));
+
   } else {
     range_spliter_.default_row_num_per_range_ = num;
   }
@@ -836,14 +836,14 @@ int TestPartitionIncrementalRangeSliter::check_iterator_result(storage::ObIStore
   int ret = OB_SUCCESS;
   if (OB_ISNULL(iter)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid agrument", KR(ret));
+
   } else {
     const ObDatumRow *row = nullptr;
     int64_t length = 0;
     while (OB_SUCC(ret)) {
       if (OB_FAIL(iter->get_next_row(row))) {
         if (ret != OB_ITER_END) {
-          STORAGE_LOG(WARN, "failed to get next row", KR(ret));
+
         } else {
           ret = OB_SUCCESS;
           break;
@@ -870,14 +870,14 @@ int TestPartitionIncrementalRangeSliter::check_ranges_result(const ObIArray<ObDa
   int ret = OB_SUCCESS;
   if (ranges.empty()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K(ranges), K(result));
+
   } else if (OB_UNLIKELY(!ranges.at(0).get_start_key().is_min_rowkey() || !ranges.at(0).is_left_open())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected ranges", KR(ret), K(ranges));
+
   } else if (OB_UNLIKELY(!ranges.at(ranges.count() - 1).get_end_key().is_max_rowkey() ||
                          !ranges.at(ranges.count() - 1).is_right_open())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected ranges", KR(ret), K(ranges));
+
   } else if (ranges.count() == 1 || result.empty()) {
     equal = (ranges.count() == 1 && result.empty());
   } else {
@@ -887,10 +887,10 @@ int TestPartitionIncrementalRangeSliter::check_ranges_result(const ObIArray<ObDa
       const ObDatumRange &cur_range = ranges.at(i);
       if (OB_UNLIKELY(!prev_range.is_right_closed() || !cur_range.is_left_open())) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected range", K(ret), K(i), K(prev_range), K(cur_range));
+
       } else if (OB_UNLIKELY(get_val(cur_range.get_start_key()) != get_val(prev_range.get_end_key()))) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected ranges", K(ret), K(i), K(prev_range), K(cur_range));
+
       } else {
         int64_t val = get_val(cur_range.get_start_key());
         length += ::snprintf(buf_ + length, MAX_BUF_LENGTH - length, "%ld,", val);
@@ -904,7 +904,7 @@ int TestPartitionIncrementalRangeSliter::check_ranges_result(const ObIArray<ObDa
       buf_[length] = '\0';
       equal = (length == result.length() && ::memcmp(buf_, result.ptr(), length) == 0);
       if (!equal) {
-        STORAGE_LOG(DEBUG, "ranges result", KR(ret), K(buf_));
+
       }
     }
   }

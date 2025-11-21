@@ -63,7 +63,7 @@ int ObDbmsStatsPreferences::reset_global_pref_defaults(ObExecContext &ctx)
                                         affected_rows))) {
     LOG_WARN("fail to exec sql", K(raw_sql), K(ret));
   } else {
-    LOG_TRACE("Succeed to reset global pref defaults", K(raw_sql));
+
   }
   return ret;
 }
@@ -108,7 +108,7 @@ int ObDbmsStatsPreferences::get_prefs(ObMySQLProxy *mysql_proxy,
     } else {
       result.set_null();
     }
-    LOG_TRACE("Succeed to get prefs", K(ret), K(get_user_sql), K(get_global_sql), K(result));
+
   }
   return ret;
 }
@@ -149,7 +149,7 @@ int ObDbmsStatsPreferences::set_prefs(ObExecContext &ctx,
                                        affected_rows))) {
           LOG_WARN("fail to exec sql", K(raw_sql), K(ret));
         } else {
-          LOG_TRACE("Succeed to set table prefs", K(raw_sql));
+
         }
       }
     }
@@ -167,7 +167,7 @@ int ObDbmsStatsPreferences::set_prefs(ObExecContext &ctx,
                                           affected_rows))) {
       LOG_WARN("fail to exec sql", K(raw_sql), K(ret));
     } else {
-      LOG_TRACE("Succeed to set table prefs", K(raw_sql), K(affected_rows));
+
     }
   }
   return ret;
@@ -212,7 +212,7 @@ int ObDbmsStatsPreferences::delete_user_prefs(ObExecContext &ctx,
                                             affected_rows))) {
         LOG_WARN("fail to exec sql", K(raw_sql), K(ret));
       } else {
-        LOG_TRACE("Succeed to delete user prefs", K(raw_sql), K(affected_rows));
+
       }
     }
   }
@@ -261,7 +261,7 @@ int ObDbmsStatsPreferences::do_get_prefs(ObMySQLProxy *mysql_proxy,
           LOG_WARN("failed to get result", K(ret));
         } else {
           ret = OB_SUCCESS;
-          LOG_TRACE("Succeed to get stats history info", K(result), K(raw_sql));
+
         }
       }
       int tmp_ret = OB_SUCCESS;
@@ -327,7 +327,7 @@ int ObDbmsStatsPreferences::get_sys_default_stat_options(ObExecContext &ctx,
   } else if (OB_FAIL(get_no_acquired_prefs(stat_prefs, no_acquired_prefs))) {
     LOG_WARN("failed to get no acquired prefs", K(ret));
   } else if (no_acquired_prefs.empty()) {//have got all expected sys prefs from user prefs sys table
-    LOG_TRACE("succeed to get sys default stat options", K(param));
+
   } else {//try get sys prefs from global prefs sys table
     raw_sql.reset();
     sname_list.reset();
@@ -427,7 +427,7 @@ int ObDbmsStatsPreferences::gen_init_global_prefs_sql(ObSqlString &raw_sql,
                                    value_str.ptr()))) {
       LOG_WARN("failed to append fmt", K(ret));
     } else {
-      LOG_TRACE("Succeed gen init global prefs sql", K(raw_sql));
+
       if (expect_affected_rows != NULL) {
         *expect_affected_rows = total_rows;
       }
@@ -494,7 +494,7 @@ int ObDbmsStatsPreferences::do_get_sys_perfs(ObExecContext &ctx,
           LOG_WARN("failed to get result", K(ret));
         } else {
           ret = OB_SUCCESS;
-          LOG_TRACE("Succeed to do get sys perfs", K(raw_sql), K(param));
+
         }
       }
       int tmp_ret = OB_SUCCESS;

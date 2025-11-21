@@ -206,10 +206,10 @@ private:
     storage::ObTenantFreezeInfoMgr *mgr = MTL(storage::ObTenantFreezeInfoMgr *);   \
     if (OB_UNLIKELY(NULL == mgr)) {                                                \
       ret = common::OB_ERR_UNEXPECTED;                                             \
-      STORAGE_LOG(ERROR, "failed to get tenant freeze info mgr from mtl", K(ret)); \
+ \
     } else if (OB_FAIL(mgr->func(args))) {                                         \
       if (OB_ENTRY_NOT_EXIST != ret) {                                             \
-        STORAGE_LOG(WARN, "failed to execute func", K(ret));                       \
+                       \
       }                                                                            \
     }                                                                              \
     ret;                                                                           \

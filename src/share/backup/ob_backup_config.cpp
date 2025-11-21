@@ -201,7 +201,7 @@ int ObBackupConfigParserGenerator::set_restore_source_type_(const common::ObSqlS
     } else if (is_service) {
       restore_source_type_ = share::ObLogRestoreSourceType::SERVICE;
     }
-    LOG_DEBUG("log restore source type", K(is_location), K(is_service));
+
   }
   return ret;
 }
@@ -416,7 +416,7 @@ int ObDataBackupDestConfigParser::parse_from(const common::ObSqlString &value)
   } else if (OB_FAIL(config_items_.push_back(pair))) {
     LOG_WARN("fail to push backup item", K(ret));
   } else {
-    LOG_INFO("parse from", K(value), K(backup_dest), K(path), K(config_items_));
+
   }
   return ret;
 }
@@ -456,7 +456,7 @@ int ObDataBackupDestConfigParser::check_before_update_inner_config(obrpc::ObSrvR
       }
       LOG_WARN("fail to check dest validity", K(ret), K_(tenant_id), K(backup_dest));
     } else {
-      LOG_INFO("succ to check data dest config", K_(tenant_id), K(backup_dest)); 
+ 
     }
   }
   return ret;
@@ -515,7 +515,7 @@ int ObDataBackupDestConfigParser::update_inner_config_table(common::ObISQLClient
   if (FAILEDx(update_data_backup_dest_config_(trans))) {
     LOG_WARN("fail to update data backup dest config", K(ret), K_(tenant_id));
   } else {
-    LOG_INFO("succeed to set backup dest", K(ret), KPC(this));
+
   }
   return ret;
 }
@@ -980,7 +980,7 @@ int ChangeExternalStorageDestMgr::update_and_validate_authorization(const char *
   } else if (OB_FAIL(dest_mgr.check_dest_validity(*rpc_proxy, true/*need_format_file*/))) {
     LOG_WARN("fail to check archive dest validity", K(ret), K(tenant_id_), K(backup_dest_str));
   } else {
-    LOG_INFO("succeed to check archive dest validity", K(tenant_id_), K(backup_dest_str));
+
   }
 
   return ret;

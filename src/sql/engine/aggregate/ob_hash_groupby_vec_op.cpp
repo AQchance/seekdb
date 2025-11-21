@@ -181,7 +181,7 @@ int ObHashGroupByVecOp::inner_open()
       LOG_WARN("failed to init llc map", K(ret));
     } else {
       llc_est_.enabled_ = MY_SPEC.by_pass_enabled_ && MY_SPEC.llc_ndv_est_enabled_ && !force_by_pass_;
-      LOG_TRACE("gby switch", K(MY_SPEC.id_), K(llc_est_.enabled_), K(MY_SPEC.by_pass_enabled_), K(MY_SPEC.llc_ndv_est_enabled_), K(bypass_ctrl_.by_pass_ctrl_enabled_), K(ret));
+
       //THIRD_STAGE have to process dup data but aggr_code is not in gby_expr, we can not judge same group by aggr ptr
       reorder_aggr_rows_ = eval_ctx_.max_batch_size_ >= MIN_BATCH_SIZE_REORDER_AGGR_ROWS
                            && MY_SPEC.aggr_stage_ != ObThreeStageAggrStage::THIRD_STAGE;
@@ -452,7 +452,7 @@ int ObHashGroupByVecOp::next_duplicate_data_permutation(
     LOG_WARN("failed to get brs", K(ret));
   } else if (ObThreeStageAggrStage::NONE_STAGE == MY_SPEC.aggr_stage_) {
     // non-three stage aggregation
-    LOG_DEBUG("debug write aggr code", K(ret), K(last_group), K(nth_group));
+
   } else if (ObThreeStageAggrStage::FIRST_STAGE == MY_SPEC.aggr_stage_) {
     int64_t first_idx = MY_SPEC.aggr_code_idx_ + 1;
     int64_t start_idx = nth_group < MY_SPEC.dist_col_group_idxs_.count() ?
@@ -502,7 +502,7 @@ int ObHashGroupByVecOp::next_duplicate_data_permutation(
           eval_flags.set(i);
         }
         aggr_code_expr->set_evaluated_projected(eval_ctx_);
-        LOG_DEBUG("debug write aggr code", K(ret), K(aggr_code), K(first_idx));
+
       }
     }
     LOG_DEBUG("debug write aggr code", K(ret), K(last_group), K(nth_group), K(first_idx),
@@ -624,10 +624,10 @@ int ObHashGroupByVecOp::finish_insert_distinct_data()
     } else if (OB_FAIL(distinct_data_set_.open_hash_table_part())) {
       LOG_WARN("failed to open hash table part", K(ret));
     } else {
-      LOG_DEBUG("finish insert row and open hash table part", K(ret), K(is_init_distinct_data_));
+
     }
   }
-  LOG_DEBUG("open hash table part", K(ret), K(is_init_distinct_data_));
+
   return ret;
 }
 
@@ -781,7 +781,7 @@ bool ObHashGroupByVecOp::need_start_dump(const int64_t input_rows, int64_t &est_
       }
       actual_need_dump = false;
       int ret = OB_SUCCESS; // no use
-      LOG_TRACE("max insert is about to dump, stop it", K(ret), K(get_actual_mem_used_size()), K(get_mem_bound_size()), K(sql_mem_processor_.get_data_ratio()));
+
     } else if (MY_SPEC.by_pass_enabled_) {
       bypass_ctrl_.start_process_ht();
       bypass_ctrl_.set_max_rebuild_times();
@@ -866,7 +866,7 @@ int ObHashGroupByVecOp::setup_dump_env(const int64_t part_id, const int64_t inpu
     } else if (OB_FAIL(sql_mem_processor_.update_used_mem_size(get_mem_used_size()))) {
       LOG_WARN("failed to update mem size", K(ret));
     }
-    LOG_TRACE("trace setup dump", K(part_cnt), K(pre_part_cnt), K(part_id));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -1014,7 +1014,7 @@ int ObHashGroupByVecOp::inner_get_next_batch(const int64_t max_row_cnt)
     if (bypass_ctrl_.by_pass_ctrl_enabled_ && force_by_pass_) {
       curr_group_id_ = 0;
       bypass_ctrl_.start_by_pass();
-      LOG_TRACE("force by pass open");
+
     } else if (OB_FAIL(load_data_batch(MY_SPEC.max_batch_size_))) {
       LOG_WARN("load data failed", K(ret));
     } else {
@@ -1159,7 +1159,7 @@ int ObHashGroupByVecOp::by_pass_return_batch(int64_t op_max_batch_size) {
     // If batch_size<=1, we also need to ensure that the data here is fully retrieved; if not all data from ht is fetched at once, it will continue to be called next time
     // by_pass_prepare_one_batch（inside it will change brs_.end_ to true）, then continue here from the hash table
     // Fetch data, it will eventually be all fetched.
-    LOG_DEBUG("here check op_max_batch_size", K(op_max_batch_size), K(curr_group_id_), K(local_group_rows_.size()));
+
     brs_.end_ = false;
     int64_t read_rows = 0;
     // curr_group_id_ = 0;
@@ -1583,7 +1583,7 @@ int ObHashGroupByVecOp::next_batch(bool is_from_row_store,
     } else if (OB_FAIL(child_->get_next_batch(max_row_cnt, child_brs))) {
       LOG_WARN("fail to get next batch", K(ret));
     }
-    LOG_TRACE("get_row from child", K(*child_brs), K(ret));
+
   } else {
     int64_t read_size = 0;
     child_brs = &dumped_batch_rows_;
@@ -1597,7 +1597,7 @@ int ObHashGroupByVecOp::next_batch(bool is_from_row_store,
         LOG_WARN("fail to get next batch", K(ret));
       }
     } else {
-      LOG_TRACE("get_row from row_store", K(read_size));
+
       const_cast<ObBatchRows *>(child_brs)->size_ = read_size;
       const_cast<ObBatchRows *>(child_brs)->end_ = false;
       if (first_batch_from_store_) {
@@ -1693,7 +1693,7 @@ int ObHashGroupByVecOp::eval_groupby_exprs_batch(const ObCompactRow **store_rows
                     eval_ctx_, child_brs))) {
           LOG_WARN("eval failed", K(ret));
         } else {
-          LOG_DEBUG("org dup col evaluated", K(i), K(*MY_SPEC.org_dup_cols_.at(dup_idx)), KP(MY_SPEC.org_dup_cols_.at(dup_idx)));
+
         }
       }
     }
@@ -2027,7 +2027,7 @@ int ObHashGroupByVecOp::group_child_batch_rows(const ObCompactRow **store_rows,
       process_check_dump))) {
     LOG_WARN("failed to batch process duplicate data", K(ret));
   } else if (can_skip_last_group_) {
-    LOG_TRACE("no distinct aggr");
+
     // no groupby exprs, don't calculate the last duplicate data for non-distinct aggregate
   } else if ((ObThreeStageAggrStage::SECOND_STAGE == MY_SPEC.aggr_stage_ && !use_distinct_data_)
               && OB_FAIL(aggr_code_expr->eval_vector(eval_ctx_, child_brs))) {
@@ -2200,7 +2200,7 @@ int ObHashGroupByVecOp::by_pass_prepare_one_batch(const int64_t batch_size)
   bool last_group = false;
   bool insert_group_ht = false;
   bool has_by_pass_agg_row = false;
-  LOG_TRACE("by pass prepare one batch", K(batch_size));
+
   if (ObThreeStageAggrStage::FIRST_STAGE == MY_SPEC.aggr_stage_
       && by_pass_nth_group_ <= MY_SPEC.dist_col_group_idxs_.count()
       && by_pass_nth_group_ > 0) {
@@ -2354,7 +2354,7 @@ int ObHashGroupByVecOp::by_pass_get_next_permutation_batch(int64_t &nth_group, b
     my_brs.skip_->set_all(child_brs->size_);
   } else {
     CK (dup_groupby_exprs_.count() == all_groupby_exprs_.count());
-    LOG_DEBUG("next duplicate data permutation", K(all_groupby_exprs_), K(dup_groupby_exprs_));
+
     for (int64_t i = 0; OB_SUCC(ret) && i < dup_groupby_exprs_.count(); ++i) {
       if (nullptr == dup_groupby_exprs_.at(i)) {
         if (OB_FAIL(all_groupby_exprs_.at(i)->init_vector_for_write(
@@ -2551,16 +2551,16 @@ int ObHashGroupByVecOp::check_llc_ndv()
   } else {
     global_bound_size = tenant_sql_mem_manager->get_global_bound_size();
     has_enough_mem_for_deduplication = (global_bound_size * LlcEstimate::GLOBAL_BOUND_RATIO_) > (llc_est_.avg_group_mem_ * ndv);
-    LOG_TRACE("check llc ndv", K(ndv_ratio_is_small_enough), K(ndv), K(llc_est_.est_cnt_), K(has_enough_mem_for_deduplication), K(llc_est_.avg_group_mem_), K(global_bound_size), K(get_actual_mem_used_size()));
+
     if (!has_enough_mem_for_deduplication) {
       //continue bypass and stop estimating llc ndv 
       llc_est_.enabled_ = false;
-      LOG_TRACE("stop check llc ndv and continue bypass", K(ndv_ratio_is_small_enough), K(ndv), K(llc_est_.est_cnt_), K(has_enough_mem_for_deduplication), K(llc_est_.avg_group_mem_), K(global_bound_size), K(get_actual_mem_used_size()));
+
     } else if (ndv_ratio_is_small_enough) {
       // go to llc_insert_state and stop bypass and stop estimating llc ndv
       bypass_ctrl_.bypass_rebackto_insert(ndv);
       llc_est_.enabled_  = false;
-      LOG_TRACE("reback into deduplication state and stop bypass and stop estimating llc ndv", K(ndv_ratio_is_small_enough), K(ndv), K(llc_est_.est_cnt_), K(has_enough_mem_for_deduplication), K(llc_est_.avg_group_mem_), K(global_bound_size), K(get_actual_mem_used_size()));
+
     } else {
       //do nothing, continue bypass and estimate llc ndv 
     }
@@ -2633,7 +2633,7 @@ int ObHashGroupByVecOp::init_popular_values()
     }
   }
   if (popular_map_.size() == 0) {
-    LOG_DEBUG("data skew4: no popular values", K(ret), K(dop), K(total_load_rows_), K(MY_SPEC.id_));
+
   } else {
     op_monitor_info_.otherstat_4_value_ = popular_map_.size();  
   }

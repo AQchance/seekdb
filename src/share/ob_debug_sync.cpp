@@ -47,7 +47,7 @@ void ObDSActionArray::clear(const ObDebugSyncPoint sync_point)
       action_ptrs_[sync_point]->sync_point_ = INVALID_DEBUG_SYNC_POINT;
       action_ptrs_[sync_point] = NULL;
       active_cnt_--;
-      LOG_INFO("clear sync point", K(sync_point));
+
     }
   } else {
     LOG_WARN_RET(OB_ERR_UNEXPECTED, "invalid sync point", K(sync_point));
@@ -60,7 +60,7 @@ void ObDSActionArray::clear_all()
     memset(action_ptrs_, 0, sizeof(action_ptrs_));
     memset(actions_, 0, sizeof(actions_));
     active_cnt_ = 0;
-    LOG_INFO("clear all sync point");
+
   }
 }
 
@@ -388,7 +388,7 @@ void ObDSSessionActions::clear(const ObDebugSyncPoint sync_point)
       }
     }
     if (NULL != n) {
-      LOG_INFO("clear action", K(sync_point), "action", n->action_);
+
       actions_.remove(n);
       free_node(n);
       n = NULL;
@@ -585,7 +585,7 @@ int ObDSEventControl::broadcast(const ObSyncEventName &name)
         if (it->waiter_cnt_ > 0 && it->signal_cnt_ < it->waiter_cnt_) {
           it->signal_cnt_ = it->waiter_cnt_;
         }
-        LOG_INFO("broadcast", KP(it), K(name), "signal_cnt", it->signal_cnt_, "waiter_cnt", it->waiter_cnt_);
+
       }
     }
 
@@ -610,7 +610,7 @@ int ObDSEventControl::wait(const ObSyncEventName &name,
     LOG_WARN("invalid event name", K(ret), K(name), K(timeout_us));
   } else if (stop_) {
     ret = OB_CANCELED;
-    LOG_INFO("is stopping", K(ret), K(name));
+
   } else if (OB_FAIL(locate(name, e))) {
     LOG_WARN("locate event failed", K(ret), K(name));
   } else if (OB_ISNULL(e)) {
@@ -618,7 +618,7 @@ int ObDSEventControl::wait(const ObSyncEventName &name,
     LOG_WARN("NULL event", K(ret));
   } else {
     e->waiter_cnt_++;
-    LOG_INFO("start wait", KP(e), K(name), "signal_cnt", e->signal_cnt_);
+
     while (!stop_ && e->signal_cnt_ <= 0) {
       const int64_t now_ms = ObTimeUtility::current_time() / 1000;
       if (now_ms < abs_timeout_ms) {
@@ -629,12 +629,12 @@ int ObDSEventControl::wait(const ObSyncEventName &name,
     }
     if (stop_) {
       ret = OB_CANCELED;
-      LOG_INFO("is stopping", K(ret), K(name));
+
     } else {
-      LOG_INFO("finish wait", KP(e), K(name));
+
       e->waiter_cnt_--;
       if (e->signal_cnt_ <= 0) {
-        LOG_INFO("wait for event timeout", K(name), K(timeout_us));
+
       }
       if (e->signal_cnt_ > 0 && clear) {
         e->signal_cnt_--;
@@ -862,7 +862,7 @@ int ObDebugSync::parse_action(const ObString &str_origin,
       LOG_WARN("unexpected parameters found", K(ret), K(token), K(str), K(str_origin));
     }
   }
-  LOG_INFO("finish get debug sync action", K(ret), K(str_origin), K(action), K(clear), K(reset));
+
   return ret;
 }
 
@@ -965,7 +965,7 @@ int ObDebugSync::execute(const ObDebugSyncPoint sync_point)
       }
     }
     if (OB_SUCC(ret) && OB_UNLIKELY(got)) {
-      LOG_INFO("execute action",K(is_local_action), K(action));
+
       if (!action.signal_.is_empty()) {
         if (OB_FAIL(event_control_.signal(action.signal_))) {
           LOG_WARN("signal failed", K(ret), K(action));
@@ -1067,7 +1067,7 @@ int ObDebugSync::set_global_action(const bool reset, const bool clear,
   if (OB_SUCC(ret)) {
     DEBUG_SYNC(NOW);
   }
-  LOG_INFO("set debug sync global action", K(reset), K(clear), K(action), K(is_debug_sync_enabled));
+
   return ret;
 }
 

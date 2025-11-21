@@ -81,7 +81,7 @@ int ObTxTable::check_with_tx_data(ObReadTxDataArg &read_tx_data_arg, ObITxDataCh
         ret = fn(TX_DATA_ARR[i]);
       }
       if (OB_FAIL(ret)) {
-        STORAGE_LOG(ERROR, "check with tx data failed", KR(ret), K(read_tx_data_arg), K(TX_DATA_ARR.at(i)));
+
       }
       break;
     }
@@ -322,7 +322,7 @@ int TestMultiVersionDeleteInsertBlockscan::get_next_micro_scanner(ObIMicroBlockR
   ObMicroBlockData block_data;
   while (OB_SUCC(ret)) {
     if (OB_FAIL(prefetcher.prefetch())) {
-      STORAGE_LOG(WARN, "fail to prefetch micro block", K(ret), K(prefetcher));
+
     } else if (prefetcher.cur_range_fetch_idx_ >= prefetcher.cur_range_prefetch_idx_)  {
       if (OB_LIKELY(prefetcher.is_prefetch_end_)) {
         ret = OB_ITER_END;
@@ -333,26 +333,26 @@ int TestMultiVersionDeleteInsertBlockscan::get_next_micro_scanner(ObIMicroBlockR
       continue;
     } else if (-1 == prefetcher.current_read_handle().micro_begin_idx_) {
       ret = OB_ITER_END;
-      STORAGE_LOG(WARN, "scan empty read handle", K(ret), K(prefetcher.current_read_handle()));
+
     } else if (-1 == prefetcher.cur_micro_data_fetch_idx_
                && FALSE_IT(prefetcher.cur_micro_data_fetch_idx_ = prefetcher.current_read_handle().micro_begin_idx_)) {
     } else if (nullptr == scanner_.micro_scanner_) {
       if (OB_FAIL(scanner_.init_micro_scanner())) {
-        STORAGE_LOG(WARN, "fail to init micro scanner", K(ret));
+
       } else {
         scanner_.micro_scanner_->reuse();
       }
     }
     if (OB_SUCC(ret)) {
       if (OB_FAIL(scanner_.micro_scanner_->set_range(*prefetcher.current_read_handle().range_))) {
-        STORAGE_LOG(WARN, "fail to set range for micro scanner", K(ret));
+
       } else if (OB_FAIL(prefetcher.current_micro_handle().get_micro_block_data(&scanner_.macro_block_reader_, block_data))) {
-        STORAGE_LOG(WARN, "fail to get block data", K(ret), K(prefetcher.current_micro_handle()));
+
       } else if (OB_FAIL(scanner_.micro_scanner_->open(prefetcher.current_micro_handle().macro_block_id_,
                                                       block_data,
                                                       prefetcher.current_micro_info().is_left_border(),
                                                       prefetcher.current_micro_info().is_right_border()))) {
-        STORAGE_LOG(WARN, "fail to open micro scanner and preprocess delete insert bitmap", K(ret), K(prefetcher));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -371,7 +371,7 @@ int TestMultiVersionDeleteInsertBlockscan::get_next_preprocessed_bitmap(ObCGBitm
   int ret = OB_SUCCESS;
   ObIMicroBlockRowScanner *micro_scanner = nullptr;
   if (OB_FAIL(get_next_micro_scanner(micro_scanner))) {
-    STORAGE_LOG(WARN, "fail to get next micro_scanner", K(ret));
+
   } else {
     bitmap = scanner_.micro_scanner_->di_bitmap_;
   }
@@ -847,7 +847,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_basic()
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -917,7 +917,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_with_cac
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for case 1", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -966,7 +966,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_with_cac
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for case 2", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -1012,7 +1012,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_with_cac
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for case 3", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -1057,7 +1057,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_with_cac
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for case 4", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -1107,7 +1107,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_with_cac
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for case 5", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -1158,7 +1158,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_with_cac
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for case 6", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -1209,7 +1209,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_with_cac
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for case 7", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -1254,7 +1254,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_with_cac
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for case 8", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -1304,7 +1304,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_with_cac
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for case 9", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -1349,7 +1349,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_with_cac
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for case 10", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -1521,7 +1521,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_with_cac
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for cached row 2", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -1590,7 +1590,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_with_fil
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for case 1", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -1637,7 +1637,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_with_fil
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for case 2", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -1683,7 +1683,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_with_fil
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for case 3", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -1728,7 +1728,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_with_fil
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for case 4", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -1778,7 +1778,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_get_next_compacted_row_with_fil
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for case 5", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;
       }
@@ -1852,7 +1852,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_meet_empty_range_block()
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for empty range block", K(res_iter), K(results[res_iter]), K(result));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;                 
       }
@@ -1960,7 +1960,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_shadow_row_output()
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for empty range block", K(res_iter), K(results[res_iter]), K(result), KPC(row));
+
         ASSERT_EQ(results[res_iter], result);
         res_iter += 1;                 
       }
@@ -2027,7 +2027,7 @@ void TestMultiVersionDeleteInsertBlockscan::test_with_uncommitted_lock_row()
                                     row->delete_version_,
                                     row->is_delete_filtered_,
                                     row->storage_datums_[4].get_int());
-        STORAGE_LOG(INFO, "check multi version di result for uncommitted lock row", K(res_iter), K(results[res_iter]), K(result));
+
         EXPECT_EQ(results[res_iter], result);
         res_iter += 1;                 
       }

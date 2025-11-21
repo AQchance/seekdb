@@ -87,7 +87,7 @@ int ObFlyingTabletPointerMap::check_exist(
     common::ObBucketHashRLockGuard lock_guard(bucket_lock_, key.hash());
     if (OB_ISNULL(handle_ptr = map_.get(key))) {
       is_exist = false;
-      LOG_INFO("tablet handle not exist", K(ret), K(key));
+
     } else if (OB_ISNULL(t_ptr = handle_ptr->get_resource_ptr())) {
       ret = common::OB_ERR_UNEXPECTED;
       LOG_WARN("fail to get tablet pointer", K(ret), KP(t_ptr));

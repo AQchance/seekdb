@@ -60,7 +60,7 @@ int ObPlanSet::get_variable_meta(const ObSQLSessionInfo *session_info, const ObS
     if (ret == OB_ERR_USER_VARIABLE_UNKNOWN) {
       meta = UNKNOWN_VAR_DEFAULT_META;
       ret = OB_SUCCESS;
-      LOG_TRACE("ignore unknow variable error", K(ret), K(var_name));
+
     } else {
       LOG_WARN("failed to get user variable", K(ret), K(var_name));
     }
@@ -90,7 +90,7 @@ int ObPlanSet::match_params_info(const ParamStore *params,
   } else {
     // Match the original parameters
     int64_t N = params->count();
-    LOG_TRACE("params info", K(params_info_), K(*params), K(this));
+
     for (int64_t i = 0; OB_SUCC(ret) && is_same && i < N; ++i) {
       if (OB_FAIL(match_param_info(params_info_.at(i),
                                    params->at(i),
@@ -195,15 +195,15 @@ int ObPlanSet::match_params_info(const ParamStore *params,
         LOG_WARN("failed to match multi stmt info", K(ret));
       } else if (!is_same) {
         ret = OB_BATCHED_MULTI_STMT_ROLLBACK;
-        LOG_TRACE("batched multi stmt needs rollback", K(ret));
+
       }
     }
     if (OB_FAIL(ret)) {
       is_same = false;
-      LOG_TRACE("after match param result", K(ret), K(is_same), K(params_info_));
+
     }
   }
-  LOG_DEBUG("after match param result", K(ret), K(is_same), K(params_info_));
+
   return ret;
 }
 
@@ -273,9 +273,9 @@ int ObPlanSet::match_param_info(const ObParamInfo &param_info,
         is_same = true;
       } else {
         is_same = false;
-        LOG_TRACE("ext match param info", K(data_type), K(param_info), K(is_same), K(ret));
+
       }
-      LOG_DEBUG("ext match param info", K(data_type), K(param_info), K(is_same), K(ret));
+
     } else if (param.get_param_meta().is_ext()) {
       if (!param_info.flag_.need_to_check_extend_type_) {
         // do nothing
@@ -285,7 +285,7 @@ int ObPlanSet::match_param_info(const ObParamInfo &param_info,
                              | static_cast<uint32_t>(param_info.col_type_);
         is_same = (udt_id_info == udt_id_param) ? true : false;
       }
-      LOG_DEBUG("ext match param info", K(param.get_accuracy()), K(param_info), K(is_same), K(ret));
+
     } else if (param_info.is_oracle_null_value_ && !param.is_null()) {
       is_same = false;
     } else if (ObSQLUtils::is_oracle_null_with_normal_type(param)
@@ -491,7 +491,7 @@ int ObPlanSet::match_params_info(const Ob2DArray<ObParamInfo,
                                                          is_ignore_stmt_, is_same))) {
         LOG_WARN("failed to match pre calc cons", K(ret));
       } else if (!is_same) {
-        LOG_TRACE("pre calc constraints for plan set and cur plan not match");
+
       }
     }
 
@@ -890,7 +890,7 @@ int ObPlanSet::match_constraint(const ParamStore &params, bool &is_matched)
                    K(ret), K(const_param.get_type()), K(params.at(param_idx).get_type()));
         } else if (!const_param.can_compare(params.at(param_idx)) ||
                    0 != const_param.compare(params.at(param_idx))) {
-          LOG_TRACE("not matched const param", K(const_param), K(params.at(param_idx)));
+
           is_matched = false;
         } else {
           // do nothing
@@ -924,7 +924,7 @@ int ObPlanSet::match_constraint(const ParamStore &params, bool &is_matched)
         }
       }
       if (match_const) {
-        LOG_TRACE("matched const param constraint", K(params), K(all_possible_const_param_constraints_.at(i)));
+
         is_matched = false; // matching one of the constraint, need to generated new plan
       }
     }
@@ -974,7 +974,7 @@ int ObPlanSet::match_constraint(const ParamStore &params, bool &is_matched)
     }
     if (OB_SUCC(ret) && !is_matched) {
       is_matched = false;
-      LOG_TRACE("not match equal param constraint", K(params), K(first_idx), K(second_idx));
+
     }
   }
 
@@ -1245,14 +1245,14 @@ int ObSqlPlanSet::init_new_set(const ObPlanCacheCtx &pc_ctx,
       if (TABLE_SCHEMA == schema_obj.get_schema_type()
           && is_virtual_table(schema_obj.object_id_)) {
         is_contain_virtual_table_ = true;
-        LOG_DEBUG("contain virtual table", K(is_contain_virtual_table_), K(schema_obj));
+
       }
     } // for end
     for (int64_t i = 0; !is_contain_inner_table_ && i < plan.get_dependency_table().count(); i++) {
       const ObSchemaObjVersion &schema_obj = plan.get_dependency_table().at(i);
       if (is_inner_table(schema_obj.object_id_)) {
         is_contain_inner_table_ = true;
-        LOG_DEBUG("contain virtual table", K(is_contain_inner_table_), K(schema_obj));
+
       }
     } // for end
   }
@@ -1267,7 +1267,7 @@ int ObSqlPlanSet::init_new_set(const ObPlanCacheCtx &pc_ctx,
     const ObPhysicalPlan &sql_plan = dynamic_cast<const ObPhysicalPlan &>(plan);
     enable_inner_part_parallel_exec_ = sql_plan.get_px_dop() > 1;
     contain_index_location = sql_plan.contain_index_location();
-    LOG_DEBUG("using px", K(enable_inner_part_parallel_exec_));
+
     plan.get_pre_expr_ref_count();
   }
   if (OB_SUCC(ret) && (!contain_index_location || is_multi_stmt_plan())) {
@@ -1300,7 +1300,7 @@ int ObSqlPlanSet::select_plan(ObPlanCacheCtx &pc_ctx, ObPlanCacheObject *&cache_
   } else {
     if (OB_FAIL(get_plan_special(pc_ctx, plan))) {
       if (OB_SQL_PC_NOT_EXIST == ret) {
-        LOG_TRACE("fail to get plan special", K(ret));
+
       } else {
         LOG_WARN("fail to get plan special", K(ret));
       }
@@ -1468,7 +1468,7 @@ int ObSqlPlanSet::add_physical_plan(const ObPhyPlanType plan_type,
     LOG_WARN("invalid plan type", K(ret), K(plan_type));
   } else if (OB_PHY_PLAN_LOCAL == plan_type) {
     if (OB_FAIL(add_local_plan(pc_ctx, plan))) {
-      LOG_DEBUG("failed to add local plan", K(ret));
+
     }
   } else if (OB_FAIL(dist_plans_.add_plan(plan, pc_ctx))) {
     LOG_WARN("failed to add dist plan", K(ret), K(plan));
@@ -1586,7 +1586,7 @@ int ObSqlPlanSet::try_get_local_plan(ObPlanCacheCtx &pc_ctx,
   ObSEArray<ObCandiTableLoc, 2> candi_table_locs;
   ObPhysicalPlan *local_plan = get_local_plan(pc_ctx);
   if (OB_ISNULL(local_plan)) {
-    LOG_DEBUG("local plan is null");
+
     get_next = true;
   } else {
     pc_ctx.exist_local_plan_ = true;
@@ -1596,7 +1596,7 @@ int ObSqlPlanSet::try_get_local_plan(ObPlanCacheCtx &pc_ctx,
                                      real_type))) {
       LOG_WARN("fail to get plan type", K(ret));
     } else if (OB_PHY_PLAN_LOCAL != real_type) {
-      LOG_DEBUG("not local plan", K(real_type));
+
       plan = NULL;
       get_next = true;
     } else if (GCONF._enable_adaptive_auto_dop && plan->get_is_use_auto_dop() && is_single_table_
@@ -1616,7 +1616,7 @@ int ObSqlPlanSet::try_get_local_plan(ObPlanCacheCtx &pc_ctx,
       if (OB_FAIL(ret)) {
         auto_dop_map.clear();
       }
-      LOG_TRACE("adaptive px dop", K(ret), K(is_single_part), K(dop));
+
     }
   }
   if (OB_SUCC(ret) && NULL == plan) {
@@ -1635,7 +1635,7 @@ int ObSqlPlanSet::try_get_remote_plan(ObPlanCacheCtx &pc_ctx,
   ObPhyPlanType real_type = OB_PHY_PLAN_UNINITIALIZED;
   ObSEArray<ObCandiTableLoc, 2> candi_table_locs;
   if (OB_ISNULL(remote_plan_)) {
-    LOG_DEBUG("remote plan is null");
+
     get_next = true;
   } else if (OB_FAIL(get_plan_type(remote_plan_->get_table_locations(),
                                   remote_plan_->has_uncertain_local_operator(),
@@ -1644,7 +1644,7 @@ int ObSqlPlanSet::try_get_remote_plan(ObPlanCacheCtx &pc_ctx,
                                   real_type))) {
     LOG_WARN("fail to get plan type", K(ret));
   } else if (OB_PHY_PLAN_REMOTE != real_type) {
-    LOG_DEBUG("remote type is not match", K(real_type));
+
     plan = NULL;
     get_next = true;
   } else {
@@ -1664,9 +1664,9 @@ int ObSqlPlanSet::try_get_dist_plan(ObPlanCacheCtx &pc_ctx,
   plan = NULL;
   ObExecContext &exec_ctx = pc_ctx.exec_ctx_;
   if (OB_FAIL(dist_plans_.get_plan(pc_ctx, plan))) {
-    LOG_TRACE("failed to get dist plan", K(ret));
+
   } else if (plan != NULL) {
-    LOG_TRACE("succeed to get dist plan", K(*plan));
+
     if (GCONF._enable_adaptive_auto_dop && plan->get_is_use_auto_dop() && is_single_table_
         && !is_contain_inner_table_ && !plan->stat_.is_inner_) {
       int64_t dop = -1;
@@ -1684,7 +1684,7 @@ int ObSqlPlanSet::try_get_dist_plan(ObPlanCacheCtx &pc_ctx,
       if (OB_FAIL(ret)) {
         auto_dop_map.clear();
       }
-      LOG_TRACE("adaptive px dop", K(ret), K(dop), K(is_single_part), K(pc_ctx.exist_local_plan_));
+
     }
   }
   if (OB_SQL_PC_NOT_EXIST == ret) {
@@ -1697,7 +1697,7 @@ int ObSqlPlanSet::try_get_dist_plan(ObPlanCacheCtx &pc_ctx,
 int ObSqlPlanSet::get_plan_special(ObPlanCacheCtx &pc_ctx,
                                    ObPhysicalPlan *&plan)
 {
-  LOG_DEBUG("get plan special", K(need_try_plan_));
+
   int ret = OB_SUCCESS;
   plan = NULL;
   bool get_next = true;
@@ -1718,7 +1718,7 @@ int ObSqlPlanSet::get_plan_special(ObPlanCacheCtx &pc_ctx,
   //try dist plan
   if (OB_SUCC(ret) && get_next) {
     if (OB_FAIL(try_get_dist_plan(pc_ctx, plan))) {
-      LOG_TRACE("failed to try get dist plan", K(ret));
+
     }
   }
   if (OB_SUCC(ret) && nullptr == plan) {
@@ -1901,7 +1901,7 @@ int ObSqlPlanSet::get_phy_locations(const ObTablePartitionInfoArray &partition_i
                                     ObIArray<ObCandiTableLoc> &candi_table_locs)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("add plan partition infos", K(partition_infos));
+
   if (OB_FAIL(ObPhyLocationGetter::get_phy_locations(partition_infos,
                                                      //table_locs,
                                                      candi_table_locs))) {

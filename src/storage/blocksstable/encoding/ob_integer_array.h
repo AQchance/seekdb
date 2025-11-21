@@ -91,7 +91,7 @@ OB_INLINE int ObIntegerArrayGenerator::init(char *data, const int64_t byte)
   int ret = common::OB_SUCCESS;
   if (NULL == data || byte <= 0 || byte > sizeof(int64_t)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(data), K(byte));
+
   } else {
     switch (byte) {
       case 1: {
@@ -112,7 +112,7 @@ OB_INLINE int ObIntegerArrayGenerator::init(char *data, const int64_t byte)
       }
       default:
         ret = common::OB_INVALID_ARGUMENT;
-        STORAGE_LOG(WARN, "invalid integer byte", K(ret), K(byte));
+
     }
   }
   return ret;

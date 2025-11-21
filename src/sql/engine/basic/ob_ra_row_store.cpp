@@ -242,7 +242,7 @@ void ObRARowStore::reset()
     if (OB_FAIL(FILE_MANAGER_INSTANCE_WITH_MTL_SWITCH.remove(tenant_id_, fd_))) {
       LOG_WARN("remove file failed", K(ret), K_(fd));
     } else {
-      LOG_INFO("close file success", K(ret), K_(fd));
+
     }
     fd_ = -1;
     dir_id_ = -1;
@@ -925,7 +925,7 @@ int ObRARowStore::write_file(BlockIndex &bi, void *buf, int64_t size)
         LOG_WARN("open file failed", K(ret));
       } else {
         file_size_ = 0;
-        LOG_INFO("open file success", K_(fd), K_(dir_id));
+
       }
     }
     ret = OB_E(EventTable::EN_8) ret;
@@ -1023,7 +1023,7 @@ bool ObRARowStore::need_dump()
   } else if (mem_limit_ > 0) {
     if (mem_hold_ > mem_limit_) {
       dump = true;
-      LOG_TRACE("need dump", K(dump), K(mem_hold_), K(mem_limit_));
+
     }
   } else if (!GCONF.is_sql_operator_dump_enabled()) {
     // no dump
@@ -1045,7 +1045,7 @@ bool ObRARowStore::need_dump()
         dump = true;
       }
       if (dump) {
-        LOG_TRACE("check need dump", K(dump), K(limit), K(hold));
+
       }
     }
   }

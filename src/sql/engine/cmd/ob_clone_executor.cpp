@@ -138,7 +138,7 @@ int ObCloneTenantExecutor::wait_clone_tenant_finished_(ObExecContext &ctx,
         }
       } else if (job.get_status().is_sys_success_status()) {
         clone_over = true;
-        LOG_INFO("clone tenant successful", K(job));
+
       } else if (job.get_status().is_sys_failed_status()) {
         ret = OB_ERR_CLONE_TENANT;
         LOG_WARN("clone tenant failed", KR(ret), K(job));

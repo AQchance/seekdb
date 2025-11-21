@@ -92,7 +92,7 @@ TEST(Expr, test_print_func_ptr)
 {
   // test print function pointer
   auto f = &eval_num_add;
-  LOG_INFO("add func", K(f));
+
   char buf[1024];
   int64_t pos = 0;
   databuff_print_obj(buf, 1024, pos, f);
@@ -116,7 +116,7 @@ TEST_F(TestExpr, number_add)
   ObObj result;
 
   ASSERT_EQ(OB_SUCCESS, old_expr.calc(expr_ctx_, row, result));
-  LOG_INFO("old expr result", K(result));
+
 
   int64_t TEST_CNT = 1000000;
   ASSERT_EQ(OB_SUCCESS, timed_execute( "old add expr", TEST_CNT,
@@ -128,7 +128,7 @@ TEST_F(TestExpr, number_add)
 
   ObDatum *datum  = NULL;
   ASSERT_EQ(OB_SUCCESS, expr->eval(eval_ctx_, datum));
-  LOG_INFO("new get result", K(*datum), K(DATUM2STR(*expr, *datum)));
+
 
   ASSERT_EQ(OB_SUCCESS, timed_execute(
           "new add expr", TEST_CNT,
@@ -154,7 +154,7 @@ TEST_F(TestExpr, int_less)
   ObObj result;
 
   ASSERT_EQ(OB_SUCCESS, old_expr.calc(expr_ctx_, row, result));
-  LOG_INFO("old expr result", K(result));
+
 
   int64_t TEST_CNT = 1000000;
   ASSERT_EQ(OB_SUCCESS, timed_execute( "old less expr", TEST_CNT,
@@ -165,7 +165,7 @@ TEST_F(TestExpr, int_less)
 
   ObDatum *datum  = NULL;
   ASSERT_EQ(OB_SUCCESS, expr->eval(eval_ctx_, datum));
-  LOG_INFO("new get result", K(*datum), K(DATUM2STR(*expr, *datum)));
+
 
   ASSERT_EQ(OB_SUCCESS, timed_execute(
           "new less expr", TEST_CNT,

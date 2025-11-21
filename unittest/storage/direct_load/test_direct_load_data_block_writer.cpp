@@ -123,12 +123,12 @@ protected:
       row = nullptr;
       if (OB_ISNULL(row = OB_NEWx(ObDirectLoadDatumRow, &allocator_))) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "fail to new ObDirectLoadDatumRow", KR(ret));
+
       } else if (OB_FAIL(row->init(column_num, &allocator_))) {
-        STORAGE_LOG(WARN, "fail to init datum row", KR(ret));
+
       } else if (FALSE_IT(row->seq_no_ = 0)) {
       } else if (OB_FAIL(rows_.push_back(row))) {
-        STORAGE_LOG(WARN, "fail to push back", KR(ret));
+
       }
       if (OB_FAIL(ret)) {
         if (nullptr != row) {
@@ -223,12 +223,12 @@ protected:
       for (int64_t i = 0; OB_SUCC(ret) && i < count; ++i) {
         ObDirectLoadDatumRow *row = nullptr;
         if (OB_FAIL(rows_guard.get_new_row(row))) {
-          STORAGE_LOG(WARN, "fail to get new row", KR(ret));
+
         } else {
           datum_row_.storage_datums_ = row->storage_datums_;
           datum_row_.count_ = row->count_;
           if (OB_FAIL(row_generate_.get_next_row(datum_row_))) {
-            STORAGE_LOG(WARN, "fail to generate row", KR(ret));
+
           }
         }
       }

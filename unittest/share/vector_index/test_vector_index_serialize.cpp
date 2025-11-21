@@ -54,7 +54,7 @@ public:
   int operator()(const char* data, const int64_t data_size, share::ObOStreamBuf::CbParam &cb_param) {
     if (OB_SUCCESS == ret_) {
       ObString str(data_size, data);
-      LOG_INFO("output", K(str));
+
       TestOStreamCbParam* param = dynamic_cast<TestOStreamCbParam*>(&cb_param);
       param->total_size_ += data_size;
     }
@@ -116,7 +116,7 @@ public:
         data = const_cast<char*>(data_str + param->cur_);
         param->cur_ += read_size;
         ObString str(read_size, data);
-        LOG_INFO("input", K(str));
+
       }
     }
     return ret_;

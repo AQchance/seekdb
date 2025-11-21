@@ -74,7 +74,7 @@ int ObTableServiceLibrary::init()
   } else {
     // init trace id
     ObCurTraceId::SeqGenerator::seq_generator_ = ObTimeUtility::current_time();
-    LOG_INFO("libobtable inited");
+
   }
   return ret;
 }
@@ -82,7 +82,7 @@ int ObTableServiceLibrary::init()
 void ObTableServiceLibrary::destroy()
 {
   ObKVGlobalCache::get_instance().destroy();
-  LOG_INFO("libobtable destroyed");
+
   OB_LOGGER.set_stop_append_log();
 }
 

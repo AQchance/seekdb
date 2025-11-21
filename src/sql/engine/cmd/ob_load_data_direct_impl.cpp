@@ -555,10 +555,10 @@ int ObLoadDataDirectImpl::DataReader::read_buffer(ObLoadFileBuffer &file_buffer)
     if (OB_FAIL(file_reader_->readn(file_buffer.current_ptr(), read_count, read_size))) {
       LOG_WARN("fail to read file", KR(ret));
     } else if (0 == read_size) {
-      LOG_TRACE("read nothing", K(is_end_file()));
+
     } else {
       file_buffer.update_pos(read_size); // update buffer data length
-      LOG_TRACE("read file sucess", K(read_size));
+
       ATOMIC_AAF(&execute_ctx_->job_stat_->read_bytes_, read_size);
     }
   }
@@ -612,7 +612,7 @@ int ObLoadDataDirectImpl::DataReader::get_next_buffer(ObLoadFileBuffer &file_buf
           LOG_WARN("fail to back up data", KR(ret));
         } else {
           line_count = complete_cnt;
-          LOG_DEBUG("LOAD DATA backup", "data", data_trimer_.get_incomplate_data_string());
+
         }
       }
     }
@@ -1068,7 +1068,7 @@ int ObLoadDataDirectImpl::FileLoadExecutor::execute()
       LOG_WARN("fail to start trans", KR(ret));
     }
 
-    LOG_TRACE("file load executor prepare execute done", K(ret));
+
     while (OB_SUCC(ret) && OB_SUCC(execute_ctx_->exec_ctx_.check_status())) {
       TaskHandle *handle = nullptr;
       if (OB_FAIL(get_next_task_handle(handle))) {
@@ -1115,7 +1115,7 @@ int ObLoadDataDirectImpl::FileLoadExecutor::execute()
     }
   }
 
-  LOG_TRACE("large file load executor init done", K(ret));
+
   return ret;
 }
 
@@ -1232,7 +1232,7 @@ void ObLoadDataDirectImpl::FileLoadExecutor::wait_all_task_finished()
 {
   const int64_t processing_task_cnt = task_controller_.get_processing_task_cnt();
   const int64_t total_task_cnt = task_controller_.get_total_task_cnt();
-  LOG_INFO("LOAD DATA wait all task finish", K(processing_task_cnt), K(total_task_cnt));
+
   task_controller_.wait_all_task_finish(execute_param_->combined_name_.ptr(), THIS_WORKER.get_timeout_ts());
 }
 
@@ -1675,7 +1675,7 @@ int ObLoadDataDirectImpl::MultiFilesLoadTaskProcessor::skip_ignore_rows(int64_t 
       ATOMIC_AAF(&execute_ctx_->job_stat_->parsed_rows_, skip_line_count);
       ATOMIC_AAF(&execute_ctx_->job_stat_->parsed_bytes_, skip_bytes);
     }
-    LOG_INFO("LOAD DATA skip ignore rows", KR(ret), K(ignore_row_num), K(skip_line_count), K(skip_bytes));
+
   }
   return ret;
 }
@@ -2037,7 +2037,7 @@ int ObLoadDataDirectImpl::BackupLoadExecutor::process_partition(int32_t session_
                                                                 int64_t subpart_count,
                                                                 int64_t subpart_idx)
 {
-  LOG_INFO("start process partition", K(partition_idx), K(subpart_count), K(subpart_idx));
+
   int ret = OB_SUCCESS;
   int64_t total_processed_line_count = 0;
   if (IS_NOT_INIT) {
@@ -2241,7 +2241,7 @@ int ObLoadDataDirectImpl::execute(ObExecContext &ctx, ObLoadDataStmt &load_stmt)
     } else if (OB_FAIL(init_execute_context())) {
       LOG_WARN("fail to init execute context", KR(ret), K(ctx), K(load_stmt));
     } else {
-      LOG_INFO("LOAD DATA init finish", K_(execute_param), "file_path", load_args.file_name_);
+
       ObLoadDataStat *job_stat = execute_ctx_.job_stat_;
       OZ(ob_write_string(job_stat->allocator_, load_args.file_name_, job_stat->file_path_));
       job_stat->file_column_ = execute_param_.data_access_param_.file_column_num_;

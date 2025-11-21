@@ -513,7 +513,7 @@ int DASOpResultIter::next_result()
   }
   if (OB_UNLIKELY(task_iter_.is_end())) {
     ret = OB_ITER_END;
-    LOG_DEBUG("fetch next das task end", K(ret));
+
   }
   return ret;
 }

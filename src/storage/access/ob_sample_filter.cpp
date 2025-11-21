@@ -281,7 +281,7 @@ int ObHybridSampleFilterExecutor::init_sample_segment_length(const double percen
     } else if (OB_FAIL(interval_infos_.push_back(ObSampleIntervalInfo{expand_start, MAX(interval_length, EXPAND_INTERVAL_LENGTH)}))) {
       LOG_WARN("Failed to push element to interval_infos_", K(ret), K_(interval_infos));
     }
-    LOG_DEBUG("wenye check: sample_segment_length_ has been set", K(interval_length), K(expand_start));
+
   }
   return ret;
 }
@@ -447,7 +447,7 @@ int ObHybridSampleFilterExecutor::check_sample_block(
   } else if (OB_FAIL(update_row_id_handle(level, parent_fetch_idx, child_prefetch_idx, index_info.get_row_count()))) {
     LOG_WARN("Failed to update row id in sample", K(ret), K(level), K(parent_fetch_idx), K(child_prefetch_idx), K(index_info.get_row_count()));
   } else if (!index_info.can_blockscan() || !pd_row_range_.is_valid()) {
-    LOG_DEBUG("Can not filter micro block in sample", K_(pd_row_range), K(index_info));
+
   } else {
     if (level == index_tree_height_) {
       start_row_id = data_row_id_handle_[child_prefetch_idx % data_prefetch_depth_];
@@ -492,7 +492,7 @@ int64_t ObHybridSampleFilterExecutor::get_range_sample_count(
     // A negative value implies the check range inclusives the entire leftmost sample interval or can be handled in right side, so there is no need to subtract it.
     count1 = start_row_num > interval_parser.right_ ? interval_parser.count_ : MAX(start_row_num - interval_parser.left_, 0);
     start_iid = interval_parser.interval_id_;
-    LOG_DEBUG("left interval_info", K(interval_parser));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -501,7 +501,7 @@ int64_t ObHybridSampleFilterExecutor::get_range_sample_count(
     } else {
       // The logic on the right side is similar to the left.
       count2 = interval_parser.left_ > end_row_num ? interval_parser.count_ : MAX(interval_parser.right_ - end_row_num, 0);
-      LOG_DEBUG("right interval_info", K(interval_parser));
+
       sample_count = get_sample_count(start_iid, interval_parser.interval_id_, interval_parser.interval_length_) - count1 - count2;
     }
   }
@@ -523,13 +523,13 @@ int ObHybridSampleFilterExecutor::check_range_filtered(
     if (OB_FAIL(get_range_sample_count(start_row_num, end_row_num, range_sample_row_count))) {
       LOG_WARN("Failed to get range sample count", K(ret), K(start_row_num), K(end_row_num), K(range_sample_row_count));
     } else {
-      LOG_DEBUG("check range filtered in fast sample", K(start_row_num), K(end_row_num), K(range_sample_row_count), K(index_info));
+
       if (range_sample_row_count < 0) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("Unexpected row count to sample in this range", K(ret), K(range_sample_row_count), K(start_row_num), K(end_row_num));
       } else if (range_sample_row_count == 0) {
         index_info.set_filter_constant_type(sql::ObBoolMaskType::ALWAYS_FALSE);
-        LOG_DEBUG("Range is filtered during perfetching when sample", K(start_row_num), K(index_info));
+
       } else {
         // need to sample row in this range, can not filtered.
       }
@@ -747,7 +747,7 @@ int ObRowSampleFilter::combine_to_filter_tree(sql::ObPushdownFilterExecutor *&ro
     LOG_WARN("The ObRowSampleFilter has not been inited", K(ret));
   } else if (nullptr == root_filter) {
     root_filter = sample_filter_;
-    LOG_DEBUG("The pushdown filter is null, only sample filter exists", KP(root_filter));
+
   } else {
     sql::ObPushdownFilterFactory filter_factory(allocator_);
     if (nullptr == filter_node_ && OB_FAIL(filter_factory.alloc(sql::PushdownFilterType::AND_FILTER, 2, filter_node_))) {
@@ -800,7 +800,7 @@ void ObRowSampleFilterFactory::destroy_sample_filter(ObRowSampleFilter *&sample_
       LOG_WARN("Failed to update row num when destroy sample filter", K(ret), KPC(sample_executor));
     } else {
       int64_t row_num = sample_executor->get_row_num();
-      LOG_TRACE("Total row num scanned in sample", K(ret), K(row_num));
+
       common::ObIAllocator *allocator = sample_filter->get_allocator();
       sample_filter->~ObRowSampleFilter();
       if (nullptr != allocator) {

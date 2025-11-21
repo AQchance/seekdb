@@ -248,7 +248,7 @@ int ObDirectLoadInsertDataTabletContext::close_tablet_direct_load(bool commit)
 void ObDirectLoadInsertDataTabletContext::cancel()
 {
   is_cancel_ = true;
-  LOG_INFO("start to remove slice writers", K(tablet_id_));
+
   ddl_agent_.cancel();
 }
 
@@ -385,7 +385,7 @@ int ObDirectLoadInsertDataTabletContext::record_closed_slice(const int64_t slice
       ob_sort(closed_slices_.begin(), closed_slices_.end());
     }
   }
-  LOG_TRACE("push slice idx", KR(ret), K(slice_idx), K(closed_slices_));
+
   return ret;
 }
 
@@ -406,7 +406,7 @@ int ObDirectLoadInsertDataTabletContext::get_prefix_merge_slice_idx(int64_t &sli
     }
     slice_idx = max_continued_idx < 0 ? max(0, closed_slices_.count() - 1) : max_continued_idx;
   }
-  LOG_TRACE("get merge slice idx", KR(ret), K(max_continued_idx), K(slice_idx), K(closed_slices_.count()));
+
   return ret;
 }
 
@@ -564,7 +564,7 @@ int ObDirectLoadInsertDataTabletContext::calc_range(const int64_t thread_cnt)
     if (OB_FAIL(ddl_agent_.calc_range(context_id_, thread_cnt))) {
       LOG_WARN("fail to calc range", KR(ret), K(tablet_id_), K(context_id_), K(thread_cnt));
     } else {
-      LOG_INFO("success to calc range", K(tablet_id_));
+
     }
   }
   return ret;

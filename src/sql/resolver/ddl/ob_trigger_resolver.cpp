@@ -341,7 +341,7 @@ int ObTriggerResolver::resolve_instead_dml_trigger(const ParseNode &parse_node,
 {
   // An INSTEAD OF trigger is always a row-level trigger.
   int ret = OB_SUCCESS;
-  LOG_DEBUG("resolve instead of trigger");
+
   OV (T_TG_INSTEAD_DML == parse_node.type_, OB_ERR_UNEXPECTED, parse_node.type_);
   OV (parse_node.num_child_ == 5, OB_ERR_UNEXPECTED, parse_node.num_child_);
   OV (OB_NOT_NULL(parse_node.children_));
@@ -948,7 +948,7 @@ int ObTriggerResolver::resolve_base_object(ObCreateTriggerArg &tg_arg,
 int ObTriggerResolver::resolve_order_clause(const ParseNode *parse_node, ObCreateTriggerArg &trigger_arg)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("resolve trigger order clause start", K(ret));
+
   if (OB_NOT_NULL(parse_node)) {
     bool is_oracle_mode = false;
     ObTriggerInfo &trg_info = trigger_arg.trigger_info_;
@@ -981,7 +981,7 @@ int ObTriggerResolver::resolve_order_clause(const ParseNode *parse_node, ObCreat
       }
     }
   }
-  LOG_DEBUG("resolve trigger order clause end", K(ret));
+
   return ret;
 }
 

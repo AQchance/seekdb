@@ -117,7 +117,7 @@ int ObTenantFreezer::init()
 
 void ObTenantFreezer::run_timer_task()
 {
-  LOG_INFO("====== tenant freeze timer task ======");
+
   this->do_freeze_diagnose();
   this->check_and_do_freeze();
 }
@@ -132,7 +132,7 @@ int ObTenantFreezer::start()
                                  FREEZE_TRIGGER_INTERVAL, true/*repeat*/, false/*immediate*/))) {
     LOG_WARN("[TenantFreezer] fail to schedule freeze_trigger_timer_task", KR(ret));
   } else {
-    LOG_INFO("[TenantFreezer] ObTenantFreezer start", K_(tenant_info));
+
   }
   return ret;
 }
@@ -146,7 +146,7 @@ int ObTenantFreezer::stop()
   } else {
     TG_STOP(freeze_trigger_tg_id_);
     // task_list_.stop_all();
-    LOG_INFO("[TenantFreezer] ObTenantFreezer stoped done", K_(tenant_info));
+
   }
   return ret;
 }
@@ -155,7 +155,7 @@ void ObTenantFreezer::wait()
 {
   TG_WAIT(freeze_trigger_tg_id_);
   // task_list_.wait_all();
-  LOG_INFO("[TenantFreezer] ObTenantFreezer wait done", K_(tenant_info));
+
 }
 
 bool ObTenantFreezer::exist_ls_freezing()
@@ -241,7 +241,7 @@ bool ObTenantFreezer::memstore_remain_memory_is_exhausting()
       ATOMIC_BCAS(&memstore_remain_memory_is_exhausting_cache_.update_ts_, last_update_ts, cur_ts)) {
     bool remain_mem_exhausting = false;
     if (false == tenant_info_.is_loaded_) {
-      LOG_INFO("[TenantFreezer] This tenant not exist", KR(ret));
+
     } else {
       const int64_t MEMORY_IS_EXHAUSTING_PERCENTAGE = 10;
 
@@ -376,7 +376,7 @@ int ObTenantFreezer::tenant_freeze_data_()
     if (ret == OB_ITER_END) {
       ret = OB_SUCCESS;
       if (ls_cnt > 0) {
-        LOG_INFO("[TenantFreezer] succeed to freeze tenant", KR(ret), K(ls_cnt));
+
       } else {
         LOG_WARN("[TenantFreezer] no logstream", KR(ret), K(ls_cnt));
       }
@@ -433,7 +433,7 @@ int ObTenantFreezer::tenant_freeze(const ObFreezeSourceFlag source)
     LOG_WARN("unset tenant freeze failed", KR(tmp_ret));
   }
 
-  LOG_INFO("tenant_freeze finished", KR(ret), K(abs_timeout_ts));
+
 
   return ret;
 }
@@ -585,19 +585,19 @@ int ObTenantFreezer::check_and_freeze_tx_data_()
       LOG_WARN("[TenantFreezer] fail to do tx data self freeze", KR(ret), K(tenant_info_.tenant_id_));
     }
 
-    LOG_INFO("[TenantFreezer] Trigger Tx Data Table Self Freeze", STATISTIC_PRINT_MACRO);
+
   }
 
   // execute statistic print once a minute
   if (TC_REACH_TIME_INTERVAL(60 * 1000 * 1000)) {
     int tmp_ret = OB_SUCCESS;
     if (frozen_tx_data_mem_used + active_tx_data_mem_used > tx_data_mem_limit) {
-      LOG_INFO("tx data use too much memory!!!", STATISTIC_PRINT_MACRO);
+
     } else if (OB_FAIL(get_tx_data_info_for_freeze_(
                    frozen_tx_data_mem_used, active_tx_data_mem_used, need_re_freeze, true /*for_statistic_print*/))) {
-      LOG_INFO("print statistic failed");
+
     } else {
-      LOG_INFO("TxData Memory Statistic : ", STATISTIC_PRINT_MACRO);
+
     }
   }
   return ret;
@@ -774,7 +774,7 @@ void ObTenantFreezer::record_freezer_source_event(const ObLSID &ls_id,
 {
   if (is_valid_freeze_source((source))) {
     ATOMIC_AAF(&freezer_stat_.captured_source_times_[static_cast<int64_t>(source)], 1);
-    STORAGE_LOG(INFO, "[Freezer] freeze from source", K(ls_id), "freeze_source", obj_to_cstring(source));
+
   }
 }
 
@@ -855,7 +855,7 @@ int ObTenantFreezer::check_and_do_freeze()
   int64_t check_and_freeze_end_ts = ObTimeUtil::current_time();
   int64_t spend_time = check_and_freeze_end_ts - check_and_freeze_start_ts;
   if (spend_time > 2_s) {
-    STORAGE_LOG_RET(WARN, OB_ERR_TOO_MUCH_TIME, "check and do freeze spend too much time", K(spend_time));
+
   }
   return ret;
 }
@@ -865,7 +865,7 @@ int ObTenantFreezer::retry_failed_major_freeze_(bool &triggered)
   int ret = OB_SUCCESS;
 
   if (get_retry_major_info().is_valid()) {
-    LOG_INFO("A major freeze is needed due to previous failure");
+
     if (OB_FAIL(do_major_freeze_(get_retry_major_info().frozen_scn_))) {
       LOG_WARN("major freeze failed", K(ret));
     }
@@ -1117,7 +1117,7 @@ int ObTenantFreezer::get_tenant_memstore_cond_(
     const uint64_t tenant_id = MTL_ID();
     if (false == tenant_info_.is_loaded_) {
       ret = OB_ENTRY_NOT_EXIST;
-      LOG_INFO("[TenantFreezer] This tenant not exist", K(tenant_id), KR(ret));
+
     } else if (FALSE_IT(tenant_info_.get_freeze_ctx(ctx))) {
     } else if (OB_FAIL(get_tenant_mem_usage_(ctx))) {
       LOG_WARN("[TenantFreezer] failed to get tenant mem usage", KR(ret), K(tenant_id));
@@ -1153,7 +1153,7 @@ int ObTenantFreezer::get_tenant_memstore_limit(int64_t &mem_limit)
     const uint64_t tenant_id = tenant_info_.tenant_id_;
     if (false == tenant_info_.is_loaded_) {
       mem_limit = INT64_MAX;
-      LOG_INFO("[TenantFreezer] This tenant not exist", K(tenant_id), KR(ret));
+
     } else {
       mem_limit = tenant_info_.get_memstore_limit();
     }
@@ -1313,7 +1313,7 @@ int ObTenantFreezer::check_memstore_full_(bool &last_result,
       ObTenantFreezeCtx ctx;
       if (false == tenant_info_.is_loaded_) {
         is_out_of_mem = false;
-        LOG_INFO("[TenantFreezer] This tenant not exist", K(tenant_id), KR(ret));
+
       } else if (FALSE_IT(tenant_info_.get_freeze_ctx(ctx))) {
       } else if (OB_FAIL(get_tenant_mem_usage_(ctx))) {
         LOG_WARN("[TenantFreezer] fail to get mem usage", KR(ret), K(tenant_info_.tenant_id_));
@@ -1446,11 +1446,11 @@ int ObTenantFreezer::post_freeze_request_(
     ObTenantFreezeArg arg;
     arg.freeze_type_ = freeze_type;
     arg.try_frozen_scn_ = try_frozen_scn;
-    LOG_INFO("[TenantFreezer] post freeze request to remote", K(arg));
+
     if (OB_FAIL(rpc_proxy_.to(self_).by(tenant_info_.tenant_id_).post_freeze_request(arg, &tenant_mgr_cb_))) {
       LOG_WARN("[TenantFreezer] fail to post freeze request", K(arg), KR(ret));
     }
-    LOG_INFO("[TenantFreezer] after freeze at remote");
+
   }
   return ret;
 }
@@ -1490,7 +1490,7 @@ int ObTenantFreezer::post_mds_table_freeze_request_()
 int ObTenantFreezer::rpc_callback()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("[TenantFreezer] call back of tenant freezer request");
+
   return ret;
 }
 
@@ -1644,7 +1644,7 @@ int ObTenantFreezer::do_minor_freeze_data_(const ObTenantFreezeCtx &ctx)
       LOG_WARN("fail to minor freeze", K(ret));
     } else {
       tenant_info_.update_slow_freeze_interval();
-      LOG_INFO("finish tenant minor freeze", K(ret));
+
     }
     // clear freezing mark for tenant
     int tmp_ret = OB_SUCCESS;
@@ -1705,7 +1705,7 @@ int ObTenantFreezer::do_major_if_need_(const bool need_freeze)
 int ObTenantFreezer::do_major_freeze_(const int64_t try_frozen_scn)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("A major freeze is needed", K(try_frozen_scn));
+
   if (OB_FAIL(post_freeze_request_(MAJOR_FREEZE,
                                    try_frozen_scn))) {
     LOG_WARN("major freeze failed", K(ret), K_(tenant_info));
@@ -1732,7 +1732,7 @@ void ObTenantFreezer::log_frozen_memstore_info_if_need_(const ObTenantFreezeCtx 
 
     char frozen_mt_info[DEFAULT_BUF_LENGTH];
     tenant_allocator.log_frozen_memstore_info(frozen_mt_info, sizeof(frozen_mt_info));
-    LOG_INFO("[TenantFreezer] oldest frozen memtable", "list", frozen_mt_info);
+
   }
 }
 

@@ -64,7 +64,7 @@ int ObXaStartResolver::resolve(const ParseNode &parse_node)
           xa_start_stmt->set_format_id(format_id);
         }
         xa_start_stmt->set_flags(flag);
-        LOG_DEBUG("xa start resolver", K(gtrid_string), K(bqual_string), K(format_id), K(flag));
+
       }
     }
   }

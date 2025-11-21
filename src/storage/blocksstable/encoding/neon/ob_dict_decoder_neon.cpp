@@ -88,7 +88,7 @@ struct DictCmpRefNeonFunc_T<1, CMP_TYPE>
         }
       }
     }
-    LOG_DEBUG("[Neon filter] fast cmp dict ref for 1 byte");
+
   }
 };
 
@@ -146,7 +146,7 @@ struct DictCmpRefNeonFunc_T<2, CMP_TYPE>
         }
       }
     }
-    LOG_DEBUG("[Neon filter] fast cmp dict ref for 2 bytes");
+
   }
 };
 

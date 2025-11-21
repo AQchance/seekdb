@@ -125,7 +125,7 @@ int ObStorageHAMacroBlockWriter::check_macro_block_(
   if (OB_SUCC(ret)) {
     ret = OB_E(EventTable::EN_RESTORE_MACRO_CRC_ERROR) OB_SUCCESS;
     if (OB_FAIL(ret)) {
-      LOG_INFO("ERRSIM check_macro_block", K(ret));
+
     }
   }
 #endif
@@ -158,10 +158,10 @@ int ObStorageHAMacroBlockWriter::process(
 
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (OB_FAIL(macro_meta_row.init(OB_MAX_ROWKEY_COLUMN_NUMBER + 1))) {
     // use max row key cnt + 1 as capacity, because meta row is kv
-    STORAGE_LOG(WARN, "failed to init macro meta row", K(ret));
+
   } else {
     while (OB_SUCC(ret)) {
       if (!GCTX.omt_->has_tenant(tenant_id_)) {
@@ -169,19 +169,19 @@ int ObStorageHAMacroBlockWriter::process(
         LOG_WARN("tenant not exists, stop migrate", K(ret), K(tenant_id_));
         break;
       } else if (OB_FAIL(SYS_TASK_STATUS_MGR.is_task_cancel(dag_id_, is_cancel))) {
-        STORAGE_LOG(WARN, "failed to check is task canceled", K(ret), K_(dag_id));
+
       } else if (is_cancel) {
         ret = OB_CANCELED;
         STORAGE_LOG(WARN, "copy task has been canceled, skip remaining macro blocks", 
           K(ret), K_(dag_id), "finished_macro_block_count", copied_ctx.macro_block_list_.count());
         break;
       } else if (OB_FAIL(ObStorageHAUtils::check_disk_space())) {
-        STORAGE_LOG(WARN, "failed to check disk space", K(ret));
+
         break;
       } else if (OB_FAIL(ObStorageHAUtils::check_log_status(tenant_id_, ls_id_, result))) {
         LOG_WARN("failed to check log status", K(ret), K(tenant_id_), K(ls_id_));
       } else if (OB_SUCCESS != result) {
-        LOG_INFO("can not replay log, it will retry", K(result), K(ha_dag_net_ctx));
+
         if (OB_FAIL(ha_dag_net_ctx.set_result(result/*result*/, true/*need_retry*/))) {
           LOG_WARN("failed to set result", K(ret), K(ha_dag_net_ctx));
         } else {
@@ -189,27 +189,27 @@ int ObStorageHAMacroBlockWriter::process(
           LOG_WARN("log sync or replay error, need retry", K(ret), K(tenant_id_), K(ls_id_), K(ha_dag_net_ctx));
         }
       } else if (OB_FAIL(dag_yield())) {
-        STORAGE_LOG(WARN, "fail to yield dag", KR(ret));
+
       } else if (OB_FAIL(reader_->get_next_macro_block(read_data))) {
         if (OB_ITER_END != ret) {
           LOG_WARN("failed to get next macro block", K(ret));
         } else {
-          LOG_INFO("get next macro block end");
+
           ret = OB_SUCCESS;
         }
         break;
       } else if (!read_data.is_valid()) {
         ret = OB_INVALID_ARGUMENT;
-        STORAGE_LOG(WARN, "invalid read data", K(ret), K(read_data));
+
       } else if (read_data.is_macro_meta()) {
         const MacroBlockId &macro_id = read_data.macro_meta_->get_macro_id();
         if (ObIndexBlockRowHeader::DEFAULT_IDX_ROW_MACRO_ID == macro_id) {
           ret = OB_INVALID_ARGUMENT;
-          STORAGE_LOG(WARN, "invalid macro id (id is default)", K(ret), K(macro_id));
+
         } else if (OB_FAIL(copied_ctx.add_macro_block_id(macro_id))) {
-          STORAGE_LOG(WARN, "fail to add macro id", K(ret), K(macro_id));
+
         } else if (OB_FAIL(index_block_rebuilder_->append_macro_row(*read_data.macro_meta_))) {
-          STORAGE_LOG(WARN, "failed to append macro row", K(ret), KPC(read_data.macro_meta_));
+
         } else {
           copied_ctx.increment_old_block_count();
           ++reuse_count;
@@ -219,10 +219,10 @@ int ObStorageHAMacroBlockWriter::process(
         MacroBlockId macro_block_id = read_data.macro_block_id_;
 
         if (OB_FAIL(check_macro_block_(data))) {
-          STORAGE_LOG(WARN, "failed to check macro block, fatal error", K(ret), K(write_count), K(data));
+
           ret = OB_INVALID_DATA;// overwrite ret
         } else if (!write_handle.is_empty() && OB_FAIL(write_handle.wait())) {
-          STORAGE_LOG(WARN, "failed to wait write handle", K(ret), K(write_info));
+
         } else if (OB_FAIL(set_macro_write_info_(macro_block_id, write_info, opt)))  {
           LOG_WARN("failed to set macro write info", K(ret), K(macro_block_id));
         } else if (OB_FAIL(write_macro_block_(opt, write_info, write_handle, copied_ctx, data))) {
@@ -231,11 +231,11 @@ int ObStorageHAMacroBlockWriter::process(
           ObTaskController::get().allow_next_syslog();
           ++write_count;
           write_size += data.capacity();
-          LOG_INFO("success copy macro block", K(write_count));
+
         }
       } else {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "invalid read data", K(ret), K(read_data));
+
       }
     }
 
@@ -322,12 +322,12 @@ int ObStorageHALocalMacroBlockWriter::set_macro_write_info_(
   int64_t tablet_transfer_seq = OB_INVALID_TRANSFER_SEQ;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (OB_ISNULL(index_block_rebuilder_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "index_block_rebuilder_ should not be nullptr", KR(ret), KP(index_block_rebuilder_));
+
   } else if (OB_FAIL(index_block_rebuilder_->get_tablet_transfer_seq(tablet_transfer_seq))) {
-    STORAGE_LOG(WARN, "failed to get tablet_transfer_seq", K(ret));
+
   } else {
     write_info.io_desc_.set_wait_event(ObWaitEventIds::DB_FILE_MIGRATE_WRITE);
     write_info.io_desc_.set_sys_module_id(ObIOModule::HA_MACRO_BLOCK_WRITER_IO);

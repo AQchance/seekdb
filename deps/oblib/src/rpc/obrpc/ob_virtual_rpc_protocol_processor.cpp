@@ -690,7 +690,7 @@ int ObVirtualRpcProtocolProcessor::decode_segment(ObRpcCompressDCtx &ctx,
       if (OB_FAIL(compressor->insert_uncompressed_block(dctx, ring_buffer + ring_buffer_pos, original_size))) {
         LOG_ERROR("failed to insert_uncompressed_block", K(ring_buffer_pos), K(original_size), KP(dctx), K(ret));
       } else {
-        LOG_INFO("data is not compressed", K(ctx), K(original_size), K(ret));
+
         timeguard.click();
         MEMCPY(net_packet_buf + net_packet_buf_pos, data + pos, original_size);
         timeguard.click();

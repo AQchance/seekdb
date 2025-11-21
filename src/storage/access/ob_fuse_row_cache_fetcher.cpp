@@ -65,24 +65,24 @@ int ObFuseRowCacheFetcher::get_fuse_row_cache(const ObDatumRowkey &rowkey, ObFus
     LOG_WARN("ObFuseRowCacheFetcher has not been inited", K(ret));
   } else if (rowkey.get_datum_cnt() > read_info_->get_datum_utils().get_rowkey_count()) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected invalid read info", K(ret), K(rowkey), KPC(read_info_));
+
   } else if (is_mview_table_scan(type_)) {
     ObMultiVersionFuseRowCacheKey cache_key(read_start_version_, read_snapshot_version_, MTL_ID(), tablet_id_, rowkey,
                                             read_info_->get_schema_column_count(), read_info_->get_datum_utils());
     if (OB_FAIL(ObStorageCacheSuite::get_instance().get_multi_version_fuse_row_cache().get_row(cache_key, handle))) {
       if (OB_ENTRY_NOT_EXIST != ret) {
-        STORAGE_LOG(WARN, "fail to get row from multi version fuse row cache", K(ret), K(cache_key));
+
       }
     } else {
       EVENT_INC(ObStatEventIds::FUSE_ROW_CACHE_HIT);
       EVENT_INC(ObStatEventIds::MULTI_VERSION_FUSE_ROW_CACHE_HIT);
     }
-    STORAGE_LOG(DEBUG, "get from multi version fuse row cache", K(ret), K(cache_key));
+
   } else {
     ObFuseRowCacheKey cache_key(MTL_ID(), tablet_id_, rowkey, tablet_version_, read_info_->get_schema_column_count(), read_info_->get_datum_utils());
     if (OB_FAIL(ObStorageCacheSuite::get_instance().get_fuse_row_cache().get_row(cache_key, handle))) {
       if (OB_ENTRY_NOT_EXIST != ret) {
-        STORAGE_LOG(WARN, "fail to get row from fuse row cache", K(ret), K(cache_key));
+
       }
     } else {
       EVENT_INC(ObStatEventIds::FUSE_ROW_CACHE_HIT);
@@ -100,7 +100,7 @@ int ObFuseRowCacheFetcher::put_fuse_row_cache(const ObDatumRowkey &rowkey, ObDat
     LOG_WARN("ObFuseRowCacheFetcher has not been inited", K(ret));
   } else if (OB_UNLIKELY(read_snapshot_version_ <= 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to put fuse row cache", K(ret), K(read_snapshot_version_));
+
   } else  if (row.snapshot_version_ == INT64_MAX) {
     // uncommited row value, do not put into row cache
   } else if (is_mview_table_scan(type_)) {
@@ -109,11 +109,11 @@ int ObFuseRowCacheFetcher::put_fuse_row_cache(const ObDatumRowkey &rowkey, ObDat
                                             read_info_->get_schema_column_count(), read_info_->get_datum_utils());
     ObFuseRowCacheValue row_cache_value;
     if (OB_SUCCESS != (tmp_ret = row_cache_value.init(row, read_snapshot_version_))) {
-      STORAGE_LOG(WARN, "fail to init row cache value", K(tmp_ret));
+
     } else if (OB_SUCCESS != (tmp_ret = ObStorageCacheSuite::get_instance().get_multi_version_fuse_row_cache().put_row(cache_key, row_cache_value))) {
-      STORAGE_LOG(WARN, "fail to put row into multi version fuse row cache", K(tmp_ret));
+
     } else {
-      STORAGE_LOG(DEBUG, "update multi version fuse row cache", K(cache_key), K(row_cache_value), K(row), KPC(read_info_));
+
     }
   } else {
     // update row cache
@@ -121,11 +121,11 @@ int ObFuseRowCacheFetcher::put_fuse_row_cache(const ObDatumRowkey &rowkey, ObDat
     ObFuseRowCacheKey cache_key(MTL_ID(), tablet_id_, rowkey, tablet_version_, read_info_->get_schema_column_count(), read_info_->get_datum_utils());
     ObFuseRowCacheValue row_cache_value;
     if (OB_SUCCESS != (tmp_ret = row_cache_value.init(row, read_snapshot_version_))) {
-      STORAGE_LOG(WARN, "fail to init row cache value", K(tmp_ret));
+
     } else if (OB_SUCCESS != (tmp_ret = ObStorageCacheSuite::get_instance().get_fuse_row_cache().put_row(cache_key, row_cache_value))) {
-      STORAGE_LOG(WARN, "fail to put row into fuse row cache", K(tmp_ret));
+
     } else {
-      STORAGE_LOG(DEBUG, "update fuse row cache", K(cache_key), K(row_cache_value), K(row), KPC(read_info_));
+
     }
   }
 

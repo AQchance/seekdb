@@ -43,7 +43,7 @@ int ObLocationDDLService::create_location(const obrpc::ObCreateLocationArg &arg,
   ObSchemaGetterGuard schema_guard;
   int64_t refreshed_schema_version = 0;
   uint64_t loc_id = OB_INVALID_ID;
-  LOG_INFO("create location ddl service", K(ret), K(location_url), K(location_access_info));
+
   if (OB_ISNULL(ddl_service_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get unexpected null", K(ret));

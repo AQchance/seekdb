@@ -79,7 +79,7 @@ ObAdminExecutor::~ObAdminExecutor()
   ObTimerService::get_instance().stop();
   ObTimerService::get_instance().wait();
   ObTimerService::get_instance().destroy();
-  LOG_INFO("destruct ObAdminExecutor");
+
 }
 
 int ObAdminExecutor::prepare_io()
@@ -144,7 +144,7 @@ int ObAdminExecutor::load_config()
   const char *dump_path = "etc/observer.config.bin";
   config_mgr_.set_dump_path(dump_path);
   if (OB_FAIL(config_mgr_.load_config())) {
-    STORAGE_LOG(WARN, "fail to load config", K(ret));
+
   } else {
     ObServerConfig &config = config_mgr_.get_config();
     int32_t local_port = static_cast<int32_t>(config.rpc_port);
@@ -183,9 +183,9 @@ int ObAdminExecutor::set_s3_url_encode_type(const char *type_str) const
   int ret = OB_SUCCESS;
   if (OB_ISNULL(type_str)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "type str is null", KR(ret), KP(type_str));
+
   } else if (OB_FAIL(common::ObDeviceManager::get_instance().init_devices_env())) {
-    STORAGE_LOG(WARN, "fail to init device env", KR(ret), K(type_str));
+
   } else if (0 == STRCASECMP("default", type_str)) {
     Aws::Http::SetCompliantRfc3986Encoding(false);
   } else if (0 == STRCASECMP("compliantRfc3986Encoding", type_str)) {
@@ -202,13 +202,13 @@ int ObAdminExecutor::set_sts_credential_key(const char *sts_credential)
   int ret = OB_SUCCESS;
   if (OB_ISNULL(sts_credential)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "sts credential is null", KR(ret), KP(sts_credential));
+
   } else {
     if (OB_FAIL(ObDeviceManager::get_instance().init_devices_env())) {
-      STORAGE_LOG(WARN, "fail to init device env", KR(ret));
+
     } else if (OB_FAIL(ObObjectStorageInfo::register_cluster_version_mgr(
                    &ObClusterVersionBaseMgr::get_instance()))) {
-      STORAGE_LOG(WARN, "fail to register cluster version mgr", KR(ret));
+
     } else {
       omt::ObTenantConfigGuard tenant_config(TENANT_CONF(OB_SYS_TENANT_ID));
       if (OB_UNLIKELY(!tenant_config.is_valid())) {

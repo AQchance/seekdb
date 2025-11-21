@@ -140,7 +140,7 @@ int ObTransferTaskOperator::get_by_status(
         LOG_WARN("construct transfer task failed", KR(ret), K(tenant_id), K(sql), K(tasks));
       } else if (tasks.empty()) {
         ret = OB_ENTRY_NOT_EXIST;
-        LOG_TRACE("tasks in status not found", KR(ret), K(tenant_id), K(status), K(tasks));
+
       }
     }
   }
@@ -170,7 +170,7 @@ int ObTransferTaskOperator::get_all_task_status(
         LOG_WARN("construct transfer task failed", KR(ret), K(tenant_id), K(sql), K(task_status));
       } else if (task_status.empty()) {
         ret = OB_ENTRY_NOT_EXIST;
-        LOG_TRACE("no task in table", KR(ret), K(tenant_id), K(task_status));
+
       }
     }
   }
@@ -318,7 +318,7 @@ int ObTransferTaskOperator::insert(
       }
       LOG_WARN("fail to write sql", KR(ret), K(tenant_id), K(sql), K(affected_rows), K(task));
     } else {
-      LOG_INFO("insert transfer task success", K(tenant_id), K(affected_rows), K(task));
+
     }
   }
   return ret;
@@ -574,7 +574,7 @@ int ObTransferTaskOperator::remove(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("delete more than one row", KR(ret), K(tenant_id), K(affected_rows), K(sql));
   } else {
-    LOG_INFO("remove transfer_task success", K(tenant_id), K(task_id));
+
   }
   return ret;
 }
@@ -1054,7 +1054,7 @@ int ObTransferTaskOperator::get_history_task(
       } else if (OB_FAIL(parse_sql_result_(tenant_id, *res, with_time, task, create_time, finish_time))) {
         LOG_WARN("parse sql result failed", KR(ret), K(tenant_id));
       } else {
-        LOG_TRACE("get history task status success", KR(ret), K(tenant_id), K(task_id), K(task));
+
       }
     }
   }
@@ -1089,14 +1089,14 @@ int ObTransferTaskOperator::get_max_task_id_from_history(
       } else if (OB_FAIL(res->get_int("max_task_id", max_task_id_int64))) {
         if (OB_ERR_NULL_VALUE == ret) {
           max_task_id.reset(); // return INVALID_ID when history is empty
-          LOG_TRACE("transfer history is empty", KR(ret), K(tenant_id), K(max_task_id));
+
           ret = OB_SUCCESS;
         } else {
           LOG_WARN("get max task id failed", KR(ret), K(max_task_id), K(sql));
         }
       } else {
         max_task_id = max_task_id_int64;
-        LOG_TRACE("get max transfer task_id from history success", KR(ret), K(tenant_id), K(max_task_id));
+
       }
     }
   }
@@ -1136,7 +1136,7 @@ int ObTransferTaskOperator::get_last_task_by_balance_task_id(
       } else if (OB_FAIL(res->next())) {
         if (OB_ITER_END == ret) {
           ret = OB_ENTRY_NOT_EXIST;
-          LOG_TRACE("task not found", KR(ret), K(tenant_id), K(balance_task_id));
+
         } else {
           LOG_WARN("next failed", KR(ret), K(sql));
         }
@@ -1180,7 +1180,7 @@ int ObTransferTaskOperator::update_comment(
       ret = OB_STATE_NOT_MATCH;
       LOG_WARN("incorrect affected rows", KR(ret), K(tenant_id), K(affected_rows), K(sql));
     } else {
-      LOG_INFO("update comment successfully", K(tenant_id), K(task_id), K(comment), K(affected_rows));
+
     }
   }
   return ret;

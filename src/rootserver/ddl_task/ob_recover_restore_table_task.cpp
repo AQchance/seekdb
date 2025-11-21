@@ -65,7 +65,7 @@ int ObRecoverRestoreTableTask::init(
     task_version_ = OB_RECOVER_RESTORE_TABLE_TASK_VERSION;
     set_is_ignore_errors(true);
   }
-  LOG_INFO("init recover restore table ddl task finished", K(ret), KPC(this));
+
   return ret;
 }
 
@@ -83,7 +83,7 @@ int ObRecoverRestoreTableTask::init(const ObDDLTaskRecord &task_record)
   } else {
     set_is_ignore_errors(true);
   }
-  LOG_INFO("init recover table restore ddl task finished", K(ret), KPC(this));
+
   return ret;
 }
 
@@ -152,7 +152,7 @@ int ObRecoverRestoreTableTask::update_complete_sstable_job_status(const common::
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("snapshot version not match", K(ret), K(snapshot_version), K(snapshot_version_));
   } else if (execution_id < execution_id_) {
-    LOG_INFO("receive a mismatch execution result, ignore", K(ret_code), K(execution_id), K(execution_id_));
+
   } else if (OB_FAIL(replica_builder_.update_build_progress(tablet_id,
                                                             addr,
                                                             ret_code,
@@ -205,7 +205,7 @@ int ObRecoverRestoreTableTask::fail()
     } else if (OB_ISNULL(table_schema)) {
       // already dropped.
       already_cleanuped = true;
-      LOG_INFO("already dropped", K(ret), K(dst_tenant_id_), K(target_object_id_));
+
     } else if (OB_FAIL(dst_tenant_schema_guard.get_database_schema(dst_tenant_id_, table_schema->get_database_id(), db_schema))) {
       LOG_WARN("get db schema failed", K(ret), K(dst_tenant_id_), KPC(table_schema));
     } else if (OB_ISNULL(db_schema)) {
@@ -242,7 +242,7 @@ int ObRecoverRestoreTableTask::fail()
       LOG_WARN("check and cancel complement data dag failed", K(ret));
     } else if (!all_complement_dag_exit) {
       if (REACH_COUNT_INTERVAL(1000L)) {
-        LOG_INFO("wait all complement data dag exit", K(dst_tenant_id_), K(task_id_));
+
       }
     } else if (OB_FAIL(drop_table_arg.tables_.push_back(table_item))) {
       LOG_WARN("push back failed", K(ret), K(drop_table_arg));
@@ -281,7 +281,7 @@ int ObRecoverRestoreTableTask::check_health()
       const ObDDLTaskStatus old_status = static_cast<ObDDLTaskStatus>(task_status_);
       const ObDDLTaskStatus new_status = ObDDLTaskStatus::FAIL;
       int tmp_ret = switch_status(new_status, false, ret);
-      LOG_INFO("switch status to build_failed", K(ret), K(tmp_ret), K_(task_status), K(old_status), K(new_status));
+
       ret = OB_SUCCESS;
     } else if (OB_STANDBY_READ_ONLY == ret) {
       // do not care about the role of the source tenant is expected.

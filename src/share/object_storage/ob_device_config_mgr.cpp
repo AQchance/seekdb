@@ -59,7 +59,7 @@ int ObDeviceConfigMgr::init(const char *data_dir)
 void ObDeviceConfigMgr::destroy()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("device config mgr start to destroy");
+
   common::SpinWLockGuard w_guard(manifest_rw_lock_);
   SMART_VAR(ObArray<ObDeviceConfig>, device_configs) {
     // save the content of config_map_, so as to print in log
@@ -75,7 +75,7 @@ void ObDeviceConfigMgr::destroy()
     data_storage_dest_.reset();
     clog_storage_dest_.reset();
     is_inited_ = false;
-    LOG_INFO("device config mgr finish to destroy", KR(ret), K(device_configs));
+
   }
 }
 
@@ -91,13 +91,13 @@ int ObDeviceConfigMgr::load_configs()
       LOG_WARN("ObDeviceConfigMgr not init", KR(ret));
     } else if (OB_FAIL(device_manifest_.load(device_configs, head_))) {
       if (OB_NO_SUCH_FILE_OR_DIRECTORY == ret) { // first start of observer
-        LOG_INFO("device manifest file does not exist", KR(ret));
+
         ret = OB_SUCCESS;
       } else {
         LOG_WARN("fail to load device manifest file", KR(ret));
       }
     } else if (0 == device_configs.count()) {
-      LOG_INFO("no config in device manifest file", KR(ret));
+
     } else if (device_configs.count() > 0) {
       ObArenaAllocator allocator;
       for (int64_t i = 0; OB_SUCC(ret) && (i < device_configs.count()); ++i) {
@@ -137,7 +137,7 @@ int ObDeviceConfigMgr::load_configs()
         }
       }
     }
-    LOG_INFO("finish to load configs", KR(ret), K(device_configs), K_(head));
+
   }
   return ret;
 }
@@ -234,7 +234,7 @@ int ObDeviceConfigMgr::get_all_device_configs(common::ObIArray<ObDeviceConfig> &
       }
     }
   }
-  LOG_INFO("finish to get all device configs", KR(ret), K(configs));
+
   return ret;
 }
 
@@ -256,7 +256,7 @@ int ObDeviceConfigMgr::get_device_config(
   } else {
     config = *p_device_config;
   }
-  LOG_INFO("finish to get device config", KR(ret), K(config));
+
   return ret;
 }
 
@@ -273,10 +273,10 @@ int ObDeviceConfigMgr::add_device_config(const ObDeviceConfig &config)
     // if shared storage info has been dumped to manifest, storage_dest_ need reset, cannot use anymore
     data_storage_dest_.reset();
     clog_storage_dest_.reset();
-    LOG_INFO("shared storage info has been dumped to manifest, storage_dest reset succeed", K(is_dump_manifest));
+
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("succ to add device config", KR(ret), K(config));
+
   }
   return ret;
 }
@@ -288,7 +288,7 @@ int ObDeviceConfigMgr::remove_device_config(const ObDeviceConfig &config)
   if (OB_FAIL(modify_device_config_(config, type))) {
     LOG_WARN("fail to modify device config", KR(ret), K(config));
   } else {
-    LOG_INFO("succ to remove device config", KR(ret), K(config));
+
   }
   return ret;
 }
@@ -300,7 +300,7 @@ int ObDeviceConfigMgr::update_device_config(const ObDeviceConfig &config)
   if (OB_FAIL(modify_device_config_(config, type))) {
     LOG_WARN("fail to modify device config", KR(ret), K(config));
   } else {
-    LOG_INFO("succ to update device config", KR(ret), K(config));
+
   }
   return ret;
 }
@@ -456,7 +456,7 @@ int ObDeviceConfigMgr::set_storage_dest(const ObStorageUsedType::TYPE used_for, 
       LOG_WARN("fail to set object storage root dir", KR(ret), K(storage_dest));
 #endif
     } else {
-      LOG_INFO("succ to set storage dest", K(used_for), K(storage_dest));
+
     }
   }
   return ret;
@@ -484,7 +484,7 @@ int ObDeviceConfigMgr::save_configs_()
           LOG_ERROR("fail to dump2file", KR(ret));
         }
       }
-      LOG_INFO("finish to save configs", KR(ret), K(device_configs), K_(head));
+
     }
   }
   return ret;
@@ -572,7 +572,7 @@ int ObDeviceConfigMgr::modify_device_config_(
     // based on the original op_id & sub_op_id, here rollback the head.
     head_.assign(ori_head);
   }
-  LOG_INFO("finish to modify device config", KR(ret), K(config), K_(head));
+
   return ret;
 }
 

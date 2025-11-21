@@ -69,7 +69,7 @@ int ObAlterAutoPartAttrOp::check_alter_table_partition_attr(
       }
     }
   }
-  LOG_DEBUG("auto part, after switch ddl type", K(ddl_type));
+
   return ret;
 }
 
@@ -134,7 +134,7 @@ int ObAlterAutoPartAttrOp::get_part_key_column_ids(
       }
     }
   }
-  LOG_DEBUG("get partition key columns id", K(ret), K(part_key_ids));
+
   return ret;
 }
 

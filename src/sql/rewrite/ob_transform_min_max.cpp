@@ -98,7 +98,7 @@ int ObTransformMinMax::check_transform_validity(ObTransformerCtx &ctx,
   } else if (!is_valid) {
     OPT_TRACE("order by is invalid for multi min/max");
   } else {
-    LOG_TRACE("Succeed to check minmax transform validity", K(is_valid));
+
   }
   return ret;
 }
@@ -158,7 +158,7 @@ int ObTransformMinMax::do_single_minmax_transform(ObSelectStmt *select_stmt)
     } else if (OB_FAIL(ObTransformUtils::set_limit_expr(child_stmt, ctx_))) {
       LOG_WARN("failed to set child limit item", K(ret));
     } else {
-      LOG_TRACE("Succeed to do transform min max", K(*select_stmt));
+
     }
   }
   return ret;
@@ -242,7 +242,7 @@ int ObTransformMinMax::do_multi_minmax_transform(ObSelectStmt *select_stmt)
       } else if (OB_FAIL(select_stmt->formalize_stmt(ctx_->session_info_, false))) {
         LOG_WARN("failed to formalize stmt", K(ret));
       } else {
-        LOG_TRACE("succeed to do transform min max", KPC(select_stmt));
+
       }
     }
   }

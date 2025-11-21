@@ -105,7 +105,7 @@ TEST_F(TestExternalSort, normal) {
 	for (int64_t i = 0; i < schema_count; ++i) {
 		for (int64_t j = 0; OB_SUCC(ret) && j < rowkey_count; ++j) {
 			if (OB_SUCCESS != (ret = sort_column_indexes.push_back(j))) {
-				STORAGE_LOG(WARN, "Fail to push sort column indexes, ", K(j));
+
 			}
 		}
 
@@ -153,7 +153,7 @@ TEST_F(TestExternalSort, test_async) {
 	for (int64_t i = 0; i < schema_count; ++i) {
 		for (int64_t j = 0; OB_SUCC(ret) && j < rowkey_count; ++j) {
 			if (OB_SUCCESS != (ret = sort_column_indexes.push_back(j))) {
-				STORAGE_LOG(WARN, "Fail to push sort column indexes, ", K(j));
+
 			}
 		}
 
@@ -175,7 +175,7 @@ TEST_F(TestExternalSort, test_async) {
 		row.row_val_.count_ = 5;
 
 		ASSERT_EQ(0, row_generate_.get_next_row(row));
-		STORAGE_LOG(INFO, "", K(row));
+
 		for (int64_t i = 0; i < 300000L; ++i) {
 			ASSERT_EQ(0, row_generate_.get_next_row(row));
 			buf_pos = 0;
@@ -184,7 +184,7 @@ TEST_F(TestExternalSort, test_async) {
 			buf_pos = 0;
 			ASSERT_EQ(OB_SUCCESS, row.deserialize(buf, buf_len, buf_pos));
 			if (i == 0) {
-				STORAGE_LOG(INFO, "dump", K(buf_pos), K(buf_len), K(row));
+
 			}
 
 			ret = external_sort.add_item(row);
@@ -214,7 +214,7 @@ TEST_F(TestExternalSort, test_async) {
 int main(int argc, char **argv) {
 	int tmp_ret = OB_SUCCESS;
 	if (OB_TMP_FAIL(oceanbase::common::ObDeviceManager::get_instance().init_devices_env())) {
-		STORAGE_LOG(ERROR, "fail to init device manager", K(tmp_ret));
+
 	}
     oceanbase::lib::set_memory_limit(8L * 1024L * 1024L * 1024L);
 	oceanbase::common::ObIOManager::get_instance().init(1024L * 1024L * 1024L);

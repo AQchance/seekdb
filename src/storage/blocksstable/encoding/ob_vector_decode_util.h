@@ -246,7 +246,7 @@ struct LoadByteAlignedData_T
   {
     int ret = OB_NOT_IMPLEMENT;
     static_assert(PACKING_LEN <= ObVecDecodeUtils::MAX_FAST_DECODE_FIXED_PACK_LEN, "Invalid PACKING_LEN");
-    STORAGE_LOG(ERROR, "not implemented ", K(ret));
+
   }
 };
 
@@ -1134,14 +1134,14 @@ int ObLoadIntegerVecDataDispatcher<VectorType, ValueType, DataLocator>::load_byt
   if (OB_FAIL(ret)) {
   } else if (OB_UNLIKELY(MAX_PACKING_LEN < fixed_packing_len)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid packing length for fixed byte aligned vector data dispatcher", K(ret), K(fixed_packing_len));
+
   } else if (OB_UNLIKELY(type_store_size > sizeof(ValueType))) {
     ret = OB_ERR_UNEXPECTED;
     STORAGE_LOG(WARN, "unexpected vector value type size less than type store size",
         K(ret), K(sizeof(ValueType)), K(type_store_size));
   } else if (OB_UNLIKELY(ObVecDecodeUtils::IsSignedType<ValueType>::signed_ && type_sc == ObUIntSC)) {
     ret = OB_NOT_SUPPORTED;
-    STORAGE_LOG(WARN, "decode vector on type converted from unsigned to signed not supported", K(ret), K(stored_obj_type));
+
   } else {
     ret = func_array_[store_type][packing_type_idx][null_type](data_loactor, row_cap, vec_offset, vector);
   }
@@ -1186,7 +1186,7 @@ int ObLoadFixByteAlignedVecDataDispatcher<VectorType, ValueType, DataLocator>::l
   ObObjTypeStoreClass type_sc = get_store_class_map()[ob_obj_type_class(stored_obj_type)];
   if (OB_UNLIKELY(ObDecimalIntSC != type_sc && ObOTimestampSC != type_sc && ObIntervalSC != type_sc)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid type for fixed byte aligned vector data dispatcher", K(ret), K(stored_obj_type));
+
   } else {
     ret = func_array_[null_type](data_loactor, row_cap, vec_offset, vector);
   }
@@ -1245,7 +1245,7 @@ int ObLoadVarByteAlignedVecDataDispatcher<VectorType, ValueType, DataLocator>::l
   }
   default: {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected store class type", K(ret));
+
   }
   }
 
@@ -1304,7 +1304,7 @@ int ObVecDecodeUtils::load_byte_aligned_vector(
   }
   default: {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected vector format", K(ret), K(vec_format));
+
   }
   }
   return ret;
@@ -1399,7 +1399,7 @@ int ObVecDecodeUtils::load_byte_aligned_vector(
   #undef LOAD_VEC_BY_TYPE
 
   if (OB_FAIL(ret)) {
-    STORAGE_LOG(WARN, "failed to load byte aligned data to vector", K(ret), K(schema_obj_meta), K(stored_obj_type));
+
   }
   return ret;
 }

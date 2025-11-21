@@ -695,7 +695,7 @@ int ObMViewInfo::bacth_fetch_mview_infos(ObISQLClient &sql_client,
                     K(ret), K(mview_infos), K(mview_ids), K(sql));
         }
       }
-      LOG_INFO("bacth get mview infos", K(sql), K(mview_infos));
+
     }
   }
   return ret;
@@ -799,7 +799,7 @@ int ObMViewInfo::update_mview_data_attr(ObISQLClient &sql_client,
         // check all dep mview is synced
         if (is_synced && !tmp_mview_info.is_synced_) {
           is_synced = false;
-          LOG_INFO("data not synced", K(tmp_mview_info));
+
         }
         // compute min_data_sync_scn
         data_sync_scn = min(data_sync_scn, tmp_mview_info.data_sync_scn_);
@@ -807,7 +807,7 @@ int ObMViewInfo::update_mview_data_attr(ObISQLClient &sql_client,
       if (is_synced) {
         if (!dep_mview_data_sync_scn_is_equal) {
           is_synced = false;
-          LOG_INFO("data not synced", K(dep_mview_data_sync_scn_is_equal));
+
         } else {
           if (!nested_consistent_refresh) {
             if (dep_base_table && data_sync_scn != refresh_scn) {
@@ -851,7 +851,7 @@ int ObMViewInfo::check_satisfy_target_data_sync_scn(
     // do nothing
     satisfy = true;
   } else if (target_data_sync_ts > mview_info.get_data_sync_scn()) {
-    LOG_INFO("dep mview not fit target data sync scn", K(ret), K(mview_info), K(target_data_sync_ts));
+
     satisfy = false;
   } else if (target_data_sync_ts < mview_info.get_data_sync_scn()) {
     ret = OB_ERR_MVIEW_CAN_NOT_NESTED_CONSISTENT_REFRESH;

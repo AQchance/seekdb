@@ -63,7 +63,7 @@ int ObBEngFTParser::get_next_token(
     word_len = token.len_;
     char_len = token.len_;
     word_freq = token_freq;
-    LOG_DEBUG("succeed to add word", K(ObString(word_len, word)), K(word_freq));
+
   }
   return ret;
 }
@@ -94,7 +94,7 @@ int ObBEngFTParser::init(ObFTParserParam *param)
       LOG_WARN("token stream is nullptr", K(ret), KP(token_stream_));
     } else {
       is_inited_ = true;
-      LOG_DEBUG("succeed to init beng parser", K(ret), K(english_analyzer_), KPC(token_stream_), K(doc_));
+
     }
   }
   if (OB_FAIL(ret) && OB_UNLIKELY(!is_inited_)) {

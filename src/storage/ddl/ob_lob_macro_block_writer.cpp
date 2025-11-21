@@ -168,7 +168,7 @@ int ObLobMacroBlockWriter::write(const ObColumnSchemaItem &column_schema, ObIAll
       } else if (OB_FAIL(macro_block_writer_->append_row(lob_meta_row_))) {
         LOG_WARN("macro block writer append row failed", K(ret), K(lob_meta_row_));
       } else {
-        LOG_DEBUG("lob writer append row", K(lob_meta_row_));
+
       }
     }
     if (OB_SUCC(ret)) {

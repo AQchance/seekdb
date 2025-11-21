@@ -50,7 +50,7 @@ int ObTenantRestoreInfoMgr::mtl_init(ObTenantRestoreInfoMgr *&restore_info_mgr)
   if (OB_FAIL(restore_info_mgr->init(MTL_ID()))) {
     LOG_WARN("failed to init tenant restore info mgr", K(ret), K(MTL_ID()));
   } else {
-    LOG_INFO("success to init ObTenantRestoreInfoMgr", K(MTL_ID()));
+
   }
   return ret;
 }
@@ -88,7 +88,7 @@ void ObTenantRestoreInfoMgr::wait()
 {
   if (OB_LIKELY(is_inited_)) {
     TG_WAIT_TASK(MTL(omt::ObSharedTimer*)->get_tg_id(), refresh_info_task_);
-    LOG_INFO("wait tenant restore info refresh task", K_(tenant_id));
+
   }
 }
 
@@ -96,7 +96,7 @@ void ObTenantRestoreInfoMgr::stop()
 {
   if (OB_LIKELY(is_inited_)) {
     TG_CANCEL_TASK(MTL(omt::ObSharedTimer*)->get_tg_id(), refresh_info_task_);
-    LOG_INFO("stop tenant restore info refresh task", K_(tenant_id));
+
   }
 }
 
@@ -104,7 +104,7 @@ void ObTenantRestoreInfoMgr::destroy()
 { 
   stop();
   wait();
-  LOG_INFO("tenant restore info mgr destroy", K_(tenant_id));
+
 }
 
 int ObTenantRestoreInfoMgr::refresh_restore_info()
@@ -144,7 +144,7 @@ int ObTenantRestoreInfoMgr::refresh_restore_info()
           dest_id_ = dest_id;
           set_refreshed_();
           stop();
-          LOG_INFO("get refresh restore info", K_(tenant_id), K_(backup_set_list));
+
         }
       }
     }
@@ -176,7 +176,7 @@ int ObTenantRestoreInfoMgr::refresh_restore_info()
         restore_job_id_ = job_id;
         set_refreshed_();
         stop();
-        LOG_INFO("get refresh restore info", K_(tenant_id), K_(backup_set_list));
+
       }
     }
   }
@@ -219,7 +219,7 @@ int ObTenantRestoreInfoMgr::get_backup_dest(const int64_t backup_set_id, share::
     if (OB_FAIL(backup_dest.set(path))) {
       LOG_WARN("failed to set backup dest", K(ret));
     } else {
-      LOG_INFO("get backup dest", K(backup_set_id), K(backup_dest));
+
     }
   }
   return ret;
@@ -237,7 +237,7 @@ int ObTenantRestoreInfoMgr::get_backup_type(const int64_t backup_set_id, ObBacku
     LOG_WARN("failed to get restore backup set brief info", K(ret), K(backup_set_id));
   } else {
     backup_type = backup_set_list_.at(idx).backup_set_desc_.backup_type_;
-    LOG_INFO("get backup type", K(backup_set_id), K(backup_type));
+
   }
   return ret;
 }
@@ -252,7 +252,7 @@ int ObTenantRestoreInfoMgr::get_restore_dest_id(int64_t &dest_id)
     LOG_WARN("restore info has not been refreshed", K(ret));
   } else {
     dest_id_ = dest_id;
-    LOG_INFO("get dest id", K(dest_id));
+
   }
   return ret;
 }
@@ -282,7 +282,7 @@ void ObTenantRestoreInfoMgr::RestoreInfoRefresher::runTimerTask()
   if (OB_FAIL(mgr_.refresh_restore_info())) {
     LOG_WARN("failed to refresh restore info", K(ret));
   } else {
-    LOG_INFO("refresh restore info");
+
   }
 }
 

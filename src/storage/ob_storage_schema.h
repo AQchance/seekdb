@@ -521,11 +521,11 @@ int ObStorageSchema::serialize_schema_array(
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(serialization::encode_vi64(buf, data_len, pos, array.count()))) {
-    STORAGE_LOG(WARN, "Fail to encode column count", K(ret));
+
   }
   for (int64_t i = 0; OB_SUCC(ret) && i < array.count(); ++i) {
     if (OB_FAIL(array.at(i).serialize(buf, data_len, pos))) {
-      STORAGE_LOG(WARN, "Fail to serialize column", K(ret));
+
     }
   }
   return ret;
@@ -549,7 +549,7 @@ bool ObStorageSchema::check_column_array_valid(const common::ObIArray<T> &array)
   for (int64_t i = 0; valid_ret && i < array.count(); ++i) {
     if (!array.at(i).is_valid()) {
       valid_ret = false;
-      STORAGE_LOG_RET(WARN, OB_INVALID_ERROR, "column item is invalid", K(i), K(array.at(i)));
+
     }
   }
   return valid_ret;

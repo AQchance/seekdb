@@ -46,7 +46,7 @@ int build_tenant_errsim_moulde(
       ObTenantErrsimModuleMgr *errsim_module_mgr = nullptr;
       if (OB_ISNULL(errsim_module_mgr = MTL(ObTenantErrsimModuleMgr *))) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "errsim module mgr should not be NULL", K(ret), KP(errsim_module_mgr));
+
       } else if (OB_FAIL(errsim_module_mgr->build_tenant_moulde(tmp_tenant_id, config_version, module_array, percentage))) {
         LOG_WARN("failed to build tenant module", K(ret), K(tmp_tenant_id), K(config_version));
       }
@@ -74,7 +74,7 @@ bool is_errsim_module(
       ObTenantErrsimModuleMgr *errsim_module_mgr = nullptr;
       if (OB_ISNULL(errsim_module_mgr = MTL(ObTenantErrsimModuleMgr *))) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "errsim module mgr should not be NULL", K(ret), KP(errsim_module_mgr));
+
       } else {
         b_ret = errsim_module_mgr->is_errsim_module(type);
       }
@@ -100,7 +100,7 @@ int add_tenant_errsim_event(
       ObTenantErrsimEventMgr *errsim_event_mgr = nullptr;
       if (OB_ISNULL(errsim_event_mgr = MTL(ObTenantErrsimEventMgr *))) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "errsim event mgr should not be NULL", K(ret), KP(errsim_event_mgr));
+
       } else if (OB_FAIL(errsim_event_mgr->add_tenant_event(event))) {
         LOG_WARN("failed to add tenant event", K(ret), K(event));
       }

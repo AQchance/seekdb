@@ -46,12 +46,12 @@ int ObLSBackupCleanScheduler::schedule_backup_clean_dag(const obrpc::ObLSBackupC
     } else if (OB_FAIL(scheduler->create_and_add_dag_net<ObLSBackupCleanDagNet>(&param))) {
       if (OB_TASK_EXIST == ret) {
         ret = OB_SUCCESS;
-        LOG_INFO("[BACKUP_CLEAN]alreadly have log stream backup dag net in DagScheduler", K(ret));
+
       } else {
         LOG_WARN("failed to create log stream backup dag net", K(ret));
       }
     } else {
-      LOG_INFO("[BACKUP_CLEAN]success to create log stream backup dag net", K(ret), K(param));
+
     }
   }
 
@@ -199,7 +199,7 @@ int ObLSBackupCleanDagNet::start_running()
       ret = OB_EAGAIN;
     }
   } else {
-    LOG_INFO("[BACKUP_CLEAN]succeed to schedule backup clean dag", K(*clean_dag));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -384,7 +384,7 @@ int ObLSBackupCleanDag::create_first_task()
   } else if (OB_FAIL(add_task(*task))) {
     LOG_WARN("Fail to add task", K(ret));
   } else {
-    LOG_INFO("[BACKUP_CLEAN]success finish create first task", K(*task));
+
   }
   return ret;
 }
@@ -516,7 +516,7 @@ int ObLSBackupCleanTask::post_rpc_result_(const int64_t result)
   } else if (OB_FAIL(GCTX.srv_rpc_proxy_->to(leader_addr).report_backup_clean_over(clean_ls_res))) {
     LOG_WARN("failed to post backup ls data res", K(ret), K(clean_ls_res));
   } else {
-    LOG_INFO("[BACKUP_CLEAN] success finish task post rpc result", K(clean_ls_res));
+
   }
 
   return ret;
@@ -627,7 +627,7 @@ int ObLSBackupCleanTask::delete_backup_complement_log_files_()
   } else if (OB_FAIL(ObBackupCleanUtil::delete_backup_dir_files(complement_dir, backup_dest_.get_storage_info()))) {
     LOG_WARN("failed to delete backup complement dir files", K(ret), K(complement_dir), K(backup_dest_));
   } else {
-    LOG_INFO("[BACKUP_CLEAN]success delete complement log", K(complement_dir));
+
   }
   return ret;
 }
@@ -666,7 +666,7 @@ int ObLSBackupCleanTask::delete_backup_complement_log_piece_(const share::ObBack
       } else if (OB_FAIL(ObBackupCleanUtil::delete_backup_dir_files(piece_dir, backup_dest_.get_storage_info()))) { // delete the piece dir
         LOG_WARN("failed to delete backup piece dir files", K(ret), K(piece_dir));
       } else {
-        LOG_INFO("Delete complement log piece", "cost_ts", ObTimeUtility::current_time() - start_time, K(piece_dir));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -714,7 +714,7 @@ int ObLSBackupCleanTask::delete_backup_complement_log_ls_(const share::ObBackupP
       }
     }
     if (OB_SUCC(ret)) {
-      LOG_INFO("Deleted all ls in this complement log piece", "ls_num", ls_entrys.count(), K(piece_dir));
+
     }
   }
   return ret;
@@ -761,7 +761,7 @@ int ObLSBackupCleanTask::delete_sys_data_(const ObBackupPath &path)
       } else if (OB_FAIL(ObBackupCleanUtil::delete_backup_dir_files(sys_path, backup_dest_.get_storage_info()))) {
         LOG_WARN("failed to delete backup log stream dir files", K(ret), K(path));
       } else {
-        LOG_INFO("[BACKUP_CLEAN]success delete sys data turn", K(sys_path)); 
+ 
       } 
     }
   }
@@ -795,7 +795,7 @@ int ObLSBackupCleanTask::delete_major_data_(const ObBackupPath &path)
       } else if (OB_FAIL(ObBackupCleanUtil::delete_backup_dir_files(major_path, backup_dest_.get_storage_info()))) {
         LOG_WARN("failed to delete backup log stream dir files", K(ret), K(path));
       } else {
-        LOG_INFO("[BACKUP_CLEAN]success delete major data turn", K(major_path)); 
+ 
       } 
     }
   }
@@ -829,7 +829,7 @@ int ObLSBackupCleanTask::delete_minor_data_(const ObBackupPath &path)
       } else if (OB_FAIL(ObBackupCleanUtil::delete_backup_dir_files(minor_path, backup_dest_.get_storage_info()))) {
         LOG_WARN("failed to delete backup log stream dir files", K(ret), K(path));
       } else {
-        LOG_INFO("[BACKUP_CLEAN]success delete minor data turn", K(minor_path)); 
+ 
       } 
     }
   }
@@ -863,7 +863,7 @@ int ObLSBackupCleanTask::delete_fused_meta_data_(const ObBackupPath &path)
       } else if (OB_FAIL(ObBackupCleanUtil::delete_backup_dir_files(fused_meta_path, backup_dest_.get_storage_info()))) {
         LOG_WARN("failed to delete backup log stream dir files", K(ret), K(path));
       } else {
-        LOG_INFO("[BACKUP_CLEAN]success delete fused meta turn", K(fused_meta_path)); 
+ 
       } 
     }
   }
@@ -897,7 +897,7 @@ int ObLSBackupCleanTask::delete_user_data_(const ObBackupPath &path)
       } else if (OB_FAIL(ObBackupCleanUtil::delete_backup_dir_files(user_data_path, backup_dest_.get_storage_info()))) {
         LOG_WARN("failed to delete backup log stream dir files", K(ret), K(path));
       } else {
-        LOG_INFO("[BACKUP_CLEAN]success delete user data turn", K(user_data_path)); 
+ 
       } 
     }
   }
@@ -931,7 +931,7 @@ int ObLSBackupCleanTask::delete_meta_info_(const ObBackupPath &path)
       } else if (OB_FAIL(ObBackupCleanUtil::delete_backup_dir_files(meta_path, backup_dest_.get_storage_info()))) {
         LOG_WARN("failed to delete backup log stream dir files", K(ret), K(path));
       } else {
-        LOG_INFO("[BACKUP_CLEAN]success delete meta info turn", K(meta_path)); 
+ 
       } 
     }
   }
@@ -975,13 +975,13 @@ int ObLSBackupCleanTask::delete_backup_set_ls_files_(const ObBackupPath &path)
     LOG_WARN("failed to delete meta info", K(ret)); 
   } else if (OB_FAIL(delete_log_stream_dir_(path))) {
     if (OB_DIR_NOT_EXIST == ret) {
-      LOG_INFO("dir is not exist", K(ret), K(path), K(*this));
+
       ret = OB_SUCCESS;
     } else {
       LOG_WARN("failed to delete backup log stream dir", K(ret), K(path));
     }
   } else {
-    LOG_INFO("[BACKUP_CLEAN]success finish delete backup set files", K(path)); 
+ 
   }
   return ret;
 }
@@ -1018,7 +1018,7 @@ int ObLSBackupCleanTask::delete_piece_log_files_(const ObBackupPath &path)
   } else if (OB_FAIL(ObBackupCleanUtil::delete_backup_dir_files(log_path, backup_dest_.get_storage_info()))) {
     LOG_WARN("failed to delete backup log stream dir files", K(ret), K(path));
   } else {
-    LOG_INFO("[BACKUP_CLEAN]success delete log files", K(log_path)); 
+ 
   } 
   return ret;
 }
@@ -1047,7 +1047,7 @@ int ObLSBackupCleanTask::delete_piece_ls_meta_files_(const ObBackupPath &path)
     } else if (OB_FAIL(ObBackupCleanUtil::delete_backup_dir_files(meta_path, backup_dest_.get_storage_info()))) {
       LOG_WARN("failed to delete backup log stream dir files", K(ret), K(meta_path));
     } else {
-      LOG_INFO("[BACKUP_CLEAN]success delete meta files", K(meta_path)); 
+ 
     }
   } while (OB_SUCC(ret));
   return ret;

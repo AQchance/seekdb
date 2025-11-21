@@ -313,7 +313,7 @@ TEST_F(ObGlobalIteratorPoolTest, wash)
 
   set_tenant_memory_limit(tenant_id_, test_tenant_mem_limit_low - 10);
   iter_pool.wash();
-  STORAGE_LOG(INFO, "after wash", K(iter_pool), K(test_tenant_mem_limit_low));
+
   ASSERT_FALSE(iter_pool.is_washing_);
   ASSERT_TRUE(iter_pool.is_disabled_);
 
@@ -321,24 +321,24 @@ TEST_F(ObGlobalIteratorPoolTest, wash)
   ret = iter_pool.get(type, cached_node);
   ASSERT_EQ(ret, OB_SUCCESS);
   ASSERT_TRUE(nullptr == cached_node);
-  STORAGE_LOG(INFO, "after release", K(iter_pool));
+
 
   set_tenant_memory_limit(tenant_id_, tenant_mem_limit);
   iter_pool.wash();
-  STORAGE_LOG(INFO, "after wash", K(iter_pool), K(test_tenant_mem_limit_low));
+
   ASSERT_FALSE(iter_pool.is_washing_);
   ASSERT_FALSE(iter_pool.is_disabled_);
 
   set_tenant_memory_limit(tenant_id_, tenant_mem_hold + 10);
   iter_pool.wash();
-  STORAGE_LOG(INFO, "after wash", K(iter_pool), K(test_tenant_mem_limit_low));
+
   ASSERT_FALSE(iter_pool.is_washing_);
   ASSERT_TRUE(iter_pool.is_disabled_);
   ASSERT_EQ(tenant_mem_hold + 10, iter_pool.tenant_mem_user_limit_);
 
   set_tenant_memory_limit(tenant_id_, tenant_mem_limit);
   iter_pool.wash();
-  STORAGE_LOG(INFO, "after wash", K(iter_pool), K(test_tenant_mem_limit_low));
+
   ASSERT_FALSE(iter_pool.is_washing_);
   ASSERT_FALSE(iter_pool.is_disabled_);
   ASSERT_EQ(tenant_mem_limit, iter_pool.tenant_mem_user_limit_);

@@ -112,7 +112,7 @@ int ObFakeCTETableOp::get_next_single_batch(const int64_t max_row_cnt)
       brs_.size_ = 0;
       ret = OB_SUCCESS;
     } else {
-      LOG_INFO("Fail to get result from cte table", K(ret));
+
     }
   } else {
     brs_.size_ = 1;

@@ -129,7 +129,7 @@ int ObStaticEngineExprCG::detect_batch_size(const ObRawExprUniqueSet &exprs,
       }
       if (OB_UNLIKELY(batch_size != config_maxrows)) {
         batch_size = is2n(batch_size) ? batch_size : next_pow2(batch_size) >> 1;
-        LOG_TRACE("After adjust batch_size adaptively", K(config_maxrows), K(batch_size));
+
       }
     } else {
       uint32_t row_size = 1;
@@ -147,7 +147,7 @@ int ObStaticEngineExprCG::detect_batch_size(const ObRawExprUniqueSet &exprs,
           has_large_data = is_large_data(vectorized_exprs.at(i)->get_data_type());
         }
         batch_size = config_target_maxsize / row_size;
-        LOG_TRACE("detect_batch_size", K(row_size), K(batch_size), K(expr_cnt), K(has_large_data), K(lob_rowsets_max_rows));
+
         // recalculate batch_size: count 2 additional bitmaps: skip + eval_flags
         batch_size = (config_target_maxsize -
                       expr_cnt * 2 * ObBitVector::memory_size(batch_size)) /
@@ -302,7 +302,7 @@ int ObStaticEngineExprCG::cg_expr_basic(const ObIArray<ObRawExpr *> &raw_exprs)
   for (int64_t i = 0; OB_SUCC(ret) && i < raw_exprs.count(); i++) {
     ObRawExpr *raw_expr = raw_exprs.at(i);
     ObExpr *rt_expr = get_rt_expr(*raw_expr);
-    LOG_DEBUG("cg expr basic", K(raw_expr), K(rt_expr), KPC(raw_expr));
+
     const ObObjMeta &result_meta = raw_expr->get_result_meta();
     // init type_
     rt_expr->type_ = raw_expr->get_expr_type();
@@ -407,7 +407,7 @@ int ObStaticEngineExprCG::cg_expr_basic(const ObIArray<ObRawExpr *> &raw_exprs)
           if (is_dyn_qm) {
             int64_t param_idx = 0;
             ret = static_cast<ObConstRawExpr *>(raw_expr)->get_value().get_unknown(param_idx);
-            LOG_DEBUG("generate rt expr basic", K(param_idx), K(*gen_questionmarks_.at(param_idx)));
+
             if (OB_FAIL(ret)) {
               LOG_WARN("get param idx failed", K(ret));
             } else if (OB_ISNULL(gen_questionmarks_.at(param_idx))) {
@@ -557,7 +557,7 @@ int ObStaticEngineExprCG::cg_expr_by_operator(const ObIArray<ObRawExpr *> &raw_e
           LOG_WARN("fail to write string", K(ret));
         } else {
           rt_expr->extra_info_ = extra_info;
-          LOG_DEBUG("external file col expr", K(ret), "path", data_access_info->data_access_path_);
+
         }
       }
     } else if (!IS_EXPR_OP(rt_expr->type_) || IS_AGGR_FUN(rt_expr->type_)) {
@@ -1137,7 +1137,7 @@ int ObStaticEngineExprCG::arrange_datums_data(ObIArray<ObRawExpr *> &exprs,
                           + get_datums_header_size(*e) /* datums */;
     }
 
-    LOG_TRACE("arrange datums data", K(cur_total_size), K(use_rich_format()));
+
     if (use_rich_format()) {
       // lens/offsets
       uint32_t len_arr_total = 0;
@@ -1714,7 +1714,7 @@ ObStaticEngineExprCG::ObExprBatchSize ObStaticEngineExprCG::get_expr_execute_siz
         break;
       }
     }
-    LOG_DEBUG("check expr type", K(type), KPC(raw_exprs.at(i)));
+
     // There are certain cases: that a SQL could not be executed vectorizely
     // For example:
     // A UDF functions may modify session value or global var, and could not be
@@ -1743,7 +1743,7 @@ ObStaticEngineExprCG::ObExprBatchSize ObStaticEngineExprCG::get_expr_execute_siz
       size = ObExprBatchSize::full;
     }
   }
-  LOG_TRACE("can_execute_vectorizely", K(size));
+
   return size;
 }
 int ObStaticEngineExprCG::divide_probably_local_exprs(common::ObIArray<ObRawExpr *> &exprs)
@@ -1797,7 +1797,7 @@ int ObStaticEngineExprCG::gen_expr_with_row_desc(const ObRawExpr *expr,
 
   CK(OB_NOT_NULL(expr));
   if (OB_SUCC(ret)) {
-    LOG_TRACE("generate temp expr", K(*expr), K(row_desc));
+
     int64_t param_cnt =
       (session->get_cur_exec_ctx() != NULL
        && session->get_cur_exec_ctx()->get_physical_plan_ctx() != NULL) ?
@@ -2038,7 +2038,7 @@ int ObStaticEngineExprCG::generate_partial_expr_frame(
   }
 
   if (OB_SUCC(ret)) {
-    LOG_TRACE("generate partial expr frame", K(partial), K(global));
+
   }
 
   return ret;
@@ -2132,7 +2132,7 @@ int ObStaticEngineExprCG::generate_extra_questionmarks(ObRawExprUniqueSet &flatt
         }
       }
     }
-    LOG_DEBUG("extra question marks", K(gen_questionmarks_));
+
     for (int i = 0; OB_SUCC(ret) && i < gen_questionmarks_.count(); i++) {
       if (OB_NOT_NULL(gen_questionmarks_.at(i))) {
         if (OB_FAIL(flattened_raw_exprs.append(gen_questionmarks_.at(i)))) {

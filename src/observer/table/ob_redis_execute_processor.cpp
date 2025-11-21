@@ -186,7 +186,7 @@ int ObRedisExecuteP::try_process()
 
 #ifndef NDEBUG
   // debug mode
-  LOG_INFO("[TABLE] execute redis operation", K(ret), K_(result), K_(retry_count));
+
 #else
   // release mode
   LOG_TRACE(

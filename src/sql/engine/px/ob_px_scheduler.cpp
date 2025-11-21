@@ -132,7 +132,7 @@ int ObPxMsgProc::on_sqc_init_msg(ObExecContext &ctx, const ObPxInitSqcResultMsg 
 {
   int ret = OB_SUCCESS;
 
-  LOG_TRACE("on_sqc_init_msg", K(pkt));
+
 
   ObDfo *edge = NULL;
   ObPxSqcMeta *sqc = NULL;
@@ -330,7 +330,7 @@ int ObPxMsgProc::process_sqc_finish_msg_once(ObExecContext &ctx, const ObPxFinis
                  OB_ID(dfo_id), sqc->get_dfo_id(),
                  OB_ID(sqc_id), sqc->get_sqc_id());
 
-    LOG_TRACE("[MSG] sqc finish", K(*edge), K(*sqc));
+
     LOG_TRACE("on_sqc_finish_msg update feedback info",
         K(pkt.fb_info_), K(ctx.get_feedback_info()));
   }
@@ -352,7 +352,7 @@ int ObPxMsgProc::process_sqc_finish_msg_once(ObExecContext &ctx, const ObPxFinis
     if (OB_SUCC(ret) && sqc_threads_finish) {
       edge->set_thread_finish(true);
       edge->set_used_worker_count(dfo_used_worker_count);
-      LOG_TRACE("[MSG] dfo finish", K(*edge));
+
     }
   }
 
@@ -506,7 +506,7 @@ int ObPxMsgProc::on_dfo_pair_thread_inited(ObExecContext &ctx, ObDfo &child, ObD
     if (OB_FAIL(scheduler_->build_data_xchg_ch(ctx, child, parent))) {
       LOG_WARN("fail init dtl data channel", K(ret));
     } else {
-      LOG_TRACE("build data xchange channel for dfo pair ok", K(parent), K(child));
+
     }
   }
   // Distribute dtl channel information to parent, child two DFOs, so that they can start sending and receiving data
@@ -514,7 +514,7 @@ int ObPxMsgProc::on_dfo_pair_thread_inited(ObExecContext &ctx, ObDfo &child, ObD
     if (OB_FAIL(scheduler_->dispatch_dtl_data_channel_info(ctx, child, parent))) {
       LOG_WARN("fail setup dtl data channel for child-parent pair", K(ret));
     } else {
-      LOG_TRACE("dispatch dtl data channel for pair ok", K(parent), K(child));
+
     }
   }
 
@@ -528,7 +528,7 @@ int ObPxMsgProc::on_interrupted(ObExecContext &ctx, const ObInterruptCode &ic)
   // override ret code
   // Throw error code to main processing routine
   ret = ic.code_;
-  LOG_TRACE("qc received a interrupt and throw out of msg proc", K(ic), K(ret));
+
   return ret;
 }
 
@@ -550,7 +550,7 @@ int ObPxTerminateMsgProc::on_sqc_init_msg(ObExecContext &ctx, const ObPxInitSqcR
   /**
    * Mark sqc, dfo as already started.
    */
-  LOG_TRACE("terminate msg proc on sqc init msg", K(pkt.rc_));
+
   if (pkt.task_count_ <= 0) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("task count returned by sqc invalid. expect 1 or more", K(pkt), K(ret));
@@ -570,7 +570,7 @@ int ObPxTerminateMsgProc::on_sqc_init_msg(ObExecContext &ctx, const ObPxInitSqcR
     sqc->set_thread_inited(true);
 
     if (pkt.rc_ != OB_SUCCESS) {
-      LOG_DEBUG("receive error code from sqc init msg", K(coord_info_.first_error_code_), K(pkt.rc_));
+
     }
     ObPxErrorUtil::update_qc_error_code(coord_info_.first_error_code_,
         pkt.rc_, pkt.err_msg_, sqc->get_exec_addr());
@@ -600,7 +600,7 @@ int ObPxTerminateMsgProc::on_sqc_init_msg(ObExecContext &ctx, const ObPxInitSqcR
 int ObPxTerminateMsgProc::on_sqc_finish_msg(ObExecContext &ctx, const ObPxFinishSqcResultMsg &pkt)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("terminate msg : proc on sqc finish msg", K(pkt.rc_));
+
   ObDfo *edge = NULL;
   ObPxSqcMeta *sqc = NULL;
   ObSQLSessionInfo *session = NULL;
@@ -638,7 +638,7 @@ int ObPxTerminateMsgProc::on_sqc_finish_msg(ObExecContext &ctx, const ObPxFinish
   } else {
     sqc->set_thread_finish(true);
     if (pkt.rc_ != OB_SUCCESS) {
-      LOG_DEBUG("receive error code from sqc finish msg", K(coord_info_.first_error_code_), K(pkt.rc_));
+
     }
     ObPxErrorUtil::update_qc_error_code(coord_info_.first_error_code_,
         pkt.rc_, pkt.err_msg_, sqc->get_exec_addr());
@@ -647,7 +647,7 @@ int ObPxTerminateMsgProc::on_sqc_finish_msg(ObExecContext &ctx, const ObPxFinish
                  OB_ID(dfo_id), sqc->get_dfo_id(),
                  OB_ID(sqc_id), sqc->get_sqc_id());
 
-    LOG_TRACE("terminate msg : sqc finish", K(*edge), K(*sqc));
+
     LOG_TRACE("on_sqc_finish_msg update feedback info",
         K(pkt.fb_info_), K(ctx.get_feedback_info()));
   }
@@ -669,7 +669,7 @@ int ObPxTerminateMsgProc::on_sqc_finish_msg(ObExecContext &ctx, const ObPxFinish
     if (OB_SUCC(ret) && sqc_threads_finish) {
       edge->set_thread_finish(true);
       edge->set_used_worker_count(dfo_used_worker_count);
-      LOG_TRACE("terminate msg : dfo finish", K(*edge));
+
     }
   }
 

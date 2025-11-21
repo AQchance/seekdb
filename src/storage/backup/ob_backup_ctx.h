@@ -103,7 +103,7 @@ int ObSimpleBackupStatMgr::get_missing_items_(
   missing.reset();
   if (lhs.count() < rhs.count()) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "count not expected", K(ret), K(lhs.count()), K(rhs.count()));
+
   } else {
     for (int64_t i = 0; OB_SUCC(ret) && i < lhs.count(); ++i) {
       bool exist = false;
@@ -117,7 +117,7 @@ int ObSimpleBackupStatMgr::get_missing_items_(
       }
       if (OB_SUCC(ret) && !exist) {
         if (OB_FAIL(missing.push_back(lhs_item))) {
-          STORAGE_LOG(WARN, "failed to push back", K(ret), K(lhs_item));
+
         }
       }
     }
@@ -131,7 +131,7 @@ int ObSimpleBackupStatMgr::print_missing_items_(const common::ObIArray<T> &missi
   int ret = OB_SUCCESS;
   for (int64_t i = 0; OB_SUCC(ret) && i < missing.count(); ++i) {
     const T &item = missing.at(i);
-    STORAGE_LOG(ERROR, "BACKUP ITEM IS MISSING", K_(tenant_id), K_(ls_id), K(item));
+
   }
   return ret;
 }

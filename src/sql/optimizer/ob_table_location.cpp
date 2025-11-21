@@ -799,7 +799,7 @@ int ObTableLocation::assign(const ObTableLocation &other)
     } else if (OB_FAIL(part_hint_ids_.assign(other.part_hint_ids_))) {
       LOG_WARN("Failed to assign part hint ids", K(ret));
     }
-    LOG_TRACE("deep copy table location", K(other));
+
     for (int64_t i = 0; OB_SUCC(ret) && i < other.vies_.count(); i++) {
       ValueItemExpr vie;
       OZ(other.vies_.at(i).deep_copy(allocator_, vie));
@@ -1484,13 +1484,13 @@ int ObTableLocation::calculate_single_tablet_partition(ObExecContext &exec_ctx,
       LOG_WARN("failed to assign related map list", K(ret));
     }
   }
-  LOG_DEBUG("calculate single tablet id end", K(loc_meta_), K(object_id_), K(tablet_id_));
+
   NG_TRACE(tl_calc_part_id_end);
 
   ObDASTableLoc *table_loc = nullptr;
   ObDASTabletLoc *tablet_loc = nullptr;
   ObDASTableLocMeta *final_meta = nullptr;
-  LOG_DEBUG("das table loc assign begin", K_(loc_meta));
+
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(das_ctx.build_table_loc_meta(loc_meta_, final_meta))) {
     LOG_WARN("build table loc meta failed", K(ret));
@@ -1876,7 +1876,7 @@ int ObTableLocation::calculate_tablet_ids(ObExecContext &exec_ctx,
     }
   }
 
-  LOG_DEBUG("calculate tablet ids end", K(loc_meta_), K(partition_ids), K(tablet_ids));
+
   NG_TRACE(tl_calc_part_id_end);
   return ret;
 }
@@ -4124,7 +4124,7 @@ int ObTableLocation::calc_partition_id_by_row(ObExecContext &exec_ctx,
     } else {
       CK(OB_NOT_NULL(se_part_expr_));
       OZ(se_part_expr_->eval(exec_ctx, row, func_result));
-      LOG_DEBUG("part expr func result", K(func_result), K(part_type_));
+
     }
   } else if (PARTITION_FUNC_TYPE_RANGE_COLUMNS == subpart_type_ || PARTITION_FUNC_TYPE_LIST_COLUMNS == subpart_type_) {
     calc_range_part_level = PARTITION_LEVEL_TWO;
@@ -4426,7 +4426,7 @@ int ObTableLocation::se_calc_value_item_row(common::ObExprCtx &expr_ctx,
 int ObTableLocation::replace_ref_table_id(const uint64_t ref_table_id, ObExecContext &exec_ctx)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("set log op infos", K(ref_table_id), K(loc_meta_));
+
   //replace the partition hint ids with local index object id
   ObDASTabletMapper tablet_mapper;
   if (is_non_partition_optimized_) {
@@ -5498,7 +5498,7 @@ int ObTableLocation::pruning_single_partition(int64_t tablet_id,
         }
       }
     }
-    LOG_TRACE("pruning_single_partition", K(tablet_id), K(tablet_ids), K(pruning), KPC(this));
+
   }
   return ret;
 }
@@ -5902,7 +5902,7 @@ int ObTableLocation::calc_list_value_partition_ids(
       }
     }
   }
-  LOG_TRACE("calc list partition ids", KP(calc_node), KP(part_ids), K(partition_ids));
+
   return ret;
 }
 

@@ -202,7 +202,7 @@ int ObVariableSetExecutor::execute(ObExecContext &ctx, ObVariableSetStmt &stmt)
                     // Found in system table __all_sys_variable, indicating it is due to version compatibility,
                     // Return value set to OB_SYS_VARS_MAYBE_DIFF_VERSION, set it to OB_SUCCESS later
                     ret = OB_SYS_VARS_MAYBE_DIFF_VERSION;
-                    LOG_INFO("try to set sys var from new version, ignore it", K(ret), K(node.variable_name_));
+
                   }
                 }
               } else {
@@ -497,7 +497,7 @@ int ObVariableSetExecutor::execute_subquery_expr(ObExecContext &ctx,
     if (OB_SUCC(ret) && (OB_FAIL(ob_write_obj(ctx.get_allocator(), tmp_value, value_obj)))) {
       LOG_WARN("failed to write value", K(ret));
     }
-    LOG_TRACE("succ to calculate value by executing inner sql", K(ret), K(value_obj), K(subquery_expr));
+
   }
   if (OB_NOT_NULL(conn) && OB_NOT_NULL(sql_proxy)) {
     int tmp_ret = sql_proxy->close(conn, true);
@@ -1021,14 +1021,14 @@ int ObVariableSetExecutor::process_session_autocommit_hook(ObExecContext &exec_c
         } else {
           // in xa trans
           if (transaction::ObGlobalTxType::XA_TRANS == global_tx_type) {
-            LOG_INFO("set autocommit off in xa trans", K(ret), K(xid));
+
           // in dblink trans
           } else if (transaction::ObGlobalTxType::DBLINK_TRANS == global_tx_type) {
             if (my_session->need_restore_auto_commit()) {
               ret = OB_OP_NOT_ALLOW;
               LOG_WARN("not allow to set autocommit off", K(ret), K(xid));
             } else {
-              LOG_INFO("set autocommit off in dblink trans", K(ret), K(xid));
+
             }
           } else {
             ret = OB_ERR_UNEXPECTED;
@@ -1141,7 +1141,7 @@ int ObVariableSetExecutor::update_resource_mapping_rule_version(ObMySQLProxy &sq
   ObSqlString sql;
   const char *tname = OB_ALL_SYS_STAT_TNAME;
   if (OB_FAIL(sql.assign_fmt("REPLACE INTO %s (", tname))) {
-    STORAGE_LOG(WARN, "append table name failed, ", K(ret));
+
   } else {
     ObSqlString values;
     SQL_COL_APPEND_VALUE(sql, values, ObSchemaUtils::get_extract_tenant_id(tenant_id, tenant_id), "tenant_id", "%lu");
@@ -1165,7 +1165,7 @@ int ObVariableSetExecutor::update_resource_mapping_rule_version(ObMySQLProxy &sq
       } else {
         if (is_single_row(affected_rows) || is_double_row(affected_rows)) {
           // insert or replace
-          LOG_TRACE("update resource mapping version successfully", K(sql.string()));
+
         } else {
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("unexpected value. expect 1 or 2 row affected", K(affected_rows), K(sql), K(ret));

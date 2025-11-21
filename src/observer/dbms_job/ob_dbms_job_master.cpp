@@ -121,12 +121,12 @@ void ObDBMSJobTask::runTimerTask()
       }
     }
   }
-  LOG_DEBUG("JobKEYS INFO HEADER ==== ", KPC(job_key_), K(wait_vector_.count()));
+
   int i = 0;
   for (WaitVectorIterator iter = wait_vector_.begin();
           OB_SUCC(ret) && iter != wait_vector_.end(); ++iter, ++i) {
     ObDBMSJobKey *job = *iter;
-    LOG_DEBUG("JobKEYS INFO ELEMENT ====", K(i), KPC(job));
+
   }
   return;
 }
@@ -263,7 +263,7 @@ int ObDBMSJobMaster::init(ObISQLClient *sql_client,
     job_rpc_proxy_ = GCTX.dbms_job_rpc_proxy_;
     inited_ = true;
   }
-  LOG_INFO("dbms job master inited!", K(ret));
+
   return ret;
 }
 
@@ -295,7 +295,7 @@ int ObDBMSJobMaster::stop()
     sleep(1);
   }
   stoped_ = false;
-  LOG_INFO("dbms job master stoped", K(ret), K(lbt()));
+
   return ret;
 }
 
@@ -311,7 +311,7 @@ int ObDBMSJobMaster::scheduler()
   } else {
     ObCurTraceId::set(trace_id_);
     running_ = true;
-    LOG_INFO("NOTICE: DBMS Job master start running!", K(ret), K(running_));
+
     lib::set_thread_name("DBMS_JOB_MASTER");
     while (OB_SUCC(ret) && !stoped_) {
       ObLink* ptr = NULL;
@@ -319,7 +319,7 @@ int ObDBMSJobMaster::scheduler()
       ObDBMSJobKey *job_key = NULL;
       if (OB_FAIL(ready_queue_.pop(ptr, timeout))) {
         if (OB_ENTRY_NOT_EXIST == ret) {
-          LOG_INFO("dbms job master wait timeout, no entry", K(ret));
+
           ret = OB_SUCCESS;
         } else {
           LOG_ERROR("fail to pop dbms job ready queue", K(ret), K(timeout));
@@ -332,11 +332,11 @@ int ObDBMSJobMaster::scheduler()
         if (OB_SUCCESS != (tmp_ret = scheduler_job(job_key))) {
           LOG_WARN("fail to scheduler single dbms job", K(ret), K(tmp_ret), KPC(job_key));
         } else {
-          LOG_INFO("success to scheduler single dbms job", K(ret), K(tmp_ret), KPC(job_key));
+
         }
       }
     }
-    LOG_INFO("NOTICE: DBMS Job master end running!", K(ret), K(running_));
+
     running_ = false;
   }
   return ret;
@@ -399,11 +399,11 @@ int ObDBMSJobMaster::scheduler_job(ObDBMSJobKey *job_key, bool is_retry)
     } else {
       int tmp = alive_jobs_.erase_refactored(job_info.get_job_id_with_tenant());
       if (tmp != OB_SUCCESS) {
-        LOG_INFO("failed delete valid job from hash set", K(ret), K(job_info));
+
       }
       allocator_.free(job_key); // job deleted!
     }
-    LOG_DEBUG("scheduler A real JOB!", K(ret), KPC(job_key));
+
   }
   return ret;
 }
@@ -535,7 +535,7 @@ int ObDBMSJobMaster::server_random_pick(int64_t tenant_id, ObString &pick_zone, 
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("can not find a alive server", K(ret), K(cnt), K(total_server.count()));
     } else {
-      LOG_INFO("GET A ADDR FOR EXECUTE", K(ret), K(pick));
+
       server = pick;
     }
   }
@@ -604,7 +604,7 @@ int ObDBMSJobMaster::load_and_register_new_jobs(uint64_t tenant_id, ObDBMSJobKey
   ObSEArray<ObDBMSJobInfo, 32> job_infos;
   ObArenaAllocator allocator;
   OZ (job_utils_.get_dbms_job_infos_in_tenant(tenant_id, allocator, job_infos));
-  LOG_INFO("load and register new jobs", K(ret), KPC(job_key), K(job_key), K(job_infos));
+
   OZ (register_jobs(tenant_id, job_infos, job_key));
   return ret;
 }
@@ -708,7 +708,7 @@ int ObDBMSJobMaster::register_job(
   if (OB_FAIL(ret) && OB_NOT_NULL(job_key)) {
     allocator_.free(job_key);
   }
-  LOG_INFO("register new dbms job", K(ret), K(job_info), KPC(job_key), K(job_key));
+
 
   return ret;
 }

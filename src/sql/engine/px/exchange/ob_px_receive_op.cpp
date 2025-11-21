@@ -187,10 +187,10 @@ int ObPxReceiveOp::init_dfc(ObDtlDfoKey &key)
     int ret = OB_SUCCESS;
     ret = OB_E(EventTable::EN_FORCE_DFC_BLOCK) ret;
     force_block = (OB_HASH_NOT_EXIST == ret);
-    LOG_TRACE("Worker init dfc", K(key), K(dfc_.is_receive()), K(force_block), K(ret));
+
     ret = OB_SUCCESS;
 #endif
-    LOG_TRACE("Worker init dfc", K(key), K(dfc_.is_receive()), K(force_block));
+
   }
   return ret;
 }
@@ -207,7 +207,7 @@ int ObPxReceiveOp::init_channel(
   int ret = OB_SUCCESS;
   ObPhysicalPlanCtx *phy_plan_ctx = GET_PHY_PLAN_CTX(ctx_);
   ObDtlDfoKey key;
-  LOG_TRACE("Try to get channel infomation from SQC");
+
   CK (OB_NOT_NULL(ctx_.get_physical_plan_ctx()) && OB_NOT_NULL(ctx_.get_physical_plan_ctx()->get_phy_plan()));
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(recv_input.get_data_ch(task_ch_set, phy_plan_ctx->get_timeout_timestamp(), ch_info_))) {
@@ -249,7 +249,7 @@ int ObPxReceiveOp::init_channel(
         ch->set_operator_owner();
         ch->set_thread_id(thread_id);
       }
-      LOG_TRACE("Receive channel",KP(ch->get_id()), K(ch->get_peer()));
+
     }
     LOG_TRACE("Get receive channel ok",
               "task_id", recv_input.get_task_id(),
@@ -317,7 +317,7 @@ int ObPxReceiveOp::link_ch_sets(ObPxTaskChSet &ch_set,
           LOG_WARN("fail push back channel ptr", K(ci), K(ret));
         } else {
           offset += DTL_CHANNEL_SIZE;
-          LOG_TRACE("link receive-transmit ch", K(*ch), K(idx), K(ci));
+
         }
       }
       if (0 == channels.count() && !failed_in_push_back_to_channels) {
@@ -376,7 +376,7 @@ int ObPxReceiveOp::inner_drain_exch()
         LOG_WARN("failed to active all receive channel", K(ret));
       }
     }
-    LOG_TRACE("drain px receive", K(get_spec().id_), K(ret), K(lbt()));
+
     dfc_.drain_all_channels();
     exch_drained_ = true;
     if (OB_ITER_END == ret) {
@@ -500,7 +500,7 @@ int ObPxReceiveOp::erase_dtl_interm_result()
           }
         }
       }
-      LOG_TRACE("receive erase dtl interm res", K(i), K(get_spec().get_id()), K(ci), K(ctx_.get_px_batch_id()));
+
     }
   }
   return ret;
@@ -570,7 +570,7 @@ int ObPxReceiveOp::send_channel_ready_msg(int64_t child_dfo_id)
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("piece count exceeded task count", K(proxy.get_task_count()), K(*curr_piece_cnt_ptr), K(ret));
       }
-      LOG_TRACE("1 receive is ready", K(merge_finish), K(ATOMIC_LOAD(curr_piece_cnt_ptr)), K(get_spec().id_), K(lbt()));
+
       if (OB_SUCC(ret) && merge_finish) {
         ObInitChannelPieceMsg piece;
         piece.piece_count_ = ATOMIC_LOAD(curr_piece_cnt_ptr);
@@ -634,7 +634,7 @@ int ObPxFifoReceiveOp::inner_close()
   // must erase after unlink channel
   release_channel_ret = erase_dtl_interm_result();
   if (release_channel_ret != common::OB_SUCCESS) {
-    LOG_TRACE("release interm result failed", KR(release_channel_ret));
+
   }
   return ret;
 }
@@ -761,7 +761,7 @@ int ObPxFifoReceiveOp::fetch_rows(const int64_t row_cnt)
       if (OB_SUCCESS == ret) {
         metric_.mark_first_out();
         metric_.set_last_out_ts(::oceanbase::common::ObTimeUtility::current_time());
-        LOG_DEBUG("Got one row from channel", K(ret));
+
         break; // got one row
       } else if (OB_ITER_END == ret) {
         if (GCONF.enable_sql_audit) {
@@ -769,7 +769,7 @@ int ObPxFifoReceiveOp::fetch_rows(const int64_t row_cnt)
           op_monitor_info_.otherstat_2_value_ = oceanbase::common::ObClockGenerator::getClock();
         }
         metric_.mark_eof();
-        LOG_TRACE("Got eof row from channel", K(ret));
+
         break;
       } else if (OB_DTL_WAIT_EAGAIN == ret) {
         // no data for now, wait and try again
@@ -785,7 +785,7 @@ int ObPxFifoReceiveOp::fetch_rows(const int64_t row_cnt)
             break;
           }
           if (0 == retry_cnt % 100) {
-            LOG_DEBUG("Wait for next row", K(tmp_ret), K(ret));
+
           }
           retry_cnt++;
         }
@@ -797,7 +797,7 @@ int ObPxFifoReceiveOp::fetch_rows(const int64_t row_cnt)
   }
   if (OB_ITER_END == ret) {
     iter_end_ = true;
-    LOG_TRACE("receive eof row", K(get_spec().id_),  K(ret));
+
   }
   return ret;
 }
@@ -859,7 +859,7 @@ int ObPxFifoReceiveOp::get_rows_from_channels(const int64_t row_cnt, int64_t tim
     }
     if (msg_loop_.all_eof(task_channels_.count())) {
       ret = OB_ITER_END;
-      LOG_TRACE("no more date in all channels", K(ret));
+
       break;
     }
     if (OB_FAIL(msg_loop_.process_any())) {
@@ -905,7 +905,7 @@ int ObPxFifoReceiveOp::get_rows_from_channels_vec(const int64_t row_cnt, int64_t
     }
     if (msg_loop_.all_eof(task_channels_.count())) {
       ret = OB_ITER_END;
-      LOG_TRACE("no more date in all channels", K(ret));
+
       break;
     }
     if (OB_FAIL(msg_loop_.process_any())) {

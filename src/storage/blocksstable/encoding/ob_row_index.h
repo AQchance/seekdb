@@ -107,9 +107,9 @@ inline int ObVarRowIndex::init(const char *data, const int64_t len,
       || index_byte < sizeof(char) || index_byte >= sizeof(int64_t)
       || len < (row_cnt + 1) * index_byte)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(data), K(len), K(row_cnt), K(index_byte));
+
   } else if (OB_FAIL(index_.init(data + len - index_byte * (row_cnt + 1), index_byte))) {
-    STORAGE_LOG(WARN, "init index array failed", K(ret));
+
   } else {
     data_ = data;
     row_cnt_ = row_cnt;
@@ -122,10 +122,10 @@ inline int ObVarRowIndex::get(const int64_t row_id, const char *&data, int64_t &
   int ret = OB_SUCCESS;
   if (OB_ISNULL(data_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret), KP_(data));
+
   } else if (OB_UNLIKELY(row_id < 0 || row_id >= row_cnt_)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid row id", K(ret), K(row_id), K_(row_cnt));
+
   } else {
     uint64_t offset = index_.get_array().at(row_id);
     data = data_ + offset;
@@ -144,10 +144,10 @@ inline int ObVarRowIndex::batch_get(
   int ret = OB_SUCCESS;
   if (OB_ISNULL(data_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "Not inited", K(ret), KP_(data));
+
   } else if (OB_ISNULL(row_ids) || OB_ISNULL(datums) || OB_ISNULL(row_datas)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument", K(ret), KP(row_ids), KP(row_datas), KP(datums));
+
   }
   // Not check if row_id is valid for performance
   for (int64_t i = 0; OB_SUCC(ret) && i < row_cap; ++i) {
@@ -172,10 +172,10 @@ inline int ObVarRowIndex::batch_get(
   int ret = OB_SUCCESS;
   if (OB_ISNULL(data_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "Not inited", K(ret), KP_(data));
+
   } else if (OB_ISNULL(row_ids) || OB_ISNULL(row_lens) || OB_ISNULL(row_datas)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument", K(ret), KP(row_ids), KP(row_datas), KP(row_lens));
+
   }
 
   for (int64_t i = 0; OB_SUCC(ret) && i < row_cap; ++i) {
@@ -192,7 +192,7 @@ inline int ObFixRowIndex::init(const char *data, const int64_t len, const int64_
   // len might be 0, when no var column and no row header
   if (OB_UNLIKELY(NULL == data || len < 0 || row_cnt <= 0 || 0 != len % row_cnt)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(data), K(len), K(row_cnt));
+
   } else {
     data_ = data;
     row_size_ = len / row_cnt;
@@ -206,10 +206,10 @@ inline int ObFixRowIndex::get(const int64_t row_id, const char *&data, int64_t &
   int ret = OB_SUCCESS;
   if (OB_ISNULL(data_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret), KP_(data));
+
   } else if (OB_UNLIKELY(row_id < 0 || row_id >= row_cnt_)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(row_id), K_(row_cnt));
+
   } else {
     len = row_size_;
     data = data_ + row_id * row_size_;
@@ -227,10 +227,10 @@ inline int ObFixRowIndex::batch_get(
   int ret = OB_SUCCESS;
   if (OB_ISNULL(data_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "Not inited", K(ret), KP_(data));
+
   } else if (OB_ISNULL(row_ids) || OB_ISNULL(datums) || OB_ISNULL(row_datas)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument", K(ret), KP(row_ids), KP(row_datas), KP(datums));
+
   }
   // Not check row_id valid for performance
   for (int64_t i = 0; OB_SUCC(ret) && i < row_cap; ++i) {
@@ -254,10 +254,10 @@ inline int ObFixRowIndex::batch_get(
    int ret = OB_SUCCESS;
   if (OB_ISNULL(data_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "Not inited", K(ret), KP_(data));
+
   } else if (OB_ISNULL(row_ids) || OB_ISNULL(row_lens) || OB_ISNULL(row_datas)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument", K(ret), KP(row_ids), KP(row_datas), KP(row_lens));
+
   }
   // Not check row_id valid for performance
   for (int64_t i = 0; OB_SUCC(ret) && i < row_cap; ++i) {

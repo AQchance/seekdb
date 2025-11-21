@@ -270,7 +270,7 @@ int ObMemtableBlockReader::get_next_di_row(const ObFilterResult &filter_res,
       }
     }
   }
-  LOG_DEBUG("[MULTIVERSION MOW] memtable get next di row", K(ret), K(current), K(row));
+
   return ret;
 }
 

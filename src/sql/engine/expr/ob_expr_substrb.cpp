@@ -85,7 +85,7 @@ int ObExprSubstrb::calc(ObString &res_str, const ObString &text,
       }
     }
   }
-  LOG_DEBUG("calc substrb done", K(ret), K(res_str));
+
   return ret;
 }
 

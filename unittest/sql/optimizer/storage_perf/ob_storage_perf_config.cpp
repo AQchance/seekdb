@@ -39,7 +39,7 @@ bool QuerySpeed::is_over(QuerySpeed *query_speed) {
   bool ret = false;
   if(NULL == query_speed) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "argument is NULL");
+
   } else if(llabs(avg_speed_ - query_speed->avg_speed_) > query_speed_over_limit_percentage
             || llabs(row_cache_speed_ - query_speed->row_cache_speed_) > query_speed_over_limit_percentage
             || llabs(block_cache_speed_ - query_speed->block_cache_speed_) > query_speed_over_limit_percentage
@@ -86,12 +86,12 @@ int ObStoragePerfConfig::init(const char *config_file)
 
   if (is_inited_) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "cannot init twice");
+
   } else if (NULL == config_file) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "config file is NULL", K(config_file));
+
   } else if (OB_FAIL(config.load(config_file))) {
-    STORAGE_LOG(WARN, "failed to load config", K(config_file), K(ret));
+
   } else {
     const char *perf_root_dir = config.getString("common_parameter", "perf_root_dir", "");
     int n1 = snprintf(perf_root_dir_, MAX_PATH_SIZE, "%s", perf_root_dir);
@@ -105,7 +105,7 @@ int ObStoragePerfConfig::init(const char *config_file)
         || n4 < 0 || n4 > MAX_PATH_SIZE
         || n5 < 0 || n5 > MAX_PATH_SIZE) {
         ret = OB_BUF_NOT_ENOUGH;
-      STORAGE_LOG(WARN, "buf not enough", K(perf_root_dir), K(n1), K(n2), K(n3), K(n4), K(n5));
+
     }
 
     partition_size_ = config.getInt("common_parameter", "partition_size");

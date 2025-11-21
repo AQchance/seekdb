@@ -59,7 +59,7 @@ int ObMySQLPreparedParam::init()
     LOG_ERROR("out of memory, alloc mem for mysql_bind error", K(ret));
   } else {
     MEMSET(bind_, 0, sizeof(MYSQL_BIND) * param_count_);
-    LOG_DEBUG("statement field", K(param_count_));
+
   }
   return ret;
 }

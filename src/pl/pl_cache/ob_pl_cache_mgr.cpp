@@ -334,7 +334,7 @@ int ObPLCacheMgr::flush_pl_cache_by_sql(
       LOG_WARN("execute query failed", K(ret), K(sql));
     } else {
       // do nothing
-      LOG_INFO("succ to flush pl cache", K(key_id), K(tenant_id), K(affected_rows));
+
     }
   }
   return ret;

@@ -165,12 +165,12 @@ int ObPartitionSplitQuery::get_tablet_split_range(
         } else {
           const ObColDescIArray &col_descs = tablet.get_rowkey_read_info().get_columns_desc();
           if (OB_FAIL(src_range.prepare_memtable_readable(col_descs, allocator))) {
-            STORAGE_LOG(WARN, "Fail to transfer store rowkey", K(ret), K(src_range), K(col_descs));
+
           }
         }
       }
     } else {
-      LOG_INFO("No need to split range", K(split_info));
+
     }
   }
   return ret;
@@ -198,7 +198,7 @@ int ObPartitionSplitQuery::copy_split_key(
       }
     }
     if (OB_FAIL(new_key.assign(datums, src_datum_cnt))) {
-      STORAGE_LOG(WARN, "Failed to assign datum rowkey", K(ret), KP(datums), K(src_datum_cnt));
+
       new_key.reset();
       allocator.free(datums);
       datums = nullptr;
@@ -235,7 +235,7 @@ int ObPartitionSplitQuery::get_tablet_split_ranges(
         } else if (OB_FAIL(get_tablet_split_range(tablet, datum_utils, split_info_, allocator, datum_range, is_empty_range))) {
           LOG_WARN("Fail to get tabelt split range", K(ret), K(split_info_));
         } else if (is_empty_range) {
-          LOG_INFO("Range after split is empty", K(ori_ranges.count()), K(i), "tablet_id", tablet.get_tablet_meta().tablet_id_, K(ori_ranges.at(i)));
+
         } else if (OB_FAIL(datum_range.to_store_range(col_descs, allocator, tmp_range))) {
           LOG_WARN("fail to transfer to store range", K(ret), K(datum_range));
         } else if (OB_FALSE_IT(tmp_range.set_table_id(ori_ranges.at(i).get_table_id()))) {
@@ -262,7 +262,7 @@ int ObPartitionSplitQuery::get_split_datum_range(
     }
     if (OB_FAIL(ret)) {
     } else if (OB_FAIL(get_tablet_split_range(tablet, *datum_utils, split_info_, allocator, datum_range, is_empty_range))) {
-      STORAGE_LOG(WARN, "Failed to split range", K(ret), K(split_info_));
+
     }
   }
   return ret;
@@ -311,7 +311,7 @@ int ObPartitionSplitQuery::split_multi_ranges_if_need(
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(ret), K(tablet_handle));
   } else if (OB_FAIL(ObTabletSplitMdsHelper::get_is_spliting(*tablet_handle.get_obj(), is_tablet_spliting))) {
-    STORAGE_LOG(WARN, "fail to get tablet split status", K(ret));
+
   } else if (!is_tablet_spliting) {
     // do nothing
   } else if (OB_FAIL(ObTabletSplitMdsHelper::get_split_info_with_cache(*tablet_handle.get_obj(), allocator, split_info))) {
@@ -477,7 +477,7 @@ int ObPartitionSplitQuery::fill_range_filter_param(
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("expr is null", K(ret), K(expr));
       }
-      LOG_DEBUG("print filter batch result flag", K(expr->batch_result_));
+
       if (OB_SUCC(ret)) {
         const int col_idx = (i - 1) % part_column_cnt;
         ObDatum &expr_datum = expr->locate_datum_for_write(eval_ctx);
@@ -487,19 +487,19 @@ int ObPartitionSplitQuery::fill_range_filter_param(
           if (lower_bound.is_min_rowkey()) {
             expr_datum.set_outrow(); // min
             if (expr_datum.is_outrow()) {
-              LOG_DEBUG("set is outrow", K(ret), K(expr_datum));
+
             }
           } else {
             const ObDatum &lower_datum = lower_bound.get_datum(col_idx);
             if (lower_datum.is_min()) {
               expr_datum.set_outrow(); // min
               if (expr_datum.is_outrow()) {
-                LOG_DEBUG("set is outrow", K(ret), K(expr_datum));
+
               }
             } else if (lower_datum.is_max()) {
               expr_datum.set_ext(); // max
               if (expr_datum.is_ext()) {
-                LOG_DEBUG("set is ext", K(ret), K(expr_datum));
+
               }
             } else if (OB_FAIL(expr_datum.from_storage_datum(lower_datum,
                 expr->obj_datum_map_,
@@ -511,19 +511,19 @@ int ObPartitionSplitQuery::fill_range_filter_param(
           if (upper_bound.is_max_rowkey()) {
             expr_datum.set_ext(); // max
             if (expr_datum.is_ext()) {
-              LOG_DEBUG("set is ext", K(ret), K(expr_datum));
+
             }
           } else {
             const ObDatum &upper_datum = upper_bound.get_datum(col_idx);
             if ( upper_datum.is_max()) {
               expr_datum.set_ext();  // max
               if (expr_datum.is_ext()) {
-                LOG_DEBUG("set is ext", K(ret), K(expr_datum));
+
               }
             } else if (upper_datum.is_min()) {
               expr_datum.set_outrow();  // min
               if (expr_datum.is_outrow()) {
-                LOG_DEBUG("set is outrow", K(ret), K(expr_datum));
+
               }
             } else if (OB_FAIL(expr_datum.from_storage_datum(
                 upper_datum,
@@ -536,7 +536,7 @@ int ObPartitionSplitQuery::fill_range_filter_param(
       }
     }
   }
-  LOG_DEBUG("fill range filter param", K(ret), K(lower_bound), K(upper_bound));
+
   return ret;
 }
 

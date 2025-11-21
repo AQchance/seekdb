@@ -419,7 +419,7 @@ void ObDDLWriteMacroBlockBasePipeline::postprocess(int &ret_code)
     } else if (OB_FAIL(set_remain_block())) {
       LOG_WARN("set remain block failed", K(ret));
     } else {
-      LOG_INFO("not data any more, change ret to be success", K(ret), K(dag->get_ddl_task_param()));
+
       ret_code = OB_SUCCESS;
     }
   }

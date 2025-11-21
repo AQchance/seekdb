@@ -92,7 +92,7 @@ OB_INLINE int ObStringPrefixDecoder::init(
   int ret = common::OB_SUCCESS;
   if (OB_UNLIKELY(is_inited())) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init twice", K(ret));
+
   } else {
     meta += column_header.offset_;
     meta_header_ = reinterpret_cast<const ObStringPrefixMetaHeader *>(meta);

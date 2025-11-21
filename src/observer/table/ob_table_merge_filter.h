@@ -211,7 +211,7 @@ int ObTableMergeRowIterator<Row, Compare, RowIterator>::build_heap(const ObIArra
         LOG_WARN("fail to iterate to next", K(ret));
       } else {
         // row_iter valid -> false
-        LOG_DEBUG("no valid row iter", KPC(row_iter));
+
         ret = OB_SUCCESS;
       }
     } else if (OB_FAIL(valid_row_iters.push_back(row_iter))) {
@@ -245,7 +245,7 @@ int ObTableMergeRowIterator<Row, Compare, RowIterator>::iter_and_push_iterator(R
       LOG_WARN("fail to iterate to next", K(ret));
     } else {
       ret = OB_SUCCESS;
-      LOG_DEBUG("one cache row iterator finished", K(ret), K(iter));
+
     }
   } else if (OB_FAIL(binary_heap_.push(&iter))) {
     LOG_WARN("fail to push iter", K(ret));
@@ -277,12 +277,12 @@ int ObTableMergeRowIterator<Row, Compare, RowIterator>::get_next_row(Row *&row)
   int ret = OB_SUCCESS;
   if (binary_heap_.empty() && OB_ISNULL(last_pop_iter_)) {
     ret = OB_ITER_END;
-    LOG_DEBUG("ObTableMergeRowIterator iter end", K(ret));
+
   } else if (OB_NOT_NULL(last_pop_iter_) && OB_FAIL(iter_and_push_iterator(*last_pop_iter_))) {
     LOG_WARN("fail to iter and push_iterator", K(ret));
   } else if (binary_heap_.empty()) {
     ret = OB_ITER_END;
-    LOG_DEBUG("ObTableMergeRowIterator iter end after iter last pop iter", K(ret));
+
   } else {
     RowIterator* cache_iterator = binary_heap_.top();
     if (OB_ISNULL(cache_iterator)) {
@@ -320,7 +320,7 @@ int ObTableMergeRowIterator<Row, Compare, RowIterator>::seek(const ObString& key
         if (OB_FAIL(cache_iter->next_row())) {
           if (OB_ITER_END == ret) {
             // No more rows in this iterator
-            LOG_DEBUG("No more results available", K(ret));
+
           } else {
             LOG_WARN("fail to get next row", K(ret));
           }
@@ -359,7 +359,7 @@ int ObTableMergeRowIterator<Row, Compare, RowIterator>::rescan(ReScanParam&... r
         LOG_WARN("fail to rescan", K(ret));
       } else {
         ret = OB_SUCCESS;
-        LOG_DEBUG("fail to rescan", K(ret), K(row_iter));
+
       }
     } else if (OB_FAIL(iter_and_push_iterator(*row_iter))) {
       LOG_WARN("fail to iter and push iterator", K(ret));

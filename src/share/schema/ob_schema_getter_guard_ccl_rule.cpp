@@ -53,7 +53,7 @@ int ObSchemaGetterGuard::get_ccl_rule_with_name(
                  tenant_id, mode, name, simple_ccl_rule_schema))) {
     LOG_WARN("get schema failed", KR(ret), K(tenant_id), K(name));
   } else if (NULL == simple_ccl_rule_schema) {
-    LOG_INFO("ccl rule not exist", K(tenant_id), K(name));
+
   } else if (OB_FAIL(get_schema(
                  CCL_RULE_SCHEMA, simple_ccl_rule_schema->get_tenant_id(),
                  simple_ccl_rule_schema->get_ccl_rule_id(), ccl_rule_schema,
@@ -89,7 +89,7 @@ int ObSchemaGetterGuard::get_ccl_rule_with_ccl_rule_id(
                  ccl_rule_id, simple_ccl_rule_schema))) {
     LOG_WARN("get schema failed", KR(ret), K(tenant_id), K(ccl_rule_id));
   } else if (NULL == simple_ccl_rule_schema) {
-    LOG_INFO("ccl rule not exist", K(tenant_id), K(ccl_rule_id));
+
   } else if (OB_FAIL(get_schema(
                  CCL_RULE_SCHEMA, simple_ccl_rule_schema->get_tenant_id(),
                  simple_ccl_rule_schema->get_ccl_rule_id(), ccl_rule_schema,

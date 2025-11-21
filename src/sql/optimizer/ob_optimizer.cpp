@@ -80,7 +80,7 @@ int ObOptimizer::optimize(ObDMLStmt &stmt, ObLogPlan *&logical_plan)
                 K(logical_plan->get_optimization_cost()));
   }
   optimizer_mem_usage = ctx_.get_allocator().total() - last_mem_usage;
-  LOG_TRACE("[SQL MEM USAGE]", K(optimizer_mem_usage), K(last_mem_usage));
+
   return ret;
 }
 
@@ -307,10 +307,10 @@ int ObOptimizer::check_dml_parallel_mode()
   if (ctx_.can_use_pdml() && ctx_.get_can_use_parallel_das_dml()) {
     if (ctx_.get_global_hint().get_parallel_das_dml_option() == ObParallelDASOption::ENABLE) {
       ctx_.set_can_use_pdml(false);
-      LOG_TRACE("parallel_das_dml hint cause force use das parallel");
+
     } else {
       ctx_.set_can_use_parallel_das_dml(false);
-      LOG_TRACE("pdml and parallel das dml all supported, choose pdml");
+
     }
   }
   return ret;
@@ -325,13 +325,13 @@ int ObOptimizer::check_parallel_das_dml_supported_feature(const ObDelUpdStmt &pd
     use_parallel_das_dml = false;
   } else if (ctx_.has_dblink()) {
     use_parallel_das_dml = false;
-    LOG_TRACE("has dblink not use parallel das dml");
+
   } else if (!ctx_.has_fk() && ctx_.contain_user_nested_sql()) {
     use_parallel_das_dml = false;
-    LOG_TRACE("ctx has user nexted sql not use parallel das dml");
+
   } else if (ctx_.is_online_ddl()) {
     use_parallel_das_dml = false;
-    LOG_TRACE("is online ddl not use parallel das dml");
+
   }
   return ret;
 }
@@ -355,30 +355,30 @@ int ObOptimizer::check_parallel_das_dml_enabled(const ObDMLStmt &stmt,
     LOG_WARN("unexpected null", K(ret), K(ctx_.get_exec_ctx()));
   } else if (!session.enable_parallel_das_dml()) {
     can_use_parallel_das_dml = false;
-    LOG_TRACE("enable_das_parallel_execution is false, can't submit task parallel");
+
   } else if (!stmt.is_px_dml_supported_stmt()) {
     can_use_parallel_das_dml = false;
-    LOG_TRACE("stmt can't support parallel_das_dml");
+
   } else if (ctx_.has_var_assign() && !ctx_.is_var_assign_only_in_root_stmt()) {
     // It can be supported, but we won’t let it go for now and wait for the follow-up.
     can_use_parallel_das_dml = false;
-    LOG_TRACE("has var_assign, can't support parallel_das_dml now");
+
   } else if (!session.is_user_session()) {
     // not user request
     can_use_parallel_das_dml = false;
-    LOG_TRACE("not user request, can't support parallel_das_dml");
+
   } else if (!is_strict_mode(session.get_sql_mode())) {
     can_use_parallel_das_dml = false;
-    LOG_TRACE("not strict mode, can't support parallel_das_dml");
+
   } else if (OB_FAIL(check_parallel_das_dml_supported_feature(static_cast<const ObDelUpdStmt&>(stmt),
                                                               session,
                                                               can_use_parallel_das_dml))) {
 
   } else if (!can_use_parallel_das_dml) {
-    LOG_TRACE("not support parallel das dml");
+
   } else if (ctx_.get_global_hint().get_parallel_das_dml_option() == ObParallelDASOption::DISABLE) {
     can_use_parallel_das_dml = false;
-    LOG_TRACE("hint force close das parallel, can't support parallel_das_dml");
+
   } else if (query_ctx->get_query_hint().has_outline_data() &&
       ctx_.get_global_hint().get_parallel_das_dml_option() != ObParallelDASOption::ENABLE) {
     can_use_parallel_das_dml = false;
@@ -387,7 +387,7 @@ int ObOptimizer::check_parallel_das_dml_enabled(const ObDMLStmt &stmt,
             K(query_ctx->get_query_hint().has_outline_data()));
   } else if (ctx_.can_use_pdml()) {
     // can use pdml must can use parallel_das_dml
-    LOG_TRACE("pdml is enabled, can use parallel das");
+
   } else if (ctx_.get_global_hint().get_pdml_option() == ObPDMLOption::ENABLE ||
       ctx_.get_global_hint().get_parallel_das_dml_option() == ObParallelDASOption::ENABLE) {
     LOG_TRACE("can use parallel_das_dml by pdml hint",
@@ -406,7 +406,7 @@ int ObOptimizer::check_parallel_das_dml_enabled(const ObDMLStmt &stmt,
     // enable parallel das dml by session
   } else {
     can_use_parallel_das_dml = false;
-    LOG_TRACE("other scense, can't support parallel_das_dml");
+
   }
 
   if (OB_SUCC(ret)) {
@@ -465,7 +465,7 @@ int ObOptimizer::check_pdml_enabled(const ObDMLStmt &stmt,
     // do nothing
   } else if (!is_strict_mode(session.get_sql_mode())) {
     can_use_pdml = false;
-    LOG_TRACE("not strict mode, can't support PDML");
+
   } else if (ctx_.get_global_hint().get_pdml_option() == ObPDMLOption::ENABLE) {
     // 1. enable parallel dml by hint
   } else if (ctx_.get_global_hint().get_pdml_option() == ObPDMLOption::DISABLE
@@ -493,7 +493,7 @@ int ObOptimizer::check_pdml_enabled(const ObDMLStmt &stmt,
     LOG_WARN("failed to check is heap table", K(ret));
   } else {
     ctx_.set_can_use_pdml(can_use_pdml);
-    LOG_TRACE("check use all pdml feature", K(ret), K(can_use_pdml), K(ctx_.is_online_ddl()), K(session_enable_pdml));
+
   }
   return ret;
 }
@@ -555,7 +555,7 @@ int ObOptimizer::check_pdml_supported_feature(const ObDelUpdStmt &pdml_stmt,
     // if no trigger, no foreign key, delete can do pdml, even if with local unique index
     if (!table_infos.at(0)->part_ids_.empty()) {
       is_use_pdml = false;
-      LOG_TRACE("delete sql with partition hint", K(table_infos.at(0)->part_ids_));
+
     } else {
       is_use_pdml = true;
     }
@@ -581,7 +581,7 @@ int ObOptimizer::check_pdml_supported_feature(const ObDelUpdStmt &pdml_stmt,
     } else if (stmt::T_UPDATE == pdml_stmt.get_stmt_type()) {
       if (!table_infos.at(0)->part_ids_.empty()) {
         is_use_pdml = false;
-        LOG_TRACE("update sql with partition hint", K(table_infos.at(0)->part_ids_));
+
       }
       for (int i = 0; OB_SUCC(ret) && is_use_pdml && i <
           table_infos.at(0)->column_exprs_.count(); i++) {
@@ -621,7 +621,7 @@ int ObOptimizer::check_pdml_insert_up_enabled(const ObDelUpdStmt &pdml_stmt,
       LOG_WARN("fail to get bool opt param", K(ret));
     } else if (!opt_param_enable_pdml_insertup) {
       is_use_pdml = false;
-      LOG_TRACE("disable pdml insert up");
+
     } else {
       const share::schema::ObTableSchema *table_schema = NULL;
       const ObInsertStmt &insert_stmt = static_cast<const ObInsertStmt &>(pdml_stmt);
@@ -692,7 +692,7 @@ int ObOptimizer::check_pdml_insert_up_enabled(const ObDelUpdStmt &pdml_stmt,
         }
       }
     }
-    LOG_TRACE("check whether enable pdml insert on duplicate", K(is_use_pdml));
+
   }
   return ret;
 }
@@ -897,7 +897,7 @@ int ObOptimizer::extract_opt_ctx_basic_flags(const ObDMLStmt &stmt, ObSQLSession
       ctx_.set_hash_join_enabled(true);
       ctx_.set_merge_join_enabled(true);
       ctx_.set_nested_join_enabled(true);
-      LOG_TRACE("all join types are set to disable");
+
     } else {
       ctx_.set_hash_join_enabled(hash_join_enabled);
       ctx_.set_merge_join_enabled(optimizer_sortmerge_join_enabled);

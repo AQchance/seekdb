@@ -120,7 +120,7 @@ int TestMicroBlockScanner::check_row(ObMicroBlockScanner &scanner,
       for(int64_t j = 0; j < column_num && ret == OB_SUCCESS; ++ j){
         if(get_row->row_val_.cells_[j] != objs[j]){
           ret = OB_ERROR;
-          STORAGE_LOG(ERROR, "obj not equal", K(get_row->row_val_.cells_[j]), K(objs[j]));
+
         }
       }
       bool exist = false;
@@ -135,7 +135,7 @@ int TestMicroBlockScanner::check_row(ObMicroBlockScanner &scanner,
       for(int64_t j = 0; j < column_num && ret == OB_SUCCESS; ++ j){
         if(get_row->row_val_.cells_[j] != objs[j]){
           ret = OB_ERROR;
-          STORAGE_LOG(ERROR, "obj not equal", K(get_row->row_val_.cells_[j]), K(objs[j]));
+
         }
       }
       bool exist = false;

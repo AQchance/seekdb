@@ -115,9 +115,9 @@ int TestOptimizerUtils::generate_logical_plan(ObResultSet &result, //ObIAllocato
     /**
      *  3. set resolver context
      */
-    LOG_DEBUG("begin parse sql");
+
     ObAddr addr;
-    LOG_DEBUG("setting local address to 1.1.1.1");
+
     addr.set_ip_addr("1.1.1.1", 8888);
     memory_total  = allocator_.total();
     memory_parser = allocator_.total();
@@ -182,7 +182,7 @@ int TestOptimizerUtils::generate_logical_plan(ObResultSet &result, //ObIAllocato
             ret = OB_ERROR;
           } else {
             stmt->get_query_ctx()->set_sql_stmt(parse_result.input_sql_, parse_result.input_sql_len_);
-            LOG_DEBUG("Generate stmt success", "query", stmt->get_query_ctx()->get_sql_stmt());
+
           }
           if (OB_SUCC(ret)) {
             // transform
@@ -254,7 +254,7 @@ int TestOptimizerUtils::generate_logical_plan(ObResultSet &result, //ObIAllocato
                   memory_total = allocator_.total() - memory_total;
                   LOG_INFO("[SQL MEM USAGE TOTAL]", "parser", memory_parser, "resolver", memory_resolver,
                           "optimizer", memory_optimizer, "total", memory_total, K(query));
-                  LOG_DEBUG("succ to generate logical plan");
+
                   // std::cout << "<<<<<<<<<<<<<<<<<<<<<<<<<<<<" << std::endl;
                   // std::cout << "SQL: " << query_str << std::endl;
                   // std::cout << "parse:     " << time_2 - time_1 << std::endl;
@@ -288,7 +288,7 @@ void TestOptimizerUtils::compile_sql(const char* query_str, std::ofstream &of_re
   ObLogPlan *logical_plan;
   ObString sql = ObString::make_string(query_str);
   of_result << "SQL: " << query_str << std::endl;
-  LOG_INFO("Case query", K_(case_id), K(query_str));
+
   bool is_select = true;
   OK(generate_logical_plan(result, sql, query_str, logical_plan, is_select));
   if (is_select) {
@@ -349,7 +349,7 @@ do {                                                                         \
   ObResultSet result(session_info_, allocator_);                             \
   ObString sql = ObString::make_string(query);                               \
   bool is_select = true;\
-  LOG_INFO("Case query", K(sql));                                            \
+                                            \
   ASSERT_TRUE(OB_SUCCESS != generate_logical_plan(result, sql, query, logical_plan, is_select)); \
 } while(0)
 
@@ -360,7 +360,7 @@ do {                                                                         \
    ObString sql = ObString::make_string((query));                               \
    bool is_select = true;\
    int actual_ret = generate_logical_plan(result, sql, (query), logical_plan, is_select); \
-   LOG_INFO("actual ret is", K(actual_ret)); \
+ \
    ASSERT_TRUE((ret_val) == actual_ret); \
 } while(0)
 

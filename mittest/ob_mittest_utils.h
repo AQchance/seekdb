@@ -108,12 +108,12 @@ void __attribute__ ((weak)) get_netport_range(int &start_port, int &end_port)
     start_port = atoi(mit_network_start_port_env);
     end_port = atoi(mit_network_port_num_env) + start_port;
     start_port = (start_port+3) / 3 * 3;
-    STORAGE_LOG(INFO, "get netport from env", K(start_port), K(end_port));
+
   } else {
     //srand(oceanbase::common::ObTimeUtility::current_time());
     start_port = 11000;
     end_port = start_port + 100;
-    STORAGE_LOG(INFO, "get netport rand", K(start_port), K(end_port));
+
   }
 }
 
@@ -146,7 +146,7 @@ int64_t __attribute__ ((weak)) get_rpc_port(int &server_fd_ret)
         close(server_fd2);
         break;
       } else {
-        STORAGE_LOG(INFO, "find port fail continue try", K(can_use), K(can_use1), K(can_use2), K(port));
+
         if (can_use) {
           close(server_fd);
         }
@@ -160,10 +160,10 @@ int64_t __attribute__ ((weak)) get_rpc_port(int &server_fd_ret)
       }
     }
   }
-  STORAGE_LOG(INFO, "find port", K(find_port));
+
   if (find_port == 0) {
-    STORAGE_LOG_RET(WARN, OB_ERR_UNEXPECTED, "find port fail", K(find_port));
-    STORAGE_LOG_RET(WARN, OB_ERR_UNEXPECTED, "net", "ss", _executeShellCommand("ss -antlp").c_str());
+
+
     OB_ASSERT(false);
   }
   return find_port;

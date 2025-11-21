@@ -174,11 +174,11 @@ int ObMViewPushRefreshScnTask::check_major_mv_refresh_scn_safety(const uint64_t 
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("major_mv_safety>>>>");
+
     bool is_safety = true;
     for (int64_t idx = 0; OB_SUCC(ret) && idx < merge_info_array.count(); idx++) {
       ObMajorMVMergeInfo &merge_info = merge_info_array.at(idx);
-      LOG_INFO("major_mv_safety>>>> merge_info", K(merge_info));
+
       if (!merge_info.is_valid()) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("merge_info is invalid", K(merge_info));
@@ -205,7 +205,7 @@ int ObMViewPushRefreshScnTask::check_major_mv_refresh_scn_safety(const uint64_t 
         }
       }
     }
-    LOG_INFO("major_mv_safety<<<<<<<<<<<", K(is_safety));
+
   }
   return ret;
 }
@@ -223,7 +223,7 @@ int ObMViewPushRefreshScnTask::update_major_refresh_mview_scn_(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("fail to min_major_refresh_mview_scn is invalid", KR(ret), K(tenant_id), K(major_refresh_mview_scn));
   } else if (major_refresh_mview_scn <= min_major_refresh_mview_scn) {
-    LOG_INFO("skip update_major_refresh_mview_scn", KR(ret), K(tenant_id), K(major_refresh_mview_scn), K(min_major_refresh_mview_scn));
+
   } else {
     ObMajorRefreshMViewScnArg arg;
     arg.major_refresh_mview_scn_ = major_refresh_mview_scn;

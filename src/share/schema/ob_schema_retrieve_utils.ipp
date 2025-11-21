@@ -3365,7 +3365,7 @@ int ObSchemaRetrieveUtils::retrieve_routine_priv_schema(
       // ignore it
       ret = common::OB_SUCCESS;
     } else if (is_deleted) {
-      LOG_TRACE("routine_priv is is_deleted", K(routine_priv));
+
     } else if (OB_FAIL(routine_priv_array.push_back(routine_priv))) {
       LOG_WARN("Failed to push back", K(ret));
     }
@@ -3404,7 +3404,7 @@ int ObSchemaRetrieveUtils::retrieve_column_priv_schema(
       // ignore it
       ret = common::OB_SUCCESS;
     } else if (is_deleted) {
-      LOG_TRACE("column_priv is is_deleted", K(column_priv));
+
     } else if (OB_FAIL(column_priv_array.push_back(column_priv))) {
       LOG_WARN("Failed to push back", K(ret));
     }
@@ -3515,7 +3515,7 @@ int ObSchemaRetrieveUtils::retrieve_obj_mysql_priv_schema(
       // ignore it
       ret = common::OB_SUCCESS;
     } else if (is_deleted) {
-      LOG_TRACE("obj_mysql_priv is is_deleted", K(obj_mysql_priv));
+
     } else if (OB_FAIL(obj_mysql_priv_array.push_back(obj_mysql_priv))) {
       LOG_WARN("Failed to push back", K(ret));
     }

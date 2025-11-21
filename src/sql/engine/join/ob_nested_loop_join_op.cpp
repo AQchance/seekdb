@@ -74,7 +74,7 @@ int ObNestedLoopJoinOp::inner_open()
   if (simulate_group_size > 0) {
     max_group_size_ = simulate_group_size;
     group_size = simulate_group_size;
-    LOG_TRACE("simulate group size is", K(simulate_group_size));
+
   } else {
     group_size = MY_SPEC.group_size_;
   }
@@ -85,7 +85,7 @@ int ObNestedLoopJoinOp::inner_open()
       } else {
         max_group_size_ = OB_MAX_BULK_JOIN_ROWS + MY_SPEC.plan_->get_batch_size();
       }
-      LOG_TRACE("max group size of NLJ is", K(max_group_size_), K(MY_SPEC.plan_->get_batch_size()));
+
     }
     if (OB_ISNULL(batch_mem_ctx_)) {
       ObSQLSessionInfo *session = ctx_.get_my_session();
@@ -238,7 +238,7 @@ int ObNestedLoopJoinOp::do_drain_exch()
     if (!is_operator_end()) {
       // the drain request is triggered by parent operator
       // NLJ needs to pass the drain request to it's child operator
-      LOG_TRACE("The drain request is passed by parent operator");
+
       if (OB_FAIL( ObOperator::do_drain_exch())) {
         LOG_WARN("failed to drain normal NLJ operator", K(ret));
       }
@@ -960,7 +960,7 @@ int ObNestedLoopJoinOp::process_right_batch()
           brs_.skip_->set(r_idx);
         } else { /*do nothing*/
         }
-        LOG_DEBUG("cal_other_conds finished ", K(is_match), K(l_idx_), K(r_idx));
+
       } // for conds end
     }
 

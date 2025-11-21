@@ -746,7 +746,7 @@ int ObTypeLibSysVar::check_update_type(const ObSetVar &set_var, const ObObj &val
         number::ObNumber num = val.get_number();
         if (num.is_valid_int()) {
           ret = OB_SUCCESS;
-          LOG_DEBUG("number is valid int", K(val), K(num));
+
         }
       } else if (ob_is_decimal_int(val.get_type())) {
         int tmp_ret = ret;
@@ -757,7 +757,7 @@ int ObTypeLibSysVar::check_update_type(const ObSetVar &set_var, const ObObj &val
           LOG_WARN("check valid int64 failed", K(ret));
         } else if (is_valid_int64) {
           ret = OB_SUCCESS;
-          LOG_DEBUG("decimal int is valid int", K(val), K(res_v));
+
         }
       }
     }
@@ -956,7 +956,7 @@ int ObCharsetSysVar::check_update_type(const ObSetVar &set_var, const ObObj &val
       number::ObNumber num = val.get_number();
       if (num.is_valid_int()) {
         ret = OB_SUCCESS;
-        LOG_DEBUG("number is valid int", K(val), K(num));
+
       }
     }
     if (OB_SUCCESS != ret) {
@@ -1101,7 +1101,7 @@ int ObTinyintSysVar::check_update_type(const ObSetVar &set_var, const ObObj &val
       //do value range check in do_check_and_convert
       if (num.is_valid_int()) {
         ret = OB_SUCCESS;
-        LOG_DEBUG("number is valid int", K(val), K(num));
+
       } else {
         LOG_WARN("number is not valid int for sys var on oracle mode", K(val), K(num));
       }
@@ -2702,7 +2702,7 @@ int ObSysVarOnUpdateFuncs::update_tx_isolation(ObExecContext &ctx,
   ObTxIsolationLevel isolation = transaction::tx_isolation_from_str(var_val);
   bool for_next_trans = (set_var.set_scope_ == ObSetVar::SET_SCOPE_NEXT_TRANS);
 
-  LOG_INFO("update tx_isolation", K(var_name), K(var_val), K(for_next_trans), K(isolation));
+
   if (OB_ISNULL(session)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("fail to get session info", K(ret));
@@ -2789,7 +2789,7 @@ int ObSysVarOnUpdateFuncs::update_tx_read_only_no_scope(ObExecContext &ctx,
                  KPC(session->get_tx_desc()), KPC(session));
       }
     }
-    LOG_DEBUG("update tx_read only, while scope=none", K(ret), K(val.get_bool()));
+
   }
   return ret;
 }
@@ -3196,7 +3196,7 @@ int ObPreProcessSysVars::change_base_values(const ObIArray<std::pair<ObString, O
       LOG_WARN("fail to change initial value", K(ret), K(sys_var.first), K(sys_var.second));
       ret = OB_SUCCESS; // ignore errors
     } else {
-      LOG_INFO("succ to change initial value", K(sys_var.first), K(sys_var.second));
+
     }
   }
   return ret;

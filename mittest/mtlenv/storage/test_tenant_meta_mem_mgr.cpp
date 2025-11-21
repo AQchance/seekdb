@@ -217,10 +217,10 @@ void TestTenantMetaMemMgr::prepare_data_schema(
     } else {
       column.set_rowkey_position(0);
     }
-    LOG_INFO("add column", K(i), K(column));
+
     ASSERT_EQ(OB_SUCCESS, table_schema.add_column(column));
   }
-  LOG_INFO("dump data table schema", LITERAL_K(TEST_ROWKEY_COLUMN_CNT), K(table_schema));
+
 
   ret = create_tablet_schema.init(allocator, table_schema, lib::Worker::CompatMode::MYSQL,
         false/*skip_column_info*/, DATA_VERSION_1_0_0_0);
@@ -1571,13 +1571,13 @@ TEST_F(TestTenantMetaMemMgr, test_leak_checker)
   tb_handle_1.get_obj()->tablet_meta_.transfer_info_.transfer_seq_ = 0;
   ASSERT_EQ(MTL(ObTenantMetaMemMgr*)->leak_checker_.tb_ref_bucket_[index_1], 1);
   ASSERT_EQ(functor(), initial_size + 1);
-  LOG_INFO("test_leak_checker, should be log pinned tablet info here (maybe n lines)");
+
   MTL(ObTenantMetaMemMgr *)->leak_checker_.dump_pinned_tablet_info();
   // Reset tablet handle, decrease ref cnt
   tb_handle_1.reset();
   ASSERT_EQ(MTL(ObTenantMetaMemMgr*)->leak_checker_.tb_ref_bucket_[index_1], 0);
   ASSERT_EQ(functor(), initial_size);
-  LOG_INFO("test_leak_checker, should be log pinned tablet info here (maybe n-1 lines)");
+
   MTL(ObTenantMetaMemMgr *)->leak_checker_.dump_pinned_tablet_info();
 
   // Set tablet at one t3m, reset at another t3m
@@ -1593,7 +1593,7 @@ TEST_F(TestTenantMetaMemMgr, test_leak_checker)
   tb_handle_2.get_obj()->tablet_meta_.transfer_info_.transfer_seq_ = 0;
   ASSERT_EQ(MTL(ObTenantMetaMemMgr*)->leak_checker_.tb_ref_bucket_[index_2], 1);
   ASSERT_EQ(functor(), initial_size + 1);
-  LOG_INFO("test_leak_checker, should be log pinned tablet info here (maybe n lines)");
+
   MTL(ObTenantMetaMemMgr *)->leak_checker_.dump_pinned_tablet_info();
   // Change default t3m
   ObTenantMetaMemMgr *true_t3m = MTL(ObTenantMetaMemMgr*);
@@ -1603,7 +1603,7 @@ TEST_F(TestTenantMetaMemMgr, test_leak_checker)
   ASSERT_EQ(MTL(ObTenantMetaMemMgr*), &another_t3m);
   ASSERT_EQ(functor(), 0);
   tb_handle_2.reset();
-  LOG_INFO("test_leak_checker, should be log pinned tablet info here (maybe n-1 lines)");
+
   MTL(ObTenantMetaMemMgr *)->leak_checker_.dump_pinned_tablet_info();
 
   // Change default t3m back

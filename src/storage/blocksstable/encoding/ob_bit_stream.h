@@ -151,7 +151,7 @@ OB_INLINE int ObBitStream::init(unsigned char *data, const int64_t length)
   // can init twice and length may equal to zero
   if (NULL == data || length < 0) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(data), K(length));
+
   } else {
     data_ = data;
     bit_len_ = length * BS_WORD_BIT;
@@ -165,11 +165,11 @@ OB_INLINE int ObBitStream::set(const int64_t offset, const int64_t cnt, const in
   int ret = common::OB_SUCCESS;
   if (!is_init()) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else if (offset < 0 || cnt <= 0 || cnt >= sizeof(value) * BS_WORD_BIT
       || offset + cnt > bit_len_) {
     ret = common::OB_INDEX_OUT_OF_RANGE;
-    STORAGE_LOG(WARN, "index out of range", K(ret), K(offset), K(cnt), K_(bit_len));
+
   } else {
     uint64_t v = static_cast<uint64_t>(value);
     int64_t index = offset;
@@ -213,11 +213,11 @@ OB_INLINE int ObBitStream::get(const int64_t offset, const int64_t cnt, int64_t 
   int ret = common::OB_SUCCESS;
   if (!is_init()) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else if (offset < 0 || cnt <= 0 || cnt >= sizeof(value) * BS_WORD_BIT
       || offset + cnt > bit_len_) {
     ret = common::OB_INDEX_OUT_OF_RANGE;
-    STORAGE_LOG(WARN, "index out of range", K(ret), K(offset), K(cnt), K_(bit_len));
+
   } else {
     ret = get(data_, offset, cnt, value);
   }

@@ -72,7 +72,7 @@ int ObAlterLocalityFinishChecker::check()
   int ret = OB_SUCCESS;
   share::schema::ObSchemaGetterGuard schema_guard;
   ObArray<const ObSimpleTenantSchema *> tenant_schemas;
-  LOG_INFO("start to check alter locality finish");
+
   //STEP 0: previous check
   int64_t rs_job_id = 0;
   if (OB_UNLIKELY(!inited_)) {

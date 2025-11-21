@@ -124,7 +124,7 @@ int ObCreateRuleProcessor::parse_request_param()
   int ret = OB_SUCCESS;
   ObString enabled;
   sql::ObSQLSessionInfo *session = ctx_.get_my_session();
-  LOG_DEBUG("parse request param", K(params_));
+
   if (OB_ISNULL(session)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("session is null", K(ret));
@@ -193,7 +193,7 @@ int ObCreateRuleProcessor::generate_exec_arg()
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_DEBUG("succ generate exec arg", K(arg_));
+
   }
   return ret;
 }
@@ -217,7 +217,7 @@ int ObRemoveRuleProcessor::parse_request_param()
 {
   int ret = OB_SUCCESS;
   bool is_enabled = false;
-  LOG_DEBUG("parse request param", K(params_));
+
   sql::ObSQLSessionInfo *session = ctx_.get_my_session();
   if (OB_ISNULL(session)) {
     ret = OB_ERR_UNEXPECTED;
@@ -239,7 +239,7 @@ int ObRemoveRuleProcessor::generate_exec_arg()
 {
   int ret = OB_SUCCESS;
   arg_.rule_status_ = ObUDRInfo::DELETE_STATUS;
-  LOG_DEBUG("succ generate exec arg", K(arg_));
+
   return ret;
 }
 
@@ -262,7 +262,7 @@ int ObEnableRuleProcessor::parse_request_param()
 {
   int ret = OB_SUCCESS;
   bool is_enabled = false;
-  LOG_DEBUG("parse request param", K(params_));
+
   sql::ObSQLSessionInfo *session = ctx_.get_my_session();
   if (OB_ISNULL(session)) {
     ret = OB_ERR_UNEXPECTED;
@@ -284,7 +284,7 @@ int ObEnableRuleProcessor::generate_exec_arg()
 {
   int ret = OB_SUCCESS;
   arg_.rule_status_ = ObUDRInfo::ENABLE_STATUS;
-  LOG_DEBUG("succ generate exec arg", K(arg_));
+
   return ret;
 }
 
@@ -307,7 +307,7 @@ int ObDisableRuleProcessor::parse_request_param()
 {
   int ret = OB_SUCCESS;
   bool is_enabled = false;
-  LOG_DEBUG("parse request param", K(params_));
+
   sql::ObSQLSessionInfo *session = ctx_.get_my_session();
   if (OB_ISNULL(session)) {
     ret = OB_ERR_UNEXPECTED;
@@ -329,7 +329,7 @@ int ObDisableRuleProcessor::generate_exec_arg()
 {
   int ret = OB_SUCCESS;
   arg_.rule_status_ = ObUDRInfo::DISABLE_STATUS;
-  LOG_DEBUG("succ generate exec arg", K(arg_));
+
   return ret;
 }
 

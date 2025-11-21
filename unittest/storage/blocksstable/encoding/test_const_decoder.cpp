@@ -93,7 +93,7 @@ void TestConstDecoder::batch_decode_to_vector_no_exc_test(const VectorFormat vec
     ASSERT_EQ(OB_SUCCESS, VectorDecodeTestUtil::generate_column_output_expr(
         ROW_CNT, col_meta, vector_format, eval_ctx, col_expr, frame_allocator));
     int32_t col_offset = i;
-    LOG_INFO("Current col: ", K(i), K(col_meta),  K(*decoder.decoders_[col_offset].ctx_), K(precision), K(vec_tc));
+
 
     int32_t row_ids[ROW_CNT];
     for (int32_t datum_idx = 0; datum_idx < ROW_CNT; ++datum_idx) {
@@ -386,7 +386,7 @@ TEST_F(TestConstDecoder, filter_push_down_gt_lt_ge_le)
   }
   for (int64_t i = ROW_CNT - 1; i < ROW_CNT; ++i) {
     ASSERT_EQ(OB_SUCCESS, encoder_.append_row(row)) << "i: " << i << std::endl;
-    LOG_INFO("Null row appended: ", K(row));
+
   }
 
   int64_t seed0_count = ROW_CNT - 5;
@@ -673,7 +673,7 @@ TEST_F(TestConstDecoder, filter_push_down_in)
   }
   for (int64_t i = ROW_CNT - 1; i < ROW_CNT; ++i) {
     ASSERT_EQ(OB_SUCCESS, encoder_.append_row(row)) << "i: " << i << std::endl;
-    LOG_INFO("Null row appended: ", K(row));
+
   }
 
   int64_t seed0_count = ROW_CNT - 4;
@@ -785,7 +785,7 @@ TEST_F(TestConstDecoder, batch_decode_to_datum_test_without_expection)
 
   for (int64_t i = 0; i < full_column_cnt_; ++i) {
     int32_t col_offset = i;
-    STORAGE_LOG(INFO, "Current col: ", K(i),K(col_descs_.at(i)), K(*decoder.decoders_[col_offset].ctx_));
+
     ObDatum datums[ROW_CNT];
     int32_t row_ids[ROW_CNT];
     for (int32_t j = 0; j < ROW_CNT; ++j) {
@@ -795,7 +795,7 @@ TEST_F(TestConstDecoder, batch_decode_to_datum_test_without_expection)
     ASSERT_EQ(OB_SUCCESS, decoder.decoders_[col_offset]
         .batch_decode(decoder.row_index_, row_ids, cell_datas, ROW_CNT, datums));
     for (int64_t j = 0; j < ROW_CNT; ++j) {
-      LOG_INFO("Current row: ", K(j), K(col_offset), K(rows[j].storage_datums_[i]), K(datums[j]));
+
       ASSERT_TRUE(ObDatum::binary_equal(rows[j].storage_datums_[i], datums[j]));
     }
   }
@@ -865,7 +865,7 @@ TEST_F(TestConstDecoder, cell_decode_to_datum_test_without_expection)
 
   for (int64_t i = 0; i < full_column_cnt_; ++i) {
     int32_t col_offset = i;
-    LOG_INFO("Current col: ", K(i), K(col_descs_.at(i)),  K(*decoder.decoders_[col_offset].ctx_));
+
     for (int64_t j = 0; j < row_cnt; ++j) {
       ObDatum datum;
       datum.ptr_ = reinterpret_cast<char *>(datum_buf);
@@ -873,7 +873,7 @@ TEST_F(TestConstDecoder, cell_decode_to_datum_test_without_expection)
       ObBitStream bs(reinterpret_cast<unsigned char *>(const_cast<char *>(row_data)), row_len);
       ASSERT_EQ(OB_SUCCESS,
           decoder.decoders_[col_offset].decode(datum,j, bs, row_data, row_len));
-      LOG_INFO("Current row: ", K(j), K(col_offset), K(rows[j].storage_datums_[col_offset]), K(datum));
+
       ASSERT_TRUE(ObDatum::binary_equal(rows[j].storage_datums_[col_offset], datum));
     }
   }

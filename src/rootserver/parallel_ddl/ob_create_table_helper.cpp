@@ -160,7 +160,7 @@ int ObCreateTableHelper::lock_database_by_obj_name_()
     }
   }
   const int64_t cost_ts = ObTimeUtility::current_time() - start_ts;
-  LOG_INFO("lock databases", KR(ret), K_(tenant_id), K(cost_ts));
+
   return ret;
 }
 
@@ -258,7 +258,7 @@ int ObCreateTableHelper::lock_objects_by_name_()
     }
   }
   const int64_t cost_ts = ObTimeUtility::current_time() - start_ts;
-  LOG_INFO("lock objects by name", KR(ret), K_(tenant_id), K(cost_ts));
+
   return ret;
 }
 
@@ -334,7 +334,7 @@ int ObCreateTableHelper::lock_objects_by_id_()
     LOG_WARN("fail to lock objects by id", KR(ret));
   }
   const int64_t cost_ts = ObTimeUtility::current_time() - start_ts;
-  LOG_INFO("lock objects by id", KR(ret), K_(tenant_id), K(cost_ts));
+
   return ret;
 }
 
@@ -393,7 +393,7 @@ int ObCreateTableHelper::post_lock_objects_by_id_()
     LOG_WARN("fail to lock objects by id", KR(ret));
   }
   const int64_t cost_ts = ObTimeUtility::current_time() - start_ts;
-  LOG_INFO("lock objects by id in post", KR(ret), K_(tenant_id), K(cost_ts));
+
   return ret;
 }
 
@@ -465,7 +465,7 @@ int ObCreateTableHelper::check_ddl_conflict_()
 
   }
   const int64_t cost_ts = ObTimeUtility::current_time() - start_ts;
-  LOG_INFO("check ddl confict", KR(ret), K_(tenant_id), K(cost_ts));
+
   return ret;
 }
 
@@ -485,7 +485,7 @@ int ObCreateTableHelper::prefetch_schemas_()
     LOG_WARN("fail to check and set parent table id", KR(ret));
   }
   const int64_t cost_ts = ObTimeUtility::current_time() - start_ts;
-  LOG_INFO("prefetch schemas", KR(ret), K_(tenant_id), K(cost_ts));
+
   return ret;
 }
 

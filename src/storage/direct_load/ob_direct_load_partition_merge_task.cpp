@@ -131,7 +131,7 @@ int ObDirectLoadPartitionMergeTask::process()
           }
         }
       }
-      LOG_INFO("add sstable slice end", KR(ret), K(tablet_id), K(parallel_idx_), K(affected_rows_));
+
     }
     if (OB_SUCC(ret)) {
       if (OB_FAIL(insert_tablet_ctx_->close_sstable_slice(slice_id, parallel_idx_/*slice_idx*/, ddl_agent))) {
@@ -383,7 +383,7 @@ int ObDirectLoadPartitionOriginDataUnrescanMergeTask::process()
                                           ctx_->job_stat_))) {
       LOG_WARN("fail to init direct writer", KR(ret));
     } else {
-      LOG_INFO("add sstable slice begin", K(tablet_id), K(parallel_idx_));
+
       ObDirectLoadDatumRow datum_row;
       ObDirectLoadRowFlag row_flag;
       row_flag.uncontain_hidden_pk_ = true;
@@ -414,7 +414,7 @@ int ObDirectLoadPartitionOriginDataUnrescanMergeTask::process()
           LOG_WARN("fail to close direct writer", KR(ret));
         }
       }
-      LOG_INFO("add sstable slice end", KR(ret), K(tablet_id), K(parallel_idx_), K(affected_rows_));
+
     }
     if (row_iter != nullptr) {
       row_iter->~ObDirectLoadOriginTableScanner();

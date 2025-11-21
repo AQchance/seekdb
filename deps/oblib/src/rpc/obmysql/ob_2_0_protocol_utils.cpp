@@ -180,7 +180,7 @@ inline int ObProto20Utils::do_proto20_packet_encode(ObProtoEncodeParam &param)
         break;
       }
       case FILL_DONE_STEP: {
-        LOG_DEBUG("fill ob 20 packet succ");
+
         proto20_context.curr_proto20_packet_start_pos_ += (param.ez_buf_->last - param.ez_buf_->pos);
 
         // reset extra info
@@ -266,7 +266,7 @@ int ObProto20Utils::encode_extra_info(char *buffer, int64_t length, int64_t &pos
           } else if (OB_FAIL(ob_obj_kv.value_.serialize(buffer, length,pos))) {
             LOG_WARN("fail to serialize value", K(i), "value", ob_obj_kv.value_, K(ret));
           } else {
-            LOG_TRACE("encode extra_info val", KPHEX(buffer+orig_pos, pos-orig_pos));
+
           }
         }
       }
@@ -281,7 +281,7 @@ int ObProto20Utils::encode_extra_info(char *buffer, int64_t length, int64_t &pos
     }
   }
 
-  LOG_DEBUG("fill proto20 extra info succ", KPC(extra_info));
+
 
   return ret;
 }
@@ -349,7 +349,7 @@ int ObProto20Utils::encode_new_extra_info(char *buffer, int64_t length, int64_t 
     }
   }
 
-  LOG_DEBUG("fill proto20 extra info succ", KP(extra_info));
+
 
   return ret;
 }
@@ -532,7 +532,7 @@ inline int ObProto20Utils::fill_proto20_tailer(ObProtoEncodeParam &param) {
     } else {
       easy_buffer.write(proto20_context.tailer_len_);
       proto20_context.next_step_ = FILL_HEADER_STEP;
-      LOG_DEBUG("fill proto20 tailer succ", K(crc64));
+
     }
   }
   return ret;

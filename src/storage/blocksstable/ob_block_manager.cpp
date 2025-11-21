@@ -216,7 +216,7 @@ int ObBlockManager::start(const int64_t reserved_size, bool &need_format) {
   } else {
     need_format = opt.value_.value_bool;
     is_started_ = true;
-    LOG_INFO("start block manager", K(need_format));
+
     LOG_DBA_INFO_V2(OB_SERVER_BLOCK_MANAGER_START_SUCCESS,
                     DBA_STEP_INC_INFO(server_start),
                     "block manager start success.");
@@ -229,7 +229,7 @@ void ObBlockManager::stop() { timer_.stop(); }
 
 void ObBlockManager::wait() {
   timer_.wait();
-  LOG_INFO("the block manager finish wait");
+
 }
 
 void ObBlockManager::destroy() {
@@ -446,7 +446,7 @@ int ObBlockManager::write_super_block(const ObServerSuperBlock &super_block,
     LOG_WARN("write size not equal super block size", K(ret), K(buf_holder),
              K(write_size));
   } else {
-    LOG_INFO("succeed to write super block", K(ret), K(super_block));
+
   }
   return ret;
 }
@@ -644,7 +644,7 @@ int ObBlockManager::resize_file(const int64_t new_data_file_size,
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(ret), K(reserved_size));
   } else if (!is_mark_sweep_enabled()) {
-    LOG_INFO("mark and sweep is disabled, do not resize file at present");
+
   } else {
     SpinWLockGuard sweep_guard(sweep_lock_);
     const int64_t old_macro_block_cnt =
@@ -990,7 +990,7 @@ void ObBlockManager::mark_and_sweep()
     ret = OB_NOT_INIT;
     LOG_WARN("block manager not init", K(ret));
   } else if (!is_mark_sweep_enabled()) {
-    LOG_INFO("mark and sweep is disabled, do not mark and sweep this round");
+
   } else {
     if (OB_FAIL(mark_info.init(ObModIds::OB_STORAGE_FILE_BLOCK_REF, OB_SERVER_TENANT_ID))) {
       LOG_WARN("fail to init mark info, ", K(ret));
@@ -1018,7 +1018,7 @@ void ObBlockManager::mark_and_sweep()
       if (OB_FAIL(ret)) {
       } else if (OB_FAIL(mark_macro_blocks(mark_info, macro_id_set, tmp_status))) {
         if (OB_ALLOCATE_MEMORY_FAILED == ret) {
-          LOG_INFO("mark blocks meet memory issue, still countinue sweep to lease compaction space");
+
           ret = OB_SUCCESS;
         } else {
           LOG_WARN("fail to mark macro blocks", K(ret));
@@ -1070,7 +1070,7 @@ int ObBlockManager::mark_macro_blocks(
     LOG_WARN("unexpected error, omt is nullptr", K(ret), KP(omt));
   } else if (0 == mark_info.count()) {
     tmp_status.mark_finished_ = false;
-    LOG_INFO("no block alloc/free, no need to mark blocks", K(ret), K(mark_info.count()));
+
   } else if (OB_FAIL(mark_tmp_file_blocks(mark_info, macro_id_set, tmp_status))) {
     LOG_WARN("fail to mark tmp file blocks", K(ret));
   } else if (OB_FAIL(mark_server_meta_blocks(mark_info, macro_id_set, tmp_status))) {
@@ -1650,7 +1650,7 @@ void ObBlockManager::InspectBadBlockTask::runTimerTask() {
       last_check_time_ = ObTimeUtility::fast_current_time();
     }
   } else {
-    LOG_INFO("skip inspect bad block", K_(last_check_time), K_(last_macro_idx));
+
   }
 }
 
@@ -1873,7 +1873,7 @@ void ObBlockManager::InspectBadBlockTask::inspect_bad_block() {
 #ifdef ERRSIM
                  && (begin_time - block_info.access_time_) >
                         static_cast<int64_t>(10_s)) {
-        LOG_INFO("errsim bad block: start check macro block", K(block_info));
+
 #else
                  && (begin_time - block_info.access_time_) >
                         ACCESS_TIME_INTERVAL) {

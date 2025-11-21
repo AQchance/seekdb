@@ -94,7 +94,7 @@ int ObPlanCacheObject::set_params_info(const ParamStore &params)
         param_info.scale_ = data_type.get_scale();
         param_info.precision_ = data_type.get_precision();
       }
-      LOG_DEBUG("ext params info", K(data_type), K(param_info), K(params.at(i)));
+
     } else if (params.at(i).get_param_meta().is_ext() || params.at(i).is_collection_sql_type()) {
       param_info.scale_ = 0;
       uint64_t udt_id = params.at(i).get_accuracy().get_accuracy();
@@ -170,7 +170,7 @@ int ObPlanCacheObject::check_pre_calc_cons(const bool is_ignore_stmt,
       LOG_WARN("failed to eval pre calc expr frame info expect error", K(ret));
     }
   } else if (OB_FAIL(pre_calc_frame.eval(exec_ctx, datum_params))) {
-    LOG_TRACE("failed to eval pre calc expr frame info", K(ret));
+
     is_match = false;
     ret = OB_SUCCESS;
   } else {

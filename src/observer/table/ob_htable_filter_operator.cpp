@@ -107,7 +107,7 @@ void ObHTableColumnTracker::set_ttl(int32_t ttl_value)
     int64_t now = ObTimeUtility::current_time();
     now = now / 1000;  // us -> ms
     oldest_stamp_ = now - (ttl_value * 1000LL);
-    LOG_DEBUG("set ttl", K(ttl_value), K(now), K_(oldest_stamp));
+
     NG_TRACE_EXT(t, OB_ID(arg1), ttl_value, OB_ID(arg2), oldest_stamp_);
   } else {
     LOG_WARN_RET(OB_INVALID_ARGUMENT, "invalid ttl value", K(ttl_value));
@@ -118,7 +118,7 @@ void ObHTableColumnTracker::set_max_version(int32_t max_version)
 {
   if (max_version > 0) {
     max_versions_ = max_version;
-    LOG_DEBUG("set max_version", K(max_version));
+
     NG_TRACE_EXT(version, OB_ID(arg1), max_version);
   } else {
     LOG_WARN_RET(OB_INVALID_ARGUMENT, "invalid max version value", K(max_version));
@@ -390,7 +390,7 @@ int ObHTableWildcardColumnTracker::get_next_column_or_row(const ObHTableCell &ce
 
 void ObHTableWildcardColumnTracker::reset()
 {
-  LOG_DEBUG("reset qualifier");
+
   column_has_expired_ = false;
   current_qualifier_.reset();
 }
@@ -439,7 +439,7 @@ int ObHTableScanMatcher::pre_check(const ObHTableCell &cell, ObHTableMatchCode &
     // if row key is changed, then we know that we have moved over to the next row
     // WildcardColumnTracker will come to this branch
     match_code = ObHTableMatchCode::DONE;
-    LOG_DEBUG("row changed", K(match_code), K(cell));
+
   } else if (column_tracker_->done()) {
     match_code = ObHTableMatchCode::SEEK_NEXT_ROW;
   }
@@ -456,7 +456,7 @@ int ObHTableScanMatcher::pre_check(const ObHTableCell &cell, ObHTableMatchCode &
     // continue
     need_match_column = true;
   }
-  LOG_DEBUG("pre_check", K(ret), K(match_code), K(need_match_column));
+
   return ret;
 }
 
@@ -465,7 +465,7 @@ int ObHTableScanMatcher::match_column(const ObHTableCell &cell, ObHTableMatchCod
   int ret = OB_SUCCESS;
   int64_t timestamp = cell.get_timestamp();
   int cmp_tr = time_range_.compare(timestamp);
-  LOG_DEBUG("compare time range", K(timestamp), K(cmp_tr), K_(time_range));
+
   // STEP 0: Check if the timestamp is in the range
   // @note timestamp is negative and in the descending order!
   if (cmp_tr > 0) {
@@ -499,7 +499,7 @@ int ObHTableScanMatcher::match_column(const ObHTableCell &cell, ObHTableMatchCod
             } else {
               ObHTableMatchCode orig_code = match_code;
               match_code = merge_filter_return_code(cell, match_code, filter_rc);
-              LOG_DEBUG("filter cell", K(filter_rc), K(orig_code), K(match_code));
+
             }
           }
           break;
@@ -676,12 +676,12 @@ int ObHTableRowIterator::next_cell()
     if (OB_FAIL(try_record_expired_rowkey(curr_cell_))) {
       LOG_WARN("failed to record expired rowkey", K(ret));
     }
-    LOG_DEBUG("[yzfdebug] fetch next cell", K_(curr_cell));
+
   } else if (OB_ITER_END == ret) {
     has_more_cells_ = false;
     curr_cell_.set_ob_row(NULL);
     matcher_->clear_curr_row();
-    LOG_DEBUG("iterator end", K_(has_more_cells));
+
   }
   return ret;
 }
@@ -701,7 +701,7 @@ int ObHTableRowIterator::get_next_cell_hint()
       while (OB_SUCC(ret) && !enter_hint_key) {
         if (ObHTableUtils::compare_cell(curr_cell_, *hint_cell, false) >= 0) {
           enter_hint_key = true;
-          LOG_INFO("curr_cell is bigger than hint_cell", K(ret), K(curr_cell_), K(hint_cell));
+
         } else if (OB_FAIL(ObHTableUtils::create_last_cell_on_row_col(allocator_, curr_cell_, next_cell))) {
           LOG_WARN("failed to create last cell", K(ret));
         } else {
@@ -821,7 +821,7 @@ int ObHTableRowIterator::get_next_result_internal(ResultType*& result)
       } else if (filtered) {
         // filter out the current row and fetch the next row
         hfilter_->reset();
-        LOG_DEBUG("filter_row_key skip the row", K(ret));
+
         // loop = false;
         ret = seek_or_skip_to_next_row(curr_cell_);
       }
@@ -834,9 +834,9 @@ int ObHTableRowIterator::get_next_result_internal(ResultType*& result)
       LOG_WARN("failed to match cell", K(ret));
     } else {
       if (NULL == curr_cell_.get_ob_row()) {
-        LOG_DEBUG("matcher, curr_cell=NULL ", K(match_code));
+
       } else {
-        LOG_DEBUG("matcher", K_(curr_cell), K(match_code));
+
       }
       switch (match_code) {
         case ObHTableMatchCode::INCLUDE:
@@ -985,7 +985,7 @@ int ObHTableRowIterator::seek(ObHTableCell &key, int32_t &skipped_count)
     while (OB_SUCC(next_cell())) {
       cmp_ret = ObHTableUtils::compare_cell(curr_cell_, key, scan_order_);
       if (cmp_ret >= 0) {
-        LOG_DEBUG("seek to", K(key), K_(curr_cell));
+
         break;
       }
     }
@@ -1053,7 +1053,7 @@ int ObHTableRowIterator::seek_first_cell_on_hint(const ObNewRow *ob_row)
         if (OB_NOT_NULL(matcher_)) {
           matcher_->clear_curr_row();
         }
-        LOG_DEBUG("iterator end", K_(has_more_cells));
+
       }
     } else {
       curr_cell_.set_ob_row(first_cell_on_row);
@@ -1248,7 +1248,7 @@ int ObHTableReversedRowIterator::init()
     if (OB_FAIL(child_op_->get_next_row(tmp_next_row))) {
       if (OB_ITER_END == ret) {
         has_more_cells_ = false;
-        LOG_DEBUG("no data in table", K(ret));
+
       } else {
         LOG_WARN("failed to rescan and get next row", K(ret));
       }
@@ -1352,7 +1352,7 @@ int ObHTableReversedRowIterator::seek_or_skip_to_next_row_inner(const ObString &
       if (OB_ITER_END != ret) {
         LOG_WARN("failed to rescan and get next row", K(ret));
       } else {
-        LOG_DEBUG("reverse scan has no more cell", K(ret), K(has_more_cells_));
+
         has_more_cells_ = false;
       }
     } else {
@@ -1510,7 +1510,7 @@ int ObHTableReversedRowIterator::create_forward_child_op()
   forward_tb_ctx_.set_read_latest(reversed_tb_ctx.is_read_latest());
 
   if (forward_tb_ctx_.is_init()) {
-    LOG_INFO("forward_tb_ctx_ has been inited", K_(forward_tb_ctx));
+
   } else if (OB_FAIL(forward_tb_ctx_.init_common(*const_cast<ObTableApiCredential *>(reversed_tb_ctx.get_credential()),
                  reversed_tb_ctx.get_tablet_id(),
                  reversed_tb_ctx.get_timeout_ts()))) {
@@ -1643,7 +1643,7 @@ int ObHTableFilterOperator::get_next_result_internal(ResultType *&next_result)
   }
   while (OB_SUCC(ret) && row_iterator_->has_more_result() && !reach_caching_limit(num_of_row) &&
          OB_SUCC(row_iterator_->get_next_result(htable_row))) {
-    LOG_DEBUG("got one row", "cells_count", htable_row->get_row_count());
+
     bool is_empty_row = (htable_row->get_row_count() == 0);
     if (is_empty_row) {
       if (nullptr != filter_) {
@@ -1661,7 +1661,7 @@ int ObHTableFilterOperator::get_next_result_internal(ResultType *&next_result)
         if (filter_->filter_row_key(first_cell_entity)) {
           // filter out the current row and fetch the next row
           filter_->reset();
-          LOG_DEBUG("skip the row", K(ret));
+
           continue;
         }
       }
@@ -1675,7 +1675,7 @@ int ObHTableFilterOperator::get_next_result_internal(ResultType *&next_result)
       if (!is_empty_row) {
         // last chance to drop entire row based on the sequence of filter calls
         if (filter_->filter_row()) {
-          LOG_DEBUG("filter out the row");
+
           exclude = true;
         }
       }
@@ -1730,7 +1730,7 @@ int ObHTableFilterOperator::get_next_result_internal(ResultType *&next_result)
     ret = OB_SUCCESS;
   }
 
-  LOG_DEBUG("get_next_result", K(ret), "row_count", next_result->get_row_count());
+
   return ret;
 }
 
@@ -1797,7 +1797,7 @@ int ObHTableFilterOperator::init(common::ObIAllocator *allocator)
   if (OB_SUCC(ret)) {
     row_iterator_->set_scanner_context(&scanner_context_);
     is_inited_ = true;
-    LOG_DEBUG("obHTableFilterOperator init success", K(ret));
+
   }
   return ret;
 }

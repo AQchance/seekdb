@@ -98,7 +98,7 @@ int ObImportTableArg::add_database(const ObImportDatabaseItem &item)
   } else if (OB_FAIL(database_array_.add_item(item))) {
     LOG_WARN("failed to add table", K(ret), K(item));
   } else {
-    LOG_INFO("add one database", K(item));
+
   }
   return ret;
 }
@@ -135,7 +135,7 @@ int ObImportTableArg::add_table(const ObImportTableItem &item)
   } else if (OB_FAIL(table_array_.add_item(item))) {
     LOG_WARN("failed to add table", K(ret), K(item));
   } else {
-    LOG_INFO("add one table", K(item));
+
   }
   return ret;
 }

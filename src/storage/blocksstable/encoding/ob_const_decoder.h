@@ -179,14 +179,14 @@ OB_INLINE int ObConstDecoder::init(
   int ret = common::OB_SUCCESS;
   if (OB_UNLIKELY(is_inited())) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init twice", K(ret));
+
   } else {
     meta_data += column_header.offset_;
     meta_header_ = reinterpret_cast<const ObConstMetaHeader *>(meta_data);
     const char *dict_data = meta_data + meta_header_->offset_;
     if (meta_header_->count_ > 0) {
       if (OB_FAIL(dict_decoder_.init(column_header.get_store_obj_type(), dict_data))) {
-        STORAGE_LOG(WARN, "failed to init dict decoder", K(ret), KP(dict_data));
+
         meta_header_ = NULL;
       }
     }

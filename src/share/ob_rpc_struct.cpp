@@ -7670,7 +7670,7 @@ int ObBatchCreateTabletArg::assign(const ObBatchCreateTabletArg &arg)
   } else if (OB_FAIL(tablet_extra_infos_.assign(arg.tablet_extra_infos_))) {
     LOG_WARN("failed to assign tablet extra infos", K(ret), K(arg));
   } else if (OB_FAIL(create_tablet_schemas_.reserve(create_tablet_schemas.count()))) {
-    STORAGE_LOG(WARN, "Fail to reserve schema array", K(ret), K(create_tablet_schemas.count()));
+
   } else {
     for (int64_t i = 0; OB_SUCC(ret) && i < create_tablet_schemas.count(); ++i) {
       if (OB_ISNULL(create_tablet_schemas[i])) {
@@ -7685,10 +7685,10 @@ int ObBatchCreateTabletArg::assign(const ObBatchCreateTabletArg &arg)
         } else if (FALSE_IT(create_tablet_schema = new (create_tablet_schema_ptr)ObCreateTabletSchema())) {
         } else if (OB_FAIL(create_tablet_schema->init(allocator_, *create_tablet_schemas[i]))) {
           create_tablet_schema->~ObCreateTabletSchema();
-          STORAGE_LOG(WARN,"Fail to init create_tablet_schema", K(ret));
+
         } else if (OB_FAIL(create_tablet_schemas_.push_back(create_tablet_schema))) {
           create_tablet_schema->~ObCreateTabletSchema();
-          STORAGE_LOG(WARN, "Fail to add schema", K(ret));
+
         }
       }
     }
@@ -7768,14 +7768,14 @@ int ObBatchCreateTabletArg::serialize_for_create_tablet_schemas(char *buf,
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(serialization::encode_vi64(buf, data_len, pos, create_tablet_schemas_.count()))) {
-    STORAGE_LOG(WARN, "failed to encode schema count", K(ret));
+
   }
   for (int64_t i = 0; OB_SUCC(ret) && i < create_tablet_schemas_.count(); ++i) {
     if (OB_ISNULL(create_tablet_schemas_.at(i))) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("null tx service ptr", KR(ret), K(i), KPC(this));
     } else if (OB_FAIL(create_tablet_schemas_.at(i)->serialize(buf, data_len, pos))) {
-      STORAGE_LOG(WARN, "failed to serialize schema", K(ret));
+
     }
   }
   return ret;
@@ -7832,18 +7832,18 @@ int ObBatchCreateTabletArg::deserialize_create_tablet_schemas(const char *buf,
   int64_t count = 0;
   if (OB_ISNULL(buf) || OB_UNLIKELY(data_len <= 0) || OB_UNLIKELY(pos > data_len)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(buf), K(data_len), K(pos), K(ret));
+
   } else if (pos == data_len) {
     //do nothing
   } else if (OB_FAIL(serialization::decode_vi64(buf, data_len, pos, &count))) {
-    STORAGE_LOG(WARN, "failed to decode schema count", K(ret));
+
   } else if (count < 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "count invalid", KR(ret), K(buf), K(data_len), K(pos), K(count));
+
   } else if (count == 0) {
-    STORAGE_LOG(INFO, "upgrade, count is 0", KR(ret), K(buf), K(data_len), K(pos), K(count));
+
   } else if (OB_FAIL(create_tablet_schemas_.reserve(count))) {
-    STORAGE_LOG(WARN, "failed to reserve schema array", K(ret), K(count), K(buf), K(data_len), K(pos));
+
   } else {
     for (int64_t i = 0; OB_SUCC(ret) && i < count; ++i) {
       ObCreateTabletSchema *create_tablet_schema = NULL;
@@ -7854,10 +7854,10 @@ int ObBatchCreateTabletArg::deserialize_create_tablet_schemas(const char *buf,
       } else if (FALSE_IT(create_tablet_schema = new (create_tablet_schema_ptr)ObCreateTabletSchema())) {
       } else if (OB_FAIL(create_tablet_schema->deserialize(allocator_, buf, data_len, pos))) {
         create_tablet_schema->~ObCreateTabletSchema();
-        STORAGE_LOG(WARN,"failed to deserialize schema", K(ret), K(i), K(count), K(buf), K(data_len), K(pos));
+
       } else if (OB_FAIL(create_tablet_schemas_.push_back(create_tablet_schema))) {
         create_tablet_schema->~ObCreateTabletSchema();
-        STORAGE_LOG(WARN, "failed to add schema", K(ret));
+
       }
     }
     if (OB_FAIL(ret)) {
@@ -8623,7 +8623,7 @@ OB_DEF_DESERIALIZE(ObRegisterTxDataArg)
       LOG_WARN("acquire tx by deserialize fail", K(data_len), K(pos), KR(ret));
     } else {
       LST_DO_CODE(OB_UNIS_DECODE, ls_id_, type_, buf_, request_id_, register_flag_, seq_no_);
-      LOG_INFO("deserialize txDesc from session", KPC_(tx_desc), KPC(this));
+
     }
   }
   return ret;
@@ -8944,7 +8944,7 @@ int ObArbGCNotifyArg::init(const arbserver::GCMsgEpoch &epoch,
     LOG_WARN("failed to assign ls_ids to ls_ids_", K(ret), KPC(this), K(ls_ids));
   } else {
     epoch_ = epoch;
-    LOG_INFO("init ObArbGCNotifyArg success", KPC(this));
+
   }
   return ret;
 }

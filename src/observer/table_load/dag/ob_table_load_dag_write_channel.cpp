@@ -83,7 +83,7 @@ int ObTableLoadDagWriteChannel::create_writer(ObTableLoadStoreTrans *trans,
       LOG_WARN("fail to init writer", KR(ret));
     } else {
       writer = chunk_writer;
-      LOG_INFO("create writer", KR(ret), KP(trans), K(session_id), KP(writer));
+
     }
     if (OB_FAIL(ret)) {
       OB_DELETEx(ObTableLoadDagChunkWriter, &allocator, chunk_writer);
@@ -163,7 +163,7 @@ int ObTableLoadDagChunkWriter::write(const ObTableLoadTabletObjRowArray &row_arr
       const ObTableLoadTabletObjRow &obj_row = row_array.at(i);
       if (OB_FAIL(store_writer_->cast_row(session_id_, obj_row.obj_row_, datum_row))) {
         ObTableLoadErrorRowHandler *error_row_handler = dag_->store_ctx_->error_row_handler_;
-        LOG_INFO("write row error", K(ret), K(obj_row));
+
         if (OB_FAIL(error_row_handler->handle_error_row(ret))) {
           LOG_WARN("fail to handle error row", K(ret), K(obj_row));
         } else {

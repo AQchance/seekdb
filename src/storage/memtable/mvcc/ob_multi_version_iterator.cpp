@@ -268,7 +268,7 @@ int ObMultiVersionValueIterator::get_trans_status(const transaction::ObTransID &
                                                     merge_scn_,
                                                     state,
                                                     trans_version))) {
-    STORAGE_LOG(WARN, "check_with_tx_data fail.", K(trans_id));
+
   }
 
   return ret;

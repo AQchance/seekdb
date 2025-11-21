@@ -267,7 +267,7 @@ int ObTextRetrievalTokenIter::do_token_cnt_agg(const ObDocIdExt &doc_id)
     } else {
       token_count = fwd_idx_agg_expr_->locate_expr_datum(*eval_ctx_).get_int();
     }
-    LOG_DEBUG("retrieval iterator get token cnt for doc", K(ret), K(doc_id), K(token_count));
+
   }
   return ret;
 }
@@ -608,14 +608,14 @@ int ObTextRetrievalTokenIter::estimate_token_doc_cnt()
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get unexpected null", K(ret), K(access_service));
   } else if (OB_FAIL(table_scan_range.init(*inv_idx_agg_param_, batch, allocator))) {
-    STORAGE_LOG(WARN, "Failed to init table scan range", K(ret), K(batch));
+
   } else if (OB_FAIL(access_service->estimate_row_count(est_param,
                                                         table_scan_range,
                                                         timeout_us,
                                                         est_records,
                                                         logical_row_cnt,
                                                         physical_row_cnt))) {
-    LOG_TRACE("OPT:[STORAGE EST FAILED, USE STAT EST]", "storage_ret", ret);
+
   } else {
     token_doc_cnt_ = logical_row_cnt;
     token_doc_cnt_calculated_ = true;
@@ -975,7 +975,7 @@ int ObTextRetrievalBlockMaxIter::advance_to(const ObDatum &id_datum)
 int ObTextRetrievalBlockMaxIter::advance_shallow(const ObDatum &id_datum, const bool inclusive)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("[Sparse Retrieval] advance shallow", K(ret), K(id_datum), K(inclusive));
+
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
     LOG_WARN("not initialized", K(ret));

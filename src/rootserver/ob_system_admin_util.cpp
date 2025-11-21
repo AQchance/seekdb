@@ -37,7 +37,7 @@ namespace rootserver
 
 int ObAdminSwitchReplicaRole::execute(const ObAdminSwitchReplicaRoleArg &arg)
 {
-  LOG_INFO("execute switch replica role request", K(arg));
+
   ObArenaAllocator allocator(ObModIds::OB_RS_PARTITION_TABLE_TEMP);
   int ret = OB_SUCCESS;
   const ObLSID ls_id(arg.ls_id_);
@@ -105,14 +105,14 @@ int ObAdminSwitchReplicaRole::execute(const ObAdminSwitchReplicaRoleArg &arg)
       if (OB_FAIL(row.change_manual_leader(arg.server_))) {
         LOG_WARN("fail to change manual leader in __all_ls_election_reference_info", K(ret), K(arg));
       } else {
-        LOG_INFO("successfully to change manual leader in __all_ls_election_reference_info", K(ret), K(arg));
+
       }
     } else if (switch_leader_arg.role_ == ObRole::FOLLOWER) {
       logservice::coordinator::LsElectionReferenceInfoRow row(tenant_id, share::ObLSID(arg.ls_id_));
       if (OB_FAIL(row.add_server_to_blacklist(arg.server_, logservice::coordinator::InsertElectionBlacklistReason::SWITCH_REPLICA))) {
         LOG_WARN("fail to add remove member info in __all_ls_election_reference_info", K(ret), K(arg));
       } else {
-        LOG_INFO("successfully to add remove member info in __all_ls_election_reference_info", K(ret), K(arg));
+
       }
     } else if (switch_leader_arg.role_ == ObRole::INVALID_ROLE) {
       logservice::coordinator::LsElectionReferenceInfoRow row(tenant_id, share::ObLSID(arg.ls_id_));
@@ -126,7 +126,7 @@ int ObAdminSwitchReplicaRole::execute(const ObAdminSwitchReplicaRoleArg &arg)
         }
       }
       if (OB_SUCC(ret)) {
-        LOG_INFO("successfully to reset server status in __all_ls_election_reference_info", K(ret), K(arg));
+
       }
     }
     return ret;
@@ -165,7 +165,7 @@ int ObAdminSwitchReplicaRole::execute(const ObAdminSwitchReplicaRoleArg &arg)
       LOG_WARN("failed to notify switch ls leader", KR(ret), K(ls_info));
     }
   }
-  LOG_INFO("switch leader done", KR(ret), K(arg), K(tenant_id), K(ls_info));
+
   return ret;
 }
 
@@ -284,7 +284,7 @@ int ObAdminCallServer::call_all(const ObServerZoneArg &arg)
 
 int ObAdminReportReplica::execute(const obrpc::ObAdminReportReplicaArg &arg)
 {
-  LOG_INFO("execute report request", K(arg));
+
   int ret = OB_SUCCESS;
   if (!ctx_.is_inited()) {
     ret = OB_NOT_INIT;
@@ -315,7 +315,7 @@ int ObAdminReportReplica::call_server(const ObAddr &server)
 
 int ObAdminRecycleReplica::execute(const obrpc::ObAdminRecycleReplicaArg &arg)
 {
-  LOG_INFO("execute recycle request", K(arg));
+
   int ret = OB_SUCCESS;
   if (!ctx_.is_inited()) {
     ret = OB_NOT_INIT;
@@ -346,7 +346,7 @@ int ObAdminRecycleReplica::call_server(const ObAddr &server)
 
 int ObAdminClearLocationCache::execute(const obrpc::ObAdminClearLocationCacheArg &arg)
 {
-  LOG_INFO("execute clear location cache request", K(arg));
+
   int ret = OB_SUCCESS;
   if (!ctx_.is_inited()) {
     ret = OB_NOT_INIT;
@@ -377,7 +377,7 @@ int ObAdminClearLocationCache::call_server(const ObAddr &server)
 
 int ObAdminReloadUnit::execute()
 {
-  LOG_INFO("execute reload unit request");
+
   int ret = OB_SUCCESS;
   if (!ctx_.is_inited()) {
     ret = OB_NOT_INIT;
@@ -385,13 +385,13 @@ int ObAdminReloadUnit::execute()
   } else if (OB_FAIL(ctx_.unit_mgr_->load())) {
     LOG_WARN("unit manager load failed", KR(ret));
   }
-  LOG_INFO("finish execute reload unit request", KR(ret));
+
   return ret;
 }
 
 int ObAdminReloadServer::execute()
 {
-  LOG_INFO("execute reload server request");
+
   int ret = OB_SUCCESS;
   if (!ctx_.is_inited()) {
     ret = OB_NOT_INIT;
@@ -407,7 +407,7 @@ int ObAdminReloadServer::execute()
 
 int ObAdminReloadZone::execute()
 {
-  LOG_INFO("execute reload zone request");
+
   int ret = OB_SUCCESS;
   if (!ctx_.is_inited()) {
     ret = OB_NOT_INIT;
@@ -420,7 +420,7 @@ int ObAdminReloadZone::execute()
 
 int ObAdminClearMergeError::execute(const obrpc::ObAdminMergeArg &arg)
 {
-  LOG_INFO("execute clear merge error request", K(arg));
+
   int ret = OB_SUCCESS;
   if (!ctx_.is_inited()) {
     ret = OB_NOT_INIT;
@@ -460,7 +460,7 @@ int ObAdminClearMergeError::execute(const obrpc::ObAdminMergeArg &arg)
 
 int ObAdminZoneFastRecovery::execute(const obrpc::ObAdminRecoveryArg &arg)
 {
-  LOG_INFO("execute zone fast recovery admin request", K(arg));
+
   int ret = OB_SUCCESS;
   if (!ctx_.is_inited()) {
     ret = OB_NOT_INIT;
@@ -493,7 +493,7 @@ int ObAdminZoneFastRecovery::execute(const obrpc::ObAdminRecoveryArg &arg)
 
 int ObAdminMerge::execute(const obrpc::ObAdminMergeArg &arg)
 {
-  LOG_INFO("execute merge admin request", K(arg));
+
   int ret = OB_SUCCESS;
   if (!ctx_.is_inited()) {
     ret = OB_NOT_INIT;
@@ -584,7 +584,7 @@ int ObAdminClearRoottable::execute(const obrpc::ObAdminClearRoottableArg &arg)
 //FIXME: flush schemas of all tenants
 int ObAdminRefreshSchema::execute(const obrpc::ObAdminRefreshSchemaArg &arg)
 {
-  LOG_INFO("execute refresh schema", K(arg));
+
   int ret = OB_SUCCESS;
   if (!ctx_.is_inited()) {
     ret = OB_NOT_INIT;
@@ -653,7 +653,7 @@ int ObAdminRefreshSchema::call_server(const ObAddr &server)
 
 int ObAdminRefreshMemStat::execute(const ObAdminRefreshMemStatArg &arg)
 {
-  LOG_INFO("execute refresh memory stat");
+
   int ret = OB_SUCCESS;
   if (!ctx_.is_inited()) {
     ret = OB_NOT_INIT;
@@ -681,7 +681,7 @@ int ObAdminRefreshMemStat::call_server(const ObAddr &server)
 
 int ObAdminWashMemFragmentation::execute(const ObAdminWashMemFragmentationArg &arg)
 {
-  LOG_INFO("execute sync wash fragment");
+
   int ret = OB_SUCCESS;
   if (!ctx_.is_inited()) {
     ret = OB_NOT_INIT;
@@ -944,7 +944,7 @@ int ObAdminSetConfig::update_config(obrpc::ObAdminSetConfigArg &arg, int64_t new
       if (OB_FAIL(ret)) {
       } else {
         if (OB_UNLIKELY(ERRSIM_UPDATE_MIN_CONFIG_VERSION_ERROR)) {
-          LOG_INFO("ERRSIM here, new config version is setted to 0");
+
           new_version = 1;
         } else {
           new_version = std::max(new_version + 1, ObTimeUtility::current_time());
@@ -1075,7 +1075,7 @@ int ObAdminSetConfig::update_sys_config_(
   } else if (OB_FAIL(GCTX.config_mgr_->got_version(new_version))) {
     LOG_WARN("config mgr got version failed", KR(ret), K(new_version));
   } else {
-    LOG_INFO("got new sys config version", K(new_version), K(item));
+
   }
   // try broadcast sys config version is changed
   if (OB_FAIL(ret)) {
@@ -1083,7 +1083,7 @@ int ObAdminSetConfig::update_sys_config_(
     LOG_WARN("fail to construct arg and broadcast global config version",
              KR(ret), K(new_version));
   } else {
-    LOG_INFO("success to broadcast global config version", KR(ret), K(new_version));
+
   }
   return ret;
 }
@@ -1223,7 +1223,7 @@ int ObAdminSetConfig::construct_arg_and_broadcast_global_config_version_(
 int ObAdminSetConfig::broadcast_config_version_(
     const obrpc::ObBroadcastConfigVersionArg &broadcast_arg)
 {
-  LOG_INFO("try to broadcast config version", K(broadcast_arg));
+
   int ret = OB_SUCCESS;
   ObZone empty_zone; // to get all server
   common::ObArray<common::ObAddr> server_list;
@@ -1249,7 +1249,7 @@ int ObAdminSetConfig::broadcast_config_version_(
           LOG_WARN("fail to add failed infos", KR(tmp_ret), K(server_list.at(index)), K(index));
         }
       } else {
-        LOG_INFO("success to broadcast config version", K(server_list.at(index)), K(broadcast_arg));
+
       }
     }
   }
@@ -1354,7 +1354,7 @@ int ObAdminSetConfig::inner_update_tenant_config_for_compatible_(
 
 int ObAdminSetConfig::execute(obrpc::ObAdminSetConfigArg &arg)
 {
-  LOG_INFO("execute set config request", K(arg));
+
   DEBUG_SYNC(BEFORE_EXECUTE_ADMIN_SET_CONFIG);
   int ret = OB_SUCCESS;
   int64_t config_version = 0;
@@ -1382,7 +1382,7 @@ int ObAdminSetConfig::execute(obrpc::ObAdminSetConfigArg &arg)
       } else if (OB_FAIL(ctx_.root_service_->set_config_post_hook(arg))) {
         LOG_WARN("fail to set config callback", KR(ret));
       } else {
-        LOG_INFO("set config succ", K(arg));
+
       }
     }
   }
@@ -1392,7 +1392,7 @@ int ObAdminSetConfig::execute(obrpc::ObAdminSetConfigArg &arg)
 int ObAdminUpgradeVirtualSchema::execute()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("execute upgrade virtual schema request");
+
   int64_t upgrade_cnt = 0;
   ObSchemaGetterGuard schema_guard;
   ObArray<uint64_t> tenant_ids;
@@ -1541,11 +1541,11 @@ int ObAdminUpgradeVirtualSchema::execute(
       if (OB_SCHEMA_ERROR != ret) {
         LOG_WARN("check table schema failed", KR(ret), K(tenant_id), K(*hard_code_table));
       } else {
-        LOG_INFO("table schema need upgrade", K(tenant_id), K(*hard_code_table));
+
         if (OB_FAIL(upgrade_(tenant_id, *hard_code_table))) {
           LOG_WARN("upgrade failed", KR(ret), K(tenant_id), K(*hard_code_table));
         } else {
-          LOG_INFO("update table schema success", K(tenant_id), K(*hard_code_table));
+
           upgrade_cnt++;
         }
       }
@@ -1802,7 +1802,7 @@ int ObAdminRollingUpgradeCmd::execute(const obrpc::ObAdminRollingUpgradeArg &arg
                                "ori_cluster_version", ori_min_server_version,
                                "build_version", build_version.ptr());
       }
-      LOG_INFO("change upgrade parameters", KR(ret), "_upgrade_stage", arg.stage_);
+
     }
   }
   return ret;
@@ -1895,7 +1895,7 @@ int ObAdminCheckPartitionTable::call_server(const ObAddr &server)
 int ObAdminCreateInnerSchema::execute(const obrpc::ObRunJobArg &arg)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("execute create inner role request", KR(ret));
+
   if (!ctx_.is_inited()) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", KR(ret));
@@ -1917,7 +1917,7 @@ int ObAdminCreateInnerSchema::execute(const obrpc::ObRunJobArg &arg)
 int ObAdminIOCalibration::execute(const obrpc::ObRunJobArg &arg)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("execute io calibration quest", KR(ret));
+
   if (!ctx_.is_inited()) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", KR(ret));
@@ -2017,7 +2017,7 @@ int ObAdminRefreshIOCalibration::execute(const obrpc::ObAdminRefreshIOCalibratio
       }
     }
   }
-  LOG_INFO("admin refresh io calibration", K(ret), K(arg), K(server_list));
+
   return ret;
 }
 
@@ -2031,7 +2031,7 @@ int ObAdminRefreshIOCalibration::call_server(const common::ObAddr &server)
 int ObAdminRootInspection::execute(const obrpc::ObRunJobArg &arg)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("execute root inspection request", K(arg));
+
   ObAddr rs_addr;
   if (!ctx_.is_inited()) {
     ret = OB_NOT_INIT;
@@ -2071,7 +2071,7 @@ int ObAdminUpgradeStorageFormatVersionExecutor::execute(const obrpc::ObRunJobArg
 {
   int ret = OB_SUCCESS;
   ObInnerJob job = INVALID_INNER_JOB;
-  LOG_INFO("execute upgrade storage format version request", K(arg));
+
   if (OB_UNLIKELY(!ctx_.is_inited())) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("ObAdminUpgradeStorageFormatVersionExecutor has not been inited", KR(ret));
@@ -2136,7 +2136,7 @@ int ObAdminFlushCache::execute(const obrpc::ObAdminFlushCacheArg &arg)
         }
         for (int64_t j = 0; OB_SUCC(ret) && j < server_list.count(); ++j) {
           fc_arg.tenant_id_ = arg.tenant_ids_.at(i);
-          LOG_INFO("flush server cache", K(fc_arg), K(server_list.at(j)));
+
           if (OB_FAIL(call_server(server_list.at(j), fc_arg))) {
             LOG_WARN("fail to call tenant server",
                      "tenant_id", arg.tenant_ids_.at(i),
@@ -2156,7 +2156,7 @@ int ObAdminFlushCache::execute(const obrpc::ObAdminFlushCacheArg &arg)
       fc_arg.cache_type_ = arg.cache_type_;
       fc_arg.ns_type_ = arg.ns_type_;
       for (int64_t j = 0; OB_SUCC(ret) && j < server_list.count(); ++j) {
-        LOG_INFO("flush server cache", K(fc_arg), K(server_list.at(j)));
+
         if (OB_FAIL(call_server(server_list.at(j), fc_arg))) {
           LOG_WARN("fail to call tenant server",
                    "server addr", server_list.at(j));
@@ -2220,7 +2220,7 @@ int ObAdminFlushCache::call_server(const common::ObAddr &server, const obrpc::Ob
 
 int ObAdminSetTP::execute(const obrpc::ObAdminSetTPArg &arg)
 {
-  LOG_INFO("start execute set_tp request", K(arg));
+
   int ret = OB_SUCCESS;
   if (!ctx_.is_inited()) {
     ret = OB_NOT_INIT;
@@ -2231,7 +2231,7 @@ int ObAdminSetTP::execute(const obrpc::ObAdminSetTPArg &arg)
   } else if (OB_FAIL(call_all(arg))) {
     LOG_WARN("execute report replica failed", KR(ret), K(arg));
   }
-  LOG_INFO("end execute set_tp request", K(arg));
+
   return ret;
 }
 

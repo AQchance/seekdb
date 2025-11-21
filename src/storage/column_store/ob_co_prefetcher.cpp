@@ -44,7 +44,7 @@ void ObCOPrefetcher::reuse()
 int ObCOPrefetcher::refresh_blockscan_checker(const int64_t start_micro_idx, const ObDatumRowkey &border_rowkey)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("[COLUMNSTORE] COPrefetcher refresh_blockscan_checker [start]", K(border_rowkey), K_(block_scan_state), K(start_micro_idx));
+
   if (OB_UNLIKELY(!border_rowkey.is_valid() || 0 > start_micro_idx)) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("Invalid argument to check range block scan", K(ret), K(border_rowkey), K(start_micro_idx));
@@ -68,7 +68,7 @@ int ObCOPrefetcher::refresh_blockscan_checker(const int64_t start_micro_idx, con
 int ObCOPrefetcher::refresh_blockscan_checker_for_column_store(const int64_t start_micro_idx, const ObDatumRowkey &border_rowkey)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("[COLUMNSTORE] COPrefetcher refresh_blockscan_checker [start]", K(border_rowkey), K_(block_scan_state), K(start_micro_idx));
+
   if (OB_UNLIKELY(!border_rowkey.is_valid() || 0 >= start_micro_idx)) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("Invalid argument to check range block scan", K(ret), K(border_rowkey), K(start_micro_idx));
@@ -93,7 +93,7 @@ int ObCOPrefetcher::refresh_blockscan_checker_for_column_store(const int64_t sta
       } else {
         // Current range is the last range.
       }
-      LOG_DEBUG("ObCOPrefetcher::refresh_blockscan_checker", K_(block_scan_state));
+
     } else if (OB_FAIL(refresh_blockscan_checker_internal(start_micro_idx, border_rowkey))) {
       LOG_WARN("Failed to refresh blockscan checker", K(ret), K(border_rowkey), K(start_micro_idx));
     }
@@ -352,7 +352,7 @@ int ObCOPrefetcher::skip_prefetch(
 {
   int ret = OB_SUCCESS;
   int16_t level = caculate_level(co_index_tree_level_handle);
-  LOG_DEBUG("Skip prefetch", K(get_cur_level_of_block_scan()), K(level));
+
   // Advance to border in current level.
   if (is_blockscan_in_target_level(level)
        && OB_FAIL(advance_index_tree_level(co_index_tree_level_handle))) {
@@ -367,7 +367,7 @@ int ObCOPrefetcher::try_jumping_to_next_skip_level(
 {
   int ret = OB_SUCCESS;
   int16_t level = caculate_level(co_index_tree_level_handle);
-  LOG_DEBUG("Skip prefetch", K(get_cur_level_of_block_scan()), K(level));
+
   if (is_blockscan_in_target_level(level)) {
     if (OB_UNLIKELY(is_out_of_range)) {
       ret = OB_ERR_UNEXPECTED;

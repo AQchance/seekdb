@@ -230,7 +230,7 @@ int ObTmpFileEvictionManager::pop_file_from_list_(const bool &is_meta, ObSNTmpFi
   ObSpinLockGuard guard(lock);
   if (eviction_list.is_empty()) {
     ret = OB_EMPTY_RESULT;
-    LOG_DEBUG("eviction_list is empty", K(is_meta));
+
   } else if (OB_ISNULL(file = &eviction_list.remove_first()->file_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("file is null", KR(ret));

@@ -154,10 +154,10 @@ int ObAllMicroBlockRangeIterator::deep_copy_rowkey(const ObDatumRowkey &src_key,
 
   if (OB_ISNULL(allocator_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObIndexBlockMacroIterator is not inited", K(ret), KP(allocator_));
+
   } else if (OB_UNLIKELY(!src_key.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to deep copy datum rowkey", K(ret), K(src_key));
+
   } else {
     if (key_buf != nullptr) {
       allocator_->free(key_buf);
@@ -166,9 +166,9 @@ int ObAllMicroBlockRangeIterator::deep_copy_rowkey(const ObDatumRowkey &src_key,
     const int64_t copy_size = src_key.get_deep_copy_size();
     if (OB_ISNULL(key_buf = reinterpret_cast<char *>(allocator_->alloc(copy_size)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "Failed to alloc memory", K(ret), K(copy_size));
+
     } else if (OB_FAIL(src_key.deep_copy(dest_key, key_buf, copy_size))) {
-      STORAGE_LOG(WARN, "Failed to deep copy rowkey", K(ret), K(src_key), K(copy_size));
+
       allocator_->free(key_buf);
       key_buf = nullptr;
     }

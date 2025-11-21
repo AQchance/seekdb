@@ -126,7 +126,7 @@ int ObLockTableResolver::resolve_mysql_lock_node_(const ParseNode &lock_node)
       if (OB_FAIL(static_cast<ObLockTableStmt *>(stmt_)->add_mysql_lock_node(node))) {
         LOG_WARN("add mysql lock node failed", K(ret), K(node));
       } else {
-        LOG_DEBUG("succ to add lock table item", K(node));
+
       }
     }
   }
@@ -199,7 +199,7 @@ int ObLockTableResolver::resolve_oracle_table_list_(const ParseNode &table_list)
       ret = OB_WRONG_TABLE_NAME;
       LOG_WARN("invalid table name", K(ret));
     } else {
-      LOG_DEBUG("succ to add lock table item", KPC(table_item));
+
     }
   }
   return ret;

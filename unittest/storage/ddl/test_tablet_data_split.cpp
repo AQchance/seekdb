@@ -200,7 +200,7 @@ int TestDataSplit::prepare_mock_finish_arg(obrpc::ObTabletSplitArg &arg)
 TEST_F(TestDataSplit, test_single_replica_request_arg_serialize)
 {
   int ret = OB_SUCCESS;
-  STORAGE_LOG(INFO, "TestDataSplit::ObDDLBuildSingleReplicaRequestArg");
+
   int64_t pos = 0;
   int64_t write_pos = 0;
   const int64_t buf_len = 1 * 1024 * 1024;
@@ -252,7 +252,7 @@ TEST_F(TestDataSplit, test_single_replica_request_arg_serialize)
 TEST_F(TestDataSplit, test_split_finish_arg_serialize)
 {
   int ret = OB_SUCCESS;
-  STORAGE_LOG(INFO, "TestDataSplit::test_split_finish_arg_serialize");
+
   int64_t pos = 0;
   int64_t write_pos = 0;
   const int64_t buf_len = 1 * 1024 * 1024;
@@ -290,7 +290,7 @@ TEST_F(TestDataSplit, test_split_finish_arg_serialize)
 TEST_F(TestDataSplit, test_convert_rowkey_to_range)
 {
   int ret = OB_SUCCESS;
-  STORAGE_LOG(INFO, "TestDataSplit::test_convert_rowkey_to_range");
+
   ObStorageDatum cmp_datum;
   cmp_datum.set_string("aaaaa");
   ObArray<ObDatumRange> datum_ranges_array;

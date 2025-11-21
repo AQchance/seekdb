@@ -227,9 +227,9 @@ int ObTTLUtil::insert_ttl_task(uint64_t tenant_id,
     LOG_WARN("fail to execute sql", K(ret), K(sql));
   } else if (affect_rows != 1) {
     ret = OB_ERR_UNEXPECTED;
-    LOG_INFO("execute sql, affect rows != 1", K(ret), K(sql));
+
   } else {
-    LOG_INFO("success to execute sql", K(ret), K(sql));
+
   }
 
   return ret;
@@ -295,9 +295,9 @@ int ObTTLUtil::update_ttl_task(uint64_t tenant_id,
     }
   } else if (affect_rows != 1) {
     ret = OB_ERR_UNEXPECTED;
-    LOG_INFO("execute sql, affect rows != 1", K(ret), K(sql));
+
   } else {
-    LOG_INFO("success to execute sql", K(ret), K(sql));
+
   }
 
   return ret;
@@ -329,7 +329,7 @@ int ObTTLUtil::update_ttl_task_all_fields(uint64_t tenant_id,
   } else if (OB_FAIL(proxy.write(gen_meta_tenant_id(tenant_id), sql.ptr(), affect_rows))) {
     LOG_WARN("fail to execute sql", K(ret), K(sql));
   } else {
-    LOG_INFO("success to execute sql", K(ret), K(sql));
+
   }
 
   return ret;
@@ -354,7 +354,7 @@ int ObTTLUtil::delete_ttl_task(uint64_t tenant_id,
   } else if (OB_FAIL(proxy.write(gen_meta_tenant_id(tenant_id), sql.ptr(), affect_rows))) {
     LOG_WARN("fail to execute sql", K(ret), K(sql));
   } else {
-    LOG_INFO("success to execute sql", K(ret), K(sql));
+
   }
 
   return ret;
@@ -639,7 +639,7 @@ int ObTTLUtil::move_task_to_history_table(uint64_t tenant_id, uint64_t task_id,
     LOG_WARN("fail to execute sql", K(ret), K(sql), K(tenant_id));
   } else {
     move_rows = delete_rows;
-    LOG_INFO("success to execute sql", K(ret), K(tenant_id), K(sql), K(insert_rows), K(delete_rows));
+
   }
 
   return ret;
@@ -669,7 +669,7 @@ int ObTTLUtil::move_tenant_task_to_history_table(const ObTTLStatusKey &key,
   } else if (OB_FAIL(proxy.write(gen_meta_tenant_id(key.tenant_id_), sql.ptr(), delete_rows))) {
     LOG_WARN("fail to execute sql", K(ret), K(sql), K(key.tenant_id_));
   } else {
-    LOG_INFO("success to execute sql", K(ret), K(key.tenant_id_), K(sql), K(insert_rows), K(delete_rows));
+
   }
 
   return ret;
@@ -1234,7 +1234,7 @@ int ObTTLUtil::get_ttl_info(const ObTTLParam &param, ObIArray<ObSimpleTTLInfo> &
                   check_tenant_is_restore(NULL, tenant_id, is_restore))) {
         LOG_WARN("fail to check tenant is restore", KR(ret), K(i), "ttl_info", tmp_info_array.at(i));
       } else if (is_restore) {
-        LOG_INFO("skip restoring tenant to do ttl task", K(tenant_id));
+
       } else if (OB_FAIL(share::ObAllTenantInfoProxy::load_tenant_info(tenant_id, GCTX.sql_proxy_,
                                                                 false, tenant_info))) {
         if (OB_ITER_END == ret) {
@@ -1244,7 +1244,7 @@ int ObTTLUtil::get_ttl_info(const ObTTLParam &param, ObIArray<ObSimpleTTLInfo> &
           LOG_WARN("fail to load tenant info", KR(ret), K(tenant_id));
         }
       } else if (tenant_info.is_standby()) { // Skip major freeze for standby tenants
-        LOG_INFO("skip do ttl task for standby tenant", K(tenant_info));
+
       } else if (OB_FAIL(ttl_info_array.push_back(tmp_info_array.at(i)))) {
         LOG_WARN("fail to push back ttl info", KR(ret), K(i), "ttl_info", tmp_info_array.at(i));
       }
@@ -1324,7 +1324,7 @@ int ObTTLUtil::dispatch_one_tenant_ttl(obrpc::ObTTLRequestArg::TTLRequestType ty
     }
     
     const int64_t launch_cost_time = ObTimeUtility::current_time() - launch_start_time;
-    LOG_INFO("do tenant ttl", KR(ret), K(tenant_id), K(leader), K(ttl_info), K(launch_cost_time));
+
   }
   return ret;
 }
@@ -1357,7 +1357,7 @@ int ObTTLUtil::get_tenant_table_ids(const uint64_t tenant_id, ObIArray<uint64_t>
   ObMultiVersionSchemaService &schema_service = ObMultiVersionSchemaService::get_instance();
   if (!schema_service.is_tenant_full_schema(tenant_id)) {
     ret = OB_EAGAIN;
-    LOG_INFO("tenant does not has a full schema already, maybe server is restart, need retry!");
+
   } else if (OB_FAIL(schema_service.get_tenant_schema_guard(tenant_id, schema_guard))) {
     LOG_WARN("fail to get schema guard", KR(ret), K(tenant_id));
   } else if (OB_FAIL(schema_guard.get_table_ids_in_tenant(tenant_id, table_id_array))) {

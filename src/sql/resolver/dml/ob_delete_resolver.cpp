@@ -256,7 +256,7 @@ int ObDeleteResolver::resolve_table_list(const ParseNode &table_list, bool &is_m
           In order to share the same logic with 'select' to generate access path costly, we
           add the table in the udpate stmt in the from_item list as well.
          */
-        LOG_DEBUG("succ to add from item", KPC(table_item));
+
       }
       if (OB_ISNULL(table_item) || session_info_->is_inner()) {
       } else if (OB_UNLIKELY(table_item->is_system_table_ && table_item->table_name_.case_compare(OB_ALL_LICENSE_TNAME) == 0)) {

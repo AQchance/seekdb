@@ -193,14 +193,14 @@ int ObAllVirtualProxyRoutine::inner_open()
     } else if (OB_FAIL(tenant_schema_guard_.get_tenant_info(tenant_name, tenant_schema))) {
       LOG_WARN("fail to get tenant info", KR(ret), K(tenant_name));
     } else if (OB_ISNULL(tenant_schema)) {
-      LOG_TRACE("tenant not exist", K(tenant_name)); // skip
+ // skip
     } else {
       tenant_id = tenant_schema->get_tenant_id();
       if (OB_UNLIKELY(!is_valid_tenant_id(effective_tenant_id_))) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("invalid effective_tenant_id", KR(ret), K_(effective_tenant_id));
       } else if (!is_sys_tenant(effective_tenant_id_)) {
-        LOG_TRACE("only sys tenant is allowed", K(tenant_id), K_(effective_tenant_id)); // skip
+ // skip
       } else if (OB_FAIL(schema_service_->get_tenant_schema_guard(tenant_id, tenant_schema_guard_))) {
         LOG_WARN("fail to get tenant schema guard", KR(ret), K(tenant_id));
       } else if (OB_FAIL(schema_checker.init(tenant_schema_guard_))) {
@@ -223,13 +223,13 @@ int ObAllVirtualProxyRoutine::inner_open()
             ret = OB_SUCCESS; // if database, package or routine not exist, return nothing
           } else if (routine_infos.count() <= 0
               || OB_ISNULL(routine_info = static_cast<const ObRoutineInfo*>(routine_infos.at(0)))) {
-            LOG_TRACE("routine does not exist", K(input_key)); // skip
+ // skip
           } else if (OB_FAIL(valid_routine_keys_.push_back(input_key))) {
             LOG_WARN("failed to push back valid_routine_keys_", KR(ret), K(input_key));
           } else if (OB_FAIL(routine_infos_.push_back(routine_info))) {
             LOG_WARN("failed to push back routine_infos_", KR(ret), K(routine_info));
           } else {
-            LOG_TRACE("succ to push back routine_info", K(input_key), KPC(routine_info));
+
           }
         } // end for input_table_ids_
       }
@@ -273,7 +273,7 @@ int ObAllVirtualProxyRoutine::inner_get_next_row_()
   } else if (OB_FAIL(fill_row_(valid_routine_keys_.at(inner_idx_), *routine_info))) {
     LOG_WARN("fail to fill row", KR(ret), K_(inner_idx), K_(valid_routine_keys), KPC(routine_info));
   } else {
-    LOG_TRACE("succ to fill row", KR(ret), K_(inner_idx), K_(valid_routine_keys), KPC(routine_info));
+
     ++inner_idx_;
   }
   return ret;

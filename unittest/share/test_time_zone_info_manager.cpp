@@ -45,7 +45,7 @@ void test_str_to_ob_time(const ObString &str, const ObString &expect_tz_name, co
   EXPECT_EQ(OB_SUCCESS, ObTimeConverter::str_to_ob_time_with_date(str, ob_time));
   EXPECT_EQ(expect_tz_name, ObString(strlen(ob_time.tz_name_), ob_time.tz_name_));
   EXPECT_EQ(expect_tz_abbr, ObString(strlen(ob_time.tzd_abbr_), ob_time.tzd_abbr_));
-  LOG_INFO("test result", K(str), K(ob_time));
+
 }
 
 TEST(test_time_zone_info_manager, str_to_digit_with_date)
@@ -75,7 +75,7 @@ TEST(test_time_zone_info_manager, str_to_digit_without_date)
   ObTime ob_time1(DT_TYPE_TIME);
   EXPECT_EQ(OB_SUCCESS, ObTimeConverter::str_to_ob_time_without_date("10:11:12", ob_time1, &scale));
   int64_t value = ObTimeConverter::ob_time_to_time(ob_time1);
-  LOG_INFO("str to ob_time", K(ob_time1), K(value));
+
   EXPECT_EQ(OB_SUCCESS, ObTimeConverter::time_overflow_trunc(value));
 }
 

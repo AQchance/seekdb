@@ -50,7 +50,7 @@ int ObMdsMinorFilter::init(
   } else {
     last_major_snapshot_ = last_major_snapshot;
     truncate_filter_snapshot_ = MIN(multi_version_start, last_major_snapshot);
-    LOG_INFO("truncate info filter snapshot", KR(ret), K(last_major_snapshot), K(multi_version_start), K_(truncate_filter_snapshot));
+
     is_inited_ = true;
   }
   return ret;
@@ -78,7 +78,7 @@ int ObMdsMinorFilter::filter(
     ret = filter_truncate_info(row, kv_adapter, filter_ret);
   } else {
     filter_ret = FILTER_RET_NOT_CHANGE;
-    LOG_DEBUG("not medium info/truncate info", K(ret), K(row), K_(last_major_snapshot), K_(truncate_filter_snapshot), K(kv_adapter));
+
   }
 
   return ret;
@@ -100,10 +100,10 @@ int ObMdsMinorFilter::filter_medium_info(
     LOG_WARN("fail to deserialize medium_info_key", K(ret), K(kv_adapter));
   } else if (medium_info_key.get_medium_snapshot() <= last_major_snapshot_) {
     filter_ret = FILTER_RET_REMOVE;
-    LOG_DEBUG("medium info is filtered", K(ret), K(row), K(last_major_snapshot_), K(medium_info_key), K(kv_adapter));
+
   } else {
     filter_ret = FILTER_RET_NOT_CHANGE;
-    LOG_DEBUG("medium info is not filtered", K(ret), K(row), K(last_major_snapshot_), K(medium_info_key), K(kv_adapter));
+
   }
   return ret;
 }
@@ -126,7 +126,7 @@ int ObMdsMinorFilter::filter_truncate_info(
   } else if (truncate_info.commit_version_ < truncate_filter_snapshot_) {
     filter_ret = FILTER_RET_REMOVE;
     // TODO change into debug log later
-    LOG_INFO("truncate info is filtered", K(ret), K(row), K(truncate_filter_snapshot_), K(truncate_info), K(kv_adapter));
+
   } else {
     filter_ret = FILTER_RET_NOT_CHANGE;
   }
@@ -156,7 +156,7 @@ int ObCrossLSMdsMinorFilter::filter(
       LOG_WARN("uncommitted row or uncompacted row in mds table", K(ret), K(row));
     } else {
       filter_ret = FILTER_RET_REMOVE;
-      LOG_DEBUG("filter tablet status for cross ls mds minor merge", K(ret));
+
     }
   } else {
     filter_ret = FILTER_RET_NOT_CHANGE;

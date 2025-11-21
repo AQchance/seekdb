@@ -67,7 +67,7 @@ void print_hash_value(int64_t hash_input, double percent = 30.0)
   uint64_t hash = murmurhash(&hash_input, sizeof(int64_t), 100000);
   uint64_t cut_off = static_cast<uint64_t>(static_cast<double>(UINT64_MAX) * percent / 100.0);
   bool ret = hash <= cut_off;
-  STORAGE_LOG(INFO, "hash value: ", K(hash_input), K(hash), K(cut_off), K(ret));
+
 }
 
 TEST_F(TestObRowSampleIterator, test_sample)

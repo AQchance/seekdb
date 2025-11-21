@@ -269,7 +269,7 @@ int ObPxTransmitOp::fetch_first_row()
       } else {
         if (brs->end_ && 0 == brs->size_) {
           iter_end_ = true;
-          LOG_TRACE("transmit iter end", K(ret), K(iter_end_));
+
         }
       }
     } else {
@@ -278,7 +278,7 @@ int ObPxTransmitOp::fetch_first_row()
           LOG_WARN("get next row failed", K(ret));
         } else {
           iter_end_ = true;
-          LOG_TRACE("transmit iter end", K(ret), K(iter_end_));
+
           ret = OB_SUCCESS;
         }
       }
@@ -340,7 +340,7 @@ int ObPxTransmitOp::init_channel(ObPxTransmitOpInput &trans_input)
   ObPhysicalPlanCtx *phy_plan_ctx = GET_PHY_PLAN_CTX(ctx_);
   ObDtlDfoKey parent_key;
   ObDtlSqcInfo self_info;
-  LOG_TRACE("Try to get channel information from SQC", K(lbt()));
+
   CK (OB_NOT_NULL(ctx_.get_physical_plan_ctx()) && OB_NOT_NULL(ctx_.get_physical_plan_ctx()->get_phy_plan()));
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(trans_input.get_data_ch(
@@ -401,7 +401,7 @@ int ObPxTransmitOp::init_channel(ObPxTransmitOpInput &trans_input)
         ch->set_row_meta(params_.meta_);
         ch->plan_min_cluster_version_ = min_cluster_version;
       }
-      LOG_TRACE("Transmit channel", K(ch), KP(ch->get_id()), K(ch->get_peer()));
+
     }
     LOG_TRACE("Get transmit channel ok",
               "task_id", trans_input.get_task_id(),
@@ -1312,7 +1312,7 @@ int ObPxTransmitOp::send_row(int64_t slice_idx,
       LOG_WARN("fail to send row normal", K(ret));
     }
   }
-  LOG_DEBUG("Send row", K(slice_idx), K(ret), K(is_vectorized()));
+
   return ret;
 }
 
@@ -1333,7 +1333,7 @@ int ObPxTransmitOp::send_row_normal(int64_t slice_idx,
     LOG_WARN("unexpected NULL ptr", K(ret));
   } else if (ch->is_drain()) {
     // if drain, don't send again
-    LOG_TRACE("drain channel", KP(ch->get_id()));
+
   } else {
     if (NULL != spec.tablet_id_expr_ && !has_set_tablet_id_vector_) {
       update_row(spec.tablet_id_expr_, tablet_id);
@@ -1345,7 +1345,7 @@ int ObPxTransmitOp::send_row_normal(int64_t slice_idx,
       }
     }
   }
-  LOG_DEBUG("Send row", K(slice_idx), K(ret));
+
   return ret;
 }
 
@@ -1384,7 +1384,7 @@ int ObPxTransmitOp::next_row()
       ret = OB_ITER_END;
     }
     consume_first_row_ = true;
-    LOG_TRACE("transmit iter end", K(ret), K(iter_end_));
+
   } else if (!consume_first_row_ && !sample_done_) {
     consume_first_row_ = true;
   } else {
@@ -1465,7 +1465,7 @@ ERRSIM_POINT_DEF(ERRSIM_DYNAMIC_SAMPLE_FAIL)
 int ObPxTransmitOp::do_datahub_dynamic_sample(int64_t op_id, ObDynamicSamplePieceMsg &piece_msg)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("before dynamic sample", K(ctx_.get_partition_ranges()));
+
   ObPxSqcHandler *handler = ctx_.get_sqc_handler();
   if (OB_ISNULL(handler)) {
     ret = OB_NOT_SUPPORTED;
@@ -1592,7 +1592,7 @@ int ObPxTransmitOp::wait_channel_ready_msg()
       LOG_WARN("failed to wait whole msg", K(ret), K(spec_.id_), K(GETTID()));
     } else {
       receive_channel_ready_ = true;
-      LOG_TRACE("get channel msg, start to transmit", K(spec_.id_), K(GETTID()));
+
     }
   }
   return ret;

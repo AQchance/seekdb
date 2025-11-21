@@ -145,7 +145,7 @@ OB_DEF_DESERIALIZE(ObTableLockTaskRequest)
     LOG_WARN("acquire tx by deserialize fail", K(data_len), K(pos), K(ret));
   } else {
     need_release_tx_ = true;
-    LOG_TRACE("deserialize txDesc", KPC_(tx_desc));
+
   }
   return ret;
 }
@@ -813,7 +813,7 @@ void ObTableLockTaskRequest::reset()
 {
   if (OB_NOT_NULL(tx_desc_)) {
     if (need_release_tx_) {
-      LOG_TRACE("free txDesc", KPC_(tx_desc));
+
       TxDescHelper::release_tx_desc(*tx_desc_);
     }
   }

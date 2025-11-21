@@ -36,7 +36,7 @@ public:
     int ret = OB_SUCCESS;
     if (OB_FAIL(producer_.get_next_row(row))) {
       if (OB_ITER_END != ret) {
-        STORAGE_LOG(WARN, "failed to get next row", K(ret));
+
       }
     }
     return ret;
@@ -141,7 +141,7 @@ TEST_F(TestLogicRowProducer, bug16079910)
 
 int main(int argc, char **argv)
 {
-  STORAGE_LOG(INFO, "begin unittest: test_logic_row_producer");
+
   oceanbase::common::ObLogger::get_logger().set_log_level("DEBUG");
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

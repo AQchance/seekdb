@@ -556,7 +556,7 @@ int ObTransferPartitionCommand::cancel_all_init_transfer_partition_(const uint64
     if (OB_FAIL(ret)) {
     } else if (balance_task.get_part_list().count() == new_part_list.count()) {
       //The number being equal means part_list should be equal, no further validation is done.
-      LOG_INFO("part list no change, no need update", K(balance_task), K(new_part_list), K(init_list));
+
     } else if (OB_FAIL(ObBalanceTaskTableOperator::update_task_part_list(tenant_id,
             balance_task.get_balance_task_id(), new_part_list, trans))) {
       LOG_WARN("failed to update task part list", KR(ret), K(tenant_id), K(balance_task),

@@ -86,7 +86,7 @@ int ObIvfAsyncTaskExector::LoadTaskCallback::operator()(IvfCacheMgrEntry &entry)
                    ++task_trace_base_num_, allocator, new_trace_id))) {
       LOG_WARN("fail to fetch new trace id", K(ret), K(tablet_id));
     } else {
-      LOG_DEBUG("start load task", K(ret), K(tablet_id), K(new_task_id), K(index_table_id));
+
       // 1. update task_ctx to async task map
       task_ctx->tenant_id_ = tenant_id_;
       task_ctx->ls_ = ls_;
@@ -192,7 +192,7 @@ int ObIvfAsyncTaskExector::LoadTaskCallback::operator()(ObIvfAuxTableInfoEntry &
                    ++task_trace_base_num_, allocator, new_trace_id))) {
       LOG_WARN("fail to fetch new trace id", K(ret), K(task_trace_base_num_));
     } else {
-      LOG_DEBUG("start load task", K(ret), K(task_trace_base_num_), K(new_task_id), K(index_table_id));
+
       // 1. update task_ctx to async task map
       task_ctx->tenant_id_ = tenant_id_;
       task_ctx->ls_ = ls_;
@@ -244,7 +244,7 @@ bool ObIvfAsyncTaskExector::check_operation_allow()
     LOG_WARN("fail to get active time");
   } else if (!is_active_time) {
     bret = false;
-    LOG_INFO("skip this round, not in active time.");
+
   }
   return bret;
 }
@@ -497,9 +497,9 @@ int ObIvfAsyncTaskExector::check_schema_version_changed(bool &schema_changed)
     LOG_WARN("fail to get tenant schema version", K(ret), K_(tenant_id));
   } else if (!ObSchemaService::is_formal_version(schema_version)) {
     ret = OB_EAGAIN;
-    LOG_INFO("is not a formal_schema_version", KR(ret), K(schema_version));
+
   } else if (local_schema_version_ == OB_INVALID_VERSION || local_schema_version_ < schema_version) {
-    LOG_INFO("schema changed", KR(ret), K_(local_schema_version), K(schema_version));
+
     local_schema_version_ = schema_version;
     schema_changed = true;
   }

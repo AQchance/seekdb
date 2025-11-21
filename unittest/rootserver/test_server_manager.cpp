@@ -294,7 +294,7 @@ TEST_F(TestServerManager, basic)
   ASSERT_EQ(OB_NOT_INIT, server_mgr.start_server(server, zone));
   ASSERT_EQ(OB_NOT_INIT, server_mgr.stop_server(server, zone));
   server_mgr.reset();
-  LOG_INFO("server manager", K(server_mgr));
+
 }
 
 #define GET_STR(fun, ...) ({ const char *__str = NULL; ret = fun(__VA_ARGS__, __str); __str;})
@@ -537,7 +537,7 @@ TEST_F(TestServerManager, get)
   ObZone zone;
   ASSERT_EQ(OB_SUCCESS, server_manager_.get_server_zone(lq.server_, zone));
   ASSERT_EQ(ObZone("2"), zone);
-  LOG_INFO("Print", K(server_manager_));
+
 
   int64_t lease_time = 0;
   ASSERT_EQ(OB_SUCCESS, server_manager_.get_lease_duration(lease_time));

@@ -58,10 +58,10 @@ int ObLobQueryBaseHandler::execute()
       LOG_WARN("do_execute fail, check need rerty", KR(ret), K(retry_cnt), K(param_));
       is_continue = false;
       if (param_.no_need_retry_) {
-        LOG_INFO("no need retry", K(ret), K(is_continue), K(retry_cnt), K(param_));
+
         is_continue = false;
       } else if (OB_ISNULL(param_.lob_locator_)) {
-        LOG_INFO("lob locator is null, so can not retry", K(ret), K(is_continue), K(retry_cnt), K(param_));
+
         is_continue = false;
       } else if (OB_TMP_FAIL(ObLobRetryUtil::check_need_retry(param_, ret, retry_cnt, is_continue))) {
         LOG_WARN("check_need_retry fail", K(tmp_ret), K(ret), K(is_continue), K(retry_cnt), K(param_));
@@ -73,7 +73,7 @@ int ObLobQueryBaseHandler::execute()
     }
     if (is_continue) {
       ++retry_cnt;
-      LOG_INFO("[LOB RETRY] retry again", K(ret), K(retry_cnt), K(param_), K(param_.allocator_->total()), K(param_.allocator_->used()));
+
     }
   } while (is_continue);
   return ret;
@@ -498,7 +498,7 @@ int ObLobEraseHandler::erase_process_meta_info(
     LOG_WARN("offset invalid", K(ret), K(piece_write_begin), K(piece_write_begin), K(result));
   } else if (result.len_ == result.info_.char_len_) {
     del_piece = true;
-    LOG_DEBUG("just delete", K(piece_write_begin), K(piece_write_end), K(piece_char_len));
+
   } else if (meta_iter.is_range_begin(result.info_)) {
     if (OB_FAIL(buffer.char_append(result.info_.lob_data_, 0/*char_offset*/, result.st_ /*char_len*/))) { // is_range_begin
       LOG_WARN("char_append fail", K(ret));
@@ -677,7 +677,7 @@ int ObLobWriteHandler::execute(ObLobQueryIter *iter, ObString& read_buf, ObStrin
       uint64_t pos = 0;
       if (old_data.length() == 0) {
         if (param_.scan_backward_) {
-          LOG_INFO("param scan_backward is true. Make it be false.", K(param_));
+
           param_.scan_backward_ = false;
         }
         if(OB_FAIL(prepare_data_buffer(param_, remain_buf, store_chunk_size_))) {
@@ -1005,7 +1005,7 @@ int ObLobWriteBaseHandler::write_one_piece(ObLobAccessParam& param, ObLobMetaInf
   } else if (OB_FAIL(param.update_handle_data_size(nullptr/*old_info*/, &meta_row/*new_info*/))) {
     LOG_WARN("failed update handle", K(ret), K(param), K(meta_row));
   } else {
-    LOG_TRACE("write success", K(param), K(meta_row));
+
   }
   return ret;
 }
@@ -1035,7 +1035,7 @@ int ObLobWriteBaseHandler::update_one_piece(ObLobAccessParam& param, ObLobMetaIn
   } else if (OB_FAIL(param.update_handle_data_size(&old_meta_info, &new_meta_info))) {
     LOG_WARN("failed update handle", K(ret), K(old_meta_info), K(new_meta_info));
   } else {
-    LOG_TRACE("update success", K(param), K(old_meta_info), K(new_meta_info));
+
   }
   return ret;
 }
@@ -1058,7 +1058,7 @@ int ObLobWriteBaseHandler::erase_one_piece(ObLobAccessParam& param, ObLobMetaInf
   } else if (OB_FAIL(param.update_handle_data_size(&meta_info/*old_info*/, nullptr/*new_info*/))) {
     LOG_WARN("failed update handle", K(ret), K(param), K(meta_info));
   } else {
-    LOG_TRACE("erase success", K(param), K(meta_info));
+
   }
   return ret;
 }

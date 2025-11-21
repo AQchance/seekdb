@@ -253,7 +253,7 @@ int ObUDRAnalyzer::add_dynamic_param_info(
   if (OB_FAIL(dynamic_param_infos.push_back(param_info))) {
     LOG_WARN("failed to add dynamic param info", K(ret), K(param_info));
   } else {
-    LOG_DEBUG("succ to add dynamic param info", K(param_info));
+
   }
   return ret;
 }
@@ -270,7 +270,7 @@ int ObUDRAnalyzer::add_fixed_param_value(
   if (OB_FAIL(fixed_param_infos.push_back(param_value))) {
     LOG_WARN("failed to add fixed param info", K(ret), K(param_value));
   } else {
-    LOG_DEBUG("succ to add fixed param value", K(param_value));
+
   }
   return ret;
 }
@@ -396,7 +396,7 @@ int ObUDRAnalyzer::serialize_to_hex(const T &infos, common::ObString &infos_str)
     LOG_WARN("encode error", KR(ret), K(hex_pos), K(hex_size));
   } else {
     infos_str.assign(hex_buf, hex_pos);
-    LOG_DEBUG("succ to serialize", K(infos_str));
+
   }
   return ret;
 }

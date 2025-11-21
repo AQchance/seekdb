@@ -124,14 +124,14 @@ void MockTmpFileUtil::MOCK_SEND_IO_MODE::reset()
 void MockTmpFileUtil::MOCK_THREAD_RUNNING_CTRL::reset()
 {
   if (MODE::ASYNC == mode_) {
-    LOG_DEBUG("reset mock thread running ctrl in ASYNC mode", KP(mock_async_thread_), K(mock_swap_tg_));
+
     if (nullptr != mock_async_thread_ && nullptr != mock_swap_tg_) {
-      LOG_DEBUG("stop mock_async_thread");
+
       ATOMIC_SET(&mock_swap_tg_->stop_, true);
       mock_async_thread_->join();
       delete mock_async_thread_;
       mock_async_thread_ = nullptr;
-      LOG_DEBUG("stop mock_async_thread finish");
+
     }
   }
   mode_ = SYNC;
@@ -151,7 +151,7 @@ void MockTmpFileUtil::set_async_mode(ObTenantBase *tenant_ctx, lib::TGRunnable *
       ASSERT_NE(nullptr, tenant_ctx);
       ASSERT_NE(nullptr, mock_swap_tg);
       ObTenantEnv::set_tenant(mock_thread_running_ctrl.tenant_ctx_);
-      LOG_INFO("mock_async_thread start");
+
       mock_thread_running_ctrl.mock_swap_tg_->run1();
     });
   }
@@ -167,7 +167,7 @@ void MockTmpFileUtil::check_wbp_free_list(ObTmpWriteBufferPool &wbp)
   ObArray<uint32_t> meta_page_id;
 
   int64_t free_page_num = max_page_num - wbp.used_page_num_;
-  LOG_INFO("checking free page num", K(free_page_num), K(wbp.used_page_num_));
+
   wbp.print_statistics();
   EXPECT_GT(free_page_num, 0);
 

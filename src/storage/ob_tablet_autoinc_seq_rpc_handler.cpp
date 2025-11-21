@@ -320,10 +320,10 @@ int ObTabletAutoincSeqRpcHandler::replay_update_tablet_autoinc_seq(
       LOG_WARN("failed to init tablet auto inc sequence replay executor", K(ret), K(autoinc_seq), K(is_tablet_creating), K(replay_scn));
     } else if (OB_FAIL(replay_executor.execute(replay_scn, ls->get_ls_id(), tablet_id))) {
       if (OB_TABLET_NOT_EXIST == ret) {
-        LOG_INFO("tablet may be deleted, skip this log", K(ret), K(tablet_id), K(replay_scn));
+
         ret = OB_SUCCESS;
       } else if (OB_NO_NEED_UPDATE == ret) {
-        LOG_INFO("no need replay, skip this log", K(ret), K(tablet_id), K(replay_scn));
+
         ret = OB_SUCCESS;
       } else if (OB_EAGAIN == ret) {
         // retry replay again

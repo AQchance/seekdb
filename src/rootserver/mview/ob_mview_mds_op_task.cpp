@@ -92,7 +92,7 @@ int ObMViewMdsOpTask::CollectNeedDeleteMdsFunctor::
   if (OB_FAIL(tx_set_.exist_refactored(mv_mds_kv.first))) {
     if (OB_HASH_EXIST == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("mview_mds_op", "txid", mv_mds_kv.first, "mds", mv_mds_kv.second);
+
     } else if (OB_HASH_NOT_EXIST) {
       if (OB_FAIL(del_tx_id_.push_back(mv_mds_kv.first))) {
         LOG_WARN("del_tx_id push failed", KR(ret), K(mv_mds_kv.first));
@@ -145,7 +145,7 @@ int ObMViewMdsOpTask::update_mview_mds_op()
 
   ObSEArray<transaction::ObTransID, 2> del_tx_id;
   CollectNeedDeleteMdsFunctor collect_func(tx_set, del_tx_id);
-  LOG_INFO("mview_mds_op", K(mview_mds_map.size()), "tx_count", tx_set.size());
+
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(mview_mds_map.foreach_refactored(collect_func))) {
     LOG_WARN("fail to foreach mview mds map", K(ret));
@@ -161,7 +161,7 @@ int ObMViewMdsOpTask::update_mview_mds_op()
     }
   }
   int64_t end_ts = ObTimeUtil::current_time();
-  LOG_INFO("update_mview_mds", KR(ret), K(tx_set), K(del_tx_id), "cost", end_ts - start_ts);
+
   return ret;
 }
 

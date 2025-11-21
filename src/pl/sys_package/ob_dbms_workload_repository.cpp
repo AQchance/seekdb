@@ -139,7 +139,7 @@ int ObDbmsWorkloadRepository::create_snapshot(
             LOG_WARN("user submit wr snapshot failed but error code cannot be retrieved", K(ret),
                 K(snap_id));
           } else {
-            LOG_DEBUG("all wr task success", K(snap_id));
+
           }
         }
       }

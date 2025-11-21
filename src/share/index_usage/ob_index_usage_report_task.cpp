@@ -80,7 +80,7 @@ int ObIndexUsageReportTask::GetIndexUsageItemsFn::operator()(common::hash::HashM
         LOG_WARN("fail to push back to list", K(ret), K(tenant_id_));
       } else if (++total_dump_count_ >= MAX_DUMP_ITEM_COUNT) {
         ret = OB_ITER_END;
-        LOG_INFO("Reach index usage info dump limit", K(ret), K(total_dump_count_));
+
       }
       entry.second.reset(); // reset record
     }
@@ -222,7 +222,7 @@ int ObIndexUsageReportTask::check_and_delete(const ObIArray<ObIndexUsageKey> &ca
       if (OB_HASH_NOT_EXIST == ret) { // insert new
         ret = OB_SUCCESS;
         if (deleted_map_.size() >= MAX_DELETE_HASHMAP_SIZE) {
-          LOG_INFO("reach max deleted map upper limited", K(deleted_map_.size()));
+
           break;
         } else if (OB_FAIL(deleted_map_.set_refactored(key, 1, true /* overwrite */))) {
           LOG_WARN("fail to set delete map", K(ret), K(key));
@@ -288,7 +288,7 @@ int ObIndexUsageReportTask::dump()
           LOG_WARN("failed to get schema version", K(ret), K(tenant_id));
         } else if (!ObSchemaService::is_formal_version(schema_version)) {
           ret = OB_EAGAIN;
-          LOG_INFO("is not a formal_schema_version", K(ret), K(tenant_id), K(schema_version));
+
         } else if (OB_FALSE_IT(index_usage_items_fn.set_schema_guard(&schema_guard))) {
         } else if (OB_FAIL(hashmap->foreach_refactored(index_usage_items_fn))) {
           if (OB_ITER_END != ret) {

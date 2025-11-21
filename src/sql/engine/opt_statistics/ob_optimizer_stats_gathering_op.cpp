@@ -253,7 +253,7 @@ int ObOptimizerStatsGatheringOp::send_stats()
                 ctx_.get_physical_plan_ctx()->get_timeout_timestamp(), true, false))) {
     LOG_WARN("get msg failed", K(ret), K(MY_SPEC.id_), K(piece_msg_));
   } else {
-    LOG_DEBUG("SUCCESS to send piece msg", K(ret), K(piece_msg_));
+
     //after send we need to reset table_stat_map and column_stat_map
     piece_msg_.reset();
   }
@@ -300,7 +300,7 @@ int ObOptimizerStatsGatheringOp::get_tab_stat_by_key(ObOptTableStat::Key &key, O
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_DEBUG("GET tab_stat", KPC(tab_stat));
+
   }
   return ret;
 }
@@ -328,7 +328,7 @@ int ObOptimizerStatsGatheringOp::get_col_stat_by_key(ObOptColumnStat::Key &key, 
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_DEBUG("GET col_stat", K(key), KPC(osg_col_stat));
+
   }
   return ret;
 }
@@ -366,7 +366,7 @@ int ObOptimizerStatsGatheringOp::calc_column_stats(ObExpr *expr, uint64_t column
     LOG_WARN("fail to set global column stat", K(ret));
   } else {
     row_len += col_len;
-    LOG_TRACE("succed to calc column stat", KPC(expr), K(row_len), KPC(datum));
+
   }
   return ret;
 }
@@ -529,7 +529,7 @@ int ObOptimizerStatsGatheringOp::on_piece_msg(const ObOptStatsGatherPieceMsg &pi
       }
     }
     if (OB_SUCC(ret)) {
-      LOG_DEBUG("OSG merge piece msg", K(piece_msg));
+
       // why reset piece_msg_?
       piece_msg_.reset();
     }

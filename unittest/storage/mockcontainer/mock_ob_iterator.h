@@ -145,12 +145,12 @@ public:
         break;
       }
       ret1 = get_next_row(this_row);
-      STORAGE_LOG(DEBUG, "compare row", K(ret1), KPC(this_row), K(ret2), KPC(other_row));
+
       if (ret1 == ret2) {
         if (common::OB_SUCCESS == ret1 && this_row && other_row) {
           bool_ret = ObMockIterator::equals(*this_row, *other_row,
               cmp_multi_version_row_flag, cmp_row_flag, cmp_is_get_and_scan_index);
-          STORAGE_LOG(DEBUG, "compare row", K(bool_ret), K(ret1), KPC(this_row), K(ret2), KPC(other_row));
+
           if (this_row->trans_id_ != other_row->trans_id_) {
             STORAGE_LOG_RET(ERROR, OB_ERR_UNEXPECTED, "not equal trans_id", KPC(this_row), K(this_row->trans_id_),
                 K(*other_row), K(other_row->trans_id_));

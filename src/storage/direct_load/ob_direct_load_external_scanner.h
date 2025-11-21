@@ -84,19 +84,19 @@ int ObDirectLoadExternalSequentialScanner<T>::init(
   int ret = common::OB_SUCCESS;
   if (IS_INIT) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObDirectLoadExternalSequentialScanner init twice", KR(ret), KP(this));
+
   } else if (OB_UNLIKELY(data_block_size <= 0 || data_block_size % DIO_ALIGN_SIZE != 0 ||
                          compressor_type <= common::ObCompressorType::INVALID_COMPRESSOR ||
                          fragments.empty())) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K(compressor_type), K(fragments));
+
   } else {
     if (OB_FAIL(fragments_.assign(fragments))) {
-      STORAGE_LOG(WARN, "fail to assign fragments", KR(ret));
+
     } else if (OB_FAIL(reader_.init(data_block_size, compressor_type))) {
-      STORAGE_LOG(WARN, "fail to init fragment reader", KR(ret));
+
     } else if (OB_FAIL(switch_next_fragment())) {
-      STORAGE_LOG(WARN, "fail to switch next fragment", KR(ret));
+
     } else {
       is_inited_ = true;
     }
@@ -110,17 +110,17 @@ int ObDirectLoadExternalSequentialScanner<T>::get_next_item(const T *&item)
   int ret = common::OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObDirectLoadExternalSequentialScanner not init", KR(ret), KP(this));
+
   } else {
     item = nullptr;
     while (OB_SUCC(ret) && nullptr == item) {
       if (OB_FAIL(reader_.get_next_item(item))) {
         if (OB_UNLIKELY(common::OB_ITER_END != ret)) {
-          STORAGE_LOG(WARN, "fail to get next item", KR(ret));
+
         } else {
           if (OB_FAIL(switch_next_fragment())) {
             if (OB_UNLIKELY(common::OB_ITER_END != ret)) {
-              STORAGE_LOG(WARN, "fail to switch next fragment", KR(ret));
+
             }
           }
         }
@@ -140,7 +140,7 @@ int ObDirectLoadExternalSequentialScanner<T>::switch_next_fragment()
     reader_.reuse();
     const ObDirectLoadExternalFragment &fragment = fragments_.at(next_pos_);
     if (OB_FAIL(reader_.open(fragment.file_handle_, 0, fragment.file_size_))) {
-      STORAGE_LOG(WARN, "fail to open file", KR(ret));
+
     } else {
       next_pos_++;
     }
@@ -207,7 +207,7 @@ int ObDirectLoadExternalSortScanner<T, Compare>::init(
   int ret = common::OB_SUCCESS;
   if (IS_INIT) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObDirectLoadExternalSortScanner init twice", KR(ret), KP(this));
+
   } else if (OB_UNLIKELY(data_block_size <= 0 || data_block_size % DIO_ALIGN_SIZE != 0 ||
                          compressor_type <= common::ObCompressorType::INVALID_COMPRESSOR ||
                          fragments.empty() || nullptr == compare)) {
@@ -220,13 +220,13 @@ int ObDirectLoadExternalSortScanner<T, Compare>::init(
       ExternalReader *reader = nullptr;
       if (OB_ISNULL(reader = OB_NEWx(ExternalReader, (&allocator_)))) {
         ret = common::OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "fail to new fragment reader", KR(ret));
+
       } else if (OB_FAIL(reader->init(data_block_size, compressor_type))) {
-        STORAGE_LOG(WARN, "fail to init fragment reader", KR(ret));
+
       } else if (OB_FAIL(reader->open(fragment.file_handle_, 0, fragment.file_size_))) {
-        STORAGE_LOG(WARN, "fail to open fragment", KR(ret));
+
       } else if (OB_FAIL(iters_.push_back(reader))) {
-        STORAGE_LOG(WARN, "fail to push back", KR(ret));
+
       }
       if (OB_FAIL(ret)) {
         if (nullptr != reader) {
@@ -238,7 +238,7 @@ int ObDirectLoadExternalSortScanner<T, Compare>::init(
     }
     if (OB_SUCC(ret)) {
       if (OB_FAIL(merger_.init(iters_, compare))) {
-        STORAGE_LOG(WARN, "fail to init merger", KR(ret));
+
       } else {
         is_inited_ = true;
       }
@@ -253,7 +253,7 @@ int ObDirectLoadExternalSortScanner<T, Compare>::get_next_item(const T *&item)
   int ret = common::OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObDirectLoadExternalSortScanner not init", KR(ret), KP(this));
+
   } else {
     ret = merger_.get_next_item(item);
   }

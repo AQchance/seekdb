@@ -308,7 +308,7 @@ int ObTmpFileBlock::init_block(const int64_t block_index,
   } else {
     block_index_ = block_index;
     block_state_ = BlockState::IN_MEMORY;
-    LOG_DEBUG("init block successfully", K(block_index), K(begin_page_id), K(page_num), KPC(this));
+
   }
   return ret;
 }
@@ -323,7 +323,7 @@ int ObTmpFileBlock::write_back_start()
         KR(ret), KPC(this));
   } else {
     block_state_ = BlockState::WRITE_BACK;
-    LOG_DEBUG("switch tmp file block to write back state", KPC(this));
+
   }
   return ret;
 }
@@ -338,7 +338,7 @@ int ObTmpFileBlock::write_back_failed()
         KR(ret), KPC(this));
   } else {
     block_state_ = BlockState::IN_MEMORY;
-    LOG_DEBUG("switch tmp file block to in memory state", KPC(this));
+
   }
   return ret;
 }
@@ -358,7 +358,7 @@ int ObTmpFileBlock::write_back_succ(blocksstable::MacroBlockId macro_block_id)
   } else {
     macro_block_id_ = macro_block_id;
     block_state_ = BlockState::ON_DISK;
-    LOG_DEBUG("switch tmp file block to on disk state", KPC(this));
+
   }
   return ret;
 }
@@ -620,7 +620,7 @@ int ObTmpFileBlockManager::create_tmp_file_block(const int64_t begin_page_id, co
     if (OB_FAIL(block_map_.insert(ObTmpFileBlockKey(block_index), handle))) {
       LOG_WARN("fail to insert tmp file block into map", KR(ret), K(block_index));
     }
-    LOG_DEBUG("create tmp file block succ", KR(ret), K(block_index));
+
   }
 
   if (OB_FAIL(ret) && OB_NOT_NULL(blk)) {
@@ -749,7 +749,7 @@ int ObTmpFileBlockManager::release_tmp_file_page(const int64_t block_index,
     }
   }
 
-  LOG_DEBUG("release_tmp_file_page", KR(ret), K(block_index), K(begin_page_id), K(page_num), K(handle));
+
 
   if (FAILEDx(handle.get()->can_remove(can_remove))) {
     LOG_WARN("check block can remove failed", KR(ret), K(handle));
@@ -776,7 +776,7 @@ int ObTmpFileBlockManager::remove_tmp_file_block_(const int64_t block_index)
       if (ret != OB_ENTRY_NOT_EXIST) {
         LOG_WARN("fail to erase tmp file block", KR(ret), K(block_index));
       } else {
-        LOG_DEBUG("erase tmp file block succ", KR(ret), K(block_index));
+
         ret = OB_SUCCESS;
       }
     } else if (OB_UNLIKELY(nullptr == (blk = handle.get()))) {
@@ -784,7 +784,7 @@ int ObTmpFileBlockManager::remove_tmp_file_block_(const int64_t block_index)
       LOG_WARN("unexpected null", KR(ret), K(block_index));
     } else {
       ObTmpBlockCache::get_instance().erase(ObTmpBlockCacheKey(block_index, MTL_ID()));
-      LOG_DEBUG("erase tmp file block from map succ", KR(ret), K(handle));
+
     }
   }
 
@@ -832,7 +832,7 @@ void ObTmpFileBlockManager::print_block_usage()
   } else if (OB_FAIL(get_block_usage_stat(used_page_num, block_num))) {
     LOG_WARN("fail to get block usage stat", KR(ret));
   } else if (OB_UNLIKELY(0 == block_num)) {
-    LOG_INFO("temporary file module use no blocks");
+
   } else {
     int64_t occupied_page_num = block_num * ObTmpFileGlobal::BLOCK_PAGE_NUMS;
     double disk_fragment_ratio = static_cast<double>(used_page_num) / static_cast<double>(occupied_page_num);

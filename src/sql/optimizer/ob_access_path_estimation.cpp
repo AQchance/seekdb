@@ -146,7 +146,7 @@ int ObAccessPathEstimation::do_estimate_rowcount(ObOptimizerContext &ctx,
 {
   int ret = OB_SUCCESS;
   bool is_success = true;
-  LOG_TRACE("Try to do estimate rowcount", K(method));
+
 
   if (OB_UNLIKELY(EST_INVALID == method) ||
       OB_UNLIKELY((method & EST_DS_FULL) && (method & EST_DS_BASIC)) ||
@@ -305,7 +305,7 @@ int ObAccessPathEstimation::check_can_use_dynamic_sampling(ObOptimizerContext &c
                                                               table_meta.get_all_used_parts(),
                                                               ctx.get_failed_ds_tab_list())) {
     valid_methods &= ~EST_DS_METHODS;
-    LOG_TRACE("get failed ds table, not use dynamic sampling", K(table_meta), K(ctx.get_failed_ds_tab_list()));
+
   }
   for (int64_t i = 0; OB_SUCC(ret) && (valid_methods & EST_DS_FULL) && i < filter_exprs.count(); ++i) {
     bool invalid = false;
@@ -459,7 +459,7 @@ int ObAccessPathEstimation::choose_best_est_method(ObOptimizerContext &ctx,
     method = choose_one_est_method(valid_methods, default_est_priority, priority_cnt);
   }
 
-  LOG_TRACE("choose a best est method", K(valid_methods), K(is_simple_scene), K(is_complex_scene), K(method));
+
   return ret;
 }
 
@@ -533,7 +533,7 @@ int ObAccessPathEstimation::check_path_can_use_storage_estimation(const AccessPa
       }
     }
   }
-  LOG_TRACE("check_path_can_use_storage_estimation", K(can_use));
+
   return ret;
 }
 
@@ -569,7 +569,7 @@ int ObAccessPathEstimation::process_vtable_default_estimation(AccessPath *path)
     est_cost_info.batch_type_ = ObSimpleBatch::T_SCAN;
     if (est_cost_info.ranges_.empty() || est_cost_info.prefix_filters_.empty()) {
       output_row_count = static_cast<double>(OB_EST_DEFAULT_VIRTUAL_TABLE_ROW_COUNT);
-      LOG_TRACE("OPT:[VT] virtual table without range, use default stat", K(output_row_count));
+
     } else {
       output_row_count = static_cast<double>(est_cost_info.ranges_.count());
       if (!est_cost_info.is_unique_) {
@@ -857,8 +857,8 @@ int ObAccessPathEstimation::add_storage_estimation_task(ObOptimizerContext &ctx,
     OPT_TRACE("partitions :", chosen_partitions);
     OPT_TRACE("ranges :", chosen_scan_ranges);
     OPT_TRACE_END_SECTION;
-    LOG_TRACE("choose partitions and ranges to estimate rowcount", K(ap.index_id_), K(chosen_partitions));
-    LOG_TRACE("choose ranges to estimate rowcount", K(chosen_scan_ranges));
+
+
     for (int64_t i = 0; OB_SUCC(ret) && i < chosen_partitions.count(); i ++) {
       EstimatedPartition best_index_part;
       ObBatchEstTasks *task = NULL;
@@ -1163,7 +1163,7 @@ int ObAccessPathEstimation::process_storage_estimation_result(ObIArray<ObBatchEs
                 result_helpers.at(i).result_.physical_row_count_, "(physical)");
     }
   }
-  LOG_TRACE("succeed to process storage estimation result", K(is_reliable), K(result_helpers));
+
   return ret;
 }
 
@@ -1932,13 +1932,13 @@ int ObAccessPathEstimation::estimate_full_table_rowcount(ObOptimizerContext &ctx
     if (OB_FAIL(storage_estimate_full_table_rowcount(ctx, part_loc_info_array.at(0), meta))) {
       LOG_WARN("failed to storage estimate full table rowcount", K(ret));
     } else {
-      LOG_TRACE("succeed to storage estimate full table rowcount", K(meta));
+
     }
   } else if (part_loc_info_array.count() > 1 && partition_limit >= 0) {
     if (OB_FAIL(storage_estimate_range_rowcount(ctx, part_loc_info_array, true, NULL, meta))) {
       LOG_WARN("failed to storage estimate full table rowcount", K(ret));
     } else {
-      LOG_TRACE("succeed to storage estimate full table rowcount", K(meta));
+
     }
   //if the part loc infos more than 1, we see the dml info inner table and storage inner table.
   } else if (part_loc_info_array.count() > 1) {
@@ -1957,7 +1957,7 @@ int ObAccessPathEstimation::estimate_full_table_rowcount(ObOptimizerContext &ctx
                                                              all_ls_ids, meta))) {
         LOG_WARN("failed to estimate full table rowcount by meta table", K(ret));
       } else {
-        LOG_TRACE("succeed to estimate full table rowcount", K(meta));
+
       }
     }
   } else {
@@ -2118,8 +2118,8 @@ int ObAccessPathEstimation::storage_estimate_range_rowcount(ObOptimizerContext &
                                                           chosen_partitions))) {
     LOG_WARN("failed to choose partitions", K(ret));
   } else {
-    LOG_TRACE("choose partitions to estimate rowcount", K(chosen_partitions));
-    LOG_TRACE("choose ranges to estimate rowcount", K(chosen_scan_ranges));
+
+
   }
   for (int64_t i = 0; OB_SUCC(ret) && !need_fallback && i < chosen_partitions.count(); i ++) {
     EstimatedPartition best_index_part;
@@ -2223,7 +2223,7 @@ int ObAccessPathEstimation::estimate_full_table_rowcount_by_meta_table(ObOptimiz
   } else {
     meta.average_row_size_ = static_cast<double>(ObOptStatManager::get_default_avg_row_size());
     meta.part_size_ = meta.table_row_count_ * meta.average_row_size_;
-    LOG_TRACE("succeed to estimate full table rowcount by meta table", K(meta));
+
   }
   return ret;
 }
@@ -2235,7 +2235,7 @@ int ObAccessPathEstimation::process_dynamic_sampling_estimation(ObOptimizerConte
                                                                 bool &is_success)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("begin process dynamic sampling estimation", K(paths));
+
   ObDSTableParam ds_table_param;
   ObSEArray<ObDSResultItem, 4> ds_result_items;
   is_success = true;
@@ -2311,7 +2311,7 @@ int ObAccessPathEstimation::process_dynamic_sampling_estimation(ObOptimizerConte
       } else if (OB_FAIL(estimate_path_rowcount_by_dynamic_sampling(ds_table_param.table_id_, paths, ds_result_items))) {
         LOG_WARN("failed to estimate path rowcount by dynamic sampling", K(ret));
       }
-      LOG_TRACE("finish dynamic sampling", K(only_ds_basic_stat), K(only_ds_filter), K(no_ds_data), K(is_success));
+
       OPT_TRACE("end to process table dynamic sampling estimation");
       OPT_TRACE("dynamic sampling estimation result:");
       OPT_TRACE(ds_result_items);
@@ -2680,7 +2680,7 @@ int ObAccessPathEstimation::estimate_path_rowcount_by_dynamic_sampling(const uin
               }
             }
           }
-          LOG_TRACE("OPT:[DYNAMIC SAPMLING EST ROW COUNT", K(logical_row_count), K(physical_row_count), K(est_cost_info), K(output_rowcnt));
+
         }
       }
     }
@@ -2717,7 +2717,7 @@ int ObAccessPathEstimation::process_non_ds_filters(const OptTableMetas &table_me
                                                                          all_predicate_sel))) {
     LOG_WARN("failed to calculate conditional sel", K(result_item));
   } else {
-    LOG_TRACE("succeed to calculate non ds filters selectivity", K(selectivity), K(total_sel), K(result_item));
+
   }
   return ret;
 }
@@ -2745,7 +2745,7 @@ int ObAccessPathEstimation::update_column_metas_by_ds_col_stat(const int64_t row
     }
     col_metas.at(i).set_base_ndv(col_metas.at(i).get_ndv());
   }
-  LOG_TRACE("update column metas by ds col stat", K(ds_col_stats), K(col_metas), K(rowcount));
+
   return ret;
 }
 
@@ -3074,7 +3074,7 @@ int RangePartitionHelper::get_scan_range_partitions(ObExecContext &exec_ctx,
                                                           level_one_part_ids))) {
       // Some constructed range may be invalid and will get an error during get_partition_ids_by_range.
       // We can ignore the error and consider the range to be invalid.
-      LOG_TRACE("failed to get partition ids by range", K(ret), KPC(part_range_ptr), KPC(gen_range_ptr));
+
       ret = OB_SUCCESS;
       partition_ids.reuse();
     }

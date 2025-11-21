@@ -106,7 +106,7 @@ int ObSignalHandle::add_signums_to_set(sigset_t &sig_set)
 int ObSignalHandle::deal_signals(int signum)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("received signal", K(signum));
+
   switch (signum)
   {
     case SIGPIPE: {
@@ -175,7 +175,7 @@ int ObSignalHandle::deal_signals(int signum)
         LOG_ERROR("ObMultiTenant in global context should not be NULL", K(ret));
       } else {
         ObServer::get_instance().get_gctx().omt_->set_cpu_dump();
-        LOG_INFO("CPU_DUMP: switch on");
+
       }
       break;
     }
@@ -185,7 +185,7 @@ int ObSignalHandle::deal_signals(int signum)
         LOG_ERROR("ObMultiTenant in global context should not be NULL", K(ret));
       } else {
         ObServer::get_instance().get_gctx().omt_->unset_cpu_dump();
-        LOG_INFO("CPU_DUMP: switch off");
+
       }
       break;
     }

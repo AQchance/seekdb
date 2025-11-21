@@ -318,10 +318,10 @@ int ObInfoRingArray<T>::init(const int64_t max_cnt)
   int ret = OB_SUCCESS;
   if (IS_INIT) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "already been initiated", K(ret));
+
   } else if (max_cnt <= 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "max count is invalid", K(ret), K(max_cnt));
+
   } else {
     void *buf = NULL;
     if (OB_ISNULL(buf = allocator_.alloc(max_cnt * sizeof(T)))) {
@@ -343,13 +343,13 @@ int ObInfoRingArray<T>::get(const int64_t idx, T &item)
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else if (OB_ISNULL(array_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "array is null", K(ret));
+
   } else if (idx < 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid idx", K(ret), K(idx), K_(pos));
+
   } else {
     SpinRLockGuard guard(lock_);
     if (idx >= max_cnt_ || idx >= pos_) {
@@ -374,10 +374,10 @@ int ObInfoRingArray<T>::add_no_lock(const T &item)
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else if (OB_ISNULL(array_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "array is null", K(ret));
+
   } else {
     array_[pos_ % max_cnt_] = item;
     pos_++;
@@ -392,7 +392,7 @@ int ObInfoRingArray<T>::get_list(ObIArray<T> &input_array)
   SpinRLockGuard guard(lock_);
   for (int i = 0; OB_SUCC(ret) && i < size(); ++i) {
     if (OB_FAIL(input_array.push_back(array_[i]))) {
-      STORAGE_LOG(WARN, "failed to push into input array", K(ret), K(i), K(array_[i]));
+
     }
   }
   return ret;

@@ -201,7 +201,7 @@ int ObLocationMgr::del_location(const ObTenantLocationId &id)
     if (OB_ENTRY_NOT_EXIST == ret) {
       // if item does not exist, regard it as succeeded, schema will be refreshed later
       ret = OB_SUCCESS;
-      LOG_INFO("failed to remove location schema, item may not exist", K(ret));
+
     } else {
       LOG_WARN("failed to remove location schema", K(ret));
     }

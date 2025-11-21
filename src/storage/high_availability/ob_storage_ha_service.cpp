@@ -196,7 +196,7 @@ int ObStorageHAService::scheduler_ls_ha_handler_()
     LOG_WARN("storage ha service do not init", K(ret));
   } else {
     std::random_shuffle(ls_id_array_.begin(), ls_id_array_.end());
-    LOG_INFO("start do ls ha handler", K(ls_id_array_));
+
 
     for (int64_t i = 0; OB_SUCC(ret) && i < ls_id_array_.count(); ++i) {
       const share::ObLSID &ls_id = ls_id_array_.at(i);
@@ -253,7 +253,7 @@ int ObStorageHAService::errsim_set_ls_migration_status_hold_()
     ret = EN_STORAGE_HA_SERVICE_SET_LS_MIGRATION_STATUS_HOLD ? : OB_SUCCESS;
     const ObAddr &self = GCONF.self_addr_;
     if (OB_FAIL(ret)) {
-      STORAGE_LOG(ERROR, "fake EN_STORAGE_HA_SERVICE_SET_LS_MIGRATION_STATUS_HOLD", K(ret));
+
       //overwrite ret
       ret = OB_SUCCESS;
       const ObString &errsim_server = GCONF.errsim_migration_src_server_addr.str();

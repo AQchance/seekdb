@@ -152,7 +152,7 @@ int ObServerManager::add_server(const common::ObAddr &server, const ObZone &zone
 
   if (OB_SUCC(ret)) {
     ROOTSERVICE_EVENT_ADD("server", "add_server", K(server));
-    LOG_INFO("add new server", K(server), K(zone));
+
     int tmp_ret = server_change_callback_->on_server_change();
     if (OB_SUCCESS != tmp_ret) {
       LOG_WARN("fail to callback on server change", KR(ret), K(tmp_ret));
@@ -193,7 +193,7 @@ int ObServerManager::try_delete_server_working_dir(
                                                               ip_str,
                                                               server.get_port(),
                                                               svr_seq))) {
-        STORAGE_LOG(WARN, "failed to delete tenant all", K(ret), K(tenant_id), K(server));
+
       }
     }
   }
@@ -247,7 +247,7 @@ int ObServerManager::delete_server(const ObIArray<ObAddr> &servers, const ObZone
     if (OB_SUCC(ret)) {
       new_server_status.admin_status_ = ObServerStatus::OB_SERVER_ADMIN_DELETING;
       ROOTSERVICE_EVENT_ADD("server", "delete_server", K(server));
-      LOG_INFO("delete server, server change status to deleting", K(server), K(zone));
+
       char ip_buf[common::MAX_IP_ADDR_LENGTH];
       (void)server.ip_to_string(ip_buf, common::MAX_IP_ADDR_LENGTH);
       int64_t job_id = 0;
@@ -386,7 +386,7 @@ int ObServerManager::end_delete_server(const ObAddr &server, const ObZone &zone,
       } else {
         ROOTSERVICE_EVENT_ADD("server", "cancel_delete_server", K(server));
       }
-      LOG_INFO("end delete server", K(server), K(commit));
+
       int tmp_ret = server_change_callback_->on_server_change();
       if (OB_SUCCESS != tmp_ret) {
         LOG_WARN("fail to callback on server change", KR(ret), KR(tmp_ret));
@@ -751,7 +751,7 @@ int ObServerManager::check_server_permanent_offline(const ObAddr &server, bool &
       } else {
         ret = OB_SUCCESS;
         is_offline = false;
-        LOG_DEBUG("treat not exist server as not alive", K(server));
+
       }
     } else if (NULL == status_ptr) {
       ret = OB_ERR_UNEXPECTED;
@@ -782,7 +782,7 @@ int ObServerManager::check_server_alive(const ObAddr &server, bool &is_alive) co
       } else {
         ret = OB_SUCCESS;
         is_alive = false;
-        LOG_DEBUG("treat not exist server as not alive", K(server));
+
       }
     } else if (NULL == status_ptr) {
       ret = OB_ERR_UNEXPECTED;
@@ -813,7 +813,7 @@ int ObServerManager::check_server_active(const ObAddr &server, bool &is_active) 
       } else {
         ret = OB_SUCCESS;
         is_active = false;
-        LOG_INFO("treat not exist server as not active", K(server));
+
       }
     } else if (NULL == status_ptr) {
       ret = OB_ERR_UNEXPECTED;
@@ -844,7 +844,7 @@ int ObServerManager::check_server_stopped(const common::ObAddr &server, bool &is
       } else {
         ret = OB_SUCCESS;
         is_stopped = true;
-        LOG_INFO("treat server that is not exist as stopped", K(server));
+
       }
     } else if (NULL == status_ptr) {
       ret = OB_ERR_UNEXPECTED;
@@ -1206,7 +1206,7 @@ int ObServerManager::load_server_statuses(const ObServerStatusArray &server_stat
           if (ObServerStatus::OB_HEARTBEAT_ALIVE == status.hb_status_) {
             status.hb_status_ = ObServerStatus::OB_HEARTBEAT_LEASE_EXPIRED;
           }
-          LOG_INFO("import server", K(status));
+
           if (OB_FAIL(server_statuses_.push_back(status))) {
             LOG_WARN("push back to server_statuses failed", K(ret));
           }
@@ -1443,7 +1443,7 @@ int ObServerManager::find(const ObAddr &server, const ObServerStatus *&status) c
     if (!find) {
       ret = OB_ENTRY_NOT_EXIST;
       // we print info log here, because sometime this is normal(such as add server)
-      LOG_INFO("server not exist", K(server), K(ret));
+
     }
   }
   return ret;
@@ -1544,7 +1544,7 @@ int ObServerManager::check_in_service(const common::ObAddr &addr, bool &in_servi
       } else {
         ret = OB_SUCCESS;
         in_service = false;
-        LOG_INFO("treat server that not exist as not in service", K(addr));
+
       }
     } else if (NULL == status_ptr) {
       ret = OB_ERR_UNEXPECTED;

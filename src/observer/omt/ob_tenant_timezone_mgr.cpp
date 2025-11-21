@@ -165,7 +165,7 @@ int ObTenantTimezoneMgr::add_tenant_timezone(uint64_t tenant_id)
     } else if (OB_FAIL(timezone_map_.set_refactored(tenant_id, new_timezone, 1))) {
       LOG_WARN("add new tenant timezone failed", K(ret));
     } else {
-      LOG_INFO("add tenant timezone success!", K(tenant_id), K(sizeof(ObTenantTimezone)));
+
     }
     if (OB_FAIL(ret)) {
       ob_delete(new_timezone);
@@ -192,7 +192,7 @@ int ObTenantTimezoneMgr::del_tenant_timezone(uint64_t tenant_id)
   } else if (OB_FAIL(timezone_map_.erase_refactored(tenant_id))) {
     LOG_WARN("erase tenant timezone failed", K(ret), K(tenant_id));
   } else {
-    LOG_INFO("drop tenant tz push back succeed", K(timezone->get_tenant_id()));
+
     ob_delete(timezone);
   }
   return ret;

@@ -176,7 +176,7 @@ int ObCopiedSSTableCreatorImpl::do_create_sstable_(
     }
   }
 
-  LOG_INFO("create sstable", K(ret), KPC_(src_sstable_param), K(param));
+
 
   return ret;
 }
@@ -214,7 +214,7 @@ int ObCopiedEmptySSTableCreator::create_sstable()
     }
   }
 
-  LOG_INFO("create empty sstable", K(ret), K(table_handle));
+
 
   return ret;
 }
@@ -255,7 +255,7 @@ int ObCopiedSSTableCreator::create_sstable()
     }
   }
 
-  LOG_INFO("create local sstable with index builder", K(ret), K(table_handle));
+
 
   return ret;
 }
@@ -310,7 +310,7 @@ int ObRestoredSharedSSTableCreator::create_sstable()
     }
   }
 
-  LOG_INFO("create restore shared sstable with index builder", K(ret), K(table_handle));
+
 
   return ret;
 }
@@ -356,7 +356,7 @@ int ObCopiedSharedMacroBlocksSSTableCreator::create_sstable()
     }
   }
 
-  LOG_INFO("create shared macro blocks sstable", K(ret), K(table_handle));
+
 
   return ret;
 }
@@ -424,7 +424,7 @@ int ObCopiedSharedSSTableCreator::create_sstable()
       }
     }
   }
-  LOG_INFO("create shared sstable with index builder", K(ret), K(table_handle));
+
   return ret;
 }
 
@@ -522,7 +522,7 @@ int ObSSTableCopyFinishTask::init(const ObPhysicalCopyTaskInitParam &init_param)
       LOG_WARN("failed to prepare sstable index builder", K(ret), K(init_param), K(cluster_version));
     } else {
       is_inited_ = true;
-      LOG_INFO("succeed init ObSSTableCopyFinishTask", K(init_param), K(sstable_macro_range_info_));
+
     }
   }
   return ret;
@@ -644,7 +644,7 @@ int ObSSTableCopyFinishTask::process()
   } else if (OB_FAIL(update_copy_tablet_record_extra_info_())) {
     LOG_WARN("failed to update copy tablet record extra info", K(ret), K(copy_ctx_));
   } else {
-    LOG_INFO("succeed sstable copy finish", K(copy_ctx_));
+
   }
 
 #ifdef ERRSIM
@@ -697,11 +697,11 @@ int ObSSTableCopyFinishTask::update_major_sstable_reuse_info_()
     LOG_WARN("sstable copy finish task do not init", K(ret));
   } else if (GCTX.is_shared_storage_mode()) {
     // skip reuse macro block in shared storage mode
-    LOG_INFO("skip reuse macro block in shared storage mode");
+
   } else if (FALSE_IT(is_major_sstable = ObITable::is_major_sstable(copy_ctx_.table_key_.table_type_))) {
   } else if (!is_major_sstable) {
     // sstable is not major, skip reuse
-    LOG_INFO("sstable is not major, skip update major sstable reuse info", K(ret), K(is_major_sstable), "table_key", copy_ctx_.table_key_);
+
   } else if (OB_ISNULL(copy_ctx_.macro_block_reuse_mgr_)) {
     //do nothing
     LOG_WARN("macro block reuse mgr is null, skip update major sstbale reuse info", K(ret), KP(copy_ctx_.macro_block_reuse_mgr_), K(copy_ctx_));
@@ -720,7 +720,7 @@ int ObSSTableCopyFinishTask::update_major_sstable_reuse_info_()
     } else if (OB_FAIL(copy_ctx_.macro_block_reuse_mgr_->count(reuse_info_count))) {
       LOG_WARN("failed to count reuse info", K(ret), K(copy_ctx_));
     } else {
-      LOG_INFO("succeed update major sstable reuse info", K(ret), K(copy_ctx_), K(reuse_info_count));
+
     }
     
     // if build or count reuse map failed, reset reuse map
@@ -754,7 +754,7 @@ int ObSSTableCopyFinishTask::update_copy_tablet_record_extra_info_()
   }
 
   if (OB_SUCC(ret)) {
-    LOG_DEBUG("succeed update copy tablet record extra info", K(copy_ctx_));
+
   }
 
   return ret;
@@ -798,7 +798,7 @@ int ObSSTableCopyFinishTask::prepare_data_store_desc_(
     if (OB_SUCC(ret) && is_user_tenant(tenant_id)) {
       ret = PHYSICAL_COPY_TASK_GET_TABLET_FAILED ? : OB_SUCCESS;
       if (OB_FAIL(ret)) {
-        STORAGE_LOG(ERROR, "fake PHYSICAL_COPY_TASK_GET_TABLET_FAILED", K(ret));
+
       }
     }
 #endif
@@ -906,7 +906,7 @@ int ObSSTableCopyFinishTask::prepare_sstable_index_builder_(
     ObSSTableIndexBuilder::ObSpaceOptimizationMode mode = ObSSTableIndexBuilder::DISABLE;
 
     if (!is_sstable_should_rebuild_index_(sstable_param)) {
-      LOG_INFO("sstable is no need build sstable index builder", K(tablet_id), KPC(sstable_param));
+
     } else if (OB_FAIL(get_space_optimization_mode_(sstable_param, mode))) {
       LOG_WARN("failed to get space optimization mode", K(ret), K(tablet_id), KPC(sstable_param));
     } else if (OB_FAIL(prepare_data_store_desc_(ls_id, tablet_id, sstable_param, cluster_version, desc))) {

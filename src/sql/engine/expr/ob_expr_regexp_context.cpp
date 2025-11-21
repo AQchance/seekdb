@@ -173,7 +173,7 @@ int ObExprRegexContext::match(ObExprStringBuf &string_buf,
     if (OB_FAIL(check_icu_regexp_status(m_error_code))) {
       LOG_WARN("failed to check icu regexp status", K(ret), K(u_errorName(m_error_code)));
     } else {
-      LOG_TRACE("Succeed to match", K(start), K(text.length()), K(result));
+
     }
   }
   return ret;
@@ -398,7 +398,7 @@ int ObExprRegexContext::append_head(ObExprStringBuf &string_buf,
       LOG_WARN("failed to check icu regexp status", K(u_errorName(m_error_code)), K(ret));
     } else {
       buff_pos += current_pos;
-      LOG_TRACE("succeed to append head", K(buff_pos), K(current_pos), K(buff_size));
+
     }
   }
   return ret;
@@ -448,7 +448,7 @@ int ObExprRegexContext::append_replace_str(ObExprStringBuf &string_buf,
     LOG_WARN("failed to check icu regexp status", K(ret), K(u_errorName(m_error_code)));
   } else {
     buff_pos += replace_size;
-    LOG_TRACE("succeed to append append replace", K(buff_pos), K(replace_size), K(buff_size));
+
   }
   return ret;
 }
@@ -485,7 +485,7 @@ int ObExprRegexContext::append_tail(ObExprStringBuf &string_buf,
     LOG_WARN("failed to check icu regexp status", K(u_errorName(m_error_code)), K(ret));
   } else {
     buff_pos += tail_size;
-    LOG_TRACE("succeed to append tail", K(buff_pos), K(tail_size), K(buff_size));
+
   }
   return ret;
 }
@@ -611,19 +611,19 @@ int ObExprRegexContext::preprocess_pattern(ObExprStringBuf &string_buf,
             buf_len += origin_buf_len - begin_idx - u_const_str1.length();
           }
           pattern.assign_ptr(buf, buf_len);
-          LOG_TRACE("succeed to preprocess pattern", K(buf), K(buf_len));
+
         }
       } else {
         pattern = origin_pattern;
-        LOG_TRACE("succeed to preprocess pattern", K(origin_pattern), K(pattern));
+
       }
     }
   } else {
     pattern = origin_pattern;
-    LOG_TRACE("succeed to preprocess pattern", K(origin_pattern), K(pattern));
+
   }
   if (OB_SUCC(ret)) {
-    LOG_TRACE("succeed to preprocess pattern", K(origin_pattern), K(pattern));
+
   }
   return ret;
 }
@@ -727,7 +727,7 @@ int ObExprRegexContext::get_valid_replace_string(ObIAllocator &alloc,
   } else if (origin_replace.empty()) {
     MEMSET(u_replace, 0, buf_len);
     u_replace_len = 0;
-    LOG_TRACE("succeed to get valid replace string", K(u_replace_len));
+
   } else {
     //oracle mode replace string '\1' <==> '$1' in mysql mode, we need extra convert.
     UErrorCode m_error_code = U_ZERO_ERROR;
@@ -785,7 +785,7 @@ int ObExprRegexContext::get_valid_replace_string(ObIAllocator &alloc,
           backslash_cnt = 0;
         }
       }
-      LOG_TRACE("succeed to get valid replace string", K(tmp_len), K(u_replace_len), K(group_count));
+
     }
   }
   return ret;
@@ -1041,7 +1041,7 @@ int ObExprHsRegexCtx::match(ObExprStringBuf &string_buf,
       LOG_WARN("hs scan failed", K(ret), K(status));
     } else {
       result = (match_infos.count() > 0);
-      LOG_DEBUG("Succeed to match", K(start), K(start_pos), K(text.length()), K(result));
+
     }
   }
   return ret;

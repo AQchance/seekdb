@@ -209,7 +209,7 @@ int ObMaintainDepInfoTaskQueue::init(const int64_t thread_cnt, const int64_t que
 void ObMaintainDepInfoTaskQueue::run2()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("async task queue start");
+
   if (!is_inited_) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", K(ret));
@@ -228,7 +228,7 @@ void ObMaintainDepInfoTaskQueue::run2()
           LOG_WARN("sys_view_consistent size too much", K(sys_view_consistent_.size()));
           sys_view_consistent_.clear();
         }
-        LOG_INFO("[ASYNC TASK QUEUE]", K(queue_.size()), K(sys_view_consistent_.size()));
+
       }
       if (last_execute_time_ > 0
          && static_cast<int64_t>(GCONF._ob_obj_dep_maint_task_interval) > 0) {
@@ -305,7 +305,7 @@ void ObMaintainDepInfoTaskQueue::run2()
       }
     }
   }
-  LOG_INFO("async task queue stop");
+
 }
 
 }  // namespace sql

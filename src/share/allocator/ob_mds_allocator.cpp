@@ -195,10 +195,10 @@ ObMdsThrottleGuard::~ObMdsThrottleGuard()
   } else if (throttle_tool_->is_throttling<ObTenantMdsAllocator>(share_ti_guard, module_ti_guard)) {
 
     if (OB_FAIL(MTL(ObLSService *)->get_ls(ls_id_, ls_handle, ObLSGetMod::STORAGE_MOD))) {
-      STORAGE_LOG(WARN, "get ls handle failed", KR(ret), K(ls_id_));
+
     } else if (OB_ISNULL(ls_handle.get_ls())) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(ERROR, "get ls handle failed", KR(ret), K(ls_id_));
+
     } else {
       (void)TxShareMemThrottleUtil::do_throttle<ObTenantMdsAllocator>(for_replay_,
                                                                       abs_expire_time_,

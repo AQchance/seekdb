@@ -57,7 +57,7 @@ int ObMySQLPreparedResult::init()
     LOG_ERROR("out of memory, alloc mem for mysql bind error", K(ret));
   } else {
     MEMSET(bind_, 0, sizeof(MYSQL_BIND) * result_column_count_);
-    LOG_TRACE("statemen field count = ", K(result_column_count_));
+
   }
   return ret;
 }

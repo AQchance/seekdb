@@ -82,7 +82,7 @@ void ObUDRRefreshTask::runTimerTask()
 {
   int ret = OB_SUCCESS;
   if (OB_NOT_NULL(rule_mgr_) && rule_mgr_->inited_) {
-    LOG_INFO("run rewrite rule refresh task", K(rule_mgr_->tenant_id_));
+
     if (OB_FAIL(rule_mgr_->sync_rule_from_inner_table())) {
       LOG_WARN("failed to sync rule from inner table", K(ret));
     }
@@ -216,7 +216,7 @@ int ObUDRMgr::get_udr_item(const ObUDRContext &rule_ctx,
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(rule_item_mgr_.get_udr_item(rule_ctx, item_guard, cst_cons_list))) {
-    LOG_DEBUG("failed to get rewrite rule item", K(ret), K(rule_ctx));
+
   }
   return ret;
 }
@@ -235,7 +235,7 @@ int ObUDRMgr::sync_rule_from_inner_table()
 {
   int ret = OB_SUCCESS;
   lib::ObMutexGuard guard(mutex_);
-  LOG_DEBUG("sync rule from inner table", K(tenant_id_), K(rule_version_));
+
   int64_t max_rule_version = OB_INVALID_VERSION;
   ObSEArray<ObUDRInfo, 32> rule_infos;
   UDRTmpAllocatorGuard alloc_guard;
@@ -243,21 +243,21 @@ int ObUDRMgr::sync_rule_from_inner_table()
   if (OB_FAIL(sql_service_.fetch_max_rule_version(tenant_id_, max_rule_version))) {
     LOG_WARN("failed to fetch max rule version", K(ret));
   } else if (rule_version_ >= max_rule_version) {
-    LOG_TRACE("local version is latest, don't need refresh", K(tenant_id_), K(rule_version_), K(max_rule_version));
+
   } else if (OB_FAIL(alloc_guard.init(tenant_id_))) {
     LOG_WARN("failed to init allocator guard", K(ret));
   } else if (OB_ISNULL(allocator = alloc_guard.get_allocator())) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get null allocator", K(ret));
   } else {
-    LOG_INFO("local version is not latest, need refresh", K(tenant_id_), K(rule_version_), K(max_rule_version));
+
     if (OB_FAIL(sql_service_.clean_up_items_marked_for_deletion(tenant_id_))) {
       LOG_WARN("failed to clean up items marked for deletion", K(ret));
     } else if (OB_FAIL(sql_service_.get_need_sync_rule_infos(*allocator, tenant_id_, rule_version_, rule_infos))) {
       LOG_WARN("failed to get need sync rule infos", K(ret), K(rule_version_), K(max_rule_version));
     } else if (rule_infos.empty()) {
       // do nothing
-      LOG_TRACE("rule infos is empty", K(tenant_id_), K(rule_version_), K(max_rule_version));
+
     } else if (OB_FAIL(rule_item_mgr_.sync_local_cache_rules(rule_infos))) {
       LOG_WARN("failed to sync local cache rules", K(ret));
     } else {

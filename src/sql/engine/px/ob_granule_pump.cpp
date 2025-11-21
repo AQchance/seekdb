@@ -220,7 +220,7 @@ int ObGITaskSet::set_block_order(bool desc)
         LOG_WARN("failed to assign task info", K(ret));
       }
     }
-    LOG_TRACE("reverse block task info", K(ret), K(gi_task_set_));
+
   }
   return ret;
 }
@@ -350,7 +350,7 @@ int ObGranulePump::fetch_granule_task(const ObGITaskSet *&res_task_set,
 {
   int ret = OB_SUCCESS;
   /*try get gi task*/
-  LOG_DEBUG("fetch granule task from granule pump");
+
   if (GIT_UNINITIALIZED == splitter_type) {
     ret = OB_NOT_INIT;
     LOG_WARN("granule pump is not init", K(ret));
@@ -412,7 +412,7 @@ int ObGranulePump::fetch_granule_by_worker_id(const ObGITaskSet *&res_task_set,
     } else if (OB_FAIL(res_task_set->get_task_at_pos(info, pos))) {
       LOG_WARN("get task info failed", K(ret));
     } else {
-      LOG_TRACE("get GI task", K(taskset), K(ret));
+
     }
   }
   return ret;
@@ -451,7 +451,7 @@ int ObGranulePump::fetch_granule_from_shared_pool(const ObGITaskSet *&res_task_s
             fetched_task_cnt >= ((taskset.task_count_ + parallelism_ - 1) / parallelism_)) {
           ret = OB_ITER_END;
           finished_cnt_++;
-          LOG_TRACE("return iter end to make GI tasks allocated evenly.");
+
         }
       }
       if (OB_FAIL(ret)) {
@@ -465,7 +465,7 @@ int ObGranulePump::fetch_granule_from_shared_pool(const ObGITaskSet *&res_task_s
       } else if (OB_FAIL(res_task_set->get_task_at_pos(info, pos))) {
         LOG_WARN("get task info failed", K(ret));
       } else {
-        LOG_TRACE("get GI task", K(taskset), K(ret));
+
       }
     }
   }
@@ -531,7 +531,7 @@ int ObGranulePump::fetch_pw_granule_by_worker_id(ObIArray<ObGranuleTaskInfo> &in
       LOG_WARN("incorrect state", K(ret));
     }
   }
-  LOG_TRACE("get a new partition wise join gi tasks", K(infos), K(ret));
+
   return ret;
 }
 
@@ -604,7 +604,7 @@ int ObGranulePump::fetch_pw_granule_from_shared_pool(ObIArray<ObGranuleTaskInfo>
         LOG_WARN("incorrect state", K(ret));
       }
     }
-    LOG_TRACE("get a new partition wise join gi tasks", K(infos), K(ret));
+
   }
   return ret;
 }
@@ -651,7 +651,7 @@ int ObGranulePump::add_new_gi_task(ObGranulePumpArgs &args, bool check_task_exis
   partition_wise_join_ = ObGranuleUtil::pwj_gi(args.gi_attri_flag_);
   ObTableModifySpec *modify_op = args.op_info_.get_modify_op();
   ObIArray<const ObTableScanSpec *> &scan_ops = args.op_info_.get_scan_ops();
-  LOG_DEBUG("init granule", K(args));
+
   LOG_DEBUG("gi pump add_new_gi_task", K(modify_op), K(this), K(scan_ops), K(gi_task_array_map_),
            K(gi_task_array_map_.count()), K(args.tablet_arrays_));
 
@@ -663,7 +663,7 @@ int ObGranulePump::add_new_gi_task(ObGranulePumpArgs &args, bool check_task_exis
       LOG_WARN("check can randomize failed", K(ret));
     } else if (can_randomize) {
       random_type = ObGITaskSet::GI_RANDOM_RANGE;
-      LOG_TRACE("split random task/range for online ddl and pdml");
+
     }
   }
 
@@ -772,7 +772,7 @@ int ObGranulePump::init_external_odps_table_downloader(ObGranulePumpArgs &args)
         if (OB_FAIL(odps_partition_downloader_mgr_.init_downloader(args.external_table_files_.count()))) {
           LOG_WARN("init odps_partition_downloader_mgr_ failed", K(ret), K(args.external_table_files_.count()));
         } else {
-          LOG_TRACE("succ to init odps table partition downloader", K(ret), K(is_odps_downloader_inited()));
+
         }
 #else   
         ret = OB_NOT_SUPPORTED;
@@ -843,7 +843,7 @@ void ObGranulePump::destroy()
 #if defined (OB_BUILD_CPP_ODPS)
     int ret = 0;
     if (is_odps_downloader_inited()) {
-      LOG_TRACE("destroy odps_partition_downloader_mgr_", K(ret), KP(this), KP(&odps_partition_downloader_mgr_));
+
       odps_partition_downloader_mgr_.reset();
     }
 #endif
@@ -999,7 +999,7 @@ int ObGranuleSplitter::get_query_range(ObExecContext &ctx,
       LOG_WARN("Failed to make whole range", K(ret));
     } else if (!tsc_pre_query_range.has_exec_param()) {
       // No dynamic parameters can be present to perform query range pre-extraction
-      LOG_DEBUG("try to get scan range for partition granule");
+
       if (OB_FAIL(ObSQLUtils::extract_pre_query_range(
                     tsc_pre_query_range,
                     ctx.get_allocator(),
@@ -1020,7 +1020,7 @@ int ObGranuleSplitter::get_query_range(ObExecContext &ctx,
     if (OB_SUCC(ret)) {
       // No query range extracted, use whole range
       if (scan_ranges.empty()) {
-        LOG_DEBUG("the scan ranges is invalid, use the whole range", K(scan_ranges));
+
         if (OB_FAIL(ranges.push_back(whole_range))) {
            LOG_WARN("Failed to push back scan range", K(ret));
         }
@@ -1179,7 +1179,7 @@ int ObRandomGranuleSplitter::split_granule(ObGranulePumpArgs &args,
         LOG_WARN("failed to push back task set", K(ret));
       } else {
         gi_task_array_result.at(idx + task_idx).tsc_op_id_ = op_id;
-        LOG_TRACE("random granule split task", K(args.gi_op_id_), K(idx), K(op_id), K(task_idx), K(taskset_array).at(0), K(&(taskset_array.at(0))), K(lbt()));
+
       }
     }
   }
@@ -1465,7 +1465,7 @@ int ObNormalAffinitizeGranuleSplitter::split_granule(ObGranulePumpArgs &args,
       K(op_id), K(tsc->get_loc_ref_table_id()), K(taskset_array), K(ret), K(scan_ops.count()),
       K(idx), K(task_idx), K(total_task_set));
   }
-  LOG_TRACE("normal affinitize gi split_granule", K(ret), K(tablet_arrays), K(random_type));
+
   return ret;
 }
 // FULL PARTITION WISE unique split method, can handle INSERT/REPLACE task splitting
@@ -1534,7 +1534,7 @@ int ObPartitionWiseGranuleSplitter::split_granule(ObGranulePumpArgs &args,
     ObGITaskSet total_task_set;
     ObGITaskArray &taskset_array = gi_task_array_result.at(task_begin_idx).taskset_array_;
     const ObDMLBaseCtDef *dml_ctdef = nullptr;
-    LOG_TRACE("handler split dml op task", K(modify_op->get_type()));
+
     if (OB_FAIL(modify_op->get_single_dml_ctdef(dml_ctdef))) {
       LOG_WARN("get single table loc id failed", K(ret));
     } else if (OB_FAIL(split_insert_gi_task(args,
@@ -1549,7 +1549,7 @@ int ObPartitionWiseGranuleSplitter::split_granule(ObGranulePumpArgs &args,
       LOG_WARN("failed to push back task set", K(ret));
     } else {
       // Obtain the corresponding insert/replace op id
-      LOG_TRACE("split modify gi task successfully", K(modify_op->get_id()));
+
       gi_task_array_result.at(task_begin_idx).tsc_op_id_ = modify_op->get_id();
     }
   }
@@ -1739,7 +1739,7 @@ int ObPWAffinitizeGranuleSplitter::adjust_task_order(bool asc, ObGITaskArray &ta
   // In same pw affi task group, worker has there own task order,
   // we must adjust task order to get right join result, just see issue/22963231.
   int ret = OB_SUCCESS;
-  LOG_TRACE("adjust task order", K(tsc_op_id), K(asc), K(locations_order), K(taskset_array));
+
   bool no_need_reverse = false;
   bool force_reverse = false;
   bool found = false;
@@ -1844,7 +1844,7 @@ int ObGranulePump::init_arg(
   for (int i = 0; OB_SUCC(ret) && i < partitions_info.count(); ++i) {
     OZ(arg.partitions_info_.push_back(partitions_info.at(i)));
   }
-  LOG_TRACE("gi pump init arg", K(scan_ops), K(tablet_arrays), K(arg.tablet_arrays_));
+
   OZ(arg.external_table_files_.assign(external_table_files));
   OZ(arg.locations_order_.assign(locations_order));
   if (OB_SUCC(ret)) {
@@ -1914,7 +1914,7 @@ int ObGranulePump::split_granule(ObGranuleIteratorOp *gi_op, int64_t scan_op_id,
                                              const ObIArray<ObNewRange> &ranges)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("[Adaptive Task Splitting] try to split long tail gi task", K(gi_op->get_spec().get_id()));
+
   int64_t worker_id = gi_op->get_worker_id();
   ObIAllocator &allocator =
       gi_op->get_exec_ctx().get_sqc_handler()->get_sqc_ctx().get_tasks().at(worker_id).allocator_;
@@ -1974,7 +1974,7 @@ int ObGranulePump::split_granule(ObGranuleIteratorOp *gi_op, int64_t scan_op_id,
         LOG_WARN("check can randomize failed", K(ret));
       } else if (can_randomize) {
         random_type = ObGITaskSet::GI_RANDOM_RANGE;
-        LOG_TRACE("split random task/range for online ddl and pdml");
+
       }
     }
 

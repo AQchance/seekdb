@@ -148,7 +148,7 @@ int ObVirtualShowTrace::retrive_all_span_info()
         }
       }
     }
-    LOG_TRACE("after read dia log from span info", K(show_trace_arr_.count()), K(ret));
+
   }
 
   return ret;
@@ -313,7 +313,7 @@ int ObVirtualShowTrace::generate_span_info_tree()
       }
     }
   }
-  LOG_TRACE("after push back show_trace record", K(show_trace_arr_.count()), K(ret));
+
   return ret;
 }
 
@@ -686,7 +686,7 @@ int ObVirtualShowTrace::inner_get_next_row(common::ObNewRow *&row)
       is_first_get_ = false;
       show_trace_rec_idx_ = 0;
     }
-    LOG_TRACE("after pre processed", K(show_trace_arr_.count()), K(ret));
+
   }
 
   // display

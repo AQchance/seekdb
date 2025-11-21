@@ -18,7 +18,7 @@
     auto n1 = new ObTxNode(1, ObAddr(ObAddr::VER::IPV4, "127.0.0.1", 8888), bus_); \
     NAMED_DEFER(defer_n1, delete(n1));                                  \
     ASSERT_EQ(OB_SUCCESS, n1->start());                                 \
-    LOG_INFO("##START_ONE_TX_NODE##", "node.addr_", n1->addr_);
+
 
 #define START_TWO_TX_NODE(n1, n2)                                       \
     auto n1 = new ObTxNode(1, ObAddr(ObAddr::VER::IPV4, "127.0.0.1", 8888), bus_); \
@@ -27,7 +27,7 @@
     NAMED_DEFER(defer_n2, delete(n2));                                  \
     ASSERT_EQ(OB_SUCCESS, n1->start());                                 \
     ASSERT_EQ(OB_SUCCESS, n2->start());                                 \
-    LOG_INFO("##START_TWO_TX_NODE##", K(n1->addr_), K(n2->addr_));
+
 
 #define START_TWO_TX_NODE_WITH_LSID(n1, n2, ls_id)                                       \
   auto n1 = new ObTxNode(ls_id, ObAddr(ObAddr::VER::IPV4, "127.0.0.1", 8888), bus_);     \
@@ -36,12 +36,12 @@
   NAMED_DEFER(defer_n2, delete (n2));                                                    \
   ASSERT_EQ(OB_SUCCESS, n1->start());                                                    \
   ASSERT_EQ(OB_SUCCESS, n2->start());                                                    \
-  LOG_INFO("##START_TWO_TX_NODE##", K(n1->addr_), K(n2->addr_));
+
 
 #define PREPARE_TX(n1, tx)                                              \
     ObTxDescGuard guard = n1->get_tx_guard();                           \
     ObTxDesc &tx = guard.get_tx_desc();                                 \
-    LOG_INFO("##PREPARE_TX##", "node", n1->addr_, "tx_id", tx.tx_id_);
+
 
 #define PREPARE_TX_PARAM(tx_param)                      \
     ObTxParam tx_param;                                 \
@@ -69,21 +69,21 @@
 
 #define INJECT_LINK_FAILURE(n1, n2)                                     \
     ASSERT_EQ(OB_SUCCESS, bus_.inject_link_failure(n1->addr_, n2->addr_)); \
-    LOG_INFO("##JINECT_LINK_FAILURE##", K(n1->addr_), K(n2->addr_));
+
 
 #define REPAIR_LINK_FAILURE(n1, n2)                                     \
     ASSERT_EQ(OB_SUCCESS, bus_.repair_link_failure(n1->addr_, n2->addr_)); \
-    LOG_INFO("##REPAIR_LINK_FAILURE##", K(n1->addr_), K(n2->addr_));
+
 
 #define ASYNC_DO(op_name, op)                                       \
     auto op_name ## _fff_ = [&] { return op; };                     \
     auto op_name = test::make_async(op_name ## _fff_);              \
     op_name.wait_started();                                         \
     ASSERT_FALSE(op_name.is_evaled());                              \
-    LOG_INFO("##ASYNC_DO##", "op_name", #op_name);
+
 
 #define ASYNC_WAIT(op_name, timeout_us, ret)            \
-    LOG_INFO("##ASYNC_WAIT##", "op_name", #op_name);    \
+    \
     int ret = 0;                                        \
     do {                                                \
         int i = timeout_us / 1000;                      \
@@ -92,7 +92,7 @@
         }                                               \
         if (i > 0) { ret = op_name.get();  }            \
     } while(0);                                         \
-    LOG_INFO("##ASYNC_DONE##", "op_name", #op_name);
+
 
 #define ROLLBACK_TX(n1, tx)                     \
     n1->rollback_tx(tx);

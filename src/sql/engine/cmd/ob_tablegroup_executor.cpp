@@ -64,7 +64,7 @@ int ObCreateTablegroupExecutor::execute(ObExecContext &ctx, ObCreateTablegroupSt
       LOG_WARN("rpc proxy create tablegroup failed", K(ret));
     }
   }
-  LOG_INFO("finish execute create tablegroup.", K(stmt), K(ret));
+
   return ret;
 }
 
@@ -93,7 +93,7 @@ int ObDropTablegroupExecutor::execute(ObExecContext &ctx, ObDropTablegroupStmt &
   } else if (OB_FAIL(common_rpc_proxy->drop_tablegroup(drop_tablegroup_arg))) {
     LOG_WARN("rpc proxy drop tablegroup failed", K(ret));
   }
-  LOG_INFO("finish execute drop tablegroup.", K(stmt), K(ret));
+
   return ret;
 }
 

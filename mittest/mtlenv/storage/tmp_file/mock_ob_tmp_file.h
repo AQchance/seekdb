@@ -131,14 +131,14 @@ int MockTenantTmpFileManager::init()
     if (OB_FAIL(mock_sn_tmp_file_mgr_.init())) { /* replace sn_file_mgr_ with mock_sn_tmp_file_mgr_ */
       LOG_WARN("fail to init sn tmp file manager", KR(ret));
     } else {
-      LOG_INFO("MockTenantTmpFileManager init sn file manager complete", KP(&get_sn_file_manager()), KP(&sn_file_manager_));
+
     }
   }
 
   if (OB_SUCC(ret)) {
     is_inited_ = true;
   }
-  LOG_INFO("MockTenantTmpFileManager init success", KR(ret));
+
   return ret;
 }
 
@@ -147,9 +147,9 @@ int MockTmpFileSwapTg::init()
   int ret = OB_SUCCESS;
   if (IS_INIT) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObTmpFileSwapTG init twice");
+
   } else if (OB_FAIL(idle_cond_.init(ObWaitEventIds::NULL_EVENT))) {
-    STORAGE_LOG(WARN, "failed to init condition variable", KR(ret));
+
   } else {
     is_inited_ = true;
     last_swap_timestamp_ = 0;
@@ -189,9 +189,9 @@ int MockTmpFileFlushTask::write_one_block()
       ret = OB_SERVER_OUTOF_DISK_SPACE;
     }
     write_block_ret_code_ = ret;
-    LOG_DEBUG("MockTmpFileFlushTask use mock io error", KR(ret), KPC(this));
+
   } else {
-    LOG_DEBUG("MockTmpFileFlushTask send io succ normally", KR(ret), KPC(this));
+
   }
   return ret;
 }
@@ -228,7 +228,7 @@ int MockTmpFileFlushTask::wait_macro_block_handle()
       LOG_WARN("unknown wait mode", KR(ret), K(io_result_ret_code_), K(MockIO.get_wait_mode()));
       break;
   }
-  LOG_DEBUG("MockTmpFileFlushTask::wait_macro_block_handle", KR(ret), KPC(this));
+
   return ret;
 }
 
@@ -240,7 +240,7 @@ int MockTmpFileFlushManager::alloc_flush_task(ObTmpFileFlushTask *&flush_task)
   void *task_buf = nullptr;
   if (OB_ISNULL(task_buf = task_allocator_.alloc(sizeof(MockTmpFileFlushTask)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to allocate memory for flush callback", KR(ret));
+
   } else {
     flush_task = new (task_buf) MockTmpFileFlushTask();
   }
@@ -252,27 +252,27 @@ int MockTmpFilePageCacheController::init()
   int ret = OB_SUCCESS;
   if (IS_INIT) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObTmpFilePageCacheController init twice");
+
   } else if (OB_FAIL(task_allocator_.init(lib::ObMallocAllocator::get_instance(),
                                           OB_MALLOC_MIDDLE_BLOCK_SIZE,
                                           ObMemAttr(MTL_ID(), "UTTmpFileCtl", ObCtxIds::DEFAULT_CTX_ID)))) {
-    STORAGE_LOG(WARN, "fail to init task allocator", KR(ret));
+
   } else if (OB_FAIL(mock_flush_mgr_.init())) { /* init mock flush mgr */
-    STORAGE_LOG(WARN, "fail to init mock flush task mgr", KR(ret));
+
   } else if (OB_FAIL(flush_priority_mgr_.init())) {
-    STORAGE_LOG(WARN, "fail to init flush priority mgr", KR(ret));
+
   } else if (OB_FAIL(write_buffer_pool_.init())) {
-    STORAGE_LOG(WARN, "fail to init write buffer pool", KR(ret));
+
   } else if (OB_FAIL(mock_flush_tg_.init())) { /* init mock flush tg and start timer threads */
-    STORAGE_LOG(WARN, "fail to init mock flush thread", KR(ret));
+
   } else if (OB_FAIL(mock_flush_tg_.start())) {
-    STORAGE_LOG(WARN, "fail to start mock flush thread", KR(ret));
+
   } else if (OB_FAIL(mock_swap_tg_.init())) { /* init mock swap tg */
-    STORAGE_LOG(WARN, "fail to init mock swap thread", KR(ret));
+
   }  else {
     flush_all_data_ = false;
     is_inited_ = true;
-    LOG_INFO("MockTmpFilePageCacheController init successful");
+
   }
   return ret;
 }
@@ -305,16 +305,16 @@ int MockTmpFilePageCacheController::inner_origin_invoke_swap_and_wait_(int64_t e
   ObTmpFileSwapJob *swap_job = nullptr;
   if (OB_ISNULL(task_buf = task_allocator_.alloc(sizeof(ObTmpFileSwapJob)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to allocate memory for swap job", KR(ret));
+
   } else if (FALSE_IT(swap_job = new (task_buf) ObTmpFileSwapJob())) {
   } else if (OB_FAIL(swap_job->init(expect_swap_size, timeout_ms))) {
-    STORAGE_LOG(WARN, "fail to init sync swap job", KR(ret), KPC(swap_job));
+
   } else if (OB_FAIL(mock_swap_tg_.swap_job_enqueue(swap_job))) { // replace swap_tg_ with mock_swap_tg_ to inject IO error
-    STORAGE_LOG(WARN, "fail to enqueue swap job", KR(ret), KPC(swap_job));
+
   } else {
     mock_swap_tg_.notify_doing_swap();
     if (OB_FAIL(swap_job->wait_swap_complete())) {
-      STORAGE_LOG(WARN, "fail to wait for swap job complete timeout", KR(ret));
+
     }
   }
 
@@ -325,7 +325,7 @@ int MockTmpFilePageCacheController::inner_origin_invoke_swap_and_wait_(int64_t e
     swap_job->reset();
     int tmp_ret = OB_SUCCESS;
     if (OB_TMP_FAIL(free_swap_job_(swap_job))) {
-      STORAGE_LOG(ERROR, "fail to free swap job", KR(ret), KR(tmp_ret));
+
     }
   }
   return ret;
@@ -342,7 +342,7 @@ int MockSharedNothingTmpFile::generate_meta_flush_info(
   MockIO.save_generate_error_code(OB_SUCCESS);
   ret = ObSharedNothingTmpFile::generate_meta_flush_info(flush_task, info, meta_flush_context, flush_sequence, need_flush_tail);
   if (OB_FAIL(ret) && OB_ITER_END != ret) {
-    LOG_DEBUG("detect generate meta flush info failed, save error code", KR(ret));
+
     MockIO.save_generate_error_code(ret);
 
     if (MockTmpFileUtil::MOCK_THREAD_RUNNING_CTRL::ASYNC == MockIO.get_thread_running_mode()) {
@@ -364,7 +364,7 @@ int MockSNTenantTmpFileManager::init_sub_module_()
   } else {
     mock_page_cache_controller_.mock_swap_tg_.set_stop(false); /* unset mock thread stop flag */
     is_running_ = true; /* manually set is_running_ flag */
-    LOG_INFO("MockSNTenantTmpFileManager init successful", K(tenant_id_), KP(this));
+
   }
   return ret;
 }
@@ -401,7 +401,7 @@ int MockSNTenantTmpFileManager::open(int64_t &fd, const int64_t &dir_id, const c
     tmp_file = nullptr;
   }
 
-  LOG_INFO("open a tmp file over", KR(ret), K(fd), K(dir_id), KP(tmp_file), K(lbt()));
+
   return ret;
 }
 

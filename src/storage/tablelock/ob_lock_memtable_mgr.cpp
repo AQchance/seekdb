@@ -87,7 +87,7 @@ int ObLockMemtableMgr::init(
     freezer_ = freezer;
     t3m_ = t3m;
     is_inited_ = true;
-    LOG_INFO("lock memtable mgr init successfully", K(ls_id), K(tablet_id), K(this));
+
   }
   return ret;
 }
@@ -128,7 +128,7 @@ int ObLockMemtableMgr::create_memtable(const CreateMemtableArg &arg)
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("ls_tx_svr is null", K(ret));
   } else {
-    LOG_INFO("create lock memtable successfully", K_(ls_id), K(memtable), KPC(this));
+
   }
 
   return ret;
@@ -141,10 +141,10 @@ const ObLockMemtable *ObLockMemtableMgr::get_memtable_(const int64_t pos) const
   const ObLockMemtable *memtable = nullptr;
   if (OB_ISNULL(imemtable)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (!imemtable->is_lock_memtable()) {
     ret = OB_ENTRY_NOT_EXIST;
-    STORAGE_LOG(WARN, "not lock memtable", K(ret), K(imemtable->get_key()));
+
   } else {
     memtable = static_cast<const ObLockMemtable*>(imemtable);
   }
@@ -181,13 +181,13 @@ int ObLockMemtableMgr::release_head_memtable_(storage::ObIMemtable *imemtable,
   int ret = OB_SUCCESS;
   int tmp_ret = OB_SUCCESS;
 
-  LOG_INFO("lock memtable mgr release head memtable", KP(imemtable), K(force));
+
   ObLockMemtable *memtable = static_cast<ObLockMemtable *>(imemtable);
   if (get_memtable_count_() > 0 && force) {
     // for force
     const int64_t idx = get_memtable_idx(memtable_head_);
     if (nullptr != tables_[idx] && memtable == tables_[idx]) {
-      LOG_INFO("release head memtable", K(ret), K_(ls_id), KP(memtable));
+
       release_head_memtable();
       FLOG_INFO("succeed to release head lock table memtable", K(ret),
                 K_(ls_id), KP(imemtable), K(memtable_head_), K(memtable_tail_));

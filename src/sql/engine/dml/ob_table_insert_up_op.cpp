@@ -204,7 +204,7 @@ int ObTableInsertUpOp::inner_open_with_das()
      ObDasParallelType type = ObTableModifyOp::check_das_parallel_type();
      if (DAS_SERIALIZATION != type) {
        type = DAS_BLOCKING_PARALLEL;
-       LOG_TRACE("this sql use das parallel submit for insert_up", K(check_das_parallel_type()));
+
      }
      upd_rtctx_.das_ref_.get_das_parallel_ctx().set_das_parallel_type(type);
      upd_rtctx_.das_ref_.get_das_parallel_ctx().set_das_dop(ctx_.get_das_ctx().get_real_das_dop());
@@ -304,7 +304,7 @@ int ObTableInsertUpOp::inner_get_next_row()
   ObPhysicalPlanCtx *plan_ctx = GET_PHY_PLAN_CTX(ctx_);
   ObSQLSessionInfo *my_session = GET_MY_SESSION(ctx_);
   if (iter_end_) {
-    LOG_DEBUG("can't get gi task, iter end", K(MY_SPEC.id_), K(iter_end_));
+
     ret = OB_ITER_END;
   } else {
     if (OB_FAIL(try_check_status())) {
@@ -489,7 +489,7 @@ int ObTableInsertUpOp::do_insert_up_cache()
         if (OB_FAIL(conflict_checker_.lock_row(upd_old_row))) {
           LOG_WARN("checker lock row failed", K(ret), KPC(upd_old_row));
         } else {
-          LOG_TRACE("curr update row is not changed", KPC(upd_new_row), KPC(upd_old_row));
+
         }
       }
 
@@ -853,7 +853,7 @@ int ObTableInsertUpOp::calc_upd_old_row_tablet_loc(const ObUpdCtDef &upd_ctdef,
     //direct write insert row to storage
     tablet_loc = MY_INPUT.get_tablet_loc();
   }
-  LOG_DEBUG("get upd del old row pkey", KPC(tablet_loc));
+
   return ret;
 }
 
@@ -881,7 +881,7 @@ int ObTableInsertUpOp::calc_upd_new_row_tablet_loc(const ObUpdCtDef &upd_ctdef,
     //direct write insert row to storage
     tablet_loc = MY_INPUT.get_tablet_loc();
   }
-  LOG_DEBUG("get upd ins new row pkey", KPC(tablet_loc));
+
   return ret;
 }
 
@@ -949,7 +949,7 @@ int ObTableInsertUpOp::get_next_row_from_child()
     }
   } else {
     found_rows_++;
-    LOG_TRACE("child output row", "output row", ROWEXPR2STR(eval_ctx_, child_->get_spec().output_));
+
   }
   return ret;
 }
@@ -987,7 +987,7 @@ int ObTableInsertUpOp::do_insert_up()
     } else if (!check_is_duplicated()) {
       insert_rows_ += insert_rows;
       guarantee_session_last_insert_id();
-      LOG_TRACE("try insert is not duplicated", K(ret), K(insert_rows_));
+
     }
     GET_DIAGNOSTIC_INFO->get_ash_stat().in_duplicate_conflict_resolve_=true;
     if (OB_FAIL(ret) || !check_is_duplicated()) {
@@ -1063,7 +1063,7 @@ int ObTableInsertUpOp::load_batch_insert_up_rows(bool &is_iter_end,
               K(insert_up_row_store_.get_mem_used()), K(is_ignore_), K(execute_single_row_));
       } else if (simulate_batch_count != 0 && row_count > simulate_batch_count) {
         reach_mem_limit = true;
-        LOG_TRACE("insert up rows reach simulate_batch_count", K(row_count), K(default_row_store_mem_limit));
+
       }
       // record for insertup batch_dml_optimization
       int64_t insert_row = is_skipped ? 0 : 1;
@@ -1095,7 +1095,7 @@ int ObTableInsertUpOp::post_all_try_insert_das_task(ObDMLRtCtx &dml_rtctx)
                                                             ctx_.get_das_ctx().get_snapshot()))) {
           LOG_WARN("fail to get ls read snapshot", K(ret));
         } else {
-          LOG_TRACE("all task with same ls_id get ls snapshot", K(ls_id), K(ctx_.get_das_ctx().get_snapshot()));
+
         }
       } else {
         if (OB_FAIL(ObSqlTransControl::get_read_snapshot(my_session,
@@ -1104,7 +1104,7 @@ int ObTableInsertUpOp::post_all_try_insert_das_task(ObDMLRtCtx &dml_rtctx)
           LOG_WARN("fail to get global read snapshot", K(ret));
         } else {
           gts_state_ = GTE_GTS_STATE;
-          LOG_TRACE("tablets in different ls_id, we get_gts", K(ctx_.get_das_ctx().get_snapshot()));
+
         }
       }
     }
@@ -1248,13 +1248,13 @@ int ObTableInsertUpOp::fetch_conflict_rowkey(int64_t row_cnt)
     share::ObLSID try_exec_ls_id;
     share::ObLSID lookup_ls_id;
     if (!dml_rtctx_.das_ref_.check_tasks_same_ls_and_is_local(try_exec_ls_id)) {
-      LOG_TRACE("tablets in different ls_id when try insert", K(ctx_.get_das_ctx().get_snapshot()));
+
     } else if (!conflict_checker_.das_ref_.check_tasks_same_ls_and_is_local(lookup_ls_id)) {
       refresh_snapshot = true;
-      LOG_TRACE("tablets in different ls_id when lookup get conflicted row", K(ctx_.get_das_ctx().get_snapshot()));
+
     } else if ((OB_UNLIKELY(try_exec_ls_id != lookup_ls_id))) {
       refresh_snapshot = true;
-      LOG_TRACE("tablets in ls_id of try execution are different with lookup", K(ctx_.get_das_ctx().get_snapshot()));
+
     }
     if (refresh_snapshot) {
       ObSQLSessionInfo *my_session = GET_MY_SESSION(ctx_);
@@ -1265,7 +1265,7 @@ int ObTableInsertUpOp::fetch_conflict_rowkey(int64_t row_cnt)
         LOG_WARN("fail to get global read snapshot", K(ret));
       } else {
         gts_state_ = GTE_GTS_STATE;
-        LOG_TRACE("get new snapshot", K(ctx_.get_das_ctx().get_snapshot()));
+
       }
     }
   }
@@ -1283,7 +1283,7 @@ int ObTableInsertUpOp::prepare_final_insert_up_task()
   for (; OB_SUCC(ret) && start_row_iter != end_row_iter; ++start_row_iter) {
     clear_datum_eval_flag();
     ObConflictValue &constraint_value = start_row_iter->second;
-    LOG_DEBUG("get one constraint_value from primary hash map", K(constraint_value));
+
     if (constraint_value.new_row_source_ == ObNewRowSource::FROM_UPDATE) {
       OZ(do_update(constraint_value));
     } else if (constraint_value.new_row_source_ == ObNewRowSource::NEED_DO_LOCK) {
@@ -1498,7 +1498,7 @@ int ObTableInsertUpOp::calc_auto_increment(const ObUpdCtDef &upd_ctdef)
       autoinc_params.at(i).sync_flag_ = false;
       if (NULL != autoinc_params.at(i).cache_handle_) {
         autoinc_params.at(i).cache_handle_->last_row_dup_flag_ = false;
-        LOG_DEBUG("set autoinc_params", K(i), K(autoinc_params.at(i)));
+
       }
     }
 

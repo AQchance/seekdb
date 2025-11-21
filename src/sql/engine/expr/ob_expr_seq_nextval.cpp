@@ -93,7 +93,7 @@ int ObExprSeqNextval::calc_sequence_nextval(const ObExpr &expr, ObEvalCtx &ctx, 
     } else {
       res.set_number(num);
     }
-    LOG_DEBUG("trace sequence nextval", K(num), K(ret));
+
   }
   return ret;
 }

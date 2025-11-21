@@ -810,7 +810,7 @@ int ObTableCtx::check_is_cs_replica_query(bool &is_cs_replica_query) const
     } else {
       is_cs_replica_query = ObRoutePolicyType::COLUMN_STORE_ONLY == loc_meta->route_policy_;
     }
-    LOG_TRACE("[CS-Replica] check cs replica query", K(ret), K(is_cs_replica_query), KPC(loc_meta));
+
   }
   return ret;
 }

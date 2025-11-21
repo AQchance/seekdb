@@ -82,7 +82,7 @@ int ObTransformConditionalAggrCoalesce::transform_one_stmt(
     LOG_WARN("failed to add transform hint", K(ret));
   } else {
     trans_happened = true;
-    LOG_TRACE("succeed to coalesce conditional aggregate functions", K(trans_happened));
+
     OPT_TRACE("succeed to coalesce conditional aggregate functions", K(trans_happened));
   }
   return ret;
@@ -353,7 +353,7 @@ int ObTransformConditionalAggrCoalesce::try_transform_wo_pullup(ObSelectStmt *se
                                                 is_aggr_count_decrease))) {
     LOG_WARN("failed to check aggrs count decrease", K(ret));
   } else if (!force_trans && !is_aggr_count_decrease) {
-    LOG_TRACE("reject coalesce without pullup due to increased aggregate functions");
+
     OPT_TRACE("reject coalesce without pullup due to increased aggregate functions");
   } else if (OB_FAIL(do_transform_wo_pullup(select_stmt, 
                                             trans_param.cond_aggrs_wo_extra_dep_,
@@ -399,14 +399,14 @@ int ObTransformConditionalAggrCoalesce::try_transform_with_pullup(ObSelectStmt *
                                                 is_aggr_count_decrease))) {
     LOG_WARN("failed to check aggrs count decrease", K(ret));
   } else if (!force_trans && !is_aggr_count_decrease) {
-    LOG_TRACE("reject coalesce with pullup due to increased aggregate functions");
+
     OPT_TRACE("reject coalesce with pullup due to increased aggregate functions");
   } else if (!force_trans && OB_FAIL(check_statistics_threshold(select_stmt, 
                                                                 trans_param, 
                                                                 hit_threshold))) {
     LOG_WARN("failed to check statistics threshold", K(ret));
   } else if (!force_trans && !hit_threshold) {
-    LOG_TRACE("reject coalesce with pullup due to statistics threshold");
+
     OPT_TRACE("reject coalesce with pullup due to statistics threshold");
   } else if (OB_FAIL(do_transform_with_pullup(select_stmt, 
                                               trans_param.cond_aggrs_with_extra_dep_,
@@ -443,7 +443,7 @@ int ObTransformConditionalAggrCoalesce::check_statistics_threshold(ObSelectStmt 
   } else if (select_stmt->get_table_size() != 1 || 
              select_stmt->get_joined_tables().count() > 0 ||
              select_stmt->get_semi_info_size() > 0) {
-    LOG_TRACE("access more than one base table, disable rewrite");
+
     OPT_TRACE("access more than one base table, disable rewrite");
   } else if (OB_ISNULL(base_table = select_stmt->get_table_item(0))) {
     ret = OB_ERR_UNEXPECTED;
@@ -451,7 +451,7 @@ int ObTransformConditionalAggrCoalesce::check_statistics_threshold(ObSelectStmt 
   } else if (!base_table->is_basic_table()) {
     // in order to evaluate the rewrite gains more accurately, 
     // stmt is required to access only one base table
-    LOG_TRACE("access more than one base table, disable rewrite");
+
     OPT_TRACE("access more than one base table, disable rewrite");
   } else if (OB_FAIL(ObRawExprUtils::extract_column_exprs(select_stmt->get_group_exprs(), 
                                                           cols_in_groupby))) {

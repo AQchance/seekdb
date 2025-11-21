@@ -212,7 +212,7 @@ int GetTxStateWithSCNFunctor::operator()(const ObTxData &tx_data, ObTxCCCtx *tx_
     trans_version_ = SCN::min_scn();
   } else {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(ERROR, "unexpected transaction state_", K(ret), K(tx_data));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -391,7 +391,7 @@ int LockForReadFunctor::operator()(const ObTxData &tx_data, ObTxCCCtx *tx_cc_ctx
     // such cases, reads will experience exceptions that the txn is in a RUNNING
     // state without tx_ctx. Therefore, we need to tolerate this exception.
     ret = OB_REPLICA_NOT_READABLE;
-    STORAGE_LOG(WARN, "lock for read meet stale data", KR(ret));
+
   } else {
     for (int32_t i = 0; OB_ERR_SHARED_LOCK_CONFLICT == ret; i++) {
       retry_cnt++;
@@ -560,7 +560,7 @@ int ObCleanoutTxNodeOperation::operator()(const ObTxDataCheckData &tx_data)
         }
       } else {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected transaction state_", K(ret));
+
       }
     }
 

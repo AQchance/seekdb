@@ -71,7 +71,7 @@ int ObTenantCloneUtil::check_clone_tenant_exist(common::ObISQLClient &sql_client
     }
   } else {
     is_exist = true;
-    LOG_INFO("clone job exist", KR(ret), K(clone_tenant_name));
+
   }
 
   return ret;
@@ -390,7 +390,7 @@ int ObTenantCloneUtil::release_clone_tenant_resource_of_clone_job(const ObCloneJ
           LOG_WARN("fail to drop tenant", KR(ret), K(clone_job), K(arg));
         }
       }
-      LOG_INFO("recycle clone tenant", KR(ret), K(clone_job));
+
     }
     if (OB_SUCC(ret)) {
       obrpc::ObDropResourcePoolArg arg;
@@ -400,7 +400,7 @@ int ObTenantCloneUtil::release_clone_tenant_resource_of_clone_job(const ObCloneJ
       if (OB_FAIL(GCTX.rs_rpc_proxy_->timeout(timeout).drop_resource_pool(arg))) {
         LOG_WARN("drop_resource_pool failed", KR(ret), K(clone_job));
       }
-      LOG_INFO("recycle clone resource pool", KR(ret), K(clone_job));
+
     }
   }
 
@@ -433,7 +433,7 @@ int ObTenantCloneUtil::release_source_tenant_resource_of_clone_job(common::ObISQ
   } else if (OB_FAIL(schema_guard.check_tenant_exist(source_tenant_id, is_source_tenant_exist))) {
     LOG_WARN("get tenant ids failed", K(ret));
   } else if (OB_UNLIKELY(!is_source_tenant_exist)) {
-    LOG_INFO("source tenant doesn't exist while release source tenant resource", KR(ret), K(source_tenant_id));
+
   } else if (OB_FAIL(schema_guard.reset())) {
     LOG_WARN("fail to reset schema guard", KR(ret));
   } else if (OB_FAIL(trans.start(&sql_client, gen_meta_tenant_id(source_tenant_id)))) {
@@ -449,14 +449,14 @@ int ObTenantCloneUtil::release_source_tenant_resource_of_clone_job(common::ObISQ
                      global_lock))) {
       if (OB_TENANT_SNAPSHOT_NOT_EXIST == ret) {
         ret = OB_SUCCESS;
-        LOG_INFO("global lock has not been created", KR(ret), K(clone_job));
+
         is_already_unlocked = true;
       } else {
         LOG_WARN("fail to get global_lock", KR(ret), K(clone_job));
       }
     } else if (ObTenantSnapStatus::CLONING != global_lock.get_status()) {
       is_already_unlocked = true;
-      LOG_INFO("global lock has been released", KR(ret), K(clone_job));
+
     } else if (OB_FAIL(ObTenantSnapshotUtil::unlock_tenant_snapshot_simulated_mutex_from_clone_release_task(
                                                 trans,
                                                 source_tenant_id,
@@ -478,7 +478,7 @@ int ObTenantCloneUtil::release_source_tenant_resource_of_clone_job(common::ObISQ
       if (!tenant_snapshot_id.is_valid()) {
         if (ObTenantCloneJobType::FORK == job_type &&
             !status.is_sys_valid_snapshot_status_for_fork()) {
-          LOG_INFO("fork tenant snapshot has not been created", K(clone_job));
+
         } else {
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("tenant snapshot is invalid", KR(ret), K(clone_job));
@@ -491,7 +491,7 @@ int ObTenantCloneUtil::release_source_tenant_resource_of_clone_job(common::ObISQ
           // fork clone job will generate tenant_snapshot_id at first, and then create snapshot.
           // thus, it is possible that job has valid tenant_snapshot_id, but the snapshot doesn't exist
           ret = OB_SUCCESS;
-          LOG_INFO("tenant snapshot has not been created", K(clone_job));
+
         } else {
           LOG_WARN("fail to get tenant snapshot", KR(ret), K(clone_job));
         }
@@ -514,7 +514,7 @@ int ObTenantCloneUtil::release_source_tenant_resource_of_clone_job(common::ObISQ
           LOG_WARN("fail to recycle tenant snapshot ls replicas", KR(ret), K(clone_job));
         } else {
           need_notify_tenant_snapshot_scheduler = true;
-          LOG_INFO("release source tenant resource", KR(ret), K(clone_job));
+
         }
       }
     }
@@ -647,7 +647,7 @@ int ObTenantCloneUtil::cancel_clone_job_by_source_tenant_id(
     } else {
       ret = OB_SUCCESS;
       clone_already_finish = true;
-      LOG_INFO("clone job has already finished", KR(ret), K(source_tenant_id));
+
     }
   } else if (OB_FAIL(inner_cancel_clone_job_(clone_op, clone_job, reason, clone_already_finish))) {
     LOG_WARN("fail to cancel clone job", KR(ret), K(clone_job), K(reason));

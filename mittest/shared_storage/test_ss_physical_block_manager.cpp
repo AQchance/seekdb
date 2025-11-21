@@ -339,11 +339,11 @@ TEST_F(TestSSPhysicalBlockManager, free_bitmap_mem_usage)
   ObSSPhysicalBlockManager &phy_blk_mgr = MTL(ObSSMicroCache *)->phy_blk_mgr_;
   const int64_t ori_blk_cnt = phy_blk_mgr.blk_cnt_info_.total_blk_cnt_;
   ObConcurrentFIFOAllocator &allocator = phy_blk_mgr.allocator_;
-  LOG_INFO("check origin info", K(ori_blk_cnt), K(allocator.allocated()));
+
   for (int64_t i = 1; i <= 10000; ++i) {
     const int64_t new_blk_cnt = ori_blk_cnt + i;
     ASSERT_EQ(OB_SUCCESS, phy_blk_mgr.reinit_free_bitmap(new_blk_cnt));
-    LOG_INFO("reinit free bitmap", K(i), K(allocator.allocated()));
+
   }
 }
 
@@ -976,13 +976,13 @@ TEST_F(TestSSPhysicalBlockManager, test_scan_reorgan_blk)
 
 TEST_F(TestSSPhysicalBlockManager, alloc_all_phy_block)
 {
-  LOG_INFO("TEST_CASE: start alloc_all_phy_block");
+
   int ret = OB_SUCCESS;
 
   ObSSPhysicalBlockManager &phy_blk_mgr = MTL(ObSSMicroCache *)->phy_blk_mgr_;
   ObSSMicroCacheSuperBlock &super_blk = phy_blk_mgr.super_block_;
   SSPhyBlockCntInfo &blk_cnt_info = phy_blk_mgr.blk_cnt_info_;
-  LOG_INFO("TEST: check blk_cnt_info", K(blk_cnt_info));
+
 
   ObArray<ObSSPhysicalBlockHandle> alloc_blk_handles;
   // 1. alloc all micro_data_blk

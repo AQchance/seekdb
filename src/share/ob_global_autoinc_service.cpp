@@ -179,7 +179,7 @@ int ObGlobalAutoIncService::handle_next_autoinc_request(
     int err = autoinc_map_.get_refactored(key.table_id_, cache_node);
     const int64_t tenant_id = key.tenant_id_;
     const int64_t request_version = request.autoinc_version_;
-    LOG_TRACE("begin handle req autoinc request", K(request), K(cache_node));
+
     if (OB_UNLIKELY(OB_SUCCESS != err && OB_HASH_NOT_EXIST != err)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("failed to get seq value", K(ret), K(key));
@@ -238,7 +238,7 @@ int ObGlobalAutoIncService::handle_next_autoinc_request(
             LOG_WARN("set autoinc_map_ failed", K(ret));
           }
         }
-        LOG_TRACE("after handle req autoinc request", K(request), K(cache_node));
+
       }
     }
     mutex.unlock();
@@ -270,7 +270,7 @@ int ObGlobalAutoIncService::handle_curr_autoinc_request(const ObGAISAutoIncKeyAr
     const int64_t tenant_id = key.tenant_id_;
     int err = autoinc_map_.get_refactored(key.table_id_, cache_node);
     const int64_t request_version = request.autoinc_version_;
-    LOG_TRACE("start handle get autoinc request", K(request), K(cache_node));
+
     if (OB_UNLIKELY(OB_SUCCESS != err && OB_HASH_NOT_EXIST != err)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("failed to get seq value", K(ret), K(key));
@@ -327,7 +327,7 @@ int ObGlobalAutoIncService::handle_push_autoinc_request(
     int err = autoinc_map_.get_refactored(key.table_id_, cache_node);
     const int64_t request_version = request.autoinc_version_;
     const uint64_t insert_value = request.base_value_;
-    LOG_TRACE("start handle push global autoinc request", K(request), K(cache_node));
+
     if (OB_UNLIKELY(OB_SUCCESS != err && OB_HASH_NOT_EXIST != err)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("failed to get seq value", K(ret), K(key), K(err));
@@ -389,7 +389,7 @@ int ObGlobalAutoIncService::handle_clear_autoinc_cache_request(const ObGAISAutoI
   } else if (OB_FAIL(mutex.lock())) {
     LOG_WARN("fail to get lock", K(ret));
   } else {
-    LOG_TRACE("start clear autoinc cache request", K(request));
+
     if (OB_FAIL(autoinc_map_.erase_refactored(key.table_id_))) {
       LOG_WARN("fail to erase autoinc cache map key", K(ret));
     }
@@ -465,12 +465,12 @@ int ObGlobalAutoIncService::fetch_next_node_(const ObGAISNextAutoIncValReq &requ
     if (OB_FAIL(node.with_new_end(end_inclusive))) {
       LOG_WARN("fail to update available value", K(ret), K(node), K(end_inclusive));
     } else {
-      LOG_TRACE("fetch next node done", K(request), K(node));
+
     }
   } else if (OB_FAIL(node.init(start_inclusive, end_inclusive, sync_value, autoinc_version))){
     LOG_WARN("fail to init node", K(ret), K(start_inclusive), K(end_inclusive), K(sync_value));
   } else {
-    LOG_TRACE("fetch next node done", K(request), K(node));
+
   }
   return ret;
 }
@@ -521,7 +521,7 @@ int ObGlobalAutoIncService::inner_switch_to_follower()
   int ret = OB_SUCCESS;
   const int64_t start_time_us = ObTimeUtility::current_time();
   ObMutexGuard lock(switching_mutex_);
-  LOG_INFO("start to switch to follower", KP(this), K(*this));
+
   ATOMIC_STORE(&is_switching_, true);
   ATOMIC_STORE(&is_leader_, false);
   if (OB_UNLIKELY(!is_inited_)) {
@@ -542,7 +542,7 @@ int ObGlobalAutoIncService::inner_switch_to_follower()
   }
   ATOMIC_STORE(&is_switching_, false);
   const int64_t cost_us = ObTimeUtility::current_time() - start_time_us;
-  LOG_INFO("global_autoinc service: switch_to_follower", K(*this), K(cost_us));
+
   return ret;
 }
 
@@ -575,7 +575,7 @@ int ObGlobalAutoIncService::broadcast_global_autoinc_cache()
       } else if (OB_FAIL(gais_request_rpc_->broadcast_global_autoinc_cache(msg))) {
         LOG_WARN("broadcast gais request failed", K(ret), K(msg));
       } else {
-        LOG_INFO("succ to broadcast global autoinc cache", K(msg));
+
       }
       if (NULL != buffer) {
         ob_free(buffer);

@@ -107,7 +107,7 @@ int ObDfoSchedDepthGenerator::do_generate_sched_depth(ObExecContext &exec_ctx,
           LOG_WARN("fail set dfo block", K(ret), K(*child), K(parent));
         } else {
           parent.set_earlier_sched(true);
-          LOG_DEBUG("parent dfo can do earlier scheduling", K(*child), K(parent));
+
         }
       }
     }
@@ -526,7 +526,7 @@ int ObDfoMgr::do_split(ObExecContext &exec_ctx,
       parent_dfo->set_dml_op(true);
     }
     const ObPhyOperatorType op_type = phy_op->get_type();
-    LOG_TRACE("set DFO need_branch_id", K(op_type));
+
     parent_dfo->set_need_branch_id_op(op_type == PHY_INSERT_ON_DUP
                                       || op_type == PHY_REPLACE
                                       || op_type == PHY_LOCK);
@@ -651,7 +651,7 @@ int ObDfoMgr::do_split(ObExecContext &exec_ctx,
         if (OB_FAIL(dfo_int_gen.gen_id(dfo->get_dfo_id(), dfo->get_interrupt_id()))) {
           LOG_WARN("fail gen dfo int id", K(ret));
         }
-        LOG_TRACE("cur dfo info", K(dfo->get_qc_id()), K(dfo->get_dfo_id()), K(dfo->get_dop()));
+
       }
     } else {
       const ObTransmitSpec *transmit = static_cast<const ObTransmitSpec *>(phy_op);
@@ -788,13 +788,13 @@ int ObDfoMgr::get_ready_dfos(ObIArray<ObDfo*> &dfos) const
   bool got_pair_dfo = false;
   dfos.reset();
 
-  LOG_TRACE("ready dfos", K(edges_.count()));
+
   // edges have already been sorted by scheduling order, those listed first are scheduled first
   for (int64_t i = 0; OB_SUCC(ret) && i < edges_.count(); ++i) {
     ObDfo *edge = edges_.at(i);
     ObDfo *root_edge = edges_.at(edges_.count() - 1);
     if (edge->is_thread_finish()) {
-      LOG_TRACE("finish dfo", K(*edge));
+
       continue;
     } else {
       // edge not completed, scheduling goal is to facilitate the completion of this edge as soon as possible, including scheduling the DFO it depends on, i.e.:
@@ -837,7 +837,7 @@ int ObDfoMgr::get_ready_dfos(ObIArray<ObDfo*> &dfos) const
         } else {
           sibling_edge->set_active();
           got_pair_dfo = true;
-          LOG_TRACE("start schedule dfo", K(*sibling_edge), K(*sibling_edge->parent()));
+
         }
       }else {
         // The current edge has not been completed, and there are no sibling edges to schedule, return an empty dfos, continue waiting
@@ -868,7 +868,7 @@ int ObDfoMgr::get_ready_dfos(ObIArray<ObDfo*> &dfos) const
           } else {
             parent_edge->set_active();
             got_pair_dfo = true;
-            LOG_DEBUG("dfo do earlier scheduling", K(*parent_edge->parent()));
+
           }
         }
       }
@@ -895,7 +895,7 @@ int ObDfoMgr::get_ready_dfos(ObIArray<ObDfo*> &dfos) const
           } else {
             root_edge->set_active();
             got_pair_dfo = true;
-            LOG_TRACE("Try to schedule root dfo", KP(root_edge), KP(root_dfo_));
+
           }
         }
       }
@@ -1016,6 +1016,6 @@ int64_t ObDfoMgr::get_adaptive_px_dop(const ObTransmitSpec &spec, ObExecContext 
   } else {
     px_dop = px_dop >= 1 ? px_dop : spec.get_px_dop();
   }
-  LOG_TRACE("adaptive px dop", K(spec.get_id()), K(px_dop));
+
   return px_dop;
 }

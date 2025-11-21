@@ -105,7 +105,7 @@ int ObServerTraceMap::get_server_rpc_port(const common::ObAddr &server, const in
       }
     } else {
       exist = true;
-      LOG_TRACE("success to get rpc port in loacl", K(ret), K(rpc_port), K(sql_port));
+
     }
   }
   return ret;
@@ -256,7 +256,7 @@ int ObServerTraceMap::broadcast_server_trace_() const
       }
     }
   }
-  LOG_INFO("finished broadcasting server trace", KR(ret), KR(tmp_ret), K(alive_servers));
+
   return ret;
 }
 

@@ -434,7 +434,7 @@ int ObDropVecIVFIndexTask::prepare(const share::ObDDLTaskStatus &new_status)
     if (OB_FAIL(switch_status(new_status, true, ret))) {
       LOG_WARN("switch status failed", K(ret), K(new_status), K(task_status_));
     } else {
-      LOG_INFO("prepare success", K(ret), K(parent_task_id_), K(task_id_), K(*this));
+
     }
   }
   return ret;
@@ -598,7 +598,7 @@ int ObDropVecIVFIndexTask::wait_drop_task_finish(const share::ObDDLTaskStatus &n
     if (OB_FAIL(switch_status(new_status, true/*enable_flt*/, ret))) {
       LOG_WARN("fail to switch status", K(ret), K(new_status));
     } else {
-      LOG_INFO("wait_drop_task_finish success", K(ret), K(task_type_));
+
     }
   }
   return ret;
@@ -628,7 +628,7 @@ int ObDropVecIVFIndexTask::check_drop_index_finish(
                                                        unused_user_msg_len))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("ddl task not finish", K(ret), K(tenant_id),  K(task_id), K(table_id));
+
     } else {
       LOG_WARN("fail to get ddl error message", K(ret), K(tenant_id), K(task_id), K(table_id));
     }
@@ -636,7 +636,7 @@ int ObDropVecIVFIndexTask::check_drop_index_finish(
     ret = error_message.ret_code_;
     has_finished = true;
   }
-  LOG_INFO("wait build index finish", K(ret), K(tenant_id), K(task_id), K(table_id), K(has_finished));
+
   return ret;
 }
 
@@ -657,7 +657,7 @@ int ObDropVecIVFIndexTask::wait_child_task_finish(
       } else if (OB_FAIL(check_drop_index_finish(tenant_id_, task_info.task_id_, task_info.table_id_, finished))) {
         LOG_WARN("fail to check vec index child task finish", K(ret));
       } else if (!finished) { // nothing to do
-        LOG_INFO("child task hasn't been finished", K(tenant_id_), K(task_info));
+
       }
     }
     if (OB_SUCC(ret) && finished) {
@@ -766,7 +766,7 @@ int ObDropVecIVFIndexTask::cleanup_impl()
   } else {
     need_retry_ = false;
   }
-  LOG_INFO("clean task finished", K(ret), K(*this));
+
   return ret;
 }
 

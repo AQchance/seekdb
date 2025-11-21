@@ -378,7 +378,7 @@ int ObAliveServerTracer::refresh()
 int ObAliveServerTracer::refresh_primary_cluster_id()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("refresh primary cluster finish", K(ret), K(primary_cluster_id_));
+
   return ret;
 }
 

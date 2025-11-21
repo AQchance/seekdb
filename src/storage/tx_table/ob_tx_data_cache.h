@@ -74,12 +74,12 @@ public:  // derived from ObIKVCacheKey
     int ret = OB_SUCCESS;
     if (OB_ISNULL(buf) || OB_UNLIKELY(buf_len < size())) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "invalid argument", KR(ret), K(buf_len), K(size()));
+
     } else {
       ObTxDataCacheKey *new_key = new (buf) ObTxDataCacheKey(tenant_id_, ls_id_, tx_id_);
       if (OB_ISNULL(new_key)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "new key ptr is null", KR(ret), KPC(this));
+
       } else {
         key = new_key;
       }

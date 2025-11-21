@@ -119,7 +119,7 @@ bool TestRangeSpliter::equal_ranges(ObStoreRange &range1, ObStoreRange &range2)
   }
   if (!bret) {
     int ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "ranges are not equal", K(range1), K(range2));
+
   }
 
   return bret;
@@ -130,7 +130,7 @@ bool TestRangeSpliter::loop_equal_ranges(ObIArray<ObStoreRange> &ranges1, ObIArr
   bool bret = false;
   if (ranges1.count() != ranges2.count()) {
     int ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "ranges are not equal", K(ranges1), K(ranges2));
+
   } else {
     bret = true;
     for (int64_t i = 0; bret && i < ranges1.count(); i++) {
@@ -366,7 +366,7 @@ TEST_F(TestRangeSpliter, test_single_basic)
   range_split_info.set_parallel_target(2);
   ASSERT_EQ(OB_SUCCESS, range_spliter.split_ranges(range_split_info, allocator, true, split_ranges));
   ASSERT_EQ(2, split_ranges.count());
-  STORAGE_LOG(INFO, "finish split ranges", K(split_ranges));
+
 
   const char *rowkey_data =
       "bigint   var   bigint  bigint flag    multi_version_row_flag\n"
@@ -380,7 +380,7 @@ TEST_F(TestRangeSpliter, test_single_basic)
   range_split_info.set_parallel_target(3);
   ASSERT_EQ(OB_SUCCESS, range_spliter.split_ranges(range_split_info, allocator, true, split_ranges));
   ASSERT_EQ(3, split_ranges.count());
-  STORAGE_LOG(INFO, "finish split ranges", K(split_ranges));
+
   const char *rowkey_data1 =
       "bigint   var   bigint  bigint flag    multi_version_row_flag\n"
       "10       var1   -9    MIN      EXIST   CLF\n"
@@ -393,7 +393,7 @@ TEST_F(TestRangeSpliter, test_single_basic)
   range_split_info.set_parallel_target(4);
   ASSERT_EQ(OB_SUCCESS, range_spliter.split_ranges(range_split_info, allocator, true, split_ranges));
   ASSERT_EQ(4, split_ranges.count());
-  STORAGE_LOG(INFO, "finish split ranges", K(split_ranges));
+
   const char *rowkey_data2 =
       "bigint   var   bigint  bigint flag    multi_version_row_flag\n"
       "7        var1   -9    MIN      EXIST   CLF\n"
@@ -407,7 +407,7 @@ TEST_F(TestRangeSpliter, test_single_basic)
   range_split_info.set_parallel_target(9);
   ASSERT_EQ(OB_SUCCESS, range_spliter.split_ranges(range_split_info, allocator, true, split_ranges));
   ASSERT_EQ(9, split_ranges.count());
-  STORAGE_LOG(INFO, "finish split ranges", K(split_ranges));
+
   const char *rowkey_data3 =
       "bigint   var   bigint  bigint flag    multi_version_row_flag\n"
       "4        var1   -9    MIN      EXIST   CLF\n"
@@ -446,7 +446,7 @@ TEST_F(TestRangeSpliter, test_single_multi_sstable)
   range_split_info.set_parallel_target(2);
   ASSERT_EQ(OB_SUCCESS, range_spliter.split_ranges(range_split_info, allocator, true, split_ranges));
   ASSERT_EQ(2, split_ranges.count());
-  STORAGE_LOG(INFO, "finish split ranges", K(split_ranges));
+
   const char *rowkey_data =
       "bigint   var   bigint  bigint flag    multi_version_row_flag\n"
       "17       var1   -9    MIN      EXIST   CLF\n";
@@ -457,7 +457,7 @@ TEST_F(TestRangeSpliter, test_single_multi_sstable)
   range_split_info.set_parallel_target(5);
   ASSERT_EQ(OB_SUCCESS, range_spliter.split_ranges(range_split_info, allocator, true, split_ranges));
   ASSERT_EQ(5, split_ranges.count());
-  STORAGE_LOG(INFO, "finish split ranges", K(split_ranges));
+
   const char *rowkey_data1 =
       "bigint   var   bigint  bigint flag    multi_version_row_flag\n"
       "8       var1   -9    MIN      EXIST   CLF\n"
@@ -475,7 +475,7 @@ TEST_F(TestRangeSpliter, test_single_multi_sstable)
   range_split_info.set_parallel_target(3);
   ASSERT_EQ(OB_SUCCESS, range_spliter.split_ranges(range_split_info, allocator, true, split_ranges));
   ASSERT_EQ(3, split_ranges.count());
-  STORAGE_LOG(INFO, "finish split ranges", K(split_ranges));
+
   const char *rowkey_data2 =
       "bigint   var   bigint  bigint flag    multi_version_row_flag\n"
       "8       var1   -9    MIN      EXIST   CLF\n"
@@ -505,7 +505,7 @@ TEST_F(TestRangeSpliter, test_micro_level_split)
   range_split_info.set_parallel_target(4);
   ASSERT_EQ(OB_SUCCESS, range_spliter.split_ranges(range_split_info, allocator, false, split_ranges));
   ASSERT_EQ(4, split_ranges.count());
-  STORAGE_LOG(INFO, "finish split ranges", K(split_ranges));
+
   const char *rowkey_data =
       "bigint   var   bigint  bigint flag    multi_version_row_flag\n"
       "8       var1   -9    MIN      EXIST   CLF\n"
@@ -520,7 +520,7 @@ TEST_F(TestRangeSpliter, test_micro_level_split)
   range_split_info.set_parallel_target(7);
   ASSERT_EQ(OB_SUCCESS, range_spliter.split_ranges(range_split_info, allocator, false, split_ranges));
   ASSERT_EQ(7, split_ranges.count());
-  STORAGE_LOG(INFO, "finish split ranges", K(split_ranges));
+
   const char *rowkey_data1 =
       "bigint   var   bigint  bigint flag    multi_version_row_flag\n"
       "5       var1   -9    MIN      EXIST   CLF\n"

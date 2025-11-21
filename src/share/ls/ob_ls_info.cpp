@@ -979,7 +979,7 @@ int ObLSInfo::rectify_replica_type_(
     //   We can not avoid this case, because informations in meta table
     //   is not updated immediately. We just rectify replica type according
     //   to informations recorded in meta table at that moment.
-    LOG_TRACE("replica type is column store, do not change replica type", KPC(replica));
+
   } else if (REPLICA_TYPE_FULL == replica->get_replica_type()
              || REPLICA_TYPE_READONLY == replica->get_replica_type()) {
     // for F/R-replica:
@@ -1018,7 +1018,7 @@ int ObLSInfo::rectify_replica_status_(
     LOG_WARN("invalid argument", KR(ret), KP(replica));
   } else if (REPLICA_STATUS_OFFLINE == replica->get_replica_status()) {
     // do nothing
-    LOG_TRACE("replica already offline", KPC(replica));
+
   } else if (REPLICA_TYPE_COLUMNSTORE == replica->get_replica_type()) {
     if (in_leader_member_list) {
       replica->set_replica_status(REPLICA_STATUS_OFFLINE);

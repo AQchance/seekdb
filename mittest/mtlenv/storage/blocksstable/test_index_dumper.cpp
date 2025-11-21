@@ -185,7 +185,7 @@ TEST_F(TestIndexDumper, test_deep_copy_micro)
   int tmp_ret = OB_SUCCESS;
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = meta_iter.get_next(data_macro_meta);
-    STORAGE_LOG(DEBUG, "Got next data macro block meta", K(tmp_ret), K(data_macro_meta));
+
     if (OB_SUCCESS == tmp_ret) {
       ASSERT_EQ(OB_SUCCESS, data_macro_meta.build_row(leaf_row, allocator_, CLUSTER_CURRENT_VERSION));
       ASSERT_EQ(OB_SUCCESS, micro_writer->append_row(leaf_row));
@@ -276,7 +276,7 @@ TEST_F(TestIndexDumper, get_from_mem)
   int tmp_ret = OB_SUCCESS;
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = meta_iter.get_next(data_macro_meta);
-    STORAGE_LOG(DEBUG, "Got next data macro block meta", K(tmp_ret), K(data_macro_meta));
+
     if (OB_SUCCESS == tmp_ret) {
       ObDataMacroBlockMeta *deep_copy_meta = nullptr;
       ASSERT_EQ(OB_SUCCESS, data_macro_meta.deep_copy(deep_copy_meta, allocator_));
@@ -296,7 +296,7 @@ TEST_F(TestIndexDumper, get_from_mem)
   ObDatumRow meta_row;
   ASSERT_EQ(OB_SUCCESS, meta_row.init(allocator_, TEST_ROWKEY_COLUMN_CNT + 3));
 
-  STORAGE_LOG(INFO, "test print metas count", K(data_macro_metas.count()));
+
   for (int64_t i = 0; i < data_macro_metas.count(); ++i) {
     ObDataMacroBlockMeta &meta = data_macro_metas.at(i);
     ASSERT_EQ(OB_SUCCESS, meta.build_row(meta_row, allocator_, CLUSTER_CURRENT_VERSION));
@@ -304,7 +304,7 @@ TEST_F(TestIndexDumper, get_from_mem)
   }
   // close
   ASSERT_EQ(OB_SUCCESS, macro_meta_dumper.close(meta_block_info));
-  STORAGE_LOG(INFO, "test print meta block info", K(meta_block_info));
+
   ASSERT_TRUE(meta_block_info.in_mem());
   ASSERT_EQ(data_macro_metas.count(), meta_block_info.get_row_count());
   ASSERT_EQ(1, meta_block_info.get_micro_block_count());
@@ -320,7 +320,7 @@ TEST_F(TestIndexDumper, get_from_mem)
   int iter_cnt = 0;
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = index_block_loader.get_next_row(load_row);
-    STORAGE_LOG(INFO, "loader get next row", K(tmp_ret), K(load_row));
+
     if (OB_SUCCESS == tmp_ret) {
       ASSERT_EQ(OB_SUCCESS, data_macro_metas.at(iter_cnt).build_row(meta_row, allocator_, CLUSTER_CURRENT_VERSION));
       for (int64_t i = 0; i < TEST_ROWKEY_COLUMN_CNT + 3; ++i) {
@@ -434,11 +434,11 @@ TEST_F(TestIndexDumper, get_from_mem_and_change_row_store_type)
           const ObIndexBlockRowHeader *tmp_row_header = nullptr;
           ASSERT_EQ(OB_SUCCESS, tmp_row_parser.init(mem_desc.get_rowkey_column_count(), load_row));
           ASSERT_EQ(OB_SUCCESS, tmp_row_parser.get_header(tmp_row_header));
-          LOG_INFO("load row", KPC(tmp_row_header));
+
           tmp_row_parser.reset();
           ASSERT_EQ(OB_SUCCESS, tmp_row_parser.init(mem_desc.get_rowkey_column_count(), *new_row));
           ASSERT_EQ(OB_SUCCESS, tmp_row_parser.get_header(tmp_row_header));
-          LOG_INFO("new row", KPC(tmp_row_header));
+
         }
         ASSERT_TRUE(bret);
       }
@@ -467,7 +467,7 @@ TEST_F(TestIndexDumper, get_from_disk)
   int tmp_ret = OB_SUCCESS;
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = meta_iter.get_next(data_macro_meta);
-    STORAGE_LOG(DEBUG, "Got next data macro block meta", K(tmp_ret), K(data_macro_meta));
+
     if (OB_SUCCESS == tmp_ret) {
       ObDataMacroBlockMeta *deep_copy_meta = nullptr;
       ASSERT_EQ(OB_SUCCESS, data_macro_meta.deep_copy(deep_copy_meta, allocator_));
@@ -487,7 +487,7 @@ TEST_F(TestIndexDumper, get_from_disk)
   ObDatumRow meta_row;
   ASSERT_EQ(OB_SUCCESS, meta_row.init(allocator_, TEST_ROWKEY_COLUMN_CNT + 3));
 
-  STORAGE_LOG(INFO, "test print metas count", K(data_macro_metas.count()));
+
   for (int64_t i = 0; i < data_macro_metas.count(); ++i) {
     ObDataMacroBlockMeta &meta = data_macro_metas.at(i);
     ASSERT_EQ(OB_SUCCESS, meta.build_row(meta_row, allocator_, CLUSTER_CURRENT_VERSION));
@@ -501,7 +501,7 @@ TEST_F(TestIndexDumper, get_from_disk)
   ObTableBackupFlag table_backup_flag;
   table_backup_flag.clear();
   ASSERT_EQ(OB_SUCCESS, macro_meta_dumper.close(meta_block_info));
-  STORAGE_LOG(INFO, "test print meta block info", K(meta_block_info));
+
   ASSERT_TRUE(meta_block_info.in_disk());
   ASSERT_EQ(data_macro_metas.count(), meta_block_info.get_row_count());
   ASSERT_EQ(data_macro_metas.count(), meta_block_info.block_write_ctx_->get_macro_block_count());
@@ -517,7 +517,7 @@ TEST_F(TestIndexDumper, get_from_disk)
   int iter_cnt = 0;
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = index_block_loader.get_next_row(load_row);
-    STORAGE_LOG(INFO, "loader get next row", K(tmp_ret), K(load_row));
+
     if (OB_SUCCESS == tmp_ret) {
       ASSERT_EQ(OB_SUCCESS, data_macro_metas.at(iter_cnt).build_row(meta_row, allocator_, CLUSTER_CURRENT_VERSION));
       for (int64_t i = 0; i < TEST_ROWKEY_COLUMN_CNT + 3; ++i) {
@@ -538,7 +538,7 @@ TEST_F(TestIndexDumper, get_from_disk)
   ASSERT_EQ(OB_SUCCESS, index_block_loader.open(meta_block_info));
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = index_block_loader.get_next_micro_block_desc(load_micro_block_desc, mem_desc, allocator_);
-    STORAGE_LOG(INFO, "loader get next micro block", K(tmp_ret), K(load_micro_block_desc));
+
     if (OB_SUCCESS == tmp_ret) {
       ++iter_cnt;
     }
@@ -564,7 +564,7 @@ TEST_F(TestIndexDumper, get_from_array)
   int tmp_ret = OB_SUCCESS;
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = meta_iter.get_next(data_macro_meta);
-    STORAGE_LOG(DEBUG, "Got next data macro block meta", K(tmp_ret), K(data_macro_meta));
+
     if (OB_SUCCESS == tmp_ret) {
       ObDataMacroBlockMeta *deep_copy_meta = nullptr;
       ASSERT_EQ(OB_SUCCESS, data_macro_meta.deep_copy(deep_copy_meta, allocator_));
@@ -584,7 +584,7 @@ TEST_F(TestIndexDumper, get_from_array)
   ObDatumRow meta_row;
   ASSERT_EQ(OB_SUCCESS, meta_row.init(allocator_, TEST_ROWKEY_COLUMN_CNT + 3));
 
-  STORAGE_LOG(INFO, "test print metas count", K(data_macro_metas.count()));
+
   for (int64_t i = 0; i < data_macro_metas.count(); ++i) {
     ObDataMacroBlockMeta &meta = data_macro_metas.at(i);
     ASSERT_EQ(OB_SUCCESS, meta.build_row(meta_row, allocator_, CLUSTER_CURRENT_VERSION));
@@ -592,7 +592,7 @@ TEST_F(TestIndexDumper, get_from_array)
   }
   // close
   ASSERT_EQ(OB_SUCCESS, macro_meta_dumper.close(meta_block_info));
-  STORAGE_LOG(INFO, "test print meta block info", K(meta_block_info));
+
   ASSERT_TRUE(meta_block_info.in_array());
   ASSERT_EQ(data_macro_metas.count(), meta_block_info.get_row_count());
 
@@ -608,10 +608,10 @@ TEST_F(TestIndexDumper, get_from_array)
   int iter_cnt = 0;
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = index_block_loader.get_next_row(load_row);
-    STORAGE_LOG(INFO, "loader get next row", K(iter_cnt), K(tmp_ret), K(load_row));
+
     if (OB_SUCCESS == tmp_ret) {
       ASSERT_EQ(OB_SUCCESS, data_macro_metas.at(iter_cnt).build_row(meta_row, allocator_, CLUSTER_CURRENT_VERSION));
-      STORAGE_LOG(INFO, "data macro meta", K(meta_row), K(data_macro_metas.at(iter_cnt)));
+
       for (int64_t i = 0; i < TEST_ROWKEY_COLUMN_CNT + 3; ++i) {
         ASSERT_TRUE(ObDatum::binary_equal(load_row.storage_datums_[i], meta_row.storage_datums_[i]));
       }

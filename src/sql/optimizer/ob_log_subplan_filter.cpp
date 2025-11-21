@@ -312,18 +312,18 @@ int ObLogSubPlanFilter::allocate_granule_pre(AllocGIContext &ctx)
 {
   int ret = OB_SUCCESS;
   if (!ctx.exchange_above()) {
-    LOG_TRACE("no exchange above, do nothing");
+
   } else if (!ctx.is_in_partition_wise_state() &&
              !ctx.is_in_pw_affinity_state() &&
              is_partition_wise()) {
     ctx.set_in_partition_wise_state(this);
-    LOG_TRACE("in find partition wise state", K(*this));
+
   } else if (ctx.is_in_partition_wise_state()) {
     if (DIST_PARTITION_NONE == dist_algo_) {
       if (OB_FAIL(ctx.set_pw_affinity_state())) {
         LOG_WARN("set affinity state failed", K(ret), K(ctx));
       }
-      LOG_TRACE("partition wise affinity", K(ret));
+
     }
   }
   return ret;
@@ -349,7 +349,7 @@ int ObLogSubPlanFilter::allocate_granule_post(AllocGIContext &ctx)
         // granule iterator not found, do nothing
       } else {
         static_cast<ObLogGranuleIterator *>(op)->add_flag(GI_PARTITION_WISE);
-        LOG_TRACE("set right child gi to affinity", K(i));
+
       }
     }
   }

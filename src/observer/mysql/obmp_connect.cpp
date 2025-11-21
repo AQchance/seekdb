@@ -58,7 +58,7 @@ int extract_user_tenant(const ObString &in, ObString &user_name, ObString &tenan
   if (NULL == at_pos) {
     user_name = extract_user_name(in);
     tenant_name = ObString::make_empty_string();
-    LOG_INFO("username and tenantname", K(user_name), K(tenant_name));
+
   } else {
     // Accept empty username.  Empty username is one of normal
     // usernames that we can create user with empty name.
@@ -79,7 +79,7 @@ int extract_user_tenant(const ObString &in, ObString &user_name, ObString &tenan
         ObString tenantname(in.length() - (tenant_pos - user_pos), tenant_pos);
         user_name = extract_user_name(username);
         tenant_name = tenantname;
-        LOG_DEBUG("username and tenantname", K(user_name), K(tenant_name));
+
       }
     }
   }
@@ -176,7 +176,7 @@ int ObMPConnect::deserialize()
         conn->client_type_ = common::OB_CLIENT_NON_STANDARD;
       }
       db_name_ = hsr_.get_database();
-      LOG_DEBUG("database name", K(hsr_.get_database()));
+
     }
 
     deser_ret_ = ret;  // record deserialize ret code.
@@ -485,7 +485,7 @@ inline void reset_inner_proxyro_scramble(
 const char *AUTH_PLUGIN_MYSQL_NATIVE_PASSWORD = "mysql_native_password";
 int ObMPConnect::load_privilege_info(ObSQLSessionInfo &session)
 {
-  LOG_DEBUG("load privilege info");
+
   int ret = OB_SUCCESS;
   ObSMConnection *conn = get_conn();
   ObSchemaGetterGuard schema_guard;
@@ -585,7 +585,7 @@ int ObMPConnect::load_privilege_info(ObSQLSessionInfo &session)
             login_info.db_ = db_name;
           }
         }
-        LOG_TRACE("some important information required for login verification, print it before doing login", K(ret), K(ObString(sizeof(conn->scramble_buf_), conn->scramble_buf_)), K(conn->is_proxy_), K(conn->client_type_), K(hsr_.get_auth_plugin_name()), K(hsr_.get_auth_response()));
+
         if (OB_FAIL(ret)) {
           // Do nothing
         } else {
@@ -603,7 +603,7 @@ int ObMPConnect::load_privilege_info(ObSQLSessionInfo &session)
             // Client is not use mysql_native_password method,
             // but observer only support mysql_native_password in user account's authentication, 
             // so observer need tell client use mysql_native_password method by sending "AuthSwitchRequest"
-            LOG_TRACE("auth plugin from client is not mysql_native_password, start to auth switch request", K(ret), K(hsr_.get_auth_plugin_name()));
+
             conn->set_auth_switch_phase(); // State of connection turn to auth_switch_phase
             OMPKAuthSwitch auth_switch;
             auth_switch.set_plugin_name(ObString(AUTH_PLUGIN_MYSQL_NATIVE_PASSWORD));
@@ -621,7 +621,7 @@ int ObMPConnect::load_privilege_info(ObSQLSessionInfo &session)
               packet_sender_.disable_response(); // The connection is about to be closed, do not need response ok pkt or err pkt, so disable it
               disconnect();// If send "AuthSwitchRequest" failed, observer need disconnect with client
             } else {
-              LOG_TRACE("suuc to send auth switch request", K(ret));
+
               obmysql::ObMySQLPacket *asr_pkt = NULL;
               int64_t start_wait_asr_time = ObTimeUtil::current_time();
               int receive_asr_times = 0;
@@ -655,7 +655,7 @@ int ObMPConnect::load_privilege_info(ObSQLSessionInfo &session)
                 disconnect(); // If receive "AuthSwitchResponse" failed, observer need disconnect with client
               } else {
               /*--------------------END------------------if error occur, disconnect--------------------END------------------*/
-                LOG_TRACE("suuc to receive auth switch response", K(ret));
+
                 const obmysql::ObMySQLRawPacket *asr_raw_pkt  = reinterpret_cast<const ObMySQLRawPacket*>(asr_pkt);
                 const char *auth_data = asr_raw_pkt->get_cdata();
                 const int64_t auth_data_len = asr_raw_pkt->get_clen();
@@ -975,7 +975,7 @@ int ObMPConnect::update_login_stat_mysql(const uint64_t tenant_id,
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("user info is null", K(tenant_id), K(user_name_), K(ret));
       } else if (!obsys::ObNetUtil::is_match(client_ip_, user_info->get_host_name_str())) {
-        LOG_INFO("account not matched, try next", KPC(user_info), K(client_ip_));
+
       } else if (OB_FAIL(update_login_stat_in_trans_mysql(tenant_id, *user_info, is_login_succ,
                                                           is_locked_tmp))) {
         LOG_WARN("fail to update login stat in trans mysql");
@@ -1547,7 +1547,7 @@ int ObMPConnect::check_update_client_capability(uint64_t &cap) const
 
   cap = (server_client_cap_flag.capability_ & cap);//if old java client, set it 0
 
-  LOG_DEBUG("debug client capability", K(cap));
+
   return ret;
 }
 
@@ -1837,10 +1837,10 @@ int ObMPConnect::verify_connection(const uint64_t tenant_id) const
         && 0 == user_name_.compare(OB_SYS_USER_NAME)
         && (0 == client_ip_.compare(IPV4_LOCAL_STR)
             || 0 == client_ip_.compare(IPV6_LOCAL_STR))) {
-      LOG_DEBUG("this is root@sys user from local host, no need verify_ip_white_list", K(ret));
+
     } else if (OB_SYS_TENANT_ID == tenant_id
                && (SS_INIT == GCTX.status_ || SS_STARTING == GCTX.status_)) {
-      LOG_INFO("server is initializing, ignore verify_ip_white_list", "status", GCTX.status_, K(ret));
+
     } else if (OB_FAIL(verify_ip_white_list(tenant_id))) {
       LOG_WARN("failed to verify_ip_white_list", K(ret));
     } else {
@@ -1986,7 +1986,7 @@ int ObMPConnect::verify_identify(ObSMConnection &conn, ObSQLSessionInfo &session
           }
         }
       }
-      LOG_DEBUG("INIT_CONNECT", K(ret), K(sql_str));
+
       //a statement that has a error will causing client connections to fail
       if (OB_SUCCESS != ret) {
         force_disconnect();
@@ -2015,7 +2015,7 @@ int ObMPConnect::verify_ip_white_list(const uint64_t tenant_id) const
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("client_ip is empty", K(ret));
   } else if (0 == client_ip_.compare(UNIX_SOCKET_CLIENT_IP)) {
-    LOG_INFO("match unix socket connection", K(tenant_id), K(client_ip_));
+
   } else if (OB_FAIL(gctx_.schema_service_->get_tenant_schema_guard(tenant_id, schema_guard))) {
     LOG_WARN("get_schema_guard failed", K(ret));
   } else if (OB_FAIL(schema_guard.get_tenant_info(tenant_id, tenant_schema))) {
@@ -2046,7 +2046,7 @@ int ObMPConnect::convert_oracle_object_name(const uint64_t tenant_id, ObString &
   lib::Worker::CompatMode compat_mode = lib::Worker::CompatMode::MYSQL;
   if (object_name.empty()) {
     //Here the obj_name passed in may be empty, so no error code is assigned
-    LOG_DEBUG("object name is null when try to convert it");
+
   } else if (OB_FAIL(ObCompatModeGetter::get_tenant_mode(tenant_id, compat_mode))) {
     LOG_WARN("fail to get tenant mode in convert_oracle_object_name", K(ret));
   } else if (compat_mode == lib::Worker::CompatMode::ORACLE) {
@@ -2202,7 +2202,7 @@ int ObMPConnect::extract_service_name(ObSMConnection &conn, ObString &service_na
     service_name = ObString::make_string("test_service");
     conn.has_service_name_ = true;
     failover_mode = true;
-    LOG_INFO("ERRSIM_MOCK_SERVICE_NAME opened", KR(ret), K(service_name), K(tenant_name_));
+
   }
   return ret;
 }

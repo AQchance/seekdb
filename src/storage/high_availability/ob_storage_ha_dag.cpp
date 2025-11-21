@@ -249,10 +249,10 @@ int ObStorageHADag::inner_reset_status_for_retry()
       LOG_WARN("failed to get ha dag net ctx result", K(tmp_ret), KPC(ha_dag_net_ctx_));
       ret = tmp_ret;
     } else {
-      LOG_INFO("set inner set status for retry failed", K(ret), KPC(ha_dag_net_ctx_));
+
     }
   } else {
-    LOG_INFO("start retry", KPC(this));
+
     result_mgr_.reuse();
     if (OB_FAIL(create_first_task())) {
       LOG_WARN("failed to create first task", K(ret), KPC(this));

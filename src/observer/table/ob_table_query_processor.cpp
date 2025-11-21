@@ -92,7 +92,7 @@ int ObTableQueryP::init_tb_ctx(ObTableApiCacheGuard &cache_guard)
   tb_ctx_.set_read_latest(false);
 
   if (tb_ctx_.is_init()) {
-    LOG_INFO("tb ctx has been inited", K_(tb_ctx));
+
   } else if (OB_FAIL(tb_ctx_.init_common(credential_,
                                          arg_.tablet_id_,
                                          get_timeout_ts()))) {
@@ -166,10 +166,10 @@ int ObTableQueryP::query_and_result(ObTableApiScanExecutor *executor)
           if (OB_ITER_END != ret) {
             LOG_WARN("fail to flush result packet", K(ret));
           } else {
-            LOG_TRACE("user abort the stream rpc", K(ret));
+
           }
         } else {
-          LOG_DEBUG("flush one result", K(ret), "row_count", result_.get_row_count());
+
           result_row_count_ += result_.get_row_count();
           result_.reset_except_property();
         }
@@ -197,7 +197,7 @@ int ObTableQueryP::query_and_result(ObTableApiScanExecutor *executor)
     }
     this->set_result_compress_type(compressor_type);
 
-    LOG_DEBUG("last result", K(ret), "row_count", result_.get_row_count());
+
     NG_TRACE_EXT(tag1, OB_ID(return_rows), result_count, OB_ID(arg2), result_row_count_);
   }
 

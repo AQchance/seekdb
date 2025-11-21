@@ -94,7 +94,7 @@ int ObTransformPredicateMoveAround::do_transform_predicate_move_around(ObDMLStmt
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("push down common filter for temp table:", is_happened);
-      LOG_TRACE("succeed to do push down common filter for temp table", K(temp_table_infos_),  K(is_happened));
+
     }
   }
   for (int64_t i = 0; i < temp_table_infos_.count(); i ++) {
@@ -215,7 +215,7 @@ int ObTransformPredicateMoveAround::need_transform(const common::ObIArray<ObPare
   } else if (check_outline_valid_to_transform(stmt, need_trans)) {
     LOG_WARN("failed to check outline", K(ret));
   }
-  LOG_DEBUG("IF NO PRED DEDUCE", K(need_trans));
+
   return ret;
 }
 
@@ -290,7 +290,7 @@ int ObTransformPredicateMoveAround::transform_one_stmt_with_outline(
   } else if (OB_FAIL(do_transform_predicate_move_around(stmt, trans_happened))) {
     LOG_WARN("failed to do transform_predicate_move_around", K(ret));
   } else if (transed_stmts_.empty() || !trans_happened) {
-    LOG_TRACE("outline data trans not happened");
+
   } else if (OB_FAIL(adjust_transed_stmts())) {
     LOG_WARN("sort sort transed stmts failed", K(ret));  
   } else if (OB_FAIL(add_transform_hint(*stmt, &transed_stmts_))) {
@@ -665,7 +665,7 @@ int ObTransformPredicateMoveAround::choose_and_rename_predicates_for_subquery(Ob
       if (OB_FAIL(check_expr_pullup_validity(preds.at(i), subquery_columns, state))) {
         LOG_WARN("check expr pullup validity failed", K(ret));
       } else if (state != 1) {
-        LOG_DEBUG("state is not 1");
+
       } else if (OB_FAIL(copier.copy(preds.at(i), new_pred))) {
         LOG_WARN("failed to copy on replace expr", K(ret));
       } else if (OB_ISNULL(new_pred)) {
@@ -679,7 +679,7 @@ int ObTransformPredicateMoveAround::choose_and_rename_predicates_for_subquery(Ob
         LOG_WARN("push back failed", K(ret));
       } 
     }
-    LOG_TRACE("show renamed preds", K(preds), K(renamed_preds));
+
   }
   return ret;
 }
@@ -1251,7 +1251,7 @@ int ObTransformPredicateMoveAround::pushdown_predicates(
     } else {/*do nothing*/}
   } else if (enable_no_pred_deduce) {
     // do not transform for current level stmt, but need call function to transform child query
-    LOG_TRACE("NO PRED DEDUCE");
+
     OPT_TRACE("hint disable transform");
     if (OB_FAIL(pushdown_into_tables_skip_current_level_stmt(*stmt))) {
       LOG_WARN("failed to pushdown predicates into tables skip current level stmt", K(ret));
@@ -1579,7 +1579,7 @@ int ObTransformPredicateMoveAround::check_conds_deduced(const ObIArray<ObRawExpr
   } else if (OB_FAIL(new_conditions.assign(old_conditions))) {
     LOG_WARN("failed to assign exprs", K(ret));
   }
-  LOG_DEBUG("check transform happened", K(old_conditions), K(new_conditions), K(happened));
+
   return ret;
 }
 
@@ -1921,7 +1921,7 @@ int ObTransformPredicateMoveAround::pullup_predicates_from_const_select(ObSelect
       } else if (OB_FAIL(pullup_preds.push_back(generated_expr))) {
         LOG_WARN("failed to push back generated expr", K(ret));
       } else {
-        LOG_TRACE("generate expr for set op", K(*generated_expr));
+
       }
     }
   }

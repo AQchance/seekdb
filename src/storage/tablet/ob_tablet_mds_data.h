@@ -214,7 +214,7 @@ int ObTabletMdsData::update_user_data_from_complex_addr(
 
   if (OB_UNLIKELY(!complex_addr.is_memory_object() && !complex_addr.is_none_object())) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "complex addr is not memory or none type", K(ret), K(complex_addr));
+
   } else if (complex_addr.is_none_object()) {
     // do nothing
   } else {
@@ -225,7 +225,7 @@ int ObTabletMdsData::update_user_data_from_complex_addr(
     } else {
       int64_t pos = 0;
       if (OB_FAIL(user_data.deserialize(str.ptr(), str.length(), pos))) {
-        STORAGE_LOG(WARN, "failed to deserialize", K(ret));
+
       }
     }
   }

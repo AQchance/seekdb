@@ -292,7 +292,7 @@ public:
         != (tmp_ret = get_schema(&mgr_, schema_status, ObSchemaType::TABLE_SCHEMA, table_id, 1, handle, schema))) {
       if (OB_ENTRY_NOT_EXIST != tmp_ret) {
         ret = tmp_ret;
-        STORAGE_LOG(WARN, "failed to get schema", K(ret), K(table_id));
+
       }
     } else {
       exist = true;

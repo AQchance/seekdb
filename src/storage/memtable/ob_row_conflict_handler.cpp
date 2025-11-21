@@ -163,7 +163,7 @@ int ObRowConflictHandler::check_foreign_key_constraint(const storage::ObTableIte
   blocksstable::ObDatumRowkeyHelper rowkey_converter;
   blocksstable::ObDatumRowkey datum_rowkey;
   if (OB_FAIL(rowkey_converter.convert_datum_rowkey(rowkey.get_rowkey(), datum_rowkey))) {
-    STORAGE_LOG(WARN, "Failed to convert datum rowkey", K(ret), K(rowkey));
+
   } else if (OB_FAIL(check_row_locked(param, context, datum_rowkey, false /* by_myself */, true /* post_lock */))) {
     if (OB_TRY_LOCK_ROW_CONFLICT == ret) {
       if (REACH_TIME_INTERVAL(1000 * 1000)) {

@@ -44,7 +44,7 @@ int ObExecStatCollector::add_raw_stat(const common::ObString &str)
   int ret = OB_SUCCESS;
   if (length_ + str.length() >= MAX_STAT_BUF_COUNT) {
     ret = OB_BUF_NOT_ENOUGH;
-    LOG_DEBUG("buffer size not enough", K(ret),K(length_), K(str.length()));
+
   } else {
     MEMCPY(extend_buf_ + length_, str.ptr(), str.length());
     length_ += str.length();
@@ -85,7 +85,7 @@ int ObExecStatCollector::collect_plan_monitor_info(uint64_t job_id,
       } else if (OB_FAIL(add_stat<ObPhyOperatorMonitorInfo>(op_info))) {
         SQL_MONITOR_LOG(WARN, "fail to add value", K(ret), K(i));
       } else {
-        LOG_DEBUG("collect plan monitor info", K(*op_info));
+
       }
     }
   }

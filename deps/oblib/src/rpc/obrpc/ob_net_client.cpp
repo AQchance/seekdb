@@ -49,7 +49,7 @@ int ObNetClient::init_(const ObNetOptions opts)
     inited_ = true;
   }
 
-  LOG_INFO("net client init", K(ret), "rpc io", opts.rpc_io_cnt_, "mysql io", opts.mysql_io_cnt_);
+
 
   return ret;
 }
@@ -84,7 +84,7 @@ void ObNetClient::destroy()
 {
   if (inited_) {
     inited_ = false;
-    LOG_INFO("net client destory successfully");
+
   }
 }
 

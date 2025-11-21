@@ -34,12 +34,12 @@ int ObExprTypeToStr::assign(const ObExprOperator &other) {
   int ret = OB_SUCCESS;
   const ObExprTypeToStr *tmp_other = dynamic_cast<const ObExprTypeToStr*>(&other);
 
-  LOG_DEBUG("start to assign ObExprTypeToStr", K(other), K(*this));
+
   if ((OB_ISNULL(tmp_other))) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("cast failed, type of argument is wrong", K(ret), K(other));
   } else if (OB_UNLIKELY(tmp_other == this)) {
-    LOG_DEBUG("other is same with this, no need to assign");
+
   } else {
     if (OB_FAIL(ObExprOperator::assign(other))) {
       LOG_WARN("ObExprOperator::assign failed", K(ret));
@@ -172,7 +172,7 @@ int ObEnumSetInfo::init_enum_set_info(common::ObIAllocator *allocator, ObExpr &r
 
     if (OB_SUCC(ret)) {
       rt_expr.extra_info_ = enumset_info;
-      LOG_DEBUG("succ init_enum_set_info", KPC(enumset_info));
+
     }
   }
   return ret;

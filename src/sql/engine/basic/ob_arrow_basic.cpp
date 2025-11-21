@@ -92,7 +92,7 @@ arrow::Status ObArrowMemPool::Allocate(int64_t size, uint8_t** out)
       total_alloc_size_ += size;
     }
   }
-  LOG_DEBUG("ObArrowMemPool::Allocate", K(size), "stack", lbt());
+
   return status_ret;
 }
 
@@ -105,7 +105,7 @@ arrow::Status ObArrowMemPool::Reallocate(int64_t old_size, int64_t new_size, uin
     MEMCPY(*ptr, old, std::min(old_size, new_size));
     Free(old, old_size);
   }
-  LOG_DEBUG("ObArrowMemPool::Reallocate", K(old_size), K(new_size), "stack", lbt());
+
   return status_ret;
 }
 
@@ -113,15 +113,15 @@ void ObArrowMemPool::Free(uint8_t* buffer, int64_t size) {
   int ret = OB_SUCCESS;
   ob_free_align(buffer);
   total_alloc_size_ -= size;
-  LOG_DEBUG("ObArrowMemPool::Free", K(size), "stack", lbt());
+
 }
 
 void ObArrowMemPool::ReleaseUnused() {
-  LOG_DEBUG("ObArrowMemPool::ReleaseUnused", "stack", lbt());
+
 }
 
 int64_t ObArrowMemPool::bytes_allocated() const {
-  LOG_DEBUG("ObArrowMemPool::bytes_allocated", "stack", lbt());
+
   return total_alloc_size_;
 }
 
@@ -153,7 +153,7 @@ arrow::Result<int64_t> ObArrowFile::Read(int64_t nbytes, void *out)
     position_ += read_size;
     ret_code = read_size;
   }
-  LOG_DEBUG("Read(int64_t nbytes, void *out)", K(nbytes));
+
   return ret_code;
 }
 
@@ -164,7 +164,7 @@ arrow::Result<std::shared_ptr<arrow::Buffer>> ObArrowFile::Read(int64_t nbytes)
   if (bytes_read < nbytes) {
     RETURN_NOT_OK(buffer->Resize(bytes_read));
   }
-  LOG_DEBUG("ObArrowFile::Read(int64_t nbytes)", K(nbytes));
+
   return std::move(buffer);
 }
 
@@ -186,7 +186,7 @@ arrow::Result<int64_t> ObArrowFile::ReadAt(int64_t position, int64_t nbytes, voi
     position_ = position + read_size;
     ret_code = read_size;
   }
-  LOG_DEBUG("ObArrowFile::Read(int64_t nbytes)", K(nbytes));
+
   return ret_code;
 }
 
@@ -199,7 +199,7 @@ arrow::Result<std::shared_ptr<arrow::Buffer>> ObArrowFile::ReadAt(int64_t positi
     RETURN_NOT_OK(buffer->Resize(bytes_read));
     buffer->ZeroPadding();
   }
-  LOG_DEBUG("ObArrowFile::ReadAt(int64_t position, int64_t nbytes)", K(nbytes));
+
   return std::move(buffer);
 }
 

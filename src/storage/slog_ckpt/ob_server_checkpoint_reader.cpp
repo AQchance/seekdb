@@ -44,7 +44,7 @@ int ObServerCheckpointReader::read_tenant_meta_checkpoint(const MacroBlockId &en
   int ret = OB_SUCCESS;
   ObMemAttr mem_attr(OB_SERVER_TENANT_ID, ObModIds::OB_CHECKPOINT);
   if (OB_UNLIKELY(!entry_block.is_valid())) {
-    LOG_INFO("has no tenant config checkpoint");
+
   } else if (OB_FAIL(tenant_meta_item_reader_.init(entry_block, mem_attr))) {
     LOG_WARN("fail to init tenant config item reader", K(ret));
   } else {

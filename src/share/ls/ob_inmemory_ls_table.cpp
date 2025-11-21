@@ -145,7 +145,7 @@ int ObInMemoryLSTable::update(
       LOG_WARN("submit_update_rslist_task failed", KR(ret));
     }
   }
-  LOG_INFO("update ls replica", KR(ret), K(replica), K_(ls_info));
+
 
   return ret;
 }
@@ -170,10 +170,10 @@ int ObInMemoryLSTable::update_follower_replica_(const ObLSReplica &replica)
     } else if (OB_FAIL(ls_info_.add_replica(new_replica))) {
       LOG_WARN("add replica failed", KR(ret), K(replica));
     } else {
-      LOG_INFO("add follower replica for sys ls", K(new_replica));
+
     }
   }
-  LOG_INFO("inmemory ls table add replica", KR(ret), K(replica));
+
   return ret;
 }
 
@@ -206,7 +206,7 @@ int ObInMemoryLSTable::update_leader_replica_(const ObLSReplica &replica)
     for (int64_t i = 0; OB_SUCC(ret) && i < all_replicas.count(); ++i) {
       if ((all_replicas.at(i).is_strong_leader())
           && all_replicas.at(i).get_server() != replica.get_server()) {
-        LOG_INFO("update replica role to FOLLOWER", "replica", all_replicas.at(i));
+
         all_replicas.at(i).set_role(FOLLOWER);
       }
       if (max_proposal_id < all_replicas.at(i).get_proposal_id()) {

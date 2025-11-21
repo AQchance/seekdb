@@ -85,9 +85,9 @@ int ObMergeParameter::init(
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!merge_ctx.is_valid() || idx < 0 || idx >= static_param_.concurrent_cnt_)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to assign merge parameter", K(merge_ctx), K(idx), K(ret));
+
   } else if (OB_FAIL(merge_ctx.get_merge_range(idx, merge_range_))) {
-    STORAGE_LOG(WARN, "failed to get merge range from merge context", K(ret));
+
   } else {
     const ObMergeType merge_type = static_param_.get_merge_type();
     merge_version_range_ = static_param_.version_range_;
@@ -108,12 +108,12 @@ int ObMergeParameter::init(
     if (is_major_or_meta_merge_type(static_param_.get_merge_type()) && !get_schema()->is_row_store()) {
       if (OB_ISNULL(allocator)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected null allocator", K(ret));
+
       } else if (OB_FAIL(set_merge_rowid_range(allocator))) {
-        STORAGE_LOG(WARN, "failed to set merge rowid range", K(ret));
+
       } else if (OB_ISNULL(cg_rowkey_read_info_ = OB_NEWx(ObCGRowkeyReadInfo, allocator, *static_param_.rowkey_read_info_))) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "unexpected null rowkey read info", K(ret));
+
       }
     }
 
@@ -133,7 +133,7 @@ int ObMergeParameter::init(
       ret = OB_INVALID_ARGUMENT;
       LOG_WARN("schema is null", K(ret), K(*this));;
     } else if (schema->is_mv_major_refresh_table() && is_major_merge_type(static_param_.get_merge_type()) && OB_FAIL(init_mview_merge_param(allocator))) {
-      STORAGE_LOG(WARN, "failed to init mview merge param", K(ret));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -150,15 +150,15 @@ int ObMergeParameter::set_merge_rowid_range(ObIAllocator *allocator)
   const ObTablesHandleArray &tables_handle = get_tables_handle();
   if (OB_UNLIKELY(tables_handle.empty() || nullptr == allocator)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected null tables handle", K(ret), K(tables_handle), K(allocator));
+
   } else if (OB_ISNULL(table = tables_handle.get_table(0)) || !table->is_sstable()) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected null table", K(ret), KPC(table));
+
   } else if (OB_ISNULL(sstable = static_cast<ObSSTable *>(table))) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected null table", K(ret), KPC(sstable));
+
   } else if (OB_FAIL(sstable->get_cs_range(merge_range_, *static_param_.rowkey_read_info_, *allocator, merge_rowid_range_))) {
-    STORAGE_LOG(WARN, "failed to get cs range", K(ret), K(merge_range_));
+
   }
 
   return ret;
@@ -169,9 +169,9 @@ int ObMergeParameter::init_mview_merge_param(ObIAllocator *allocator)
   int ret = OB_SUCCESS;
   if (OB_ISNULL(mview_merge_param_ = OB_NEWx(ObMviewMergeParameter, allocator))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "failed to alloc mview merge param", K(ret));
+
   } else if (OB_FAIL(mview_merge_param_->init(*this))) {
-     STORAGE_LOG(WARN, "Failed to init mview merge param", K(ret));
+
   }
   return ret;
 }
@@ -562,7 +562,7 @@ void ObTabletMergeDag::fill_compaction_progress(
       && OB_UNLIKELY(OB_SUCCESS != (tmp_ret = input_progress->get_progress_info(progress)))) {
     LOG_WARN_RET(tmp_ret, "failed to get progress info", K(tmp_ret));
   } else {
-    LOG_TRACE("success to get progress info", K(tmp_ret), K(input_progress));
+
   }
 
   if (DAG_STATUS_FINISH == progress.status_) { // fix merge_progress
@@ -611,7 +611,7 @@ void ObTabletMergeDag::fill_diagnose_compaction_progress(
       } else if (OB_TMP_FAIL(input_progress->diagnose_progress(progress))) {
         LOG_WARN_RET(tmp_ret, "failed to diagnose progress info", K(tmp_ret), KPC(ctx), K(progress));
       } else {
-        LOG_TRACE("success to diagnose progress", K(tmp_ret), K(progress));
+
       }
     }
   }
@@ -644,7 +644,7 @@ int ObTabletMergeDag::create_first_task()
   int ret = OB_SUCCESS;
   ObTabletMergePrepareTask *task = nullptr;
   if (OB_FAIL(create_task(nullptr/*parent*/, task))) {
-    STORAGE_LOG(WARN, "fail to alloc prepare task", K(ret));
+
   }
   return ret;
 }
@@ -907,7 +907,7 @@ int ObTabletMergeDag::generate_merge_task(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("start task idx is invalid", KR(ret), K(start_task_idx), K(ctx));
   } else if (start_task_idx == ctx.get_concurrent_cnt()) {
-    LOG_INFO("all merge task finish, just create finish task", KR(ret), K(start_task_idx), K(ctx.get_concurrent_cnt()));
+
     if (OB_FAIL(create_task(prepare_task/*parent*/, finish_task))) {
       LOG_WARN("fail to create finish task", K(ret), K(ctx));
     }
@@ -1074,7 +1074,7 @@ void ObTabletMergeFinishTask::report_checkpoint_info(ObTabletMergeCtx &ctx)
   int tmp_ret = OB_SUCCESS;
   if (is_mini_merge(ctx.get_merge_type())) {
     if (OB_TMP_FAIL(report_checkpoint_diagnose_info(ctx))) {
-      STORAGE_LOG_RET(WARN, 0, "failed to report_checkpoint_diagnose_info", K(tmp_ret), K(ctx));
+
     }
   }
 }
@@ -1147,7 +1147,7 @@ int ObTabletMergeTask::init(const int64_t idx, ObBasicTabletMergeCtx &ctx)
   if (OB_FAIL(ret)) {
   } else if (OB_ISNULL(merger_)) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "Failed to allocate memory for partition merger", K(ret), KP(merger_));
+
   } else {
     idx_ = idx;
     ctx_ = &ctx;
@@ -1191,7 +1191,7 @@ int ObTabletMergeTask::process()
 #ifdef ERRSIM
   ret = OB_E(EventTable::EN_COMPACTION_MERGE_TASK) OB_SUCCESS;
   if (OB_FAIL(ret)) {
-    STORAGE_LOG(INFO, "ERRSIM EN_COMPACTION_MERGE_TASK", K(ret));
+
     return ret;
   }
   if (OB_NOT_NULL(ctx_) && ctx_->get_tablet_id().id() > ObTabletID::MIN_USER_TABLET_ID) {
@@ -1203,7 +1203,7 @@ int ObTabletMergeTask::process()
   ret = SPECIFIED_SERVER_STOP_COMPACTION;
   if (OB_FAIL(ret)) {
     if (-ret == GCTX.get_server_id()) {
-      STORAGE_LOG(INFO, "ERRSIM SPECIFIED_SERVER_STOP_COMPACTION", K(ret));
+
       return OB_EAGAIN;
     } else {
       ret = OB_SUCCESS;
@@ -1213,18 +1213,18 @@ int ObTabletMergeTask::process()
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObTabletMergeTask is not inited", K(ret));
+
   } else if (OB_ISNULL(ctx_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected null merge ctx", K(ret));
+
   } else if (OB_UNLIKELY(is_major_merge_type(ctx_->get_merge_type())
                          && !MERGE_SCHEDULER_PTR->could_major_merge_start())) {
     ret = OB_CANCELED;
-    LOG_INFO("Merge has been paused", K(ret));
+
     CTX_SET_DIAGNOSE_LOCATION(*ctx_);
   } else if (OB_ISNULL(merger_)) {
     ret = OB_ERR_SYS;
-    STORAGE_LOG(WARN, "Unexpected null partition merger", K(ret));
+
   } else {
     ctx_->mem_ctx_.mem_click();
     if (OB_FAIL(merger_->merge_partition(*ctx_, idx_))) {
@@ -1236,13 +1236,13 @@ int ObTabletMergeTask::process()
         merger_->force_flat_format();
         if (OB_FAIL(merger_->merge_partition(*ctx_, idx_))) {
           if (OB_ALLOCATE_MEMORY_FAILED == ret || OB_TIMEOUT == ret || OB_IO_ERROR == ret) {
-            STORAGE_LOG(WARN, "retry merge partition with flat row store type failed", K(ret));
+
           } else {
-            STORAGE_LOG(ERROR, "retry merge partition with flat row store type failed", K(ret));
+
           }
         }
       } else {
-        STORAGE_LOG(WARN, "failed to merge partition", K(ret));
+
       }
     }
 
@@ -1258,9 +1258,9 @@ int ObTabletMergeTask::process()
   if (OB_FAIL(ret)) {
     if (NULL != ctx_) {
       if (OB_CANCELED == ret) {
-        STORAGE_LOG(INFO, "merge is canceled", K(ret), "param", ctx_->get_dag_param(), K(idx_));
+
       } else {
-        STORAGE_LOG(WARN, "failed to merge", K(ret), "param", ctx_->get_dag_param(), K(idx_));
+
       }
     }
   }

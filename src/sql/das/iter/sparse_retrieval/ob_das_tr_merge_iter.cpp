@@ -107,7 +107,7 @@ int ObDASTRMergeIter::inner_init(ObDASIterParam &param)
     sr_iter_param_.max_batch_size_ = merge_param.max_batch_size_; // may be greater than ir_rtdef_->eval_ctx_->max_batch_size_
     inv_idx_tablet_switched_ = false;
     is_inited_ = true;
-    LOG_DEBUG("tr merge iter", K_(function_lookup_mode), K_(topk_mode), K_(daat_mode), K_(taat_mode));
+
   }
   return ret;
 }
@@ -1340,7 +1340,7 @@ int ObDASTRMergeIter::build_query_tokens(const ObDASIRScanCtDef *ir_ctdef,
         root_node = parant_node;
       }
     }
-    LOG_DEBUG("boolean query", K(has_duplicate_boolean_tokens), K(search_text_string), K(query_tokens));
+
   } else {
     // TODO: FTParseHelper currently does not support deduplicate tokens
     //       We should abstract such universal analyse functors into utility structs
@@ -1378,7 +1378,7 @@ int ObDASTRMergeIter::build_query_tokens(const ObDASIRScanCtDef *ir_ctdef,
         }
       }
     }
-    LOG_DEBUG("tokenized text query:", K(ret), KPC(search_text_datum), K(query_tokens));
+
   }
   return ret;
 }

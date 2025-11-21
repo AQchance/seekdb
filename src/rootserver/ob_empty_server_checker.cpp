@@ -40,7 +40,7 @@ using namespace share;
 
 void ObEmptyServerChecker::run3()
 {
-  LOG_INFO("empty server checker start");
+
   int ret = OB_SUCCESS;
   if (!inited_) {
     ret = OB_NOT_INIT;
@@ -58,11 +58,11 @@ void ObEmptyServerChecker::run3()
         wait_time_ms = 100;
       }
       if (OB_SUCCESS != idle_wait(wait_time_ms)) {
-          LOG_DEBUG("wait timeout", K(wait_time_ms));
+
       }
     }
   }
-  LOG_INFO("empty server checker stop");
+
 }
 
 int ObEmptyServerChecker::try_delete_server_()
@@ -89,7 +89,7 @@ int ObEmptyServerChecker::try_delete_server_()
         if (OB_FAIL(unit_mgr_->check_server_empty(addr, server_empty))) {
           LOG_WARN("check_server_empty failed", "server", addr, KR(ret));
         } else if (!server_empty) {
-          LOG_INFO("server not empty and has units on it", "server", addr, KR(ret));
+
         } else if (OB_FAIL(empty_servers_.push_back(addr))) {
           LOG_WARN("failed to push back empty server", KR(ret), KPC(server_info));
         }
@@ -106,7 +106,7 @@ int ObEmptyServerChecker::try_delete_server_()
       const bool commit = true;
       for (int64_t i = 0; OB_SUCC(ret) && i < empty_servers_.count(); ++i) {
         const ObAddr &addr = empty_servers_.at(i);
-        LOG_INFO("sys tenant data version >= 4.2, server zone op service executes finish_delete_server");
+
         if (OB_FAIL(server_zone_op_service_->finish_delete_server(addr, zone))) {
           LOG_WARN("server_zone_op_service finish_delete_server failed", KR(ret), K(addr), K(zone));
         } else if (OB_FAIL(server_mgr_->load_server_manager())) {
@@ -251,7 +251,7 @@ int ObEmptyServerChecker::check_server_emtpy_by_ls_(
         const ObAddr &addr = m->get_server();
         if (has_exist_in_array(empty_servers, addr, &idx)) {
           //has member in server
-          LOG_INFO("ls replica has member on server", K(ls_info), K(addr), K(empty_servers));
+
           if (OB_FAIL(empty_servers.remove(idx))) {
             LOG_WARN("failed to remove addr from empty servers", KR(ret), K(idx), K(empty_servers));
           }
@@ -268,7 +268,7 @@ int ObEmptyServerChecker::check_server_emtpy_by_ls_(
           const ObAddr &addr = learner.get_server();
           if (has_exist_in_array(empty_servers, addr, &idx)) {
             //has learner in server
-            LOG_INFO("ls replica has learner on server", K(ls_info), K(addr), K(empty_servers));
+
             if (OB_FAIL(empty_servers.remove(idx))) {
               LOG_WARN("failed to remove addr from empty servers", KR(ret), K(idx), K(empty_servers));
             }
@@ -281,7 +281,7 @@ int ObEmptyServerChecker::check_server_emtpy_by_ls_(
       const ObAddr &addr = replica_array.at(i).get_server();
       if (has_exist_in_array(empty_servers, addr, &idx)) {
         //has member in server
-        LOG_INFO("this sever has ls replica", K(ls_info), K(addr));
+
         if (OB_FAIL(empty_servers.remove(idx))) {
           LOG_WARN("failed to remove addr from empty servers", KR(ret), K(idx));
         }

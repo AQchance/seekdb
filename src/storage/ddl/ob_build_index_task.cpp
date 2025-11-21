@@ -70,14 +70,14 @@ int ObUniqueIndexChecker::calc_column_checksum(
   column_checksum.reuse();
   if (OB_UNLIKELY(column_cnt <= 0 || column_cnt > need_reshape.count() || column_cnt > cols_desc.count())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), K(column_cnt), K(need_reshape), K(cols_desc));
+
   } else if (OB_FAIL(column_checksum.reserve(column_cnt))) {
-    STORAGE_LOG(WARN, "fail to reserve column", K(ret), K(column_cnt));
+
   } else {
     const ObDatumRow *row = NULL;
     for (int64_t i = 0; OB_SUCC(ret) && i < column_cnt; ++i) {
       if (OB_FAIL(column_checksum.push_back(0))) {
-        STORAGE_LOG(WARN, "fail to push back column checksum", K(ret));
+
       }
     }
     while (OB_SUCC(ret)) {
@@ -86,11 +86,11 @@ int ObUniqueIndexChecker::calc_column_checksum(
           ret = OB_SUCCESS;
           break;
         } else {
-          STORAGE_LOG(WARN, "fail to get next row", K(ret));
+
         }
       } else if (OB_ISNULL(row)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "store row must not be NULL", K(ret), KP(row));
+
       } else if (column_cnt != row->get_column_count()) {
         ret = OB_INVALID_ARGUMENT;
         STORAGE_LOG(WARN, "column cnt not as expected", K(ret), K(column_cnt), "row_val_column_cnt",
@@ -105,7 +105,7 @@ int ObUniqueIndexChecker::calc_column_checksum(
           }
         }
         if (OB_SUCC(ret) && OB_FAIL(dag_yield())) {
-          STORAGE_LOG(WARN, "fail to yield dag", KR(ret));
+
         }
       }
     }
@@ -122,7 +122,7 @@ int ObUniqueIndexChecker::scan_table_with_column_checksum(
   SMART_VAR(ObLocalScan, local_scan) {
     if (OB_UNLIKELY(!param.is_valid())) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "invalid arguments", K(ret), K(param));
+
     } else if (OB_FAIL(DDL_SIM(param_->tenant_id_, param_->task_id_, UNIQUE_INDEX_CHECKER_SCAN_TABLE_WITH_CHECKSUM_FAILED))) {
       LOG_WARN("ddl sim failure", K(ret), K(param_->tenant_id_), K(param_->task_id_));
     } else {
@@ -204,7 +204,7 @@ int ObUniqueIndexChecker::generate_index_output_param(
   output_projector.reuse();
   if (OB_UNLIKELY(!data_table_schema.is_valid() || !index_schema.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), K(data_table_schema), K(index_schema));
+
   } else if (OB_FAIL(DDL_SIM(param_->tenant_id_, param_->task_id_, UNIQUE_INDEX_CHECKER_GENERATE_INDEX_OUTPUT_PARAM_FAILED))) {
     LOG_WARN("ddl sim failure", K(ret), K(param_->tenant_id_), K(param_->task_id_));
   } else {
@@ -221,7 +221,7 @@ int ObUniqueIndexChecker::generate_index_output_param(
         col_desc.col_type_ = rowkey_column->type_;
         col_desc.col_order_ = rowkey_column->order_;
         if (OB_FAIL(col_ids.push_back(col_desc))) {
-          STORAGE_LOG(WARN, "fail to push back column desc", K(ret));
+
         }
       }
     }
@@ -241,7 +241,7 @@ int ObUniqueIndexChecker::generate_index_output_param(
         }
         if (j == col_ids.count()) {
           if (OB_FAIL(col_ids.push_back(index_col_desc))) {
-            STORAGE_LOG(WARN, "fail to push back index col desc", K(ret));
+
           }
         }
       }
@@ -257,13 +257,13 @@ int ObUniqueIndexChecker::generate_index_output_param(
       }
       if (j == col_ids.count()) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "error unexpected, output col does not exist in index table columns", K(ret));
+
       } else if (OB_FAIL(output_projector.push_back(static_cast<int32_t>(j)))) {
-        STORAGE_LOG(WARN, "fail to push back output projector", K(ret));
+
       }
     }
 
-    STORAGE_LOG(INFO, "output index projector", K(output_projector), K(col_ids), K(org_col_ids));
+
   }
 
   return ret;
@@ -278,7 +278,7 @@ int ObUniqueIndexChecker::get_index_columns_without_virtual_generated_and_shadow
   ObArray<ObColDesc> index_table_columns;
   col_ids.reset();
   if (OB_FAIL(index_table_schema.get_column_ids(index_table_columns))) {
-    STORAGE_LOG(WARN, "fail to get column ids", K(ret));
+
   }
   for (int64_t i = 0; OB_SUCC(ret) && i < index_table_columns.count(); ++i) {
     const ObColumnSchemaV2 *column_schema = nullptr;
@@ -317,10 +317,10 @@ int ObUniqueIndexChecker::scan_main_table_with_column_checksum(
   ObArray<int32_t> output_projector;
   if (OB_UNLIKELY(!data_table_schema.is_valid() || !index_schema.is_valid() || snapshot_version <= 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), K(data_table_schema), K(index_schema), K(snapshot_version));
+
   } else if (OB_FAIL(generate_index_output_param(data_table_schema, index_schema,
       col_ids, org_col_ids, output_projector))) {
-    STORAGE_LOG(WARN, "fail to generate index output param", K(ret));
+
   } else {
     ObScanTableParam param;
     param.data_table_schema_ = &data_table_schema;
@@ -332,11 +332,11 @@ int ObUniqueIndexChecker::scan_main_table_with_column_checksum(
     param.is_scan_index_ = false;
     param.task_id_ = task_id;
 
-    STORAGE_LOG(INFO, "scan main table column checksum", K(col_ids), K(org_col_ids));
+
     if (OB_FAIL(scan_table_with_column_checksum(param, column_checksum, row_count))) {
-      STORAGE_LOG(WARN, "fail to scan table with column checksum", K(ret));
+
     }
-    LOG_INFO("scan main table column checksum", K(org_col_ids), K(column_checksum));
+
   }
   return ret;
 }
@@ -355,14 +355,14 @@ int ObUniqueIndexChecker::scan_index_table_with_column_checksum(
   ObArray<int64_t> tmp_column_checksum;
   if (OB_UNLIKELY(!index_schema.is_valid() || snapshot_version <= 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), K(index_schema), K(snapshot_version));
+
   } else if (OB_FAIL(index_schema.get_column_ids(column_ids))) {
-    STORAGE_LOG(WARN, "fail to get column ids", K(ret), "index_id", index_schema.get_table_id());
+
   } else {
     ObArray<int32_t> output_projector;
     for (int64_t i = 0; OB_SUCC(ret) && i < column_ids.count(); ++i) {
       if (OB_FAIL(output_projector.push_back(static_cast<int32_t>(i)))) {
-        STORAGE_LOG(WARN, "fail to push back output projector", K(ret));
+
       }
     }
 
@@ -376,9 +376,9 @@ int ObUniqueIndexChecker::scan_index_table_with_column_checksum(
       param.output_projector_ = &output_projector;
       param.is_scan_index_ = true;
       param.task_id_ = task_id;
-      STORAGE_LOG(INFO, "scan index table column checksum", K(column_ids));
+
       if (OB_FAIL(scan_table_with_column_checksum(param, tmp_column_checksum, row_count))) {
-        STORAGE_LOG(WARN, "fail to scan table with column checksum", K(ret));
+
       } else {
         for (int64_t i = 0; OB_SUCC(ret) && i < column_ids.count(); ++i) {
           const ObColumnSchemaV2 *column_schema = nullptr;
@@ -404,7 +404,7 @@ int ObUniqueIndexChecker::check_global_index(ObIDag *dag, const int64_t task_id)
   int ret = OB_SUCCESS;
   if (OB_ISNULL(dag)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), KP(dag));
+
   } else {
     ObArray<int64_t> column_checksum;
     int64_t row_count = 0;
@@ -412,12 +412,12 @@ int ObUniqueIndexChecker::check_global_index(ObIDag *dag, const int64_t task_id)
       if (!param_->is_scan_index_) {
         if (OB_FAIL(scan_main_table_with_column_checksum(*(param_->data_table_schema_), *(param_->index_schema_),
             param_->snapshot_version_, task_id, column_checksum, row_count))) {
-          STORAGE_LOG(WARN, "fail to scan main table with column checksum", K(ret));
+
         }
       } else {
         if (OB_FAIL(scan_index_table_with_column_checksum(*(param_->data_table_schema_), *(param_->index_schema_),
           param_->snapshot_version_, task_id, column_checksum, row_count))) {
-          STORAGE_LOG(WARN, "fail to scan index table with column checksum", K(ret));
+
         }
       }
     }
@@ -448,7 +448,7 @@ int ObUniqueIndexChecker::check_unique_index(ObIDag *dag, const int64_t task_id)
       } else if (OB_FAIL(ObDDLUtil::ddl_get_tablet(ls_handle, param_->tablet_id_, tablet_handle_))) {
         LOG_WARN("fail to get tablet", K(ret), K(param_->tablet_id_), K(tablet_handle_));
       } else if (param_->index_schema_->is_fts_index() || param_->index_schema_->is_vec_index()) {
-        STORAGE_LOG(INFO, "do not need to check unique for domain index", "index_id", param_->index_schema_->get_table_id());
+
       } else {
         if (OB_FAIL(ret)) {
         } else if (OB_FAIL(wait_trans_end(dag))) {
@@ -476,13 +476,13 @@ int ObUniqueIndexChecker::check_unique_index(ObIDag *dag, const int64_t task_id)
       if (OB_SUCCESS != (tmp_ret = ObDDLErrorMessageTableOperator::get_index_task_info(*GCTX.sql_proxy_, *param_->index_schema_, info))) {
         if (OB_ITER_END == tmp_ret) {
           keep_report_err_msg = false;
-          LOG_INFO("get task id failed, check whether index building task is cancled", K(ret), K(tmp_ret), KPC(param_->index_schema_));
+
         } else {
-          LOG_INFO("get task id failed, but retry to get it", K(ret), K(tmp_ret), KPC(param_->index_schema_));
+
         }
       } else if (OB_UNLIKELY(param_->task_id_ != info.task_id_)) {
         keep_report_err_msg = false;
-        LOG_INFO("get task id mismatched, check whether index building task is cancled", K(ret), K(param_->task_id_), K(info.task_id_));
+
       } else if (OB_SUCCESS != (tmp_ret = ObDDLErrorMessageTableOperator::generate_index_ddl_error_message(
           ret, *(param_->index_schema_), info.trace_id_str_, info.task_id_, info.parent_task_id_, param_->tablet_id_.id(), self_addr, *GCTX.sql_proxy_, "\0", report_ret_code))) {
         LOG_WARN("fail to generate index ddl error message", K(ret), K(tmp_ret), KPC(param_->index_schema_), K(param_->tablet_id_), K(self_addr));
@@ -505,7 +505,7 @@ int ObUniqueIndexChecker::check_unique_index(ObIDag *dag, const int64_t task_id)
           LOG_WARN("check if tenant has been dropped failed", K(tmp_ret), K(param_->tenant_id_));
         } else if (is_tenant_dropped) {
           keep_report_err_msg = false;
-          LOG_INFO("break when tenant dropped", K(tmp_ret), KPC(param_->index_schema_), K(param_->tablet_id_), K(self_addr));
+
         }
       }
     }
@@ -572,10 +572,10 @@ int ObUniqueCheckingDag::init(
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(is_inited_)) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObUniqueCheckingDag has already been inited", K(ret));
+
   } else if (OB_FAIL(param_.init(tenant_id, ls_id, tablet_id, is_scan_index, index_table_id,
                      schema_version, task_id, execution_id, snapshot_version, user_parallelism))) {
-    STORAGE_LOG(WARN, "fail to init ObUniqueCheckingParam", KR(ret), K_(param));
+
   } else if (OB_UNLIKELY(!param_.is_valid())) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected", K(ret), K(param_));
@@ -591,13 +591,13 @@ int ObUniqueCheckingDag::alloc_unique_checking_prepare_task(ObUniqueCheckingPara
   ObUniqueCheckingPrepareTask *prepare_task = NULL;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObUniqueCheckingDag has not been inited", K(ret));
+
   } else if (OB_FAIL(alloc_task(prepare_task))) {
-    STORAGE_LOG(WARN, "fail to alloc task", K(ret));
+
   } else if (OB_FAIL(prepare_task->init(param, context))) {
-    STORAGE_LOG(WARN, "fail to init prepare task", K(ret));
+
   } else if (OB_FAIL(add_task(*prepare_task))) {
-    STORAGE_LOG(WARN, "fail to add task", K(ret));
+
   }
   return ret;
 }
@@ -613,17 +613,17 @@ int ObUniqueCheckingDag::alloc_global_index_task_callback(
   callback = NULL;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObUniqueCheckingDag has not been inited", K(ret));
+
   } else if (OB_UNLIKELY(!tablet_id.is_valid() || OB_INVALID_ID == index_id || OB_INVALID_ID == data_table_id || schema_version <= 0 || task_id <= 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), K(tablet_id), K(index_id), K(data_table_id), K(schema_version), K(task_id));
+
   } else if (OB_ISNULL(buf = ob_malloc(sizeof(ObGlobalUniqueIndexCallback),
       ObModIds::OB_CS_BUILD_INDEX))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to allocate memory", K(ret));
+
   } else if (OB_ISNULL(callback = new (buf) ObGlobalUniqueIndexCallback(param_.tenant_id_, tablet_id, index_id, data_table_id, schema_version, task_id))) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "fail to placement new local index callback", K(ret));
+
   } else {
     param_.callback_ = callback;
   }
@@ -637,7 +637,7 @@ uint64_t ObUniqueCheckingDag::hash() const
   uint64_t hash_val = 0;
   if (NULL == param_.index_schema_) {
     tmp_ret = OB_ERR_SYS;
-    STORAGE_LOG_RET(ERROR, tmp_ret, "index schema must not be NULL", K(tmp_ret));
+
   } else {
     hash_val = param_.tablet_id_.hash() + param_.index_schema_->get_table_id();
   }
@@ -653,10 +653,10 @@ int ObUniqueCheckingDag::fill_info_param(compaction::ObIBasicInfoParam *&out_par
   }
   if (!is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (OB_FAIL(ADD_DAG_WARN_INFO_PARAM(out_param, allocator, get_type(), 
                                 static_cast<int64_t>(param_.tablet_id_.id()), index_id))) {
-    STORAGE_LOG(WARN, "failed to fill info param", K(ret));
+
   }
   return ret;
 }
@@ -671,13 +671,13 @@ int ObUniqueCheckingDag::fill_dag_key(char *buf, const int64_t buf_len) const
 
   if (!is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } 
   else {
     int64_t pos = 0;
     if (OB_FAIL(databuff_print_multi_objs(buf, buf_len, pos,
         "tablet_id=", param_.tablet_id_, " index_id=", index_id))) {
-      STORAGE_LOG(WARN, "failed to fill dag key", K(ret), K(param_.tablet_id_), K(index_id), K(pos));
+
     }
   }
   return ret;
@@ -737,10 +737,10 @@ int ObUniqueCheckingPrepareTask::init(ObUniqueCheckingParam &param, ObUniqueChec
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(is_inited_)) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObUniqueCheckingPrepareTask has already been inited", K(ret));
+
   } else if (OB_UNLIKELY(!param.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid param", K(ret), K(param));
+
   } else {
     param_ = &param;
     context_ = &context;
@@ -755,14 +755,14 @@ int ObUniqueCheckingPrepareTask::process()
   ObUniqueCheckingDag *dag = NULL;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObUniqueCheckingPrepareTask has not been inited", K(ret));
+
   } else if (OB_ISNULL(dag = static_cast<ObUniqueCheckingDag *>(get_dag()))) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "error unexpected, dag must not be NULL", K(ret));
+
   } else if (OB_FAIL(dag->prepare_context())) {
-    STORAGE_LOG(WARN, "fail to generate dag context", K(ret));
+
   } else if (OB_FAIL(generate_unique_checking_task(dag))) {
-    STORAGE_LOG(WARN, "fail to generate unique checking task", K(ret));
+
   }
   if (OB_FAIL(ret)) {
     context_->unique_checking_ret_ = ret;
@@ -778,18 +778,18 @@ int ObUniqueCheckingPrepareTask::generate_unique_checking_task(ObUniqueCheckingD
   ObUniqueCheckingMergeTask *merge_task = nullptr;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObIndexPrepareTask has not been inited", K(ret));
+
   } else if (OB_ISNULL(dag)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), KP(dag));
+
   } else if (OB_FAIL(dag->alloc_task(checking_task))) {
-    STORAGE_LOG(WARN, "fail to alloc checking task", K(ret));
+
   } else if (OB_FAIL(checking_task->init(0, *param_, *context_))) {
-    STORAGE_LOG(WARN, "fail to init unique checking task", K(ret));
+
   } else if (OB_FAIL(add_child(*checking_task))) {
-    STORAGE_LOG(WARN, "fail to add child for prepare task", K(ret));
+
   } else if (OB_FAIL(dag->add_task(*checking_task))) {
-    STORAGE_LOG(WARN, "fail to add unique checking task", K(ret));
+
   } else if (OB_FAIL(dag->alloc_task(merge_task))) {
     LOG_WARN("alloc task failed", K(ret));
   } else if (OB_ISNULL(merge_task)) {
@@ -816,12 +816,12 @@ int ObSimpleUniqueCheckingTask::init(const int64_t task_id, ObUniqueCheckingPara
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(is_inited_)) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObSimpleUniqueCheckingTask has already been inited", K(ret));
+
   } else if (OB_UNLIKELY(task_id < 0 || !param.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), K(task_id), K(param));
+
   } else if (OB_FAIL(unique_checker_.init(param, context))) {
-    STORAGE_LOG(WARN, "fail to init unique index checker", K(ret));
+
   } else {
     task_id_ = task_id;
     param_ = &param;
@@ -837,14 +837,14 @@ int ObSimpleUniqueCheckingTask::process()
   ObUniqueCheckingDag *dag = NULL;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObSimpleUniqueCheckingTask has not been inited", K(ret));
+
   } else if (OB_ISNULL(dag = static_cast<ObUniqueCheckingDag *>(get_dag()))) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "error unexpected, dag must not be NULL", K(ret));
+
   } else if (OB_SUCCESS != (context_->unique_checking_ret_)) {
-    STORAGE_LOG(WARN, "unique checking has already failed", "ret", context_->unique_checking_ret_);
+
   } else if (OB_FAIL(unique_checker_.check_unique_index(dag, task_id_))) {
-    STORAGE_LOG(WARN, "fail to check unique index", K(ret));
+
   }
   // store the ret code by the check unique index and report it in the merge task
   if (OB_FAIL(ret) && OB_NOT_NULL(context_)) {
@@ -860,7 +860,7 @@ int ObSimpleUniqueCheckingTask::process()
       "tablet_id", param_->tablet_id_,
       dag->get_ls_id());
   }
-  LOG_INFO("simple unique check task process.", K(ret), "ddl_event_info", ObDDLEventInfo(), KPC(dag), K(task_id_));
+
   return ret;
 }
 
@@ -890,7 +890,7 @@ int ObSimpleUniqueCheckingTask::generate_next_task(ObITask *&next_task)
     LOG_WARN("fail to init unique checking task", K(ret));
   } else {
     next_task = unique_checking_task;
-    LOG_INFO("generate next unique checking task", K(ret));
+
   }
   if (OB_FAIL(ret) && OB_NOT_NULL(context_)) {
     if (OB_ITER_END != ret) {
@@ -911,10 +911,10 @@ int ObUniqueCheckingMergeTask::init(ObUniqueCheckingParam &param, ObUniqueChecki
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(is_inited_)) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObUniqueCheckingMergeTask has already been inited", K(ret));
+
   } else if (!param.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid param", K(ret), K(param));
+
   } else {
     param_ = &param;
     context_ = &context;
@@ -945,7 +945,7 @@ int ObUniqueCheckingMergeTask::process()
       }
       if (OB_ISNULL(column_schema)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "error unexpected, column schema must not be NULL", K(ret), K(column_ids.at(i)));
+
       } else {
         ObDDLChecksumItem item;
         item.execution_id_ = param_->execution_id_;
@@ -977,10 +977,10 @@ int ObUniqueCheckingMergeTask::process()
   // overwrite ret
   if (NULL != param_->callback_) {
     if (NULL != param_->index_schema_) {
-      STORAGE_LOG(INFO, "unique checking callback", K(param_->tablet_id_), "index_id", param_->index_schema_->get_table_id());
+
     }
     if (OB_FAIL(param_->callback_->operator()(context_->unique_checking_ret_))) {
-      STORAGE_LOG(WARN, "fail to check unique index response", K(ret));
+
     }
   }
   return ret;
@@ -1007,19 +1007,19 @@ int ObGlobalUniqueIndexCallback::operator()(const int ret_code)
 #ifdef ERRSIM
     if (OB_SUCC(ret)) {
       ret = OB_E(EventTable::EN_DDL_REPORT_REPLICA_BUILD_STATUS_FAIL) OB_SUCCESS;
-      LOG_INFO("report replica build status errsim", K(ret));
+
     }
 #endif
   if (OB_FAIL(ret)) {
   } else if (OB_ISNULL(GCTX.rs_rpc_proxy_) || OB_ISNULL(GCTX.rs_mgr_)) {
     ret = OB_ERR_SYS;
-    STORAGE_LOG(WARN, "innner system error, rootserver rpc proxy or rs mgr must not be NULL", K(ret), K(GCTX));
+
   } else if (OB_FAIL(GCTX.rs_mgr_->get_master_root_server(rs_addr))) {
-    STORAGE_LOG(WARN, "fail to get rootservice address", K(ret));
+
   } else if (OB_FAIL(GCTX.rs_rpc_proxy_->to(rs_addr).calc_column_checksum_response(arg))) {
-    STORAGE_LOG(WARN, "fail to check unique index response", K(ret), K(arg));
+
   } else {
-    STORAGE_LOG(INFO, "send column checksum response", K(arg));
+
   }
   return ret;
 }
@@ -1052,7 +1052,7 @@ int ObUniqueCheckingParam::init(
   ObMultiVersionSchemaService *schema_service = nullptr;
   if (OB_UNLIKELY(is_inited_)) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObUniqueCheckingParam has already been inited", K(ret));
+
   } else if (OB_UNLIKELY(OB_INVALID_TENANT_ID == tenant_id || !ls_id.is_valid() || !tablet_id.is_valid()
       || OB_INVALID_ID == index_table_id || schema_version < 0 || task_id <= 0
       || execution_id < 0 || snapshot_version < 0)) {
@@ -1065,19 +1065,19 @@ int ObUniqueCheckingParam::init(
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("get schema service failed", K(ret));
       } else if (OB_FAIL(schema_service->get_tenant_schema_guard(tenant_id, schema_guard_, schema_version))) {
-        STORAGE_LOG(WARN, "fail to get schema guard", K(ret), K(schema_version));
+
       } else if (OB_FAIL(schema_guard_.check_formal_guard())) {
         LOG_WARN("schema_guard is not formal", K(ret), K(tablet_id));
       } else if (OB_FAIL(schema_guard_.get_table_schema(tenant_id, index_table_id, index_schema_))) {
-        STORAGE_LOG(WARN, "fail to get table schema", K(ret));
+
       } else if (OB_ISNULL(index_schema_)) {
         ret = OB_TABLE_NOT_EXIST;
-        STORAGE_LOG(WARN, "fail to get table schema", K(ret), K(index_table_id));
+
       } else if (OB_FAIL(schema_guard_.get_table_schema(tenant_id, index_schema_->get_data_table_id(), data_table_schema_))) {
-        STORAGE_LOG(WARN, "fail to get table schema", K(ret));
+
       } else if (OB_ISNULL(data_table_schema_)) {
         ret = OB_TABLE_NOT_EXIST;
-        STORAGE_LOG(WARN, "data table not exist", K(ret));
+
       } else if (OB_FAIL(ObCompatModeGetter::get_table_compat_mode(tenant_id, index_table_id, compat_mode_))) {
         LOG_WARN("failed to get compat mode", K(ret), K(index_table_id));
       } else {
@@ -1125,7 +1125,7 @@ int ObUniqueCheckingContext::init(const ObUniqueCheckingParam *param)
     ObArray<ObColDesc> tmp_column_ids;
     ObArray<int64_t> column_ids;
     if (OB_FAIL(param->index_schema_->get_column_ids(tmp_column_ids))) {
-      STORAGE_LOG(WARN, "fail to get columns ids", K(ret));
+
     } else {
       for (int64_t i = 0; OB_SUCC(ret) && i < tmp_column_ids.count(); ++i) {
         if (!is_shadow_column(tmp_column_ids.at(i).col_id_)) {

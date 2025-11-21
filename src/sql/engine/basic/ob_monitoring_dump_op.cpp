@@ -98,7 +98,7 @@ int ObMonitoringDumpOp::inner_close()
       K(MY_SPEC.dst_op_id_));
     sum_hash += output_hash;
   }
-  LOG_INFO("monitoring dump sum output hash value", K(id), K(sum_hash), K(MY_SPEC.dst_op_id_));
+
   op_monitor_info_.otherstat_1_value_ += static_cast<int64_t>(sum_hash);
   op_monitor_info_.otherstat_1_id_ = ObSqlMonitorStatIds::MONITORING_DUMP_SUM_OUTPUT_HASH;
   return ret;
@@ -126,7 +126,7 @@ int ObMonitoringDumpOp::inner_get_next_row()
   clear_evaluated_flag();
   if (OB_FAIL(child_->get_next_row())) {
     if (OB_ITER_END == ret) {
-      LOG_DEBUG("OB_ITER_END", K(op_name_.get_string()), K(MY_SPEC.dst_op_id_));
+
       last_row_time_ = ObTimeUtility::current_time();
     } else {
       LOG_WARN("Failed to get next row", K(ret));
@@ -178,7 +178,7 @@ int ObMonitoringDumpOp::calc_hash_value()
 
 int ObMonitoringDumpOp::inner_get_next_batch(const int64_t max_row_cnt)
 {
-  LOG_DEBUG("MonitoringDumpOp get_next_batch start");
+
   int ret = OB_SUCCESS;
   int64_t batch_cnt = min(max_row_cnt, MY_SPEC.max_batch_size_);
   const ObBatchRows *child_brs = nullptr;

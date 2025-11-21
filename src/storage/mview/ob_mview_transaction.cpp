@@ -92,7 +92,7 @@ int ObMViewTransaction::ObSessionParamSaved::save(ObSQLSessionInfo *session_info
                          ObSysVarClassType::SYS_VAR_COLLATION_CONNECTION, collation_connection_var_))) {
         LOG_WARN("fail to get sys varibale", K(ret));
       }
-      LOG_DEBUG("print session var when save", K(collation_connection_var_));
+
     }
   }
   return ret;
@@ -399,7 +399,7 @@ int ObMViewTransaction::start(
     } else {
       session_info_ = session_info;
       in_trans_ = true;
-      LOG_DEBUG("start transaction success", K(tenant_id));
+
     }
   }
   if (OB_FAIL(ret)) {
@@ -420,7 +420,7 @@ int ObMViewTransaction::end(const bool commit)
     if (OB_FAIL(end_transaction(commit))) {
       LOG_WARN("fail to end transation", KR(ret));
     } else {
-      LOG_DEBUG("end transaction success", K(commit));
+
     }
     in_trans_ = false;
   }

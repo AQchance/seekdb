@@ -59,7 +59,7 @@ int ObMPResetConnection::process()
     const ObMySQLRawPacket &pkt = reinterpret_cast<const ObMySQLRawPacket&>(req_->get_packet());
     session->update_last_active_time();
     session->set_query_start_time(ObTimeUtility::current_time());
-    LOG_TRACE("begin reset connection. ", K(session->get_server_sid()), K(session->get_effective_tenant_id()));
+
     tenant_id = session->get_effective_tenant_id();
     if (OB_FAIL(process_extra_info(*session, pkt, need_response_error))) {
       LOG_WARN("fail get process extra info", K(ret));

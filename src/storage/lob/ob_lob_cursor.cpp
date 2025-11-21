@@ -190,7 +190,7 @@ int ObLobCursor::merge_chunk_data(int start_chunk_pos, int end_chunk_pos)
           LOG_WARN("invalid chunk data", KR(ret), K(i), K(chunk_idx_array), K(start_chunk_pos), K(end_chunk_pos));
         } else {
           use_update_buffer = true;
-          LOG_DEBUG("set use update buffer", K(i), K(chunk_idx_array.count()));
+
         }
       }
     }
@@ -583,7 +583,7 @@ int ObLobCursor::get_one_chunk_with_all_data(ObString &data)
     LOG_WARN("partial_data_ data length incorrect", KR(ret), K(ori_data_length_), K(chunk_data(0)));
   } else {
     data = chunk_data(0).data_;
-    LOG_DEBUG("get chunk data success", K(chunk_data(0)), K(data));
+
   }
   return ret;
 }

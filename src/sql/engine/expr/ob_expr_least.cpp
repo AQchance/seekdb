@@ -98,7 +98,7 @@ int ObExprLeastGreatest::calc_result_typeN_mysql(ObExprResType &type,
           }
         }
       }
-      LOG_DEBUG("least calc_result_typeN", K(type), K(type.get_calc_accuracy()));
+
     }
   }
   return ret;
@@ -189,7 +189,7 @@ int ObExprLeastGreatest::cg_expr(ObExprCGCtx &op_cg_ctx,
           }
         }
       }
-      LOG_DEBUG("least cg", K(result_type_));
+
     }
   }
   return ret;

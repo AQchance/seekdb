@@ -130,7 +130,7 @@ void batch_implicit_scale(ObDatumVector &arg_dv, ObDatumVector &result_dv, unsig
 {
   static_assert(wide::IsIntegral<out_type>::value, "");
   static_assert(wide::IsIntegral<in_type>::value, "");
-  LOG_DEBUG("batch implicit scale", K(lbt()), K(batch_size), K(is_scale_up));
+
   out_type sf = get_scale_factor<out_type>(scale);
   auto scale_up_task = [&](int i) __attribute__((always_inline))
   {
@@ -221,7 +221,7 @@ void batch_explicit_scale(ObDatumVector &arg_dv, ObDatumVector &result_dv, unsig
   static_assert(wide::IsIntegral<in_type>::value, "");
   static_assert(wide::IsIntegral<out_type>::value, "");
   using calc_type = typename wide::CommonType<in_type, out_type>::type;
-  LOG_DEBUG("batch explicit scale", K(lbt()), K(batch_size), K(is_scale_up), K(out_prec));
+
   int ret = OB_SUCCESS;
   OB_ASSERT(out_prec <= OB_MAX_DECIMAL_POSSIBLE_PRECISION);
   const ObDecimalInt *min_v = wide::ObDecimalIntConstValue::get_min_lower(out_prec);
@@ -386,7 +386,7 @@ void batch_const_scale(ObDatumVector &arg_dv, ObDatumVector &result_dv, const in
     }
   };
 
-  LOG_DEBUG("batch const scale", K(lbt()), K(batch_size), K(is_scale_up), K(cast_mode));
+
   if (is_scale_up) {
     if (OB_LIKELY(skip.accumulate_bit_cnt(batch_size) == 0
         && eval_flags.accumulate_bit_cnt(batch_size) == 0)) {
@@ -520,7 +520,7 @@ static int decimalint_fast_cast(const ObExpr &expr, ObEvalCtx &ctx, ObDatum &res
 {
   EVAL_ARG()
   {
-    LOG_DEBUG("fast casting routing from decimalint to decimalint");
+
     ObDecimalIntBuilder res_val;
     ObScale out_scale = expr.datum_meta_.scale_;
     ObScale in_scale = expr.args_[0]->datum_meta_.scale_;
@@ -611,7 +611,7 @@ static int int_fast_batch_cast(const ObExpr &expr, ObEvalCtx &ctx, const ObBitVe
 template <typename in_type, typename out_type, typename int_type, bool is_explicit>
 static int int_fast_cast(const ObExpr &expr, ObEvalCtx &ctx, ObDatum &res_datum)
 {
-  LOG_DEBUG("fast casting routine from int to decimal int");
+
   EVAL_ARG()
   {
     ObScale out_scale = expr.datum_meta_.scale_;
@@ -682,7 +682,7 @@ DEF_BATCH_CAST_FUNC(ObDecimalIntTC, ObDecimalIntTC)
   EVAL_BATCH_ARGS()
   {
     DEF_BATCH_CAST_PARAMS;
-    LOG_DEBUG("common batch scale for decimal int to decimal int", K(batch_size));
+
     int64_t skip_sz = skip.accumulate_bit_cnt(batch_size);
     int64_t eval_sz = eval_flags.accumulate_bit_cnt(batch_size);
     if (skip_sz == batch_size || eval_sz == batch_size) {
@@ -742,7 +742,7 @@ DEF_BATCH_CAST_FUNC(ObIntTC, ObDecimalIntTC)
   }
 
   int ret = OB_SUCCESS;
-  LOG_DEBUG("common batch scale for int to decimal int", K(batch_size));
+
   EVAL_BATCH_ARGS()
   {
     DEF_BATCH_CAST_PARAMS;
@@ -798,7 +798,7 @@ DEF_BATCH_CAST_FUNC(ObUIntTC, ObDecimalIntTC)
 #define EXPLICIT_CAST_UINT(int_type) DO_EXPLICIT_CAST(uint64_t, int_type)
 
   int ret = OB_SUCCESS;
-  LOG_DEBUG("common batch scale for uint to decimal int", K(batch_size));
+
   EVAL_BATCH_ARGS()
   {
     DEF_BATCH_CAST_PARAMS;

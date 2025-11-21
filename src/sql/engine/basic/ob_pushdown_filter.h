@@ -974,7 +974,7 @@ public:
   {
     int ret = OB_SUCCESS;
     if (OB_FAIL((*hash_func_)(*datum_, seed, seed))) {
-      STORAGE_LOG(WARN, "Failed to do hash for datum", K_(datum));
+
     } else {
       hash_val = seed;
     }
@@ -1030,7 +1030,7 @@ public:
       is_exist = false;
       ret = OB_SUCCESS;
     } else {
-      STORAGE_LOG(WARN, "Failed to search in hashset", K(ret), K(param));
+
     }
     return ret;
   }
@@ -1076,7 +1076,7 @@ public:
     int ret = OB_SUCCESS;
     uint64_t hash_val;
     if (OB_FAIL(hash_func_(datum, 0, hash_val))) {
-      STORAGE_LOG(WARN, "Failed to do hash for datum", K(datum));
+
     } else {
       ret = set_.insert_hash(hash_val);
     }
@@ -1087,7 +1087,7 @@ public:
     int ret = OB_SUCCESS;
     uint64_t hash_val;
     if (OB_FAIL(hash_func_(datum, 0, hash_val))) {
-      STORAGE_LOG(WARN, "Failed to do hash for datum", K(datum));
+
     } else {
       is_exist = set_.test_hash(hash_val);
     }
@@ -1552,11 +1552,11 @@ int ObPushdownFilterExecutor::init_array_param(common::ObFixedArray<T, common::O
   if (FALSE_IT(param.clear())) {
   } else if (OB_FAIL(param.reserve(size))) {
     if (OB_UNLIKELY(OB_SIZE_OVERFLOW != ret)) {
-      STORAGE_LOG(WARN, "Failed to init params", K(ret));
+
     } else {
       param.reset();
       if (OB_FAIL(param.init(size))) {
-        STORAGE_LOG(WARN, "Failed to init params", K(ret), K(size));
+
       }
     }
   }

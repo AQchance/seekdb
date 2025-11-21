@@ -54,7 +54,7 @@ int ObMySQLResultImpl::init(bool enable_use_result)
   } else {
     if (enable_use_result) {
       result_ = mysql_use_result(stmt);
-      LOG_DEBUG("enabled mysql_use_result", K(enable_use_result), K(result_), K(mysql_get_client_version()), K(mysql_get_client_info()));
+
     } else {
       result_ = mysql_store_result(stmt);
     }

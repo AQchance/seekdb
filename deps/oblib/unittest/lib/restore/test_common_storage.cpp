@@ -1119,7 +1119,7 @@ int TestCommonStorage::force_delete_dir(const common::ObString &uri)
 
   if (OB_FAIL(databuff_printf(cmd, OB_MAX_URI_LENGTH, "%s%.*s", "rm -rf ",
       static_cast<int>(uri.length() - offset), uri.ptr() + offset))) {
-    STORAGE_LOG(WARN, "fail to fill path", K(ret), K(uri));
+
   } else if (0 != std::system(cmd)) {
     ret = OB_ERR_UNEXPECTED;
     OB_LOG(WARN, "fail to delete dir", K(ret), K(uri), K(cmd));
@@ -1225,7 +1225,7 @@ int TestCommonStorage::write_multi_files(
       for (int64_t i = start_idx; OB_SUCC(ret) && (i < end_idx); ++i) {
         if (OB_FAIL(databuff_printf(full_uri, OB_MAX_URI_LENGTH, "%.*s%s_%ld",
             static_cast<int>(uri.length()), uri.ptr(), file_prefix, (i + 1)))) {
-          STORAGE_LOG(WARN, "fail to fill path", K(ret), K(uri));
+
         } else if (OB_FAIL(write_single_file(full_uri, buf, buf_len))) {
           OB_LOG(WARN, "fail to write single file", K(ret), K(uri), K(length));
         }
@@ -1250,7 +1250,7 @@ int TestCommonStorage::write_multi_files(
           for (auto j = start_idx + i; OB_SUCC(ret) && j < end_idx; j += thread_cnt) {
             if (OB_FAIL(databuff_printf(full_uri_arr[i], OB_MAX_URI_LENGTH, "%.*s%s_%ld",
                 static_cast<int>(uri.length()), uri.ptr(), file_prefix, (j + 1)))) {
-              STORAGE_LOG(WARN, "fail to fill path", K(ret), K(uri));
+
             } else if (OB_FAIL(write_single_file(full_uri_arr[i], buf, buf_len))) {
               OB_LOG(WARN, "fail to write single file", K(ret), K(uri), K(length));
             }

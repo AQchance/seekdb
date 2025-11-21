@@ -57,10 +57,10 @@ int ObAllVirtualTabletCompactionProgress::inner_get_next_row(common::ObNewRow *&
     SERVER_LOG(WARN, "ObAllVirtualTabletCompactionProgress has been inited", K(ret));
   } else if (OB_FAIL(progress_iter_.get_next_info(progress_))) {
     if (OB_ITER_END != ret) {
-      STORAGE_LOG(WARN, "Fail to get next suggestion info", K(ret));
+
     }
   } else if (OB_FAIL(fill_cells())) {
-    STORAGE_LOG(WARN, "Fail to fill cells", K(ret), K(progress_));
+
   } else {
     row = &cur_row_;
   }

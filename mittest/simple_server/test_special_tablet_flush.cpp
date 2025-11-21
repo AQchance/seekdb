@@ -82,7 +82,7 @@ void ObTabletFlushTest::set_private_buffer_size()
 
 void ObTabletFlushTest::prepare_tx_table_data()
 {
-  LOG_INFO("insert data start");
+
   common::ObMySQLProxy &sql_proxy = get_curr_simple_server().get_sql_proxy2();
   int64_t i = 0;
   int64_t affected_rows = 0;
@@ -105,7 +105,7 @@ void ObTabletFlushTest::prepare_tx_table_data()
   // create data in tx ctx table
   WRITE_SQL_BY_CONN(connection, "begin;");
   WRITE_SQL_FMT_BY_CONN(connection, "insert into test_special_tablet_flush_t values(2, 2);");
-  LOG_INFO("insert data finish");
+
 }
 
 void ObTabletFlushTest::prepare_ddl_lock_table_data(ObLS *&ls)
@@ -170,12 +170,12 @@ void ObTabletFlushTest::prepare_ddl_lock_table_data(ObLS *&ls)
 
 void ObTabletFlushTest::minor_freeze()
 {
-  LOG_INFO("minor_freeze start");
+
   common::ObMySQLProxy &sql_proxy = get_curr_simple_server().get_sql_proxy();
   int64_t affected_rows = 0;
   ObSqlString sql;
   EXE_SQL("alter system minor freeze tenant tt1;");
-  LOG_INFO("minor_freeze finish");
+
 }
 
 TEST_F(ObTabletFlushTest, observer_start)
@@ -299,7 +299,7 @@ int main(int argc, char **argv)
   OB_LOGGER.set_enable_async_log(false);
   GCONF._enable_defensive_check = false;
 
-  LOG_INFO("main>>>");
+
   oceanbase::unittest::RunCtx.time_sec_ = time_sec;
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

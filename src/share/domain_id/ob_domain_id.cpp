@@ -762,7 +762,7 @@ int ObDomainIdUtils::fill_batch_domain_id_datum(ObDomainIDType type, void *expr,
               datums[i].set_string(buf + buf_pos, domain_ids.at(i).at(idx).length());
               buf_pos += domain_ids.at(i).at(idx).length();
             }
-            LOG_TRACE("Domain id merge fill a domain id", KP(buf + buf_pos), K(domain_ids.at(i).at(idx).length()), K(i));
+
           }
         }
         break;
@@ -814,7 +814,7 @@ int ObDomainIdUtils::fill_batch_domain_id_datum(ObDomainIDType type, void *expr,
               datums[i].set_string(buf + buf_pos, domain_ids.at(i).at(idx).length());
               buf_pos += domain_ids.at(i).at(idx).length();
             }
-            LOG_TRACE("Domain id merge fill a domain id", KP(buf + buf_pos), K(domain_ids.at(i).at(idx).length()), K(i));
+
           }
         }
         break;

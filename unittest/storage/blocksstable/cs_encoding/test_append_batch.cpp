@@ -164,7 +164,7 @@ TEST_F(TestAppendBatch, test_integer_append)
   ObMicroBlockDesc micro_block_desc;
   ObMicroBlockHeader *header = nullptr;
   ASSERT_EQ(OB_SUCCESS, build_micro_block_desc(encoder, micro_block_desc, header));
-  LOG_INFO("finish build_micro_block_desc", K(micro_block_desc));
+
   ASSERT_EQ(OB_SUCCESS, full_transform_check_row(header, micro_block_desc, row_arr, row_cnt, true));
 }
 
@@ -289,7 +289,7 @@ TEST_F(TestAppendBatch, test_string_append)
   ObMicroBlockDesc micro_block_desc;
   ObMicroBlockHeader *header = nullptr;
   ASSERT_EQ(OB_SUCCESS, build_micro_block_desc(encoder, micro_block_desc, header));
-  LOG_INFO("finish build_micro_block_desc", K(micro_block_desc));
+
   ASSERT_EQ(OB_SUCCESS, full_transform_check_row(header, micro_block_desc, row_arr, row_cnt, true));
 }
 

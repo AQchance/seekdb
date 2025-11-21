@@ -201,7 +201,7 @@ int ObTablePartitionInfo::replace_final_location_key(ObExecContext &exec_ctx,
         candi_table_loc_.set_table_location_key(table_location_.get_table_id(), ref_table_id);
       }
     }
-    LOG_TRACE("replace final location info", K(table_location_.get_loc_meta()), K(ref_table_id), K(candi_table_loc_));
+
   }
   return ret;
 }

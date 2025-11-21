@@ -88,11 +88,11 @@ int ObBlockMetaTree::init(const ObTablet &tablet,
         LOG_WARN("init row id datum utils failed", K(ret), K(col_descs));
       } else {
         datum_utils_ = &row_id_datum_utils_;
-        LOG_INFO("block meta tree sort with row id", K(table_key));
+
       }
     } else {
       datum_utils_ = const_cast<blocksstable::ObStorageDatumUtils *>(&data_desc_.get_desc().get_datum_utils());
-      LOG_INFO("block meta tree sort with row key", K(table_key));
+
     }
     is_inited_ = true;
   }
@@ -874,7 +874,7 @@ int ObDDLKV::init(const ObLSID &ls_id,
     trans_id_ = trans_id;
     seq_no_ = seq_no;
     is_inited_ = true;
-    LOG_INFO("ddl kv init success", K(ret), KP(this), K(*this));
+
   }
   return ret;
 }
@@ -1046,7 +1046,7 @@ int ObDDLKV::set_macro_block(
 #ifdef ERRSIM
   if (0 != GCONF.errsim_max_ddl_block_count) {
     freeze_block_count = GCONF.errsim_max_ddl_block_count;
-    LOG_INFO("ddl set macro block count", K(freeze_block_count));
+
   }
 #endif
   if (OB_UNLIKELY(!is_inited_)) {
@@ -1071,7 +1071,7 @@ int ObDDLKV::set_macro_block(
       }
       if (OB_UNLIKELY(DDLKV_FREEZE_BLOCK_COUNT_SMALL)) {
         freeze_block_count = 10;
-        LOG_INFO("ddl set macro block count", K(freeze_block_count));
+
       }
     }
   }
@@ -1127,7 +1127,7 @@ int ObDDLKV::set_macro_block(
       }
     } else if (macro_block.scn_ > freeze_scn_) {
       ret = OB_EAGAIN;
-      LOG_INFO("this ddl kv is freezed, retry other ddl kv", K(ret), K(ls_id_), K(tablet_id_), K(macro_block), K(freeze_scn_));
+
     } else if (OB_UNLIKELY(snapshot_version != ddl_snapshot_version_ || data_format_version != data_format_version_ || macro_block.trans_id_ != trans_id_)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("unexpected error", K(ret), K(macro_block), K(snapshot_version), K(data_format_version), KPC(this));
@@ -1204,7 +1204,7 @@ int ObDDLKV::set_macro_block(
             column_count_ = data_macro_meta->val_.column_count_ - ObMultiVersionRowkeyHelpper::get_extra_rowkey_col_cnt();
           }
         }
-        LOG_INFO("succeed to set macro block into ddl kv", K(macro_block), K(macro_block_count_), KPC(data_macro_meta));
+
       }
     }
   }
@@ -1325,14 +1325,14 @@ int ObDDLKV::full_load_freeze_(const SCN &freeze_scn)
       final_freeze_scn = max_scn_;
     } else {
       ret = OB_EAGAIN;
-      LOG_INFO("ddl kv not freezed, try again", K(ret), K(ls_id_), K(tablet_id_), K(get_macro_block_cnt()));
+
     }
     if (OB_SUCC(ret)) {
       if (OB_FAIL(set_end_scn(final_freeze_scn))) {
         LOG_WARN("fail to set end scn", K(ret), K(final_freeze_scn));
       } else {
         ATOMIC_SET(&is_independent_freezed_, true);
-        LOG_INFO("ddl kv freezed", K(ret), K(ls_id_), K(tablet_id_), K(get_macro_block_cnt()), K(final_freeze_scn), K(freeze_scn));
+
       }
     }
   }
@@ -1403,12 +1403,12 @@ int ObDDLKV::close()
     LOG_WARN("ddl kv is not init", K(ret));
   } else if (is_closed_) {
     // do nothing
-    LOG_INFO("ddl kv already closed", K(*this));
+
   } else if (OB_FAIL(prepare_sstable())) {
     LOG_WARN("prepare sstable failed", K(ret));
   } else {
     is_closed_ = true; // data not dumped, just means data is complete
-    LOG_INFO("ddl kv closed success", K(*this));
+
   }
   return ret;
 }
@@ -1449,7 +1449,7 @@ int ObDDLKV::wait_pending()
       const bool pending_finished = SCN::plus(max_decided_scn, 1) >= freeze_scn_ && !is_pending();
       if (!pending_finished) {
         ret = OB_EAGAIN;
-        LOG_INFO("wait pending not finish", K(ret), K_(ls_id), K_(tablet_id), K_(freeze_scn), K_(min_scn), K_(max_scn), K(max_decided_scn));
+
       }
     }
   }
@@ -1625,7 +1625,7 @@ bool ObDDLKV::rec_scn_is_stable()
     // ddl kv do not have data yet
     rec_scn_is_stable = false;
   } else if (OB_FAIL(freezer_->get_max_consequent_callbacked_scn(max_decided_scn))) {
-    STORAGE_LOG(WARN, "get_max_consequent_callbacked_scn failed", K(ret), K(ls_id));
+
   } else if (max_decided_scn >= rec_scn) {
     rec_scn_is_stable = true;
   }
@@ -1775,7 +1775,7 @@ int ObDDLKV::get_schema_info(
     if (OB_SUCC(ret)) {                                                                         \
       if (OB_ISNULL(row_scanner)) {                                                             \
         ret = OB_ERR_UNEXPECTED;                                                                \
-        STORAGE_LOG(WARN, "unexpected error, row_scanner is nullptr", K(ret), KP(row_scanner)); \
+ \
       } else if (OB_FAIL(row_scanner->init(param, context, this, query_range))) {               \
         LOG_WARN("Fail to open row scanner", K(ret), K(param), K(context), KP(query_range));    \
       }                                                                                         \

@@ -371,7 +371,7 @@ int main(int argc, char **argv)
   oceanbase::unittest::init_log_and_gtest(argc, argv);
   OB_LOGGER.set_log_level(log_level);
 
-  LOG_INFO("main>>>");
+
   oceanbase::unittest::R.time_sec_ = time_sec;
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

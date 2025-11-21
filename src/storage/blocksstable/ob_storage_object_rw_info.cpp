@@ -30,7 +30,7 @@ int ObStorageObjectWriteInfo::fill_io_info_for_backup(const blocksstable::MacroB
     // do nothing
   } else if (!has_backup_device_handle_) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "device handle should not be null", K(ret));
+
   } else {
     backup::ObBackupWrapperIODevice *device = static_cast<backup::ObBackupWrapperIODevice *>(device_handle_);
     io_info.fd_.fd_id_ = device->simulated_fd_id();

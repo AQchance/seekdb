@@ -164,7 +164,7 @@ int ObExprMinus::calc_result_type2(ObExprResType &type,
         type2.set_calc_scale(type.get_scale());
       }
     }
-    LOG_DEBUG("calc_result_type2", K(scale), K(type1), K(type2), K(type), K(precision));
+
   }
   return ret;
 }
@@ -332,7 +332,7 @@ int ObExprMinus::minus_double(ObObj &res,
       LOG_WARN("double out of range", K(res), K(left), K(right), K(res));
       res.set_null();
     }
-    LOG_DEBUG("succ to minus double", K(res), K(left), K(right));
+
   }
   UNUSED(allocator);
   UNUSED(scale);
@@ -407,7 +407,7 @@ int ObExprMinus::minus_datetime(ObObj &res, const ObObj &left, const ObObj &righ
       LOG_USER_ERROR(OB_OPERATE_OVERFLOW, "DATE", expr_str);
     }
   }
-  LOG_DEBUG("minus datetime", K(left), K(right), K(ob_time), K(res));
+
   UNUSED(allocator);
   UNUSED(scale);
   return ret;
@@ -875,7 +875,7 @@ int ObExprMinus::minus_number_number(EVAL_FUNC_ARG_DECL)
 
 int ObExprMinus::minus_number_number_batch(BATCH_EVAL_FUNC_ARG_DECL)
 {
-  LOG_DEBUG("minus_number_number_batch begin");
+
   int ret = OB_SUCCESS;
   ObDatumVector l_datums;
   ObDatumVector r_datums;
@@ -930,7 +930,7 @@ int ObExprMinus::minus_number_number_batch(BATCH_EVAL_FUNC_ARG_DECL)
       }
     }
   }
-  LOG_DEBUG("minus_number_number_batch done");
+
   return ret;
 }
 

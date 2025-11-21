@@ -346,7 +346,7 @@ int ObTmpFileWBPIndexCache::binary_search(const int64_t target_page_virtual_id, 
       // do nothing
     } else if (OB_ISNULL(target_bucket)) {
       // page_index = ObTmpFileGlobal::INVALID_PAGE_ID;
-      LOG_DEBUG("the target page_index might be removed from cache", K(fd_), K(target_page_virtual_id), KPC(this));
+
     } else if (OB_FAIL(target_bucket->binary_search(target_page_virtual_id, page_index))) {
       LOG_WARN("fail to binary search page index", KR(ret), K(fd_), K(target_page_virtual_id),
                KPC(target_bucket), KPC(this));
@@ -358,7 +358,7 @@ int ObTmpFileWBPIndexCache::binary_search(const int64_t target_page_virtual_id, 
 int ObTmpFileWBPIndexCache::expand_()
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("start to expand tmp file wbp index cache", KPC(this));
+
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", KR(ret), KPC(this));
@@ -393,14 +393,14 @@ int ObTmpFileWBPIndexCache::expand_()
       capacity_ = new_capacity;
     }
   }
-  LOG_DEBUG("expand tmp file wbp index cache over", KR(ret), KPC(this));
+
   return ret;
 }
 
 void ObTmpFileWBPIndexCache::shrink_()
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("start to shrink tmp file wbp index cache", KPC(this));
+
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", KR(ret), KPC(this));
@@ -442,10 +442,10 @@ void ObTmpFileWBPIndexCache::shrink_()
       right_ = size_ - 1;
       capacity_ = new_capacity;
       page_buckets_ = new_buckets;
-      LOG_DEBUG("successfully shrink tmp file page index cache", K(fd_), KPC(this));
+
     }
   }
-  LOG_DEBUG("shrink tmp file wbp index cache over", KR(ret), KPC(this));
+
 }
 
 int ObTmpFileWBPIndexCache::sparsify_()
@@ -495,7 +495,7 @@ int ObTmpFileWBPIndexCache::sparsify_()
       ignored_push_count_ = 0;
     }
   }
-  LOG_INFO("sparsify tmp file wbp index cache over", KR(ret), KPC(this));
+
   return ret;
 }
 

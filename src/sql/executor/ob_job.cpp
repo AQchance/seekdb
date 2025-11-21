@@ -58,7 +58,7 @@ int ObJob::prepare_task_control(const ObExecContext &exec_ctx)
         LOG_WARN("fail add task to taskq", K(ret), "task", helper.convert(task));
       }
       ObCStringHelper helper;
-      LOG_DEBUG("add task", K(task), "task", helper.convert(task));
+
     }
     if (OB_LIKELY(OB_ITER_END == ret)) {
       ret = OB_SUCCESS;

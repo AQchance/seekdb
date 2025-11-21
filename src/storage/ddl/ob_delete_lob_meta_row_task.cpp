@@ -215,7 +215,7 @@ int ObDeleteLobMetaRowDag::report_replica_build_status()
 #ifdef ERRSIM
     if (OB_SUCC(ret)) {
       ret = OB_E(EventTable::EN_DDL_REPORT_REPLICA_BUILD_STATUS_FAIL) OB_SUCCESS;
-      LOG_INFO("report replica build status errsim", K(ret));
+
     }
 #endif
     obrpc::ObDDLBuildSingleReplicaResponseArg arg;

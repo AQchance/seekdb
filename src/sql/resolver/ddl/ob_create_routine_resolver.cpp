@@ -937,7 +937,7 @@ int ObCreateRoutineResolver::resolve(const ParseNode &parse_tree)
   if (OB_NOT_NULL(get_basic_stmt())) {
     // basic stmt would be set externally in alter routine
     OX (crt_routine_arg = &(static_cast<ObCreateRoutineStmt *>(get_basic_stmt())->get_routine_arg()));
-    LOG_DEBUG("get basic stmt from alter routine");
+
   } else {
     OZ (create_routine_arg(crt_routine_arg));
   }

@@ -45,7 +45,7 @@ int ObPDMLOpRowIterator::get_next_row(const ObExprPtrIArray &row)
     }
   } while (OB_SUCC(ret) && !is_distinct);
   if (OB_SUCC(ret)) {
-    LOG_TRACE("get next row from pdml iterator", "row", ROWEXPR2STR(*eval_ctx_, row));
+
   }
   return ret;
 }
@@ -208,7 +208,7 @@ int ObPDMLOpBatchRowCache::add_row(const ObExprPtrIArray &row, ObTabletID tablet
       if (OB_EXCEED_MEM_LIMIT != ret) {
         LOG_WARN("fail add row to store", K(ret));
       } else {
-        LOG_INFO("pdml row cache needs write out rows", K_(cached_rows_num), K(tablet_id), K(ret));
+
       }
     } else if (OB_ISNULL(stored_row)) {
       ret = OB_ERR_UNEXPECTED;

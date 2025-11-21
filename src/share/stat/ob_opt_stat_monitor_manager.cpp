@@ -97,7 +97,7 @@ void ObOptStatMonitorFlushAllTask::runTimerTask()
 {
   int ret = OB_SUCCESS;
   if (OB_NOT_NULL(optstat_monitor_mgr_) && optstat_monitor_mgr_->inited_) {
-    LOG_INFO("run opt stat monitor flush all task", K(optstat_monitor_mgr_->tenant_id_));
+
     uint64_t tenant_id = optstat_monitor_mgr_->tenant_id_;
     bool is_primary = true;
     THIS_WORKER.set_timeout_ts(FLUSH_INTERVAL / 2 + ObTimeUtility::current_time());
@@ -117,7 +117,7 @@ void ObOptStatMonitorCheckTask::runTimerTask()
 {
   int ret = OB_SUCCESS;
   if (OB_NOT_NULL(optstat_monitor_mgr_) && optstat_monitor_mgr_->inited_) {
-    LOG_INFO("run opt stat monitor check task", K(optstat_monitor_mgr_->tenant_id_));
+
     uint64_t tenant_id = optstat_monitor_mgr_->tenant_id_;
     bool is_primary = true;
     THIS_WORKER.set_timeout_ts(CHECK_INTERVAL + ObTimeUtility::current_time());
@@ -216,7 +216,7 @@ int ObOptStatMonitorManager::flush_database_monitoring_info(sql::ObExecContext &
           }
         }
       }
-      LOG_TRACE("flush database monitoring info cache", K(arg), K(failed_server_arr), K(all_server_arr));
+
     }
   }
   return ret;
@@ -603,7 +603,7 @@ int ObOptStatMonitorManager::exec_insert_monitor_modified_sql(ObSqlString &value
              OB_FAIL(mysql_proxy_->write(tenant_id_, insert_sql.ptr(), affected_rows))) {
     LOG_WARN("fail to exec sql", K(insert_sql), K(ret));
   } else {
-    LOG_TRACE("succeed to exec insert monitor modified sql", K(tenant_id_), K(values_sql));
+
   }
   return ret;
 }
@@ -690,7 +690,7 @@ int ObOptStatMonitorManager::update_dml_stat_info_from_direct_load(
 {
   int ret = OB_SUCCESS;
   ObOptStatMonitorManager *optstat_monitor_mgr = NULL;
-  LOG_TRACE("begin to update dml stat info from direct load", K(dml_stats));
+
   if (dml_stats.empty() || OB_ISNULL(dml_stats.at(0))) {
     //do nothing
   } else if (OB_UNLIKELY(dml_stats.at(0)->tenant_id_ != MTL_ID())) {
@@ -711,7 +711,7 @@ int ObOptStatMonitorManager::update_dml_stat_info(const ObIArray<ObOptDmlStat *>
   int ret = OB_SUCCESS;
   ObSqlString value_sql;
   int64_t count = 0;
-  LOG_TRACE("begin to update dml stat info from direct load", K(dml_stats));
+
   ObSEArray<ObOptDmlStat, 16> tmp_dml_stats;
   for (int64_t i = 0; OB_SUCC(ret) && i < dml_stats.count(); ++i) {
     if (OB_ISNULL(dml_stats.at(i))) {
@@ -1020,7 +1020,7 @@ int ObOptStatMonitorManager::do_get_opt_stats_expired_table_info(const int64_t t
         }
       }
     }
-    LOG_TRACE("do get opt stats expired table info", K(select_sql), K(stale_infos));
+
   }
   return ret;
 }
@@ -1058,7 +1058,7 @@ int ObOptStatMonitorManager::mark_the_opt_stat_expired(const OptStatExpiredTable
                                                     async_stale_max_table_size))) {
     LOG_WARN("failed to get async stale max table size", K(ret));
   } else if (OB_UNLIKELY(async_stale_max_table_size <= 0)) {
-    LOG_INFO("skip to mark the opt stat expired", K(async_stale_max_table_size));
+
   } else if (OB_FAIL(get_need_mark_opt_stats_expired(table_stats,
                                                      expired_table_info,
                                                      async_stale_max_table_size,
@@ -1309,7 +1309,7 @@ int ObOptStatMonitorManager::get_need_mark_opt_stats_expired(const ObIArray<ObOp
       no_table_stats.reset();
     }
   }
-  LOG_TRACE("get need mark opt stats expired", K(expired_table_stats), K(no_table_stats));
+
   return ret;
 }
 
@@ -1347,7 +1347,7 @@ int ObOptStatMonitorManager::check_table_stat_expired_by_dml_info(const uint64_t
           ))) {
       LOG_WARN("failed to append fmt", K(ret));
     } else {
-      LOG_TRACE("check table stat expired by dml info", K(select_sql));
+
       SMART_VAR(ObMySQLProxy::MySQLResult, proxy_result) {
         sqlclient::ObMySQLResult *client_result = NULL;
         ObSQLClientRetryWeak sql_client_retry_weak(mysql_proxy_);
@@ -1371,7 +1371,7 @@ int ObOptStatMonitorManager::check_table_stat_expired_by_dml_info(const uint64_t
         }
       }
     }
-    LOG_TRACE("check_table_stat_expired_by_dml_info end", K(is_stat_expired));
+
   }
   return ret;
 }
@@ -1420,7 +1420,7 @@ int ObOptStatMonitorManager::do_mark_the_opt_stat_missing(const uint64_t tenant_
           LOG_WARN("fail to exec sql", K(insert_sql), K(ret));
         } else {
           begin_idx = end_idx;
-          LOG_TRACE("Succeed to do mark the opt stat expired", K(insert_sql), K(no_table_stats), K(affected_rows));
+
         }
       }
       //end gather trans
@@ -1471,7 +1471,7 @@ int ObOptStatMonitorManager::do_mark_the_opt_stat_expired(const uint64_t tenant_
       LOG_WARN("fail to exec sql", K(update_sql), K(ret));
     } else {
       begin_idx = end_idx;
-      LOG_TRACE("Succeed to do mark the opt stat expired", K(update_sql), K(expired_table_stats), K(affected_rows));
+
     }
   }
   return ret;
@@ -1576,7 +1576,7 @@ int ObOptStatMonitorManager::get_async_stale_max_table_size(const uint64_t tenan
     ret = OB_ERR_DBMS_STATS_PL;
     LOG_WARN("Illegal async stale max table size", K(ret), K(async_stale_max_table_size));
   }
-  LOG_TRACE("get_async_stale_max_table_size", K(async_stale_max_table_size), K(result));
+
   return ret;
 }
 

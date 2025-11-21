@@ -330,7 +330,7 @@ int ObCreateCCLRuleResolver::merge_strings_with_escape(const ParseNode &ccl_filt
     }
   }
 
-  LOG_TRACE("ccl_keywords_sql: ", K(ccl_keywords_sql));
+
   if (OB_SUCC(ret) && OB_FAIL(ob_write_string(*allocator_, ccl_keywords_sql.string(), ccl_keyword))) {
     LOG_WARN("fail to write string to ccl_keyword", K(ret));
   }

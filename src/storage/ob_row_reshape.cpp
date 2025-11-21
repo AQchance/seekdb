@@ -90,7 +90,7 @@ int ObRowReshapeUtil::need_reshape_table_row(
       } else if (is_oracle_compatible(sql_mode) && cell.is_character_type() && cell.get_string_len() == 0) {
         // Oracle compatibility mode: '' as null
         need_reshape = true;
-        LOG_DEBUG("Pstor2", K(cell), K(cell.get_string()), K(need_reshape));
+
       } else if (cell.is_binary()) {
         need_reshape = true;
       }
@@ -160,7 +160,7 @@ int ObRowReshapeUtil::reshape_row(
         }
       } else if (is_oracle_compatible(sql_mode) && cell.is_character_type() && cell.get_string_len() == 0) {
         // Oracle compatibility mode: '' as null
-        LOG_DEBUG("reshape empty string to null", K(cell));
+
         row_reshape_ins->row_reshape_cells_[i].set_null();
       } else if (cell.is_fixed_len_char_type()) {
         const char *str = cell.get_string_ptr();

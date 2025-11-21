@@ -131,7 +131,7 @@ int ObServiceEpochProxy::insert_service_epoch(
     } else if (OB_FAIL(sql_proxy.write(meta_tenant_id, sql.ptr(), affected_rows))) {
       LOG_WARN("fail to execute sql", KR(ret), K(tenant_id), K(meta_tenant_id), K(sql));
     } else {
-      LOG_INFO("succ to insert service epoch", K(tenant_id), K(name), K(epoch_value), K(affected_rows));
+
     }
   }
 

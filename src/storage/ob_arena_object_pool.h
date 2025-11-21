@@ -70,9 +70,9 @@ void *ObArenaObjPool<T, OBJ_NUM>::alloc()
 
   if (OB_ISNULL(ptr)) {
     ATOMIC_DEC(&alloc_count_);
-    STORAGE_LOG_RET(ERROR, common::OB_ALLOCATE_MEMORY_FAILED, "obj alloc error, no memory", K(*this), K(lbt()));
+
   } else {
-    STORAGE_LOG(DEBUG, "obj alloc succ", K(*this), KP(ptr), K(lbt()));
+
   }
 
   return ptr;
@@ -83,9 +83,9 @@ void ObArenaObjPool<T, OBJ_NUM>::free(void *obj)
 {
   bool need_free = true;
   if (OB_ISNULL(obj)) {
-    STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "obj is null, unexpected error", KP(obj), K(*this), K(lbt()));
+
   } else {
-    STORAGE_LOG(DEBUG, "object free succ", KP(obj), K(*this), K(lbt()));
+
     ATOMIC_INC(&free_count_);
     for (int i = 0; need_free && i < OBJ_NUM; i++) {
       int64_t pos = sizeof(T) * i;
@@ -104,7 +104,7 @@ template <typename T, int64_t OBJ_NUM>
 void ObArenaObjPool<T, OBJ_NUM>::reset()
 {
   if (OB_UNLIKELY(alloc_count_ != free_count_)) {
-    STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "object alloc and free count not match", K(*this));
+
   }
   OB_SAFE_ASSERT(alloc_count_ == free_count_);
 
@@ -130,9 +130,9 @@ void *ObArenaObjPool<T, OBJ_NUM>::alloc(bool &hit_cache)
 
   if (OB_ISNULL(ptr)) {
     ATOMIC_DEC(&alloc_count_);
-    STORAGE_LOG_RET(ERROR, common::OB_ALLOCATE_MEMORY_FAILED, "obj alloc error, no memory", K(*this), K(lbt()));
+
   } else {
-    STORAGE_LOG(DEBUG, "obj alloc succ", K(*this), KP(ptr), K(lbt()));
+
   }
 
   return ptr;

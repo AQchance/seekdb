@@ -212,13 +212,13 @@ int ObLobMetaManager::getlength_remote(ObLobAccessParam &param, uint64_t &char_l
       } else if (cur_position == remote_ctx->rpc_buffer_.get_position()) {
         if (!remote_ctx->handle_.has_more()) {
           ret = OB_ITER_END;
-          LOG_DEBUG("empty rpc buffer, no more data", K(remote_ctx->rpc_buffer_));
+
         } else {
           ret = OB_ERR_SYS;
           LOG_ERROR("rpc buffer has no data", K(ret), K(remote_ctx->rpc_buffer_));
         }
       } else {
-        LOG_DEBUG("get more data", K(remote_ctx->rpc_buffer_));
+
       }
     }
     if (ret == OB_ITER_END) {

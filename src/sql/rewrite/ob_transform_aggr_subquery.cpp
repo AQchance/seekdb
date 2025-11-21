@@ -353,7 +353,7 @@ int ObTransformAggrSubquery::gather_transform_params(ObDMLStmt &stmt,
     } else if (!ja_query_ref_valid) {
       OPT_TRACE("exec param expr of ja query ref is not valid, can not transform");
     } else if (ObOptimizerUtil::find_item(no_rewrite_exprs_, child_expr)) {
-      LOG_TRACE("subquery in select expr and can use index");
+
       OPT_TRACE("subquery in select expr and can use index, no need transform");
     } else if (OB_FAIL(check_hint_allowed_unnest(stmt, *subquery,
                                                  ctx_->trans_list_loc_ + transform_params.count(),
@@ -542,7 +542,7 @@ int ObTransformAggrSubquery::check_aggr_first_validity(ObDMLStmt &stmt,
              subquery->has_sequence() ||
              subquery->is_set_stmt()) {
     is_valid = false;
-    LOG_TRACE("invalid subquery", K(is_valid), K(*subquery));
+
     OPT_TRACE("subquery has rollup/having/limit offset/limit percent/win_func/sequence");
   } else if (OB_FAIL(check_subquery_aggr_item(*subquery, is_valid))) {
     LOG_WARN("failed to check subquery select item", K(ret));
@@ -552,7 +552,7 @@ int ObTransformAggrSubquery::check_aggr_first_validity(ObDMLStmt &stmt,
     LOG_WARN("failed to check stmt has assignment ref user var", K(ret));
   } else if (has_ref_assign_user_var) {
     is_valid = false;
-    LOG_TRACE("has assignment ref user variable", K(is_valid));
+
     OPT_TRACE("has assignment ref user variable");
     // 2. check the select item
   } else if (!vector_assign && subquery->get_select_item_size() > 1) {
@@ -563,7 +563,7 @@ int ObTransformAggrSubquery::check_aggr_first_validity(ObDMLStmt &stmt,
   } else if (OB_FAIL(check_subquery_select(query_ref, is_valid))) {
     LOG_WARN("failed to check select validity", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("select list is invalid", K(is_valid));
+
     OPT_TRACE("subquery select item contain subquery");
     // 3. check from list is not correlated
     // 4. check correlated join on conditions
@@ -599,7 +599,7 @@ int ObTransformAggrSubquery::check_aggr_first_validity(ObDMLStmt &stmt,
   } else if (OB_FAIL(check_subquery_orderby(query_ref, is_valid))) {
     LOG_WARN("failed to check order_by validity", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("order by item is invalid", K(is_valid));
+
     OPT_TRACE("subquery order by item contain correlated subquery");
   }
   return ret;
@@ -767,7 +767,7 @@ int ObTransformAggrSubquery::check_join_first_condition_for_limit_1(ObQueryRefRa
                                                           &const_exprs))) {
         LOG_WARN("failed to check is match index", K(ret));
       } else if (is_match) {
-        LOG_TRACE("condition match index", KPC(cond));
+
         OPT_TRACE("subquery`s correlated condition match index");
         is_valid = false; 
       }
@@ -849,7 +849,7 @@ int ObTransformAggrSubquery::check_subquery_conditions(ObQueryRefRawExpr &query_
                                                     &equal_sets, &const_exprs))) {
           LOG_WARN("failed to check is match index", K(ret));
         } else if (is_match) {
-          LOG_TRACE("inner expr match index", K(*inner_expr));
+
           is_valid = false;
           OPT_TRACE("subquery`s correlated condition match index");
         } else {
@@ -1466,17 +1466,17 @@ int ObTransformAggrSubquery::check_join_first_validity(ObQueryRefRawExpr &query_
              subquery->has_sequence() ||
              subquery->is_set_stmt()) {
     is_valid = false;
-    LOG_TRACE("invalid subquery", K(is_valid), K(*subquery));
+
     OPT_TRACE("subquery has rollup/win_func/sequence");
   } else if (in_exists) {
     if (!subquery->has_having()) {
       is_valid = false;
-      LOG_TRACE("invalid [not] exists subquery", K(is_valid), K(*subquery));
+
       OPT_TRACE("subquery do not has having")
     } else if (OB_FAIL(check_subquery_having(query_ref, *subquery, is_valid))) {
       LOG_WARN("failed to check subquery having", K(ret));
     } else if (!is_valid) {
-      LOG_TRACE("invalid having clause", K(is_valid));
+
       OPT_TRACE("having condition has subquery / do not has aggr");
     } else if (!subquery->has_limit()) {
       /*do nothing*/
@@ -1491,7 +1491,7 @@ int ObTransformAggrSubquery::check_join_first_validity(ObQueryRefRawExpr &query_
         NULL != subquery->get_limit_percent_expr() ||
         NULL != subquery->get_offset_expr()) {
       is_valid = false;
-      LOG_TRACE("invalid subquery", K(is_valid), K(*subquery));
+
       OPT_TRACE("subquery has having or limit percent or limit offset");
     } else if (OB_FAIL(check_subquery_select(query_ref, is_valid))) {
       LOG_WARN("failed to check subquery select", K(ret));
@@ -1504,7 +1504,7 @@ int ObTransformAggrSubquery::check_join_first_validity(ObQueryRefRawExpr &query_
     LOG_WARN("failed to check stmt has assignment ref user var", K(ret));
   } else if (has_ref_assign_user_var) {
     is_valid = false;
-    LOG_TRACE("has assignment ref user variable", K(is_valid));
+
     OPT_TRACE("has assignment ref user variable");
   } else if (!is_vector_assign && !in_exists && !is_vector_cmp && subquery->get_select_item_size() > 1) {
     is_valid = false;
@@ -1520,7 +1520,7 @@ int ObTransformAggrSubquery::check_join_first_validity(ObQueryRefRawExpr &query_
   } else if (OB_FAIL(check_count_const_validity(*subquery, constraints, is_valid))) {
     LOG_WARN("failed to check is valid count const", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("aggr item is invalid", K(is_valid));
+
     OPT_TRACE("exists COUNT(NULL)");
     // never reach
     // 3. check from list is not correlated
@@ -1552,7 +1552,7 @@ int ObTransformAggrSubquery::check_join_first_validity(ObQueryRefRawExpr &query_
       // do nothing
     } else if (cond->has_flag(CNT_SUB_QUERY)) {
       is_valid = false;
-      LOG_TRACE("is not valid equal or common comparsion correlation", K(i), K(*cond));
+
       OPT_TRACE("is not valid equal or common comparsion correlation");
     } else if (OB_FAIL(nested_conditions.push_back(cond))) {
       LOG_WARN("failed to push back expr", K(ret));
@@ -1568,7 +1568,7 @@ int ObTransformAggrSubquery::check_join_first_validity(ObQueryRefRawExpr &query_
   if (OB_FAIL(ret) || !is_valid) {
   } else if (!has_correlated_cond) {
     is_valid = false;
-    LOG_TRACE("no correlated common comparsion condition found", K(is_valid), K(has_correlated_cond));
+
     OPT_TRACE("no correlated common comparsion condition found");
   } else if (is_limit_single_set && OB_FAIL(check_join_first_condition_for_limit_1(query_ref, *subquery, is_valid))) {
     LOG_WARN("failed to check condition for limit 1", K(ret));
@@ -1603,7 +1603,7 @@ int ObTransformAggrSubquery::check_limit_validity(ObSelectStmt &subquery,
   } else if (T_INT == limit_expr->get_expr_type() && 
               0 == static_cast<ObConstRawExpr *>(limit_expr)->get_value().get_int()) {
     is_valid = false;
-    LOG_TRACE("get limit 0 in [not] exists expr", K(is_valid));
+
   } else if (T_QUESTIONMARK == limit_expr->get_expr_type()) {
     int64_t const_value = OB_INVALID;
     ObObj value;
@@ -1631,7 +1631,7 @@ int ObTransformAggrSubquery::check_limit_validity(ObSelectStmt &subquery,
       } else if (const_value == 0) {
         is_valid = false;
         add_limit_constraints = true;
-        LOG_TRACE("get limit 0 in [not] exists expr", K(is_valid));
+
       } 
     }
   }
@@ -1996,14 +1996,14 @@ int ObTransformAggrSubquery::check_subquery_having(const ObQueryRefRawExpr &quer
       LOG_WARN("get null expr", K(ret));
     } else if (!cur_expr->has_flag(CNT_AGG) || cur_expr->has_flag(CNT_SUB_QUERY)) {
       is_valid = false;
-      LOG_TRACE("invalid select item", K(is_valid));
+
     } else if (OB_FAIL(ObTransformUtils::is_correlated_expr(query_ref.get_exec_params(),
                                                             cur_expr,
                                                             bret))) {
       LOG_WARN("failed to check is correlated expr", K(ret));
     } else if (bret) {
       is_valid = false;
-      LOG_TRACE("having condition is correlated", K(ret));
+
     }
   }
   return ret;
@@ -2127,14 +2127,14 @@ int ObTransformAggrSubquery::is_count_const_expr(const ObRawExpr *expr, bool &is
     // do nothing
   } else if (0 == expr->get_param_count()) {
     is_count_const = true;
-    LOG_TRACE("expr is count(*)", K(*expr));
+
   } else if (OB_ISNULL(expr->get_param_expr(0))) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get null expr", K(ret));
   } else if (!expr->get_param_expr(0)->has_flag(CNT_COLUMN) 
             && !expr->get_param_expr(0)->has_flag(CNT_SUB_QUERY)) {
     is_count_const = true;
-    LOG_TRACE("expr is count(const)", K(*expr));
+
   }
   return ret;
 }
@@ -2402,7 +2402,7 @@ int ObTransformAggrSubquery::is_valid_group_by(const ObSelectStmt &subquery, boo
       }
     }
   }
-  LOG_TRACE("check single set query", K(is_valid), K(subquery.is_scala_group_by()));
+
   return ret;
 }
 

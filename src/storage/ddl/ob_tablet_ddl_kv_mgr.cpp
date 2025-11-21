@@ -222,7 +222,7 @@ int ObTabletDDLKvMgr::cleanup()
 
 void ObTabletDDLKvMgr::cleanup_unlock()
 {
-  LOG_INFO("cleanup ddl kv mgr", K(*this));
+
   for (int64_t pos = head_; pos < tail_; ++pos) {
     const int64_t idx = get_idx(pos);
     free_ddl_kv(idx);
@@ -576,7 +576,7 @@ int ObTabletDDLKvMgr::release_ddl_kvs(const ObDDLKVType ddl_kv_type, const SCN &
     for (int64_t i = head_; OB_SUCC(ret) && i < tail_; ++i) {
       const int64_t idx = get_idx(head_);
       ObDDLKV *kv = ddl_kv_handles_[idx].get_obj();
-      LOG_INFO("try release ddl kv", K(end_scn), KPC(kv));
+
 #ifdef ERRSIM
           if (OB_SUCC(ret)) {
             ret = OB_E(EventTable::EN_DDL_RELEASE_DDL_KV_FAIL) OB_SUCCESS;
@@ -593,7 +593,7 @@ int ObTabletDDLKvMgr::release_ddl_kvs(const ObDDLKVType ddl_kv_type, const SCN &
         const SCN &freeze_scn = kv->get_freeze_scn();
         free_ddl_kv(idx);
         ++head_;
-        LOG_INFO("succeed to release ddl kv", K(ls_id_), K(tablet_id_), K(freeze_scn));
+
       }
     }
   }
@@ -790,7 +790,7 @@ int ObTabletDDLKvMgr::alloc_ddl_kv(
   } else if (OB_FAIL(handle_ddl_kv_queue_overflow(ddl_kv_type))) {
     if (OB_EAGAIN == ret) {
       if (REACH_TIME_INTERVAL(10 * 1000 * 1000L)) { // 10s
-        LOG_INFO("too much ddl kv count, need retry", KR(ret), K(ddl_kv_type));
+
       }
     } else {
       LOG_WARN("error unexpected, too much ddl kv count", KR(ret), K(ddl_kv_type));
@@ -1033,7 +1033,7 @@ int ObDDLMacroIdemChecker::check_block_exist(const ObDDLMacroBlockType block_typ
       }
     } else if (prev_checksum == checksum) {
       is_marco_block_already_exist = true;
-      LOG_INFO("macro block already exist, skip replay it", K(block_id), K(logic_id), K(checksum));
+
     } else {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("checksum not match", K(ret), K(block_id), K(logic_id), K(prev_checksum), K(checksum));
@@ -1059,7 +1059,7 @@ int ObDDLMacroIdemChecker::set_block_checksum(const ObDDLMacroBlockType block_ty
   } else if (OB_FAIL(check_block_exist(block_type, direct_load_type, block_id, logic_id, checksum, table_type, is_block_exist))) {
     LOG_WARN("failed to check block exist", K(ret), K(block_id), K(logic_id), K(checksum), K(table_type));
   } else if (is_block_exist) {
-    LOG_INFO("block already exist, skip set checksum", K(block_id), K(logic_id), K(checksum), K(table_type));
+
   } else if (OB_FAIL(key.init(block_id, logic_id, table_type))) {
     LOG_WARN("failed to init key value", K(ret), K(block_id), K(logic_id));
   } else if (OB_FAIL(checksum_map_.set_refactored(key, checksum))) {

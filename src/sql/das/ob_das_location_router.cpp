@@ -99,7 +99,7 @@ int VirtualSvrPair::get_part_and_tablet_id_by_server(const ObAddr &addr,
     }
   }
   if (!tablet_id.is_valid()) {
-    LOG_DEBUG("virtual table partition not exists", K(ret), K(addr));
+
   }
 
   return ret;
@@ -904,7 +904,7 @@ int ObDASLocationRouter::nonblock_get_readable_replica(const uint64_t tenant_id,
           (route_policy != COLUMN_STORE_ONLY && tmp_replica_loc.get_replica_type() == REPLICA_TYPE_COLUMNSTORE) ||
           (route_policy == FORCE_READONLY_ZONE && tmp_replica_loc.get_replica_type() != REPLICA_TYPE_READONLY)) {
         // skip the tmp_replica_loc
-        LOG_TRACE("skip the replica due to the replica policy.", K(ret), K(tmp_replica_loc.get_replica_type()), K(tmp_replica_loc));
+
       } else if (tmp_replica_loc.get_server() == GCTX.self_addr()) {
         //prefer choose the local replica
         local_replica = &tmp_replica_loc;
@@ -912,7 +912,7 @@ int ObDASLocationRouter::nonblock_get_readable_replica(const uint64_t tenant_id,
         LOG_WARN("store tmp replica failed", K(ret));
       }
     } else {
-      LOG_INFO("this replica is in the blacklist, thus filtered it", K(bl_key));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -1347,7 +1347,7 @@ int ObDASLocationRouter::block_renew_tablet_location(const ObTabletID &tablet_id
                                                  ls_loc))) {
     LOG_WARN("failed to get location", K(ls_id), K(ret));
   } else {
-    LOG_INFO("LOCATION: block refresh table cache succ", K(tablet_id), K(ls_loc));
+
   }
   //recover query timeout ts
   THIS_WORKER.set_timeout_ts(query_timeout_ts);
@@ -1525,7 +1525,7 @@ int ObDASTabletMapper::get_tablet_and_part_id_for_list_part(const share::schema:
       if (OB_SUCC(ret)) {
         if (OB_UNLIKELY(partition_indexes.empty())) {
           // return invalid part_id/tablet_id if partition not found.
-          LOG_TRACE("partition not found");
+
         }
       }
     }
@@ -1541,7 +1541,7 @@ int ObDASTabletMapper::get_tablet_and_part_id_for_list_part(const share::schema:
       LOG_WARN("fail to fill tablet and part_ids", K(fill_tablet_id), K(table_id), K(partition_indexes));
     }
   }
-  LOG_TRACE("table schema get tablet and part id", K(table_id), K(tablet_ids), K(part_ids), K(partition_indexes));
+
   return ret;
 }
 
@@ -1638,7 +1638,7 @@ int ObDASTabletMapper::get_tablet_and_subpart_id_for_list_part(const ObTableSche
       if (OB_SUCC(ret)) {
         if (OB_UNLIKELY(partition_indexes.empty())) {
           // return invalid part_id/tablet_id if partition not found.
-          LOG_TRACE("subpartition not found");
+
         }
       }
     }
@@ -1652,7 +1652,7 @@ int ObDASTabletMapper::get_tablet_and_subpart_id_for_list_part(const ObTableSche
                                                              subpart_ids))) {
       LOG_WARN("fail to fill tablet and subpart_ids", K(fill_tablet_id), K(table_id), K(partition_indexes));
     }
-    LOG_TRACE("table schema get tablet and subpart id", K(table_id), K(tablet_ids), K(subpart_ids));
+
   }
   return ret;
 }

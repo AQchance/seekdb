@@ -465,7 +465,7 @@ int ObShardingInfo::check_if_match_partition_wise(const EqualSets &equal_sets,
                                               is_partition_wise))) {
       LOG_WARN("failed to check if match partition wise", K(ret));
     } else {
-      LOG_TRACE("succeed to check if match partition wise", K(is_partition_wise));
+
     }
   }
   return ret;
@@ -502,7 +502,7 @@ int ObShardingInfo::check_if_match_extended_partition_wise(const EqualSets &equa
                                                       is_ext_partition_wise))) {
       LOG_WARN("failed to check if match extended partition wise", K(ret));
     } else {
-      LOG_TRACE("succeed to check if match extended partition wise", K(is_ext_partition_wise));
+
     }
   }
   return ret;
@@ -560,7 +560,7 @@ int ObShardingInfo::check_if_match_partition_wise(const EqualSets &equal_sets,
                                                        is_partition_wise))) {
         LOG_WARN("failed to check if match partition wise join", K(ret));
       } else if (is_partition_wise) {
-        LOG_TRACE("succeed to check if match partition wise join", K(is_partition_wise));
+
       } else if (OB_FAIL(append(left_sharding, left_weak_sharding)) ||
                  OB_FAIL(append(right_sharding, right_weak_sharding))) {
         LOG_WARN("failed to append sharding info", K(ret));
@@ -572,7 +572,7 @@ int ObShardingInfo::check_if_match_partition_wise(const EqualSets &equal_sets,
                                                        is_partition_wise))) {
         LOG_WARN("failed to check if match partition wise join", K(ret));
       } else {
-        LOG_TRACE("succeed to check if match partition wise join", K(is_partition_wise));
+
       }
     }
   }
@@ -635,7 +635,7 @@ int ObShardingInfo::check_if_match_extended_partition_wise(const EqualSets &equa
                                                                 is_ext_partition_wise))) {
         LOG_WARN("failed to check if match extended partition wise join", K(ret));
       } else if (is_ext_partition_wise) {
-        LOG_TRACE("succeed to check if match extended partition wise join", K(is_ext_partition_wise));
+
       } else if (OB_FAIL(append(left_sharding, left_weak_sharding)) ||
                  OB_FAIL(append(right_sharding, right_weak_sharding))) {
         LOG_WARN("failed to append sharding info", K(ret));
@@ -649,7 +649,7 @@ int ObShardingInfo::check_if_match_extended_partition_wise(const EqualSets &equa
                                                                 is_ext_partition_wise))) {
         LOG_WARN("failed to check if match extended partition wise join", K(ret));
       } else {
-        LOG_TRACE("succeed to check if match extended partition wise join", K(is_ext_partition_wise));
+
       }
     }
   }
@@ -1108,7 +1108,7 @@ int ObShardingInfo::is_sharding_equal(const ObShardingInfo *left_sharding,
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_TRACE("succeed to check whether sharding info is equal", K(is_equal));
+
   }
   return ret;
 }

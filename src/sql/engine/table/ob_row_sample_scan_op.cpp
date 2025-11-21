@@ -46,7 +46,7 @@ int ObRowSampleScanOp::inner_get_next_row()
       LOG_WARN("get next row failed", K(ret), "op", op_name());
     }
   }
-  LOG_DEBUG("static engine row sample scan get row", K(ret));
+
   return ret;
 }
 

@@ -84,7 +84,7 @@ TEST_F(TestSSTableSecMetaIterator, test_basic)
   int tmp_ret = OB_SUCCESS;
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = meta_iter.get_next(data_macro_meta);
-    STORAGE_LOG(DEBUG, "Got next data macro block meta", K(tmp_ret), K(data_macro_meta));
+
     if (OB_SUCCESS == tmp_ret) {
       ObDataMacroBlockMeta *deep_copy_meta = nullptr;
       ASSERT_EQ(OB_SUCCESS, data_macro_meta.deep_copy(deep_copy_meta, allocator_));
@@ -109,7 +109,7 @@ TEST_F(TestSSTableSecMetaIterator, test_basic)
   tmp_ret = OB_SUCCESS;
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = meta_iter.get_next(data_macro_meta);
-    STORAGE_LOG(DEBUG, "Got skip next data macro block meta", K(tmp_ret), K(data_macro_meta));
+
     if (OB_SUCCESS == tmp_ret) {
       ++iter_cnt;
     }
@@ -131,7 +131,7 @@ TEST_F(TestSSTableSecMetaIterator, test_basic)
   range.end_key_ = pivot_rowkey;
   range.border_flag_.unset_inclusive_start();
   range.border_flag_.set_inclusive_end();
-  STORAGE_LOG(INFO, "chaser debug start", K(range));
+
   ASSERT_EQ(OB_SUCCESS, meta_iter.open(
       range,
       ObMacroBlockMetaType::DATA_BLOCK_META,
@@ -222,13 +222,13 @@ TEST_F(TestSSTableSecMetaIterator, test_basic)
   // range.border_flag_.set_inclusive_start();
   range.border_flag_.set_inclusive_end();
   macro_desc.macro_meta_ = &data_macro_meta;
-  STORAGE_LOG(INFO, "show query range", K(range));
+
   ASSERT_EQ(OB_SUCCESS, dual_iter.open(sstable_, range, index_read_info, allocator_));
   tmp_ret = OB_SUCCESS;
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = dual_iter.get_next_macro_block(macro_desc);
     if (OB_SUCCESS == tmp_ret) {
-      STORAGE_LOG(DEBUG, "Got next data macro block meta", K(tmp_ret), K(macro_desc));
+
     }
   }
   ASSERT_EQ(OB_ITER_END, tmp_ret);
@@ -242,7 +242,7 @@ TEST_F(TestSSTableSecMetaIterator, test_basic)
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = dual_iter.get_next_macro_block(macro_desc);
     if (OB_SUCCESS == tmp_ret) {
-      STORAGE_LOG(DEBUG, "Got next data macro block meta", K(tmp_ret), K(macro_desc));
+
     }
   }
   ASSERT_EQ(OB_ITER_END, tmp_ret);
@@ -256,7 +256,7 @@ TEST_F(TestSSTableSecMetaIterator, test_basic)
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = dual_iter.get_next_macro_block(macro_desc);
     if (OB_SUCCESS == tmp_ret) {
-      STORAGE_LOG(INFO, "Got next data macro block meta", K(tmp_ret), K(macro_desc));
+
     }
   }
   ObDatumRowkey endkey;
@@ -273,7 +273,7 @@ TEST_F(TestSSTableSecMetaIterator, test_ddl_kv)
   ObDataMacroBlockMeta data_macro_meta;
   ObDatumRange range;
   range.set_whole_range();
-  STORAGE_LOG(INFO, "qilu debug range1", K(range));
+
   ASSERT_EQ(OB_SUCCESS, meta_iter.open(
       range,
       ObMacroBlockMetaType::DATA_BLOCK_META,
@@ -283,7 +283,7 @@ TEST_F(TestSSTableSecMetaIterator, test_ddl_kv)
   int tmp_ret = OB_SUCCESS;
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = meta_iter.get_next(data_macro_meta);
-    STORAGE_LOG(DEBUG, "Got next data macro block meta", K(tmp_ret), K(data_macro_meta));
+
     if (OB_SUCCESS == tmp_ret) {
       ObDataMacroBlockMeta *deep_copy_meta = nullptr;
       ASSERT_EQ(OB_SUCCESS, data_macro_meta.deep_copy(deep_copy_meta, allocator_));
@@ -298,7 +298,7 @@ TEST_F(TestSSTableSecMetaIterator, test_ddl_kv)
   const int64_t skip_cnt = 3;
   meta_iter.reset();
   int64_t iter_cnt = 0;
-  STORAGE_LOG(INFO, "qilu debug range2", K(range));
+
   ASSERT_EQ(OB_SUCCESS, meta_iter.open(
       range,
       ObMacroBlockMetaType::DATA_BLOCK_META,
@@ -309,7 +309,7 @@ TEST_F(TestSSTableSecMetaIterator, test_ddl_kv)
   tmp_ret = OB_SUCCESS;
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = meta_iter.get_next(data_macro_meta);
-    STORAGE_LOG(DEBUG, "Got skip next data macro block meta", K(tmp_ret), K(data_macro_meta));
+
     if (OB_SUCCESS == tmp_ret) {
       ++iter_cnt;
     }
@@ -331,7 +331,7 @@ TEST_F(TestSSTableSecMetaIterator, test_ddl_kv)
   range.end_key_ = pivot_rowkey;
   range.border_flag_.unset_inclusive_start();
   range.border_flag_.set_inclusive_end();
-  STORAGE_LOG(INFO, "qilu debug range3", K(range));
+
   ASSERT_EQ(OB_SUCCESS, meta_iter.open(
       range,
       ObMacroBlockMetaType::DATA_BLOCK_META,
@@ -355,7 +355,7 @@ TEST_F(TestSSTableSecMetaIterator, test_ddl_kv)
   range.end_key_.set_max_rowkey();
   range.border_flag_.unset_inclusive_start();
   range.border_flag_.set_inclusive_end();
-  STORAGE_LOG(INFO, "qilu debug range4", K(range));
+
   ASSERT_EQ(OB_SUCCESS, meta_iter.open(
       range,
       ObMacroBlockMetaType::DATA_BLOCK_META,
@@ -383,7 +383,7 @@ TEST_F(TestSSTableSecMetaIterator, test_ddl_kv)
   range.end_key_.assign(row.storage_datums_, TEST_ROWKEY_COLUMN_CNT);
   range.border_flag_.set_inclusive_start();
   range.border_flag_.set_inclusive_end();
-  STORAGE_LOG(INFO, "qilu debug range5", K(range));
+
   ASSERT_EQ(OB_SUCCESS, meta_iter.open(
       range,
       ObMacroBlockMetaType::DATA_BLOCK_META,
@@ -402,7 +402,7 @@ TEST_F(TestSSTableSecMetaIterator, test_ddl_kv)
   range.end_key_.assign(row.storage_datums_, TEST_ROWKEY_COLUMN_CNT);
   range.border_flag_.set_inclusive_start();
   range.border_flag_.set_inclusive_end();
-  STORAGE_LOG(INFO, "qilu debug range6", K(range));
+
   ASSERT_EQ(OB_SUCCESS, meta_iter.open(
       range,
       ObMacroBlockMetaType::DATA_BLOCK_META,
@@ -425,13 +425,13 @@ TEST_F(TestSSTableSecMetaIterator, test_ddl_kv)
   // range.border_flag_.set_inclusive_start();
   range.border_flag_.set_inclusive_end();
   macro_desc.macro_meta_ = &data_macro_meta;
-  STORAGE_LOG(INFO, "show query range", K(range));
+
   ASSERT_EQ(OB_SUCCESS, dual_iter.open(sstable_, range, index_read_info, allocator_));
   tmp_ret = OB_SUCCESS;
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = dual_iter.get_next_macro_block(macro_desc);
     if (OB_SUCCESS == tmp_ret) {
-      STORAGE_LOG(DEBUG, "Got next data macro block meta", K(tmp_ret), K(macro_desc));
+
     }
   }
   ASSERT_EQ(OB_ITER_END, tmp_ret);
@@ -445,7 +445,7 @@ TEST_F(TestSSTableSecMetaIterator, test_ddl_kv)
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = dual_iter.get_next_macro_block(macro_desc);
     if (OB_SUCCESS == tmp_ret) {
-      STORAGE_LOG(DEBUG, "Got next data macro block meta", K(tmp_ret), K(macro_desc));
+
     }
   }
   ASSERT_EQ(OB_ITER_END, tmp_ret);
@@ -459,7 +459,7 @@ TEST_F(TestSSTableSecMetaIterator, test_ddl_kv)
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = dual_iter.get_next_macro_block(macro_desc);
     if (OB_SUCCESS == tmp_ret) {
-      STORAGE_LOG(INFO, "Got next data macro block meta", K(tmp_ret), K(macro_desc));
+
     }
   }
   ObDatumRowkey endkey;
@@ -481,7 +481,7 @@ TEST_F(TestSSTableSecMetaIterator, test_dual_iter)
   int tmp_ret = OB_SUCCESS;
   while (OB_SUCCESS == tmp_ret) {
     tmp_ret = dual_iter.get_next_macro_block(macro_desc);
-    STORAGE_LOG(DEBUG, "Got next data macro block meta", K(tmp_ret), K(macro_desc));
+
   }
   ASSERT_EQ(OB_ITER_END, tmp_ret);
 

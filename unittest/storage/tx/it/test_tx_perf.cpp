@@ -67,7 +67,7 @@ TEST_F(ObTestTxPerf, test_sp_trans_perf)
       uint64_t trace_id_val = now;
       int64_t sp1 = 0;
       ObCurTraceId::set(&trace_id_val);
-      LOG_INFO("start trans");
+
       ObTxDescGuard tx_guard = n1->get_tx_guard();
       if (!tx_guard.is_valid()) {
         LOG_ERROR("acquire_tx", K(ret));
@@ -105,10 +105,10 @@ TEST_F(ObTestTxPerf, test_sp_trans_perf)
         break;
       }
       ATOMIC_INC(&req);
-      LOG_INFO("end trans");
+
     }
     if (OB_FAIL(ret)) {
-      LOG_INFO("worker quit ret", K(ret));
+
       std::cout << "worker quit ret " << ret << std::endl;
     }
   };
@@ -147,7 +147,7 @@ int main(int argc, char **argv)
   ObLogger &logger = ObLogger::get_logger();
   logger.set_file_name("test_tx_perf.log", true);
   OB_LOGGER.set_log_level("ERROR");
-  STORAGE_LOG(INFO, "begin unittest: test tx perf");
+
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

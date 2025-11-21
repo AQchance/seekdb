@@ -402,7 +402,7 @@ int ObColumnNamespaceChecker::find_column_in_single_table(const TableItem &table
   //if databasename or table name is not specified,
   //we must check the uniqueness of column in the table with the same name
   bool is_match = true;
-  LOG_TRACE("column info", K(q_name), K(table_item));
+
   if (!q_name.catalog_name_.empty()) {
     if (OB_FAIL(ObResolverUtils::name_case_cmp(params_.session_info_,
                                                q_name.catalog_name_,

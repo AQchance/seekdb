@@ -88,7 +88,7 @@ int ObTempBlockStore::init(int64_t mem_limit,
 void ObTempBlockStore::reset()
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("reset temp block store", KP(this), K(*this));
+
 
   blk_ = NULL;
   blk_buf_.reset();
@@ -106,7 +106,7 @@ void ObTempBlockStore::reset()
     if (OB_FAIL(FILE_MANAGER_INSTANCE_WITH_MTL_SWITCH.remove(tenant_id_, io_.fd_))) {
       LOG_WARN("remove file failed", K(ret), K_(io_.fd));
     } else {
-      LOG_INFO("close file success", K(ret), K_(io_.fd), K_(file_size));
+
     }
     io_.fd_ = -1;
   }
@@ -129,7 +129,7 @@ void ObTempBlockStore::reuse()
     if (OB_FAIL(FILE_MANAGER_INSTANCE_WITH_MTL_SWITCH.remove(tenant_id_, io_.fd_))) {
       LOG_WARN("remove file failed", K(ret), K_(io_.fd));
     } else {
-      LOG_INFO("close file success", K(ret), K_(io_.fd), K_(file_size));
+
     }
     io_.fd_ = -1;
   }
@@ -188,7 +188,7 @@ int ObTempBlockStore::alloc_dir_id()
 int ObTempBlockStore::finish_add_row(bool need_dump /*true*/)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("start finish add row", KP(this), K(need_dump));
+
   if (OB_UNLIKELY(!is_inited())) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", K(ret));
@@ -289,7 +289,7 @@ int ObTempBlockStore::append_block_payload(const char *buf, const int64_t size, 
     MEMCPY(blk_->payload_, buf, size);
     block_id_cnt_ = blk_->end();
     blk_buf_.fast_advance(size);
-    LOG_DEBUG("append block payload", K(*this), K(*blk_), K(mem_used_), K(mem_hold_));
+
   }
   // dump data if mem used > 16MB
   const int64_t dump_threshold = 1 << 24;
@@ -562,7 +562,7 @@ int ObTempBlockStore::alloc_block(Block *&blk, const int64_t min_size, const boo
     LOG_WARN("setup block buffer fail", K(ret));
   } else {
     ++block_cnt_;
-    LOG_TRACE("succ to alloc new block", KP(this), KP(mem), K_(blk_buf), K(*blk));
+
   }
   if (OB_FAIL(ret) && !OB_ISNULL(mem)) {
     free_blk_mem(mem, size);
@@ -652,7 +652,7 @@ int ObTempBlockStore::switch_block(const int64_t min_size, const bool strict_mem
     } else if (!finish_add && OB_FAIL(alloc_block(new_blk, min_size, strict_mem_size))) {
       LOG_WARN("alloc block failed", K(ret), K(min_size));
     } else {
-      LOG_DEBUG("switch block", KP(blk_), K(*blk_), K(blk_->checksum()));
+
       saved_block_id_cnt_ = block_id_cnt_;
       blk_ = new_blk;
     }
@@ -1053,7 +1053,7 @@ int ObTempBlockStore::ensure_reader_buffer(BlockReader &reader, ShrinkBuffer &bu
           free_blk_mem(mem);
           mem = NULL;
         }
-        LOG_TRACE("alloc new blk for reader", KP(this), KP(mem));
+
       } else if (OB_FAIL(buf.init(reinterpret_cast<char *>(try_reuse_blk), try_reuse_blk->size_))) {
         LOG_WARN("fail to init reused block buf", K(ret), K_(try_reuse_blk->size));
         free_blk_mem(try_reuse_blk);
@@ -1107,7 +1107,7 @@ int ObTempBlockStore::write_file(BlockIndex &bi, void *buf, int64_t size)
         file_size_ = 0;
         io_.io_desc_.set_wait_event(ObWaitEventIds::ROW_STORE_DISK_WRITE);
         io_.io_timeout_ms_ = timeout_ms;
-        LOG_INFO("open file success", K_(io_.fd), K_(io_.dir_id), K(get_compressor_type()));
+
       }
     }
     ret = OB_E(EventTable::EN_8) ret;
@@ -1203,7 +1203,7 @@ bool ObTempBlockStore::need_dump(const int64_t extra_size)
   } else if (mem_limit_ > 0) {
     if (mem_hold_ + extra_size > mem_limit_) {
       need_to_dump = true;
-      LOG_TRACE("need dump", K(mem_hold_), K(mem_limit_));
+
     }
   }
   return need_to_dump;
@@ -1219,7 +1219,7 @@ int ObTempBlockStore::dump(const bool all_dump, const int64_t target_dump_size /
     LOG_WARN("not init", K(ret));
   } else if (!enable_dump_) {
     ret = OB_EXCEED_MEM_LIMIT;
-    LOG_INFO("BlockStore exceed mem limit and dump is disabled", K(ret));
+
   } else {
     if (all_dump) {
       // If need to dump all, first switch block and index block to ensure
@@ -1229,7 +1229,7 @@ int ObTempBlockStore::dump(const bool all_dump, const int64_t target_dump_size /
       } else if (NULL != idx_blk_ && OB_FAIL(switch_idx_block(true /* finish_add */))) {
         LOG_WARN("fail to dump last index block", K(ret));
       }
-      LOG_TRACE("dump all blocks", K(blk_mem_list_.get_size()));
+
     }
     int64_t total_dumped_size = 0;
     LinkNode *node = blk_mem_list_.get_first();
@@ -1353,7 +1353,7 @@ int ObTempBlockStore::dump_block(Block *blk, int64_t &dumped_size)
     dumped_block_id_cnt_ += blk->cnt_;
     inc_mem_hold(-(bi->capacity_ + sizeof(LinkNode)));
     inc_mem_used(-(dumped_size));
-    LOG_TRACE("succ to dump block", KP(this), K(*blk), K(*bi), K(dumped_size));
+
   }
   return ret;
 }
@@ -1389,7 +1389,7 @@ int ObTempBlockStore::dump_index_block(IndexBlock *idx_blk, int64_t &dumped_size
       dumped_size = bi->length_;
       inc_mem_hold(-(bi->capacity_ + sizeof(LinkNode)));
       inc_mem_used(-(dumped_size));
-      LOG_TRACE("succ to dump idx_bk", KP(this), K(*idx_blk), K(dumped_size));
+
     }
   }
   return ret;
@@ -1532,7 +1532,7 @@ OB_DEF_SERIALIZE(ObTempBlockStore)
       } else {
         // serialize data_buf_size
         const Block* blk = static_cast<const Block *>(mem);
-        LOG_DEBUG("serialize block", K(*blk));
+
         const int64_t raw_size = get_block_raw_size(blk);
         OB_UNIS_ENCODE(raw_size);
         if (OB_SUCC(ret)) {

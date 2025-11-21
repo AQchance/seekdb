@@ -64,7 +64,7 @@ int ObKillExecutor::execute(ObExecContext &ctx, ObKillStmt &stmt)
       } else {
         if (OB_FAIL(kill_client_session(arg, session_mgr, ctx))) {
           if (ret == OB_ERR_KILL_CLIENT_SESSION) {
-            LOG_DEBUG("Succ to Kill Client Session", K(ret), K(arg));
+
           } else {
             LOG_WARN("Fail to kill client session", K(ret), K(arg));
           }
@@ -96,7 +96,7 @@ int ObKillExecutor::kill_query_cs_id(const ObKillSessionArg &arg, ObSQLSessionMg
   common::ObZone zone;
   obrpc::ObKillQueryClientSessionArg cs_arg;
   bool is_kill_succ = true;
-  LOG_DEBUG("Begin to send kill query rpc", K(arg.sess_id_));
+
   if (OB_ISNULL(curr_sess_info = ctx.get_my_session())) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("session is NULL", K(ret), K(ctx));
@@ -153,7 +153,7 @@ int ObKillExecutor::kill_query_cs_id(const ObKillSessionArg &arg, ObSQLSessionMg
   if (OB_FAIL(ret)) {
     LOG_WARN("Fail to Kill Query Client Session", K(ret), K(client_sess_id));
   } else {
-    LOG_INFO("Succ to Kill Query Client Session", K(ret), K(client_sess_id));
+
   }
 
   return ret;
@@ -208,7 +208,7 @@ int ObKillExecutor::kill_client_session(const ObKillSessionArg &arg, ObSQLSessio
         ret = OB_SUCCESS;
       }
     }
-    LOG_INFO("current server conclude kill client session", K(arg.sess_id_));
+
   }
   if (OB_SUCC(ret)) {
     ObAddr cs_addr;
@@ -239,7 +239,7 @@ int ObKillExecutor::kill_client_session(const ObKillSessionArg &arg, ObSQLSessio
       // bool is_sys_kill = curr_sess_info->get_effective_tenant_id() == OB_SYS_TENANT_ID;
       // Currently, there is no interface for querying node addresses at tenant granularity,
       // which can be optimized later.
-      LOG_DEBUG("Begin to send kill session rpc", K(arg.sess_id_),K(create_time));
+
       if (OB_ISNULL(GCTX.srv_rpc_proxy_) || OB_ISNULL(GCTX.root_service_)) {
         ret = OB_ERR_UNEXPECTED;
         LOG_ERROR("fail to get srv_rpc_proxy", K(ret), K(GCTX.srv_rpc_proxy_),
@@ -305,7 +305,7 @@ int ObKillExecutor::kill_client_session(const ObKillSessionArg &arg, ObSQLSessio
         ret = OB_ERR_KILL_CLIENT_SESSION_FAILED;
         LOG_WARN("Fail to Kill Client Session", K(ret), K(client_sess_id));
       } else {
-        LOG_INFO("Succ to Kill Client Session", K(ret), K(client_sess_id));
+
       }
 
       // In the end, if everything succeeds here, the current map will be recorded.

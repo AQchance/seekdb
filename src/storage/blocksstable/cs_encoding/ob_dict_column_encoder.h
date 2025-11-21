@@ -77,7 +77,7 @@ int ObDictColumnEncoder::do_store_dict_ref_(ObMicroBufferWriter &buf_writer)
   const int32_t *row_refs = ctx_->ht_->get_row_refs();
   if (OB_ISNULL(ref_arr = static_cast<T*>(ctx_->allocator_->alloc(ref_arr_size)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to alloc", K(ret), K(ref_arr_size), K_(dict_encoding_meta));
+
   } else if (dict_encoding_meta_.is_const_encoding_ref()) {
     ref_arr[0] = ref_exception_cnt_;
     ref_arr[1] = const_node_.dict_ref_;
@@ -108,9 +108,9 @@ int ObDictColumnEncoder::do_store_dict_ref_(ObMicroBufferWriter &buf_writer)
   ObIntegerStreamEncoder integer_encoder;
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(integer_encoder.encode(ref_enc_ctx_, ref_arr, dict_encoding_meta_.ref_row_cnt_, buf_writer))) {
-    STORAGE_LOG(WARN, "fail to store ref integer stream", K(ret), K(ref_enc_ctx_), K_(dict_encoding_meta));
+
   } else if (OB_FAIL(stream_offsets_.push_back((uint32_t)buf_writer.length()))) {
-    STORAGE_LOG(WARN, "fail to push back ref stream offset", K(ret));
+
   } else {
     int_stream_encoding_types_[int_stream_idx_] = ref_enc_ctx_.meta_.get_encoding_type();
     int_stream_idx_++;

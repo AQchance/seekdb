@@ -285,7 +285,7 @@ int ObHbaseWildcardColumnTracker::get_next_column_or_row(const ObHTableCell &cel
 
 void ObHbaseWildcardColumnTracker::reset()
 {
-  LOG_DEBUG("reset qualifier");
+
   column_has_expired_ = false;
   current_qualifier_.reset();
 }
@@ -475,18 +475,18 @@ int ObHbaseRowIterator::next_cell()
 {
   ObNewRow *cell = NULL;
   int ret = cell_iter_->get_next_cell(cell);
-  LOG_DEBUG("fetch cell from cell iter", K(cell));
+
   if (OB_SUCCESS == ret) {
     curr_cell_.set_ob_row(cell);
     if (OB_FAIL(try_record_expired_rowkey(curr_cell_))) {
       LOG_WARN("failed to record expired rowkey", K(ret));
     }
-    LOG_DEBUG("fetch next cell", K_(curr_cell));
+
   } else if (OB_ITER_END == ret) {
     has_more_cells_ = false;
     curr_cell_.set_ob_row(NULL);
     matcher_->clear_curr_row();
-    LOG_DEBUG("iterator end", K_(has_more_cells));
+
   } else {
     LOG_WARN("fail to get next cell", K(ret));
   }
@@ -508,7 +508,7 @@ int ObHbaseRowIterator::get_next_cell_hint()
       while (OB_SUCC(ret) && !enter_hint_key) {
         if (ObHTableUtils::compare_cell(curr_cell_, *hint_cell, false) >= 0) {
           enter_hint_key = true;
-          LOG_INFO("curr_cell is bigger than hint_cell", K(ret), K(curr_cell_), K(hint_cell));
+
         } else if (OB_FAIL(ObHTableUtils::create_last_cell_on_row_col(allocator_, curr_cell_, next_cell))) {
           LOG_WARN("failed to create last cell", K(ret));
         } else {
@@ -626,7 +626,7 @@ int ObHbaseRowIterator::get_next_row_internal(ResultType *&result)
       } else if (filtered) {
         // filter out the current row and fetch the next row
         hfilter_->reset();
-        LOG_DEBUG("filter_row_key skip the row", K(ret));
+
         ret = seek_or_skip_to_next_row(curr_cell_);
       }
     }
@@ -661,9 +661,9 @@ int ObHbaseRowIterator::get_next_row_internal_normal(ResultType *&result)
       LOG_WARN("failed to match cell", K(ret));
     } else {
       if (NULL == curr_cell_.get_ob_row()) {
-        LOG_DEBUG("matcher, curr_cell=NULL ", K(match_code));
+
       } else {
-        LOG_DEBUG("matcher", K_(curr_cell), K(match_code));
+
       }
       switch (match_code) {
         case ObHTableMatchCode::INCLUDE:
@@ -808,7 +808,7 @@ int ObHbaseRowIterator::seek(ObHTableCell &key, int32_t &skipped_count)
     while (OB_SUCC(next_cell())) {
       cmp_ret = ObHTableUtils::compare_cell(curr_cell_, key, scan_order_);
       if (cmp_ret >= 0) {
-        LOG_DEBUG("seek to", K(key), K_(curr_cell));
+
         break;
       }
     }
@@ -876,7 +876,7 @@ int ObHbaseRowIterator::seek_first_cell_on_hint(const ObNewRow *ob_row)
         if (OB_NOT_NULL(matcher_)) {
           matcher_->clear_curr_row();
         }
-        LOG_DEBUG("iterator end", K_(has_more_cells));
+
       }
     } else {
       curr_cell_.set_ob_row(first_cell_on_row);
@@ -1102,7 +1102,7 @@ int ObHbaseCFIterator::get_next_result_internal(ResultType &next_result)
   }
   while (OB_SUCC(ret) && row_iterator_->has_more_result() && !reach_caching_limit(num_of_row) &&
          OB_SUCC(row_iterator_->get_next_row(htable_row))) {
-    LOG_DEBUG("got one row", "cells_count", htable_row->get_row_count());
+
     bool is_empty_row = (htable_row->get_row_count() == 0);
     if (is_empty_row) {
       if (nullptr != filter_) {
@@ -1117,7 +1117,7 @@ int ObHbaseCFIterator::get_next_result_internal(ResultType &next_result)
       if (!is_empty_row) {
         // last chance to drop entire row based on the sequence of filter calls
         if (filter_->filter_row()) {
-          LOG_DEBUG("filter out the row");
+
           exclude = true;
         }
       }
@@ -1161,7 +1161,7 @@ int ObHbaseCFIterator::get_next_result_internal(ResultType &next_result)
       row_iterator_->no_more_result();
     }
     if (reach_caching_limit(num_of_row)) {
-      LOG_TRACE("reach cache limit:", K(num_of_row));
+
     }
   }  // end while
 
@@ -1173,7 +1173,7 @@ int ObHbaseCFIterator::get_next_result_internal(ResultType &next_result)
     ret = OB_SUCCESS;
   }
 
-  LOG_DEBUG("get_next_result", K(ret), "row_count", next_result.get_row_count());
+
   return ret;
 }
 
@@ -1229,7 +1229,7 @@ int ObHbaseCFIterator::init()
 
   if (OB_SUCC(ret)) {
     is_inited_ = true;
-    LOG_DEBUG("ObHbaseCFIterator init success", K(ret));
+
   }
   return ret;
 }
@@ -1325,7 +1325,7 @@ int ObHbaseReversedRowIterator::init(ScannerContext &scanner_context, const ObHB
       if (OB_ITER_END == ret) {
         has_more_cells_ = false;
         ret = OB_SUCCESS;
-        LOG_DEBUG("no data in table", K(ret));
+
       } else {
         LOG_WARN("failed to rescan and get next row", K(ret));
       }
@@ -1430,7 +1430,7 @@ int ObHbaseReversedRowIterator::seek_or_skip_to_next_row_inner(const ObString &r
       if (OB_ITER_END != ret) {
         LOG_WARN("failed to rescan and get next row", K(ret));
       } else {
-        LOG_DEBUG("reverse scan has no more cell", K(ret), K(has_more_cells_));
+
         has_more_cells_ = false;
       }
     } else {
@@ -1584,9 +1584,9 @@ int ObHbaseRowIterator::get_next_row_internal_timeseries(ResultType *&result)
       LOG_WARN("failed to match cell", K(ret));
     } else {
       if (NULL == curr_cell_.get_ob_row()) {
-        LOG_DEBUG("matcher, curr_cell=NULL ", K(match_code));
+
       } else {
-        LOG_DEBUG("matcher", K_(curr_cell), K(match_code));
+
       }
       switch (match_code) {
         case ObHTableMatchCode::INCLUDE:
@@ -1714,7 +1714,7 @@ int ObHbaseTSExplicitColumnTracker::check_column(const ObHTableCell &cell, ObHTa
       LOG_WARN("fail to set refactored column set", K(ret), K(cell.get_qualifier()));
     }
   }
-  LOG_DEBUG("ObHbaseTSExplicitColumnTracker::check_column", K(ret), K(cell), K(match_code));
+
   return ret;
 }
 
@@ -1789,7 +1789,7 @@ int ObHbaseTSWildcardColumnTracker::get_next_column_or_row(const ObHTableCell &c
 
 void ObHbaseTSWildcardColumnTracker::reset()
 {
-  LOG_DEBUG("reset qualifier");
+
 }
 
 int32_t ObHbaseTSWildcardColumnTracker::get_cur_version()

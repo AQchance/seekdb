@@ -52,7 +52,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
   } else {
     trans_happened |= is_happened;
     OPT_TRACE("adjust duplicated table name", is_happened);
-    LOG_TRACE("succeed to adjust duplicated table name", K(is_happened), K(ret));
+
 
     if (OB_SUCC(ret)) {
       if (OB_FAIL(expand_materialized_view(stmt, is_happened))) {
@@ -60,7 +60,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("expand materialized view:", is_happened);
-        LOG_TRACE("succeed to expand materialized view",K(is_happened), K(ret));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -69,7 +69,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("flatten condition:", is_happened);
-        LOG_TRACE("succeed to flatten_condition", K(is_happened));
+
       }
     }  
     if (OB_SUCC(ret) && is_mysql_mode()) {
@@ -78,7 +78,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("generate straight join leading", is_happened);
-        LOG_TRACE("succeed to generate straight join leading", K(is_happened), K(ret));
+
       }
     }  
     if (OB_SUCC(ret) && parent_stmts.empty()) {
@@ -87,7 +87,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("expand correlated cte", is_happened);
-        LOG_TRACE("succeed to expand correlated cte", K(is_happened), K(ret));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -96,7 +96,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("transform for udt columns", is_happened);
-        LOG_TRACE("succeed to transform for udt columns", K(is_happened), K(ret));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -105,7 +105,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("transform hybrid semantic vector distance expr:", is_happened);
-        LOG_TRACE("succeed to transform hybrid semantic vector distance expr", K(is_happened));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -114,7 +114,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("transform for cast multiset", is_happened);
-        LOG_TRACE("succeed to transform for cast multiset", K(is_happened), K(ret));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -123,7 +123,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("add all rowkey columns:", is_happened);
-        LOG_TRACE("succeed to add all rowkey columns", K(is_happened));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -132,7 +132,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("eliminating having statement:", is_happened);
-        LOG_TRACE("succeed to eliminating having statement", K(is_happened));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -141,7 +141,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("replace is_serving_tenant function:", is_happened);
-        LOG_TRACE("succeed to replace function", K(is_happened));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -150,7 +150,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("transform_special_expr:", is_happened);
-        LOG_TRACE("succeed to transform_special_expr", K(is_happened), K(ret));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -159,7 +159,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("transform outer join exprs:", is_happened);
-        LOG_TRACE("succeed to transform outer join exprs", K(is_happened), K(ret));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -168,7 +168,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("transform for batch stmt:", is_happened);
-        LOG_TRACE("succeed to transform for batch stmt", K(is_happened), K(ret));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -177,7 +177,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("transform exprs:", is_happened);
-        LOG_TRACE("success to transform exprs", K(is_happened));
+
       }
     }
     /*transform_for_nested_aggregate, transformer_aggr_expr two functions are strongly dependent, must ensure the order of rewriting both*/
@@ -187,7 +187,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("transform for nested aggregate:", is_happened);
-        LOG_TRACE("succeed to transform for nested aggregate", K(is_happened), K(ret));
+
       }
       if (OB_SUCC(ret)) {
         if (OB_FAIL(transformer_aggr_expr(stmt, is_happened))) {
@@ -195,7 +195,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
         } else {
           trans_happened |= is_happened;
           OPT_TRACE("transform aggr expr:", is_happened);
-          LOG_TRACE("succeed to transform aggr expr", K(is_happened), K(ret));
+
         }
       }
     }
@@ -205,7 +205,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("transform full outer join:", is_happened);
-        LOG_TRACE("succeed to transform full outer join", K(is_happened));
+
       }
     }
 
@@ -215,7 +215,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("preserve order for pagination:", is_happened);
-        LOG_TRACE("succeed to preserve order for pagination", K(is_happened));
+
       }
     }
 
@@ -225,7 +225,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("preserve order for groupby:", is_happened);
-        LOG_TRACE("succeed to preserve order for groupby", K(is_happened));
+
       }
     }
 
@@ -234,7 +234,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
         LOG_WARN("failed to transform rollup exprs", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to transform rollup exprs",  K(is_happened));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -242,7 +242,7 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
         LOG_WARN("failed to transform for last_insert_id.", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to transform for last_insert_id.",K(is_happened), K(ret));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -251,14 +251,14 @@ int ObTransformPreProcess::transform_one_stmt(common::ObIArray<ObParentDMLStmt> 
         LOG_WARN("failed to preserve order for fulltext search", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to transform for preserve order for fulltext search",K(is_happened), K(ret));
+
       }
     }
     if (OB_SUCC(ret) && OB_FAIL(reset_view_base(stmt))) {
       LOG_WARN("failed to reset view base item", K(ret));
     }
     if (OB_SUCC(ret)) {
-      LOG_DEBUG("transform pre process succ", K(*stmt));
+
      if (OB_FAIL(stmt->formalize_stmt(ctx_->session_info_))) {
         LOG_WARN("failed to formalize stmt", K(ret));
       //} else if (OB_FAIL(stmt->formalize_stmt_expr_reference())) {
@@ -1596,7 +1596,7 @@ int ObTransformPreProcess::transform_in_or_notin_expr_without_row(ObRawExprFacto
                                 DistinctObjMeta(obj_type, coll_type, coll_level, scale)))) {
         LOG_WARN("failed to push back", K(ret));
       } else {
-        LOG_DEBUG("add param expr type", K(i), K(obj_type));
+
       }
     }
   } // for end
@@ -1614,7 +1614,7 @@ int ObTransformPreProcess::transform_in_or_notin_expr_without_row(ObRawExprFacto
       op_raw_expr->set_add_implicit_cast_for_in_param(true);
     }
   } else {
-    LOG_DEBUG("distinct types", K(distinct_types));
+
     ObSEArray<ObRawExpr *, 4> transed_in_exprs;
     ObSEArray<ObRawExpr *, 4> same_type_exprs;
     for (int i = 0; OB_SUCC(ret) && i < distinct_types.count(); i++) {
@@ -1812,7 +1812,7 @@ int ObTransformPreProcess::create_partial_expr(ObRawExprFactory &expr_factory,
   } else if (OB_FAIL(transed_in_exprs.push_back(tmp_expr))) {
     LOG_WARN("failed to push back element", K(ret));
   } else {
-    LOG_DEBUG("partial in expr", K(*tmp_expr), K(*tmp_right_expr), K(*left_expr));
+
   }
   return ret;
 }
@@ -2060,12 +2060,12 @@ int ObTransformPreProcess::check_and_transform_in_or_notin(ObRawExprFactory &exp
               static_cast<ObQueryRefRawExpr*>(in_expr->get_param_expr(0))->get_output_column() > 1)) {
     // (x, y) in ((x0, y0), (x1, y1), ...)
     // (select x, y from ...) in ((x0, y0), (x1, y1), ...))
-    LOG_DEBUG("Before Transform", K(*in_expr));
+
     ret = transform_in_or_notin_expr_with_row(
         expr_factory, session, T_OP_IN == in_expr->get_expr_type(), in_expr, trans_happened);
   } else {
     // x in (x0, x1, ...)
-    LOG_DEBUG("Before Transform", K(*in_expr));
+
     ret = transform_in_or_notin_expr_without_row(
         expr_factory, session, T_OP_IN == in_expr->get_expr_type(), in_expr, trans_happened);
   }
@@ -2077,7 +2077,7 @@ int ObTransformPreProcess::check_and_transform_in_or_notin(ObRawExprFactory &exp
     } else if (OB_FAIL(op_raw_expr->formalize(&session))) {
       LOG_WARN("formalize expr failed", K(ret));
     } else {
-      LOG_DEBUG("After Transform", K(*op_raw_expr));
+
     }
   }
   return ret;
@@ -2432,7 +2432,7 @@ int ObTransformPreProcess::check_and_transform_inner_row_cmp_val(ObRawExprFactor
       LOG_WARN("formalize expr failed", K(ret));
     } else {
       trans_happened = row_cmp_trans_happened;
-      LOG_DEBUG("After Transform", K(*op_raw_expr));
+
     }
   }
   return ret;
@@ -2701,7 +2701,7 @@ int ObTransformPreProcess::add_semantic_vector_dis_params_to_new_expr(ObDMLStmt 
         LOG_WARN("formalize failed", K(ret));
       } else {
         new_semantic_expr = temp_semantic_expr;
-        LOG_TRACE("successfully created new semantic vector distance expr with 3 params");
+
       }
     }
   }
@@ -2798,7 +2798,7 @@ int ObTransformPreProcess::create_cast_query_vector_expr(
       LOG_WARN("cast expr is null", K(ret));
     } else {
       cast_query_vector = cast_expr;
-      LOG_TRACE("created cast query vector expr", K(dst_type));
+
     }
   }
   return ret;
@@ -2840,7 +2840,7 @@ int ObTransformPreProcess::create_distance_type_const_expr(
       const_expr->set_value(obj);
 
       dis_type = const_expr;
-      LOG_TRACE("created distance type const expr", K(vector_index_param.dist_algorithm_));
+
     }
   }
   return ret;
@@ -3220,7 +3220,7 @@ int ObTransformPreProcess::transform_for_batch_stmt(ObDMLStmt *batch_stmt, bool 
       LOG_WARN("fail to check insert can batch", K(ret), KPC(insert_stmt));
     } else if (!can_batch) {
       ret = OB_BATCHED_MULTI_STMT_ROLLBACK;
-      LOG_TRACE("can't support insert batch optimization", K(ret), KPC(batch_stmt));
+
     } else if (!insert_stmt->is_insert_up() &&
         OB_FAIL(transform_for_ins_batch_stmt(batch_stmt, trans_happened))) {
       LOG_WARN("fail to transform ins batch stmt", K(ret));
@@ -3249,7 +3249,7 @@ bool ObTransformPreProcess::check_insertup_support_batch_opt(ObInsertStmt *inser
     } else if (child_size != 0) {
       // with subquery for insertup/replace/insert can't support batch_optimization
       can_batch = false;
-      LOG_TRACE("insert with subquery supported batch exec opt", K(ret));
+
     }
   }
   return ret;
@@ -3270,16 +3270,16 @@ int ObTransformPreProcess::check_insert_can_batch(ObInsertStmt *insert_stmt, boo
     // do nothing
   } else if (insert_stmt->value_from_select()) {
     can_batch = false;
-    LOG_TRACE("insert select stmt not supported batch exec opt", K(ret));
+
   } else if (!insert_stmt->is_insert_single_value()) {
     can_batch = false;
-    LOG_TRACE("multi row insert not supported batch exec opt", K(ret));
+
   } else if (OB_FAIL(check_insertup_support_batch_opt(insert_stmt, can_batch))) {
     LOG_WARN("fail to get child_stmt size", K(ret), KPC(insert_stmt));
   } else if (!can_batch) {
     // with subquery for insertup/replace/insert can't support batch_optimization
     can_batch = false;
-    LOG_TRACE("insert with subquery supported batch exec opt", K(ret));
+
   } else {
     common::ObIArray<ObRawExpr*> &value_vector = insert_stmt->get_values_vector();
     for (int64_t i = 0; OB_SUCC(ret) && i < value_vector.count(); i++) {
@@ -3288,7 +3288,7 @@ int ObTransformPreProcess::check_insert_can_batch(ObInsertStmt *insert_stmt, boo
       }
     }
   }
-  LOG_TRACE("after check can support batch_optimization", K(ret), K(can_batch));
+
   return ret;
 }
 

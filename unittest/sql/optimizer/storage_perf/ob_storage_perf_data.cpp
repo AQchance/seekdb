@@ -31,7 +31,7 @@
   tmp_value = obj.obj_get_fun(); \
   exist = tmp_value == static_cast<medium_type>(value) ? true : false; \
   if(!exist){ \
-    STORAGE_LOG(WARN, "value is different", K(tmp_value), K(value)); \
+ \
   } \
 }
 
@@ -41,16 +41,16 @@
   char *buf = NULL; \
   if(NULL == (buf = reinterpret_cast<char*>(allocator->alloc(VARIABLE_BUF_LEN)))){ \
     ret = OB_ALLOCATE_MEMORY_FAILED; \
-    STORAGE_LOG(WARN, "fail to alloc memory"); \
+ \
   } else { \
     sprintf(buf, "%ld", value); \
   } \
   if(OB_SUCC(ret)){ \
     if(OB_SUCCESS != (ret = number.from(buf, *allocator))){ \
-      STORAGE_LOG(WARN, "fail to format num", K(ret)); \
+ \
     } else if(number != obj.obj_get_fun()){ \
       exist = false; \
-      STORAGE_LOG(WARN, "row value is different", K(obj)); \
+ \
     } \
   } \
 }
@@ -69,7 +69,7 @@
   char *buf = NULL; \
   if(NULL == (buf = reinterpret_cast<char*>(allocator->alloc(VARIABLE_BUF_LEN)))){ \
     ret = OB_ALLOCATE_MEMORY_FAILED; \
-    STORAGE_LOG(WARN, "fail to alloc memory"); \
+ \
   } else if(rowkey_pos > 0){ \
     sprintf(buf, "%064ld", seed); \
   } else { \
@@ -89,7 +89,7 @@
   char *buf = NULL; \
   if(NULL == (buf = reinterpret_cast<char*>(allocator->alloc(VARIABLE_BUF_LEN)))){ \
     ret = OB_ALLOCATE_MEMORY_FAILED; \
-    STORAGE_LOG(WARN, "fail to alloc memory"); \
+ \
   } else if(rowkey_pos > 0){ \
     sprintf(buf, "%064ld", seed); \
   } else { \
@@ -97,7 +97,7 @@
   } \
   if(OB_SUCC(ret)){ \
     if(OB_SUCCESS != (ret = number.from(buf, *allocator))){ \
-      STORAGE_LOG(WARN, "fail to format num", K(ret)); \
+ \
     } else { \
       obj.obj_set_fun(number); \
     } \
@@ -134,10 +134,10 @@ int ObStoragePerfData::init(ObStoragePerfConfig *config,
   int ret = OB_SUCCESS;
   if (is_inited_) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init twice");
+
   } else if (NULL == config) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "argument is NULL");
+
   } else {
     config_ = config;
     schema_service_ = schema_service;
@@ -150,9 +150,9 @@ int ObStoragePerfData::init(ObStoragePerfConfig *config,
         || n2 > MAX_PATH_SIZE || n2 < 0
         || n3 > MAX_PATH_SIZE || n3 < 0){
       ret = OB_BUF_NOT_ENOUGH;
-      STORAGE_LOG(WARN, "fail to create data file path");
+
     } else if(OB_FAIL(init_partition_storage())){
-      STORAGE_LOG(WARN, "fail to init partition storage", K(ret));
+
     } else {
       is_inited_ = true;
     }
@@ -171,7 +171,7 @@ int ObStoragePerfData::init_data_file()
   int n1 = snprintf(location.path_, common::OB_MAX_FILE_NAME_LENGTH, "%s",
               data_file_path_);
   if (n1 < 0 || n1 > OB_MAX_FILE_NAME_LENGTH) {
-    STORAGE_LOG(WARN, "failed to copy data path");
+
   } else {
     spec.macro_block_size_ = OB_DEFAULT_MACRO_BLOCK_SIZE;
     spec.data_file_size_ = config_->get_partition_size() * 1024L * 1024L * 1024L;
@@ -179,13 +179,13 @@ int ObStoragePerfData::init_data_file()
 
   if (OB_SUCC(ret)) {
     if (OB_FAIL(data_file_.open(location, &image_))) {
-      STORAGE_LOG(WARN, "open data file error.", K(ret));
+
     } else if (OB_FAIL(image_.initialize(&data_file_, &logger_))) {
-      STORAGE_LOG(WARN, "initialize macro block meta error.", K(ret));
+
     } else if (OB_FAIL(logger_.init(data_file_, log_dir_path_, 1024L*1024L*1024L))) {
-      STORAGE_LOG(WARN, "init logger failed, ", K(ret));
+
     } else if (OB_FAIL(logger_.replay())) {
-      STORAGE_LOG(WARN, "replay storage log failed, ", K(ret));
+
     }
   }
   return ret;
@@ -201,18 +201,18 @@ int ObStoragePerfData::init_partition_storage()
   memtable_.set_version(ObVersion(2));
 
   if (OB_FAIL(init_data_file())) {
-    STORAGE_LOG(WARN, "failed init data file", K(ret));
+
   } else if (OB_FAIL(ssstore_.init(&data_file_, &cp_fty_, meta_, cache_suite_, NULL))) {
-    STORAGE_LOG(WARN, "failed to init ssstore", K(ret));
+
   } else if (OB_FAIL(ssstore_.create_new_sstable(sstable_, meta_.index_table_count_))){
-    STORAGE_LOG(WARN, "fail to create sstable");
+
   } else if(OB_SUCCESS != (ret = backup_sstable_meta(*sstable_))){
-    STORAGE_LOG(WARN, "fail to backup sstable meta", K(ret));
+
   } else if(!sstable_->is_valid()){
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "sstable is invalid");
+
   } else if(OB_FAIL(ssstore_.add_sstable(sstable_->get_meta().index_id_, sstable_))){
-    STORAGE_LOG(WARN, "fail to add sstable", K(ret));
+
   //} else if(OB_FAIL(memtable_.init(pkey))) {
   //  STORAGE_LOG(WARN, "fail to init mem table", K(ret));
   //} else if(OB_FAIL(storage_.init(pkey, pkey, &cp_fty_, &base_storage, schema_service_,
@@ -239,23 +239,23 @@ int ObStoragePerfData::backup_sstable_meta(ObSSTable &sstable)
 
   if(-1 == (fd = open(sstable_meta_path_, O_RDONLY, 0777))){
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "fail to open meta file", K(sstable_meta_path_), K(fd));
+
   } else if(0 == (size = lseek(fd, 0, SEEK_END))){
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "fail to get file length", K(size), K(sstable_meta_path_));
+
   } else if(0 != lseek(fd, 0, SEEK_SET)){
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "fail to reset lseek");
+
   } else if(NULL == (buf = static_cast<char *>(allocator.alloc(size)))){
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to allocator memory", K(size), K(ret));
+
   } else if (size != read(fd, buf, size)){
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(ERROR, "fail to read meta");
+
   } else if(OB_SUCCESS != (ret = sstable.deserialize(allocator_, buf, size, pos))){
-    STORAGE_LOG(WARN, "fail to deserialize sstable", K(ret));
+
   } else {
-    STORAGE_LOG(INFO, "backup sstable meta success");
+
     close(fd);
   }
   return ret;
@@ -282,18 +282,18 @@ int ObStoragePerfData::update_to_memtable()
   const ObTableSchema *schema = NULL;
 
   if(OB_FAIL(restore_schema_->parse_from_file("./storage_perf_update.schema", schema_guard))) {
-    STORAGE_LOG(WARN, "fail to init schema", K(ret));
+
   } else {
  //   schema_service_ = restore_schema_.schema_service_;
  //   schema_service_->get_schema_guard(schema_guard, INT64_MAX);
     schema_guard->get_table_schema(combine_id(tenant_id, pure_id+1), schema);
     if (schema == NULL) {
       ret = OB_SCHEMA_ERROR;
-      STORAGE_LOG(WARN, "schema is NULL");
+
     } else if(OB_SUCCESS != (ret = row_generate.init(*schema))) {
-      STORAGE_LOG(WARN, "fail to init table schema");
+
     } else if(OB_SUCCESS != (ret = insert_iter.init(&row_generate))) {
-      STORAGE_LOG(WARN, "fail to init ObUpdateRowIter", K(ret));
+
     }
   }
 
@@ -308,7 +308,7 @@ int ObStoragePerfData::update_to_memtable()
     dml_param.schema_version_ = 0;
 
     if(OB_FAIL(storage_.update_rows(ins_ctx, dml_param, column_ids, update_column_ids,  &insert_iter, affected_rows))) {
-      STORAGE_LOG(WARN, "fail to insert row", K(ret));
+
       ob_print_mod_memory_usage();
     }
     ins_ctx.mem_ctx_->trans_end(true, 1);
@@ -345,13 +345,13 @@ int ObRowGenerate::init(const share::schema::ObTableSchema &src_schema)
   int ret = OB_SUCCESS;
   if(is_inited_){
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "already inited");
+
   } else if (!src_schema.is_valid()) {
-    STORAGE_LOG(WARN, "schema is invalid.", K(src_schema));
+
   } else if (OB_SUCCESS != (ret = src_schema.get_column_ids(column_list_))) {
-      STORAGE_LOG(WARN, "fail to get column ids.", K(ret));
+
   } else if (OB_SUCCESS != (ret = schema_.assign(src_schema))) {
-    STORAGE_LOG(WARN, "fail to assign schema", K(ret));
+
   } else {
     p_allocator_ = &allocator_;
     is_inited_ = true;
@@ -365,13 +365,13 @@ int ObRowGenerate::init(const share::schema::ObTableSchema &src_schema, ObArenaA
   int ret = OB_SUCCESS;
   if(is_inited_){
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "already inited");
+
   } else if (!src_schema.is_valid()) {
-    STORAGE_LOG(WARN, "schema is invalid.", K(src_schema));
+
   } else if (OB_SUCCESS != (ret = src_schema.get_column_ids(column_list_))) {
-      STORAGE_LOG(WARN, "fail to get column ids.", K(ret));
+
   } else if (OB_SUCCESS != (ret = schema_.assign(src_schema))) {
-    STORAGE_LOG(WARN, "fail to assign schema", K(ret));
+
   } else {
     p_allocator_ = allocator;
     is_inited_ = true;
@@ -389,20 +389,20 @@ int ObRowGenerate::get_next_row(const ObStoreRow *&row)
 
   if(!is_inited_){
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "should init first");
+
   } else if(NULL == (buf = static_cast<char *>(p_allocator_->alloc(sizeof(ObStoreRow))))) {
-    STORAGE_LOG(WARN, "fail to alloc memory", K(ret));
+
   }
 
   else if(NULL == (objs = static_cast<ObObj*>(p_allocator_->alloc(sizeof(ObObj)*schema_.get_column_count())))){
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to alloc memory");
+
   } else {
     res_row = new(buf)ObStoreRow;
     res_row->row_val_.cells_ = objs;
     res_row->row_val_.count_ = schema_.get_column_count();
     if (OB_SUCCESS != (ret = generate_one_row(*res_row, seed_))) {
-      STORAGE_LOG(WARN, "fail to generate one row.", K(ret), K(row));
+
     }
   }
 
@@ -423,15 +423,15 @@ int ObRowGenerate::get_rowkey_by_seed(const int64_t seed, common::ObRowkey &rowk
   ObObj *objs = NULL;
   if(NULL == (objs = static_cast<ObObj*>(p_allocator_->alloc(sizeof(ObObj)*schema_.get_rowkey_column_num())))){
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to alloc memory");
+
   } else {
     row.row_val_.cells_ = objs;
     row.row_val_.count_ = schema_.get_rowkey_column_num();
     if(!is_inited_){
       ret = OB_NOT_INIT;
-      STORAGE_LOG(WARN, "should init first");
+
     } else if (OB_SUCCESS != (ret = generate_one_row(row, seed))) {
-      STORAGE_LOG(WARN, "fail to generate one row.", K(ret), K(row));
+
     } else {
       rowkey.assign(objs, schema_.get_rowkey_column_num());
     }
@@ -452,18 +452,18 @@ int ObRowGenerate::get_next_row(const int64_t seed, const ObStoreRow *&row, bool
 
   if(!is_inited_){
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "should init first");
+
   } else if(NULL == (buf = static_cast<char *>(p_allocator_->alloc(sizeof(ObStoreRow))))) {
-    STORAGE_LOG(WARN, "fail to alloc memory", K(ret));
+
   } else if(NULL == (objs = static_cast<ObObj*>(p_allocator_->alloc(sizeof(ObObj)*schema_.get_column_count())))){
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to alloc memory");
+
   } else {
     res_row = new(buf)ObStoreRow;
     res_row->row_val_.cells_ = objs;
     res_row->row_val_.count_ = schema_.get_column_count();
     if (OB_SUCCESS != (ret = generate_one_row(*res_row, seed, old_value))) {
-      STORAGE_LOG(WARN, "fail to generate one row.", K(ret), K(row));
+
     }
   }
   if(OB_SUCC(ret)) {
@@ -481,7 +481,7 @@ int ObRowGenerate::generate_one_row(ObStoreRow &row, int64_t seed, bool old_valu
   int ret = OB_SUCCESS;
   if(!is_inited_){
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "should init first");
+
   } else if (schema_.get_rowkey_column_num() > row.row_val_.count_) {
     ret = OB_INVALID_ARGUMENT;
     STORAGE_LOG(WARN, "invalid argument.",
@@ -493,7 +493,7 @@ int ObRowGenerate::generate_one_row(ObStoreRow &row, int64_t seed, bool old_valu
       const uint64_t column_id = column_list_.at(i).col_id_;
       ObObjType column_type = column_list_.at(i).col_type_.get_type();
       if (OB_SUCCESS != (ret = set_obj(column_type, column_id, seed, row.row_val_.cells_[i], old_value))) {
-        STORAGE_LOG(WARN, "fail to set obj.", K(ret), K(i), K(seed));
+
       } else {
         if (ObVarcharType == column_type || ObCharType == column_type || ObHexStringType == column_type) {
         } else if (ObNullType == column_type) {
@@ -518,7 +518,7 @@ int ObRowGenerate::set_obj(const ObObjType &column_type,
   int ret = OB_SUCCESS;
   if(!is_inited_){
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "should init first");
+
   } else {
     const int64_t rowkey_pos = schema_.get_column_schema(column_id)->get_rowkey_position();
     int64_t value = 0;
@@ -532,7 +532,7 @@ int ObRowGenerate::set_obj(const ObObjType &column_type,
     case ObNullType:
       if(rowkey_pos > 0){
         ret = OB_NOT_SUPPORTED;
-        STORAGE_LOG(WARN, "ObNULLType should not be rowkey column");
+
       } else {
         obj.set_null();
       }
@@ -632,7 +632,7 @@ int ObRowGenerate::set_obj(const ObObjType &column_type,
       char *buf = NULL;
       if(NULL == (buf = reinterpret_cast<char*>(p_allocator_->alloc(VARIABLE_BUF_LEN)))){
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "fail to alloc memory");
+
       } else if(rowkey_pos > 0){
         sprintf(buf, "%064ld", seed);
       } else {
@@ -648,13 +648,13 @@ int ObRowGenerate::set_obj(const ObObjType &column_type,
     case ObExtendType:
       if(rowkey_pos > 0){
         ret = OB_NOT_SUPPORTED;
-        STORAGE_LOG(WARN, "ObExtendType should not be rowkey column");
+
       } else {
         obj.set_nop_value();
       }
       break;
     default:
-      STORAGE_LOG(WARN, "not support this data type.", K(column_type));
+
       ret = OB_NOT_SUPPORTED;
     }
   }
@@ -668,7 +668,7 @@ int ObRowGenerate::check_one_row(const ObStoreRow& row, bool &exist)
 
   if(!is_inited_){
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "should init first");
+
   } else {
     //first get seed from rowkey
     ObObjType column_type;
@@ -687,7 +687,7 @@ int ObRowGenerate::check_one_row(const ObStoreRow& row, bool &exist)
     if(OB_SUCC(ret)){
       ObObj obj = row.row_val_.cells_[pos];
       if(OB_SUCCESS != (ret = get_seed(column_type, obj, seed))){
-        STORAGE_LOG(WARN, "fail to get seed.", K(ret));
+
       }
     }
   }
@@ -702,7 +702,7 @@ int ObRowGenerate::check_one_row(const ObStoreRow& row, bool &exist)
         column_type = schema_.get_column_schema(column_id)->get_data_type();
         value = seed * static_cast<uint8_t>(column_type) + column_id;
         if(OB_SUCCESS != (ret = compare_obj(column_type, value, row.row_val_.cells_[i], exist))){
-          STORAGE_LOG(WARN, "compare obobj error", K(ret));
+
         }
         if(!exist){
           break;
@@ -790,7 +790,7 @@ int ObRowGenerate::compare_obj(const ObObjType &column_type, const int64_t value
     char *buf = NULL;
     if(NULL == (buf = reinterpret_cast<char*>(p_allocator_->alloc(VARIABLE_BUF_LEN)))){
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "fail to alloc memory");
+
     } else {
       sprintf(buf, "%064ld", value);
     }
@@ -799,7 +799,7 @@ int ObRowGenerate::compare_obj(const ObObjType &column_type, const int64_t value
       str.assign_ptr(buf, static_cast<int32_t>(strlen(buf)));
       if(str != obj.get_string()){
         exist = false;
-        STORAGE_LOG(WARN, "row value is different", K(str), K(obj));
+
       }
     }
     break;
@@ -809,7 +809,7 @@ int ObRowGenerate::compare_obj(const ObObjType &column_type, const int64_t value
     char *buf = NULL;
     if(NULL == (buf = reinterpret_cast<char*>(p_allocator_->alloc(VARIABLE_BUF_LEN)))){
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "fail to alloc memory");
+
     } else {
       sprintf(buf, "%064ld", value);//not change this
     }
@@ -818,7 +818,7 @@ int ObRowGenerate::compare_obj(const ObObjType &column_type, const int64_t value
       str.assign_ptr(buf, static_cast<int32_t>(strlen(buf)));
       if(str != obj.get_string()){
         exist = false;
-        STORAGE_LOG(WARN, "row value is different", K(str), K(obj));
+
       }
     }
     break;
@@ -827,11 +827,11 @@ int ObRowGenerate::compare_obj(const ObObjType &column_type, const int64_t value
     //just check value to OP_NOP
     if(obj.get_ext() != ObActionFlag::OP_NOP){
       exist = false;
-      STORAGE_LOG(WARN, "row value is different", K(obj.get_ext()), K(static_cast<int64_t>(value)));
+
     }
     break;
   default:
-    STORAGE_LOG(WARN, "don't support this data type.", K(column_type));
+
     ret = OB_NOT_SUPPORTED;
   }
   return ret;
@@ -911,7 +911,7 @@ int ObRowGenerate::get_seed(const ObObjType &column_type, const ObObj obj, int64
     break;
   case ObExtendType:
   default:
-    STORAGE_LOG(WARN, "don't support this data type.", K(column_type));
+
     ret = OB_NOT_SUPPORTED;
   }
   return ret;

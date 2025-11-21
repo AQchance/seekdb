@@ -314,7 +314,7 @@ int ObDBMSSchedJobExecutor::run_dbms_sched_job(
               ret = OB_ERR_UNEXPECTED;
             }
           } else if (OB_ITER_END == ret) {
-            LOG_INFO("program not exists, may delete alreay!", K(ret), K(tenant_id), K(job_info.get_program_name().ptr()), K(job_info.get_program_name().ptr()));
+
             ret = OB_SUCCESS;
           } else {
             LOG_WARN("failed to get next", K(ret), K(tenant_id), K(job_info.get_job_name().ptr()), K(job_info.get_program_name().ptr()));
@@ -345,7 +345,7 @@ int ObDBMSSchedJobExecutor::run_dbms_sched_job(
                   ret = OB_ERR_UNEXPECTED;
                 }
               } else if (OB_ITER_END == ret) {
-                LOG_INFO("job argument not exists, use default");
+
                 ret = OB_SUCCESS;
                 OZ (sql.assign_fmt("select default_value from %s where program_name = \'%.*s\' and job_name = \'%s\' and argument_position = %d and is_for_default = 1",
                   OB_ALL_TENANT_SCHEDULER_PROGRAM_ARGUMENT_TNAME,

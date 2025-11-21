@@ -41,7 +41,7 @@ int ObDeviceConnectivityCheckManager::check_device_connectivity(const ObBackupDe
   } else if (OB_FAIL(check_file.check_io_permission(storage_dest))) {
     LOG_WARN("fail to check io permission", KR(ret), K(storage_dest));
   } else {
-    LOG_INFO("succ to check device connectivity", K(storage_dest));
+
   }
   return ret;
 }

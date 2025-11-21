@@ -107,7 +107,7 @@ int ObExprQuote::calc(ObString &res_str, ObString str, ObCollationType coll_type
           break;
         }
         }
-        LOG_DEBUG("debug result", K(wchar), KPHEX(buf, pos));
+
         return ret;
       };
       OZ (string_write_buf(ObCharsetUtils::get_const_str(coll_type, '\''), buf, buf_len, pos));

@@ -71,7 +71,7 @@ int ObExprConvert::calc_result_type2(ObExprResType &type,
       type1.set_calc_collation_type(type.get_collation_type());
       type1.set_calc_collation_level(type.get_collation_level());
       type_ctx.set_cast_mode(type_ctx.get_cast_mode() | CM_CHARSET_CONVERT_IGNORE_ERR);
-      LOG_DEBUG("in calc result type", K(ret), K(type1), K(type2), K(type));
+
     }
   }
 

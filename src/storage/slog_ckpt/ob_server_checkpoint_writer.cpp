@@ -53,7 +53,7 @@ int ObServerCheckpointWriter::init(ObStorageLogger *server_slogger)
 int ObServerCheckpointWriter::write_checkpoint(const ObLogCursor &log_cursor)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start to write server checkpoint", K(log_cursor));
+
 
   MacroBlockId tenant_meta_entry;
   if (OB_UNLIKELY(!is_inited_)) {
@@ -69,7 +69,7 @@ int ObServerCheckpointWriter::write_checkpoint(const ObLogCursor &log_cursor)
   } else if (OB_FAIL(server_slogger_->remove_useless_log_file(log_cursor.file_id_, OB_SERVER_TENANT_ID))) {
     LOG_WARN("fail to remove_useless_log_file", K(ret));
   } else {
-    LOG_INFO("succeed to write server checkpoint", K(log_cursor), K(tenant_meta_entry));
+
   }
 
   return ret;

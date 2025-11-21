@@ -160,7 +160,7 @@ int ObPxSqcAsyncProxy::launch_one_rpc_request(ObPxRpcInitSqcArgs &args, int64_t 
 
 int ObPxSqcAsyncProxy::wait_all() {
   int ret = OB_SUCCESS;
-  LOG_TRACE("wail all async sqc rpc to end", K(dfo_));
+
   // Exit the while loop condition: exit the while loop if any of the 3 conditions are met
   // 1. Obtain enough and correct callback results within the valid time frame
   // 2. Timeout, ret = OB_TIMEOUT
@@ -239,10 +239,10 @@ int ObPxSqcAsyncProxy::wait_all() {
 
 void ObPxSqcAsyncProxy::destroy() {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("async sqc proxy deconstruct, the callbacklist is ", K(callbacks_));
+
   ARRAY_FOREACH(callbacks_, idx) {
     ObSqcAsyncCB *callback = callbacks_.at(idx);
-    LOG_DEBUG("async sqc proxy deconstruct, the callback status is ", K(idx), K(*callback));
+
     callback->~ObSqcAsyncCB();
   }
   allocator_.reuse();

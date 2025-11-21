@@ -510,7 +510,7 @@ int ObInKeyPart::remove_in_dup_vals()
       }
     }
   }
-  LOG_TRACE("succeed to remove duplicated values from in keypart", K(has_dup), K(val_cnt), K(distinct_param_val_arr.count()));
+
   return ret;
 }
 

@@ -118,7 +118,7 @@ int ObLockMemCtx::rollback_table_lock_(const ObTxSEQ to_seq_no, const ObTxSEQ fr
 {
   int ret = OB_SUCCESS;
   ObLockMemtable *memtable = nullptr;
-  LOG_DEBUG("ObLockMemCtx::rollback_table_lock_", K(to_seq_no), K(from_seq_no));
+
   if (OB_FAIL(memtable_handle_.get_lock_memtable(memtable))) {
     LOG_ERROR("get lock memtable failed", K(ret));
   } else {
@@ -132,7 +132,7 @@ int ObLockMemCtx::rollback_table_lock_(const ObTxSEQ to_seq_no, const ObTxSEQ fr
       } else {
         if (curr->lock_op_.op_type_ == OUT_TRANS_LOCK || curr->lock_op_.op_type_ == OUT_TRANS_UNLOCK) {
           ret = OB_TRANS_NEED_ROLLBACK;
-          LOG_INFO("rollback trans because has OUT_TRANS_LOCK", KR(ret), K(to_seq_no), K(from_seq_no), K(lock_list_));
+
           break;
         } else {
           memtable->remove_lock_record(curr->lock_op_);
@@ -151,7 +151,7 @@ int ObLockMemCtx::rollback_table_lock_(const ObTxSEQ to_seq_no, const ObTxSEQ fr
                    curr->prio_op_.lock_op_.lock_seq_no_.get_branch() != to_seq_no.get_branch()) {
           // branch missmatch
         } else {
-          LOG_DEBUG("remove from priority_list_", KPC(curr));
+
           const ObTableLockPrioArg arg(curr->prio_op_.priority_);
           memtable->remove_priority_task(arg, curr->prio_op_.lock_op_);
           (void)priority_list_.remove(curr);
@@ -233,7 +233,7 @@ int ObLockMemCtx::rollback_table_lock(const ObTxSEQ to_seq_no, const ObTxSEQ fro
       LOG_WARN("rollback table lock failed", K(ret), K(to_seq_no), K(from_seq_no));
     }
   }
-  LOG_DEBUG("ObLockMemCtx::rollback_table_lock ", K(ret), K(to_seq_no), K(from_seq_no));
+
   return ret;
 }
 
@@ -339,7 +339,7 @@ int ObLockMemCtx::clear_table_lock(
       }
     }
   }
-  LOG_DEBUG("ObLockMemCtx::clear_table_lock ", K(ret), K(is_committed), K(commit_scn));
+
   return ret;
 }
 
@@ -372,7 +372,7 @@ int ObLockMemCtx::add_lock_record(
     free_lock_link_node_(lock_op_node);
     lock_op_node = NULL;
   }
-  LOG_DEBUG("ObLockMemCtx::add_lock_record", K(ret), K(lock_op));
+
   return ret;
 }
 
@@ -409,7 +409,7 @@ void ObLockMemCtx::remove_lock_record(
       }
     }
   }
-  LOG_DEBUG("ObLockMemCtx::remove_lock_record ", K(lock_op));
+
 }
 
 int ObLockMemCtx::check_lock_exist( //TODO(lihongqin):check it
@@ -553,7 +553,7 @@ int ObLockMemCtx::check_lock_need_replay(
   need_replay = true;
 
   if (scn < max_durable_scn_) {
-    LOG_INFO("no need replay at tx ctx", K(max_durable_scn_), K(scn), K(lock_op));
+
     need_replay = false;
   } else if (OB_UNLIKELY(!lock_op.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
@@ -601,7 +601,7 @@ int ObLockMemCtx::add_priority_record(
     free_prio_link_node_(prio_op_node);
     prio_op_node = NULL;
   }
-  LOG_INFO("ObLockMemCtx::add_priority_record", K(ret), K(arg), K(lock_op));
+
   return ret;
 }
 
@@ -643,7 +643,7 @@ int ObLockMemCtx::prepare_priority_task(
     free_prio_link_node_(prio_op_node);
     prio_op_node = NULL;
   }
-  LOG_INFO("ObLockMemCtx::prepare_priority_record", K(ret), K(arg), K(lock_op));
+
   return ret;
 }
 
@@ -680,7 +680,7 @@ void ObLockMemCtx::remove_priority_record(
       }
     }
   }
-  LOG_DEBUG("ObLockMemCtx::remove_priority_record ", K(lock_op));
+
 }
 
 // get priority op array
@@ -745,7 +745,7 @@ int ObLockMemCtx::clear_priority_list()
         free_prio_link_node_(curr);
       }
     }
-    LOG_INFO("clear priority list", K(ret), K(record_count));
+
   }
   return ret;
 }

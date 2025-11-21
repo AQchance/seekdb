@@ -89,10 +89,10 @@ int ObMemtableSingleRowReader::init_a_new_range(const ObDatumRange &new_range_to
     TRANS_LOG(WARN, "invalid memtable ptr", KR(ret));
   } else if (OB_ISNULL(out_cols = param_->get_out_col_descs())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected null out_cols", KR(ret), K_(param));
+
   } else if (FALSE_IT(cur_range_ = new_range_to_scan)) {
   } else if (OB_FAIL(check_is_range_scan_(new_range_to_scan))) {
-    STORAGE_LOG(WARN, "check is range scan failed", KR(ret), K(new_range_to_scan));
+
   } else if (!is_range_scan_) {
     // This range is a single rowkey or Delete-Insert table. Do not need construct a ObMvccRowIterator.
     // ObMemtable::get() function will be called instead
@@ -103,7 +103,7 @@ int ObMemtableSingleRowReader::init_a_new_range(const ObDatumRange &new_range_to
     ret = OB_ITER_END;
   } else if (OB_UNLIKELY(!real_range.is_memtable_valid())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected invalid datum range", K(ret), K(real_range));
+
   } else if (OB_FAIL(ObMemtableKey::build(start_key,
                                           *out_cols,
                                           &real_range.get_start_key().get_store_rowkey(),
@@ -152,7 +152,7 @@ int ObMemtableSingleRowReader::check_is_range_scan_(const blocksstable::ObDatumR
               read_info_->get_schema_rowkey_count(),
               read_info_->get_datum_utils(),
               is_single))) {
-    STORAGE_LOG(WARN, "check range failed", KR(ret));
+
   } else {
     // ObStoreRange store_range;
     // store_range.set_start_key(new_range_to_scan.get_start_key().get_store_rowkey());
@@ -201,7 +201,7 @@ int ObMemtableSingleRowReader::get_next_row(const ObDatumRow *&row)
   int ret = OB_SUCCESS;
   if (OB_FAIL(fill_in_next_row(private_row_))) {
     if (OB_ITER_END != ret) {
-      STORAGE_LOG(WARN, "fill in next row faild", KR(ret));
+
     }
   } else {
     row = &private_row_;
@@ -220,14 +220,14 @@ int ObMemtableSingleRowReader::fill_in_next_row(ObDatumRow &next_row)
   int ret = OB_SUCCESS;
   if (param_->is_delete_insert_) {
     ret = OB_NOT_SUPPORTED;
-    STORAGE_LOG(WARN, "delete insert table should not call this function", KR(ret), K(lbt()));
+
   } else {
     // NOTICE : use static to avoid constructor overhead of ObDatumRow
     static ObDatumRow unused_row;
     int64_t unused_cnt;
     if (OB_FAIL(inner_fill_in_next_row_(next_row, unused_row, unused_cnt))) {
       if (OB_ITER_END != ret) {
-        STORAGE_LOG(WARN, "fill in next row failed", KR(ret), K(next_row));
+
       }
     }
   }
@@ -248,10 +248,10 @@ int ObMemtableSingleRowReader::fill_in_next_delete_insert_row(ObDatumRow &next_r
   while (OB_SUCC(ret) && !got_a_new_row) {
     if (OB_FAIL(inner_fill_in_next_row_(next_row, delete_row, acquired_row_cnt))) {
       if (OB_ITER_END != ret) {
-        STORAGE_LOG(WARN, "fill in next row failed", KR(ret), K(next_row));
+
       }
     } else if (next_row.row_flag_.is_not_exist()) {
-      STORAGE_LOG(DEBUG, "meet a Insert-Delete row, try get next row");
+
     } else {
       got_a_new_row = true;
     }
@@ -271,25 +271,25 @@ int ObMemtableSingleRowReader::inner_fill_in_next_row_(ObDatumRow &next_row,
     ObMvccValueIterator *value_iter = nullptr;
     if (OB_FAIL(get_next_value_iter_(key, value_iter))) {
       if (OB_ITER_END != ret) {
-        STORAGE_LOG(WARN, "get next value iterator failed", KR(ret), KPC(key));
+
       }
     } else if (OB_FAIL(fill_in_next_row_by_value_iter_(key, value_iter, next_row, delete_row, acquired_row_cnt))) {
-      STORAGE_LOG(WARN, "fill in new row by value iter failed", KR(ret), KPC(key));
+
     } else if (next_row.row_flag_.is_not_exist()) {
-      STORAGE_LOG(DEBUG, "meet a Insert-Delete row, try get next row");
+
     }
-    STORAGE_LOG(DEBUG, "fill in row for range scan", K(ret), K(is_range_scan_), K(cur_range_), K(next_row), K(delete_row), K(acquired_row_cnt));
+
   } else {
     // the range is a single row key, directly get row from memtable
     if (row_has_been_gotten_) {
       ret = OB_ITER_END;
     } else if (OB_FAIL(memtable_->get(*param_, *context_, cur_range_.get_start_key(), next_row))) {
-      STORAGE_LOG(WARN, "fail to get memtable row", K(ret), K(param_), K(cur_range_));
+
     } else {
       // set row_has_been_gotten flag after get operation
       row_has_been_gotten_ = true;
       acquired_row_cnt = 1;
-      STORAGE_LOG(DEBUG, "fill in row for single rowkey scan(get)", K(next_row), K(next_row.scan_index_));
+
     }
   }
   return ret;
@@ -319,7 +319,7 @@ int ObMemtableSingleRowReader::get_next_value_iter_(const ObMemtableKey *&key, O
             lock_state.trans_scn_);
       }
     } else if (OB_ITER_END != ret) {
-      STORAGE_LOG(WARN, "row_iter_ get_next_row fail", K(ret), KP(key), KP(value_iter));
+
     }
   }
   return ret;
@@ -355,12 +355,12 @@ int ObMemtableSingleRowReader::fill_in_next_row_by_value_iter_(const ObMemtableK
                                                      next_row_scn,
                                                      delete_row_scn,
                                                      acquired_row_cnt))) {
-      STORAGE_LOG(WARN, "iterate delete insert row fail", K(ret), K(*rowkey), KP(value_iter));
+
     }
   } else {
     // normal read
     if (OB_FAIL(ObReadRow::iterate_row(*read_info_, *rowkey, *value_iter, next_row, bitmap_, next_row_scn))) {
-      STORAGE_LOG(WARN, "iterate_row fail", K(ret), K(*rowkey), KP(value_iter));
+
     } else {
       acquired_row_cnt = 1;
     }
@@ -369,14 +369,14 @@ int ObMemtableSingleRowReader::fill_in_next_row_by_value_iter_(const ObMemtableK
   if (OB_SUCC(ret)) {
     if (param_->need_scn_) {
       if (next_row.row_flag_.is_exist() && OB_FAIL(fill_in_row_scn_(next_row_scn, value_iter, next_row))) {
-        STORAGE_LOG(WARN, "fill in next row scn filed", KR(ret), K(next_row));
+
       } else if (param_->is_delete_insert_ && delete_row.row_flag_.is_exist() &&
                  OB_FAIL(fill_in_row_scn_(delete_row_scn, value_iter, delete_row))) {
-        STORAGE_LOG(WARN, "fill in delete row scn filed", KR(ret), K(delete_row));
+
       }
     }
     next_row.scan_index_ = 0;
-    STORAGE_LOG(DEBUG, "chaser debug memtable next row", K(ret), K(next_row), K(delete_row));
+
   }
   return ret;
 }
@@ -388,17 +388,17 @@ int ObMemtableSingleRowReader::fill_in_row_scn_(const int64_t row_scn,
   int ret = OB_SUCCESS;
   if (row_scn == share::SCN::max_scn().get_val_for_tx()) {
     // TODO(handora.qc): remove it as if we confirmed no problem according to row_scn
-    STORAGE_LOG(INFO, "use max row scn", KPC(value_iter->get_mvcc_acc_ctx()));
+
   }
 
   int trans_idx = read_info_->get_trans_col_index();
   if (OB_UNLIKELY(trans_idx < 0 || trans_idx >= new_row.count_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected trans idx", K(ret), K(new_row.count_), K(trans_idx));
+
   } else {
     new_row.storage_datums_[trans_idx].reuse();
     new_row.storage_datums_[trans_idx].set_int(row_scn);
-    STORAGE_LOG(DEBUG, "set row scn is", K(trans_idx), K(row_scn), K_(private_row));
+
   }
   return ret;
 }

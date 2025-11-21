@@ -150,7 +150,7 @@ int ObIvfAsyncTask::do_work()
     ctx_->task_status_.ret_code_ = ret;
     ctx_->in_thread_pool_ = false;
   }
-  LOG_INFO("end ivf do_work", K(ret), K(ctx_->task_status_.tablet_id_));
+
   return ret;
 }
 }  // namespace share

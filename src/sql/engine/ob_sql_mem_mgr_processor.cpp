@@ -69,7 +69,7 @@ int ObSqlMemMgrProcessor::init(
       } else {
         // first time to register
         profile_.init(cache_size, OB_MALLOC_MIDDLE_BLOCK_SIZE);
-        LOG_TRACE("trace register work area profile", K(profile_.get_cache_size()));
+
       }
       // Each initialization assumes it is unregistered
       profile_.set_expect_size(OB_INVALID_ID);
@@ -164,7 +164,7 @@ int ObSqlMemMgrProcessor::update_cache_size(ObIAllocator *allocator, int64_t cac
   } else if (OB_NOT_NULL(sql_mem_mgr_)) {
     int64_t pre_size = profile_.get_cache_size();
     if (!profile_.get_auto_policy()) {
-      LOG_TRACE("unexpected status: profile need register", K(ret));
+
     } else if (cache_size != pre_size) {
       profile_.init(cache_size, OB_MALLOC_MIDDLE_BLOCK_SIZE);
       if (OB_FAIL(sql_mem_mgr_->update_work_area_profile(
@@ -226,7 +226,7 @@ int ObSqlMemMgrProcessor::try_upgrade_auto_mgr(ObIAllocator *allocator, int64_t 
       if (OB_FAIL(update_used_mem_size(mem_used))) {
         LOG_WARN("failed to update used mem_size", K(ret));
       }
-      LOG_TRACE("trace upgrade auto manager", K(profile_), K(mem_used), K(max_area_size));
+
     } else if (OB_FAIL(update_used_mem_size(mem_used))) {
       LOG_WARN("failed to update used mem_size", K(ret));
     }
@@ -264,7 +264,7 @@ int ObSqlMemMgrProcessor::extend_max_memory_size(
           LOG_WARN("failed to get max available memory size", K(pre_cache_size),
             K(pre_expect_size), K(ret));
         } else if (profile_.get_cache_size() > profile_.get_expect_size()) {
-          LOG_TRACE("trace extend max memory size", K(pre_cache_size), K(pre_expect_size));
+
           break;
         }
       } else {
@@ -289,11 +289,11 @@ int ObSqlMemMgrProcessor::extend_max_memory_size(
           K(profile_.get_cache_size()));
       }
       if (max_times <= times) {
-        LOG_TRACE("extend memory size too more times", K(times));
+
         break;
       }
     }
-    LOG_TRACE("extend memory size", K(profile_.get_expect_size()), K(profile_.get_cache_size()));
+
   }
   return ret;
 }
@@ -303,7 +303,7 @@ void ObSqlMemMgrProcessor::unregister_profile()
   if (OB_NOT_NULL(sql_mem_mgr_)) {
     sql_mem_mgr_->unregister_work_area_profile(profile_);
     destroy();
-    LOG_DEBUG("trace unregister work area profile", K(profile_));
+
   }
   if (OB_NOT_NULL(dummy_ptr_)) {
     dummy_alloc_->free(dummy_ptr_);
@@ -383,7 +383,7 @@ int ObSqlWorkareaUtil::get_workarea_size(const ObSqlWorkAreaType wa_type,
       LOG_WARN("failed to init tenant config", K(tenant_id), K(ret));
     }
   }
-  LOG_DEBUG("debug workarea size", K(value), K(tenant_id), K(lbt()));
+
   return ret;
 }
 

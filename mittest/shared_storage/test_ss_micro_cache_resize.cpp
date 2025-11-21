@@ -157,7 +157,7 @@ int TestSSMicroCacheResize::TestSSMicroCacheResizeThread::parallel_get_micro_blo
 TEST_F(TestSSMicroCacheResize, test_basic_resize_cache_file)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_basic_resize_cache_file");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSPhysicalBlockManager &phy_blk_mgr = micro_cache->phy_blk_mgr_;
   ObSSMicroMetaManager &micro_meta_mgr = micro_cache->micro_meta_mgr_;
@@ -177,7 +177,7 @@ TEST_F(TestSSMicroCacheResize, test_basic_resize_cache_file)
 TEST_F(TestSSMicroCacheResize, test_resize_between_free_space_for_prewarm)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_resize_between_free_space_for_prewarm");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSARCInfo &arc_info = micro_cache->micro_meta_mgr_.arc_info_;
 
@@ -210,7 +210,7 @@ TEST_F(TestSSMicroCacheResize, test_resize_between_free_space_for_prewarm)
 TEST_F(TestSSMicroCacheResize, test_get_micro_block_and_resize_larger)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_get_micro_block_and_resize_larger");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSPhysicalBlockManager &phy_blk_mgr = micro_cache->phy_blk_mgr_;
   const int64_t origin_data_blk_cnt = phy_blk_mgr.blk_cnt_info_.cache_limit_blk_cnt();

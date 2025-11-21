@@ -119,7 +119,7 @@ public:                                                                         
   {                                                                                                    \
     int ret = OB_SUCCESS;                                                                              \
     if (OB_FAIL(BaseClass::switch_param(param, context, get_table_param))) {                           \
-      STORAGE_LOG(WARN, "Failed to switch param", K(ret));                                             \
+                                             \
     } else if (nullptr != base_data_merge_) {                                                          \
       is_table_store_refreshed_ = true;                                                                \
     }                                                                                                  \

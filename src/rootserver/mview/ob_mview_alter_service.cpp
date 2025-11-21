@@ -331,7 +331,7 @@ int ObMviewAlterService::alter_mlog_attributes(const uint64_t tenant_id,
           LOG_WARN("failed to update mlog info", KR(ret), K(mlog_info));
         }
 
-        LOG_INFO("[ALTER MLOG] alter mlog attributes", KR(ret), K(alter_table_arg));
+
       }
     }
   }

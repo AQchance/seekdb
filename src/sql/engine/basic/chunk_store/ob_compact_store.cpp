@@ -107,7 +107,7 @@ int ObCompactStore::inner_get_next_row(const ObChunkDatumStore::StoredRow *&sr)
       cur_blk_id_++;
     }
     if (OB_SUCC(ret)) {
-      LOG_TRACE("block reader read row", KPC(sr));
+
     }
   } else {
     ret = OB_ERR_UNEXPECTED;

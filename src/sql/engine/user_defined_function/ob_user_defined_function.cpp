@@ -111,7 +111,7 @@ int ObUdfFunction::process_init_func(ObUdfFunction::ObUdfCtx &udf_ctx) const
 void ObUdfFunction::process_deinit_func(ObUdfFunction::ObUdfCtx &udf_ctx) const
 {
   if (OB_ISNULL(func_deinit_)) {
-    LOG_DEBUG("the deinit function is null");
+
   } else {
     IGNORE_RETURN func_deinit_(&udf_ctx.udf_init_);
   }

@@ -75,7 +75,7 @@ int ObTransformDecorrelate::transform_one_stmt(common::ObIArray<ObParentDMLStmt>
     LOG_WARN("failed to add transform hint", K(ret));
   } else {
     trans_happened = true;
-    LOG_TRACE("succeed to do decorrelate lateral derived table");
+
   }
   return ret;
 }
@@ -101,11 +101,11 @@ int ObTransformDecorrelate::transform_one_stmt_with_outline(common::ObIArray<ObP
                                                               is_happened))) {
       LOG_WARN("failed to decorrelate aggr lateral derived table", K(ret));
     } else if (!is_happened) {
-      LOG_TRACE("can not do decorrelate with outline", K(ctx_->src_qb_name_));
+
     } else {
       ++ctx_->trans_list_loc_;
       trans_happened = true;
-      LOG_TRACE("succeed to do decorrelate with outline", K(ctx_->src_qb_name_));
+
     }
   } while (OB_SUCC(ret) && is_happened);
 
@@ -689,7 +689,7 @@ int ObTransformDecorrelate::decorrelate_aggr_lateral_derived_table(ObDMLStmt *st
     } else if (OB_FAIL(stmt->formalize_stmt(ctx_->session_info_, false))) {
       LOG_WARN("failed to formalize stmt", K(ret));
     } else {
-      LOG_TRACE("succ to to do decorrelate aggr lateral inline view");
+
     }
   }
   return ret;

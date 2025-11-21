@@ -44,12 +44,12 @@ int ObBloomFilterMicroBlockWriter::init(const int64_t micro_block_size) {
 
   if (IS_INIT) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObBloomFilterMicroBlockWriter init twice", K(ret));
+
   } else if (micro_block_size <= 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid macro block size", K(micro_block_size), K(ret));
+
   } else if (OB_FAIL(data_buffer_.ensure_space(micro_block_size))) {
-    STORAGE_LOG(WARN, "Failed to ensure space", K(micro_block_size), K(ret));
+
   } else {
     is_inited_ = true;
   }
@@ -63,7 +63,7 @@ int ObBloomFilterMicroBlockWriter::build_micro_block_header(
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObBloomFilterMicroBlockWriter is not init", K(ret));
+
   } else if (OB_UNLIKELY(rowkey_column_count <= 0 || row_count < 0)) {
     ret = OB_INVALID_ARGUMENT;
     STORAGE_LOG(WARN,
@@ -96,7 +96,7 @@ int ObBloomFilterMicroBlockWriter::write(
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObBloomFilterMicroBlockWriter is not init", K(ret));
+
   } else if (OB_UNLIKELY(!bf_cache_value.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
     STORAGE_LOG(WARN,
@@ -105,7 +105,7 @@ int ObBloomFilterMicroBlockWriter::write(
   } else if (OB_FAIL(
                  build_micro_block_header(bf_cache_value.get_prefix_len(),
                                           bf_cache_value.get_row_count()))) {
-    STORAGE_LOG(WARN, "Failed to build bf micro block header", K(ret));
+
   } else if (OB_FAIL(data_buffer_.write_serialize(bf_cache_value))) {
     STORAGE_LOG(WARN, "Failed to serialize bloom filter cache value",
                 K_(data_buffer), K(bf_cache_value), K(ret));
@@ -149,7 +149,7 @@ int ObBloomFilterMacroBlockWriter::init(const ObDataStoreDesc &desc) {
 
   if (IS_INIT) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObBloomFilterMacroBlockWriter init twice", K(ret));
+
   } else if (OB_UNLIKELY(!desc.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
     STORAGE_LOG(WARN, "Invalid argument to init ObBloomFilterMacroBlockWriter",
@@ -163,9 +163,9 @@ int ObBloomFilterMacroBlockWriter::init(const ObDataStoreDesc &desc) {
                 K(ret));
   } else if (OB_FAIL(compressor_.init(desc.get_macro_block_size(),
                                       desc.get_compressor_type()))) {
-    STORAGE_LOG(WARN, "Failed to init compressor", K(ret));
+
   } else if (OB_FAIL(bf_micro_writer_.init(desc.get_macro_block_size()))) {
-    STORAGE_LOG(WARN, "Failed to init bloomfilter micro writer", K(ret));
+
   } else {
     if (OB_FAIL(ret)) {
     } else {
@@ -183,7 +183,7 @@ int ObBloomFilterMacroBlockWriter::write(
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObBloomFilterMacroBlockWriter not init", K(ret));
+
   } else if (OB_UNLIKELY(!bf_cache_value.is_valid() ||
                          bf_cache_value.is_empty())) {
     ret = OB_INVALID_ARGUMENT;
@@ -208,12 +208,12 @@ int ObBloomFilterMacroBlockWriter::write(
                   K(block_size), K(ret));
     } else if (OB_FAIL(compressor_.compress(block_buf, block_size,
                                             comp_block_buf, comp_block_size))) {
-      STORAGE_LOG(WARN, "Failed to compress bloomfilter micro block", K(ret));
+
     } else if (OB_FAIL(write_micro_block(comp_block_buf, comp_block_size,
                                          block_size))) {
-      STORAGE_LOG(WARN, "Failed to write bloomfilter micro block", K(ret));
+
     } else if (OB_FAIL(flush_macro_block())) {
-      STORAGE_LOG(WARN, "Failed to flush bloomfilter macro block", K(ret));
+
     }
   }
 
@@ -227,7 +227,7 @@ int ObBloomFilterMacroBlockWriter::write_micro_block(
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObBloomFilterMacroBlockWriter not init", K(ret));
+
   } else if (OB_ISNULL(comp_block_buf) || comp_block_size <= 0 ||
              orig_block_size <= 0) {
     ret = OB_INVALID_ARGUMENT;
@@ -297,7 +297,7 @@ int ObBloomFilterMacroBlockWriter::init_headers(const int64_t row_count) {
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObBloomFilterMacroBlockWriter not init", K(ret));
+
   } else if (OB_UNLIKELY(row_count <= 0)) {
     ret = OB_INVALID_ARGUMENT;
     STORAGE_LOG(WARN, "Invalid argument to init bloomfilter headers",
@@ -353,7 +353,7 @@ int ObBloomFilterMacroBlockWriter::flush_macro_block() {
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObBloomFilterMacroBlockWriter not init", K(ret));
+
   } else {
     ObStorageObjectOpt opt;
     opt.set_private_object_opt();
@@ -371,7 +371,7 @@ int ObBloomFilterMacroBlockWriter::flush_macro_block() {
 
     if (OB_FAIL(ObObjectManager::write_object(opt, macro_write_info,
                                               macro_handle))) {
-      STORAGE_LOG(WARN, "Failed to write bloomfilter macro block", K(ret));
+
     } else if (OB_FAIL(block_write_ctx_.add_macro_block_id(
                    macro_handle.get_macro_id()))) {
       STORAGE_LOG(WARN, "fail to add macro id", K(ret), "macro id",

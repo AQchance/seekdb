@@ -31,13 +31,13 @@ bool ObVecAsyncTaskExector::check_operation_allow()
   const bool is_not_support = false;
   if (is_not_support) {
     bret = false;
-    LOG_DEBUG("skip this round, not support async task.");
+
   } else if (ObVecIndexAsyncTaskUtil::in_active_time(tenant_id_, is_active_time)) {
     bret = false;
     LOG_WARN("fail to get active time");
   } else if (!is_active_time) {
     bret = false;
-    LOG_INFO("skip this round, not in active time.");
+
   }
   return bret;
 }
@@ -115,11 +115,11 @@ int ObVecAsyncTaskExector::load_task(uint64_t &task_trace_base_num)
         } else if (OB_FAIL(ObVecIndexAsyncTaskUtil::get_table_id_from_adapter(adapter, tablet_id, index_table_id))) { // only get table 3 table_id to generate new task
           LOG_WARN("fail to get table id from adapter", K(ret), K(tablet_id));
         } else if (OB_INVALID_ID == index_table_id) {
-          LOG_DEBUG("index table id is invalid, skip", K(ret)); // skip to next
+ // skip to next
         } else if (OB_FAIL(ObVecIndexAsyncTaskUtil::fetch_new_trace_id(++task_trace_base_num, allocator, new_trace_id))) {
           LOG_WARN("fail to fetch new trace id", K(ret), K(tablet_id));
         } else {
-          LOG_DEBUG("start load task", K(ret), K(tablet_id), K(tenant_id_), K(task_trace_base_num), K(ls_->get_ls_id()));
+
           // 1. update task_ctx to async task map
           task_ctx->tenant_id_ = tenant_id_;
           task_ctx->ls_ = ls_;
@@ -148,7 +148,7 @@ int ObVecAsyncTaskExector::load_task(uint64_t &task_trace_base_num)
         }
       }
     }
-    LOG_INFO("finish load async task", K(ret), K(ls_->get_ls_id()), K(task_ctx_array.count()), K(current_task_cnt));
+
   }
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(insert_new_task(task_ctx_array))) {
@@ -281,7 +281,7 @@ int ObVecTaskManager::check_task_status()
     if (OB_EAGAIN == ret) {
       ret = OB_OP_NOT_ALLOW;
       LOG_USER_ERROR(OB_OP_NOT_ALLOW, "call dbms_vector.refresh_index/rebuild_index before vector index adapter ready is");
-      LOG_INFO("call dbms_vector.refresh_index/rebuild_index before vector index adapter ready is not supported, please try again", K(ret));
+
     }
   } else if (finished_task.empty()) {
   } else if (OB_FAIL(get_difference(finished_task, task_ids_, tmp_task))) {

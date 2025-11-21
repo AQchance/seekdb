@@ -368,7 +368,7 @@ int ObHashJoinBatchMgr::remove_undumped_batch(int64_t cur_dumped_partition, int3
     }
   }
   if (0 < erase_cnt) {
-    LOG_TRACE("trace remove undumped batch", K(ret), K(erase_cnt));
+
   }
   if (OB_SUCC(ret) && erase_cnt + batch_list_.size() != size) {
     ret = OB_ERR_UNEXPECTED;
@@ -421,7 +421,7 @@ int ObHashJoinBatchMgr::get_or_create_batch(
       if (OB_FAIL(batch_list_.push_front(batch_pair))) {
         LOG_WARN("fail to push batch pair to batch list", K(ret));
       } else {
-        LOG_DEBUG("push front batch", K(batchno), K(is_left));
+
         if (is_left) {
           batch = batch_pair.left_;
         } else {

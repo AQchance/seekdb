@@ -176,7 +176,7 @@ int ObTableApiUpdateExecutor::get_next_row()
         LOG_WARN("fail to get next row", K(ret));
       }
     } else if (!is_row_changed) {
-      LOG_INFO("update row not changed", K(tb_ctx_.get_entity()));
+
     } else if (OB_FAIL(update_row_to_das())) {
       LOG_WARN("fail tp update row to das", K(ret));
     } else {

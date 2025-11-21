@@ -87,7 +87,7 @@ int ObSSTableMultiVersionRowGetter::inner_open(
   } else {
     base_rowkey_ = static_cast<const ObDatumRowkey *>(query_range);
     if (OB_FAIL(base_rowkey_->to_multi_version_range(*access_ctx.get_range_allocator(), multi_version_range_))) {
-      STORAGE_LOG(WARN, "Failed to transfer multi version range", K(ret), KPC_(base_rowkey));
+
     } else if (OB_FAIL(ObSSTableRowScanner::inner_open(
                 iter_param, access_ctx, table, &multi_version_range_))) {
       LOG_WARN("failed to open scanner", K(ret));
@@ -161,7 +161,7 @@ int ObSSTableMultiVersionRowScanner::inner_open(
     ObSSTable *sstable = static_cast<ObSSTable *>(table);
     base_range_ = static_cast<const ObDatumRange *>(query_range);
     if (OB_FAIL(base_range_->to_multi_version_range(*access_ctx.get_range_allocator(), multi_version_range_))) {
-      STORAGE_LOG(WARN, "Failed to transfer multi version range", K(ret), KPC(base_range_));
+
     } else if (OB_FAIL(ObSSTableRowScanner::inner_open(iter_param, access_ctx, table, &multi_version_range_))) {
       LOG_WARN("failed to open scanner", K(ret));
     }
@@ -220,7 +220,7 @@ int ObSSTableMultiVersionRowMultiGetter::inner_open(
       for (int i = 0; OB_SUCC(ret) && i < base_rowkeys_->count(); i++) {
         tmp_multi_version_range.reset();
         if (OB_FAIL(base_rowkeys_->at(i).to_multi_version_range(*access_ctx.get_range_allocator(), tmp_multi_version_range))) {
-          STORAGE_LOG(WARN, "Failed to transfer multi version range", K(ret), K(i), K(base_rowkeys_->at(i)));
+
         } else if (OB_FAIL(multi_version_ranges_.push_back(tmp_multi_version_range))) {
           LOG_WARN("push back multi version range failed", K(ret));
         }
@@ -332,7 +332,7 @@ int ObSSTableMultiVersionRowMultiScanner::inner_open(
       for (int i = 0; OB_SUCC(ret) && i < base_ranges->count(); i++) {
         tmp_multi_version_range.reset();
         if (OB_FAIL(base_ranges->at(i).to_multi_version_range(*access_ctx.get_range_allocator(), tmp_multi_version_range))) {
-          STORAGE_LOG(WARN, "Failed to transfer multi version range", K(ret), K(i), K(base_ranges->at(i)));
+
         } else if (OB_FAIL(multi_version_ranges_.push_back(tmp_multi_version_range))) {
           LOG_WARN("push back multi version range failed", K(ret));
         }

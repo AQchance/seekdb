@@ -106,7 +106,7 @@ TEST_F(TestIndexBlockTreeCursor, test_path)
 
 TEST_F(TestIndexBlockTreeCursor, test_normal)
 {
-  STORAGE_LOG(INFO, "normal test start");
+
   uint64_t tenant_id = table_schema_.get_tenant_id();
   ObIndexBlockTreeCursor tree_cursor;
   ASSERT_EQ(OB_SUCCESS, tree_cursor.init(sstable_, allocator_, &tablet_handle_.get_obj()->get_rowkey_read_info()));
@@ -119,7 +119,7 @@ TEST_F(TestIndexBlockTreeCursor, test_normal)
   row_generate_.get_next_row(query_row_seed, query_row);
   ObDatumRowkey query_rowkey;
   query_rowkey.assign(query_row.storage_datums_, TEST_ROWKEY_COLUMN_CNT);
-  STORAGE_LOG(INFO, "Query rowkey", K(query_row));
+
   const ObIndexBlockRowParser *idx_row_parser = nullptr;
   const ObIndexBlockRowHeader *idx_row_header = nullptr;
   bool is_beyond_range = false;
@@ -129,7 +129,7 @@ TEST_F(TestIndexBlockTreeCursor, test_normal)
   ASSERT_EQ(OB_SUCCESS, tree_cursor.get_idx_parser(idx_row_parser));
   ASSERT_EQ(OB_SUCCESS, idx_row_parser->get_header(idx_row_header));
   ASSERT_TRUE(idx_row_header->is_macro_node());
-  STORAGE_LOG(DEBUG, "Show index row", K(tree_cursor.row_), K(tree_cursor.curr_path_item_));
+
   ObArray<ObDatumRowkey> endkeys;
   ObArray<ObMicroIndexInfo> index_infos;
   ObIndexBlockTreePathItem hold_item;
@@ -138,8 +138,8 @@ TEST_F(TestIndexBlockTreeCursor, test_normal)
   all_range.set_whole_range();
   ASSERT_EQ(OB_SUCCESS, tree_cursor.get_child_micro_infos(
       all_range, allocator_, endkeys, index_infos, hold_item));
-  STORAGE_LOG(DEBUG, "Endkeys: ", K(endkeys));
-  STORAGE_LOG(DEBUG, "Micro index infos:", K(index_infos));
+
+
 
 
   ASSERT_EQ(OB_SUCCESS, tree_cursor.pull_up_to_root());
@@ -158,15 +158,15 @@ TEST_F(TestIndexBlockTreeCursor, test_normal)
   // Query Rowkey larger than sstable range
   row_generate_.get_next_row(large_query_row_seed, query_row);
   query_rowkey.assign(query_row.storage_datums_, TEST_ROWKEY_COLUMN_CNT);
-  STORAGE_LOG(DEBUG, "Large query rowkey", K(query_rowkey));
+
   ASSERT_EQ(OB_SUCCESS, tree_cursor.pull_up_to_root());
-  STORAGE_LOG(DEBUG, "Root block item", KPC(tree_cursor.curr_path_item_));
+
   ASSERT_EQ(OB_SUCCESS, tree_cursor.drill_down(
       query_rowkey, ObIndexBlockTreeCursor::LEAF, is_beyond_range));
   ASSERT_TRUE(is_beyond_range);
 
   tree_cursor.idx_row_parser_.get_header(idx_row_header);
-  STORAGE_LOG(DEBUG, "Large query rowkey cursor", K(tree_cursor.row_), KPC(tree_cursor.curr_path_item_), KPC(idx_row_header));
+
 
   // Query Rowkey smaller than sstable range
   row_generate_.get_next_row(small_query_row_seed, query_row);
@@ -180,7 +180,7 @@ TEST_F(TestIndexBlockTreeCursor, test_normal)
   while (OB_SUCCESS == tmp_ret) {
     ASSERT_EQ(OB_SUCCESS, tmp_ret);
     tree_cursor.idx_row_parser_.get_header(idx_row_header);
-    STORAGE_LOG(DEBUG, "Show curr macro row", K(tree_cursor.row_), KPC(idx_row_header), K(cnt));
+
     tmp_ret = tree_cursor.move_forward(false);
     ++cnt;
   }
@@ -242,11 +242,11 @@ TEST_F(TestIndexBlockTreeCursor, test_macro_iter)
           offset += info.get_block_size();
         }
         if (info.get_macro_id() != macro_desc.macro_block_id_) {
-          LOG_INFO("not equal", K(info.get_macro_id()), K(macro_desc.macro_block_id_));
+
         }
         ASSERT_EQ(info.get_macro_id(), macro_desc.macro_block_id_);
       }
-      STORAGE_LOG(DEBUG, "Show Macro block descriptor", K(macro_desc), K(cnt));
+
       ASSERT_TRUE(macro_desc.is_valid());
     }
   }

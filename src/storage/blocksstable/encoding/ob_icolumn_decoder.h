@@ -436,9 +436,9 @@ OB_INLINE int ObIColumnDecoder::locate_row_data(
   int ret = OB_SUCCESS;
   if (OB_ISNULL(row_index)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Null pointer of row index", K(ret));
+
   } else if (OB_FAIL(row_index->get(row_id, row_data, row_len))) {
-    STORAGE_LOG(WARN, "Failed to get row data offset from row index", K(ret));
+
   }
   return ret;
 }
@@ -460,7 +460,7 @@ OB_INLINE int ObIColumnDecoder::batch_locate_row_data(
   } else if (OB_FAIL(row_index->batch_get(
       row_ids, row_cap, col_ctx.has_extend_value(),
       row_datas, datums))) {
-    STORAGE_LOG(WARN, "Failed to batch get row data offset from row index", K(ret));
+
   }
   return ret;
 }
@@ -478,7 +478,7 @@ int ObIColumnDecoder::batch_locate_cell_data(
   int ret = common::OB_SUCCESS;
   if (OB_ISNULL(data_arr) || OB_ISNULL(len_arr) || OB_ISNULL(row_ids)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument", K(ret), KP(row_ids), KP(data_arr), KP(len_arr));
+
   } else if (ctx.is_fix_length()) {
     for (int64_t i = 0; i < row_cap; ++i) {
       data_arr[i] += header.offset_;
@@ -499,7 +499,7 @@ int ObIColumnDecoder::batch_locate_cell_data(
           const uint8_t col_idx_byte = *(data_arr[i] + header.offset_);
           const char *var_data = data_arr[i] + header.offset_ + sizeof(uint8_t);
           if (OB_FAIL(gen.init(var_data - col_idx_byte, col_idx_byte))) {
-            STORAGE_LOG(WARN, "init integer array generator failed", K(ret), K(header));
+
           } else {
             var_data += (ctx.micro_block_header_->var_column_count_ - 1) * col_idx_byte;
             const int64_t offset = 0 == header.length_ ? 0 : gen.get_array().at(header.length_);
@@ -516,7 +516,7 @@ int ObIColumnDecoder::batch_locate_cell_data(
           const int8_t col_idx_byte = *(data_arr[i] + header.offset_);
           const char *var_data = data_arr[i] + header.offset_ + sizeof(uint8_t);
           if (OB_FAIL(gen.init(var_data - col_idx_byte, col_idx_byte))) {
-            STORAGE_LOG(WARN, "init integer array generator failed", K(ret), K(header));
+
           } else {
             var_data += (ctx.micro_block_header_->var_column_count_ - 1) * col_idx_byte;
             // 0 if header.length_ == 0

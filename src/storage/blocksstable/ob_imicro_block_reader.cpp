@@ -89,7 +89,7 @@ int ObIMicroBlockReader::locate_range(
       }
     }
   }
-  LOG_DEBUG("locate range for end key", K(is_left_border), K(is_right_border), K(range), K(begin_idx), K(end_idx), K(equal));
+
   return ret;
 }
 
@@ -117,7 +117,7 @@ int ObIMicroBlockReader::locate_border_row_id(
   } else if (OB_FAIL(find_bound(rowkey, true, begin_idx, end_idx, border_row_idx, is_equal))) {
     LOG_WARN("fail to get lower bound border key", K(ret), K(begin_idx), K(end_idx), K(rowkey));
   }
-  LOG_DEBUG("locate border key row id", K(ret), K(rowkey), K(begin_idx), K(end_idx), K(border_row_idx), K(is_equal));
+
   return ret;
 }
 

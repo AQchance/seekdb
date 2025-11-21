@@ -54,12 +54,12 @@ int ObStorageEstimator::estimate_row_count(const obrpc::ObEstPartArg &arg,
     } else if (OB_FAIL(res.index_param_res_.push_back(est_res))) {
       LOG_WARN("failed to push back result", K(ret));
     } else {
-      LOG_TRACE("[OPT EST]: row count stat", K(est_res), K(i), K(param));
+
     }
   }
 #if !defined(NDEBUG)
   if (OB_SUCC(ret)) {
-    LOG_INFO("[OPT EST] rowcount estimation result", K(arg), K(res));
+
   }
 #endif
   return ret;
@@ -76,12 +76,12 @@ int ObStorageEstimator::estimate_block_count_and_row_count(const obrpc::ObEstBlo
     } else if (OB_FAIL(res.tablet_params_res_.push_back(est_res))) {
       LOG_WARN("failed to push back result", K(ret));
     } else {
-      LOG_TRACE("[OPT EST]: block count and row count stat", K(est_res), K(i), "param", arg.tablet_params_arg_.at(i));
+
     }
   }
 #if !defined(NDEBUG)
   if (OB_SUCC(ret)) {
-    LOG_INFO("[OPT EST] block count and row count estimation result", K(arg), K(res));
+
   }
 #endif
   return ret;
@@ -116,7 +116,7 @@ int ObStorageEstimator::storage_estimate_rowcount(const uint64_t tenant_id,
     res.physical_row_count_ = static_cast<int64_t>(rc_physical);
     res.reliable_ = true;
   }
-  LOG_TRACE("[OPT EST]:estimate partition scan batch rowcount", K(res), K(batch), K(ret));
+
   return ret;
 }
 //@shanyan.g Adjustment layer operates at the partition level
@@ -141,14 +141,14 @@ int ObStorageEstimator::storage_estimate_partition_batch_rowcount(
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("get unexpected null", K(ret), K(access_service));
     } else if (OB_FAIL(table_scan_range.init(table_scan_param, batch, allocator))) {
-      STORAGE_LOG(WARN, "Failed to init table scan range", K(ret), K(batch));
+
     } else if (OB_FAIL(access_service->estimate_row_count(table_scan_param,
                                                           table_scan_range,
                                                           timeout_us,
                                                           est_records,
                                                           rc_logical,
                                                           rc_physical))) {
-      LOG_TRACE("OPT:[STORAGE EST FAILED, USE STAT EST]", "storage_ret", ret);
+
     } else {
       LOG_TRACE("storage estimate row count result", K(rc_logical), K(rc_physical),
                 K(table_scan_param), K(table_scan_range), K(timeout_us), K(ret));
@@ -172,7 +172,7 @@ int ObStorageEstimator::storage_estimate_block_count_and_row_count(
   common::ObIArray<int64_t> &cg_macro_cnt_arr = res.cg_macro_cnt_arr_;
   common::ObIArray<int64_t> &cg_micro_cnt_arr = res.cg_micro_cnt_arr_;
   int64_t cg_count = arg.column_group_ids_.count();
-  LOG_TRACE("begin to storage estimate blockcount", K(arg));
+
 
   if (!arg.is_valid()) {
     res.macro_block_count_ = macro_block_count;
@@ -232,7 +232,7 @@ int ObStorageEstimator::storage_estimate_skip_rate(
   common::ObIArray<uint64_t> &res_sample_count = res.sample_count_;
 
   int64_t column_count = arg.column_ids_.count();
-  LOG_TRACE("begin to storage skip rate", K(arg));
+
   if (!arg.is_valid()) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected cg skip rate", K(ret));
@@ -283,7 +283,7 @@ int ObStorageEstimator::estimate_skip_rate(const obrpc::ObEstSkipRateArg &arg,
     }
   }
   //for debug, change to trace later
-  LOG_INFO("[OPT EST]: estimate skip rate", K(arg), K(res), K(ObTimeUtility::current_time()-start_time));
+
   return ret;
 }
 } // end of sql

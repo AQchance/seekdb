@@ -82,7 +82,7 @@ TEST_F(TestProxyDefaultValue, test_mysql_common_data_types)
         ASSERT_EQ(OB_SUCCESS, ret);
         ret = row.deserialize(tmp_str.ptr(), tmp_str.length(), pos);
         ASSERT_EQ(OB_SUCCESS, ret);
-        LOG_INFO("default value", K(index), K(row));
+
         switch(index) {
           case 0: {
             bool equal = int_default_value == row.get_int();
@@ -116,7 +116,7 @@ TEST_F(TestProxyDefaultValue, test_mysql_common_data_types)
             ret = ObTimeConverter::str_to_datetime(ObString(timestamp_default_value), cvrt_ctx, timestamp);
             ASSERT_EQ(OB_SUCCESS, ret);
             bool equal = row.get_timestamp() == timestamp;
-            LOG_INFO("timestamp default value", K(row.get_timestamp()), K(timestamp));
+
             ASSERT_TRUE(equal);
             break;
           }
@@ -133,7 +133,7 @@ TEST_F(TestProxyDefaultValue, test_mysql_common_data_types)
             ret = ObTimeConverter::str_to_datetime(ObString(datetime_default_value), cvrt_ctx, datetime);
             ASSERT_EQ(OB_SUCCESS, ret);
             bool equal = row.get_datetime() == datetime;
-            LOG_INFO("datetime default value", K(row.get_datetime()), K(datetime));
+
             ASSERT_TRUE(equal);
             break;
           }
@@ -193,7 +193,7 @@ TEST_F(TestProxyDefaultValue, test_oracle_common_data_types)
         ASSERT_EQ(OB_SUCCESS, ret);
         ret = row.deserialize(tmp_str.ptr(), tmp_str.length(), pos);
         ASSERT_EQ(OB_SUCCESS, ret);
-        LOG_INFO("default value", K(index), K(row));
+
         switch(index) {
           case 0: {
             ASSERT_EQ(OB_SUCCESS, tmp_value.assign_fmt("%ld", int_default_value));

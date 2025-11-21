@@ -63,7 +63,7 @@ int validate_uri_type(const common::ObString &uri)
       !uri.prefix_match(OB_HDFS_PREFIX) &&
       !uri.prefix_match(OB_AZBLOB_PREFIX)) {
     ret = OB_INVALID_BACKUP_DEST;
-    STORAGE_LOG(ERROR, "invalid backup uri", KR(ret), KS(uri));
+
   }
   return ret;  
 }
@@ -87,7 +87,7 @@ int get_storage_type_from_path(const common::ObString &uri, ObStorageType &type)
     type = OB_STORAGE_AZBLOB;
   } else {
     ret = OB_INVALID_BACKUP_DEST;
-    STORAGE_LOG(ERROR, "invalid backup uri", KR(ret), KS(uri));
+
   }
   return ret;
 }
@@ -335,22 +335,22 @@ int ObTopNMinimumDirEntryWithMarkerOperator::func(const dirent *entry)
   Entry tmp_entry;
   if (OB_UNLIKELY(n_ <= 0) || OB_ISNULL(entry) || OB_ISNULL(entry->d_name)) {
     ret = OB_INVALID_ARGUMENT; 
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K_(n), KP(entry));
+
   } else if (FALSE_IT(d_name = entry->d_name)) {
     // filter each dirent whose name is smaller than or equal to marker_
   } else if (less_than(d_name, marker_)) {
   } else if (heap_.count() < n_) {
     if (OB_FAIL(alloc_and_init_(d_name, tmp_entry))) {
-      STORAGE_LOG(WARN, "alloc_and_init_ failed", K(ret), K(d_name));
+
     } else if (OB_FAIL(heap_.push(tmp_entry))) {
-      STORAGE_LOG(WARN, "push failed", K(ret), K(d_name), K(tmp_entry));
+
     } else {}
 
     if (OB_FAIL(ret)) {
       free_memory_(tmp_entry);
     }
   } else if (OB_FAIL(try_replace_top_(d_name))) {
-    STORAGE_LOG(WARN, "try_replace_top_ failed", K(ret), K(d_name), K(heap_.top()), K(tmp_entry));
+
   }
 
   return ret;
@@ -365,9 +365,9 @@ int ObTopNMinimumDirEntryWithMarkerOperator::handle_each_dir_entry(
   ObArray<Entry> entry_list;
   while (!heap_.empty() && OB_SUCC(ret)) {
     if (OB_FAIL(entry_list.push_back(heap_.top()))) {
-      STORAGE_LOG(WARN, "fail to push entry to entry_list", K(ret), K(entry_list.size()));
+
     } else if (OB_FAIL(heap_.pop())) {
-      STORAGE_LOG(WARN, "pop failed", K(ret));
+
     }
   }
   // Data obtained using a max heap is in descending order. 
@@ -376,7 +376,7 @@ int ObTopNMinimumDirEntryWithMarkerOperator::handle_each_dir_entry(
   for (int64_t i = entry_list.count() - 1; OB_SUCC(ret) && i >= 0; i--) {
     if (OB_ISNULL(entry_list[i].obj_name_)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "obj_name_ is NULL", K(ret), K(entry_list[i]), K(i));
+
     } else if (OB_FAIL(handle_listed_object(op, entry_list[i].obj_name_,
                                             strlen(entry_list[i].obj_name_),
                                             entry_list[i].obj_size_))) {
@@ -397,11 +397,11 @@ int ObTopNMinimumDirEntryWithMarkerOperator::alloc_and_init_(
   int64_t buf_size = -1;
   if (OB_ISNULL(d_name)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(d_name));
+
   } else if (FALSE_IT(buf_size = strlen(d_name) + 1)) {
   } else if (OB_ISNULL(out_ptr = static_cast<char*>(allocator_.alloc(buf_size)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to alloc mem for out ptr", K(ret), K(buf_size), K(d_name));
+
   } else {
     strncpy(out_ptr, d_name, buf_size - 1);
     out_ptr[buf_size - 1] = '\0';
@@ -430,15 +430,15 @@ int ObTopNMinimumDirEntryWithMarkerOperator::try_replace_top_(const char *d_name
   Entry new_entry;
   if (OB_ISNULL(d_name)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(d_name));
+
   } else if (less_than(top_data.obj_name_, d_name)) {
   } else if (OB_FAIL(alloc_and_init_(d_name, new_entry))) {
-    STORAGE_LOG(WARN, "alloc_and_cp_ failed", K(ret), K(d_name), K(top_data));
+
   } else {
     free_memory_(top_data);
     if (OB_FAIL(heap_.replace_top(new_entry))) {
       free_memory_(new_entry);
-      STORAGE_LOG(WARN, "TopNDir replace_top failed", K(ret), K(new_entry), K(top_data));
+
     }
   }
   
@@ -523,10 +523,10 @@ int ObStorageUtil::open(common::ObObjectStorageInfo *storage_info)
 
   if (is_init()) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "double init the storage util", K(ret));
+
   } else if (OB_ISNULL(storage_info) || OB_UNLIKELY(!storage_info->is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), KPC(storage_info));
+
   } else if (OB_FALSE_IT(device_type_ = storage_info->get_type())) {
   } else if (OB_STORAGE_FILE == device_type_) {
     util_ = &file_util_;
@@ -540,12 +540,12 @@ int ObStorageUtil::open(common::ObObjectStorageInfo *storage_info)
     util_ = &s3_util_;
   } else {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid device type", K(ret), K_(device_type));
+
   }
 
   if (OB_SUCC(ret) && NULL != util_) {
     if (OB_FAIL(util_->open(storage_info))) {
-      STORAGE_LOG(WARN, "failed to open util", K(ret), K_(device_type));
+
       util_ = NULL;
     } else {
       storage_info_ = storage_info;
@@ -574,14 +574,14 @@ int ObStorageUtil::head_object_meta_(const ObString &uri, ObStorageObjectMetaBas
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, device_type_))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
         K(ret), K(uri), K_(device_type));
   } else if (OB_FAIL(util_->head_object_meta(uri, obj_meta))) {
     EVENT_INC(ObStatEventIds::OBJECT_STORAGE_IO_HEAD_FAIL_COUNT);
-    STORAGE_LOG(WARN, "fail to head object meta", K(ret), K(uri));
+
   }
   EVENT_INC(ObStatEventIds::OBJECT_STORAGE_IO_HEAD_COUNT);
   return ret;
@@ -599,16 +599,16 @@ int ObStorageUtil::detect_storage_obj_meta(
   bool need_detect_appendable = is_adaptive;
   if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret), K(uri));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, device_type_))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
         K(ret), K(uri), K_(device_type));
   } else if (OB_FAIL(head_object_meta_(uri, obj_meta))) {
-    STORAGE_LOG(WARN, "fail to head object meta", K(ret), K(uri));
+
   } else if (obj_meta.is_exist_) {
     if (ObStorageObjectMetaType::OB_FS_DIR != obj_meta.type_) {
       // just return directly
@@ -640,7 +640,7 @@ int ObStorageUtil::detect_storage_obj_meta(
                                                format_meta_uri, sizeof(format_meta_uri)))) {
         OB_LOG(WARN, "fail to construct adaptive format_meta name", K(ret), K(uri));
       } else if (OB_FAIL(head_object_meta_(format_meta_uri, obj_meta))) {
-        STORAGE_LOG(WARN, "fail to head object meta", K(ret), K(format_meta_uri));
+
       } else if (obj_meta.is_exist_) {
         obj_meta.type_ = ObStorageObjectMetaType::OB_OBJ_SIMULATE_APPEND;
       } else {
@@ -859,10 +859,10 @@ int ObStorageUtil::del_appendable_file(const ObString &uri)
   ObExternalIOCounterGuard io_guard;
   if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret), K(uri));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, device_type_))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
@@ -888,10 +888,10 @@ int ObStorageUtil::list_files(
 
   if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret), K(uri));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, device_type_))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
@@ -899,9 +899,9 @@ int ObStorageUtil::list_files(
   } else if (OB_FAIL(build_full_dir_path(uri.ptr(), uri_buf, sizeof(uri_buf)))) {
     OB_LOG(WARN, "fail to make uri end with '/'", K(ret), K(uri));
   } else if (is_adaptive && OB_FAIL(list_adaptive_files(uri_buf, op))) {
-    STORAGE_LOG(WARN, "fail to list adaptive files", K(ret), K(uri));
+
   } else if (!is_adaptive && OB_FAIL(util_->list_files(uri_buf, op))) {
-    STORAGE_LOG(WARN, "fail to list files", K(ret), K(uri));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -932,10 +932,10 @@ int ObStorageUtil::list_adaptive_files(
 
   if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret), K(uri));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, device_type_))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
@@ -1251,10 +1251,10 @@ int ObStorageUtil::list_directories(
     OB_LOG(WARN, "not support list directories for adaptive mode", K(ret), K(uri), K(is_adaptive));
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, device_type_))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
@@ -1262,7 +1262,7 @@ int ObStorageUtil::list_directories(
   } else if (OB_FAIL(build_full_dir_path(uri.ptr(), uri_buf, sizeof(uri_buf)))) {
     OB_LOG(WARN, "fail to make uri end with '/'", K(ret), K(uri));
   } else if (OB_FAIL(util_->list_directories(uri_buf, op))) {
-    STORAGE_LOG(WARN, "failed to list_files", K(ret), K(uri), K(uri_buf));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -1288,16 +1288,16 @@ int ObStorageUtil::is_exist(const common::ObString &uri, bool &exist)
     //do nothing
   } else if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret), K(uri));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, device_type_))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
         K(ret), K(uri), K_(device_type));
   } else if (OB_FAIL(util_->is_exist(uri, exist))) {
-    STORAGE_LOG(WARN, "failed to check is exist", K(ret), K(uri));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -1321,10 +1321,10 @@ int ObStorageUtil::get_adaptive_file_length(const common::ObString &uri, int64_t
   if (OB_FAIL(ret)) {
   } else if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret), K(uri));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, device_type_))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
@@ -1349,10 +1349,10 @@ int ObStorageUtil::get_adaptive_file_length(const common::ObString &uri, int64_t
   
   if (OB_SUCC(ret)) {
     if (file_length == 0) {
-      STORAGE_LOG(INFO, "this file is empty", K(ret), K(uri), K(file_length));
+
     } else if (file_length < 0) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "this file length is invalid", K(ret), K(uri), K(file_length));
+
     }
   }
   
@@ -1371,10 +1371,10 @@ int ObStorageUtil::del_file(const common::ObString &uri)
   if (OB_FAIL(ret)) {
   } else if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret), K(uri));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, device_type_))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
@@ -1421,13 +1421,13 @@ int ObStorageUtil::batch_del_files(
   if (OB_FAIL(ret)) {
   } else if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret));
+
   } else if (OB_UNLIKELY(0 == n_files_to_delete)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", K(ret), K(n_files_to_delete));
+
   } else if (use_batch_del_flag) {
     hash::ObHashMap<ObString, int64_t> files_to_delete_map;
     const ObString &uri = files_to_delete.at(0);
@@ -1437,13 +1437,13 @@ int ObStorageUtil::batch_del_files(
     MEMSET(bucket_with_prefix, 0, sizeof(bucket_with_prefix));
     
     if (OB_FAIL(files_to_delete_map.create(177, mem_tag))) {
-      STORAGE_LOG(WARN, "fail to create map", K(ret), K(uri), K_(device_type));
+
     } else if (OB_UNLIKELY(!is_storage_type_match(uri, device_type_))) {
       ret = OB_INVALID_BACKUP_DEST;
       STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
           K(ret), K(uri), K_(device_type));
     } else if (OB_FAIL(get_storage_prefix_from_path(uri, prefix))) {
-      STORAGE_LOG(WARN, "fail to get storage type prefix", K(ret), K(uri));
+
     } else {
       object_start = strlen(prefix);
       while (OB_SUCC(ret) && object_start < uri.length() && uri[object_start] != '/') {
@@ -1454,7 +1454,7 @@ int ObStorageUtil::batch_del_files(
       } else if (OB_UNLIKELY(object_start >= uri.length()
           || object_start >= sizeof(bucket_with_prefix))) {
         ret = OB_INVALID_ARGUMENT;
-        STORAGE_LOG(WARN, "uri has no object or bucket too long", K(ret), K(uri), K(object_start));
+
       } else {
         MEMCPY(bucket_with_prefix, uri.ptr(), object_start);
         bucket_with_prefix[object_start] = '\0';
@@ -1538,23 +1538,23 @@ int ObStorageUtil::mkdir(const common::ObString &uri)
   const int64_t start_ts = ObTimeUtility::current_time();
   OBJECT_STORAGE_GUARD(storage_info_, uri, IO_HANDLED_SIZE_ZERO);
 
-  STORAGE_LOG(DEBUG, "mkdir", K(uri));
+
 #ifdef ERRSIM
   ret = OB_E(EventTable::EN_BACKUP_IO_BEFORE_MKDIR) OB_SUCCESS;
 #endif
   if (OB_FAIL(ret)) {
   } else if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret), K(uri));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, device_type_))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
         K(ret), K(uri), K_(device_type));
   } else if (OB_FAIL(util_->mkdir(uri))) {
-    STORAGE_LOG(WARN, "failed to mkdir", K(ret), K(uri));
+
   }
 #ifdef ERRSIM
   if (OB_SUCC(ret)) {
@@ -1578,10 +1578,10 @@ int ObStorageUtil::list_files(const common::ObString &uri, common::ObBaseDirEntr
   if (OB_FAIL(ret)) {
   } else if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret), K(uri));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, device_type_))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
@@ -1589,7 +1589,7 @@ int ObStorageUtil::list_files(const common::ObString &uri, common::ObBaseDirEntr
   } else if (OB_FAIL(build_full_dir_path(uri.ptr(), uri_buf, sizeof(uri_buf)))) {
     OB_LOG(WARN, "fail to make dir path end with '/'", K(ret), K(uri));
   } else if (OB_FAIL(util_->list_files(uri_buf, op))) {
-    STORAGE_LOG(WARN, "failed to list_files", K(ret), K(uri), K(uri_buf));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -1613,16 +1613,16 @@ int ObStorageUtil::write_single_file(const common::ObString &uri, const char *bu
   if (OB_FAIL(ret)) {
   } else if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret), K(uri));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, device_type_))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
         K(ret), K(uri), K_(device_type));
   } else if (OB_FAIL(util_->write_single_file(uri, buf, size))) {
-    STORAGE_LOG(WARN, "failed to write single file", K(ret), K(uri));
+
   } else {
     EVENT_ADD(ObStatEventIds::BACKUP_IO_WRITE_BYTES, size);
   }
@@ -1652,13 +1652,13 @@ int ObStorageUtil::del_dir(const common::ObString &uri)
   if (OB_FAIL(ret)) {
   } else if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, device_type_))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
         K(ret), K(uri), K_(device_type));
   } else if (OB_FAIL(util_->del_dir(uri))) {
-    STORAGE_LOG(WARN, "failed to del_file", K(ret), K(uri));
+
   }
   return ret;
 }
@@ -1677,10 +1677,10 @@ int ObStorageUtil::list_directories(const common::ObString &uri, common::ObBaseD
   if (OB_FAIL(ret)) {
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, device_type_))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
@@ -1688,7 +1688,7 @@ int ObStorageUtil::list_directories(const common::ObString &uri, common::ObBaseD
   } else if (OB_FAIL(build_full_dir_path(uri.ptr(), uri_buf, sizeof(uri_buf)))) {
     OB_LOG(WARN, "fail to make dir path end with '/'", K(ret), K(uri));
   } else if (OB_FAIL(util_->list_directories(uri_buf, op))) {
-    STORAGE_LOG(WARN, "failed to list_directories", K(ret), K(uri), K(uri_buf));
+
   } 
 
   if (OB_FAIL(ret)) {
@@ -1708,16 +1708,16 @@ int ObStorageUtil::is_tagging(const common::ObString &uri, bool &is_tagging)
   if (OB_FAIL(ret)) {
   } else if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret), K(uri));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, device_type_))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
         K(ret), K(uri), K_(device_type));
   } else if (OB_FAIL(util_->is_tagging(uri, is_tagging))) {
-    STORAGE_LOG(WARN, "failed to check is tagging", K(ret), K(uri));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -1738,15 +1738,15 @@ int ObStorageUtil::list_files_with_marker(const common::ObString &uri, common::O
 
   if (OB_UNLIKELY(!is_init())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "util is not inited", K(ret), K(uri));
+
   } else if (OB_UNLIKELY(uri.empty() || !op.is_marker_scan()) || OB_ISNULL(marker)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "marker ptr should not be nullptr or op type invalid", K(ret), K(uri), K(marker));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (OB_FAIL(validate_uri_type(uri))) {
-    STORAGE_LOG(WARN, "fail to validate uri!", K(uri));
+
   } else if (OB_FAIL(build_full_dir_path(uri.ptr(), uri_buf, sizeof(uri_buf)))) {
     OB_LOG(WARN, "fail to make uri end with '/'", K(ret), K(uri));
   } else {}
@@ -1766,7 +1766,7 @@ int ObStorageUtil::list_files_with_marker(const common::ObString &uri, common::O
       STORAGE_LOG(WARN, "failed to list adaptive files with marker",
           K(ret), K(uri), K(uri_buf), K(marker), K(scan_count));
     } else if (OB_FAIL(top_n_op.handle_each_dir_entry(op))) {
-      STORAGE_LOG(WARN, "failed to handle_each_dir_entry", K(ret), K(uri), K(scan_count));
+
     }
   }
 
@@ -1873,7 +1873,7 @@ ObStorageReader::ObStorageReader()
 ObStorageReader::~ObStorageReader()
 {
   if (NULL != reader_) {
-    STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "reader not closed", KCSTRING(uri_));
+
   }
 }
 
@@ -1892,20 +1892,20 @@ int ObStorageReader::open(const common::ObString &uri,
   if (OB_FAIL(ret)) {
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (NULL != reader_) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "cannot open twice", K(ret), K(uri));
+
   } else if (OB_ISNULL(storage_info) || OB_UNLIKELY(uri.empty() || !storage_info->is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), K(uri), KPC(storage_info));
+
   } else if (FALSE_IT(type = storage_info->get_type())) {
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, type))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
         K(ret), K(uri), KPC(storage_info), K(type));
   } else if (OB_FAIL(databuff_printf(uri_, sizeof(uri_), "%.*s", uri.length(), uri.ptr()))) {
-    STORAGE_LOG(WARN, "failed to fill uri", K(ret), K(uri));
+
   } else if (FALSE_IT(storage_info_ = storage_info)) {
   } else if (OB_STORAGE_FILE == type) {
     reader_ = &file_reader_;
@@ -1919,15 +1919,15 @@ int ObStorageReader::open(const common::ObString &uri,
     reader_ = &s3_reader_;
   } else {
     ret = OB_ERR_SYS;
-    STORAGE_LOG(ERROR, "unkown storage type", K(ret), K(uri));
+
   }
 
   if (OB_SUCC(ret)) {
     if (OB_ISNULL(reader_)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "reader_ is null", K(ret), K(uri));
+
     } else if (OB_FAIL(reader_->open(uri, storage_info, head_meta))) {
-      STORAGE_LOG(WARN, "failed to open reader", K(ret), K(uri), KPC(storage_info), K(head_meta));
+
     } else {
       has_meta_ = head_meta;
       if (head_meta) {
@@ -1938,7 +1938,7 @@ int ObStorageReader::open(const common::ObString &uri,
 
   if(OB_FAIL(ret)) {
     if (OB_SUCCESS != (tmp_ret = close())) {
-      STORAGE_LOG(WARN, "failed to close read file", K(ret), K(tmp_ret), K(uri));
+
     }
   } else {
     storage_info_ = storage_info;
@@ -1969,16 +1969,16 @@ int ObStorageReader::pread(char *buf, const int64_t buf_size, int64_t offset, in
   if (OB_FAIL(ret)) {
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(offset), K(buf_size));
+
   } else if (OB_ISNULL(reader_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not opened", K(ret));
+
   } else if (OB_ISNULL(buf) || OB_UNLIKELY(offset < 0 || (has_meta_ && offset > file_length_))) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", K(ret), KP(buf), K(offset), K_(has_meta), K_(file_length));
+
   } else if (OB_FAIL(reader_->pread(buf, buf_size, offset, read_size))) {
     EVENT_INC(ObStatEventIds::BACKUP_IO_READ_FAIL_COUNT);
-    STORAGE_LOG(WARN, "failed to read file", K(ret));
+
   } else {
     EVENT_ADD(ObStatEventIds::BACKUP_IO_READ_BYTES, read_size);
   }
@@ -1996,9 +1996,9 @@ int ObStorageReader::close()
 
   if (OB_ISNULL(reader_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not opened", K(ret));
+
   } else if (OB_FAIL(reader_->close())) {
-    STORAGE_LOG(WARN, "failed to close reader", K(ret));
+
   }
   reader_  = NULL;
   file_length_ = -1;
@@ -2029,7 +2029,7 @@ ObStorageAdaptiveReader::ObStorageAdaptiveReader()
 ObStorageAdaptiveReader::~ObStorageAdaptiveReader()
 {
   if (NULL != reader_) {
-    STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "adaptive reader not closed", KCSTRING(uri_));
+
   }
 }
 
@@ -2087,20 +2087,20 @@ int ObStorageAdaptiveReader::open(const common::ObString &uri,
   if (OB_FAIL(ret)) {
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (NULL != reader_) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "cannot open twice", K(ret), K(uri));
+
   } else if (OB_ISNULL(storage_info) || OB_UNLIKELY(uri.empty() || !storage_info->is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), K(uri), KPC(storage_info));
+
   } else if (FALSE_IT(type = storage_info->get_type())) {
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, type))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
         K(ret), K(uri), KPC(storage_info), K(type));
   } else if (OB_FAIL(databuff_printf(uri_, sizeof(uri_), "%.*s", uri.length(), uri.ptr()))) {
-    STORAGE_LOG(WARN, "failed to fill uri", K(ret), K(uri));
+
   } else if (FALSE_IT(storage_info_ = storage_info)) {
   } else if (OB_STORAGE_FILE == type) {
     reader_ = &file_reader_;
@@ -2114,13 +2114,13 @@ int ObStorageAdaptiveReader::open(const common::ObString &uri,
     reader_ = &s3_reader_;
   } else {
     ret = OB_ERR_SYS;
-    STORAGE_LOG(ERROR, "unkown storage type", K(ret), K(uri));
+
   }
 
   if (OB_FAIL(ret)) {
   } else if (OB_ISNULL(reader_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "reader_ is null", K(ret), K(uri));
+
   } else if (OB_FAIL(util.open(storage_info))) {
     OB_LOG(WARN, "fail to open util", K(ret), K(uri), KPC(storage_info));
   } else if (OB_FAIL(util.detect_storage_obj_meta(uri, true/*is_adaptive*/,
@@ -2136,12 +2136,12 @@ int ObStorageAdaptiveReader::open(const common::ObString &uri,
     EVENT_INC(ObStatEventIds::OBJECT_STORAGE_IO_HEAD_COUNT);
   } else {
     ret = OB_ERR_SYS;
-    STORAGE_LOG(ERROR, "invalid storage object type", K(ret), K(uri), KPC(storage_info), K_(meta));
+
   }
 
   if(OB_FAIL(ret)) {
     if (OB_SUCCESS != (tmp_ret = close())) {
-      STORAGE_LOG(WARN, "failed to close read file", K(ret), K(tmp_ret), K(uri));
+
     }
   }
 
@@ -2266,9 +2266,9 @@ int ObStorageAdaptiveReader::close()
 
   if (OB_ISNULL(reader_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not opened", K(ret));
+
   } else if (OB_FAIL(reader_->close())) {
-    STORAGE_LOG(WARN, "failed to close reader", K(ret));
+
   }
   reader_  = NULL;
   start_ts_ = 0;
@@ -2294,7 +2294,7 @@ ObStorageWriter::ObStorageWriter()
 ObStorageWriter::~ObStorageWriter()
 {
   if (NULL != writer_) {
-    STORAGE_LOG_RET(ERROR, OB_ERR_UNEXPECTED, "writer not close");
+
   }
 }
 
@@ -2312,20 +2312,20 @@ int ObStorageWriter::open(const common::ObString &uri, common::ObObjectStorageIn
   if (OB_FAIL(ret)) {
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (NULL != writer_) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "cannot open twice", K(ret), K(uri));
+
   } else if (OB_ISNULL(storage_info) || OB_UNLIKELY(uri.empty() || !storage_info->is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), K(uri), KPC(storage_info));
+
   } else if (FALSE_IT(type = storage_info->get_type())) {
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, type))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
         K(ret), K(uri), KPC(storage_info), K(type));
   } else if (OB_FAIL(databuff_printf(uri_, sizeof(uri_), "%.*s", uri.length(), uri.ptr()))) {
-    STORAGE_LOG(WARN, "failed to fill uri", K(ret), K(uri));
+
   } else if (FALSE_IT(storage_info_ = storage_info)) {
   } else if (OB_STORAGE_FILE == type) {
     writer_ = &file_writer_;
@@ -2337,15 +2337,15 @@ int ObStorageWriter::open(const common::ObString &uri, common::ObObjectStorageIn
     writer_ = &s3_writer_;
   } else {
     ret = OB_ERR_SYS;
-    STORAGE_LOG(ERROR, "unkown storage type", K(ret), K(uri));
+
   }
 
   if (OB_SUCC(ret)) {
     if (OB_ISNULL(writer_)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "writer_ is null", K(ret), K(uri));
+
     } else if (OB_FAIL(writer_->open(uri, storage_info))) {
-      STORAGE_LOG(WARN, "failed to open writer", K(ret), K(uri));
+
     } else {
       storage_info_ = storage_info;
     }
@@ -2353,7 +2353,7 @@ int ObStorageWriter::open(const common::ObString &uri, common::ObObjectStorageIn
 
   if (OB_FAIL(ret)) {
     if (OB_SUCCESS != (tmp_ret = close())) {
-      STORAGE_LOG(WARN, "failed close write file", K(ret), K(tmp_ret), K(uri));
+
     }
   }
 
@@ -2373,13 +2373,13 @@ int ObStorageWriter::write(const char *buf,const int64_t size)
   if (OB_FAIL(ret)) {
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(size));
+
   } else if (OB_ISNULL(writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not opened", K(ret));
+
   } else if(OB_FAIL(writer_->write(buf, size))) {
     EVENT_INC(ObStatEventIds::BACKUP_IO_WRITE_FAIL_COUNT);
-    STORAGE_LOG(WARN, "failed to write", K(ret));
+
   } else {
     EVENT_ADD(ObStatEventIds::BACKUP_IO_WRITE_BYTES, size);
   }
@@ -2396,9 +2396,9 @@ int ObStorageWriter::close()
   OBJECT_STORAGE_GUARD(storage_info_, uri_, IO_HANDLED_SIZE_ZERO);
   if (OB_ISNULL(writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not opened", K(ret));
+
   } else if (OB_FAIL(writer_->close())) {
-    STORAGE_LOG(WARN, "failed to close writer", K(ret));
+
   }
   writer_  = NULL;
   start_ts_ = 0;
@@ -2440,7 +2440,7 @@ ObStorageAppender::ObStorageAppender(StorageOpenMode mode)
 ObStorageAppender::~ObStorageAppender()
 {
   if (is_opened_ && NULL != appender_) {
-    STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "appender not close");
+
   }
 }
 
@@ -2459,20 +2459,20 @@ int ObStorageAppender::open(
   if (OB_FAIL(ret)) {
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (NULL != appender_) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "cannot open twice", K(ret), K(uri));
+
   } else if (OB_ISNULL(storage_info) || OB_UNLIKELY(uri.empty() || !storage_info->is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), K(uri), KPC(storage_info));
+
   } else if (FALSE_IT(type_ = storage_info->get_type())) {
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, type_))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
         K(ret), K(uri), KPC(storage_info), K_(type));
   } else if (OB_FAIL(databuff_printf(uri_, sizeof(uri_), "%.*s", uri.length(), uri.ptr()))) {
-    STORAGE_LOG(WARN, "failed to fill uri", K(ret), K(uri));
+
   } else if (FALSE_IT(storage_info_ = storage_info)) {
   } else if (OB_STORAGE_FILE == type_) {
     appender_ = &file_appender_;
@@ -2488,15 +2488,15 @@ int ObStorageAppender::open(
     }
   } else {
     ret = OB_ERR_SYS;
-    STORAGE_LOG(ERROR, "unkown storage type", K(ret), K(uri));
+
   }
 
   if (OB_SUCC(ret)) {
     if (OB_ISNULL(appender_)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "appender_ is null", K(ret), K(uri));
+
     } else if (OB_FAIL(appender_->open(uri, storage_info))) {
-      STORAGE_LOG(WARN, "failed to open writer", K(ret), K(uri));
+
     } else {
       is_opened_ = true;
     }
@@ -2504,7 +2504,7 @@ int ObStorageAppender::open(
 
   if (OB_FAIL(ret)) {
     if (OB_SUCCESS != (tmp_ret = close())) {
-      STORAGE_LOG(WARN, "failed close write file", K(ret), K(tmp_ret), K(uri));
+
     }
   }
 
@@ -2525,39 +2525,39 @@ int ObStorageAppender::repeatable_pwrite_(const char *buf, const int64_t size, c
 
   if (OB_ISNULL(appender_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not opened", K(ret));
+
   } else if (OB_ISNULL(reader = static_cast<ObStorageReader *>(allocator.alloc(sizeof(ObStorageReader))))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     OB_LOG(WARN, "fail to alloc buf for reader", K(ret));
   } else if(FALSE_IT(new (reader) ObStorageReader())) {
   } else if (OB_FAIL(reader->open(uri_, storage_info_))) {
-    STORAGE_LOG(WARN, "failed to open reader", K(ret));
+
   } else if (reader->get_length() <= offset) {
     // This situation also has concurrency issues.
     // The length read by the reader may be old, so offset not match needs to be returned for retry.
     ret = OB_OBJECT_STORAGE_PWRITE_OFFSET_NOT_MATCH;
-    STORAGE_LOG(WARN, "offset is invalid", K(offset), "length", reader->get_length(), K(ret));
+
   } else if (OB_FALSE_IT(actual_write_offset = reader->get_length() - offset)) {
   } else if (OB_FALSE_IT(read_buf_size = std::min(actual_write_offset, size))) {
   } else if (OB_ISNULL(read_buffer = static_cast<char *>(allocator.alloc(read_buf_size)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     OB_LOG(WARN, "failed to allocate memory", K(ret), K(size));
   } else if (OB_FAIL(reader->pread(read_buffer, read_buf_size, offset, read_size))) {
-    STORAGE_LOG(WARN, "failed to pread", K(ret));
+
   } else if (0 != MEMCMP(buf, read_buffer, read_buf_size)) {
     ret = OB_OBJECT_STORAGE_PWRITE_CONTENT_NOT_MATCH;
-    STORAGE_LOG(WARN, "data inconsistent", K(ret));
+
   } else if (offset + size > reader->get_length()) {
     if (OB_FAIL(appender_->pwrite(buf + actual_write_offset, size - actual_write_offset, reader->get_length()))) {
       if (OB_OBJECT_STORAGE_PWRITE_OFFSET_NOT_MATCH == ret) {
         ret = OB_IO_ERROR;
-        STORAGE_LOG(WARN, "There may be concurrency problems that require the caller to retry", K(ret));
+
       }
     }
   }
 
   if (OB_SUCCESS != (tmp_ret = reader->close())) {
-    STORAGE_LOG(WARN, "failed to close reader", K(tmp_ret));
+
   }
   if (OB_NOT_NULL(reader)) {
     reader->~ObStorageReader();
@@ -2578,21 +2578,21 @@ int ObStorageAppender::pwrite(const char *buf, const int64_t size, const int64_t
   if (OB_FAIL(ret)) {
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(offset), K(size));
+
   } else if (OB_ISNULL(appender_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not opened", K(ret));
+
   } else if (OB_FAIL(appender_->pwrite(buf, size, offset))) {
-    STORAGE_LOG(WARN, "failed to write", K(ret));
+
   }
 
   // no need to adjust the function repeatable_pwrite_
   // because S3 will not return OB_OBJECT_STORAGE_PWRITE_OFFSET_NOT_MATCH
   if (OB_OBJECT_STORAGE_PWRITE_OFFSET_NOT_MATCH == ret && appender_ != &s3_appender_) {
     if (OB_FAIL(repeatable_pwrite_(buf, size, offset))) {
-      STORAGE_LOG(WARN, "failed to repeatable_pwrite", K(ret));
+
     } else {
-      STORAGE_LOG(DEBUG, "repeatable pwrite success", K(ret));
+
     }
   }
 
@@ -2615,7 +2615,7 @@ int64_t ObStorageAppender::get_length()
   OBJECT_STORAGE_GUARD(storage_info_, uri_, IO_HANDLED_SIZE_ZERO);
 
   if (OB_ISNULL(appender_)) {
-    STORAGE_LOG_RET(WARN, common::OB_ERR_UNEXPECTED, "appender not opened");
+
   } else if (OB_ISNULL(storage_info_)) {
     ret = OB_ERR_UNEXPECTED;
     OB_LOG(WARN, "storage info is null", K(ret), KPC_(storage_info));
@@ -2647,9 +2647,9 @@ int ObStorageAppender::close()
 
   if (OB_ISNULL(appender_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not opened", K(ret));
+
   } else if (OB_FAIL(appender_->close())) {
-    STORAGE_LOG(WARN, "failed to close writer", K(ret));
+
   }
   appender_  = NULL;
   start_ts_ = 0;
@@ -2668,7 +2668,7 @@ int ObStorageAppender::seal_for_adaptive()
 
   if (OB_ISNULL(appender_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not opened", K(ret));
+
   } else if (OB_ISNULL(storage_info_)) {
     ret = OB_ERR_UNEXPECTED;
     OB_LOG(WARN, "storage info is null", K(ret), KPC_(storage_info));
@@ -2738,7 +2738,7 @@ ObStorageMultiPartWriter::ObStorageMultiPartWriter()
 ObStorageMultiPartWriter::~ObStorageMultiPartWriter()
 {
   if (is_opened_ && NULL != multipart_writer_) {
-    STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "multipart_writer not close");
+
   }
 }
 
@@ -2754,20 +2754,20 @@ int ObStorageMultiPartWriter::open(
 
   if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(uri));
+
   } else if (NULL != multipart_writer_) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "multipart writer cannot open twice", K(ret), K(uri));
+
   } else if (OB_ISNULL(storage_info) || OB_UNLIKELY(uri.empty() || !storage_info->is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), K(uri), KPC(storage_info));
+
   } else if (FALSE_IT(type = storage_info->get_type())) {
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, type))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
         K(ret), K(uri), KPC(storage_info), K(type));
   } else if (OB_FAIL(databuff_printf(uri_, sizeof(uri_), "%.*s", uri.length(), uri.ptr()))) {
-    STORAGE_LOG(WARN, "failed to fill uri", K(ret), K(uri));
+
   } else if (FALSE_IT(storage_info_ = storage_info)) {
   } else if (OB_STORAGE_FILE == type) {
     multipart_writer_ = &file_multipart_writer_;
@@ -2783,15 +2783,15 @@ int ObStorageMultiPartWriter::open(
     }
   } else {
     ret = OB_ERR_SYS;
-    STORAGE_LOG(ERROR, "unkown storage type", K(ret), K(uri));
+
   }
 
   if (OB_SUCC(ret)) {
     if (OB_ISNULL(multipart_writer_)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "multipart_writer is null", K(ret), K(uri));
+
     } else if (OB_FAIL(multipart_writer_->open(uri, storage_info))) {
-      STORAGE_LOG(WARN, "failed to open multipart writer", K(ret), K(uri), K(storage_info));
+
     } else {
       is_opened_ = true;
     }
@@ -2799,7 +2799,7 @@ int ObStorageMultiPartWriter::open(
 
   if (OB_FAIL(ret)) {
     if (OB_SUCCESS != (tmp_ret = close())) {
-      STORAGE_LOG(WARN, "failed close multipart writer", K(ret), K(tmp_ret), K(uri));
+
     }
   }
 
@@ -2814,13 +2814,13 @@ int ObStorageMultiPartWriter::write(const char *buf, const int64_t size)
 
   if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(size));
+
   } else if (OB_ISNULL(multipart_writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "multipart writer not opened", K(ret));
+
   } else if(OB_FAIL(multipart_writer_->write(buf, size))) {
     EVENT_INC(ObStatEventIds::BACKUP_IO_WRITE_FAIL_COUNT);
-    STORAGE_LOG(WARN, "failed to write", K(ret));
+
   } else {
     EVENT_ADD(ObStatEventIds::BACKUP_IO_WRITE_BYTES, size);
   }
@@ -2841,17 +2841,17 @@ int ObStorageMultiPartWriter::pwrite(const char *buf, const int64_t size, const 
   if (OB_FAIL(ret)) {
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret), K(offset), K(size));
+
   } else if (OB_ISNULL(multipart_writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "multipart writer not opened", K(ret));
+
   } else if (OB_UNLIKELY(offset != cur_max_offset_)) {
     ret = OB_ERR_UNEXPECTED;
     OB_LOG(WARN, "call pwrite in an unexpected order",
         K(ret), K(offset), K(size), K_(cur_max_offset));
   } else if (OB_FAIL(multipart_writer_->pwrite(buf, size, offset))) {
     EVENT_INC(ObStatEventIds::BACKUP_IO_WRITE_FAIL_COUNT);
-    STORAGE_LOG(WARN, "failed to write", K(ret));
+
   } else {
     EVENT_ADD(ObStatEventIds::BACKUP_IO_WRITE_BYTES, size);
     cur_max_offset_ = offset + size;
@@ -2869,7 +2869,7 @@ int64_t ObStorageMultiPartWriter::get_length()
   int ret = OB_SUCCESS;
   OBJECT_STORAGE_GUARD(storage_info_, uri_, IO_HANDLED_SIZE_ZERO);
   if (OB_ISNULL(multipart_writer_)) {
-    STORAGE_LOG_RET(WARN, common::OB_ERR_UNEXPECTED, "multipart_writer_ not opened");
+
   } else {
     ret_int = multipart_writer_->get_length();
   }
@@ -2885,12 +2885,12 @@ int ObStorageMultiPartWriter::complete()
   if (OB_FAIL(ret)) {
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited", K(ret));
+
   } else if (OB_ISNULL(multipart_writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "multipart writer not opened", K(ret));
+
   } else if (OB_FAIL(multipart_writer_->complete())) {
-    STORAGE_LOG(WARN, "failed to complete", K(ret));
+
   }
 
   // for complete
@@ -2910,12 +2910,12 @@ int ObStorageMultiPartWriter::abort()
   if (OB_FAIL(ret)) {
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer backup io is prohibited");
+
   } else if (OB_ISNULL(multipart_writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "multipart writer not opened", K(ret));
+
   } else if (OB_FAIL(multipart_writer_->abort())) {
-    STORAGE_LOG(WARN, "failed to abort", K(ret));
+
   }
 
   // for abort
@@ -2934,9 +2934,9 @@ int ObStorageMultiPartWriter::close()
   OBJECT_STORAGE_GUARD(storage_info_, uri_, IO_HANDLED_SIZE_ZERO);
   if (OB_ISNULL(multipart_writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not opened", K(ret));
+
   } else if (OB_FAIL(multipart_writer_->close())) {
-    STORAGE_LOG(WARN, "failed to close multipart writer", K(ret));
+
   }
   multipart_writer_  = NULL;
   start_ts_ = 0;
@@ -2986,20 +2986,20 @@ int ObStorageParallelMultiPartWriterBase::open(
   start_ts_ = ObTimeUtility::current_time();
   if (OB_NOT_NULL(multipart_writer_)) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "multipart writer cannot open twice", K(ret), K(uri));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer object storag io is prohibited", K(ret), K(uri));
+
   } else if (OB_ISNULL(storage_info) || OB_UNLIKELY(uri.empty() || !storage_info->is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), K(uri), KPC(storage_info));
+
   } else if (FALSE_IT(type = storage_info->get_type())) {
   } else if (OB_UNLIKELY(!is_storage_type_match(uri, type))) {
     ret = OB_INVALID_BACKUP_DEST;
     STORAGE_LOG(WARN, "uri prefix does not match the expected device type",
         K(ret), K(uri), KPC(storage_info), K(type));
   } else if (OB_FAIL(databuff_printf(uri_, sizeof(uri_), "%.*s", uri.length(), uri.ptr()))) {
-    STORAGE_LOG(WARN, "failed to fill uri", K(ret), K(uri));
+
   } else if (OB_STORAGE_FILE == type) {
     multipart_writer_ = &file_multipart_writer_;
   } else if (OB_STORAGE_OSS == type) {
@@ -3010,15 +3010,15 @@ int ObStorageParallelMultiPartWriterBase::open(
     multipart_writer_ = &s3_multipart_writer_;
   } else {
     ret = OB_ERR_SYS;
-    STORAGE_LOG(ERROR, "unkown storage type", K(ret), K(uri), K(type));
+
   }
 
   if (OB_SUCC(ret)) {
     if (OB_ISNULL(multipart_writer_)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "multipart_writer is null", K(ret), K(uri), K(type));
+
     } else if (OB_FAIL(multipart_writer_->open(uri, storage_info))) {
-      STORAGE_LOG(WARN, "failed to open multipart writer", K(ret), K(uri), KPC(storage_info));
+
     } else {
       storage_info_ = storage_info;
       is_opened_ = true;
@@ -3039,7 +3039,7 @@ ObStorageDirectMultiPartWriter::ObStorageDirectMultiPartWriter()
 ObStorageDirectMultiPartWriter::~ObStorageDirectMultiPartWriter()
 {
   if (is_opened_ && OB_NOT_NULL(multipart_writer_)) {
-    STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "direct multipart writer not close");
+
   }
   reset();
 }
@@ -3057,7 +3057,7 @@ int ObStorageDirectMultiPartWriter::open(
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(ObStorageParallelMultiPartWriterBase::open(uri, storage_info))) {
-    STORAGE_LOG(WARN, "fail to open in base writer", K(ret), K(uri), KPC(storage_info));
+
   } else {
     uploaded_file_length_ = 0;
   }
@@ -3076,7 +3076,7 @@ int ObStorageDirectMultiPartWriter::upload_part(
   const int64_t start_ts = ObTimeUtility::current_time();
   if (OB_ISNULL(multipart_writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "multipart writer not opened", K(ret));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
     STORAGE_LOG(WARN, "current observer object storage io is prohibited",
@@ -3084,9 +3084,9 @@ int ObStorageDirectMultiPartWriter::upload_part(
   } else if (OB_ISNULL(buf) || OB_UNLIKELY(size <= 0)) {
     // The validity of part_id is to be verified by each object storage individually
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), KP(buf), K(size));
+
   } else if (OB_FAIL(multipart_writer_->upload_part(buf, size, part_id))) {
-    STORAGE_LOG(WARN, "fail to upload part", K(ret), K_(uri), K(size), K(part_id));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -3110,12 +3110,12 @@ int ObStorageDirectMultiPartWriter::complete()
   const int64_t start_ts = ObTimeUtility::current_time();
   if (OB_ISNULL(multipart_writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "multipart writer not opened", K(ret));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer object storage io is prohibited", K(ret), K_(uri));
+
   } else if (OB_FAIL(multipart_writer_->complete())) {
-    STORAGE_LOG(WARN, "fail to complete multipart upload", K(ret), K_(uri));
+
   }
 
   return ret;
@@ -3128,12 +3128,12 @@ int ObStorageDirectMultiPartWriter::abort()
   const int64_t start_ts = ObTimeUtility::current_time();
   if (OB_ISNULL(multipart_writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "multipart writer not opened", K(ret));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer object storage io is prohibited", K(ret), K_(uri));
+
   } else if (OB_FAIL(multipart_writer_->abort())) {
-    STORAGE_LOG(WARN, "fail to abort multipart upload", K(ret), K_(uri));
+
   }
 
   // for abort
@@ -3153,10 +3153,10 @@ int ObStorageDirectMultiPartWriter::close()
   const int64_t start_ts = ObTimeUtility::current_time();
   if (OB_ISNULL(multipart_writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "multipart writer not opened", K(ret));
+
   } else {
     if (OB_FAIL(multipart_writer_->close())) {
-      STORAGE_LOG(WARN, "failed to close multipart writer", K(ret));
+
     }
   }
   
@@ -3181,10 +3181,10 @@ int ObStorageDirectMultiPartWriter::buf_append_part(
   is_full = false;
   if (OB_ISNULL(multipart_writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "multipart writer not opened", K(ret));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer object storage io is prohibited", K(ret), K_(uri));
+
   } else {
     is_full = true;
   }
@@ -3198,10 +3198,10 @@ int ObStorageDirectMultiPartWriter::get_part_id(bool &is_exist, int64_t &part_id
   part_id = -1;
   if (OB_ISNULL(multipart_writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "multipart writer not opened", K(ret));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer object storage io is prohibited", K(ret), K_(uri));
+
   } else {
     SpinWLockGuard guard(lock_);
     is_exist = true;
@@ -3214,7 +3214,7 @@ int ObStorageDirectMultiPartWriter::get_part_id(bool &is_exist, int64_t &part_id
 int ObStorageDirectMultiPartWriter::get_part_size(const int64_t part_id, int64_t &part_size) const
 {
   int ret = OB_NOT_SUPPORTED;
-  STORAGE_LOG(WARN, "direct multipart writer do not support get part size", K(ret));
+
   return ret;
 }
 
@@ -3229,7 +3229,7 @@ ObStorageBufferedMultiPartWriter::ObStorageBufferedMultiPartWriter()
 ObStorageBufferedMultiPartWriter::~ObStorageBufferedMultiPartWriter()
 {
   if (is_opened_ && OB_NOT_NULL(multipart_writer_)) {
-    STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "buffered multipart_writer not close");
+
   }
   reset();
 }
@@ -3254,9 +3254,9 @@ int ObStorageBufferedMultiPartWriter::open(const ObString &uri, ObObjectStorageI
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(ObStorageDirectMultiPartWriter::open(uri, storage_info))) {
-    STORAGE_LOG(WARN, "fail to open base multipart writer", K(ret), K(uri), KPC(storage_info));
+
   } else if (OB_FAIL(part_id_to_data_map_.create(7, ALLOC_TAG))) {
-    STORAGE_LOG(WARN, "fail to create part_id_to_data_map_", K(ret), K(uri), KPC(storage_info));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -3274,16 +3274,16 @@ int ObStorageBufferedMultiPartWriter::upload_part(
   int ret = OB_SUCCESS;
   if (OB_ISNULL(multipart_writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "multipart writer not opened", K(ret));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer object storage io is prohibited", K(ret), K_(uri));
+
   } else {
     PartData para_data;
     {
       SpinWLockGuard guard(lock_);
       if (OB_FAIL(part_id_to_data_map_.erase_refactored(part_id, &para_data))) {
-        STORAGE_LOG(WARN, "fail to get part data from map", K(ret), K(part_id));
+
       }
     }
 
@@ -3295,7 +3295,7 @@ int ObStorageBufferedMultiPartWriter::upload_part(
     } else if (OB_FAIL(ObStorageDirectMultiPartWriter::upload_part(para_data.data_,
                                                                      para_data.size_,
                                                                      part_id))) {
-      STORAGE_LOG(WARN, "fail to upload specified part", K(ret), K(part_id), K(para_data));
+
     }
 
     free_part_data_(para_data);
@@ -3310,13 +3310,13 @@ int ObStorageBufferedMultiPartWriter::buf_append_part(
   is_full = false;
   if (OB_ISNULL(multipart_writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "multipart writer not opened", K(ret));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer object storage io is prohibited", K(ret), K_(uri));
+
   } else if (OB_ISNULL(buf) || OB_UNLIKELY(size <= 0 || !is_valid_tenant_id(tenant_id))) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), KP(buf), K(size), K(tenant_id));
+
   } else {
     SpinWLockGuard guard(lock_);
     if (OB_FAIL(append_buf_(buf, size, tenant_id))) {
@@ -3339,7 +3339,7 @@ int ObStorageBufferedMultiPartWriter::append_buf_(
 
   if (OB_ISNULL(buf) || OB_UNLIKELY(size <= 0 || !is_valid_tenant_id(tenant_id))) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), KP(buf), K(size), K(tenant_id));
+
   } else if (OB_ISNULL(tmp_buf = static_cast<char *>(ob_malloc(final_size, attr)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     STORAGE_LOG(WARN, "fail to realloc buf",
@@ -3396,13 +3396,13 @@ int ObStorageBufferedMultiPartWriter::get_part_id(bool &is_exist, int64_t &part_
   SpinWLockGuard guard(lock_);
   if (OB_ISNULL(multipart_writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "multipart writer not opened", K(ret));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer object storage io is prohibited", K(ret), K_(uri));
+
   } else if (OB_NOT_NULL(cur_buf_)) {
     if (OB_FAIL(save_buf_to_map_())) {
-      STORAGE_LOG(WARN, "fail to save cur buf to map", K(ret), K_(cur_buf_pos));
+
     } else {
       is_exist = true;
       part_id = cur_part_id_;
@@ -3417,20 +3417,20 @@ int ObStorageBufferedMultiPartWriter::get_part_size(const int64_t part_id, int64
   part_size = -1;
   if (OB_ISNULL(multipart_writer_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "multipart writer not opened", K(ret));
+
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
     ret = OB_BACKUP_IO_PROHIBITED;
-    STORAGE_LOG(WARN, "current observer object storage io is prohibited", K(ret), K_(uri));
+
   } else if (OB_UNLIKELY(part_id <= 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "part id is invalid", K(ret), K(part_id));
+
   } else {
     SpinRLockGuard guard(lock_);
     PartData part_data;
     if (OB_FAIL(part_id_to_data_map_.get_refactored(part_id, part_data))) {
       if (ret == OB_HASH_NOT_EXIST) {
         ret = OB_INVALID_ARGUMENT;
-        STORAGE_LOG(WARN, "the specified part does not exist", K(ret), K(part_id));
+
       }
     } else {
       part_size = part_data.size_;

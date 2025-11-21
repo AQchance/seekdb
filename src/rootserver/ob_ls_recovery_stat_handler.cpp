@@ -79,7 +79,7 @@ int ObLSRecoveryGuard::init(const uint64_t tenant_id, const share::ObLSID &ls_id
         } else {
           ls_recovery_stat_ = ls_recovery_stat;
           tenant_id_ = tenant_id;
-          LOG_TRACE("inc ref success", K(tenant_id), K(ls_id), K(lbt()));
+
         }
       }
     }
@@ -94,7 +94,7 @@ ObLSRecoveryGuard::~ObLSRecoveryGuard()
   } else {
     ls_recovery_stat_->reset_add_replica_server();
     ls_recovery_stat_->dec_ref();
-    LOG_TRACE("release ls recovery stat guard", K(tenant_id_), KPC(ls_recovery_stat_));
+
     ls_recovery_stat_ = NULL;
   }
 }
@@ -104,13 +104,13 @@ bool ObLSRecoveryGuard::skip_check_member_list_change_(const uint64_t tenant_id)
   bool bret = false;
   if (!is_user_tenant(tenant_id)) {
     bret = true;
-    LOG_INFO("not user tenant, no need to check member list change", K(tenant_id));
+
   } else {
     int ret = OB_SUCCESS;//use to MTL_SWITCH
     MTL_SWITCH(tenant_id) {
       if (MTL_TENANT_ROLE_CACHE_IS_PRIMARY()) {
         bret = true;
-        LOG_INFO("is primary tenant, no need check readable_scn");
+
       }
     }
   }
@@ -171,7 +171,7 @@ int ObLSRecoveryStatHandler::init(const uint64_t tenant_id, ObLS *ls)
     SpinWLockGuard guard(lock_);
     last_dump_ts_ = ObTimeUtility::current_time();
     is_inited_ = true;
-    LOG_INFO("ObLSRecoveryStatHandler init success", K(this));
+
   }
   return ret;
 }
@@ -217,7 +217,7 @@ int ObLSRecoveryStatHandler::inc_ref(const int64_t timeout)
         ret = OB_SUCCESS;
       } else {
         const int64_t wait_time = std::min(TIME_WAIT, curr_timeout);
-        LOG_INFO("wait for inc ref", K(curr_timeout), K(timeout), K(wait_time));
+
         if (OB_TMP_FAIL(ref_cond_.timedwait(wait_time))) {
           LOG_WARN("failed to timedwait", KR(ret), KR(tmp_ret), K(wait_time));
         }
@@ -261,7 +261,7 @@ int ObLSRecoveryStatHandler::set_inner_readable_scn(const palf::LogConfigVersion
       const int64_t PRINT_INTERVAL = 1 * 1000 * 1000;
       if (readable_scn_upper_limit_ > readable_scn && REACH_THREAD_TIME_INTERVAL(PRINT_INTERVAL)) {
         const ObLSID ls_id = ls_->get_ls_id();
-        LOG_INFO("readable scn fallback", K(ls_id), K(readable_scn_upper_limit_), K(readable_scn));
+
       }
       readable_scn_upper_limit_ = SCN::max(readable_scn_upper_limit_, readable_scn);
     }
@@ -518,7 +518,7 @@ int ObLSRecoveryStatHandler::get_ls_level_recovery_stat(ObLSRecoveryStat &ls_rec
     LOG_WARN("failed to get lastest palf stat", KR(ret));
   } else if (!is_strong_leader(palf_stat_first.role_)) {
     ret = OB_NOT_MASTER;
-    LOG_TRACE("not leader", KR(ret), K(palf_stat_first));
+
   } else if (OB_FAIL(do_get_ls_level_readable_scn_(readable_scn))) {
     LOG_WARN("failed to do_get_ls_level_readable_scn_", KR(ret), KPC_(ls));
   // scn get order: read_scn before replayable_scn before sync_scn
@@ -534,7 +534,7 @@ int ObLSRecoveryStatHandler::get_ls_level_recovery_stat(ObLSRecoveryStat &ls_rec
   } else if (palf_stat_first.config_version_ != palf_stat_second.config_version_
   || !is_strong_leader(palf_stat_second.role_)) {
     ret = OB_NEED_RETRY;
-    LOG_INFO("role changed, try again", KR(ret), K(palf_stat_first), K(palf_stat_second));
+
   }
 
   return ret;
@@ -655,7 +655,7 @@ int ObLSRecoveryStatHandler::try_reload_and_fix_config_version_(
       LOG_WARN("config version is fallback", KR(ret), K(current_version), K(config_version_in_inner_));
     } else if (current_version == config_version_in_inner_) {
       need_update = false;
-      LOG_DEBUG("config version not change", KR(ret), K(current_version));
+
     } else {
       need_update = true;
       FLOG_INFO("config version not match, need update",
@@ -845,7 +845,7 @@ int ObLSRecoveryStatHandler::gather_replica_readable_scn()
     LOG_WARN("get latest palf_stat failed", KR(ret), KPC_(ls));
   } else if (!is_strong_leader(palf_stat_first.role_)) {
     ret = OB_NOT_MASTER;
-    LOG_TRACE("not leader", KR(ret), K(palf_stat_first));
+
   } else if (OB_FAIL(check_can_use_new_version_(is_valid_use))) {
     LOG_WARN("failed to check can use new version", KR(ret));
   } else if (!is_valid_use) {

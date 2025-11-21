@@ -121,7 +121,7 @@ int ObInsertResolver::resolve(const ParseNode &parse_tree)
     if (OB_FAIL(insert_stmt->formalize_stmt(session_info_))) {
       LOG_WARN("pull stmt all expr relation ids failed", K(ret));
     } else {
-      LOG_DEBUG("check insert table info", K(insert_stmt->get_insert_table_info()));
+
     }
   }
 
@@ -1183,7 +1183,7 @@ int ObInsertResolver::resolve_column_ref_expr(const ObQualifiedName &q_name, ObR
       // don't print this log as WARN,
       // as it takes lots of CPU cycles when inserting many rows
       // related issue: 
-      LOG_TRACE("resolve basic column ref failed", K(ret), K(q_name));
+
     }
   }
   return ret;
@@ -1287,7 +1287,7 @@ int ObInsertResolver::check_view_insertable()
       if (OB_FAIL(ObResolverUtils::uv_check_dup_base_col(*table, has_dup_col, has_non_col_ref))) {
         LOG_WARN("check update view hash duplicate column failed", K(ret));
       } else {
-        LOG_DEBUG("update view check duplicate column", K(has_dup_col), K(has_non_col_ref));
+
         if (has_dup_col || has_non_col_ref) {
           ret = OB_ERR_NON_INSERTABLE_TABLE;
         }
@@ -1312,7 +1312,7 @@ int ObInsertResolver::check_view_insertable()
           FOREACH_CNT_X(col, col_exprs, OB_SUCC(ret)) {
             if (OB_FAIL(check_same_base_table(*table,
                 *static_cast<ObColumnRefRawExpr *>(*col), log_error))) {
-              LOG_TRACE("check same base table fail", K(ret));
+
             }
           }
         }
@@ -1327,7 +1327,7 @@ int ObInsertResolver::check_view_insertable()
       if (OB_FAIL(ObResolverUtils::uv_check_where_subquery(*table, ref_update_table))) {
         LOG_WARN("update view check where condition failed", K(ret));
       } else {
-        LOG_DEBUG("update view check", K(ref_update_table));
+
         ret = ref_update_table ? OB_ERR_NON_INSERTABLE_TABLE : OB_SUCCESS;
       }
     }
@@ -1339,7 +1339,7 @@ int ObInsertResolver::check_view_insertable()
           table->get_base_table_item().ref_id_, insertable))) {
         LOG_WARN("check insertable join failed", K(ret));
       } else {
-        LOG_DEBUG("update view check join", K(insertable));
+
         ret = insertable ? ret : OB_ERR_NON_INSERTABLE_TABLE;
       }
     }

@@ -93,7 +93,7 @@ public:
       LOG_WARN("fail to init a ObGetRootserverRoleResult", KR(ret));
     }
     FOREACH(r, global_rs_list) {
-      LOG_INFO("dst", K(dst_));
+
       if (r->server_ == dst_
           && r->role_ == LEADER
           && OB_FAIL(role.init(LEADER, role.get_status()))) {

@@ -80,7 +80,7 @@ int ObDlQueue::init(const char *label, uint64_t tenant_id,
       if (OB_FAIL(construct_leaf_queue())) {
         LOG_WARN("fail to construct leaf queue", K(i), K(tenant_id_));
       } else {
-        LOG_INFO("construct leaf queue idx succ", K(rq_.get_push_idx()), K(tenant_id));
+
       }
     }
   }

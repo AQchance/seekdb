@@ -185,7 +185,7 @@ int ObBlockCipher::encrypt(const char *key, const int64_t key_len,
     const EVP_CIPHER *cipher = get_evp_cipher(mode);
     if (NULL != engine) {
       if (EXECUTE_COUNT_PER_SEC(10)) {
-        LOG_INFO("tde use engine to encrypt data", K(mode));
+
       }
     }
     if (OB_ISNULL(ctx) ||OB_ISNULL(cipher)) {
@@ -261,7 +261,7 @@ int ObBlockCipher::decrypt(const char *key, const int64_t key_len,
     const EVP_CIPHER *cipher = get_evp_cipher(mode);
     if (NULL != engine) {
       if (EXECUTE_COUNT_PER_SEC(10)) {
-        LOG_INFO("use engine to decrypt data", K(mode));
+
       }
     }
     if (OB_ISNULL(ctx) || OB_ISNULL(cipher)) {
@@ -622,7 +622,7 @@ int ObTdeEncryptEngineLoader::load(const common::ObString& engine)
         ENGINE_free(e);
       } else {
         tde_engine_[type] = e;
-        LOG_INFO("tde install engine success", K(engine));
+
       }
     }
   }

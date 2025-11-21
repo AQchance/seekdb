@@ -257,7 +257,7 @@ int ObPhyLocationGetter::get_phy_locations(const ObIArray<ObTableLocation> &tabl
           candi_table_loc.set_duplicate_type(table_location.get_duplicate_type());
           candi_table_loc.set_table_location_key(
               table_location.get_table_id(), table_location.get_ref_table_id());
-          LOG_DEBUG("plan cache util", K(candi_table_loc));
+
         }
         if (OB_SUCC(ret)) {
           if (OB_FAIL(table_location_ptrs.push_back(&table_location))) {
@@ -269,7 +269,7 @@ int ObPhyLocationGetter::get_phy_locations(const ObIArray<ObTableLocation> &tabl
           } else if (OB_FAIL(pc_ctx.is_retry_for_dup_tbl(is_retrying))) {
             LOG_WARN("failed to test if retrying", K(ret));
           } else if (is_retrying) {
-            LOG_INFO("Physical Location from Location Cache", K(candi_table_loc));
+
           }
         }
         if (OB_SUCC(ret)) {
@@ -302,7 +302,7 @@ int ObPhyLocationGetter::get_phy_locations(const ObIArray<ObTableLocation> &tabl
       LOG_TRACE("after select_replicas", K(on_same_server), K(has_duplicate_tbl_not_in_dml),
                 K(candi_table_locs), K(table_locations), K(ret));
     }
-    LOG_TRACE("after get_phy_locations", K(on_same_server), K(need_check_on_same_server));
+
   }
 
   return ret;

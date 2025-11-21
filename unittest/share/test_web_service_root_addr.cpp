@@ -64,7 +64,7 @@ void TestWebServiceRootAddr::start_new_shell()
   } else if (-1 == pid) {
     LOG_ERROR("fork failed", K(errno));
   } else {
-    LOG_INFO("create child", K(pid));
+
     service_pid_ = pid;
 
     // wait ./fake_ob_config-sh execute.
@@ -91,7 +91,7 @@ void TestWebServiceRootAddr::SetUp()
   } else if (-1 == pid) {
     LOG_ERROR("fork failed", K(errno));
   } else {
-    LOG_INFO("create child", K(pid));
+
     service_pid_ = pid;
 
     // wait ./fake_ob_config-sh execute.
@@ -104,7 +104,7 @@ void TestWebServiceRootAddr::TearDown()
   int status = 0;
   kill(-service_pid_, SIGINT);
   pid_t pid = wait(&status);
-  LOG_INFO("child exit", K(pid));
+
 }
 
 void TestWebServiceRootAddr::set_response_json2(const char *json)
@@ -115,7 +115,7 @@ void TestWebServiceRootAddr::set_response_json2(const char *json)
       strlen(json), json);
   ASSERT_EQ(OB_SUCCESS, ret);
   ret = system(cmd.ptr());
-  LOG_INFO("set response json", K(cmd), K(ret), K(errno), K(json));
+
   usleep(50000);
 }
 
@@ -127,7 +127,7 @@ void TestWebServiceRootAddr::set_response_json(const char *json)
       strlen(json), json);
   ASSERT_EQ(OB_SUCCESS, ret);
   ret = system(cmd.ptr());
-  LOG_INFO("set response json", K(cmd), K(ret), K(errno), K(json));
+
   usleep(50000);
 }
 

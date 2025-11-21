@@ -591,7 +591,7 @@ int ObRowkey::get_common_prefix_length(
 
   if (!lhs.is_valid() || !rhs.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(lhs), K(rhs));
+
   }
 
   min_obj_cnt = std::min(lhs.get_obj_cnt(), rhs.get_obj_cnt());

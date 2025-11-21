@@ -87,7 +87,7 @@ public:
     if (OB_FAIL(retry_list.push_back(desc))) {
       LOG_WARN("failed to push back", K(ret), K(desc));
     } else {
-      LOG_INFO("fake get all retries", K(retry_list));
+
     }
     return ret;
   }

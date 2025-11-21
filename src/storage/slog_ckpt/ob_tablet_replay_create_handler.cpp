@@ -276,7 +276,7 @@ int ObTabletReplayCreateHandler::concurrent_replay(ObStartupAccelTaskHandler* st
 
     // <3> waiting all task finish even if failure has occurred
     while (ATOMIC_LOAD(&inflight_task_cnt_) != 0) {
-      LOG_INFO("waiting all inflight replay create tablet task finish", K(inflight_task_cnt_));
+
       ob_usleep(20 * 1000); // 20ms
     }
 
@@ -344,7 +344,7 @@ int ObTabletReplayCreateHandler::add_task_(ObStartupAccelTaskHandler* startup_ac
       LOG_WARN("someone ObTabletReplayCreateTask has failed", K(ret), K(inflight_task_cnt_));
     } else if (OB_FAIL(startup_accel_handler->push_task(task))) {
       if (OB_EAGAIN == ret) {
-        LOG_INFO("task queue is full, wait and retry", KPC(task), K(inflight_task_cnt_));
+
         need_retry = true;
         ob_usleep(20 * 1000); // 20ms
       } else {
@@ -502,7 +502,7 @@ int ObTabletReplayCreateHandler::replay_create_tablet(const ObTabletReplayItem &
   } else if (OB_FAIL(ls_handle.get_ls()->get_restore_status(ls_restore_status))) {
     LOG_WARN("fail to get ls handle", K(ret), K(key));
   } else if (ls_restore_status.is_in_clone_and_tablet_meta_incomplete()) {
-    LOG_INFO("the ls is_in_clone_and_tablet_meta_incomplete", K(key), K(ls_restore_status));
+
   } else if (OB_FAIL(ls_tablet_svr->replay_create_tablet(addr, buf, buf_len, key.tablet_id_, tablet_transfer_info))) {
     LOG_WARN("fail to create tablet for replay", K(ret), K(key), K(addr));
   } else if (tablet_transfer_info.has_transfer_table() &&
@@ -620,11 +620,11 @@ int ObTabletReplayCreateHandler::record_ls_transfer_info_(
     LOG_WARN("failed to trans fail status", K(ret), "ls_id", ls->get_ls_id(),
         K(current_migration_status), K(new_migration_status));
   } else if (ObMigrationStatus::OB_MIGRATION_STATUS_NONE != new_migration_status) {
-    LOG_INFO("The log stream does not need to record transfer_info", "ls_id", ls->get_ls_id(), K(current_migration_status), K(new_migration_status));
+
   } else if (OB_FAIL(ls->get_restore_status(ls_restore_status))) {
     LOG_WARN("failed to get ls restore status", K(ret), KPC(ls));
   } else if (ls_restore_status.is_before_restore_to_consistent_scn()) {
-    LOG_INFO("the log stream in restore is before restore to consistent scn, no need to record transfer info", "ls_id", ls->get_ls_id(), K(ls_restore_status));
+
   }else if (!tablet_transfer_info.has_transfer_table()) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("tablet should have transfer table", K(ret), "ls_id", ls->get_ls_id(), K(tablet_id), K(tablet_transfer_info));

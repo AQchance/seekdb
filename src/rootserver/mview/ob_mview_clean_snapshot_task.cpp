@@ -139,7 +139,7 @@ void ObMViewCleanSnapshotTask::runTimerTask()
     } else if (mview_in_creation) {
       // when a mview is being created, its snapshot may be added but the dependency is not
       // added yet, which can cause cleaning the snapshot by mistake. so we just skip this round.
-      LOG_INFO("mview is being created, skip clean task", KR(ret), K(tenant_id_));
+
     } else {
       uint64_t last_tablet_id = 0;
       // considering the task is scheduled infrequently, performance should not be a concern here,
@@ -157,13 +157,13 @@ void ObMViewCleanSnapshotTask::runTimerTask()
           // the snapshots list is sorted by tablet_id, snapshot_scn,
           // so if the tablet_id is the same as the last one, we can safely remove this snapshot.
           need_remove_snapshot = true;
-          LOG_INFO("redundant snapshot, remove snapshot", KR(ret), K(tenant_id_), K(snapshot));
+
         } else if (FALSE_IT(last_tablet_id = snapshot.tablet_id_)) {
         } else if (OB_FAIL(get_table_id_(trans, snapshot.tablet_id_, table_id))) {
           if (OB_ITER_END == ret) {
             ret = OB_SUCCESS;
             need_remove_snapshot = true;
-            LOG_INFO("table is dropped, remove snapshot", KR(ret), K(tenant_id_), K(snapshot));
+
           } else {
             LOG_WARN("fail to get table id", KR(ret), K(snapshot));
           }
@@ -176,14 +176,14 @@ void ObMViewCleanSnapshotTask::runTimerTask()
           LOG_WARN("fail to get referring mv of base table", KR(ret), K(tenant_id_), K(table_id));
         } else if (relevent_mv_tables.empty()) {
           need_remove_snapshot = true;
-          LOG_INFO("no relevant mv, remove snapshot", KR(ret), K(tenant_id_), K(snapshot));
+
         }
         if (OB_FAIL(ret) || !need_remove_snapshot) {
           // do nothing
         } else if (OB_FAIL(snapshot_proxy.remove_snapshot(trans, tenant_id_, snapshot))) {
           LOG_WARN("fail to remove snapshot", KR(ret), K(tenant_id_), K(snapshot));
         } else {
-          LOG_INFO("[MAJ_REF_MV] successfully remove snapshot", KR(ret), K(tenant_id_), K(snapshot));
+
         }
       }
     }

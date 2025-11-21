@@ -46,7 +46,7 @@ int ObAdminDumpBlockHelper::mmap_log_file(char *&buf_out,
     LOG_WARN("failed to mmap file", K(buf_len), K(path), K(errno), KERRMSG, K(ret), K(fd_out));
   } else {
     buf_out = static_cast<char *>(buf);
-    LOG_INFO("map_log_file success", K(path), KP(buf), K(fd_out), KP(buf_out));
+
   }
   return ret;
 }
@@ -95,7 +95,7 @@ int ObAdminDumpBlockHelper::get_file_meta(const char *path,
   if (OB_SUCC(ret)) {
     header_size = MAX_INFO_BLOCK_SIZE;
     body_size = block_stat.st_size - MAX_INFO_BLOCK_SIZE;
-    LOG_INFO("get_file_meta success", K(path), K(start_lsn), K(header_size), K(body_size));
+
   }
   if (-1 != fd) {
     ::close(fd);
@@ -117,7 +117,7 @@ int ObAdminDumpBlockHelper::parse_archive_header_(const char *buf_in,
     LOG_ERROR("ObArchiveFileHeader data invalid", K(header));
   } else {
     start_lsn = LSN(header.start_lsn_);
-    LOG_INFO("parse_archive_header_ success", K(header));
+
   }
   return ret;
 }
@@ -136,7 +136,7 @@ int ObAdminDumpBlockHelper::parse_palf_header_(const char *buf_in,
     LOG_ERROR("LogBlockHeader data invalid", K(header));
   } else {
     start_lsn = header.get_min_lsn();
-    LOG_INFO("parse_palf_header_ success", K(header));
+
   }
   return ret;
 }
@@ -184,7 +184,7 @@ int ObAdminDumpBlock::decompress_()
   } else {
     buf_out = static_cast<char *>(buf);
     log_len = stat_buf.st_size;
-    LOG_INFO("map_log_file success", K(path), KP(buf), K(fd_out), KP(buf_out), K(log_len));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -216,7 +216,7 @@ int ObAdminDumpBlock::decompress_()
       int64_t after_decompress_ts = 0;
       int64_t iter_log_used = 0;
       int64_t decompress_log_used = 0;
-      LOG_INFO("[START]uncompress begin");
+
       while (OB_SUCC(ret) && OB_SUCC(iter.next())) {
         const char *buf = NULL;
         int64_t buf_len = 0;
@@ -224,7 +224,7 @@ int ObAdminDumpBlock::decompress_()
           if (OB_ITER_END != ret) {
             LOG_ERROR("ObAdminDumpIterator get_entry failed", K(iter));
           } else {
-            LOG_INFO("end iterator all logs");
+
           }
         } else {
           logservice::ObLogBaseHeader log_base_header;
@@ -342,7 +342,7 @@ int ObAdminDumpBlock::do_dump_(ObAdminDumpIterator &iter,
       LOG_ERROR("ObAdminDumpIterator get_entry failed", K(ret), K(entry), K(lsn), K(iter));
       has_encount_error = true;
     } else if (true == entry.get_header().is_padding_log()) {
-      LOG_INFO("is_padding_log, no need parse", K(entry), K(iter));
+
     } else {
       str_arg_.log_stat_->total_group_entry_count_++;
       str_arg_.log_stat_->group_entry_header_size_ += entry.get_header_size();
@@ -434,7 +434,7 @@ int ObAdminDumpBlock::parse_single_log_entry_(const LogEntry &entry,
   if (OB_FAIL(parser_le.parse())) {
     LOG_WARN("ObAdminParserLogEntry failed", K(ret), K(entry), K(block_name), K(lsn));
   } else {
-    LOG_TRACE("parse_single_log_entry_ success",K(entry), K(str_arg_));
+
   }
   return ret;
 }
@@ -483,7 +483,7 @@ int ObAdminDumpMetaBlock::dump()
     } else if (OB_FAIL(do_dump_(iter, block_name))) {
       LOG_WARN("ObAdminDumpIterator do_dump_ failed", K(ret), K(iter));
     } else {
-      LOG_INFO("ObAdminDumpBlock dump success", K(ret), K(block_path_));
+
     }
     helper.unmap_log_file(mmap_buf, header_size + body_size, fd_out);
   }

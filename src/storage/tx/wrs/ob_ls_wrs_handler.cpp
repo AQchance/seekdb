@@ -33,13 +33,13 @@ int ObLSWRSHandler::init(const share::ObLSID &ls_id)
 
   if (is_inited_) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObLSWRSHandler init twice", K(ret), K(is_inited_));
+
   } else {
     is_enabled_ = false;
     ls_weak_read_ts_.set_min();
     is_inited_ = true;
     ls_id_ = ls_id;
-    STORAGE_LOG(INFO, "ObLSWRSHandler init success", K(*this));
+
   }
 
   return ret;
@@ -61,7 +61,7 @@ int ObLSWRSHandler::offline()
   is_enabled_ = false;
   // set weak read ts to 1
   ls_weak_read_ts_.set_base();
-  STORAGE_LOG(INFO, "weak read handler disabled", K(*this));
+
   return ret;
 }
 
@@ -71,11 +71,11 @@ int ObLSWRSHandler::online()
 
   if (!is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLSWRSHandler not init", K(ret), K(*this));
+
   } else {
     ObSpinLockGuard guard(lock_);
     is_enabled_ = true;
-    STORAGE_LOG(INFO, "weak read handler enabled", K(*this));
+
   }
   return ret;
 }
@@ -94,16 +94,16 @@ int ObLSWRSHandler::generate_ls_weak_read_snapshot_version(ObLS &ls,
   ObSpinLockGuard guard(lock_);
   if (!is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLSWRSHandler not init", K(ret), K(is_inited_), K(ls));
+
   } else if (!is_enabled_) {
     need_skip = true;
     if (REACH_TIME_INTERVAL(5 * 1000 * 1000)) {
-      STORAGE_LOG(INFO, "weak read handler not enabled", K(*this));
+
     }
   } else if (OB_FAIL(generate_weak_read_timestamp_(ls, max_stale_time, timestamp))) {
     need_skip = true;
     if (REACH_TIME_INTERVAL(5 * 1000 * 1000)) {
-      STORAGE_LOG(INFO, "fail to generate weak read timestamp", KR(ret), K(max_stale_time));
+
     }
     ret = OB_SUCCESS;
   // put check transfer_prepare after generate wrs
@@ -111,7 +111,7 @@ int ObLSWRSHandler::generate_ls_weak_read_snapshot_version(ObLS &ls,
     timestamp.reset();
     need_skip = true;
     if (REACH_TIME_INTERVAL(60 * 1000 * 1000)) {
-      STORAGE_LOG(INFO, "ls in transfer status", K(*this));
+
     }
   } else if (OB_FAIL(OB_TS_MGR.get_gts(MTL_ID(), NULL, gts_scn))) {
     TRANS_LOG(WARN, "get gts scn error", K(ret), K(max_stale_time), K(*this));
@@ -166,10 +166,10 @@ int ObLSWRSHandler::generate_weak_read_timestamp_(ObLS &ls, const int64_t max_st
     if (OB_STATE_NOT_MATCH == ret) {
       // print one log per minute
       if (REACH_TIME_INTERVAL(60 * 1000 * 1000)) {
-        STORAGE_LOG(WARN, "get_max_decided_log_ts_ns error", K(ret), K(ls_id));
+
       }
     } else {
-      STORAGE_LOG(WARN, "get_max_decided_log_ts_ns error", K(ret), K(ls_id));
+
     }
   } else if (OB_FAIL(ls.get_tx_svr()
                        ->get_trans_service()
@@ -177,10 +177,10 @@ int ObLSWRSHandler::generate_weak_read_timestamp_(ObLS &ls, const int64_t max_st
                                                              min_tx_service_ts))) {
     if (OB_PARTITION_NOT_EXIST == ret) {
       if (REACH_TIME_INTERVAL(60 * 1000 * 1000)) {
-        STORAGE_LOG(WARN, "get_min_uncommit_prepare_version error", K(ret), K(ls_id));
+
       }
     } else {
-      STORAGE_LOG(WARN, "get_min_uncommit_prepare_version error", K(ret), K(ls_id));
+
     }
   } else {
     timestamp = SCN::min(min_log_service_scn, min_tx_service_ts);

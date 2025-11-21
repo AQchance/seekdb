@@ -46,7 +46,7 @@ int ObValueRowIterator::init()
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(is_inited_)) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObValueRowIterator is already initialized", K(ret));
+
   } else {
     allocator_.set_tenant_id(MTL_ID());
     is_inited_ = true;
@@ -60,23 +60,23 @@ int ObValueRowIterator::add_row(ObDatumRow &row)
   int ret = OB_SUCCESS;
   if (!row.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid row", K(ret), K(row));
+
   } else if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObValueRowIterator is not initialized", K(ret));
+
   } else {
     ObDatumRow *cur_row = nullptr;
     void *buff = nullptr;
     if (OB_ISNULL(buff = allocator_.alloc(sizeof(ObDatumRow)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "alloc memory for datum row error", K(ret));
+
     } else if (FALSE_IT(cur_row = new (buff) ObDatumRow())) {
     } else if (OB_FAIL(cur_row->init(allocator_, row.count_))) {
-      STORAGE_LOG(WARN, "init datum row error", K(ret), K(row), KPC(cur_row));
+
     } else if (OB_FAIL(cur_row->deep_copy(row, allocator_))) {
-      STORAGE_LOG(WARN, "copy row error", K(ret), K(row));
+
     } else if (OB_FAIL(rows_.push_back(cur_row))) {
-      STORAGE_LOG(WARN, "fail to push datum row to iterator array", K(ret), K(cur_row));
+
     }
   }
   return ret;
@@ -87,29 +87,29 @@ int ObValueRowIterator::add_row(ObDatumRow &row,  const ObIArray<int32_t> &proje
   int ret = OB_SUCCESS;
   if (!row.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid row", K(ret), K(row));
+
   } else if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObValueRowIterator is not initialized", K(ret));
+
   } else {
     ObDatumRow *cur_row = nullptr;
     void *buff = nullptr;
     if (OB_ISNULL(buff = allocator_.alloc(sizeof(ObDatumRow)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "alloc memory for datum row error", K(ret));
+
     } else if (FALSE_IT(cur_row = new (buff) ObDatumRow())) {
     } else if (OB_FAIL(cur_row->init(allocator_, projector.count()))) {
-      STORAGE_LOG(WARN, "init datum row error", K(ret), K(row), KPC(cur_row));
+
     }
     for (int64_t i = 0; OB_SUCC(ret) && i < projector.count(); ++i) {
       int64_t project_idx = projector.at(i);
       if (OB_FAIL(cur_row->storage_datums_[i].deep_copy(row.storage_datums_[project_idx], allocator_))) {
-        STORAGE_LOG(WARN, "fail to deep copy datum", K(ret), K(row), K(project_idx));
+
       }
     }
     if (OB_SUCC(ret)) {
       if (OB_FAIL(rows_.push_back(cur_row))) {
-        STORAGE_LOG(WARN, "fail to push datum row to iterator array", K(ret), K(cur_row));
+
       }
     }
   }
@@ -121,7 +121,7 @@ int ObValueRowIterator::get_next_row(ObDatumRow *&row)
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObValueRowIterator is not initialized", K(ret));
+
   } else if (cur_idx_ < rows_.count()) {
     row = rows_.at(cur_idx_++);
   } else {
@@ -242,7 +242,7 @@ int ObRowGetter::init_dml_access_param(ObRelativeTable &relative_table,
     }
   }
 
-  LOG_DEBUG("init dml access param", K(ret), K(out_col_ids), K(relative_table), K_(access_param));
+
   return ret;
 }
 
@@ -254,15 +254,15 @@ int ObRowGetter::prepare_cached_iter_node(const ObDMLBaseParam &dml_param,
 
   if (OB_UNLIKELY(nullptr != cached_iter_node_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected not null cached iter node", K(ret), KP(cached_iter_node_));
+
   } else if (can_use_global_iter_pool(dml_param)) {
     ObGlobalIteratorPool *iter_pool = MTL(ObGlobalIteratorPool*);
     if (OB_FAIL(iter_pool->get(iter_type_, cached_iter_node_))) {
-      STORAGE_LOG(WARN, "Failed to get from iter pool", K(ret));
+
     } else if (nullptr != cached_iter_node_) {
       access_param_.set_use_global_iter_pool();
       access_param_.iter_param_.set_use_stmt_iter_pool();
-      STORAGE_LOG(TRACE, "use global iter pool", K(access_param_));
+
     }
   }
   return ret;
@@ -274,7 +274,7 @@ int ObRowGetter::open(const ObDatumRowkey &rowkey, bool use_fuse_row_cache)
   {
     ObStorageTableGuard guard(tablet_, *store_ctx_, false);
     if (OB_FAIL(guard.refresh_and_protect_memtable_for_write(*relative_table_))) {
-      STORAGE_LOG(WARN, "fail to protect table", K(ret));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -284,9 +284,9 @@ int ObRowGetter::open(const ObDatumRowkey &rowkey, bool use_fuse_row_cache)
 
     ACTIVE_GLOBAL_ITERATOR_GUARD(ret, cached_iter_node_);
     if (OB_FAIL(init_single_merge())) {
-      STORAGE_LOG(WARN, "Fail to init ObSingleMerge", K(ret));
+
     } else if (OB_FAIL(single_merge_->open(rowkey))) {
-      STORAGE_LOG(WARN, "Fail to open iter", K(ret));
+
     } else {
       row_iter_ = single_merge_;
     }
@@ -303,7 +303,7 @@ int ObRowGetter::open(const ObIArray<ObDatumRowkey> &rowkeys, bool use_fuse_row_
     {
       ObStorageTableGuard guard(tablet_, *store_ctx_, false);
       if (OB_FAIL(guard.refresh_and_protect_memtable_for_write(*relative_table_))) {
-        STORAGE_LOG(WARN, "fail to protect table", K(ret));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -313,9 +313,9 @@ int ObRowGetter::open(const ObIArray<ObDatumRowkey> &rowkeys, bool use_fuse_row_
 
       ACTIVE_GLOBAL_ITERATOR_GUARD(ret, cached_iter_node_);
       if (OB_FAIL(init_multi_get_merge())) {
-        STORAGE_LOG(WARN, "Fail to init multi get merge", K(ret));
+
       } else if (OB_FAIL(multi_get_merge_->open(rowkeys))) {
-        STORAGE_LOG(WARN, "Fail to open iter", K(ret));
+
       } else {
         row_iter_ = multi_get_merge_;
       }
@@ -334,7 +334,7 @@ int ObRowGetter::get_next_row(blocksstable::ObDatumRow *&row)
     blocksstable::ObDatumRow *store_row = NULL;
     if (OB_FAIL(row_iter_->get_next_row(store_row))) {
       if (OB_ITER_END != ret) {
-        STORAGE_LOG(WARN, "failed to get next row", K(ret));
+
       }
     } else if (store_row->row_flag_.is_exist_without_delete()) {
       row = store_row;
@@ -355,7 +355,7 @@ int ObRowGetter::get_next_row(blocksstable::ObDatumRow *&row)
         // The txn has been killed during normal processing. So we return
         // OB_TRANS_KILLED to prompt this abnormal state.
         ret = OB_TRANS_KILLED;
-        STORAGE_LOG(WARN, "txn has terminated", K(ret), "tx_id", acc_ctx.tx_id_);
+
       }
     }
   }
@@ -384,11 +384,11 @@ int ObRowGetter::init_single_merge()
   ObQueryRowIterator *cached_iter = nullptr == cached_iter_node_ ? nullptr : cached_iter_node_->get_iter();
   if (OB_UNLIKELY(iter_type_ != T_SINGLE_GET)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected iter type", K(ret), K(iter_type_));
+
   } else if (OB_NOT_NULL(cached_iter)) {
     if (OB_UNLIKELY(cached_iter->get_type() != iter_type_)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "Unexpected cached iter type", K(ret), K(cached_iter->get_type()));
+
     } else {
       single_merge_ = static_cast<ObSingleMerge*>(cached_iter);
     }
@@ -398,11 +398,11 @@ int ObRowGetter::init_single_merge()
     void *buf = nullptr;
     if (OB_ISNULL(buf = access_ctx_.get_long_life_allocator()->alloc(sizeof(ObSingleMerge)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "Fail to allocate memory", K(ret));
+
     } else {
       single_merge_ = new (buf) ObSingleMerge();
       if (OB_FAIL(single_merge_->init(access_param_, access_ctx_, get_table_param_))) {
-        STORAGE_LOG(WARN, "Failed to init multiple merge", K(ret));
+
       }
       if (OB_FAIL(ret)) {
         single_merge_->~ObSingleMerge();
@@ -413,7 +413,7 @@ int ObRowGetter::init_single_merge()
       }
     }
   } else if (OB_FAIL(single_merge_->switch_table(access_param_, access_ctx_, get_table_param_))) {
-    STORAGE_LOG(WARN, "Failed to switch table", K(ret), K(access_param_));
+
   }
   return ret;
 }
@@ -424,11 +424,11 @@ int ObRowGetter::init_multi_get_merge()
   ObQueryRowIterator *cached_iter = nullptr == cached_iter_node_ ? nullptr : cached_iter_node_->get_iter();
   if (OB_UNLIKELY(iter_type_ != T_MULTI_GET)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected iter type", K(ret), K(iter_type_));
+
   } else if (OB_NOT_NULL(cached_iter)) {
     if (OB_UNLIKELY(cached_iter->get_type() != iter_type_)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "Unexpected cached iter type", K(ret), K(cached_iter->get_type()));
+
     } else {
       multi_get_merge_ = static_cast<ObMultipleGetMerge*>(cached_iter);
     }
@@ -438,11 +438,11 @@ int ObRowGetter::init_multi_get_merge()
     void *buf = nullptr;
     if (OB_ISNULL(buf = access_ctx_.get_long_life_allocator()->alloc(sizeof(ObSingleMerge)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "Fail to allocate memory", K(ret));
+
     } else {
       multi_get_merge_ = new (buf) ObMultipleGetMerge();
       if (OB_FAIL(multi_get_merge_->init(access_param_, access_ctx_, get_table_param_))) {
-        STORAGE_LOG(WARN, "Failed to init multiple merge", K(ret));
+
       }
       if (OB_FAIL(ret)) {
         multi_get_merge_->~ObMultipleGetMerge();
@@ -453,7 +453,7 @@ int ObRowGetter::init_multi_get_merge()
       }
     }
   } else if (OB_FAIL(multi_get_merge_->switch_table(access_param_, access_ctx_, get_table_param_))) {
-    STORAGE_LOG(WARN, "Failed to switch table", K(ret), K(access_param_));
+
   }
   return ret;
 }

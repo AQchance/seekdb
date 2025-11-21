@@ -78,7 +78,7 @@ int ObVectorIndexHistoryTask::clear_history_task()
       tenant_id_, batch_size, trans, affect_rows))) {
     LOG_WARN("fail to execute sql", KR(ret), K(sql));
   } else {
-    LOG_DEBUG("success to clear_history_task", K(ret), K(tenant_id_), K(sql), K(affect_rows));
+
   }
   if (trans.is_started()) {
     int tmp_ret = OB_SUCCESS;
@@ -120,7 +120,7 @@ int ObVectorIndexHistoryTask::move_task_to_history_table()
       }
     }
   }
-  LOG_DEBUG("do move task to history table", K(ret), K(tenant_id_));
+
   return ret;
 }
 
@@ -167,7 +167,7 @@ int ObTenantVecAsyncTaskScheduler::init(const uint64_t tenant_id, ObMySQLProxy &
   } else {
     is_inited_ = true;
     tenant_id_ = tenant_id;
-    LOG_INFO("tenant vector index mgr is inited", K_(tenant_id));
+
   }
   return ret;
 }

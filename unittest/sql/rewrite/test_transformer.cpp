@@ -160,7 +160,7 @@ void TestRewrite::SetUp()
     ctx_.schema_checker_ = &schema_checker_;
     ctx_.session_info_ = &session_info_;
     exec_ctx_.get_task_executor_ctx()->set_min_cluster_version(CLUSTER_VERSION_1_0_0_0);
-    LOG_INFO("set min cluster version", K(CLUSTER_VERSION_1_0_0_0));
+
   }
 }
 
@@ -213,9 +213,9 @@ int TestRewrite::parse_resolve_transform(std::ofstream &of_result,
     resolver_ctx.stmt_factory_ = &stmt_factory_;
     resolver_ctx.query_ctx_ = stmt_factory_.get_query_ctx();
 
-    LOG_INFO("begin parse sql", K(query_str));
+
     ObAddr addr;
-    LOG_DEBUG("setting local address to 1.1.1.1");
+
     addr.set_ip_addr("1.1.1.1", 8888);
 
     time_1 = get_usec();
@@ -258,7 +258,7 @@ int TestRewrite::parse_resolve_transform(std::ofstream &of_result,
           ret = OB_ERR_UNEXPECTED;
         } else {
           stmt->get_query_ctx()->set_sql_stmt(parse_result.input_sql_, parse_result.input_sql_len_);
-          LOG_INFO("Generate stmt success", "query", stmt->get_query_ctx()->get_sql_stmt());
+
         }
       }
       /*
@@ -283,7 +283,7 @@ int TestRewrite::parse_resolve_transform(std::ofstream &of_result,
             _OB_LOG(INFO, "finish to try to transform");
           }
         }
-        LOG_DEBUG("stmt to optimize", K(do_transform), K(*stmt));
+
         of_result << CSJ(*stmt) << std::endl;
 
         if (OB_SUCC(ret)) {
@@ -315,7 +315,7 @@ int TestRewrite::parse_resolve_transform(std::ofstream &of_result,
                   dml_stmt->get_query_ctx());
               ObTableLocation table_location;
               ret = optctx_->get_table_location_list().push_back(table_location);
-              LOG_INFO("setting local address to 1.1.1.1");
+
               optctx_->set_local_server_addr("1.1.1.1", 8888);
               ObOptimizer optimizer(*optctx_);
 
@@ -323,7 +323,7 @@ int TestRewrite::parse_resolve_transform(std::ofstream &of_result,
                 LOG_WARN("failed to optimize", "SQL", stmt);
               } else {
                 time_5 = get_usec();
-                LOG_DEBUG("succ to generate logical plan");
+
               }
             }
           }
@@ -385,7 +385,7 @@ int TestRewrite::parse_resolve(
     resolver_ctx.expr_factory_ = &expr_factory_;
     resolver_ctx.stmt_factory_ = &stmt_factory_;
     resolver_ctx.query_ctx_ = stmt_factory_.get_query_ctx();
-    LOG_INFO("begin parse sql", K(query_str));
+
 
     if (OB_FAIL(parser.parse(query_str, parse_result))) {
       LOG_WARN("failed to parse", K(ret));
@@ -425,7 +425,7 @@ int TestRewrite::parse_resolve(
           ret = OB_ERR_UNEXPECTED;
         } else {
           stmt->get_query_ctx()->set_sql_stmt(parse_result.input_sql_, parse_result.input_sql_len_);
-          LOG_INFO("Generate stmt success", "query", stmt->get_query_ctx()->get_sql_stmt());
+
         }
       }
     }
@@ -494,7 +494,7 @@ int TestRewrite::optimize(
     // that the lower cost plan is different when use default statistics and mock statistics.
     ObTableLocation table_location;
     ret = optctx_->get_table_location_list().push_back(table_location);
-    LOG_INFO("setting local address to 1.1.1.1");
+
     optctx_->set_local_server_addr("1.1.1.1", 8888);
     ObOptimizer optimizer(*optctx_);
 
@@ -520,7 +520,7 @@ int TestRewrite::gen_stmt_and_plan(ObTransformerImpl &trans_util,
     ret = optimize(stmt, logical_plan);
   }
   if (OB_FAIL(ret)) {
-    LOG_INFO("FAILED SQL", K(query_str));
+
   }
   return ret;
 }
@@ -541,7 +541,7 @@ void TestRewrite::transform_sql(ObTransformerImpl &trans_util,
   int ret = parse_resolve_transform(of_result, trans_util, sql, stmt,
       logical_plan, do_transform, do_gen_plan, allocator);
   if (ret != OB_SUCCESS) {
-    LOG_INFO("SQL", K(query_str));
+
   }
   ASSERT_EQ(OB_SUCCESS, ret);
 }
@@ -873,7 +873,7 @@ static int pure_recusive_test(int64_t level, int64_t reserved_size = 10000000)
     }
   } else {
     int64_t cur_level = level + 1;
-    LOG_INFO("leaf node quit", K(cur_level));
+
   }
   return ret;
 }
@@ -886,13 +886,13 @@ TEST_F(TestStackCheck, test_stack_check)
   void *stack_start = NULL;
   OB_ASSERT(0 == pthread_getattr_np(pthread_self(), &attr));
   OB_ASSERT(0 == pthread_attr_getstack(&attr, &stack_start, &stack_size));
-  LOG_INFO("stack size", K(stack_size));
+
   int64_t original_reserved_stack_size = get_reserved_stack_size();
   int64_t reserved_size = (static_cast<int64_t>(stack_size)) - 80 * 1000;
   set_reserved_stack_size(reserved_size); //set stack limit to 80kb = 10485760 - 10405760;
   run_fail_test_ret_as(test_file, OB_SIZE_OVERFLOW);
   int sret = pure_recusive_test(1, reserved_size);
-  LOG_INFO("pure recursive output ", K(sret));
+
   OB_ASSERT(OB_SIZE_OVERFLOW == sret);
   set_reserved_stack_size(original_reserved_stack_size);
 }*/

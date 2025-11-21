@@ -204,7 +204,7 @@ int ObFakeBackupMetaIndexMerger::get_all_retries_(const int64_t task_id, const u
   if (OB_FAIL(retry_list.push_back(desc))) {
     LOG_WARN("failed to push back", K(ret), K(desc));
   } else {
-    LOG_INFO("fake get all retries", K(retry_list));
+
   }
   return ret;
 }
@@ -499,7 +499,7 @@ void TestBackupIndexMerger::iterate_macro_index_store_(
     blocksstable::ObLogicMacroBlockId logic_id(1, 1, i);
     ObBackupMacroRangeIndex range_index;
     ret = macro_index_store.get_macro_range_index(logic_id, range_index);
-    LOG_INFO("get macro range index", K(logic_id), K(range_index));
+
     ASSERT_EQ(OB_SUCCESS, ret);
   }
 }

@@ -32,7 +32,7 @@
 #define LOG_WARN_IGNORE_COL_NOTFOUND(ret, fmt, args...) \
   do {\
     if (common::OB_ERR_BAD_FIELD_ERROR == ret) {\
-      LOG_DEBUG(fmt, ##args);\
+\
     } else {\
       LOG_WARN(fmt, ##args);\
     }\

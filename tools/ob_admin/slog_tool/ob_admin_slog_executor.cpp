@@ -200,7 +200,7 @@ int ObAdminSlogExecutor::parse_args(int argc, char *argv[])
       }
     }
   }
-  LOG_INFO("finish parse_args", K(ret), K_(data_dir), K_(tenant_id), K_(log_file_id));
+
   return ret;
 }
 

@@ -133,7 +133,7 @@ int ObAlterDatabaseResolver::resolve(const ParseNode &parse_tree)
       }
     }
   }
-  LOG_INFO("resolve alter database finish", K(ret));
+
   return ret;
 }
 }//namespace sql

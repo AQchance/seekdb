@@ -129,7 +129,7 @@ int ObSNDDLMergeHelperV2::set_ddl_complete(ObIDag *dag, ObTablet &tablet, ObDDLT
   } else if (OB_FAIL(tablet.get_ddl_kv_mgr(ddl_kv_mgr_handle, false /* not for repaly*/))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_TASK_EXPIRED;
-      LOG_INFO("ddl kv mgr not exist", K(ret), K(ddl_merge_param));
+
     } else {
       LOG_WARN("get ddl kv mgr failed", K(ret), K(ddl_merge_param));
     }
@@ -296,7 +296,7 @@ int ObSNDDLMergeHelperV2::process_prepare_task(ObIDag *dag,
   } else if (OB_FAIL(tablet_handle.get_obj()->get_ddl_kv_mgr(ddl_kv_mgr_handle))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_TASK_EXPIRED;
-      LOG_INFO("ddl kv mgr not exist", K(ret), K(ddl_merge_param));
+
     } else {
       LOG_WARN("get ddl kv mgr failed", K(ret), K(ddl_merge_param));
     }
@@ -508,7 +508,7 @@ int ObSNDDLMergeHelperV2::merge_cg_slice(ObIDag *dag,
     }
   } // ddl_sstable_iter
 
-  LOG_INFO("sn_ddl_merge_helper_v2 merge_cg_slice", KR(ret), K(ddl_sstables.count()), K(ddl_param));
+
 
   /* !!! notice !!!
    * sstable meta info rely on previous ddl dump sstable if exist
@@ -556,7 +556,7 @@ int ObIDDLMergeHelper::prepare_ddl_param(const ObDDLTabletMergeDagParamV2 &merge
     ddl_param.seq_no_              = merge_param.seq_no_;
     /* set table key*/
     ddl_param.table_key_.column_group_idx_ = cg_idx;
-    LOG_INFO("prepare_ddl_param", K(ddl_param));
+
     if (OB_FAIL(merge_param.get_table_type(cg_idx, ddl_param.table_key_.table_type_, merge_param.direct_load_type_))) {
       LOG_WARN("failed to get table type", K(ret));
     }
@@ -745,7 +745,7 @@ int ObSNDDLMergeHelperV2::assemble_sstable(ObDDLTabletMergeDagParamV2 &merge_par
   } else if (OB_FAIL(tablet_handle.get_obj()->get_ddl_kv_mgr(ddl_kv_mgr_handle))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_TASK_EXPIRED;
-      LOG_INFO("ddl kv mgr not exist", K(ret), K(merge_param));
+
     } else {
       LOG_WARN("get ddl kv mgr failed", K(ret), K(merge_param));
     }
@@ -841,7 +841,7 @@ int ObSSDDLMergeHelper::process_prepare_task(ObIDag *dag,
     } else if (OB_FAIL(tablet_handle.get_obj()->get_ddl_kv_mgr(ddl_kv_mgr_handle))) {
       if (OB_ENTRY_NOT_EXIST == ret) {
         ret = OB_TASK_EXPIRED;
-        LOG_INFO("ddl kv mgr not exist", K(ret), K(dag_merge_param));
+
       } else {
         LOG_WARN("get ddl kv mgr failed", K(ret), K(dag_merge_param));
       }
@@ -1232,7 +1232,7 @@ int ObSSDDLMergeHelper::merge_cg_sstable(ObIDag *dag,
               } else if (OB_FAIL(index_block_rebuilder.append_macro_row(macro_meta, leaf_index_block.get_buf(), leaf_index_block.get_buf_size()))) {
                 LOG_WARN("append macro row failed", K(ret), K(macro_meta), K(leaf_index_block));
               } else {
-                LOG_TRACE("rebuilder append macro row", K(ret), K(macro_meta));
+
               }
             }
           }
@@ -1408,7 +1408,7 @@ int ObSSDDLMergeHelper::write_ddl_finish_log(ObDDLTabletMergeDagParamV2 &dag_mer
   } else if (OB_FAIL(tablet_handle.get_obj()->get_ddl_kv_mgr(ddl_kv_mgr_handle))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_TASK_EXPIRED;
-      LOG_INFO("ddl kv mgr not exist", K(ret), K(dag_merge_param));
+
     } else {
       LOG_WARN("get ddl kv mgr failed", K(ret), K(dag_merge_param));
     }
@@ -1436,7 +1436,7 @@ int ObSSDDLMergeHelper::write_ddl_finish_log(ObDDLTabletMergeDagParamV2 &dag_mer
     } else if (OB_FAIL(ddl_clog_writer.write_finish_log_with_retry(true, finish_log, is_remote_write))) {
       LOG_WARN("fail write finish log", K(ret), K(finish_log));
     } else if (is_remote_write) {
-      LOG_INFO("remote write ddl log succ");
+
     } else if (OB_FAIL(ddl_clog_writer.wait_finish_log(target_ls_id, table_key, tenant_data_version))) {
       LOG_WARN("fail wait finish log", K(ret));
     }
@@ -1508,7 +1508,7 @@ int ObSSDDLMergeHelper::write_partial_sstable(ObDDLTabletMergeDagParamV2 &dag_me
                                                                              out_macro_seq))) {
       LOG_WARN("persist major to linked block fail", K(ret), K(param), K(major_sstable));
     } else {
-      LOG_INFO("persist large major to linekd block succ", K(major_sstable), KPC(out_sstable), K(out_macro_seq));
+
       out_sstable = nullptr == out_co_sstable ? major_sstable : out_co_sstable;
       update_max_meta_seq(out_macro_seq);
     }
@@ -1680,7 +1680,7 @@ int ObSSDDLMergeHelper::update_major_table_store(ObDDLTabletMergeDagParamV2 &dag
   } else if (OB_FAIL(ObSSDDLUtil::check_ddl_shared_major_exist(target_ls_id, target_tablet_id, transfer_scn, table_key.get_snapshot_version(), *allocator, is_exist))) {
     LOG_WARN("check major exist fail", K(ret), K(table_key), K(target_ls_id));
   } else if (is_exist) {
-    LOG_INFO("major already exist on shared tablet, skip update shared tablet", K(ret), K(table_key), K(target_ls_id));
+
   } else if (OB_FAIL(ObSSDDLUtil::update_shared_tablet_table_store(ls_handle, *out_sstable, *tablet_param->storage_schema_, dag_merge_param.ddl_task_param_.tenant_data_version_, transfer_scn))) {
     LOG_WARN("failed to update shared tablet", K(ret), K(target_ls_id), K(target_tablet_id));
   } else if (OB_FAIL(write_ddl_finish_log(dag_merge_param, out_sstable))) {
@@ -1745,7 +1745,7 @@ int ObSSDDLMergeHelper::assemble_sstable(ObDDLTabletMergeDagParamV2 &merge_param
   } else if (OB_FAIL(tablet_handle.get_obj()->get_ddl_kv_mgr(ddl_kv_mgr_handle))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_TASK_EXPIRED;
-      LOG_INFO("ddl kv mgr not exist", K(ret), K(merge_param));
+
     } else {
       LOG_WARN("get ddl kv mgr failed", K(ret), K(merge_param));
     }

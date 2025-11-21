@@ -40,13 +40,13 @@ int ObBackupCleanFileOp::func(const dirent *entry)
   } else if (OB_FAIL(util.del_file(tmp_path.get_ptr(), storage_info_))) {
     // File does not exist should be considered successful
     if (OB_OBJECT_NOT_EXIST == ret) {
-      LOG_INFO("file is not exist", K(ret), K(tmp_path));
+
       ret = OB_SUCCESS;
     } else {
       LOG_WARN("failed to delete file", K(ret), K(tmp_path));
     } 
   } else {
-    LOG_INFO("success to delete file", K(ret), K(tmp_path)); 
+ 
   }
   return ret;
 }
@@ -107,13 +107,13 @@ int ObBackupPrefixDeleteFileOp::func(const dirent *entry)
   } else if (OB_FAIL(util.del_file(tmp_path.get_ptr(), storage_info_))) {
     // File does not exist should be considered successful
     if (OB_OBJECT_NOT_EXIST == ret) {
-      LOG_INFO("file is not exist", K(ret), K(tmp_path));
+
       ret = OB_SUCCESS;
     } else {
       LOG_WARN("failed to delete file", K(ret), K(tmp_path));
     } 
   } else {
-    LOG_INFO("success to delete file", K(ret), K(tmp_path)); 
+ 
   }
 
 
@@ -148,7 +148,7 @@ int ObBackupCleanUtil::delete_backup_dir_files(
         ob_usleep(1 * 1000 * 1000); //1s
         if (OB_IO_LIMIT == ret) {
           if (REACH_TIME_INTERVAL(60 * 1000 * 1000)) { //60s
-            LOG_INFO("[BACKUP_CLEAN]backup io limit, need retry", K(retry_count), K(io_limit_retry_count), K(ret));
+
           }
         } else {
           LOG_WARN("failed to delete backup dir files, need retry", K(retry_count), K(io_limit_retry_count), K(ret));
@@ -187,7 +187,7 @@ int ObBackupCleanUtil::delete_clog_dir_files(
         ob_usleep(1 * 1000 * 1000); //1s
         if (OB_IO_LIMIT == ret) {
           if (REACH_TIME_INTERVAL(60 * 1000 * 1000)) { //60s
-            LOG_INFO("[BACKUP_CLEAN]backup io limit, need retry", K(retry_count), K(io_limit_retry_count), K(ret));
+
           }
         } else {
           LOG_WARN("failed to delete backup clog dir files, need retry", K(retry_count), K(io_limit_retry_count), K(ret));
@@ -206,13 +206,13 @@ int ObBackupCleanUtil::delete_backup_dir_(
   ObBackupIoAdapter util;
   if (OB_FAIL(util.del_dir(path.get_ptr(), storage_info))) {
     if (OB_DIR_NOT_EXIST == ret) {
-      LOG_INFO("dir is not exist", K(ret), K(path), KP(storage_info));
+
       ret = OB_SUCCESS;
     } else {
       LOG_WARN("failed to del dir time", K(ret), K(path), KP(storage_info));
     }
   } else {
-    LOG_INFO("[BACKUP_CLEAN]success delete backup dir", K(path));
+
   }
   return ret;
 }
@@ -242,7 +242,7 @@ int ObBackupCleanUtil::delete_backup_dir(
         ob_usleep(1 * 1000 * 1000); //1s
         if (OB_IO_LIMIT == ret) {
           if (REACH_TIME_INTERVAL(60 * 1000 * 1000)) { //60s
-            LOG_INFO("[BACKUP_CLEAN]backup io limit, need retry", K(retry_count), K(io_limit_retry_count), K(ret));
+
           }
         } else {
           LOG_WARN("failed to delete backup dir, need retry", K(retry_count), K(io_limit_retry_count), K(ret));
@@ -277,7 +277,7 @@ int ObBackupCleanUtil::delete_backup_file(
       } else if (OB_FAIL(util.del_file(path.get_ptr(), storage_info))) {
         // File does not exist should be considered successful
         if (OB_OBJECT_NOT_EXIST == ret) {
-          LOG_INFO("file is not exist", K(ret), K(path), KP(storage_info));
+
           ret = OB_SUCCESS;
         } else {
           LOG_WARN("[BACKUP_CLEAN]failed to delete file", K(ret), K(path), KP(storage_info));
@@ -291,7 +291,7 @@ int ObBackupCleanUtil::delete_backup_file(
         ob_usleep(1 * 1000 * 1000); //1s
         if (OB_IO_LIMIT == ret) {
           if (REACH_TIME_INTERVAL(60 * 1000 * 1000)) { //60s
-            LOG_INFO("[BACKUP_CLEAN]backup io limit, need retry", K(retry_count), K(io_limit_retry_count), K(ret));
+
           }
         } else {
           LOG_WARN("failed to delete backup file, need retry", K(retry_count), K(io_limit_retry_count), K(ret));

@@ -210,7 +210,7 @@ int ObGroupScanIter::get_next_row()
       }
     }
   }
-  LOG_DEBUG("das group next row", K(ret), K(this), K(*this), K(*row_store_.eval_ctx_));
+
 
   return ret;
 }
@@ -255,7 +255,7 @@ int ObGroupScanIter::get_next_rows(int64_t &count, int64_t capacity)
   int64_t storage_count = 0;
   int64_t ret_count = 0;
   int64_t group_idx = MIN_GROUP_INDEX;
-  LOG_DEBUG("das group before next row", K(last_group_idx_), K(cur_group_idx_));
+
 
   if (last_group_idx_ > cur_group_idx_) {
     ret = OB_ITER_END;
@@ -367,7 +367,7 @@ void ObGroupScanIter::reset()
   row_store_.reset();
   result_tmp_iter_ = NULL;
   iter_ = &result_tmp_iter_;
-  LOG_DEBUG("reset group scan iter", K(this), K(*this));
+
 }
 
 

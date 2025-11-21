@@ -54,7 +54,7 @@ public:
     int ret = OB_SUCCESS;
     if (OB_UNLIKELY(!row.is_valid() || nullptr == curr_micro_column_checksum)) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "invalid arguments", K(ret), K(row), K(curr_micro_column_checksum));
+
     } else {
       for (int64_t i = 0; i < row.get_column_count(); ++i) {
         curr_micro_column_checksum[i] += row.storage_datums_[i].checksum(0);
@@ -105,14 +105,14 @@ int ObMicroBlockChecksumHelper::cal_row_checksum(
   int ret = OB_SUCCESS;
   if (OB_ISNULL(datums)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(datums));
+
   } else if (OB_ISNULL(integer_col_buf_) || OB_ISNULL(integer_col_idx_)) {
     for (int64_t i = 0; i < row_col_cnt; ++i) {
       micro_block_row_checksum_ = datums[i].checksum(micro_block_row_checksum_);
     }
   } else if (OB_ISNULL(col_descs_) || row_col_cnt != col_descs_->count()) { // defense
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpect error", K(ret), KPC(col_descs_), K_(integer_col_cnt), K(row_col_cnt));
+
   } else {
     for (int64_t i = 0, idx = 0; i < row_col_cnt; ++i) {
       if (idx < integer_col_cnt_ && integer_col_idx_[idx] == i) {

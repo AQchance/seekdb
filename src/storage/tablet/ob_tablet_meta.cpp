@@ -724,7 +724,7 @@ int ObTabletMeta::serialize(char *buf, const int64_t len, int64_t &pos) const
     LOG_WARN("tablet meta's length doesn't match standard length", K(ret), K(new_pos), K(pos), K(length), K(length));
   } else {
     pos = new_pos;
-    LOG_DEBUG("succeed to serialize tablet meta", KPC(this));
+
   }
 
   return ret;
@@ -832,7 +832,7 @@ int ObTabletMeta::deserialize(
       compat_mode_ = static_cast<lib::Worker::CompatMode>(compat_mode);
       is_inited_ = true;
     }
-    LOG_DEBUG("succeed to deserialize tablet meta", KPC(this));
+
   } else {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("invalid version", K(ret), K_(version));
@@ -953,7 +953,7 @@ int ObTabletMeta::init_report_info(
     report_status.merge_snapshot_version_ = major_ckm_info.get_compaction_scn();
     report_status.row_count_ = major_ckm_info.get_row_count();
     report_status.data_checksum_ = major_ckm_info.get_data_checksum();
-    LOG_INFO("success to init report_status from major ckm info", KR(ret), K(report_status), K(major_ckm_info));
+
   }
   return ret;
 }
@@ -1313,7 +1313,7 @@ int ObMigrationTabletParam::serialize(char *buf, const int64_t len, int64_t &pos
   } else {
     pos = new_pos;
 
-    LOG_DEBUG("succeed to serialize migration tablet param", K(ret), KPC(this));
+
   }
 
   return ret;
@@ -1422,7 +1422,7 @@ int ObMigrationTabletParam::deserialize_v2_v3(const char *buf, const int64_t len
     }
     compat_mode_ = static_cast<lib::Worker::CompatMode>(compat_mode);
     pos = new_pos;
-    LOG_DEBUG("succeed to deserialize migration tablet param v2_v3", K(ret), KPC(this));
+
   }
 
   return ret;
@@ -1523,7 +1523,7 @@ int ObMigrationTabletParam::deserialize_v1(const char *buf, const int64_t len, i
     version_ = PARAM_VERSION_V2;
     pos = new_pos;
     micro_index_clustered_ = false;
-    LOG_DEBUG("succeed to deserialize migration tablet param v1", K(ret), KPC(this));
+
   }
 
   return ret;
@@ -1557,7 +1557,7 @@ int ObMigrationTabletParam::deserialize(const char *buf, const int64_t len, int6
     } else {
       pos = new_pos;
 
-      LOG_TRACE("succeed to deserialize migration tablet param", K(ret), KPC(this));
+
     }
   }
 
@@ -1811,13 +1811,13 @@ int ObMigrationTabletParam::construct_placeholder_storage_schema_and_medium(
   col_schema.default_checksum_ = 0;
 
   if (OB_FAIL(storage_schema.rowkey_array_.reserve(storage_schema.column_cnt_))) {
-    STORAGE_LOG(WARN, "Fail to reserve rowkey column array", K(ret));
+
   } else if (OB_FAIL(storage_schema.column_array_.reserve(storage_schema.column_cnt_))) {
-    STORAGE_LOG(WARN, "Fail to reserve column array", K(ret));
+
   } else if (OB_FAIL(storage_schema.rowkey_array_.push_back(rowkey_schema))) {
-    STORAGE_LOG(WARN, "Fail to add rowkey column id to rowkey array", K(ret));
+
   } else if (OB_FAIL(storage_schema.column_array_.push_back(col_schema))) {
-    STORAGE_LOG(WARN, "Fail to push into column array", K(ret), K(col_schema));
+
   } else {
     storage_schema.is_inited_ = true;
   }

@@ -107,7 +107,7 @@ int ObTruncatePartitionFilter::init(
   if (OB_SUCC(ret)) {
     base_version_ = read_version_range.base_version_;
   }
-  LOG_INFO("[TRUNCATE INFO]", K(ret), K(tablet), K(cols_desc), K(read_version_range), KPC(this));
+
   return ret;
 }
 
@@ -133,7 +133,7 @@ int ObTruncatePartitionFilter::init(
   } else {
     filter_type_ = ObTruncateFilterType::NORMAL_FILTER;
   }
-  LOG_INFO("[TRUNCATE INFO]", K(ret), K(schema_rowkey_cnt), K(cols_desc), K(mds_info_mgr), KPC(this));
+
   return ret;
 }
 
@@ -177,7 +177,7 @@ int ObTruncatePartitionFilter::switch_info(
   if (OB_SUCC(ret)) {
     base_version_ = read_version_range.base_version_;
   }
-  LOG_INFO("[TRUNCATE INFO]", K(ret), K(tablet), K(cols_desc), K(read_version_range), KPC(this));
+
   return ret;
 }
 
@@ -215,12 +215,12 @@ int ObTruncatePartitionFilter::filter(
       LOG_WARN("failed to do base version filter", K(ret), K(row));
     }
   } else if (ObTruncateFilterType::EMPTY_FILTER == filter_type_) {
-    LOG_DEBUG("[TRUNCATE INFO] filter is empty after rescan", K(*this));
+
   } else {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected state", K(ret), K_(filter_type), KPC(this));
   }
-  LOG_DEBUG("[TRUNCATE INFO] filter single row", K(ret), K(row), K(filtered), KPC(this));
+
   return ret;
 }
 
@@ -284,7 +284,7 @@ int ObTruncatePartitionFilter::combine_to_filter_tree(sql::ObPushdownFilterExecu
     LOG_WARN("unexpected null truncate filter executor", K(ret), KPC(this));
   } else if (nullptr == root_filter) {
     root_filter = truncate_filter_executor_;
-    LOG_DEBUG("[TRUNCATE INFO] pushdown filter is null, only truncate filter exists", KP(root_filter), KPC(this));
+
   } else {
     if (nullptr == pd_filter_node_with_truncate_ &&
         OB_FAIL(filter_factory_.alloc(sql::PushdownFilterType::AND_FILTER, 2, pd_filter_node_with_truncate_))) {
@@ -306,7 +306,7 @@ int ObTruncatePartitionFilter::combine_to_filter_tree(sql::ObPushdownFilterExecu
   if (OB_SUCC(ret)) {
     has_combined_to_pd_filter_ = true;
   }
-  LOG_INFO("[TRUNCATE INFO]", K(ret), KP(root_filter), KP_(truncate_filter_executor), KPC(this));
+
   return ret;
 }
 
@@ -382,7 +382,7 @@ int ObTruncatePartitionFilterFactory::build_truncate_partition_filter(
     LOG_WARN("Invalid argument", K(ret), K(tablet), KP(outer_allocator), K(read_version_range));
   } else if (FALSE_IT(tablet.check_truncate_info_state(read_version_range, has_truncate_flag, has_truncate_info))) {
   } else if (!has_truncate_flag && !has_truncate_info) {
-    LOG_DEBUG("[TRUNCATE INFO] do not need read truncate info", K(ret), K(read_version_range), KP(truncate_part_filter));
+
     if (OB_UNLIKELY(nullptr != truncate_part_filter)) {
       truncate_part_filter->reuse();
       truncate_part_filter->set_empty();
@@ -390,7 +390,7 @@ int ObTruncatePartitionFilterFactory::build_truncate_partition_filter(
   } else if (nullptr == truncate_part_filter) {
     if (OB_ISNULL(truncate_part_filter = OB_NEWx(ObTruncatePartitionFilter, outer_allocator))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed to alloc memory", K(ret));
+
     } else if (OB_FAIL(truncate_part_filter->init(tablet, split_extra_tablet_handles, cols_desc, cols_param, read_version_range,
                                                   has_truncate_flag, has_truncate_info, *outer_allocator))) {
       LOG_WARN("failed to init filter wrapper", K(ret));

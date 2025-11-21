@@ -115,7 +115,7 @@ OB_INLINE void ObLSMap::revert_ls(ObLS *ls, ObLSGetMod mod) const
 {
   if (OB_NOT_NULL(ls)) {
     if (ls->get_ref_mgr().dec(mod)) {
-      STORAGE_LOG(INFO, "ObLSMap free ls", KP(ls), K(mod), K(ls->get_ls_id()));
+
       free_ls(ls);
     }
   }
@@ -128,7 +128,7 @@ int ObLSMap::operate_ls(const share::ObLSID &ls_id,
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLSMap not init", K(ret), K(ls_id));
+
   } else {
     const int64_t pos = ls_id.hash() % BUCKETS_CNT;
     ObLS *ls = ls_buckets_[pos];

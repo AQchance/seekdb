@@ -168,7 +168,7 @@ int ObDASGlobalLookupIter::add_rowkey()
     } else {
       scan_param.is_get_ = true;
     }
-    LOG_DEBUG("build global lookup range", K(lookup_range), K(ret));
+
   }
 
   return ret;

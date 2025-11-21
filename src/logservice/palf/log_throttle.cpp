@@ -101,7 +101,7 @@ int LogWritingThrottle::throttling(const int64_t throttling_size,
           LOG_WARN("failed to update_throttling_info_", KPC(this), K(time_interval), K(remain_interval_us));
         } else if (!need_throttling_not_guarded_by_lock_(need_purging_throttling_func)
                    || has_freed_up_space) {
-          LOG_TRACE("no need throttling or log disk has been freed up", KPC(this), K(time_interval), K(remain_interval_us), K(has_freed_up_space));
+
           break;
         }
       }

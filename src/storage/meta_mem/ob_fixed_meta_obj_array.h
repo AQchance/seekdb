@@ -92,10 +92,10 @@ int ObFixedMetaObjArray<T>::init(const int64_t capacity, ObIAllocator &allocator
   int ret = OB_SUCCESS;
   if (OB_NOT_NULL(data_) || OB_NOT_NULL(allocator_)) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "double initialization", K(ret), KPC(this));
+
   } else if (OB_UNLIKELY(capacity < 0)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "invalid argument", K(capacity));
+
   } else {
     allocator_ = &allocator;
     count_ = 0;
@@ -104,7 +104,7 @@ int ObFixedMetaObjArray<T>::init(const int64_t capacity, ObIAllocator &allocator
       capacity_ = capacity;
     } else if (OB_ISNULL(data_ = static_cast<T *>(allocator_->alloc(capacity * sizeof(T))))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed to allocate memory for array", K(ret), K(capacity), K(sizeof(T)));
+
     } else {
       capacity_ = capacity;
     }
@@ -123,10 +123,10 @@ int ObFixedMetaObjArray<T>::init(
   const int64_t inner_array_size = sizeof(T) * capacity;
   if (OB_NOT_NULL(data_) || OB_NOT_NULL(allocator_)) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init twice", K(ret), KPC(this));
+
   } else if (OB_UNLIKELY(capacity < 0 || (buf_len - pos) < inner_array_size) || OB_ISNULL(data_buf)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "invalid argument", K(capacity), K(buf_len), K(pos), K(inner_array_size), KP(data_buf));
+
   } else {
     allocator_ = nullptr;
     count_ = 0;
@@ -145,9 +145,9 @@ int ObFixedMetaObjArray<T>::init_and_assign(
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(init(other.count(), allocator))) {
-    STORAGE_LOG(WARN, "failed to init fixed array", K(ret));
+
   } else if (OB_FAIL(assign(other))) {
-    STORAGE_LOG(WARN, "failed to assign from other array", K(ret), K(other));
+
   }
   return ret;
 }
@@ -179,14 +179,14 @@ int ObFixedMetaObjArray<T>::deserialize(
   int64_t count = 0;
   if (OB_UNLIKELY(0 != count_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "deserialize a non-empty fixed array is not supported", K(ret));
+
   }
   OB_UNIS_DECODE(count);
   if (OB_SUCC(ret) && count > 0) {
     if (OB_FAIL(init(count, allocator))) {
-      STORAGE_LOG(WARN, "fail to init array", K(ret));
+
     } else if (OB_FAIL(prepare_allocate(count))) {
-      STORAGE_LOG(WARN, "fail to init array item", K(ret));
+
     } else {
       for (int64_t i = 0; OB_SUCC(ret) && i < count; i ++) {
         OB_UNIS_DECODE(at(i));
@@ -213,14 +213,14 @@ int ObFixedMetaObjArray<T>::deep_copy(
   const int64_t memory_size = get_deep_copy_size();
   if (OB_ISNULL(dst_buf) || OB_UNLIKELY(buf_size < memory_size)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalue argument", K(ret), KP(dst_buf), K(buf_size), K(memory_size));
+
   } else if (OB_NOT_NULL(dst_array.data_) || OB_NOT_NULL(dst_array.allocator_)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "can not copy to inited array with this deep copy interface", K(ret), K(dst_array));
+
   } else if (OB_FAIL(dst_array.init(count_, buf_size, dst_buf, pos))) {
-    STORAGE_LOG(WARN, "fail to init dst array with copy buf", K(ret), KP(dst_buf), K_(count));
+
   } else if (OB_FAIL(dst_array.assign(*this))) {
-    STORAGE_LOG(WARN, "fail to copy local data to dest array", K(ret));
+
   }
   return ret;
 }
@@ -258,18 +258,18 @@ int ObFixedMetaObjArray<T>::push_back(const T &obj)
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(count_ >= capacity_)) {
     ret = OB_SIZE_OVERFLOW;
-    STORAGE_LOG(WARN, "fixede array size over flow", K(ret), K_(capacity));
+
   } else if (OB_ISNULL(data_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "array not inited", K(ret));
+
   } else if (OB_LIKELY(count_ >= init_cnt_)) {
     if (OB_FAIL(common::construct_assign(data_[count_], obj))) {
-      STORAGE_LOG(WARN, "failed to copy data", K(ret));
+
     } else {
       ++init_cnt_;
     }
   } else if (OB_FAIL(common::copy_assign(data_[count_], obj))) {
-    STORAGE_LOG(WARN, "failed to copy data", K(ret));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -333,10 +333,10 @@ int ObFixedMetaObjArray<T>::assign(const common::ObIArray<T> &other)
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(capacity_ < other.count())) {
     ret = OB_SIZE_OVERFLOW;
-    STORAGE_LOG(WARN, "memory of current array is not enough", K(ret), K_(capacity), K(other));
+
   } else if (OB_UNLIKELY(0 != count_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "assign to a non-empty array is not supported", K(ret));
+
   } else if (0 == other.count()) {
     capacity_ = 0;
     count_ = 0;
@@ -344,11 +344,11 @@ int ObFixedMetaObjArray<T>::assign(const common::ObIArray<T> &other)
     data_ = nullptr;
   } else if (OB_ISNULL(data_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "assign to a non-inited fixed meta obj array is not supported", K(ret));
+
   } else if (this != &other) {
     for (int64_t i = 0; OB_SUCC(ret) && i < other.count(); ++i) {
       if (OB_FAIL(push_back(other.at(i)))) {
-        STORAGE_LOG(WARN, "failed to push item in array", K(ret), K(i));
+
       }
     }
   }
@@ -363,13 +363,13 @@ int ObFixedMetaObjArray<T>::prepare_allocate(int64_t capacity)
 
   if (OB_UNLIKELY(capacity > capacity_)) {
     ret = OB_SIZE_OVERFLOW;
-    STORAGE_LOG(WARN, "fixed array size over flow", K(ret), K(capacity), K_(capacity));
+
   } else if (0 == capacity) {
     count_ = 0;
     init_cnt_ = 0;
   } else if (OB_ISNULL(data_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "array not inited", K(ret));
+
   } else {
     for (int64_t i = init_cnt_; i < capacity; ++i) {
       new(&data_[i]) T();

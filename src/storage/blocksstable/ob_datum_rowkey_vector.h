@@ -261,7 +261,7 @@ int ObColumnVector::locate_integer_key(
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(begin >= end)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument", K(ret), K(begin), K(end));
+
   } else {
     const T *first = data + begin;
     const T *last = data + end;
@@ -272,7 +272,7 @@ int ObColumnVector::locate_integer_key(
     } else if (need_upper_bound) {
       if (OB_UNLIKELY(*lb < key)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "Unexpected cmp ret", K(ret), K(*lb), K(key), K(begin), K(end));
+
       } else if (*lb > key) {
         end = begin;
       } else {
@@ -472,7 +472,7 @@ int ObColumnVector::locate_integer_key_with_null(
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(begin >= end || (!has_null_ && !cell.null_))) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument", K(ret), K(begin), K(end), K(has_null_), K(cell));
+
   } else {
     ObRVIntegerWithNullComparor<T> comparor(!is_oracle_mode);
     const ObRVIntegerIterator<T> first(begin, data, nulls_);
@@ -485,7 +485,7 @@ int ObColumnVector::locate_integer_key_with_null(
       const int cmp_ret =  comparor.compare(*lb, cell);
       if (OB_UNLIKELY(cmp_ret < 0)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "Unexpected cmp ret", K(ret), K(cmp_ret), K(*lb), K(cell), K(begin), K(end));
+
       } else if (cmp_ret > 0) {
         end = begin;
       } else {

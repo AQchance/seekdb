@@ -141,7 +141,7 @@ int ObMVProvider::init_mv_provider(ObSQLSessionInfo *session_info,
           } else if (OB_FAIL(checker.check_mv_refresh_type())) {
             LOG_WARN("failed to check mv refresh type", K(ret));
           } else if (OB_MV_COMPLETE_REFRESH >= (refreshable_type_ = checker.get_refersh_type())) {
-            LOG_TRACE("mv not support fast refresh", K_(refreshable_type), K(mv_schema->get_table_name()));
+
           } else if (check_refreshable_only) {
             inited_ = true;
           } else if (OB_FAIL(print_mv_operators(mv_printer_ctx,
@@ -371,7 +371,7 @@ int ObMVProvider::get_real_time_mv_expand_view(const uint64_t tenant_id,
     LOG_WARN("failed to write string", K(ret));
   } else {
     is_major_refresh_mview = OB_MV_FAST_REFRESH_MAJOR_REFRESH_MJV == mv_provider.refreshable_type_;
-    LOG_TRACE("finish generate rt mv expand view", K(mview_id), K(is_major_refresh_mview), K(expand_view));
+
   }
   return ret;
 }
@@ -519,7 +519,7 @@ int ObMVProvider::generate_mv_stmt(ObIAllocator &alloc,
     LOG_WARN("failed to formalize stmt reference", K(ret));
   } else {
     view_stmt = sel_stmt;
-    LOG_DEBUG("generate mv stmt", KPC(view_stmt));
+
   }
   return ret;
 }
@@ -558,7 +558,7 @@ int ObMVProvider::check_mview_dep_session_vars(const ObTableSchema &mv_schema,
     if (gen_error) {
       LOG_WARN("some session variables differ from values used when the mview was created. ", K(mview_name));
     } else {
-      LOG_TRACE("some session variables differ from values used when the mview was created. ", K(mview_name));
+
     }
     for (int64_t i = 0; OB_SUCC(ret) && i < local_diff_vars.count(); ++i) {
       if (OB_ISNULL(sys_var = local_diff_vars.at(i))) {
@@ -575,7 +575,7 @@ int ObMVProvider::check_mview_dep_session_vars(const ObTableSchema &mv_schema,
         if (gen_error) {
           LOG_WARN("session variable changed", K(i), K(var_name), K(local_var_val), K(cur_var_val));
         } else {
-          LOG_TRACE("session variable changed", K(i), K(var_name), K(local_var_val), K(cur_var_val));
+
         }
       }
     }

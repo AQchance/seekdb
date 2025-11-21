@@ -42,10 +42,10 @@ namespace compaction
     if (OB_SIZE_OVERFLOW != ret && OB_EAGAIN != ret) {                         \
       LOG_WARN("failed to create merge dag", K(ret), K(param));                \
     } else if (OB_EAGAIN == ret) {                                             \
-      LOG_DEBUG("exists same dag, wait the dag to finish", K(ret), K(param));  \
+  \
     }                                                                          \
   } else {                                                                     \
-    LOG_DEBUG("success to schedule tablet merge dag", K(ret), K(param));       \
+       \
   }
 
 #define CREATE_AND_GET_DAG(T, dag) \
@@ -55,7 +55,7 @@ namespace compaction
         LOG_WARN("failed to create merge dag", K(ret), K(param)); \
       } \
     } else { \
-      LOG_DEBUG("success to create and get dag", K(ret), K(param)); \
+ \
     } \
   }
 int ObScheduleDagFunc::schedule_tx_table_merge_dag(

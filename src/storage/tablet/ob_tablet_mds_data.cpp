@@ -639,7 +639,7 @@ int ObTabletMdsData::load_mds_dump_kv(
     if (src_kv->v_.user_data_.empty()) {
       ObTabletObjLoadHelper::free(allocator, ptr);
       ptr = nullptr;
-      LOG_INFO("read empty user data", K(ret), K(complex_addr));
+
     } else if (OB_FAIL(ptr->assign(*src_kv, allocator))) {
       LOG_WARN("failed to copy mds dump kv", K(ret));
     }
@@ -661,7 +661,7 @@ int ObTabletMdsData::load_mds_dump_kv(
       if (dump_node.user_data_.empty()) {
         ObTabletObjLoadHelper::free(allocator, ptr);
         ptr = nullptr;
-        LOG_INFO("read empty user data", K(ret), K(complex_addr));
+
       }
     }
   } else {
@@ -700,7 +700,7 @@ int ObTabletMdsData::load_array(
     if (src_array->empty()) {
       ObTabletObjLoadHelper::free(allocator, ptr);
       ptr = nullptr;
-      LOG_INFO("read empty array", K(ret), K(complex_addr));
+
     } else if (OB_FAIL(ptr->assign(allocator, *src_array))) {
       LOG_WARN("failed to copy array", K(ret));
     }
@@ -711,7 +711,7 @@ int ObTabletMdsData::load_array(
     } else if (ptr->empty()) {
       ObTabletObjLoadHelper::free(allocator, ptr);
       ptr = nullptr;
-      LOG_INFO("read empty info", K(ret), K(complex_addr));
+
     } else {
       ptr->sort_array();
       ptr->is_inited_ = true;
@@ -751,7 +751,7 @@ int ObTabletMdsData::load_auto_inc_seq(
     if (!src_auto_inc_seq->is_valid()) {
       ObTabletObjLoadHelper::free(allocator, ptr);
       ptr = nullptr;
-      LOG_INFO("read empty auto inc seq", K(ret), K(complex_addr));
+
     } else if (OB_FAIL(ptr->assign(allocator, *src_auto_inc_seq))) {
       LOG_WARN("failed to copy auto inc seq", K(ret));
     }
@@ -768,7 +768,7 @@ int ObTabletMdsData::load_auto_inc_seq(
       // no need to copy
       ObTabletObjLoadHelper::free(allocator, ptr);
       ptr = nullptr;
-      LOG_INFO("empty auto inc seq", K(ret));
+
     }
   } else {
     ret = OB_ERR_UNEXPECTED;
@@ -1171,7 +1171,7 @@ int ObTabletMdsData::deserialize(const char *buf, const int64_t data_len, int64_
     LOG_WARN("failed to deserialize", K(ret));
   } else {
     is_inited_ = true;
-    LOG_INFO("succeeded to deserialize mds data", K(ret), KPC(this));
+
   }
 
   return ret;

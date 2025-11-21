@@ -172,7 +172,7 @@ int ObCheckConstraintValidationTask::process()
     K_(constraint_id), 
     K_(schema_version),
     table_id_buffer);
-  LOG_INFO("process check constraint validation task", "ddl_event_info", ObDDLEventInfo(), K(task_id_), K(constraint_id_));
+
   return ret;
 }
 
@@ -221,7 +221,7 @@ int ObForeignKeyConstraintValidationTask::process()
                         1L/*unused execution id*/, ret, info))) {
       LOG_WARN("fail to finish check constraint task", KR(tmp_ret));
     }
-    LOG_INFO("execute check foreign key task finish", K(ret), "ddl_event_info", ObDDLEventInfo(), K(task_key), K(data_table_id_), K(foregin_key_id_));
+
   }
   ROOTSERVICE_EVENT_ADD("ddl scheduler", "foreign key constraint validation task process finish",
     K_(tenant_id),
@@ -694,7 +694,7 @@ int ObConstraintTask::release_snapshot(const int64_t snapshot_version)
     LOG_WARN("get table schema failed", K(ret), K(object_id_));
   } else if (OB_ISNULL(table_schema)) {
     // ignore ret
-    LOG_INFO("table not exist", K(ret), K(object_id_), K(target_object_id_));
+
   } else if (OB_FAIL(ObDDLUtil::get_tablets(tenant_id_, object_id_, tablet_ids))) {
     if (OB_TABLE_NOT_EXIST == ret || OB_TENANT_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
@@ -844,7 +844,7 @@ int ObConstraintTask::send_check_constraint_request()
       LOG_WARN("submit ddl single replica build task failed", K(ret));
     } else {
       check_replica_request_time_ = ObTimeUtility::current_time();
-      LOG_INFO("send check constraint request", K(object_id_), K(target_object_id_), K(schema_version_));
+
     }
   }
   return ret;
@@ -865,7 +865,7 @@ int ObConstraintTask::send_fk_constraint_request()
       LOG_WARN("submit ddl single replica build task", K(ret));
     } else {
       check_replica_request_time_ = ObTimeUtility::current_time();
-      LOG_INFO("send foreign key request", K(object_id_), K(target_object_id_), K(schema_version_));
+
     }
   }
   return ret;
@@ -885,7 +885,7 @@ int ObConstraintTask::check_replica_end(bool &is_end)
       check_job_ret_code_ = INT64_MAX;
       ret_code_ = OB_SUCCESS;
       is_end = false;
-      LOG_INFO("ddl need retry", K(*this));
+
     }
     ret = ret_code_;
   } else {
@@ -1096,7 +1096,7 @@ int ObConstraintTask::report_check_constraint_error_code()
     const char *ddl_type_str = nullptr;
     error_message.ret_code_ = ret_code_;
     error_message.ddl_type_ = task_type_;
-    LOG_INFO("report error code", K(ret_code_));
+
     if (OB_ISNULL(error_message.user_message_ = static_cast<char *>(error_message.allocator_.alloc(OB_MAX_ERROR_MSG_LEN)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
       LOG_WARN("alloc memory failed", K(ret));
@@ -1382,7 +1382,7 @@ int ObConstraintTask::set_check_constraint_validated()
                     LOG_WARN("column is nullable without constraint, maybe constraint dropped by others", K(ret));
                   } else {
                     ret = OB_NO_NEED_UPDATE;
-                    LOG_INFO("already not null, maybe on retry", K(target_object_id_), K(column_id));
+
                   }
                 } else {
                   LOG_WARN("failed to refresh name for alter table schema", K(ret));
@@ -1462,7 +1462,7 @@ int ObConstraintTask::set_new_not_null_column_validate()
           alter_table(alter_table_arg, res))) {
         LOG_WARN("alter table failed", K(ret));
       } else {
-        LOG_TRACE("set new not null column validate", K(alter_table_arg));
+
       }
     }
   }
@@ -1572,7 +1572,7 @@ int ObConstraintTask::rollback_failed_check_constraint()
       ret = OB_SUCCESS;
     }
     if (OB_SUCC(ret)) {
-      LOG_INFO("rollback failed check constraint succussfully", K(alter_table_arg));
+
     }
   }
   return ret;
@@ -1663,7 +1663,7 @@ int ObConstraintTask::rollback_failed_foregin_key()
       ret = OB_SUCCESS;
     }
     if (OB_SUCC(ret)) {
-      LOG_INFO("rollback failed foreign key constraint succussfully", K(alter_table_arg));
+
     }
   }
   return ret;
@@ -1993,7 +1993,7 @@ int ObConstraintTask::process()
   }
   if (OB_FAIL(ret)) {
     add_event_info("constraint task process fail");
-    LOG_INFO("process constraint task fail", "ddl_event_info", ObDDLEventInfo());
+
   }
   return ret;
 }

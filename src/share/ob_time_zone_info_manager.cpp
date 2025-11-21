@@ -245,7 +245,7 @@ int ObTimeZoneInfoManager::fetch_time_zone_info_from_tenant_table(const int64_t 
               // so ObTZInfoMap will not be used again. This is a defense code. 
               new (&tz_info_map_buf_) ObTZInfoMap();
               inited_ = false;
-              LOG_INFO("reset tz info map buf", K(tenant_id_), K(ret));
+
               tz_info_map_.id_map_ = shared_tz_info_map_.id_map_;
               tz_info_map_.name_map_ = shared_tz_info_map_.name_map_;
               tz_info_map_.offset_map_ = shared_tz_info_map_.offset_map_;
@@ -318,7 +318,7 @@ int ObTimeZoneInfoManager::set_tz_info_map(ObTimeZoneInfoPos *&stored_tz_info,
   } else if (is_equal) {
     //do nothing
   } else {
-    LOG_INFO("need to upgrade transition time", KPC(stored_tz_info), K(new_tz_info));
+
     common::ObSArray<ObTZTransitionTypeInfo> &next_tz_tran_types = stored_tz_info->get_next_tz_tran_types();
     common::ObSArray<ObTZRevertTypeInfo> &next_tz_revt_types = stored_tz_info->get_next_tz_revt_types();
     if (OB_FAIL(next_tz_tran_types.assign(new_tz_info.get_tz_tran_types()))) {
@@ -487,7 +487,7 @@ int ObTimeZoneInfoManager::fill_tz_info_map(sqlclient::ObMySQLResult &result,
       }
     }
 
-    LOG_DEBUG("succ to read one row", K(tz_tran_type), K(tz_id), K(inner_tz_id), K(tz_name_str), K(tz_abbr_str));
+
 
     //set tz_info_map and create new tz_info
     if (OB_FAIL(ret)) {
@@ -521,7 +521,7 @@ int ObTimeZoneInfoManager::fill_tz_info_map(sqlclient::ObMySQLResult &result,
         LOG_WARN("stored_tz_info should be null here", K(ret));
       } else if (OB_FAIL(tz_info_map.get_tz_info_by_name(tz_name_str, stored_tz_info))) {
         if (OB_ERR_UNKNOWN_TIME_ZONE == ret) {
-          LOG_DEBUG("fail to get stored_tz_info, it is a new tz info", K(tz_name_str), K(ret));
+
           ret = OB_SUCCESS;
         } else {
           LOG_WARN("fail to get stored_tz_info", K(tz_name_str), K(ret));
@@ -539,7 +539,7 @@ int ObTimeZoneInfoManager::fill_tz_info_map(sqlclient::ObMySQLResult &result,
       } else if (!is_tran_time_null && OB_FAIL(tz_info.add_tran_type_info(tz_tran_type))) {
         LOG_WARN("fail to push bak tz_tran_type", K(ret));
       } else {
-        LOG_DEBUG("succ to add tz_tran_type", K(tz_name_str), K(tz_tran_type));
+
       }
     }
   }//while

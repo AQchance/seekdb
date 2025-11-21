@@ -95,7 +95,7 @@ void TestThrottlingUtils::test_get_throttling_interval(
 {
   const int64_t GB = 1024 * 1024 * 1024L;
   const int64_t MB = 1024 * 1024L;
-  LOG_INFO("BEGIN TEST big round", K(chunk_size), K(request_size), K(trigger_limit), K(stop_limit), K(decay_factor));
+
   int64_t interval_us = 0;
   int64_t overused_size = 1 * MB;
   test_get_throttling_interval_size(chunk_size, request_size, trigger_limit, stop_limit, overused_size, decay_factor);
@@ -133,7 +133,7 @@ void TestThrottlingUtils::test_get_throttling_interval(
                                       stop_limit, overused_percentage,
                                       decay_factor);
   }
-  LOG_INFO("END TEST big round", K(chunk_size), K(request_size), K(trigger_limit), K(stop_limit), K(decay_factor));
+
 }
 
 void TestThrottlingUtils::SetUp()
@@ -142,7 +142,7 @@ void TestThrottlingUtils::SetUp()
 
 void TestThrottlingUtils::TearDown()
 {
-  LOG_INFO("TestThrottlingUtils has TearDown");
+
   //ObMallocAllocator::get_instance()->recycle_tenant_allocator(1001);
 }
 
@@ -162,16 +162,16 @@ TEST_F(TestThrottlingUtils, test_calc_decay_factor)
   chunk_size = 2 * 1024 * 1024 + 24 * 1024;
   ASSERT_EQ(OB_SUCCESS,  ObThrottlingUtils::calc_decay_factor(available_size, duration_us, chunk_size, decay_factor));
   //0.10934
-  LOG_INFO("calc_decay_factor", K(chunk_size), K(duration_us), K(available_size), K(decay_factor));
+
   ASSERT_EQ(10933, static_cast<int64_t>(decay_factor * 100000.0));
   available_size = 10 * GB;
 
   ASSERT_EQ(OB_SUCCESS,  ObThrottlingUtils::calc_decay_factor(available_size, duration_us, chunk_size, decay_factor));
-  LOG_INFO("calc_decay_factor", K(chunk_size), K(duration_us), K(available_size), K(decay_factor));
+
   ASSERT_EQ(109728, static_cast<int64_t>(decay_factor * 10000000000.0));
   available_size = 40 * GB;
   ASSERT_EQ(OB_SUCCESS,  ObThrottlingUtils::calc_decay_factor(available_size, duration_us, chunk_size, decay_factor));
-  LOG_INFO("calc_decay_factor", K(chunk_size), K(duration_us), K(available_size), K(decay_factor));
+
   ASSERT_EQ(42875, static_cast<int64_t>(decay_factor * 1000000000000.0));
 }
 
@@ -199,23 +199,23 @@ TEST_F(TestThrottlingUtils, test_get_throttling_interval_basic)
   int64_t duration_us = 1800 * 1000 * 1000L;
   ASSERT_EQ(OB_SUCCESS, ObThrottlingUtils::calc_decay_factor(available_size, duration_us, chunk_size, decay_factor));
   request_size = 1 * KB;
-  LOG_INFO("TEST REQUEST_SIZE", K(request_size));
+
   test_get_throttling_interval(chunk_size, request_size, trigger_limit, stop_limit, decay_factor);
 
   request_size = 10 * KB;
-  LOG_INFO("TEST REQUEST_SIZE", K(request_size));
+
   test_get_throttling_interval(chunk_size, request_size, trigger_limit, stop_limit, decay_factor);
 
   request_size = 100 * KB;
-  LOG_INFO("TEST REQUEST_SIZE", K(request_size));
+
   test_get_throttling_interval(chunk_size, request_size, trigger_limit, stop_limit, decay_factor);
 
   request_size = 1 * MB;
-  LOG_INFO("TEST REQUEST_SIZE", K(request_size));
+
   test_get_throttling_interval(chunk_size, request_size, trigger_limit, stop_limit, decay_factor);
 
   request_size = palf::MAX_LOG_BUFFER_SIZE;
-  LOG_INFO("TEST REQUEST_SIZE", K(request_size));
+
   test_get_throttling_interval(chunk_size, request_size, trigger_limit, stop_limit, decay_factor);
 
 }
@@ -228,7 +228,7 @@ int main(int argc, char **argv)
   system("rm -rf ./test_throttling_utils.log*");
   OB_LOGGER.set_file_name("test_throttling_utils.log", true);
   OB_LOGGER.set_log_level("INFO");
-  LOG_INFO("begin unittest::test_throttling_utils");
+
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

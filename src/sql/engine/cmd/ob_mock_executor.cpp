@@ -52,7 +52,7 @@ int ObMockExecutor::execute(ObExecContext &exec_ctx, ObMockStmt &stmt)
     LOG_USER_WARN(OB_NOT_SUPPORTED, "This statement is");
   } else if (stmt::T_FLUSH_TABLE_MOCK == stmt.get_stmt_type()) {
     if (is_mock_stmt_flush_table_enabled()) {
-      LOG_INFO("mock flush table statment but return success");
+
     } else {
       ret = OB_NOT_SUPPORTED;
       LOG_USER_ERROR(OB_NOT_SUPPORTED, "This statement is");

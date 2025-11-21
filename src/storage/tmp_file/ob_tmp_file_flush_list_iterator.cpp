@@ -210,7 +210,7 @@ int ObTmpFileFlushListIterator::next(const FlushCtxState iter_stage, ObITmpFileH
   if (OB_FAIL(ret)) {
   } else if (0 == cached_file_num_ && OB_FAIL(cache_files_(iter_stage))) {
     if (OB_ITER_END == ret) {
-      LOG_DEBUG("fail to cache files", KR(ret));
+
     } else {
       LOG_WARN("fail to cache files", KR(ret));
     }

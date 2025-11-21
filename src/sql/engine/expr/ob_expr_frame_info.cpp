@@ -344,7 +344,7 @@ int ObExprFrameInfo::get_expr_idx_in_frame(ObExpr *expr, int64_t &expr_idx) cons
 OB_DEF_SERIALIZE(ObExprFrameInfo)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("serialize expr frame info", KP(buf), K(buf_len), K(pos), K(*this));
+
   OB_UNIS_ENCODE(need_ctx_cnt_);
   ObIArray<ObExpr> *seri_arr_bak = ObExpr::get_serialize_array();
   ObExpr::get_serialize_array() = const_cast<ObArray<ObExpr> *>(&rt_exprs_);
@@ -355,7 +355,7 @@ OB_DEF_SERIALIZE(ObExprFrameInfo)
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("serialize array is null", K(ret), K(pos), K(rt_exprs_.count()));
   } else {
-    LOG_TRACE("get serialize array", K(ObExpr::get_serialize_array()), K(rt_exprs_.count()));
+
     for (int64_t i = 0; i < rt_exprs_.count() && OB_SUCC(ret); ++i) {
       const ObExpr &expr = rt_exprs_.at(i);
       if (OB_FAIL(expr.serialize(buf, buf_len, pos))) {
@@ -446,7 +446,7 @@ OB_DEF_SERIALIZE_SIZE(ObExprFrameInfo)
   OB_UNIS_ADD_LEN(const_frame_ptrs_.count());
   len += ObPxTreeSerializer::get_serialize_frame_info_size<true>(
          const_frame_, const_frame_ptrs_.get_data(), const_frame_ptrs_.count());
-  LOG_DEBUG("trace end get ser expr frame info size", K(ret), K(len));
+
 
   OB_UNIS_ADD_LEN(param_frame_);
   OB_UNIS_ADD_LEN(datum_frame_);
@@ -588,7 +588,7 @@ OB_NOINLINE int ObPreCalcExprFrameInfo::do_batch_stmt_eval(ObExecContext &exec_c
                                                                 exec_ctx.get_allocator()))) {
         LOG_WARN("deep copy datum failed", K(ret));
       } else {
-        LOG_DEBUG("do batch stmt eval", K(datum_array->data_[group_id]), KPC(res_datum), KPC(rt_expr));
+
       }
     }
   }
@@ -677,7 +677,7 @@ int ObTempExpr::eval(ObExecContext &exec_ctx, const ObNewRow &row, ObObj &result
     if (!exec_ctx.use_temp_expr_ctx_cache()) {
       temp_expr_ctx->~ObTempExprCtx();
     }
-    LOG_DEBUG("temp expr result", K(result), K(row), K(rt_exprs_));
+
   }
 
   return ret;

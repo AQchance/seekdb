@@ -35,7 +35,7 @@ int ObPreWarmerParam::init(const share::ObLSID &ls_id, const common::ObTabletID 
       }
       if (fixed_percentage_ > 0) {
         tmp_type = MEM_PRE_WARM;
-        LOG_INFO("use fixed percentage for prewarm", K(ls_id), K(tablet_id), K_(fixed_percentage), K(tmp_type));
+
       }
     }
     if (PRE_WARM_TYPE_NONE == tmp_type) {

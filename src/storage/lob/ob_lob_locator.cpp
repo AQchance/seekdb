@@ -57,16 +57,16 @@ int ObLobLocatorHelper::init(const ObTableScanParam &scan_param,
   const share::schema::ObTableParam &table_param = *scan_param.table_param_;
   if (IS_INIT) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObLobLocatorHelper init twice", K(ret), K(*this));
+
   } else if (OB_UNLIKELY(!table_param.use_lob_locator() || snapshot_version <= 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to init ObLobLocatorHelper", K(ret), K(table_param), K(snapshot_version));
+
   } else {
     if (OB_UNLIKELY(!table_param.enable_lob_locator_v2())
         && OB_UNLIKELY(!lib::is_oracle_mode() || is_sys_table(table_param.get_table_id()))) {
       // only oracle mode user table support lob locator if lob locator v2 not enabled
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "Unexpected tenant mode to init ObLobLocatorHelper", K(ret), K(table_param));
+
     } else {
       table_id_ = table_param.get_table_id();
       tablet_id_ = scan_param.tablet_id_.id();
@@ -99,12 +99,12 @@ int ObLobLocatorHelper::init(const uint64_t table_id,
   int ret = OB_SUCCESS;
   if (IS_INIT) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObLobLocatorHelper init twice", K(ret), K(*this));
+
   } else if (OB_UNLIKELY(snapshot_version <= 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to init ObLobLocatorHelper", K(ret), K(ls_id), K(snapshot_version));
+
   } else if (OB_FAIL(tx_read_snapshot_.build_snapshot_for_lob(ctx.mvcc_acc_ctx_.snapshot_, ls_id))) {
-    STORAGE_LOG(WARN, "build_snapshot_for_lob fail", K(ret), K(ls_id), K(snapshot_version), K(ctx.mvcc_acc_ctx_.snapshot_));
+
   } else {
     // table id is only used to determine if it is a systable, this interface created locator will not construct a real rowid
     table_id_ = table_id;
@@ -129,19 +129,19 @@ int ObLobLocatorHelper::fill_lob_locator(ObDatumRow &row,
   const common::ObIArray<int32_t> *out_project = access_param.iter_param_.out_cols_project_;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLobLocatorHelper is not init", K(ret), K(*this));
+
   } else if (OB_ISNULL(out_project)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to fill lob locator", K(ret), KP(out_project));
+
   } else if (OB_ISNULL(col_descs = access_param.iter_param_.get_out_col_descs())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected null col_descs", K(ret), K(access_param.iter_param_));
+
   } else if (!lib::is_oracle_mode() || is_sys_table(access_param.iter_param_.table_id_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Only oracle mode need build lob locator", K(ret));
+
   } else if (OB_ISNULL(access_param.output_exprs_) || OB_ISNULL(access_param.get_op())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "output expr or op is null", K(ret), K(access_param));
+
   }
 
   return ret;
@@ -171,7 +171,7 @@ int ObLobLocatorHelper::fill_lob_locator_v2(ObDatumRow &row,
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLobLocatorHelper is not init", K(ret), K(*this));
+
   } else if (OB_ISNULL(out_cols_param) || OB_ISNULL(col_descs)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("Unexpected null cols param", K(ret), KP(out_cols_param), KP(col_descs));
@@ -198,10 +198,10 @@ int ObLobLocatorHelper::fill_lob_locator_v2(ObDatumRow &row,
                                                 ObLobCharsetUtil::get_collation_type(datum_meta.get_type() ,datum_meta.get_collation_type()),
                                                 false,
                                                 is_sys_table(access_param.iter_param_.table_id_)))) {
-          STORAGE_LOG(WARN, "Lob: Failed to build lob locator v2", K(ret), K(i), K(datum));
+
         } else {
           datum.set_string(locator.ptr_, locator.size_);
-          STORAGE_LOG(DEBUG, "Lob: Succeed to load lob obj", K(datum), K(ret));
+
         }
       }
     }
@@ -217,7 +217,7 @@ int ObLobLocatorHelper::fill_lob_locator_v2(common::ObDatum &datum,
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLobLocatorHelper is not init", K(ret), K(*this));
+
   } else {
     const ObObjMeta &datum_meta = col_param.get_meta_type();
     ObLobLocatorV2 locator;
@@ -232,7 +232,7 @@ int ObLobLocatorHelper::fill_lob_locator_v2(common::ObDatum &datum,
                                            datum_meta.get_collation_type(),
                                            false,
                                            is_sys_table(iter_param.table_id_)))) {
-      STORAGE_LOG(WARN, "Lob: Failed to build lob locator v2", K(ret), K(datum));
+
     } else {
       datum.set_string(locator.ptr_, locator.size_);
     }
@@ -251,10 +251,10 @@ int ObLobLocatorHelper::fuse_mem_lob_header(ObObj &def_obj, uint64_t col_id, boo
     ObLobLocatorV2 locator;
     if (IS_NOT_INIT) {
       ret = OB_NOT_INIT;
-      STORAGE_LOG(WARN, "ObLobLocatorHelper is not init", K(ret), K(*this));
+
     } else if (OB_UNLIKELY(!is_valid_id(col_id))) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "Invalid argument to fuse lob header", K(ret), K(col_id));
+
     } else {
       // default values must be inrow lobs
       int64_t payload_size = def_obj.get_string().length();
@@ -279,7 +279,7 @@ int ObLobLocatorHelper::fuse_mem_lob_header(ObObj &def_obj, uint64_t col_id, boo
       char *buf = nullptr;
       if (OB_ISNULL(buf = reinterpret_cast<char *>(locator_allocator_.alloc(full_loc_size)))) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "Failed to alloc memory for lob locator", K(ret), K(full_loc_size));
+
       } else if (FALSE_IT(MEMSET(buf, 0, full_loc_size))) {
       } else {
         locator.assign_buffer(buf, full_loc_size);
@@ -291,7 +291,7 @@ int ObLobLocatorHelper::fuse_mem_lob_header(ObObj &def_obj, uint64_t col_id, boo
                                  0,
                                  read_snapshot_size,
                                  false))) {
-          STORAGE_LOG(WARN, "Lob: init locator in build_lob_locatorv2", K(ret), K(col_id));
+
         } else if (OB_FAIL(locator.set_payload_data(&lob_common, def_obj.get_string()))) {
         } else if (has_extern) {
           ObMemLobTxInfo tx_info(tx_read_snapshot_.version().get_val_for_tx(),
@@ -299,18 +299,18 @@ int ObLobLocatorHelper::fuse_mem_lob_header(ObObj &def_obj, uint64_t col_id, boo
                                  tx_read_snapshot_.tx_seq().cast_to_int());
           ObMemLobLocationInfo location_info(tablet_id_, ls_id_, def_obj.get_collation_type());
           if (OB_FAIL(locator.set_table_info(table_id_, col_id))) { // ToDo: @gehao should be column idx
-            STORAGE_LOG(WARN, "Lob: set table info failed", K(ret), K(table_id_), K(col_id));
+
           } else if (extern_flags.has_tx_info_ && OB_FAIL(locator.set_tx_info(tx_info))) {
-            STORAGE_LOG(WARN, "Lob: set transaction info failed", K(ret), K(tx_info));
+
           } else if (extern_flags.has_location_info_ && OB_FAIL(locator.set_location_info(location_info))) {
-            STORAGE_LOG(WARN, "Lob: set location info failed", K(ret), K(location_info));
+
           }
           if (OB_SUCC(ret) && extern_flags.has_read_snapshot_) {
             int64_t pos = 0;
             if (OB_FAIL(locator.get_read_snapshot_data(read_snapshot_data))) {
-              STORAGE_LOG(WARN, "Lob: get_read_snapshot_data failed", K(ret), K(locator));
+
             } else if (OB_FAIL(tx_read_snapshot_.serialize_for_lob(share::ObLSID(ls_id_), read_snapshot_data.ptr(), read_snapshot_data.length(), pos))) { 
-              STORAGE_LOG(WARN, "Lob: serialize_for_lob failed", K(ret), K(locator));
+
             }
           }
         }
@@ -338,7 +338,7 @@ int ObLobLocatorHelper::build_lob_locatorv2(ObLobLocatorV2 &locator,
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_valid_id(column_id))) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to build lob locator", K(ret), K(column_id));
+
   } else {
     char *buf = nullptr;
     const ObLobCommon *lob_common = 
@@ -410,7 +410,7 @@ int ObLobLocatorHelper::build_lob_locatorv2(ObLobLocatorV2 &locator,
                   K(rowid_str.length()), K(out_payload_len));
     } else if (OB_ISNULL(buf = reinterpret_cast<char *>(locator_allocator_.alloc(full_loc_size)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "Failed to alloc memory for lob locator", K(ret), K(full_loc_size));
+
     } else if (FALSE_IT(MEMSET(buf, 0, full_loc_size))) {
     } else {  
       ObMemLobCommon *mem_lob_common = NULL;
@@ -423,7 +423,7 @@ int ObLobLocatorHelper::build_lob_locatorv2(ObLobLocatorV2 &locator,
                                is_dst_inrow ? 0 : payload.length(),
                                read_snapshot_size,
                                is_simple))) {
-        STORAGE_LOG(WARN, "Lob: init locator in build_lob_locatorv2", K(ret), K(column_id));
+
       } else if (OB_SUCC(locator.get_mem_locator(mem_lob_common))) {
         mem_lob_common->set_has_inrow_data(is_dst_inrow);
         mem_lob_common->set_read_only(false);
@@ -431,7 +431,7 @@ int ObLobLocatorHelper::build_lob_locatorv2(ObLobLocatorV2 &locator,
       if (OB_FAIL(ret)) {
       } else if (is_simple) {
         if (OB_FAIL(locator.set_payload_data(payload))) {
-          STORAGE_LOG(WARN, "Lob: fill payload failed", K(ret), K(column_id));
+
         }
       } else if (has_extern) {
         ObMemLobTxInfo tx_info(tx_read_snapshot_.version().get_val_for_tx(),
@@ -462,21 +462,21 @@ int ObLobLocatorHelper::build_lob_locatorv2(ObLobLocatorV2 &locator,
         ObMemLobLocationInfo location_info(target_tablet_id.id(), ls_id_, cs_type);
         if (OB_FAIL(ret)) {
         } else if (has_extern && OB_FAIL(locator.set_table_info(table_id_, column_id))) { // should be column idx
-          STORAGE_LOG(WARN, "Lob: set table info failed", K(ret), K(table_id_), K(column_id));
+
         } else if (extern_flags.has_tx_info_ && OB_FAIL(locator.set_tx_info(tx_info))) {
-          STORAGE_LOG(WARN, "Lob: set transaction info failed", K(ret), K(tx_info));
+
         } else if (extern_flags.has_location_info_ && OB_FAIL(locator.set_location_info(location_info))) {
-          STORAGE_LOG(WARN, "Lob: set location info failed", K(ret), K(location_info));
+
         } else if (extern_flags.has_retry_info_ && OB_FAIL(locator.set_retry_info(retry_info))) {
-          STORAGE_LOG(WARN, "Lob: set location info failed", K(ret), K(retry_info));
+
         }
 
         if (OB_SUCC(ret) && extern_flags.has_read_snapshot_) {
           int64_t pos = 0;
           if (OB_FAIL(locator.get_read_snapshot_data(read_snapshot_data))) {
-            STORAGE_LOG(WARN, "Lob: get_read_snapshot_data failed", K(ret), K(locator));
+
           } else if (OB_FAIL(tx_read_snapshot_.serialize_for_lob(share::ObLSID(ls_id_), read_snapshot_data.ptr(), read_snapshot_data.length(), pos))) { 
-            STORAGE_LOG(WARN, "Lob: serialize_for_lob failed", K(ret), K(locator));
+
           }
         }
       }
@@ -488,7 +488,7 @@ int ObLobLocatorHelper::build_lob_locatorv2(ObLobLocatorV2 &locator,
           // build fake diskLobCommone
           ObString disk_loc_str;
           if (OB_FAIL(locator.get_disk_locator(disk_loc_str))) {
-            STORAGE_LOG(WARN, "Lob: get disk locator failed", K(ret), K(column_id));
+
           } else {
             OB_ASSERT(disk_loc_str.length() == sizeof(ObLobCommon));
             ObLobCommon *fake_lob_common = new (disk_loc_str.ptr()) ObLobCommon();
@@ -496,17 +496,17 @@ int ObLobLocatorHelper::build_lob_locatorv2(ObLobLocatorV2 &locator,
         } else if (is_src_inrow == is_dst_inrow ) {
           OB_ASSERT(payload.length() >= sizeof(ObLobCommon));
           if (OB_FAIL(locator.set_payload_data(payload))) {
-            STORAGE_LOG(WARN, "Lob: fill payload failed", K(ret), K(column_id));
+
           } 
         } else if ((!is_src_inrow) && is_dst_inrow) { //src outrow, load to inrow result
           OB_ASSERT(payload.length() >= sizeof(ObLobCommon));
           storage::ObLobManager* lob_mngr = MTL(storage::ObLobManager*);
           ObString disk_loc_str;
           if (OB_FAIL(locator.get_disk_locator(disk_loc_str))) {
-            STORAGE_LOG(WARN, "Lob: get disk locator failed", K(ret), K(column_id));
+
           } else if (OB_ISNULL(lob_mngr)) {
             ret = OB_ERR_UNEXPECTED;
-            STORAGE_LOG(WARN, "Lob: get ObLobManager null", K(ret));
+
           } else {
             char *buffer = disk_loc_str.ptr();
             MEMCPY(buffer, lob_common, payload.length());
@@ -568,11 +568,11 @@ int ObLobLocatorHelper::build_lob_locatorv2(ObLobLocatorV2 &locator,
           }
         } else if (is_src_inrow && (!is_dst_inrow)) {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(ERROR, "Lob: fatal error", K(ret), K(locator), K(is_src_inrow), K(is_dst_inrow));
+
         }
         if (OB_FAIL(ret)) {
           if (ret != OB_TIMEOUT && ret != OB_NOT_MASTER) {
-            STORAGE_LOG(WARN, "Lob: failed to build lob locator v2", K(ret));
+
           }
         }
       }

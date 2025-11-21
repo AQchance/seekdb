@@ -70,7 +70,7 @@ ObLSService::~ObLSService()
 void ObLSService::destroy()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("destroy ls service", KP(this));
+
   if (is_running_ || !is_stopped_) {
     ret = OB_ERR_UNEXPECTED;
     LOG_ERROR("should has been stopped before destroy", K(ret), K_(is_running), K_(is_stopped), KP(this));
@@ -285,7 +285,7 @@ int ObLSService::stop()
     is_running_ = false;
     is_stopped_ = true;
   }
-  LOG_INFO("stop ls service");
+
   return ret;
 }
 
@@ -351,7 +351,7 @@ int ObLSService::init(const uint64_t tenant_id,
   } else if (OB_FAIL(storage_svr_rpc_proxy_.init(GCTX.net_frame_->get_req_transport(), GCTX.self_addr()))) {
     LOG_WARN("failed to init storage svr rpc proxy", K(ret));
   } else if (OB_FAIL(storage_rpc_.init(&storage_svr_rpc_proxy_, GCTX.self_addr(), GCTX.rs_rpc_proxy_))) {
-    STORAGE_LOG(WARN, "fail to init partition service rpc", K(ret));
+
   } else {
     tenant_id_ = tenant_id;
     rs_reporter_ = reporter;
@@ -370,7 +370,7 @@ int ObLSService::start()
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("ls service is already running", K(ret));
   } else {
-    LOG_INFO("ls service start successfully");
+
     is_running_ = true;
   }
   return ret;
@@ -487,7 +487,7 @@ int ObLSService::create_ls(const obrpc::ObCreateLSArg &arg)
 {
   int ret = OB_SUCCESS;
   int tmp_ret = OB_SUCCESS;
-  LOG_INFO("create_ls begin", K(arg));
+
   DEBUG_SYNC(BEFORE_CREATE_USER_LS);
 
   if (OB_UNLIKELY(!arg.is_valid())) {
@@ -940,7 +940,7 @@ int ObLSService::replay_create_ls_(const int64_t ls_epoch, const ObLSMeta &ls_me
       LOG_WARN("enable ls palf failed", K(ret), K(ls_meta));
     } else {
       ls->disable_to_read();
-      LOG_INFO("success replay create ls", K(ret), K(ls_meta));
+
     }
   }
   if (OB_FAIL(ret)) {
@@ -1372,7 +1372,7 @@ int ObLSService::check_ls_exist(const share::ObLSID &ls_id, bool &exist)
     LOG_WARN("invalid argument", K(ret), K(ls_id));
   } else if (OB_FAIL(get_ls(ls_id, handle, ObLSGetMod::TXSTORAGE_MOD))) {
     if (OB_LS_NOT_EXIST != ret) {
-      LOG_DEBUG("get log stream failed", K(ls_id), K(ret));
+
     }
   } else if (OB_ISNULL(handle.get_ls())) {
     ret = OB_ERR_UNEXPECTED;

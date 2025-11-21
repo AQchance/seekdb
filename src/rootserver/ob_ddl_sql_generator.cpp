@@ -963,7 +963,7 @@ int ObDDLSqlGenerator::gen_catalog_priv_sql(const obrpc::ObAccountArg &account,
       }
     }
   }
-  LOG_DEBUG("gen catalog priv sql", K(sql_string.string()), K(is_grant), K(need_priv));
+
   return ret;
 }
 
@@ -1032,7 +1032,7 @@ int ObDDLSqlGenerator::gen_db_priv_sql(const obrpc::ObAccountArg &account,
       }
     }
   }
-  LOG_INFO("mingyin gen db priv sql", K(sql_string.string()), K(is_grant), K(need_priv));
+
   return ret;
 }
 
@@ -1191,7 +1191,7 @@ int ObDDLSqlGenerator::gen_object_priv_sql(const obrpc::ObAccountArg &account,
       }
     }
   }
-  LOG_INFO("mingyin gen db priv sql", K(sql_string.string()), K(is_grant), K(need_priv));
+
   return ret;
 }
 

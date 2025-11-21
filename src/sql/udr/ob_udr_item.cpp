@@ -75,7 +75,7 @@ int64_t ObUDRItem::dec_ref_count()
   if (ref_count > 0) {
     // do nothing
   } else if (0 == ref_count) {
-    LOG_DEBUG("remove rule item", K(ref_count), K(this));
+
     this->~ObUDRItem();
     allocator_.free(this);// I'm sure this is the last line, so it's safe here
   } else {
@@ -122,7 +122,7 @@ int ObUDRItem::deserialize_with_hex_str(const common::ObString &str, T &infos, c
   int64_t deserialize_pos = 0;
   if (str.empty()) {
     // do nothing
-    LOG_DEBUG("str is empty", K(ret));
+
   } else if (OB_ISNULL(deserialize_buf = static_cast<char*>(allocator_.alloc(deserialize_size)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     LOG_WARN("fail to alloc memory", K(ret), K(deserialize_size));
@@ -134,7 +134,7 @@ int ObUDRItem::deserialize_with_hex_str(const common::ObString &str, T &infos, c
     ret = OB_SIZE_OVERFLOW;
     LOG_WARN("deserialize error", K(ret), K(deserialize_pos), K(deserialize_size));
   } else {
-    LOG_DEBUG("succ to deserialize", K(infos));
+
   }
   return ret;
 }

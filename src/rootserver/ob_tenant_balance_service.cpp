@@ -321,7 +321,7 @@ int ObTenantBalanceService::is_ls_balance_finished(const uint64_t &tenant_id, bo
       LOG_WARN("fail to execute is_standby_tenant_ls_balance_finished_", KR(ret), K(tenant_id), K(is_primary));
     }
   }
-  LOG_TRACE("check whether the tenant has balanced ls", K(ret), K(tenant_id), K(is_primary), K(is_finished));
+
   return ret;
 }
 
@@ -396,7 +396,7 @@ int ObTenantBalanceService::is_standby_tenant_ls_balance_finished_(
     if (OB_FAIL(ObLSServiceHelper::balance_ls_group(need_execute_balance, tenant_info, is_finished))) {
       LOG_WARN("failed to balance ls group", KR(ret), K(tenant_info));
     }
-    LOG_INFO("check whether the non_primary_tenant has balanced ls", KR(ret), K(tenant_id), K(tenant_info));
+
   }
   return ret;
 }
@@ -986,7 +986,7 @@ int ObTenantBalanceService::transfer_partition_(int64_t &job_cnt)
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", KR(ret), K(inited_), K(loaded_));
   } else if (!ObShareUtil::is_tenant_enable_transfer(tenant_id_)) {
-    LOG_TRACE("can not transfer partition due to transfer being disabled or tenant being in upgrade mode.");
+
   } else {
     ObTransferPartitionHelper tp_help(tenant_id_, GCTX.sql_proxy_);
     int64_t unit_num = 0;
@@ -995,7 +995,7 @@ int ObTenantBalanceService::transfer_partition_(int64_t &job_cnt)
     if (OB_FAIL(tp_help.build(has_job))) {
       LOG_WARN("failed to build transfer task info", KR(ret));
     } else if (!has_job) {
-      LOG_INFO("no transfer partition job");
+
     } else if (OB_ISNULL(GCTX.sql_proxy_)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("ptr is null", KR(ret), KP(GCTX.sql_proxy_));

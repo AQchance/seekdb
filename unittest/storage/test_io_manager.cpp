@@ -255,7 +255,7 @@ TEST_F(TestIOStruct, IOHandle)
   ASSERT_TRUE(handle2.is_empty());
 
   // test log
-  LOG_INFO("test log io handle", K(handle), K(handle2));
+
 }
 
 TEST_F(TestIOStruct, IOAllocator)
@@ -578,7 +578,7 @@ TEST_F(TestIOStruct, Test_Size)
   int64_t trace_size = sizeof(ObCurTraceId::TraceId);
   int64_t fd_size = sizeof(ObIOFd);
   ASSERT_LT(max_callback_size, 512);
-  LOG_INFO("qilu :check size", K(size1), K(size2), K(size3), K(size4), K(size5), K(size6), K(max_callback_size));
+
   LOG_INFO("qilu :check size", K(size_request), K(size_result), K(size_info), K(size_thread_cond), K(size_flag),
           K(ref_size), K(time_size), K(return_size), K(fd_size), K(trace_size));
   //mark: max_callback_size=208(ObMultiDataBlockIOCallback, ObStorageMetaIOCallback)
@@ -1189,7 +1189,7 @@ int prepare_file(const char *file_path, const int64_t file_size, int32_t &fd)
         sprintf(cmd, "dd if=/dev/zero of=%s bs=1M count=%ld", file_path, write_count);
         system(cmd);
         fsync(fd);
-        LOG_INFO("prepare file finished", K(cmd), "file_size_mb", write_count);
+
       }
     }
   }
@@ -1266,7 +1266,7 @@ TEST_F(TestIOStruct, perf)
   // prepare tenant io manager
   for (int64_t i = 0; i < perf_tenants.count(); ++i) {
     IOPerfTenant &curr_config = perf_tenants.at(i);
-    LOG_INFO("wenqu: tenant config", K(curr_config), K(i));
+
     ObRefHolder<ObTenantIOManager> tenant_holder;
     ASSERT_SUCC(OB_IO_MANAGER.get_tenant_io_manager(curr_config.tenant_id_, tenant_holder));
     ASSERT_SUCC(tenant_holder.get_ptr()->refresh_group_io_config());
@@ -1298,7 +1298,7 @@ TEST_F(TestIOStruct, perf)
 //     device_handle->destroy();
 //   }
 //   free(device_buf);
-  LOG_INFO("wenqu: perf finished");
+
 }
 
 
@@ -1395,7 +1395,7 @@ TEST_F(TestIOStruct, IOTracer)
   // prepare tenant io manager
   for (int64_t i = 0; i < perf_tenants.count(); ++i) {
     IOPerfTenant &curr_config = perf_tenants.at(i);
-    LOG_INFO("wenqu: tenant config", K(curr_config), K(i));
+
     ObRefHolder<ObTenantIOManager> tenant_holder;
     ASSERT_SUCC(OB_IO_MANAGER.get_tenant_io_manager(curr_config.tenant_id_, tenant_holder));
     ASSERT_SUCC(tenant_holder.get_ptr()->refresh_group_io_config());
@@ -1411,7 +1411,7 @@ TEST_F(TestIOStruct, IOTracer)
     const IOPerfLoad &cur_load = perf_loads.at(i);
     ASSERT_SUCC(runner->init(start_ts, cur_load));
     ASSERT_SUCC(runners.push_back(runner));
-    LOG_INFO("runner start now");
+
   }
   //open tracer
   for (int64_t i = 0; i < perf_tenants.count(); ++i) {
@@ -1432,7 +1432,7 @@ TEST_F(TestIOStruct, IOTracer)
   free(runner_buf);
   free(modifyer_buf);
 
-  LOG_INFO("wenqu: modify finished");
+
 }
 
 
@@ -1470,7 +1470,7 @@ TEST_F(TestIOStruct, ModifyIOPS)
   // prepare tenant io manager
   for (int64_t i = 0; i < perf_tenants.count(); ++i) {
     IOPerfTenant &curr_config = perf_tenants.at(i);
-    LOG_INFO("wenqu: tenant config", K(curr_config), K(i));
+
     ObRefHolder<ObTenantIOManager> tenant_holder;
     ASSERT_SUCC(OB_IO_MANAGER.get_tenant_io_manager(curr_config.tenant_id_, tenant_holder));
     ASSERT_SUCC(tenant_holder.get_ptr()->refresh_group_io_config());
@@ -1486,7 +1486,7 @@ TEST_F(TestIOStruct, ModifyIOPS)
     const IOPerfLoad &cur_load = perf_loads.at(i);
     ASSERT_SUCC(runner->init(start_ts, cur_load));
     ASSERT_SUCC(runners.push_back(runner));
-    LOG_INFO("runner start now");
+
   }
   //prepare modifyer
   for (int64_t i = 0; i < perf_tenants.count(); ++i) {
@@ -1506,7 +1506,7 @@ TEST_F(TestIOStruct, ModifyIOPS)
   }
   free(runner_buf);
   free(modifyer_buf);
-  LOG_INFO("wenqu: modify finished");
+
 }
 
 
@@ -1544,7 +1544,7 @@ TEST_F(TestIOStruct, ModifyCallbackThread)
   // prepare tenant io manager
   for (int64_t i = 0; i < perf_tenants.count(); ++i) {
     IOPerfTenant &curr_config = perf_tenants.at(i);
-    LOG_INFO("wenqu: tenant config", K(curr_config), K(i));
+
     ObRefHolder<ObTenantIOManager> tenant_holder;
     ASSERT_SUCC(OB_IO_MANAGER.get_tenant_io_manager(curr_config.tenant_id_, tenant_holder));
     ASSERT_SUCC(tenant_holder.get_ptr()->refresh_group_io_config());
@@ -1560,7 +1560,7 @@ TEST_F(TestIOStruct, ModifyCallbackThread)
     const IOPerfLoad &cur_load = perf_loads.at(i);
     ASSERT_SUCC(runner->init(start_ts, cur_load));
     ASSERT_SUCC(runners.push_back(runner));
-    LOG_INFO("runner start now");
+
   }
   //prepare modifier
   for (int64_t i = 0; i < perf_tenants.count(); ++i) {
@@ -1580,7 +1580,7 @@ TEST_F(TestIOStruct, ModifyCallbackThread)
   }
   free(runner_buf);
   free(modifier_buf);
-  LOG_INFO("modify callback thread finished");
+
 }
 
 TEST_F(TestIOStruct, ModifyGroupIO)
@@ -1616,7 +1616,7 @@ TEST_F(TestIOStruct, ModifyGroupIO)
   for (int64_t i = 0; i < perf_tenants.count(); ++i) {
     IOPerfTenant &curr_config = perf_tenants.at(i);
     if (curr_config.tenant_id_ == 1002) {
-      LOG_INFO("qilu: tenant config", K(curr_config), K(i));
+
       ObRefHolder<ObTenantIOManager> tenant_holder;
       ASSERT_SUCC(OB_IO_MANAGER.get_tenant_io_manager(curr_config.tenant_id_, tenant_holder));
       ASSERT_SUCC(tenant_holder.get_ptr()->refresh_group_io_config());
@@ -1634,7 +1634,7 @@ TEST_F(TestIOStruct, ModifyGroupIO)
     if (cur_load.tenant_id_ == 1002) {
       ASSERT_SUCC(runner->init(start_ts, cur_load));
       ASSERT_SUCC(runners.push_back(runner));
-      LOG_INFO("runner start now");
+
     }
   }
   //prepare modifyer
@@ -1657,7 +1657,7 @@ TEST_F(TestIOStruct, ModifyGroupIO)
   }
   free(runner_buf);
   free(modifyer_buf);
-  LOG_INFO("qilu: modify group finished");
+
 }
 
 
@@ -1673,7 +1673,7 @@ TEST_F(TestIOStruct, abnormal)
 int main(int argc, char **argv)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("io scheduler V2 test begin");
+
   set_memory_limit(20L * 1024L * 1024L * 1024L);
   GCONF._enable_tree_based_io_scheduler = true;
   oceanbase::common::ObLogger::get_logger().set_log_level("INFO");
@@ -1695,7 +1695,7 @@ TestIOCallback::~TestIOCallback()
       help_buf_ = nullptr;
     }
     allocator_->free(this);
-    LOG_INFO("success reset callback when out_rec_cnt = 0");
+
   }
 }
 
@@ -1709,7 +1709,7 @@ int TestIOCallback::alloc_data_buf(const char *io_data_buffer, const int64_t dat
     LOG_WARN("Invalid data, the allocator is NULL, ", K(ret));
   } else if (OB_UNLIKELY(data_size <= 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid data buffer size", K(ret), K(data_size));
+
   } else if (OB_ISNULL(help_buf_ = static_cast<char *>(allocator_->alloc(data_size)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     LOG_WARN("Failed to allocate help buf", K(ret), K(data_size), KP(help_buf_));
@@ -1816,7 +1816,7 @@ int parse_group_perf_config(const char *config_file_path,
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("scan config file failed", K(ret), K(scan_ret));
         }
-        LOG_INFO("qilu: parse scheduler config", K(ret), K(scheduler_config));
+
       } else if (PerfConfigType::DEVICE == config_type) {
         IOPerfDevice item;
         int scan_ret = sscanf(curr_line, "%d%d%d%d%d%ld%s\n",
@@ -1832,7 +1832,7 @@ int parse_group_perf_config(const char *config_file_path,
           } else if (OB_FAIL(perf_devices.push_back(item))) {
             LOG_WARN("add item failed", K(ret), K(item));
           }
-          LOG_INFO("qilu: parse device", K(ret), K(item));
+
         }
       } else if (PerfConfigType::TENANT == config_type) {
         IOPerfTenant item;
@@ -1856,7 +1856,7 @@ int parse_group_perf_config(const char *config_file_path,
           } else if (OB_FAIL(perf_tenants.push_back(item))) {
             LOG_WARN("add item failed", K(ret), K(item));
           }
-          LOG_INFO("qilu: parse tenant", K(ret), K(item), K(group_config), K(item.config_));
+
         }
       } else if (PerfConfigType::LOAD == config_type) {
         IOPerfLoad item;
@@ -1904,7 +1904,7 @@ int parse_group_perf_config(const char *config_file_path,
           } else if (OB_FAIL(perf_loads.push_back(item))) {
             LOG_WARN("add item failed", K(ret), K(item));
           }
-          LOG_INFO("qilu: parse load", K(ret), K(item), K(io_mode), K(item.group_id_));
+
         }
       } else {
         ret = OB_ERR_UNEXPECTED;
@@ -2034,7 +2034,7 @@ int IOPerfRunner::do_perf_batch()
   const int64_t check_count = load_.iops_ / load_.thread_count_ / (1000L / check_interval_ms);
   int64_t last_check_ts = ObTimeUtility::fast_current_time();
   const bool need_control_io_speed = 0 != load_.iops_;
-  LOG_INFO("perf start", K(load_.tenant_id_), K(load_.group_id_));
+
   while (!has_set_stop()) {
     (void) do_batch_io();
     if (need_control_io_speed) {
@@ -2285,7 +2285,7 @@ void IOConfModify::run1()
 {
   int ret = OB_SUCCESS;
   const int64_t thread_idx = get_thread_idx();
-  LOG_INFO("modify thread start");
+
   const int64_t current_ts = ObTimeUtility::current_time();
   if (modify_init_ts_ + modify_delay_ts_ > current_ts) {
     usleep(modify_init_ts_ + modify_delay_ts_ - current_ts);
@@ -2351,7 +2351,7 @@ void IOGroupModify::run1()
 {
   int ret = OB_SUCCESS;
   const int64_t thread_idx = get_thread_idx();
-  LOG_INFO("modify thread start");
+
 
   //change 1
   int64_t current_ts = ObTimeUtility::current_time();
@@ -2410,7 +2410,7 @@ void IOTracerSwitch::run1()
 {
   int ret = OB_SUCCESS;
   const int64_t thread_idx = get_thread_idx();
-  LOG_INFO("modify thread start");
+
   const int64_t current_ts = ObTimeUtility::current_time();
   if (switch_init_ts_ + switch_delay_ts_ > current_ts) {
     usleep(switch_init_ts_ + switch_delay_ts_ - current_ts);
@@ -2467,7 +2467,7 @@ void IOCallbackModifier::run1()
 {
   int ret = OB_SUCCESS;
   const int64_t thread_idx = get_thread_idx();
-  LOG_INFO("modify thread start");
+
   const int64_t current_ts = ObTimeUtility::current_time();
   if (modify_init_ts_ + modify_delay_ts_ > current_ts) {
     usleep(modify_init_ts_ + modify_delay_ts_ - current_ts);
@@ -2476,7 +2476,7 @@ void IOCallbackModifier::run1()
   if (OB_FAIL(modify_callback_num(new_callback_num, curr_tenant_))) {
     LOG_WARN("modify config failed", K(ret), K(curr_tenant_));
   } else {
-    LOG_INFO("modify callback thread num success", K(curr_tenant_));
+
   }
 }
 int IOCallbackModifier::modify_callback_num(const int64_t thread_num,

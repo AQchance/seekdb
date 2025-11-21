@@ -132,7 +132,7 @@ int ObTxCtxTableInfo::deserialize(const char *buf,
   ObTxCtxTableCommonHeader header(MAGIC_VERSION, 0);
 
   if (OB_FAIL(tx_data_table.alloc_tx_data(tx_data_guard_, false/* enable_throttle */))) {
-      STORAGE_LOG(WARN, "alloc tx data failed", KR(ret));
+
   } else if (OB_FAIL(header.deserialize(buf, buf_len, pos))) {
     TRANS_LOG(WARN, "deserialize header fail", K(buf_len), K(pos), K(ret));
   } else if (OB_FAIL(deserialize_(buf, buf_len, pos, tx_data_table))) {
@@ -351,7 +351,7 @@ int ObCommitVersionsArray::serialize(char *buf, const int64_t buf_len, int64_t &
     STORAGE_LOG(WARN, "serialize ObCommitVersionsArray failed.", KR(ret), KP(buf), K(buf_len),
                 K(pos));
   } else if (OB_FAIL(serialization::encode_vi64(buf, buf_len, pos, UNIS_VERSION))) {
-    STORAGE_LOG(WARN, "encode UNIS_VERSION failed.", KR(ret), KP(buf), K(buf_len), K(pos));
+
   } else if (OB_FAIL(serialization::encode_vi64(buf, buf_len, pos, len))) {
     STORAGE_LOG(WARN, "encode length of commit versions array failed.", KR(ret), KP(buf),
                 K(buf_len), K(pos));
@@ -372,26 +372,26 @@ int ObCommitVersionsArray::deserialize(const char *buf, const int64_t data_len, 
 
   if (OB_UNLIKELY(nullptr == buf || data_len <= 0 || pos > data_len)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments.", KP(buf), K(data_len), K(ret));
+
   } else if (OB_FAIL(serialization::decode_vi64(buf, data_len, pos, &version))) {
-    STORAGE_LOG(WARN, "decode version fail", K(version), K(data_len), K(pos), K(ret));
+
   } else if (version != UNIS_VERSION) {
     ret = OB_VERSION_NOT_MATCH;
-    STORAGE_LOG(WARN, "object version mismatch", K(ret), K(version));
+
   }  else if (OB_FAIL(serialization::decode_vi64(buf, data_len, pos, &len))) {
-    STORAGE_LOG(WARN, "decode data len fail", K(len), K(data_len), K(pos), K(ret));
+
   } else if (OB_UNLIKELY(len < 0)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "can't decode object with negative length", KR(ret), K(len));
+
   } else if (OB_UNLIKELY(data_len < len + pos)) {
     ret = OB_DESERIALIZE_ERROR;
-    STORAGE_LOG(WARN, "buf length not correct", KR(ret), K(len), K(pos), K(data_len));
+
   } else {
     int64_t original_pos = pos;
     pos = 0;
     array_.reuse();
     if (OB_FAIL(deserialize_(buf + original_pos, len, pos))) {
-      STORAGE_LOG(WARN, "deserialize_ ObCommitVersionsArray fail", K(len), K(pos), K(ret));
+
     }
     pos += original_pos;
   }
@@ -458,7 +458,7 @@ bool ObCommitVersionsArray::is_valid()
   int64_t last_node_idx = array_.count() - 1;
   if (!array_.at(last_node_idx).start_scn_.is_max() && array_.at(last_node_idx).commit_version_.is_max()) {
     bool_ret = false;
-    STORAGE_LOG_RET(ERROR, OB_ERR_UNEXPECTED, "this commit version array is invalid", K(array_.at(last_node_idx)));
+
   }
 
   return bool_ret;

@@ -110,7 +110,7 @@ int ObMacroBlockDataIterator::next_micro_block(ObMicroBlock &micro_block)
     int64_t pos = 0;
     const char *payload_buf = nullptr;
     int64_t payload_size = 0;
-    LOG_DEBUG("next micro block", K(micro_block_info));
+
     if (OB_FAIL(micro_block.header_.deserialize(micro_buf, micro_buf_size, pos))) {
       LOG_WARN("fail to deserialize record header", K(ret));
     } else if (OB_FAIL(micro_block.header_.check_and_get_record(
@@ -170,14 +170,14 @@ int ObIndexBlockMicroIterator::init(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("Unexpected read info", K(ret), K(table_read_info), K(macro_desc));
   } else if (is_normal_cg && OB_FAIL(rowkey_helper_.trans_to_cg_range(macro_desc.start_row_offset_, macro_desc.range_))) {
-      STORAGE_LOG(WARN, "failed to trans cg range", K(ret), K(macro_desc));
+
   } else {
     range_ = is_normal_cg ? rowkey_helper_.get_result_range() : macro_desc.range_;
   }
 
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(check_range_include_rowkey_array(range_, endkeys, table_read_info.get_datum_utils()))) {
-    STORAGE_LOG(WARN, "Failed to check range include rowkey", K(ret), K(range_), K(endkeys));
+
   } else {
     ObStorageObjectReadInfo read_info;
     read_info.offset_ = sstable->get_macro_offset();;
@@ -191,7 +191,7 @@ int ObIndexBlockMicroIterator::init(
 
     if (OB_ISNULL(read_info.buf_ = reinterpret_cast<char*>(allocator_.alloc(read_info.size_)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed to alloc macro read info buffer", K(ret));
+
     } else if (OB_FAIL(ObObjectManager::async_read_object(read_info, macro_handle_))) {
       LOG_WARN("async read block failed, ", K(ret), K(read_info), K(macro_desc));
     } else if (OB_FAIL(macro_handle_.wait())) {
@@ -236,15 +236,15 @@ int ObIndexBlockMicroIterator::check_range_include_rowkey_array(
     const blocksstable::ObDatumRowkey &array_start_key = endkeys.at(0);
     const blocksstable::ObDatumRowkey &array_end_key = endkeys.at(endkeys.count() - 1);
     if (OB_FAIL(range.get_start_key().compare(array_start_key, datum_utils, cmp_ret))) {
-      STORAGE_LOG(WARN, "Failed to compare start key", K(ret), K(range), K(array_start_key));
+
     } else if (cmp_ret > 0) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "Unexpected range start key", K(ret), K(range), K(array_start_key));
+
     } else if (OB_FAIL(range.get_end_key().compare(array_end_key, datum_utils, cmp_ret))) {
-      STORAGE_LOG(WARN, "Failed to compare start key", K(ret), K(range), K(array_end_key));
+
     } else if (cmp_ret < 0) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "Unexpected range end key", K(ret), K(range), K(array_end_key));
+
     }
   }
 
@@ -263,7 +263,7 @@ int ObIndexBlockMicroIterator::next(const blocksstable::ObMicroBlock *&micro_blo
     }
   } else {
     micro_block = &micro_block_;
-    LOG_DEBUG("Iterate micro block", KPC(micro_block));
+
   }
   return ret;
 }

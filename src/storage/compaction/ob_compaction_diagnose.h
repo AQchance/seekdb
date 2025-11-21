@@ -144,16 +144,16 @@ int ObIDiagnoseInfo::deep_copy(ObIAllocator &allocator, T *&out_info)
   const int64_t alloc_size = sizeof(T) + deep_copy_size;
   if (OB_ISNULL(buf = allocator.alloc(alloc_size))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to alloc", K(ret), K(alloc_size), K(allocator.used()));
+
   } else {
     T *info = nullptr;
     if (OB_ISNULL(info = new (buf) T(false/*need_free_param*/))) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "new diagnose info is nullptr", K(ret));
+
     } else if (OB_NOT_NULL(info_param_)) {
       if (OB_FAIL(info_param_->deep_copy((char *)buf + sizeof(T), deep_copy_size, info->info_param_))){
         if (OB_ALLOCATE_MEMORY_FAILED != ret) {
-          STORAGE_LOG(WARN, "fail to deep copy info param", K(ret));
+
         }
       }
     }
@@ -305,17 +305,17 @@ int ObIDiagnoseInfoMgr::alloc_and_add(const int64_t key, T *input_info)
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObIDiagnoseInfoMgr is not init", K(ret));
+
   } else if (OB_ISNULL(input_info)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret));
+
   } else {
     T *info = NULL;
     common::SpinWLockGuard guard(lock_);
     if (info_map_.created()) {
       if (OB_FAIL(del_with_no_lock(key, input_info))) {
         if (OB_HASH_EXIST != ret && OB_HASH_NOT_EXIST != ret) {
-          STORAGE_LOG(WARN, "failed to del old info", K(ret), K(key));
+
         }
       }
     }
@@ -331,9 +331,9 @@ int ObIDiagnoseInfoMgr::alloc_and_add(const int64_t key, T *input_info)
         ret = purge_with_rw_lock(true);
       }
       if (OB_FAIL(ret)) {
-        STORAGE_LOG(WARN, "failed to add info into pool", K(ret), K(key));
+
       } else if (OB_FAIL(add_with_no_lock(key, info))) {
-        STORAGE_LOG(WARN, "failed to add info into pool", K(ret), K(key));
+
       }
     }
   }
@@ -355,7 +355,7 @@ public:
 
   void destroy() {
     ObIDiagnoseInfoMgr::destroy();
-    STORAGE_LOG(INFO, "ObScheduleSuspectInfoMgr destroy finish");
+
   }
   int add_suspect_info(const int64_t key_value, ObScheduleSuspectInfo &info);
 
@@ -737,9 +737,9 @@ ADD_SUSPECT_INFO(merge_type, diagnose_type, ls_id, UNKNOW_TABLET_ID, info_type, 
     INT_TO_PARAM_##n_int                                                                          \
     info.info_param_ = info_param;                                                               \
     if (OB_FAIL(MTL(ObScheduleSuspectInfoMgr *)->add_suspect_info(info.hash(), info))) { \
-      STORAGE_LOG(WARN, "failed to add suspect info", K(ret), K(info));                          \
+                          \
     } else if (OB_FAIL(MTL(compaction::ObDiagnoseTabletMgr *)->add_diagnose_tablet(ls_id, tablet_id, diagnose_type))) {     \
-      STORAGE_LOG(WARN, "failed to add diagnose tablet", K(ret), K(ls_id), K(tablet_id));         \
+         \
     } else {                                                                                      \
       STORAGE_LOG(DEBUG, "success to add suspect info", K(ret), K(info), K(info_type),              \
           "info_type_str", OB_SUSPECT_INFO_TYPES[info_type].info_str, K(diagnose_type));                          \
@@ -775,11 +775,11 @@ ADD_SUSPECT_INFO(merge_type, diagnose_type, ls_id, UNKNOW_TABLET_ID, info_type, 
     SIMPLE_TO_STRING_##n                                                                          \
     info.info_param_ = info_param;                                                                \
     if (OB_FAIL(ret) && OB_SIZE_OVERFLOW != ret) {                                                \
-      STORAGE_LOG(WARN, "fail to fill parameter kv into info param", K(ret));                     \
+                     \
     } else if (OB_FAIL(MTL(ObScheduleSuspectInfoMgr *)->add_suspect_info(info.hash(), info))) { \
-      STORAGE_LOG(WARN, "failed to add suspect info", K(ret), K(info));                          \
+                          \
     } else if (OB_FAIL(MTL(compaction::ObDiagnoseTabletMgr *)->add_diagnose_tablet(ls_id, tablet_id, diagnose_type))) { \
-      STORAGE_LOG(WARN, "failed to add diagnose tablet", K(ret), K(ls_id), K(tablet_id));         \
+         \
     } else {                                                                                      \
       STORAGE_LOG(DEBUG, "success to add suspect info", K(ret), K(info), K(info_type),             \
           "info_type_str", OB_SUSPECT_INFO_TYPES[info_type].info_str, K(diagnose_type));                          \
@@ -818,14 +818,14 @@ int ObDiagnoseInfoParam<int_size, str_size>::fill_comment(char *buf, const int64
   int type = ObDagType::ObDagTypeEnum::DAG_TYPE_MAX;
   if (OB_ISNULL(buf)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(buf));
+
   } else if (INFO_PARAM_TYPE_MAX <= struct_type_) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected struct_type", K(ret), K_(struct_type));
+
   } else if (FALSE_IT(type = (SUSPECT_INFO_PARAM == struct_type_ ? type_.suspect_type_ : type_.dag_type_))) {
   } else if (OB_DIAGNOSE_INFO_PARAMS[struct_type_].max_type_ <= type) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected type", K(ret), K(type), K(OB_DIAGNOSE_INFO_PARAMS[struct_type_].max_type_));
+
   } else if (OB_DIAGNOSE_INFO_PARAMS[struct_type_].info_type[type].int_size != int_size) {
     ret = OB_ERR_UNEXPECTED;
     STORAGE_LOG(WARN, "unexpected int size", K(ret), K_(struct_type), K(type), K(int_size), 
@@ -852,9 +852,9 @@ int ObDiagnoseInfoParam<int_size, str_size>::deep_copy(ObIAllocator &allocator, 
   out_param = nullptr;
   if (OB_ISNULL(buf = allocator.alloc(get_deep_copy_size()))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(TRACE, "fail to alloc memory", K(ret));
+
   } else if (OB_FAIL(deep_copy(buf, get_deep_copy_size(), out_param))) {
-    STORAGE_LOG(WARN, "fail to deep copy", K(ret));
+
     allocator.free(buf);
   }
   return ret;
@@ -867,12 +867,12 @@ int ObDiagnoseInfoParam<int_size, str_size>::deep_copy(void *buf, const int64_t 
   out_param = NULL;
   if (OB_UNLIKELY(NULL == buf || get_deep_copy_size() < buf_len)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "buf len is less than deep copy size", K(ret), KP(buf), K(get_deep_copy_size()), K(buf_len));
+
   } else {
     ObDiagnoseInfoParam<int_size, str_size> *info_param = nullptr;
     if (OB_ISNULL(info_param = (new (buf) ObDiagnoseInfoParam<int_size, str_size>()))) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "info_param is nullptr", K(ret));
+
     } else {
       info_param->type_ = type_;
       info_param->struct_type_ = struct_type_;

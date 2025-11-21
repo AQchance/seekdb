@@ -54,7 +54,7 @@ void ObStartTransferInMdsCtx::on_prepare(const share::SCN &prepare_version)
   if (OB_SUCC(ret)) {
     ret = EN_START_TRANSFER_IN_ON_PREPARE ? : OB_SUCCESS;
     if (OB_FAIL(ret)) {
-      STORAGE_LOG(ERROR, "fake EN_START_TRANSFER_IN_ON_PREPARE", K(ret));
+
       DEBUG_SYNC(BEFORE_START_TRANSFER_IN_ON_PREPARE);
     }
   }
@@ -83,7 +83,7 @@ void ObStartTransferInMdsCtx::on_abort(const share::SCN &abort_scn)
     checkpoint::ObTabletEmptyShellHandler *handler = ls->get_tablet_empty_shell_handler();
     handler->set_empty_shell_trigger(true/*is_trigger*/);
 
-    LOG_INFO("start transfer in tx aborted", K(ret), K_(ls_id), K(abort_scn));
+
   }
 }
 

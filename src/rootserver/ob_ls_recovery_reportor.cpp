@@ -64,7 +64,7 @@ int ObLSRecoveryReportor::init()
 }
 void ObLSRecoveryReportor::destroy()
 {
-  LOG_INFO("tenant recovery service destory", KPC(this));
+
   stop();
   wait();
   is_inited_ = false;
@@ -79,11 +79,11 @@ int ObLSRecoveryReportor::start()
     ret = OB_NOT_INIT;
     LOG_WARN("not init", KR(ret));
   } else if (!is_user_tenant(tenant_id_)) {
-    LOG_INFO("not user tenant no need reported", K(tenant_id_));
+
   } else if (OB_FAIL(logical_start())) {
     LOG_WARN("failed to start", KR(ret));
   } else {
-    LOG_INFO("tenant recovery service start", KPC(this));
+
   }
   return ret;
 }
@@ -102,7 +102,7 @@ void ObLSRecoveryReportor::run2()
 {
   int ret = OB_SUCCESS;
   int tmp_ret = OB_SUCCESS;
-  LOG_INFO("tenant recovery service run", KPC(this));
+
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", KR(ret));
@@ -120,7 +120,7 @@ void ObLSRecoveryReportor::run2()
           LOG_WARN("meta tenant is not ready", KR(ret), K(meta_tenant_id));
         } else if (tenant_schema.is_normal()) {
           meta_tenant_schema_normal = true;
-          LOG_INFO("meta tenant schema is normal", K(tenant_schema));
+
         } else {
           LOG_WARN("meta tenant schema is not normal, need wait", K(tenant_schema));
         }
@@ -265,7 +265,7 @@ int ObLSRecoveryReportor::update_ls_recovery(
     }
   } else if (OB_FAIL(ls->get_ls_level_recovery_stat(ls_recovery_stat))) {
     if (OB_NOT_MASTER == ret) {
-      LOG_TRACE("follower doesn't need to report ls recovery stat", KR(ret), KPC(ls));
+
       ret = OB_SUCCESS;
     } else {
       LOG_WARN("failed to get_ls_level_recovery_stat", KR(ret), KPC(ls));
@@ -290,7 +290,7 @@ int ObLSRecoveryReportor::update_ls_recovery(
   if (ls_recovery_stat.is_valid()) {
     const int64_t PRINT_INTERVAL = 10 * 1000 * 1000L;
     if (REACH_TIME_INTERVAL(PRINT_INTERVAL)) {
-      LOG_INFO("tenant update ls recovery stat", KR(ret), K(ls_recovery_stat));
+
     }
     LOG_TRACE("tenant update ls recovery stat", KR(ret),
               K(ls_recovery_stat));
@@ -387,7 +387,7 @@ int ObLSRecoveryReportor::update_replayable_point_()
     if (OB_FAIL(update_replayable_point_from_meta_())) {
       LOG_WARN("update_replayable_point_from_meta_ failed", KR(ret));
     } else {
-      LOG_INFO("update_replayable_point_from_meta_ success", KR(ret));
+
     }
   }
   return ret;
@@ -409,7 +409,7 @@ int ObLSRecoveryReportor::update_replayable_point_from_tenant_info_()
   } else if (OB_FAIL(log_service->update_replayable_point(replayable_scn))) {
     LOG_WARN("logservice update_replayable_point failed", KR(ret), K(replayable_scn));
   } else if (REACH_TIME_INTERVAL(PRINT_INTERVAL)) {
-    LOG_INFO("update_replayable_point_from_tenant_info_ success", KR(ret), K(replayable_scn));
+
   }
   return ret;
 }

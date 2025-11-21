@@ -104,7 +104,7 @@ int ObSchemaMemMgr::alloc_(const int size, void *&ptr,
       LOG_WARN("push back ptr failed", K(ret), K(pos_));
     } else {
       ptr = tmp_ptr;
-      LOG_INFO("alloc schema mgr", K(tmp_ptr), KP(tmp_ptr));
+
       if (NULL != allocator) {
         *allocator = &cur_allocator;
       }
@@ -297,7 +297,7 @@ int ObSchemaMemMgr::check_can_switch_allocator(const int64_t &switch_cnt, bool &
     cur_alloc_cnt = all_ptrs_[pos_];
     can_switch = alloc_not_in_use && cur_alloc_cnt > switch_cnt;
   }
-  LOG_TRACE("check can switch", KR(ret), K_(tenant_id), K_(pos), K(can_switch), K(cur_alloc_cnt), K(switch_cnt));
+
   return ret;
 }
 
@@ -392,7 +392,7 @@ int ObSchemaMemMgr::try_reset_allocator()
 
   if (OB_FAIL(ret)) {
   } else if (0 != ptrs_[pos_].count()) {
-    LOG_INFO("allocator is not empty, just skip", K_(tenant_id));
+
     dump_without_lock_();
   } else {
     all_ptrs_[pos_] = 0;
@@ -402,7 +402,7 @@ int ObSchemaMemMgr::try_reset_allocator()
 
   if (OB_FAIL(ret)) {
   } else if (0 != ptrs_[1 - pos_].count()) {
-    LOG_INFO("another allocator is not empty, just skip", K_(tenant_id));
+
     dump_without_lock_();
   } else {
     all_ptrs_[1 - pos_] = 0;
@@ -421,7 +421,7 @@ int ObSchemaMemMgr::try_reset_another_allocator()
     ret = OB_INNER_STAT_ERROR;
     LOG_WARN("inner stat error", K(ret));
   } else if (0 != ptrs_[1 - pos_].count()) {
-    LOG_INFO("another allocator is not empty, just skip", K_(tenant_id));
+
     dump_without_lock_();
   } else {
     all_ptrs_[1 - pos_] = 0;

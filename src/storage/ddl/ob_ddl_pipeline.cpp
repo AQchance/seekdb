@@ -958,7 +958,7 @@ int ObHNSWIndexAppendBufferOperator::append_row(
                                                                    &vec_vid, extra_obj, extra_column_count, 1, &vec_length))) {
       LOG_WARN("fail to build index to adaptor", K(ret), KPC(this));
     } else {
-      LOG_DEBUG("[vec index debug] add into snap index success", K(tablet_id_), K(vec_vid), K(vec_str));
+
     }
   }
   return ret;
@@ -1104,7 +1104,7 @@ int ObHNSWIndexBuildOperator::serialize_vector_index(
       } else {
         type = adp->get_snap_index_type();
         ctx.index_type_ = type;
-        LOG_INFO("HgraphIndex finish vsag serialize for tablet", K(tablet_id_), K(ctx.ctx_.get_vals().count()), K(type));
+
       }
     }
   }
@@ -1354,7 +1354,7 @@ int ObIVFCenterAppendBufferOperator::append_row(
     } else if (OB_FAIL(executor->append_sample_vector(reinterpret_cast<float*>(vec_str.ptr())))) {
       LOG_WARN("failed to append sample vector", K(ret));
     } else {
-      LOG_DEBUG("[vec index debug] append sample vector", K(tablet_id_), K(vec_str));
+
     }
   }
   return ret;
@@ -1457,7 +1457,7 @@ int ObIVFSq8MetaAppendBufferOperator::append_row(
     } else if (OB_FAIL(helper->update(reinterpret_cast<float*>(vec_str.ptr()), vec_dim))) {
       LOG_WARN("failed to update helper", K(ret));
     } else {
-      LOG_DEBUG("[vec index debug] append sample vector", K(tablet_id_), K(vec_str));
+
     }
   }
   return ret;
@@ -1557,7 +1557,7 @@ int ObIVFPqAppendBufferOperator::append_row(
     } else if (OB_FAIL(executor->append_sample_vector(reinterpret_cast<float*>(residual_str.ptr())))) {
       LOG_WARN("failed to append sample vector", K(ret));
     } else {
-      LOG_DEBUG("[vec index debug] append sample vector", K(tablet_id_), K(residual_str));
+
     }
   }
   return ret;
@@ -1834,7 +1834,7 @@ int ObHNSWEmbeddingOperator::process_input_chunk(const ObChunk &input_chunk)
         if (current_batch_->is_full()) {
           if (OB_FAIL(flush_current_batch())) {
             if (OB_EAGAIN == ret) {
-              LOG_INFO("embed mgr is full, record position and return", K(ret), "batch_count", current_batch_->get_count());
+
             } else {
               LOG_WARN("submit batch failed", K(ret), "batch_count", current_batch_->get_count());
             }
@@ -1893,7 +1893,7 @@ int ObHNSWEmbeddingOperator::get_next_row_from_tmp_files(ObArray<ObCGRowFile *> 
               if (OB_FAIL(current_row.init(cur_datum_rows_->get_column_count()))) {
                 LOG_WARN("init datum row failed", K(ret), K(cur_datum_rows_->get_column_count()));
               } else if (OB_FAIL(cur_datum_rows_->to_datum_row(cur_row_in_batch_, current_row))) {
-                STORAGE_LOG(WARN, "to_datum_row failed", K(ret), K(cur_row_in_batch_));
+
               } else if (OB_FAIL(parse_row(current_row, vid, text, rowkeys))) {
                 LOG_WARN("parse row failed", K(ret));
               } else {
@@ -1983,7 +1983,7 @@ int ObHNSWEmbeddingOperator::flush_current_batch()
     // Submit batch_info (ownership transferred to embedmgr slot ring)
     if (OB_FAIL(embedmgr_->submit_batch_info(current_batch_))) {
       if (OB_EAGAIN == ret) {
-        LOG_INFO("embed mgr is full, record position and return", K(ret), "batch_count", current_batch_->get_count());
+
       } else {
         LOG_WARN("submit batch failed", K(ret), "batch_count", current_batch_->get_count());
       }

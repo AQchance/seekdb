@@ -78,7 +78,7 @@ int ObVectorIndexSchedJobUtils::add_scheduler_job(
 int ObVectorIndexSchedJobUtils::add_vector_index_refresh_job(
     common::ObISQLClient &sql_client, const uint64_t tenant_id,
     const uint64_t vidx_table_id, const common::ObString &exec_env) {
-  LOG_INFO("################## [add_vector_index_refresh_job]", K(tenant_id), K(vidx_table_id), K(exec_env));
+
   int ret = OB_SUCCESS;
   int64_t job_id = OB_INVALID_ID;
   common::ObObj start_date;
@@ -113,7 +113,7 @@ int ObVectorIndexSchedJobUtils::add_vector_index_refresh_job(
 int ObVectorIndexSchedJobUtils::remove_vector_index_refresh_job(
     common::ObISQLClient &sql_client, const uint64_t tenant_id,
     const uint64_t vidx_table_id) {
-  LOG_INFO("################## [remove_vector_index_refresh_job]", K(vidx_table_id));
+
   int ret = OB_SUCCESS;
   ObSqlString refresh_job_name;
   if (OB_FAIL(refresh_job_name.assign_fmt("%lu_refresh", vidx_table_id))) {
@@ -131,7 +131,7 @@ int ObVectorIndexSchedJobUtils::add_vector_index_rebuild_job(common::ObISQLClien
                                                              const uint64_t vidx_table_id,
                                                              const common::ObString &exec_env)
 {
-  LOG_INFO("################## [add_vector_index_rebuild_job]", K(tenant_id), K(vidx_table_id), K(exec_env));
+
   int ret = OB_SUCCESS;
   int64_t job_id = OB_INVALID_ID;
   common::ObObj start_date;
@@ -167,7 +167,7 @@ int ObVectorIndexSchedJobUtils::remove_vector_index_rebuild_job(common::ObISQLCl
                                                                 const uint64_t tenant_id,
                                                                 const uint64_t vidx_table_id)
 {
-  LOG_INFO("################## [remove_vector_index_rebuild_job]", K(vidx_table_id));
+
   int ret = OB_SUCCESS;
   ObSqlString rebuild_job_name;
   if (OB_FAIL(rebuild_job_name.assign_fmt("%lu_rebuild", vidx_table_id))) {

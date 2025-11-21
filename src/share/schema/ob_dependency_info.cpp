@@ -720,7 +720,7 @@ int ObDependencyInfo::batch_invalidate_dependents(const common::ObIArray<Critica
           && ObObjectType::TYPE_BODY != obj_type
           && ObObjectType::TRIGGER != obj_type) {
         // types other than the above have different strategies for implementing INVALID status
-        LOG_DEBUG("omitted object", K(i), K(objs.at(i)));
+
       } else if (OB_FAIL(dml.add_pk_column(
               "tenant_id", ObSchemaUtils::get_extract_tenant_id(exec_tenant_id, tenant_id)))
           || OB_FAIL(dml.add_pk_column("obj_id", objs.at(i).element<0>()))
@@ -1249,7 +1249,7 @@ int ObReferenceObjTable::batch_execute_insert_or_update_obj_dependency(
     } else if (OB_FAIL(trans.write(exec_tenant_id, sql.ptr(), affected_rows))) {
       LOG_WARN("execute sql failed", K(sql), K(ret));
     } else {
-      LOG_DEBUG("execute sql dml succ", K(sql));
+
     }
   }
   return ret;
@@ -1285,7 +1285,7 @@ int ObReferenceObjTable::batch_execute_delete_obj_dependency(
     } else if (OB_FAIL(trans.write(exec_tenant_id, sql.ptr(), affected_rows))) {
       LOG_WARN("execute sql failed", K(sql), K(ret));
     } else {
-      LOG_DEBUG("execute sql dml succ", K(sql));
+
     }
   }
   return ret;
@@ -1460,7 +1460,7 @@ int ObReferenceObjTable::process_reference_obj_table(const uint64_t tenant_id,
     }
     if (OB_SIZE_OVERFLOW == ret) {
       ret = OB_SUCCESS;
-      LOG_TRACE("async queue is full");
+
     }
   }
   return ret;

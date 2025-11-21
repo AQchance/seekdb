@@ -411,7 +411,7 @@ int ObExprGeneratorImpl::visit(ObQueryRefRawExpr &expr)
       //Since child0 is the scan result of the main table, the numbering of the subqueries starts from 1,
       //The row_iter in the postfix expression is numbered starting from 0, so here it should be ref_id - 1
       if (OB_SUCC(ret)) {
-        LOG_DEBUG("convert unary current subquery ref id is", K(expr.get_ref_id()));
+
         subquery_op->set_subquery_idx(expr.get_ref_id() - 1);
         if (OB_FAIL(item.assign(op))) {
           LOG_WARN("assign sql item failed", K(ret));
@@ -650,7 +650,7 @@ int ObExprGeneratorImpl::visit_simple_op(ObNonTerminalRawExpr &expr)
           ObExprCast *cast_op = static_cast<ObExprCast*>(op);
           const bool is_implicit = expr.has_flag(IS_INNER_ADDED_EXPR);
           cast_op->set_implicit_cast(is_implicit);
-          LOG_DEBUG("cast debug, explicit or implicit", K(ret), K(is_implicit));
+
           break;
         }
         default: {
@@ -1071,7 +1071,7 @@ int ObExprGeneratorImpl::visit_normal_udf_expr(ObNonTerminalRawExpr &expr, ObExp
   } else if (OB_FAIL(normal_udf_op->init_udf(fun_sys.get_param_exprs()))) {
     LOG_WARN("failed to init udf", K(ret));
   } else {
-    LOG_DEBUG("set udf meta to expr", K(fun_sys.get_udf_meta()));
+
   }
   return ret;
 }
@@ -1833,7 +1833,7 @@ int ObExprGeneratorImpl::visit(ObPseudoColumnRawExpr &expr)
   } else if (T_PDML_PARTITION_ID == expr.get_expr_type()) {
     // Handle the physical expr operator corresponding to the partition id pseudo column
     ObExprOperator *pdml_partition_id_op = NULL;
-    LOG_TRACE("alloc pdml partition id expr phy operator", K(expr));
+
     if (OB_FAIL(factory_.alloc(expr.get_expr_type(), pdml_partition_id_op))) {
       LOG_WARN("failed to alloc expr", K(get_type_name(expr.get_expr_type())));
     } else if (OB_ISNULL(pdml_partition_id_op)) {
@@ -1844,7 +1844,7 @@ int ObExprGeneratorImpl::visit(ObPseudoColumnRawExpr &expr)
       pdml_partition_id_op->set_result_type(expr.get_result_type());
       // Default is 0
       pdml_partition_id_op->set_real_param_num(expr.get_param_count());
-      LOG_TRACE("alloc pdml partition id expr operator successfully", K(*pdml_partition_id_op));
+
       if (OB_FAIL(item.assign(pdml_partition_id_op))) {
         LOG_WARN("failed to assign pdml partition id expr operator", K(ret));
       } else if (OB_FAIL(sql_expr_->add_expr_item(item, &expr))) {
@@ -1853,7 +1853,7 @@ int ObExprGeneratorImpl::visit(ObPseudoColumnRawExpr &expr)
         // do nothing
       }
     }
-    LOG_TRACE("alloc pdml partition id expr operator", K(ret));
+
   } else {
     ret = OB_ERR_UNEXPECTED;
     LOG_ERROR("all pseudo column expr should have been generated", K(expr), K(&expr));

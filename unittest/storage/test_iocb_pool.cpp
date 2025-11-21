@@ -80,7 +80,7 @@ int TestIOCBPoolStress::init(const int64_t thread_cnt)
     LOG_WARN("init twice", K(ret));
   } else if (thread_cnt < 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(thread_cnt));
+
   } else {
     thread_cnt_ = thread_cnt;
     is_inited_ = true;

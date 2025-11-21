@@ -134,14 +134,14 @@ void ObSafeDestroyTaskQueue::loop()
 {
   int ret = OB_SUCCESS;
   if (REACH_TIME_INTERVAL(10 * 1000 * 1000)) {
-    LOG_INFO("ObSafeDestroyTaskQueue::loop begin", K(queue_.size()));
+
   }
   ObSafeDestroyProcessFunctor fn;
   if (OB_FAIL(for_each(fn))) {
     LOG_WARN("loop failed", K(ret));
   }
   if (REACH_TIME_INTERVAL(10 * 1000 * 1000)) {
-    LOG_INFO("ObSafeDestroyTaskQueue::loop finish", K(ret), K(queue_.size()));
+
   }
 }
 
@@ -175,7 +175,7 @@ int ObSafeDestroyHandler::stop()
     queue_.stop();
     // we only stop the queue to prevent push task into the queue.
     // the timer will be stop at the wait function.
-    LOG_INFO("ObSafeDestroyHandler stopped");
+
   }
   return ret;
 }
@@ -201,7 +201,7 @@ void ObSafeDestroyHandler::wait()
 
 void ObSafeDestroyHandler::destroy()
 {
-  LOG_INFO("ObSafeDestroyHandler::destroy");
+
   is_inited_ = false;
   last_process_timestamp_ = 0;
   queue_.destroy();

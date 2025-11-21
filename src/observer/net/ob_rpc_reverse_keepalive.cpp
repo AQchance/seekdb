@@ -81,7 +81,7 @@ int ObRpcReverseKeepAliveService::check_status(const int64_t send_time_us, const
     ret = OB_NOT_INIT;
     LOG_WARN("rpc reverse keepalive service is not inited", K(pkt_id));
   } else if OB_FAIL(rpc_pkt_id_map_.get(key, time_us)) {
-    LOG_INFO("orignal rpc has released", K(ret), K(pkt_id));
+
   } else if (time_us > send_time_us) {
     ret = OB_HASH_NOT_EXIST;
     LOG_WARN("send_ts check failed, client has been restarted and the pkt_id is reused", K(time_us), K(send_time_us), K(pkt_id));

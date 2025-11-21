@@ -331,7 +331,7 @@ int ObZoneMergeManagerBase::start_zone_merge(
       if (FAILEDx(zone_merge_infos_[idx].assign_value(tmp_info))) {
         LOG_WARN("fail to assign zone merge info", KR(ret), K(idx), K(tmp_info));
       } else {
-        LOG_INFO("succ to update zone merge info", K_(tenant_id), "latest zone merge_info", tmp_info);
+
       }
     }
   }
@@ -398,7 +398,7 @@ int ObZoneMergeManagerBase::finish_zone_merge(
       if (FAILEDx(zone_merge_infos_[idx].assign_value(tmp_info))) {
         LOG_WARN("fail to assign zone merge info", KR(ret), K(idx), K(tmp_info));
       } else {
-        LOG_INFO("succ to update zone merge info", K_(tenant_id), "latest zone merge_info", tmp_info);
+
       }
     }
   }
@@ -499,13 +499,13 @@ int ObZoneMergeManagerBase::set_merge_status(
         if (FAILEDx(global_merge_info_.assign_value(tmp_global_info))) {
           LOG_WARN("fail to assign global merge info", KR(ret), K(tmp_global_info));
         } else {
-          LOG_INFO("succ to update global merge info", K_(tenant_id), "latest global merge_info", tmp_global_info);
+
         }
       }
     }
 
     if (OB_SUCC(ret)) {
-      LOG_INFO("succ to set merge status", K_(tenant_id), K(error_type), K(global_merge_info_.is_merge_error_));
+
       ROOTSERVICE_EVENT_ADD("daily_merge", "set_merge_error", K_(tenant_id), K(is_merge_error), K(error_type));
     }
 
@@ -546,12 +546,12 @@ int ObZoneMergeManagerBase::set_zone_merging(
       if (FAILEDx(zone_merge_infos_[idx].assign_value(tmp_info))) {
         LOG_WARN("fail to assign zone merge info", KR(ret), K(idx), K(tmp_info));
       } else {
-        LOG_INFO("succ to update zone merge info", K_(tenant_id), "latest zone merge_info", tmp_info);
+
       }
     }
   }
 
-  LOG_INFO("set zone merging", KR(ret), K(zone), K_(tenant_id));
+
   return ret;
 }
 
@@ -585,7 +585,7 @@ int ObZoneMergeManagerBase::set_global_freeze_info(
   if (OB_FAIL(check_need_broadcast(frozen_scn, need_broadcast))) {
     LOG_WARN("fail to check_need_broadcast", KR(ret), K_(tenant_id), K(frozen_scn));
   } else if (!need_broadcast) {
-    LOG_INFO("no need set global freeze info", K(frozen_scn), K_(global_merge_info));
+
   } else if (OB_FAIL(trans.start(proxy_, meta_tenant_id))) {
     LOG_WARN("fail to start transaction", KR(ret), K_(tenant_id), K(meta_tenant_id));
   } else if (OB_FAIL(check_freeze_service_epoch(trans, expected_epoch))) {
@@ -606,12 +606,12 @@ int ObZoneMergeManagerBase::set_global_freeze_info(
       if (FAILEDx(global_merge_info_.assign_value(tmp_global_info))) {
         LOG_WARN("fail to assign global merge info", KR(ret), K(tmp_global_info));
       } else {
-        LOG_INFO("succ to update global merge info", K_(tenant_id), "latest global merge_info", tmp_global_info);
+
       }
     }
   }
 
-  LOG_INFO("finish set global freeze info", KR(ret), K_(tenant_id), K(frozen_scn), K(need_broadcast));
+
   return ret;
 }
 
@@ -723,7 +723,7 @@ int ObZoneMergeManagerBase::generate_next_global_broadcast_scn(
       }
 
       if (OB_SUCC(ret)) {
-        LOG_INFO("next global_broadcast_scn", K_(tenant_id), K(next_scn), K(tmp_global_info));
+
 
         tmp_global_info.merge_status_.set_val(ObZoneMergeInfo::MERGE_STATUS_MERGING, true);
         FREEZE_TIME_GUARD;
@@ -738,7 +738,7 @@ int ObZoneMergeManagerBase::generate_next_global_broadcast_scn(
       if (FAILEDx(global_merge_info_.assign_value(tmp_global_info))) {
         LOG_WARN("fail to assign global merge info", KR(ret), K(tmp_global_info));
       } else {
-        LOG_INFO("succ to update global merge info", K_(tenant_id), "latest global merge_info", tmp_global_info);
+
       }
     }
   }
@@ -786,7 +786,7 @@ int ObZoneMergeManagerBase::try_update_global_last_merged_scn(const int64_t expe
           if (FAILEDx(global_merge_info_.assign_value(tmp_global_info))) {
             LOG_WARN("fail to assign global merge info", KR(ret), K_(tenant_id), K(tmp_global_info));
           } else {
-            LOG_INFO("succ to update global merge info", K_(tenant_id), "latest global merge_info", tmp_global_info);
+
           }
         }
       }
@@ -830,7 +830,7 @@ int ObZoneMergeManagerBase::update_global_merge_info_after_merge(const int64_t e
         if (FAILEDx(global_merge_info_.assign_value(tmp_global_info))) {
           LOG_WARN("fail to assign global merge info", KR(ret), K_(tenant_id), K(tmp_global_info));
         } else {
-          LOG_INFO("succ to update global merge info", K_(tenant_id), "latest global merge_info", tmp_global_info);
+
         }
       }
     }
@@ -872,7 +872,7 @@ int ObZoneMergeManagerBase::try_update_zone_merge_info(const int64_t expected_ep
     handle_trans_stat(trans, ret);
 
     if (OB_SUCC(ret) && ((to_delete_infos.count() > 0) || (to_insert_infos.count() > 0))) {
-      LOG_INFO("succ to update zone info may caused by locality changing", K(to_delete_infos), K(to_insert_infos));
+
       if (OB_FAIL(reload())) {
         LOG_WARN("fail to reload after updating zone_merge_info", KR(ret));
       }
@@ -990,7 +990,7 @@ int ObZoneMergeManagerBase::suspend_or_resume_zone_merge(
       if (FAILEDx(global_merge_info_.assign_value(tmp_global_info))) {
         LOG_WARN("fail to assign global merge info", KR(ret), K(tmp_global_info));
       } else {
-        LOG_INFO("succ to update global merge info", K_(tenant_id), "latest global merge_info", tmp_global_info);
+
       }
     }
   }
@@ -1173,7 +1173,7 @@ int ObZoneMergeManagerBase::inner_adjust_global_merge_info(
         if (FAILEDx(global_merge_info_.assign_value(tmp_global_info))) {
           LOG_WARN("fail to assign global_merge_info", KR(ret), K(tmp_global_info), K_(global_merge_info));
         } else {
-          LOG_INFO("succ to update global_merge_info", K_(tenant_id), K(tmp_global_info), K_(global_merge_info));
+
         }
       }
     }

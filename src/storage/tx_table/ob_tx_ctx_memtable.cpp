@@ -59,11 +59,11 @@ int ObTxCtxMemtable::init(const ObITable::TableKey &table_key,
 
   if (IS_INIT) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init tx ctx memtable twice", KR(ret));
+
   } else if (OB_FAIL(ObITable::init(table_key))) {
-    STORAGE_LOG(WARN, "ObITable::init fail");
+
   } else if (OB_FAIL(ls_ctx_mgr_guard_.init(ls_id))) {
-    STORAGE_LOG(WARN, "ls ctx mgr guard acquire ref failed", K(ret), K(ls_id));
+
   } else {
     ls_id_ = ls_id;
     max_end_scn_.set_min();
@@ -87,13 +87,13 @@ int ObTxCtxMemtable::scan(const ObTableIterParam &param,
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ob tx ctx memtable is not inited.", KR(ret), KPC(this));
+
   } else if (OB_UNLIKELY(!param.is_valid() || !context.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid param", KR(ret), K(param), K(context));
+
   } else if (OB_UNLIKELY(!param.is_multi_version_minor_merge_)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "ObTxCtxMemtable only support scan for minor merge", KR(ret), K(param));
+
   } else if (OB_ISNULL(scan_iter_buff
                        = context.stmt_allocator_->alloc(sizeof(ObTxCtxMemtableScanIterator)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
@@ -101,7 +101,7 @@ int ObTxCtxMemtable::scan(const ObTableIterParam &param,
                 scan_iter_buff, "scan_iter_ptr", scan_iter_ptr, KR(ret));
   } else if (FALSE_IT(scan_iter_ptr = new (scan_iter_buff) ObTxCtxMemtableScanIterator())) {
   } else if (OB_FAIL(scan_iter_ptr->init(this))) {
-    STORAGE_LOG(WARN, "init scan_iter_ptr fail.", KR(ret), K(context));
+
   } else {
     // tx ctx memtable scan iterator init success
     row_iter = scan_iter_ptr;

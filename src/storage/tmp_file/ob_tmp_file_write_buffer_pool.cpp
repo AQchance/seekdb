@@ -133,7 +133,7 @@ int ObTmpWriteBufferPool::inner_alloc_page_(const int64_t fd,
           is_in_shrinking_range = true;
           insert_page_entry_to_free_list_(curr_first_free_page_id, shrink_ctx_.shrink_list_head_);
           ATOMIC_INC(&shrink_ctx_.shrink_list_size_);
-          LOG_DEBUG("skip alloc page id in shrink range", K(curr_first_free_page_id), K(shrink_ctx_));
+
         }
       }
     } while (OB_SUCC(ret) && (!cas_succeed || is_in_shrinking_range));
@@ -184,7 +184,7 @@ int ObTmpWriteBufferPool::alloc_page_(const int64_t fd,
   while (OB_SUCC(ret) && ObTmpFileGlobal::INVALID_PAGE_ID == new_page_id && current_capacity < memory_limit) {
     if (OB_FAIL(inner_alloc_page_(fd, page_key, new_page_id, new_page_buf))) {
       if (OB_SEARCH_NOT_FOUND != ret) {
-        LOG_DEBUG("wbp fail to inner alloc page", KR(ret), K(fd), K(page_key), K(new_page_id), KP(new_page_buf));
+
       } else {  // no free pages, try to expand pool size
         ret = OB_SUCCESS;
         memory_limit = get_memory_limit();
@@ -214,13 +214,13 @@ int ObTmpWriteBufferPool::alloc_page(const int64_t fd,
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", KR(ret), K(fd), K(page_key));
   } else if (OB_FAIL(alloc_page_(fd, page_key, new_page_id, new_page_buf))) {
-    LOG_DEBUG("wbp fail to alloc page", KR(ret), K(fd), K(page_key));
+
   } else if (page_key.type_ == PageEntryType::META) {
     ATOMIC_INC(&meta_page_cnt_);
-    LOG_INFO("alloc meta page", KR(ret), K(new_page_id), K(fd), K(page_key));
+
   } else {
     ATOMIC_INC(&data_page_cnt_);
-    LOG_DEBUG("alloc data page", KR(ret), K(new_page_id), K(fd), K(page_key));
+
   }
   return ret;
 }
@@ -401,9 +401,9 @@ int ObTmpWriteBufferPool::link_page(
   if (OB_SUCC(ret)) {
     fat_[prev_page_id].next_page_id_ = page_id;
     if (prev_page_key.type_ == PageEntryType::META) {
-      LOG_INFO("link meta page", KR(ret), K(fd), K(page_id), K(prev_page_id));
+
     } else {
-      LOG_DEBUG("link data page", KR(ret), K(fd), K(page_id), K(prev_page_id));
+
     }
   }
   return ret;
@@ -436,9 +436,9 @@ int ObTmpWriteBufferPool::free_page(
     next_page_id = ATOMIC_LOAD(&(fat_[page_id].next_page_id_));
     PageEntryType page_type = fat_[page_id].page_key_.type_;
     if (PageEntryType::DATA == page_type) {
-      LOG_DEBUG("free data page", KR(ret), K(page_id), K(fd), K(fat_[page_id]));
+
     } else {
-      LOG_INFO("free meta page", KR(ret), K(page_id), K(fd), K(fat_[page_id]));
+
     }
     ATOMIC_SET(&(fat_[page_id].fd_), ObTmpFileGlobal::INVALID_TMP_FILE_FD);
     ATOMIC_SET(&(fat_[page_id].next_page_id_), ObTmpFileGlobal::INVALID_PAGE_ID);
@@ -507,7 +507,7 @@ int ObTmpWriteBufferPool::expand_()
     current_capacity = ATOMIC_LOAD(&capacity_);
     if (shrink_ctx_.is_valid()) {
       ret = OB_OP_NOT_ALLOW;
-      LOG_DEBUG("wbp is shrinking, cannot expand now", K(expect_capacity), K(current_capacity), K(memory_limit));
+
     } else if (current_capacity < expect_capacity) {
       int64_t old_fat_size = fat_.count();
       int64_t cur_expand_capacity = 0;
@@ -553,7 +553,7 @@ int ObTmpWriteBufferPool::expand_()
     }
   }
 
-  LOG_INFO("wbp expand", KR(ret), K(expect_capacity), K(memory_limit), K(ATOMIC_LOAD(&capacity_)));
+
 
   return ret;
 }
@@ -597,7 +597,7 @@ int ObTmpWriteBufferPool::cal_target_shrink_range_(const bool is_auto, int64_t &
       target_page_id = fat_.count() * AUTO_SHRINKING_TARGET_SIZE_L1 / 100;
     } else {
       ret = OB_OP_NOT_ALLOW;
-      LOG_INFO("used page number watermark increases, stop shrinking", KR(ret), K(max_used_page_watermark));
+
     }
     lower_page_id = (target_page_id + BLOCK_PAGE_NUMS - 1) / BLOCK_PAGE_NUMS * BLOCK_PAGE_NUMS;
   } else {
@@ -638,7 +638,7 @@ int ObTmpWriteBufferPool::init_shrink_context(const bool is_auto)
                                         upper_page_id, is_auto))) {
       LOG_WARN("wbp fail to init shrink context", KR(ret), K(lower_page_id), K(upper_page_id));
     } else {
-      LOG_INFO("init shrinking context", KR(ret), K(shrink_ctx_));
+
     }
   }
 
@@ -669,11 +669,11 @@ bool ObTmpWriteBufferPool::need_to_shrink(bool &is_auto)
           current_capacity > WBP_BLOCK_SIZE) {
         is_auto = true;
         b_ret = true; // invoke auto-shrinking(no less than WBP_BLOCK_SIZE)
-        LOG_INFO("invoke auto shrinking due to low watermark", K(max_used_page_watermark));
+
       } else {
         // re-count max watermark for the next period
         b_ret = false;
-        LOG_DEBUG("re-count max watermark for the next period", K(max_used_page_watermark), K(current_capacity), K(memory_limit));
+
         ATOMIC_STORE(&max_used_watermark_after_shrinking_, 0);
         ATOMIC_STORE(&last_shrink_complete_ts_, ObTimeUtility::current_time());
       }
@@ -682,7 +682,7 @@ bool ObTmpWriteBufferPool::need_to_shrink(bool &is_auto)
 
   if (shrink_ctx_.is_execution_too_long()) {
     b_ret = false;
-    LOG_INFO("auto-shrinking takes too much time, stop it", K(shrink_ctx_));
+
   }
 
   return b_ret;
@@ -777,7 +777,7 @@ int ObTmpWriteBufferPool::begin_shrinking(const bool is_auto)
       if (OB_FAIL(init_shrink_context(is_auto))) {
         LOG_ERROR("fail to init shrink context, could not begin shrink process", KR(ret));
       } else {
-        LOG_INFO("wbp begin_shrinking", K(shrink_ctx_));
+
       }
       break;
     default:
@@ -797,7 +797,7 @@ int ObTmpWriteBufferPool::finish_shrinking()
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("shrink_ctx_ is invalid", K(ret), K(shrink_ctx_));
   } else if (WBPShrinkContext::SHRINKING_FINISH > shrink_ctx_.wbp_shrink_state_) {
-    LOG_INFO("wbp shrink abort", K(shrink_ctx_));
+
     // shrink abort, concat shrink list to free list if needed
     if (ObTmpFileGlobal::INVALID_PAGE_ID != shrink_ctx_.shrink_list_head_) {
       int64_t free_cnt = 0;
@@ -831,7 +831,7 @@ int ObTmpWriteBufferPool::finish_shrinking()
     // normal finish
     int32_t max_page_num = get_max_page_num();
     int32_t cur_size_num = fat_.size();
-    LOG_INFO("wbp shrink finish gracefully", K(max_page_num), K(cur_size_num), K(shrink_ctx_));
+
     shrink_ctx_.reset();
   }
 
@@ -873,7 +873,7 @@ int ObTmpWriteBufferPool::remove_invalid_page_in_free_list_()
     }
   }
 
-  LOG_DEBUG("remove_invalid_page_in_free_list_ complete", KR(ret), K(capacity_), K(fat_.size()));
+
   return ret;
 }
 
@@ -911,7 +911,7 @@ int ObTmpWriteBufferPool::release_blocks_in_shrink_range()
         ret = OB_ERR_UNEXPECTED;
         LOG_ERROR("page buf_ is nullptr", K(ret), K(i), K(fat_[i]));
       } else {
-        LOG_DEBUG("free block at ", K(i), K(capacity_), K(fat_.size()));
+
         allocator_.free(fat_[i].buf_);
         for (int64_t j = 0; j < BLOCK_PAGE_NUMS; ++j) {
           fat_.pop_back();
@@ -920,7 +920,7 @@ int ObTmpWriteBufferPool::release_blocks_in_shrink_range()
       }
     }
   }
-  LOG_DEBUG("wbp shrink fat_ release blocks finish", KR(ret), K(capacity_), K(shrink_ctx_));
+
   return ret;
 }
 
@@ -941,7 +941,7 @@ int ObTmpWriteBufferPool::advance_shrink_state()
       break;
     case WBPShrinkContext::SHRINKING_RELEASE_BLOCKS:
       if (fat_.count() == shrink_ctx_.lower_page_id_ || fat_.count() == 0) {
-        LOG_INFO("wbp shrink release blocks complete", K(shrink_ctx_));
+
         shrink_ctx_.wbp_shrink_state_ = WBPShrinkContext::SHRINKING_FINISH;
       } else {
         LOG_WARN("wbp shrink not finish, could not advance shrinking state", K(fat_.count()), K(shrink_ctx_));
@@ -978,7 +978,7 @@ bool ObTmpWriteBufferPool::is_shrink_range_all_free_()
         LOG_ERROR("invalid page id in shrink range", K(ret), K(i), K(shrink_ctx_), K(fat_.size()));
       } else if (ObPageEntry::State::INVALID != fat_[i].state_) {
         is_all_free = false;
-        LOG_DEBUG("wbp shrink range is not all free", K(i), K(fat_[i]), K(shrink_ctx_));
+
         break;
       }
     }
@@ -1047,7 +1047,7 @@ int64_t ObTmpWriteBufferPool::get_memory_limit()
     if (!tenant_config.is_valid()) {
       static const int64_t DEFAULT_MEMORY_LIMIT = 64 * WBP_BLOCK_SIZE; // 126.5MB
       memory_limit = wbp_memory_limit_ <= 0 ? DEFAULT_MEMORY_LIMIT : wbp_memory_limit_;
-      LOG_INFO("failed to get tenant config", K(MTL_ID()), K(memory_limit), K(wbp_memory_limit_));
+
     } else if (0 == tenant_config->_temporary_file_io_area_size) {
       memory_limit = WBP_BLOCK_SIZE;
     } else {
@@ -1316,11 +1316,11 @@ int ObTmpWriteBufferPool::notify_write_back(
     if (PageEntryType::DATA == fat_[page_id].page_key_.type_) {
       ATOMIC_DEC(&dirty_data_page_cnt_);
       ATOMIC_INC(&write_back_data_cnt_);
-      LOG_DEBUG("notify data write back", K(fd), K(page_id), K(fat_[page_id]));
+
     } else if (PageEntryType::META == fat_[page_id].page_key_.type_) {
       ATOMIC_DEC(&dirty_meta_page_cnt_);
       ATOMIC_INC(&write_back_meta_cnt_);
-      LOG_INFO("notify meta write back", K(fd), K(page_id), K(fat_[page_id]));
+
     }
   }
   return ret;
@@ -1354,10 +1354,10 @@ int ObTmpWriteBufferPool::notify_write_back_succ(
   } else if (is_write_back) {
     if (PageEntryType::DATA == fat_[page_id].page_key_.type_) {
       ATOMIC_DEC(&write_back_data_cnt_);
-      LOG_DEBUG("notify data write back succ", K(fd), K(page_id), K(fat_[page_id]));
+
     } else if (PageEntryType::META == fat_[page_id].page_key_.type_) {
       ATOMIC_DEC(&write_back_meta_cnt_);
-      LOG_INFO("notify meta write back succ", K(fd), K(page_id), K(fat_[page_id]));
+
     }
   }
   return ret;
@@ -1387,11 +1387,11 @@ int ObTmpWriteBufferPool::notify_write_back_fail(int64_t fd, uint32_t page_id,
     if (PageEntryType::DATA == fat_[page_id].page_key_.type_) {
       ATOMIC_INC(&dirty_data_page_cnt_);
       ATOMIC_DEC(&write_back_data_cnt_);
-      LOG_DEBUG("notify data write back fail", K(fd), K(page_id), K(fat_[page_id]));
+
     } else if (PageEntryType::META == fat_[page_id].page_key_.type_) {
       ATOMIC_INC(&dirty_meta_page_cnt_);
       ATOMIC_DEC(&write_back_meta_cnt_);
-      LOG_INFO("notify meta write back fail", K(fd), K(page_id), K(fat_[page_id]));
+
     }
   }
   return ret;
@@ -1518,7 +1518,7 @@ void ObTmpWriteBufferPool::print_page_entry(const uint32_t page_id)
     ret = OB_INVALID_ARGUMENT;
     LOG_ERROR("wbp use unexpected page id", KR(ret), K(page_id), K(fat_.size()));
   } else {
-    LOG_INFO("page entry info", K(page_id), K(fat_[page_id]));
+
   }
 }
 

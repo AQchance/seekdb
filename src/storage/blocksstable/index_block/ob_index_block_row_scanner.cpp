@@ -45,7 +45,7 @@ int ObIndexBlockDataHeader::get_index_data(
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_DEBUG("get index data", K(ret), K(row_idx), KPC(this));
+
   }
   return ret;
 }
@@ -489,7 +489,7 @@ int ObRAWIndexBlockRowIterator::locate_key(const ObDatumRowkey &rowkey)
         current_ = ObIMicroBlockReaderInfo::INVALID_ROW_INDEX;
       }
     }
-    LOG_TRACE("Binary search rowkey with micro reader", K(ret), K(range), K(begin_idx), K(rowkey));
+
   }
   if (OB_SUCC(ret)) {
     current_ = begin_idx;
@@ -520,7 +520,7 @@ int ObRAWIndexBlockRowIterator::locate_range(const ObDatumRange &range,
       LOG_WARN("Fail to locate range with micro reader", K(ret));
     }
   } else {
-    LOG_TRACE("Binary search range with micro reader", K(ret), K(range), K(begin_idx), K(end_idx));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -1878,7 +1878,7 @@ int ObIndexBlockRowScanner::get_next_idx_row(ObMicroIndexInfo &idx_block_row)
       idx_block_row.cs_row_range_.end_row_id_ += parent_row_range_.start_row_id_;
     }
   }
-  LOG_DEBUG("Get next index block row", K(ret), KPC(iter_), K(idx_block_row), K(is_normal_cg_), K(row_offset), KP(this), K(idx_block_row.endkey_));
+
   return ret;
 }
 

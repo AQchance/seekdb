@@ -189,7 +189,7 @@ int ObSequenceOptionBuilder::check_sequence_option(
     ret = OB_ERR_SEQ_CACHE_TOO_LARGE;
 
   }
-  LOG_INFO("sequence option", K(ret), K(option));
+
   return ret;
 }
 

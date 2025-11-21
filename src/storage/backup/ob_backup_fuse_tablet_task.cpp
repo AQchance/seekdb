@@ -73,7 +73,7 @@ int ObInitialBackupTabletGroupFuseTask::init()
     dag_net_ = dag_net;
     ctx_ = fuse_dag_net->get_fuse_ctx();
     is_inited_ = true;
-    LOG_INFO("succeed init initial backup tablet group fuse task");
+
   }
   return ret;
 }
@@ -160,7 +160,7 @@ int ObInitialBackupTabletGroupFuseTask::generate_tablet_fuse_dags_()
         ret = OB_EAGAIN;
       }
     } else {
-      LOG_INFO("succeed to schedule start fuse dag", K(*start_dag));
+
     }
 
     if (OB_FAIL(ret)) {
@@ -258,7 +258,7 @@ int ObStartBackupTabletGroupFuseTask::init(share::ObIDag *finish_dag)
     finish_dag_ = finish_dag;
     group_ctx_ = fuse_dag_net->get_fuse_ctx();
     is_inited_ = true;
-    LOG_INFO("succeed init start tablet group fuse task");
+
   }
   return ret;
 }
@@ -280,7 +280,7 @@ int ObStartBackupTabletGroupFuseTask::process()
   } else if (OB_FAIL(check_need_fuse_tablet_(need_fuse))) {
     LOG_WARN("failed to check need fuse tablet", K(ret));
   } else if (!need_fuse) {
-    LOG_INFO("no need fuse tablet meta", KPC_(group_ctx));
+
   } else if (OB_FAIL(group_ctx_->do_fuse())) {
     LOG_WARN("failed to do fuse", K(ret));
   } else if (OB_FAIL(generate_tablet_fuse_dag_())) {
@@ -349,7 +349,7 @@ int ObStartBackupTabletGroupFuseTask::generate_tablet_fuse_dag_()
   } else if (OB_FAIL(group_ctx_->get_next_tablet_item(fuse_item))) {
     if (OB_ITER_END == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("no tablets need fuse", KPC_(group_ctx));
+
     } else {
       LOG_WARN("failed to get next tablet id", K(ret), KPC(group_ctx_));
     }
@@ -373,7 +373,7 @@ int ObStartBackupTabletGroupFuseTask::generate_tablet_fuse_dag_()
         ret = OB_EAGAIN;
       }
     } else {
-      LOG_INFO("succeed to schedule tablet fuse dag", K(*tablet_fuse_dag));
+
       tablet_fuse_dag = NULL;
     }
   }
@@ -440,7 +440,7 @@ int ObFinishBackupTabletGroupFuseTask::init()
     dag_net_ = dag_net;
     group_ctx_ = fuse_dag_net->get_fuse_ctx();
     is_inited_ = true;
-    LOG_INFO("succeed init finish tablet group fuse task");
+
   }
   return ret;
 }
@@ -493,7 +493,7 @@ int ObFinishBackupTabletGroupFuseTask::close_extern_writer_()
   } else if (OB_FAIL(group_ctx_->close_extern_writer())) {
     LOG_WARN("failed to close extern writer", K(ret));
   } else {
-    LOG_INFO("close extern tablet meta writer", K(ret));
+
   }
   return ret;
 }
@@ -507,7 +507,7 @@ int ObFinishBackupTabletGroupFuseTask::abort_extern_writer_()
   } else if (OB_FAIL(group_ctx_->abort_extern_writer())) {
     LOG_WARN("failed to abort extern writer", K(ret));
   } else {
-    LOG_INFO("abort extern tablet meta writer", K(ret));
+
   }
   return ret;
 }
@@ -547,7 +547,7 @@ int ObFinishBackupTabletGroupFuseTask::generate_init_dag_()
         ret = OB_EAGAIN;
       }
     } else {
-      LOG_INFO("start create tablet group initial fuse dag", K(ret));
+
       initial_dag = NULL;
     }
 
@@ -638,7 +638,7 @@ int ObBackupTabletFuseTask::process()
 {
   int ret = OB_SUCCESS;
   int tmp_ret = OB_SUCCESS;
-  LOG_INFO("do backup tablet fuse task", KPC_(fuse_ctx));
+
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
@@ -712,7 +712,7 @@ int ObBackupTabletFuseTask::check_tablet_reorganized_(
       *sql_proxy_, tenant_id, tablet_id, tmp_ls_id, tablet_reoragnized))) {
     LOG_WARN("failed to check tablet has reoragnized", K(ret), K(tenant_id), K(tablet_id));
   } else {
-    LOG_INFO("check tablet has reorganized", K(tenant_id), K(tablet_id), K(tmp_ls_id), K(tablet_reoragnized));
+
   }
   return ret;
 }

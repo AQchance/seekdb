@@ -60,7 +60,7 @@ int ObLSSnapshot::init(const ObTenantSnapshotID& tenant_snapshot_id,
 void ObLSSnapshot::destroy()
 {
   if (IS_INIT) {
-    LOG_INFO("ls snapshot destroy", KPC(this));
+
     reset();
   }
 }
@@ -132,13 +132,13 @@ int ObLSSnapshot::gc_ls_snapshot()
     LOG_WARN("fail to clear_meta_snapshot_", KR(ret), KPC(this));
   }
 
-  LOG_INFO("gc ls snapshot finished", KR(ret), KPC(this));
+
   return ret;
 }
 
 void ObLSSnapshot::notify_tenant_gc()
 {
-  LOG_INFO("notify tenant gc", KPC(this));
+
 
   try_free_build_ctx_();
   meta_existed_ = false;
@@ -202,7 +202,7 @@ void ObLSSnapshot::try_set_failed()
     build_ctx_->set_failed();
   }
 
-  LOG_INFO("ObLSSnapshot exec try_set_failed", KPC(this));
+
 }
 
 bool ObLSSnapshot::is_build_finished() const
@@ -225,7 +225,7 @@ int ObLSSnapshot::load()
   int ret = OB_SUCCESS;
 
   meta_existed_ = true;
-  LOG_INFO("ls snapshot load succ", KPC(this));
+
   return ret;
 }
 
@@ -246,7 +246,7 @@ int ObLSSnapshot::build_meta_snapshot_(SCN& max_sstable_range_scn)
     max_sstable_range_scn = tmp_clog_max_scn;
   }
 
-  LOG_INFO("build ls meta snapshot finished", KR(ret), KPC(this), K(tmp_clog_max_scn));
+
   return ret;
 }
 
@@ -262,7 +262,7 @@ int ObLSSnapshot::clear_meta_snapshot_()
     }
   }
 
-  LOG_INFO("clear ls meta snapshot finished", KR(ret), KPC(this));
+
   return ret;
 }
 
@@ -393,7 +393,7 @@ void ObLSSnapshot::ObLSSnapshotBuildCtx::determine_final_rlt()
         KR(ret), KPC(this));
   } else {
     build_status_ = SUCCESSFUL;
-    LOG_INFO("ObLSSnapshotBuildCtx switch state to succ", KPC(this));
+
   }
 }
 

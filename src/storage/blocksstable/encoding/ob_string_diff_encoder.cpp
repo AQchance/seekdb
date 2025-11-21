@@ -390,7 +390,7 @@ int64_t ObStringDiffEncoder::calc_size() const
       size += DEF_VAR_INDEX_BYTE * rows_->count()
           + row_store_size_ * (rows_->count() - null_cnt_ - nope_cnt_);
     }
-    LOG_DEBUG("string diff encoded size", K(size), K_(column_index));
+
   }
   return size;
 }

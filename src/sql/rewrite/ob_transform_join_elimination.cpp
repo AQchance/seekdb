@@ -116,7 +116,7 @@ int ObTransformJoinElimination::eliminate_join_self_foreign_key(ObDMLStmt *stmt,
     LOG_WARN("eliminate join in joined table failed", K(ret));
   } else {
     trans_happened = from_happedend | joined_happedend;
-    LOG_TRACE("succ to do self foreign key elimination", K(from_happedend), K(joined_happedend));
+
   }
   return ret;
 }
@@ -180,7 +180,7 @@ int ObTransformJoinElimination::do_join_elimination_self_key(ObDMLStmt *stmt,
     LOG_WARN("failed to append equal params constraints", K(ret));
   } else {
     trans_happened = true;
-    LOG_TRACE("do join elimination for", K(*source_table), K(*target_table));
+
   }
   return ret;
 }
@@ -350,7 +350,7 @@ int ObTransformJoinElimination::eliminate_join_in_joined_table(ObDMLStmt *stmt,
       } else if (OB_FAIL(stmt->formalize_stmt(ctx_->session_info_, false))) {
         LOG_WARN("failed to formalize stmt", K(ret));
       } else {
-        LOG_TRACE("succ to do self key join in joined table elimination to remove.");
+
       }
     } else {/*do nothing*/}
   }
@@ -887,7 +887,7 @@ int ObTransformJoinElimination::eliminate_outer_join_in_joined_table(ObDMLStmt *
       LOG_WARN("failed to construct single table ids.", K(ret));
     } else {
       trans_happen = true;
-      LOG_TRACE("right branch transforms happened");
+
     }
     if (OB_FAIL(ret)) {
     } else if (OB_FAIL(check_transform_validity_outer_join(stmt, joined_table, is_non_sens_dul_vals,
@@ -1259,7 +1259,7 @@ int ObTransformJoinElimination::left_join_can_be_eliminated(ObDMLStmt *stmt,
       }
     }
   }
-  LOG_TRACE("left join can be eliminated: ", K(can_be_eliminated), KPC(table));
+
   return ret;
 }
 
@@ -1327,7 +1327,7 @@ int ObTransformJoinElimination::eliminate_outer_join(ObIArray<ObParentDMLStmt> &
       } else if (OB_FAIL(stmt->formalize_stmt(ctx_->session_info_, false))) {
         LOG_WARN("failed to formalize stmt", K(ret));
       } else {
-        LOG_TRACE("succ to do outer join elimination to remove.");
+
       }
     }
   }
@@ -2345,7 +2345,7 @@ int ObTransformJoinElimination::check_transform_validity_semi_self_key(ObDMLStmt
         if (NULL != left_table) {
           OPT_TRACE("lossless semi join can be elimated");
         }
-        LOG_TRACE("succeed to check lossless semi join", K(source_unique), K(target_unique));
+
       }
     }
   }
@@ -3888,7 +3888,7 @@ int ObTransformJoinElimination::recursive_trans_equal_join_condition(ObDMLStmt *
           if (OB_FAIL(op->replace_param_expr(i, new_expr))) {
             LOG_WARN("replace param expr failed", K(ret), K(op), K(i));
           } else {
-            LOG_TRACE("trans param expr succ", K(op), K(i));
+
           }
         } else if (OB_FAIL(SMART_CALL(recursive_trans_equal_join_condition(stmt, // rewrite failed, recursively check if its sub-expressions can be rewritten
                                                                   op->get_param_expr(i))))) {
@@ -3959,7 +3959,7 @@ int ObTransformJoinElimination::check_hint_valid(const ObDMLStmt &stmt,
     LOG_WARN("get unexpected null", K(ret), K(query_hint));
   } else {
     is_valid = hint->enable_eliminate_join(query_hint->cs_type_, table);
-    LOG_TRACE("succeed to check eliminate_join hint valid", K(is_valid), K(table), K(*hint));
+
   }
   return ret;
 }

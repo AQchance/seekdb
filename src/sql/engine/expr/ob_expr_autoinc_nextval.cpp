@@ -128,7 +128,7 @@ int ObExprAutoincNextval::get_casted_value_by_result_type(ObCastCtx &cast_ctx,
                                    param,
                                    tmp_object,
                                    res_object))) {
-    LOG_TRACE("fail cast param", K(param), K(ret));
+
   } else if (res_object->is_unsigned()) {
     // unsigned, cast to uint64_t
     EXPR_GET_UINT64_V2(*res_object, casted_value);
@@ -280,7 +280,7 @@ int ObExprAutoincNextval::generate_autoinc_value(const ObSQLSessionInfo &my_sess
         if (OB_SUCC(ret)) {
           // get auto-increment value
           if (OB_FAIL(cache_handle->next_value(value))) {
-            LOG_DEBUG("failed to get auto_increment value", K(ret), K(value));
+
             // release handle No.1
             auto_service.release_handle(cache_handle);
             // invalid cache handle; record count
@@ -444,7 +444,7 @@ int ObAutoincNextvalExtra::init_autoinc_nextval_extra(common::ObIAllocator *allo
   }
   if (OB_SUCC(ret)) {
     expr->set_autoinc_nextval_extra(reinterpret_cast<uint64_t>(autoinc_nextval_extra));
-    LOG_DEBUG("succ init_autoinc_nextval_extra", KPC(autoinc_nextval_extra));
+
   }
   return ret;
 }
@@ -477,7 +477,7 @@ int ObAutoincNextvalInfo::init_autoinc_nextval_info(common::ObIAllocator *alloca
   }
   if (OB_SUCC(ret)) {
     expr.extra_info_ = autoinc_nextval_info;
-    LOG_DEBUG("succ init_autoinc_nextval_info", KPC(autoinc_nextval_info));
+
   }
   return ret;
 }

@@ -142,7 +142,7 @@ TEST_F(TestObLogTimer, timer)
 	end_push_time = get_timestamp();
 	int64_t push_take_time = end_push_time - start_push_time;
 	EXPECT_EQ(TASK_COUNT, timer.task_queue_.get_total());
-	LOG_INFO("timer push", K(push_take_time));
+
 
 	// ObLogTimer start
 	EXPECT_EQ(OB_SUCCESS, timer.start());
@@ -151,7 +151,7 @@ TEST_F(TestObLogTimer, timer)
   while (((get_timestamp() - start_test_tstamp) < TEST_TIME_LIMIT)
 		       && (process_timer_task_count < TASK_COUNT)) {
 	}
-	LOG_INFO("process", K(process_timer_task_count));
+
 
 	int64_t min_interval = 1 * _SEC_;
 	int64_t max_interval = 0;
@@ -166,7 +166,7 @@ TEST_F(TestObLogTimer, timer)
 			max_interval = inv;
 		}
 	}
-	LOG_INFO("interval", K(min_interval), K(max_interval));
+
 
 	host.destroy();
 	ob_free(datas);

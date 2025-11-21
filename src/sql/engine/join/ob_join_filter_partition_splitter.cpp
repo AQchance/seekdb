@@ -393,7 +393,7 @@ int ObJoinFilterPartitionSplitter::dump_from_back_to_front(int64_t need_dump_siz
       }
     }
   }
-  LOG_TRACE("debug finish dump partition", K(first_dumped_partition_idx));
+
 
   if (OB_SUCC(ret)) {
     first_dumped_part_idx_ = min(first_dumped_part_idx_, first_dumped_partition_idx);

@@ -158,7 +158,7 @@ public:
     if (read_ret > 0) {
       read_size = read_ret;
     } else if (0 == read_ret) {
-      LOG_INFO("read fd return EOF", K_(fd));
+
       has_EAGAIN_ = true;
       ret = OB_IO_ERROR;
     } else if (EAGAIN == errno || EWOULDBLOCK == errno) {
@@ -207,7 +207,7 @@ public:
       if (sz < limit) {
         request_more_data_ = true;
       }
-      LOG_DEBUG("peek data", K_(reader), K(limit), K(sz));
+
     }
     return ret;
   }
@@ -216,7 +216,7 @@ public:
     if (sz > 0 && sz <= remain()) {
       cur_buf_ += sz;
       consume_sz_ += sz;
-      LOG_DEBUG("consume data", K_(reader), K(sz));
+
     } else {
       ret = OB_INVALID_ARGUMENT;
       LOG_WARN("consume data, invalid argument", K_(reader), K(sz));
@@ -352,7 +352,7 @@ private:
       if ((wbytes = ob_write_regard_ssl(fd, buf + pos, sz - pos, ssl_st_)) >= 0) {
         pos += wbytes;
       } else if (EAGAIN == errno || EWOULDBLOCK == errno) {
-        LOG_INFO("write return EAGAIN", K(fd));
+
         ret = OB_EAGAIN;
       } else if (EINTR == errno) {
         // pass
@@ -453,9 +453,9 @@ public:
       LOG_WARN("pending write task write fail", K(ret));
     } else if (become_clean) {
       need_epoll_trigger_write_ = false;
-      LOG_DEBUG("pending write clean", K(this));
+
     } else {
-      LOG_INFO("need epoll trigger write", K(this));
+
       need_epoll_trigger_write_ = true;
     }
     return ret;
@@ -467,10 +467,10 @@ public:
       int64_t wbytes = 0;
       if ((wbytes = ob_write_regard_ssl(fd_, buf + pos, sz - pos, ssl_st_)) >= 0) {
         pos += wbytes;
-        LOG_DEBUG("write fd", K(wbytes));
+
       } else if (EAGAIN == errno || EWOULDBLOCK == errno) {
         write_cond_.wait(1000 * 1000);
-        LOG_INFO("write cond wakeup");
+
       } else if (EINTR == errno) {
         // pass
       } else {
@@ -719,7 +719,7 @@ static int listen_create_unix(const char* unix_path, bool need_monopolize)
       LOG_ERROR_RET(OB_ERR_SYS, "sql nio listen unix socket failed", K(errno), K(fd));
       err = errno;
     } else {
-      LOG_INFO("sql nio unix socket listen succ", K(unix_path), K(fd));
+
     }
   }
   if (0 != err) {
@@ -833,7 +833,7 @@ public:
     } else if (OB_FAIL(evfd_.create(epfd_))) {
       LOG_WARN("evfd create fail", K(ret));
     } else {
-      LOG_INFO("sql_nio init io succ");
+
     }
     return ret;
   }
@@ -855,7 +855,7 @@ public:
         ret = OB_IO_ERROR;
         LOG_WARN("regist listen fd fail", K(ret));
       } else {
-        LOG_INFO("sql_nio init tcp listen succ", K(port), "fd", lfd_);
+
       }
       
       // add Unix domain socket listen
@@ -869,7 +869,7 @@ public:
           close(unix_lfd_);
           unix_lfd_ = -1;
         } else {
-          LOG_INFO("sql_nio init unix socket listen succ", K(unix_socket_path_), "fd", unix_lfd_);
+
         }
       }
       
@@ -886,7 +886,7 @@ public:
       if (OB_FAIL(evfd_.create(epfd_))) {
         LOG_WARN("evfd create fail", K(ret));
       } else {
-        LOG_INFO("sql_nio init listen succ", K(port));
+
       }
     }
     return ret;
@@ -919,14 +919,14 @@ public:
   }
   void revert_sock(ObSqlSock* s) {
     if (OB_UNLIKELY(s->has_error())) {
-      LOG_DEBUG("revert_sock: sock has error", K(*s));
+
       s->disable_may_handling_flag();
     } else if (OB_UNLIKELY(s->need_shutdown())) {
-      LOG_DEBUG("sock revert succ and push to close req queue", K(*s));
+
       push_close_req(s);
       s->disable_may_handling_flag();
     } else if (OB_UNLIKELY(!s->end_handle())) {
-      LOG_DEBUG("revert_sock: sock still readable", K(*s));
+
       int ret = OB_SUCCESS;
       if (OB_FAIL(handler_.on_readable(s->sess_))) {
         LOG_WARN("push to omt queue fail, will close socket", K(ret), K(*s));
@@ -1000,7 +1000,7 @@ private:
     }
   }
   void prepare_destroy(ObSqlSock* s) {
-    LOG_TRACE("prepare destroy", K(*s));
+
     s->remove_fd_from_epoll(epfd_);
     s->on_disconnect();
     pending_destroy_list_.add(&s->dlink_);
@@ -1016,14 +1016,14 @@ private:
       if (false == s->handler_close_been_called()) {
         bool need_destroy = true;
         if (0 == s->get_pending_flag()) {
-          LOG_INFO("sock ref clean, do destroy", K(*s));
+
         } else if (false == s->get_may_handling_flag()) {
-          LOG_INFO("can close safely, do destroy", K(*s));
+
         } else if (s->is_need_epoll_trigger_write()) {
-          LOG_INFO("data hasn't write completely and need close, do destroy", K(*s));
+
         } else {
           need_destroy = false;
-          LOG_TRACE("wait handling done...", K(*s));
+
         }
         if (need_destroy) {
           handler_.on_close(s->sess_, 0);
@@ -1124,7 +1124,7 @@ private:
     } else if (0 != (err = epoll_regist(epfd_, fd, epflag, s))) {
       LOG_WARN_RET(OB_ERR_SYS, "epoll_regist fail", K(fd), K(err));
     } else {
-      LOG_INFO("accept one succ", K(*s));
+
     }
     if (0 != err) {
       if (NULL != s) {
@@ -1205,7 +1205,7 @@ private:
         if (s->get_pending_flag()) {
           int64_t time_interval = ObClockGenerator::getClock() - s->get_last_decode_time();
           if (time_interval > max_process_time) {
-            LOG_INFO("[sql nio session]", K(*s));
+
           }
         }
       }

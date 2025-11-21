@@ -375,7 +375,7 @@ void ObITmpFile::reset()
 int ObITmpFile::delete_file()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("tmp file delete start", K(fd_));
+
   common::TCRWLock::WLockGuard guard(meta_lock_);
   if (IS_INIT && !is_deleting_) {
     if (OB_FAIL(inner_delete_file_())) {
@@ -392,7 +392,7 @@ int ObITmpFile::delete_file()
 int ObITmpFile::seal()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("tmp file seal start", K(fd_));
+
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", KR(ret), KPC(this));
@@ -404,7 +404,7 @@ int ObITmpFile::seal()
     } else if (OB_FAIL(inner_seal_())) {
       LOG_WARN("fail to seal", KR(ret), KPC(this));
     }
-    LOG_INFO("tmp file seal over", KR(ret), KPC(this));
+
   }
   return ret;
 }
@@ -412,7 +412,7 @@ int ObITmpFile::seal()
 int ObITmpFile::aio_pread(ObTmpFileIOCtx &io_ctx)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("aio pread start", KR(ret), K(fd_), K(io_ctx));
+
   common::TCRWLock::RLockGuard guard(meta_lock_);
 
   if (IS_NOT_INIT) {
@@ -430,7 +430,7 @@ int ObITmpFile::aio_pread(ObTmpFileIOCtx &io_ctx)
       io_ctx.set_is_unaligned_read(true);
     }
 
-    LOG_DEBUG("start to inner read tmp file", K(fd_), K(io_ctx), KPC(this));
+
     if (OB_UNLIKELY(!io_ctx.is_valid())) {
       ret = OB_INVALID_ARGUMENT;
       LOG_WARN("invalid argument", KR(ret), K(fd_), K(io_ctx), K(read_offset_));
@@ -487,7 +487,7 @@ int ObITmpFile::aio_pread(ObTmpFileIOCtx &io_ctx)
       }
     }
   }
-  LOG_DEBUG("aio pread over", KR(ret), K(fd_), KPC(this), K(io_ctx));
+
   return ret;
 }
 
@@ -599,7 +599,7 @@ int ObITmpFile::inner_read_from_wbp_(ObTmpFileIOCtx &io_ctx)
 int ObITmpFile::aio_write(ObTmpFileIOCtx &io_ctx)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("aio write start", K(fd_), K(io_ctx));
+
   ObSpinLockGuard guard(multi_write_lock_);
 
   if (IS_NOT_INIT) {
@@ -627,7 +627,7 @@ int ObITmpFile::aio_write(ObTmpFileIOCtx &io_ctx)
           io_ctx.add_lack_page_cnt();
           ret = OB_SUCCESS;
           if (TC_REACH_COUNT_INTERVAL(10)) {
-            LOG_INFO("alloc mem failed, try to evict pages", K(fd_), K(file_size_), K(io_ctx), KPC(this));
+
           }
           if (OB_FAIL(swap_page_to_disk_(io_ctx))) {
             LOG_WARN("fail to swap page to disk", KR(ret), K(fd_), K(io_ctx));
@@ -645,12 +645,12 @@ int ObITmpFile::aio_write(ObTmpFileIOCtx &io_ctx)
     int64_t cur_print_cnt = file_size_ / PRINT_LOG_FILE_SIZE;
     if (cur_print_cnt > ATOMIC_LOAD(&diag_log_print_cnt_)) {
       ATOMIC_INC(&diag_log_print_cnt_);
-      LOG_INFO("aio write finish", K(fd_), K(io_ctx), KPC(this));
+
     } else {
-      LOG_DEBUG("aio write finish", KR(ret), K(fd_), K(file_size_), K(io_ctx));
+
     }
   } else {
-    LOG_DEBUG("aio write failed", KR(ret), K(fd_), K(file_size_), K(io_ctx), KPC(this));
+
   }
 
   return ret;
@@ -659,7 +659,7 @@ int ObITmpFile::aio_write(ObTmpFileIOCtx &io_ctx)
 int ObITmpFile::inner_write_(ObTmpFileIOCtx &io_ctx)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("inner write start", K(fd_), K(file_size_), K(io_ctx));
+
   if (has_unfinished_page_()) {
     if (OB_FAIL(inner_fill_tail_page_(io_ctx))) {
       LOG_WARN("fail to fill tail page", KR(ret), K(fd_), K(io_ctx), KPC(this));
@@ -676,14 +676,14 @@ int ObITmpFile::inner_write_(ObTmpFileIOCtx &io_ctx)
     }
   }
 
-  LOG_DEBUG("inner write over", KR(ret), K(fd_), K(file_size_), K(io_ctx));
+
   return ret;
 }
 
 int ObITmpFile::inner_fill_tail_page_(ObTmpFileIOCtx &io_ctx)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("inner fill tail page start", K(fd_), K(file_size_), K(io_ctx));
+
   ObSpinLockGuard last_page_lock_guard(last_page_lock_);
   const bool is_in_disk = (0 == cached_page_nums_);
 
@@ -702,7 +702,7 @@ int ObITmpFile::inner_fill_tail_page_(ObTmpFileIOCtx &io_ctx)
     }
   }
 
-  LOG_DEBUG("inner fill tail page over", KR(ret), K(fd_), K(io_ctx), KPC(this));
+
   return ret;
 }
 
@@ -713,7 +713,7 @@ int ObITmpFile::inner_write_continuous_pages_(ObTmpFileIOCtx &io_ctx)
   int64_t write_size = 0;
   ObArray<uint32_t> page_entry_idxs;
   bool has_update_file_meta = false;
-  LOG_DEBUG("inner write continuous pages start", K(fd_), K(file_size_), K(io_ctx));
+
 
   if (OB_UNLIKELY(!io_ctx.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
@@ -743,7 +743,7 @@ int ObITmpFile::inner_write_continuous_pages_(ObTmpFileIOCtx &io_ctx)
     }
   } else {
     common::TCRWLock::WLockGuard guard(meta_lock_);
-    LOG_DEBUG("inner write continuous pages update meta start", K(fd_), KPC(this), K(io_ctx));
+
     const int64_t end_page_virtual_id = cached_page_nums_ == 0 ?
                                         ObTmpFileGlobal::INVALID_VIRTUAL_PAGE_ID :
                                         get_page_virtual_id_(file_size_, true /*is_open_interval*/);
@@ -814,12 +814,12 @@ int ObITmpFile::inner_write_continuous_pages_(ObTmpFileIOCtx &io_ctx)
         }
       }
     }
-    LOG_DEBUG("inner write continuous pages update meta over", KR(ret), K(fd_), KPC(this), K(io_ctx));
+
   } // end update meta data.
 
   // reset allocation failure status
   ret = is_alloc_failed && OB_SUCC(ret) ? OB_ALLOCATE_TMP_FILE_PAGE_FAILED : ret;
-  LOG_DEBUG("inner write continuous pages over", KR(ret), K(fd_), K(file_size_), K(io_ctx));
+
   return ret;
 }
 
@@ -833,7 +833,7 @@ int ObITmpFile::alloc_and_write_pages_(const ObTmpFileIOCtx &io_ctx,
   uint32_t previous_page_id = ObTmpFileGlobal::INVALID_PAGE_ID;
   alloced_page_id.reset();
   actual_write_size = 0;
-  LOG_DEBUG("alloc and write pages start", K(fd_), K(file_size_), K(io_ctx));
+
 
   if (OB_UNLIKELY(has_unfinished_page_())) {
     ret = OB_ERR_UNEXPECTED;
@@ -924,11 +924,11 @@ int ObITmpFile::alloc_and_write_pages_(const ObTmpFileIOCtx &io_ctx,
 int ObITmpFile::truncate(const int64_t truncate_offset)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("truncate start", K(fd_));
+
   ObSpinLockGuard last_page_lock_guard(last_page_lock_);
   common::TCRWLock::WLockGuard guard(meta_lock_);
   int64_t wbp_begin_offset = cal_wbp_begin_offset_();
-  LOG_INFO("start to truncate a temporary file", KR(ret), K(fd_), K(truncate_offset), K(wbp_begin_offset), KPC(this));
+
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
@@ -953,7 +953,7 @@ int ObITmpFile::truncate(const int64_t truncate_offset)
     last_modify_ts_ = ObTimeUtility::current_time();
   }
 
-  LOG_INFO("truncate over", KR(ret), K(truncate_offset), K(wbp_begin_offset), KPC(this));
+
   return ret;
 }
 
@@ -1097,12 +1097,12 @@ int64_t ObITmpFile::get_dirty_data_page_size_with_lock()
 int ObITmpFile::reinsert_data_flush_node()
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("reinsert_data_flush_node start", K(fd_));
+
   common::TCRWLock::WLockGuard guard(meta_lock_);
   if (OB_FAIL(reinsert_data_flush_node_())) {
     LOG_WARN("fail to reinsert flush node", KR(ret), KPC(this));
   }
-  LOG_DEBUG("reinsert_data_flush_node over", KR(ret), K(fd_), KPC(this));
+
 
   return ret;
 }
@@ -1110,7 +1110,7 @@ int ObITmpFile::reinsert_data_flush_node()
 int ObITmpFile::reinsert_data_flush_node_()
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("reinsert_data_flush_node_ start", K(fd_), KPC(this));
+
 
   if (OB_UNLIKELY(nullptr != data_flush_node_.get_next())) {
     ret = OB_ERR_UNEXPECTED;
@@ -1126,7 +1126,7 @@ int ObITmpFile::reinsert_data_flush_node_()
       LOG_WARN("fail to insert data flush list", KR(ret), K(fd_), K(dirty_page_size));
     }
   }
-  LOG_DEBUG("reinsert_data_flush_node_ over", K(fd_), KPC(this));
+
 
   return ret;
 }
@@ -1134,12 +1134,12 @@ int ObITmpFile::reinsert_data_flush_node_()
 int ObITmpFile::remove_data_flush_node()
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("remove_data_flush_node start", K(fd_));
+
   common::TCRWLock::WLockGuard guard(meta_lock_);
   if (OB_FAIL(flush_prio_mgr_->remove_file(false, *this))) {
     LOG_WARN("fail to remove flush node", KR(ret), KPC(this));
   }
-  LOG_DEBUG("remove_data_flush_node over", KR(ret), K(fd_), KPC(this));
+
 
   return ret;
 }

@@ -142,7 +142,7 @@ int ObCreateDatabaseResolver::resolve(const ParseNode &parse_tree)
       }
     }
   }
-  LOG_INFO("resolve create database finish", K(ret));
+
   return ret;
 }
 

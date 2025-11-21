@@ -63,7 +63,7 @@ int ObOptStatService::batch_get_table_stats(const uint64_t tenant_id,
     ret = OB_NOT_INIT;
     LOG_WARN("statistics service is not initialized. ", K(ret));
   } else {
-    LOG_TRACE("begin get table stat", K(keys));
+
     for (int64_t i = 0; OB_SUCC(ret) && i < keys.count(); ++i) {
     ObOptTableStatHandle handle;
       if (OB_ISNULL(keys.at(i))) {
@@ -129,7 +129,7 @@ int ObOptStatService::get_column_stat(const uint64_t tenant_id,
     ret = OB_NOT_INIT;
     LOG_WARN("statistics service is not initialized. ", K(ret), K(keys));
   } else {
-    LOG_TRACE("begin get column stat", K(keys));
+
     for (int64_t i = 0; OB_SUCC(ret) && i < keys.count(); ++i) {
       ObOptColumnStatHandle handle;
       if (OB_ISNULL(keys.at(i))) {
@@ -256,7 +256,7 @@ int ObOptStatService::load_column_stat_and_put_cache(const uint64_t tenant_id,
 {
   int ret = OB_SUCCESS;
   ObArenaAllocator arena("ObOptColStatGet", OB_MALLOC_NORMAL_BLOCK_SIZE, tenant_id);
-  LOG_TRACE("begin load column stat and put cache", K(keys));
+
   ObSEArray<ObOptKeyColumnStat, 4> key_column_stats;
   // generate new entrys and load from global statistics table and store it in cache.
   if (!inited_) {
@@ -433,7 +433,7 @@ int ObOptStatService::get_table_rowcnt(const uint64_t tenant_id,
             }
           }
         }
-        LOG_TRACE("cache stat compare", KPC(handle.stat_), K(tablet_stat));
+
         if (handle.stat_->get_row_count() < tablet_stat.insert_row_cnt_ - tablet_stat.delete_row_cnt_) {
           if (OB_FAIL(reload_tablet_ids.push_back(all_tablet_ids.at(i))) ||
               OB_FAIL(reload_ls_ids.push_back(all_ls_ids.at(i)))) {

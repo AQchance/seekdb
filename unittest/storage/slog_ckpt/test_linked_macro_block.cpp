@@ -133,7 +133,7 @@ void TestLinkedMacroBlock::write_items(ObArray<ItemInfo> &item_arr)
   for (int64_t i = 0; i < item_arr.count(); i++) {
     ASSERT_EQ(
       OB_SUCCESS, item_writer.get_item_disk_addr(item_arr.at(i).idx_, item_arr.at(i).addr_));
-    LOG_INFO("item addr", K(i), K(item_arr.at(i).addr_));
+
   }
 
   ObIArray<MacroBlockId> &block_list = item_writer.get_meta_block_list();
@@ -159,7 +159,7 @@ void TestLinkedMacroBlock::iter_read_items(const ObArray<ItemInfo> &item_arr)
       int32_t calc_crc = static_cast<int32_t>(ob_crc64(item_buf, item_buf_len));
       ASSERT_EQ(item_arr.at(idx).crc_, calc_crc);
 
-      LOG_INFO("check addr", K(item_arr.at(idx).addr_), K(addr));
+
       ASSERT_EQ(item_arr.at(idx).addr_, addr);
       idx++;
     } else {

@@ -152,7 +152,7 @@ int ObTableQueryAsyncP::init_tb_ctx(ObIAllocator* allocator,
   if (OB_FAIL(ret)) {
   } else if (ctx.is_init()) {
     ret = OB_INIT_TWICE;
-    LOG_INFO("tb ctx has been inited", K(ctx));
+
   } else if (OB_FAIL(ctx.init_common(credential, real_tablet_id, timeout_ts))) {
     LOG_WARN("fail to init table ctx common part", K(ret), K(query_info.simple_schema_->get_table_name()), K(ret));
   } else if (OB_FAIL(ctx.init_scan(query_info.query_, is_weak_read, query_ctx.index_table_id_))) {
@@ -942,7 +942,7 @@ int ObTableQueryAsyncP::process_query_start()
   } else if (OB_FAIL(query_scan_with_init(query_session_->get_allocator(), *query_ctx, query_session_->get_query()))) {
     LOG_WARN("failed to process query start scan with init", K(ret), K(query_session_id_));
   } else {
-    LOG_DEBUG("finish query start", K(ret), K(query_session_id_));
+
   }
 
   OB_TABLE_END_AUDIT(ret_code, ret, 
@@ -970,7 +970,7 @@ int ObTableQueryAsyncP::process_query_next()
   } else if (OB_FAIL(query_scan_without_init(info->tb_ctx_))) {
     LOG_WARN("fail to query next scan without init", K(ret), K(query_session_id_));
   } else {
-    LOG_DEBUG("finish query next", K(ret), K(query_session_id_));
+
   }
   return ret;
 }

@@ -255,7 +255,7 @@ int ObTableLoadDagStoreChunkWriter::inner_append_row(const ObTabletID &tablet_id
       }
     } else if (OB_LIKELY(OB_ROWKEY_ORDER_ERROR == ret)) {
       ObTableLoadErrorRowHandler *error_row_handler = store_ctx_->error_row_handler_;
-      LOG_INFO("rowkey order error", K(tablet_id), K(datum_row));
+
       if (OB_FAIL(error_row_handler->handle_error_row(ret))) {
         LOG_WARN("fail to handle error row", KR(ret), K(tablet_id), K(datum_row));
       }

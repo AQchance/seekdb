@@ -88,7 +88,7 @@ void TestSSTableRowGetter::test_one_rowkey(const int64_t seed)
   row_generate_.get_next_row(seed, query_row);
   ObDatumRowkey query_rowkey;
   query_rowkey.assign(query_row.storage_datums_, TEST_ROWKEY_COLUMN_CNT);
-  STORAGE_LOG(INFO, "Query rowkey", K(query_row));
+
   ASSERT_EQ(OB_SUCCESS, getter.init(iter_param_, context_, &sstable_, &query_rowkey));
   ASSERT_EQ(OB_SUCCESS, kv_getter.init(iter_param_, context_, &ddl_memtable_, &query_rowkey));
 
@@ -96,7 +96,7 @@ void TestSSTableRowGetter::test_one_rowkey(const int64_t seed)
   const ObDatumRow *kv_prow = nullptr;
   ASSERT_EQ(OB_SUCCESS, getter.inner_get_next_row(prow));
   ASSERT_EQ(OB_SUCCESS, kv_getter.inner_get_next_row(kv_prow));
-  STORAGE_LOG(INFO, "debug datum row1", KPC(prow), KPC(kv_prow));
+
   if (seed >= row_cnt_) {
     ASSERT_TRUE(prow->row_flag_.is_not_exist());
     ASSERT_TRUE(kv_prow->row_flag_.is_not_exist());

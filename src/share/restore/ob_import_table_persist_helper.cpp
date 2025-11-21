@@ -109,7 +109,7 @@ int ObImportTableJobPersistHelper::get_all_import_table_jobs(
       }
     }
   }
-  LOG_INFO("get targets", K(ret), K(jobs), K(exec_tenant_id), K(sql));
+
   return ret;
 }
   
@@ -164,7 +164,7 @@ int ObImportTableJobPersistHelper::force_cancel_import_job(common::ObISQLClient 
   } else if (OB_FAIL(proxy.write(get_exec_tenant_id(), sql.ptr(), affected_rows))) {
     LOG_WARN("failed to exec sql", K(ret), K(sql));
   } else {
-    LOG_INFO("success cancel import job", K(tenant_id_));
+
   }
   return ret;
 }
@@ -192,7 +192,7 @@ int ObImportTableJobPersistHelper::move_import_job_to_history(
   } else if (OB_FAIL(proxy.write(gen_meta_tenant_id(tenant_id), sql.ptr(), affected_rows))) {
     LOG_WARN("failed to exec sql", K(ret), K(sql));
   } else {
-    LOG_INFO("succeed move import job to history table", K(tenant_id), K(job_id));
+
   }
   return ret;
 }
@@ -231,7 +231,7 @@ int ObImportTableJobPersistHelper::get_import_table_job_history_by_initiator(com
       }
     }
   }
-  LOG_INFO("get import table job history", K(ret), K(job), K(sql));
+
   return ret;
 }
 
@@ -269,7 +269,7 @@ int ObImportTableJobPersistHelper::get_import_table_job_by_initiator(common::ObI
       }
     }
   }
-  LOG_INFO("get import table job", K(ret), K(job), K(sql));
+
   return ret;
 }
 
@@ -422,7 +422,7 @@ int ObImportTableTaskPersistHelper::get_all_import_table_tasks_by_initiator(comm
       }
     }
   }
-  LOG_INFO("get import table tasks", K(ret), K(tasks));
+
   return ret;
 }
 
@@ -491,7 +491,7 @@ int ObImportTableTaskPersistHelper::move_import_task_to_history(
   } else if (OB_FAIL(proxy.write(gen_meta_tenant_id(tenant_id), sql.ptr(), affected_rows))) {
     LOG_WARN("failed to exec sql", K(ret), K(sql));
   } else {
-    LOG_INFO("succeed move import task to history table", K(tenant_id), K(job_id));
+
   }
   return ret;
 }

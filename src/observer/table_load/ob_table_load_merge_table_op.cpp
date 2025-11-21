@@ -302,14 +302,14 @@ ObTableLoadMergeIndexesTableOp::ObTableLoadMergeIndexesTableOp(ObTableLoadMergeP
 int ObTableLoadMergeIndexesTableOp::inner_init()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("INDEXS TABLE OP START");
+
   return ret;
 }
 
 int ObTableLoadMergeIndexesTableOp::inner_close()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("INDEXS TABLE OP FINISH");
+
   return ret;
 }
 

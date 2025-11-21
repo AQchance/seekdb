@@ -191,7 +191,7 @@ int ObGroupWriteMacroBlockTask::group_write_macro_block(const ObTabletID &tablet
       if (OB_FAIL(ddl_dag_->batch_add_task(group_write_tasks_))) {
         LOG_WARN("batch add task failed", K(ret), K(group_write_tasks_.count()));
       } else {
-        LOG_TRACE("batch add group write task success", K(ret), K(tablet_id), K(group_write_tasks_.count()));
+
       }
     }
   }

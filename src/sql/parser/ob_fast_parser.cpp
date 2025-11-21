@@ -162,7 +162,7 @@ int ObFastParserBase::copy_trimed_data_buff(char *new_sql_buf,
                                             ObRawSql &raw_sql)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("print copy_trimed_data_buff", K(start_pos), K(end_pos), K(raw_sql.to_string()));
+
   if (start_pos < end_pos) {
     if (OB_FAIL(databuff_memcpy(new_sql_buf, buf_len, pos, end_pos - start_pos, raw_sql.ptr(start_pos)))) {
       LOG_WARN("fail to do copy", K(ret), K(buf_len), K(pos), K(start_pos), K(end_pos));
@@ -270,7 +270,7 @@ int ObFastParserBase::do_trim_for_insert(char *new_sql_buf,
     trimed_succ = true;
   }
 
-  LOG_DEBUG("print after do_trim", K(buff_len), K(pos), K(no_trim_sql), K(after_trim_sql), K(trimed_succ));
+
   return ret;
 }
 
@@ -330,7 +330,7 @@ int ObFastParserBase::parser_insert_str(common::ObIAllocator &allocator,
           first_str.assign_ptr(cur_str.ptr(), cur_str.length());
           new_truncated_sql.assign_ptr(old_no_param_sql.ptr(), end_pos + 1);
           first_end_pos = end_pos;
-          LOG_DEBUG("print first_str", K(first_str), K(is_valid), K(end_pos), K(old_no_param_sql), K(new_truncated_sql));
+
           row_count++;
         } else if (first_str != cur_str) {
           is_valid = false;

@@ -94,7 +94,7 @@ public:
         break;
       default:
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected vector format", KR(ret), KPC(this), KPC(src), K(format));
+
         break;
     }
     return ret;
@@ -134,7 +134,7 @@ public:
         break;
       default:
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected vector format", KR(ret), KPC(this), KPC(src), K(format));
+
         break;
     }
     return ret;

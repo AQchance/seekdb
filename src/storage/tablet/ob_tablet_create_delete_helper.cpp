@@ -93,7 +93,7 @@ int ObTabletCreateDeleteHelper::try_get_current_version_tablet_(
       LOG_WARN("fail to get tablet", K(ret), K(key));
     }
   }
-  LOG_INFO("try get current version tablet", K(ret), K(key), K(is_exist));
+
   return ret;
 }
 #endif
@@ -118,7 +118,7 @@ int ObTabletCreateDeleteHelper::get_tablet(
       break;
     } else if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_TABLET_NOT_EXIST;
-      LOG_DEBUG("tablet does not exist", K(ret), K(key));
+
     } else if (OB_ITEM_NOT_SETTED == ret) {
       current_time = ObClockGenerator::getClock();
       if (current_time - begin_time > timeout_us) {
@@ -148,7 +148,7 @@ int ObTabletCreateDeleteHelper::check_and_get_tablet(
 
   if (OB_FAIL(get_tablet(key, handle, timeout_us))) {
     if (OB_TABLET_NOT_EXIST == ret) {
-      LOG_DEBUG("tablet does not exist", K(ret), K(key), K(mode));
+
     } else {
       LOG_WARN("failed to get tablet", K(ret), K(key), K(mode));
     }
@@ -232,7 +232,7 @@ int ObTabletCreateDeleteHelper::check_status_for_new_mds(
     } else if (mds::TwoPhaseCommitState::ON_COMMIT == trans_state &&
         (ObTabletStatus::NORMAL == user_data.tablet_status_ || ObTabletStatus::SPLIT_DST == user_data.tablet_status_)) {
       tablet_status_cache.set_value(user_data);
-      LOG_INFO("refresh tablet status cache", K(ret), K(ls_id), K(tablet_id), K(tablet_status_cache), K(snapshot_version));
+
     }
   }
 

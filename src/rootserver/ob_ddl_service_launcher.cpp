@@ -40,7 +40,7 @@ int ObDDLServiceLauncher::mtl_init(ObDDLServiceLauncher *&ddl_service_launcher)
   int64_t start_time = ObTimeUtility::current_time();
   FLOG_INFO("[DDL_SERVICE_LAUNCHER] begin mtl_init for ddl_service_launcher");
   if (!is_sys_tenant(MTL_ID())) {
-    LOG_INFO("ddl service launcher should run on SYS tenant", KR(ret), "tenant_id", MTL_ID());
+
   } else if (OB_NOT_NULL(ddl_service_launcher)) {
     if (OB_FAIL(ddl_service_launcher->init())) {
       LOG_WARN("failed to init ddl_service_launcher", KR(ret));
@@ -59,7 +59,7 @@ int ObDDLServiceLauncher::init()
   FLOG_INFO("[DDL_SERVICE_LAUNCHER] begin init for ddl_service_launcher");
   if (!is_sys_tenant(MTL_ID())) {
     // do nothing, only sys tenant should create this launcher
-    LOG_INFO("ddl service launcher should start on sys tenant", "tenant_id", MTL_ID());
+
   } else if (OB_UNLIKELY(inited_)) {
     ret = OB_INIT_TWICE;
     LOG_WARN("init twice", KR(ret));
@@ -78,7 +78,7 @@ void ObDDLServiceLauncher::destroy()
   int64_t start_time = ObTimeUtility::current_time();
   FLOG_INFO("[DDL_SERVICE_LAUNCHER] begin destroy for ddl_service_launcher");
   if (!is_sys_tenant(MTL_ID())) {
-    LOG_INFO("new ddl scheduler should run on SYS tenant", "tenant_id", MTL_ID());
+
   } else {
     inited_ = false;
   }
@@ -93,7 +93,7 @@ int ObDDLServiceLauncher::switch_to_leader()
   int64_t start_time = ObTimeUtility::current_time();
   FLOG_INFO("[DDL_SERVICE_LAUNCHER] begin switch_to_leader for ddl_service_launcher");
   if (!is_sys_tenant(MTL_ID())) {
-    LOG_INFO("ddl service launcher should run on SYS tenant", KR(ret), "tenant_id", MTL_ID());
+
   } else if (OB_UNLIKELY(!inited_)) {
     ret = OB_NOT_INIT;
     LOG_WARN("ddl service launcher is not inited", KR(ret), K_(inited));
@@ -184,7 +184,7 @@ int ObDDLServiceLauncher::switch_to_follower_gracefully()
   int64_t start_time = ObTimeUtility::current_time();
   FLOG_INFO("[DDL_SERVICE_LAUNCHER] begin switch_to_follower_gracefully for ddl_service_launcher");
   if (!is_sys_tenant(MTL_ID())) {
-    LOG_INFO("ddl service launcher should run on SYS tenant", KR(ret), "tenant_id", MTL_ID());
+
   } else if (OB_UNLIKELY(!inited_)) {
     ret = OB_NOT_INIT;
     LOG_WARN("ddl service launcher is not inited", KR(ret), K_(inited));

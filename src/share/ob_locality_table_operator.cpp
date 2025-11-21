@@ -358,7 +358,7 @@ int ObLocalityTableOperator::load_region(const ObAddr &addr,
                   } else if (OB_FAIL(locality_info.add_locality_zone(locality_zone))) {
                     LOG_WARN("add_locality_zone error", K(ret), K(locality_zone));
                   } else {
-                    LOG_INFO("add_locality_zone success", K(locality_zone));
+
                   }
                 }
               }
@@ -368,7 +368,7 @@ int ObLocalityTableOperator::load_region(const ObAddr &addr,
       }
     }
 
-    LOG_INFO("load region", K(ret), K(locality_info));
+
   }
   return ret;
 }

@@ -43,7 +43,7 @@ int ObRpcAPDBMSJobCB::process()
     ret = OB_INVALID_ERROR;
     LOG_WARN("dbms job result is invalid", K(ret), K(result));
   } else {
-    LOG_INFO("dbms job run done!");
+
   }
   return ret;
 }
@@ -58,7 +58,7 @@ int ObRpcRunDBMSJobP::process()
   result.set_job_id(arg.job_id_);
   result.set_server_addr(arg.server_addr_);
 
-  LOG_INFO("dbms job run rpc process start", K(ret));
+
 
   if (!arg.is_valid()) {
     ret = OB_INVALID_ERROR;
@@ -72,7 +72,7 @@ int ObRpcRunDBMSJobP::process()
   } else if (OB_FAIL(executor.run_dbms_job(arg.tenant_id_, arg.job_id_))) {
     LOG_WARN("fail to executor dbms job", K(ret), K(arg));
   }
-  LOG_INFO("dbms job run rpc process end", K(ret), K(arg_));
+
   result.set_status_code(ret);
 
   return ret;

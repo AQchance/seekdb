@@ -73,10 +73,10 @@ void ObTableLoadResourceService::stop()
 {
   obsys::ObRLockGuard r_guard(rw_lock_);
   if (OB_NOT_NULL(resource_manager_)) {
-    LOG_INFO("resource_manager_ start to stop", K_(tenant_id));
+
     resource_manager_->stop();
   }
-  LOG_INFO("resource_service finish to stop", K_(tenant_id));
+
 }
 
 void ObTableLoadResourceService::wait()
@@ -84,12 +84,12 @@ void ObTableLoadResourceService::wait()
   obsys::ObRLockGuard r_guard(rw_lock_);
   int ret = OB_SUCCESS;
   if (OB_NOT_NULL(resource_manager_)) {
-    LOG_INFO("resource_manager_ start to wait", K_(tenant_id));
+
     if (OB_FAIL(resource_manager_->wait())) {
       LOG_WARN("fail to wait", KR(ret), K_(tenant_id));
     }
   }
-  LOG_INFO("resource_service finish to wait", K_(tenant_id));
+
 }
 
 void ObTableLoadResourceService::destroy()
@@ -97,10 +97,10 @@ void ObTableLoadResourceService::destroy()
   obsys::ObRLockGuard r_guard(rw_lock_);
   int ret = OB_SUCCESS;
   if (OB_NOT_NULL(resource_manager_)) {
-    LOG_INFO("resource_manager_ start to destroy", K_(tenant_id));
+
     resource_manager_->destroy();
   }
-  LOG_INFO("resource_service finish to destroy", K_(tenant_id));
+
 }
 
 int ObTableLoadResourceService::switch_to_leader()
@@ -119,7 +119,7 @@ int ObTableLoadResourceService::switch_to_leader()
     } else {
       obsys::ObRLockGuard r_guard(rw_lock_);
       ret = resource_manager_->resume();
-      LOG_INFO("resource_service finish to resume",KR(ret), K_(tenant_id));
+
     }
   }
   const int64_t cost_us = ObTimeUtility::current_time() - start_time_us;
@@ -130,7 +130,7 @@ int ObTableLoadResourceService::switch_to_leader()
 
 int ObTableLoadResourceService::switch_to_follower_gracefully() {
   int ret = OB_SUCCESS;
-  LOG_INFO("switch_to_follower_gracefully", K_(tenant_id));
+
   if (OB_FAIL(inner_switch_to_follower())) {
     LOG_WARN("fail to switch to follower", KR(ret));
   }
@@ -140,7 +140,7 @@ int ObTableLoadResourceService::switch_to_follower_gracefully() {
 
 void ObTableLoadResourceService::switch_to_follower_forcedly() {
   int ret = OB_SUCCESS;
-  LOG_INFO("switch_to_follower_forcedly", K_(tenant_id));
+
   if (OB_FAIL(inner_switch_to_follower())) {
     LOG_WARN("fail to switch to follower", KR(ret));
   }
@@ -168,7 +168,7 @@ int ObTableLoadResourceService::alloc_resource_manager()
   }
 
   if (OB_SUCC(ret)) {
-    LOG_INFO("succ to alloc resource_manager", K_(tenant_id), KP_(resource_manager));
+
   } else {
     int tmp_ret = OB_SUCCESS;
     if (OB_TMP_FAIL(delete_resource_manager())) {
@@ -193,7 +193,7 @@ int ObTableLoadResourceService::delete_resource_manager()
       LOG_WARN("fail to wait", KR(ret), K_(tenant_id));
     } else {
       resource_manager_->destroy();
-      LOG_INFO("succ to delete resource_manager", K_(tenant_id));
+
     }
   }
 
@@ -202,7 +202,7 @@ int ObTableLoadResourceService::delete_resource_manager()
     ob_delete(resource_manager_);
     resource_manager_ = nullptr;
   }
-  LOG_INFO("finish to delete resource_manager", KR(ret), K_(tenant_id));
+
 
   return ret;
 }

@@ -229,7 +229,7 @@ int ObCollectMvMergeInfoTask::collect_ls_member_merge_info(const uint64_t tenant
       ARRAY_FOREACH(addr_list, i) {
         const common::ObAddr &addr = addr_list.at(i);
         // for debug
-        LOG_INFO("iter ls memberlist", K(ls_id), K(addr), K(i), K(arg));
+
         int64_t rpc_timeout = obrpc::ObRpcProxy::MAX_RPC_TIMEOUT;
         if (OB_FAIL(batch_proxy.call(addr, rpc_timeout, arg))) {
           LOG_WARN("fail to call collect mv merge info rpc", KR(ret));
@@ -265,7 +265,7 @@ int ObCollectMvMergeInfoTask::collect_ls_member_merge_info(const uint64_t tenant
           LOG_WARN("collect invalid mv merge scn", KR(ret), K(res->get_mv_merge_scn()));
         }
       }
-      LOG_INFO("iter ls memberlist to get merge scn", K(ls_id), K(merge_scn), K(ret), K(min_idx));
+
       if (OB_SUCC(ret)) {
         if (min_idx != OB_INVALID_ID) {
           LOG_INFO("iter ls memberlist to get merge scn", K(ls_id), K(min_idx),
@@ -371,7 +371,7 @@ void ObCollectMvMergeInfoTask::runTimerTask() {
   share::SCN major_mv_merge_scn;
   if (OB_UNLIKELY(ERRSIM_SKIP_COLLECT_MV_MERGE_INFO_TASK)) {
     tmp_ret = ERRSIM_SKIP_COLLECT_MV_MERGE_INFO_TASK;
-    LOG_INFO("errsim to block collect_mv_merge_info_task", K(tmp_ret));
+
   }
   if (OB_TMP_FAIL(tmp_ret)) {
     // errsim to skip task
@@ -424,7 +424,7 @@ void ObCollectMvMergeInfoTask::runTimerTask() {
       }
     }
   }
-  LOG_INFO("collect_mv_merge_info task", KR(ret), K(need_schedule), K(latest_merge_scn), K(major_mv_merge_scn));
+
 }
 
 int ObCollectMvMergeInfoTask::get_min_mv_tablet_major_compaction_scn(share::SCN &compaction_scn)
@@ -476,7 +476,7 @@ int ObCollectMvMergeInfoTask::get_min_mv_tablet_major_compaction_scn(share::SCN 
       }
     }
     // for debug
-    LOG_INFO("get mv tablet min compaction scn", K(ret), K(compaction_scn), K(sql));
+
   }
   return ret;
 }

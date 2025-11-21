@@ -166,7 +166,7 @@ void TestCGScanner::check_data(
   while (OB_SUCC(ret)) {
     if (OB_FAIL(cg_scanner->get_next_rows(count, sql_batch_size))) {
       if (OB_ITER_END != ret) {
-        STORAGE_LOG(WARN, "Fail to get next rows", K(ret));
+
         ASSERT_EQ(OB_ITER_END, ret);
       } else {
         for (int64_t i = 0; i < count; i++) {
@@ -253,14 +253,14 @@ void TestCGScanner::test_random(const bool is_reverse)
     int64_t start = ObRandom::rand(0, row_cnt_ - 1);
     int64_t locate_count = ObRandom::rand(1, row_cnt_);
 
-    STORAGE_LOG(INFO, "start to locate random range", K(retry_cnt), K(start), K(locate_count), K(row_cnt_));
+
     ASSERT_EQ(OB_SUCCESS, cg_scanner->locate(ObCSRange(start, locate_count)));
     check_data(cg_scanner, start, locate_count, datums, is_reverse);
 
     retry_cnt--;
   }
 
-  STORAGE_LOG(INFO, "test random finished");
+
 
   allocator_.free(datum_buf);
   datum_buf = nullptr;
@@ -349,7 +349,7 @@ void TestCGScanner::test_border(const bool is_reverse)
   ASSERT_EQ(OB_SUCCESS, cg_scanner->locate(ObCSRange(start, locate_count)));
   check_data(cg_scanner, start, locate_count, datums, is_reverse);
 
-  STORAGE_LOG(INFO, "test border finished");
+
 
   allocator_.free(datum_buf);
   datum_buf = nullptr;

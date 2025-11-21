@@ -277,12 +277,12 @@ int dispatch_req(const uint64_t tenant_id, ObRequest &req, QueueThread *global_m
                 " [suggestion] check T", tenant_id, "_MysqlQueueTh thread stack to see which"
                 " procedure is taking too long or is blocked.");
       } else {
-        LOG_INFO("succeed to dispatch to tenant mysql queue", K(tenant_id));
+
       }
       mysql_queue->queue_.dec_push_worker_count();
       // print queue length per 10s
       if (REACH_TIME_INTERVAL(10 * 1000 * 1000)) {
-        LOG_INFO("mysql login queue", K(mysql_queue->queue_.size()));
+
       }
 
       // if (0 != MTL(obmysql::ObSqlNioServer *)
@@ -303,7 +303,7 @@ int dispatch_req(const uint64_t tenant_id, ObRequest &req, QueueThread *global_m
       EVENT_INC(MYSQL_DELIVER_FAIL);
       LOG_ERROR("deliver request fail", K(req));
     } else {
-      LOG_INFO("fail to dispatch to tenant, but push to global mysql queue", K(ret));
+
       ret = OB_SUCCESS;
     }
   }
@@ -334,7 +334,7 @@ int ObSrvDeliver::set_mysql_login_thread_count(int cnt)
   if (OB_FAIL(mysql_queue_->set_thread_count(cnt))) {
     SERVER_LOG(WARN, "set thread count for mysql login failed", K(ret));
   } else {
-    LOG_INFO("set mysql login thread count success", K(cnt));
+
   }
   return ret;
 }
@@ -426,7 +426,7 @@ int ObSrvDeliver::init_queue_threads()
   } else if (OB_FAIL(create_queue_thread(lib::TGDefIDs::DiagnoseQueueTh,
                                          "DiagnoseQueueTh", diagnose_queue_))) {
   } else {
-    LOG_INFO("queue thread create successfully", K_(host));
+
   }
 
   return ret;
@@ -657,7 +657,7 @@ int ObSrvDeliver::deliver_mysql_request(ObRequest &req)
       }
 
       if (OB_UNLIKELY(NULL != diagnose_queue_ && SQL_REQ_OP.get_peer(&req).get_port() <= 0)) {
-        LOG_INFO("receive login request from unix domain socket");
+
         if (!diagnose_queue_->queue_.push(&req, MAX_QUEUE_LEN)) {
           ret = OB_QUEUE_OVERFLOW;
           EVENT_INC(MYSQL_DELIVER_FAIL);
@@ -715,7 +715,7 @@ int ObSrvDeliver::deliver_mysql_request(ObRequest &req)
           }
           // print queue length per 10s
           if (REACH_TIME_INTERVAL(10 * 1000 * 1000)) {
-            LOG_INFO("mysql login queue", K(mysql_queue_->queue_.size()));
+
           }
         }
       }
@@ -804,7 +804,7 @@ int ObSrvDeliver::deliver(rpc::ObRequest &req)
     LOG_WARN("deliver rpc request in unexpected state", KP(&req), K(req_stat), K(lbt()));
 #endif
   }
-  LOG_DEBUG("deliver ob_request:", K(req));
+
   if (ObRequest::OB_RPC == req.get_type()) {
     if (OB_FAIL(deliver_rpc_request(req))) {
       if (REACH_TIME_INTERVAL(5 * 1000 * 1000)) {

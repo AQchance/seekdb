@@ -91,7 +91,7 @@ int ObAggCell::init(const bool is_group_by, sql::ObEvalCtx *eval_ctx)
       common::ObDatum *result_datums = basic_info_.agg_expr_->locate_batch_datums(*eval_ctx);
       if (OB_ISNULL(result_datums)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "Unexpected null agg datums", K(ret));
+
       } else if (OB_FAIL(new_group_by_buf(result_datums, basic_info_.batch_size_,
           common::OBJ_DATUM_NUMBER_RES_SIZE, allocator_, group_by_result_datum_buf_))) {
         LOG_WARN("Failed to new buf", K(ret));
@@ -102,11 +102,11 @@ int ObAggCell::init(const bool is_group_by, sql::ObEvalCtx *eval_ctx)
         LOG_WARN("args is invalid", K(ret), KPC(basic_info_.agg_expr_));
       } else if (OB_ISNULL(col_datums_ = basic_info_.agg_expr_->args_[0]->locate_batch_datums(*eval_ctx))) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "Unexpected null col datums", K(ret));
+
       }
     } else if (OB_ISNULL(col_datums_ = basic_info_.agg_expr_->locate_batch_datums(*eval_ctx))) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "Unexpected null col datums", K(ret));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -198,7 +198,7 @@ int ObAggCell::collect_result(sql::ObEvalCtx &ctx)
   } else {
     sql::ObEvalInfo &eval_info = basic_info_.agg_expr_->get_eval_info(ctx);
     eval_info.evaluated_ = true;
-    LOG_DEBUG("collect_result", K(result), KPC(this));
+
   }
   return ret;
 }
@@ -258,7 +258,7 @@ int ObAggCell::prepare_def_datum()
     const ObObj &def_cell = basic_info_.col_param_->get_orig_default_value();
     if (!def_cell.is_nop_value()) {
       if (OB_FAIL(def_datum_.from_obj_enhance(def_cell))) {
-        STORAGE_LOG(WARN, "Failed to transfer obj to datum", K(ret));
+
       } else if (OB_FAIL(pad_column_if_need(def_datum_, allocator_, false))) {
         LOG_WARN("Failed to pad default datum", K(ret), K_(basic_info), K_(def_datum));
       } else if (def_cell.is_lob_storage() && !def_cell.is_null()) {
@@ -436,7 +436,7 @@ int ObCountAggCell::init(const bool is_group_by, sql::ObEvalCtx *eval_ctx)
     common::ObDatum *result_datums = basic_info_.agg_expr_->locate_batch_datums(*eval_ctx);
     if (OB_ISNULL(result_datums)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "Unexpected null agg datums", K(ret));
+
     } else if (OB_FAIL(new_group_by_buf(result_datums, basic_info_.batch_size_,
         common::OBJ_DATUM_NUMBER_RES_SIZE, allocator_, group_by_result_datum_buf_))) {
       LOG_WARN("Failed to new buf", K(ret));
@@ -465,7 +465,7 @@ int ObCountAggCell::eval(
   if (OB_SUCC(ret)) {
     aggregated_ = true;
   }
-  LOG_DEBUG("after count row", K(ret), K(row_count_));
+
   return ret;
 }
 
@@ -482,7 +482,7 @@ int ObCountAggCell::eval_batch(const common::ObDatum *datums, const int64_t row_
     row_count_ += row_count;
     aggregated_ = true;
   }
-  LOG_DEBUG("after count batch", K(ret), K(row_count), K(row_count_));
+
   return ret;
 }
 
@@ -511,7 +511,7 @@ int ObCountAggCell::eval_micro_block(
   if (OB_SUCC(ret)) {
     aggregated_ = true;
   }
-  LOG_DEBUG("eval_micro_block", K(ret), K(row_count), K(row_count_));
+
   return ret;
 }
 
@@ -532,7 +532,7 @@ int ObCountAggCell::eval_index_info(const blocksstable::ObMicroIndexInfo &index_
   if (OB_SUCC(ret)) {
     aggregated_ = true;
   }
-  LOG_DEBUG("eval_index_info", K(ret), K(index_info.get_row_count()), K(row_count_));
+
   return ret;
 }
 
@@ -699,7 +699,7 @@ int ObCountAggCell::collect_batch_result_in_group_by(const int64_t distinct_cnt)
       }
     }
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(distinct_cnt));
+
   return ret;
 }
 
@@ -722,7 +722,7 @@ int ObCountAggCell::collect_result(sql::ObEvalCtx &ctx)
     result.set_int(row_count_);
     eval_info.evaluated_ = true;
   }
-  LOG_DEBUG("collect_result", K(result), KPC(this));
+
   return ret;
 }
 
@@ -1250,7 +1250,7 @@ int ObHyperLogLogAggCell::eval_batch(const common::ObDatum *datums, const int64_
       aggregated_ = true;
     }
   }
-  LOG_DEBUG("after set ndv hash batch", K(count), K_(ndv_calculator));
+
   return ret;
 }
 
@@ -1261,7 +1261,7 @@ int ObHyperLogLogAggCell::collect_result(sql::ObEvalCtx &ctx)
   sql::ObEvalInfo &eval_info = basic_info_.agg_expr_->get_eval_info(ctx);
   result.set_string(ndv_calculator_->get_buckets(), ndv_calculator_->get_bucket_num());
   eval_info.evaluated_ = true;
-  LOG_DEBUG("collect result", K_(ndv_calculator), K(result), KPC(this));
+
   return ret;
 }
 
@@ -1399,7 +1399,7 @@ int ObSumOpSizeAggCell::eval(
   if (OB_SUCC(ret)) {
     aggregated_ = true;
   }
-  LOG_DEBUG("after sum op size", K(ret), K(length), K_(total_size), K_(op_size), K_(def_op_size));
+
   return ret;
 }
 
@@ -1426,7 +1426,7 @@ int ObSumOpSizeAggCell::eval_batch(const common::ObDatum *datums, const int64_t 
       aggregated_ = true;
     }
   }
-  LOG_DEBUG("after sum op size batch", K(ret), K(row_count), K_(op_size), K_(total_size));
+
   return ret;
 }
 
@@ -1460,7 +1460,7 @@ int ObSumOpSizeAggCell::eval_micro_block(
   if (OB_SUCC(ret)) {
     aggregated_ = true;
   }
-  LOG_DEBUG("eval micro block in sum op size", K(ret), K(row_count), K_(exclude_null), K_(op_size), K_(total_size));
+
   return ret;
 }
 
@@ -1483,7 +1483,7 @@ int ObSumOpSizeAggCell::eval_index_info(const blocksstable::ObMicroIndexInfo &in
   if (OB_SUCC(ret)) {
     aggregated_ = true;
   }
-  LOG_DEBUG("eval_index_info", K(ret), K(index_info.get_row_count()), K_(op_size), K_(total_size));
+
   return ret;
 }
 
@@ -1506,7 +1506,7 @@ int ObSumOpSizeAggCell::collect_result(sql::ObEvalCtx &ctx)
     result.set_uint(total_size_);
     eval_info.evaluated_ = true;
   }
-  LOG_DEBUG("collect result", K(result), KPC(this));
+
  return ret;
 }
 
@@ -1919,7 +1919,7 @@ int ObSumAggCell::eval(
   if (OB_SUCC(ret)) {
     aggregated_ = true;
   }
-  LOG_DEBUG("after process rows", KPC(this));
+
   return ret;
 }
 
@@ -2143,7 +2143,7 @@ int ObSumAggCell::collect_batch_result_in_group_by(const int64_t distinct_cnt)
       }
     }
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(distinct_cnt));
+
   return ret;
 }
 
@@ -2197,7 +2197,7 @@ int ObSumAggCell::collect_result(sql::ObEvalCtx &ctx)
       eval_info.evaluated_ = true;
     }
   }
-  LOG_DEBUG("collect_result", K(result), KPC(this));
+
   return ret;
 }
 
@@ -2444,7 +2444,7 @@ int ObSumAggCell::eval_number_batch(const common::ObDatum *datums, const int64_t
   } else if (!all_skip) {
     result_datum_.set_number(result_nmb);
   }
-  LOG_DEBUG("number result", K(result_nmb));
+
   return ret;
 }
 
@@ -2535,7 +2535,7 @@ int ObSumAggCell::collect_result_in_group_by(const int64_t datum_offset)
       if (OB_FAIL(collect_result_to_decimal_int(right_nmb, result_datum, result_datum))) {
         LOG_WARN("Failed to collect result to decimal int", K(ret));
       }
-      LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(result_datum));
+
     }
   } else {
     common::ObDatum &result_datum = get_group_by_result_datum(datum_offset);
@@ -2567,7 +2567,7 @@ int ObSumAggCell::collect_result_in_group_by(const int64_t datum_offset)
           }
         }
       }
-      LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(right_nmb), K(result_datum));
+
     }
   }
   return ret;
@@ -2618,7 +2618,7 @@ int ObSumAggCell::output_extra_group_by_result(const int64_t start, const int64_
       }
     }
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(start), K(count), K(ObArrayWrap<common::ObDatum>(sql_result_datums, count)));
+
   return ret;
 }
 
@@ -3042,7 +3042,7 @@ int ObGroupByCell::init(const ObTableAccessParam &param, const ObTableAccessCont
     group_by_col_offset_ = param.iter_param_.group_by_cols_project_->at(0);
     for (int64_t i = 0; OB_SUCC(ret) && i < param.output_exprs_->count(); ++i) {
       if (T_PSEUDO_GROUP_ID == param.output_exprs_->at(i)->type_) {
-        LOG_TRACE("Group by pushdown in batch nlj", K(ret));
+
         continue;
       } else if (nullptr == param.output_sel_mask_ || param.output_sel_mask_->at(i)) {
         int32_t col_offset = param.iter_param_.out_cols_project_->at(i);
@@ -3055,7 +3055,7 @@ int ObGroupByCell::init(const ObTableAccessParam &param, const ObTableAccessCont
           group_by_col_datums = expr->locate_batch_datums(eval_ctx);
           if (OB_ISNULL(group_by_col_datums)) {
             ret = OB_ERR_UNEXPECTED;
-            STORAGE_LOG(WARN, "Unexpected null datums", K(ret), K(i), KPC(expr));
+
           } else if (OB_FAIL(new_group_by_buf(group_by_col_datums, batch_size_,
               common::OBJ_DATUM_NUMBER_RES_SIZE, allocator_, group_by_col_datum_buf_))) {
             LOG_WARN("Failed to new buf", K(ret));
@@ -3092,7 +3092,7 @@ int ObGroupByCell::init(const ObTableAccessParam &param, const ObTableAccessCont
       }
     }
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), KPC(this));
+
   return ret;
 }
 
@@ -3253,7 +3253,7 @@ int ObGroupByCell::prepare_tmp_group_by_buf(const int64_t size)
   if (OB_SUCC(ret)) {
     need_extract_distinct_ = true;
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(need_extract_distinct_), K(batch_size_));
+
   return ret;
 }
 
@@ -3320,7 +3320,7 @@ int ObGroupByCell::output_extra_group_by_result(int64_t &count, const ObTableIte
       ret = OB_ITER_END;
     }
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(count), K(projected_cnt_), K(distinct_cnt_), K(row_capacity_));
+
   return ret;
 }
 
@@ -3384,7 +3384,7 @@ int ObGroupByCell::extract_distinct()
 
       }
     }
-    LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(ref_cnt_), K(distinct_cnt_));
+
   }
   return ret;
 }

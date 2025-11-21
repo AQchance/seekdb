@@ -142,7 +142,7 @@ int ObCSMicroBlockTransformer::init(const ObMicroBlockHeader *header,
   } else {
     is_inited_ = true;
   }
-  LOG_DEBUG("finish init ObCSMicroBlockTransformer", K(ret), KPC(this));
+
   return ret;
 }
 
@@ -437,7 +437,7 @@ int ObCSMicroBlockTransformer::build_semistruct_column_stream_(
     uint16_t sub_column_cnt = semistruct_header->column_cnt_;
     const ObCSColumnHeader* sub_col_headers = semistrcut_meta_desc.sub_col_headers_;
     const char* sub_col_meta_ptr = semistrcut_meta_desc.sub_col_meta_ptr_;
-    LOG_TRACE("decode semistruct stream", K(column_idx), K(semistrcut_meta_desc), K(stream_idx), K(first_stream_begin_offset), K(pre_streams_len));
+
     for (int j = 0; OB_SUCC(ret) && j < sub_column_cnt; ++j) {
       const ObCSColumnHeader &sub_column_header = sub_col_headers[j];
       if (OB_UNLIKELY(!sub_column_header.is_valid())) {
@@ -640,7 +640,7 @@ int ObCSMicroBlockTransformer::build_stream_decoder_ctx_()
             original_desc_.stream_data_pos_arr_[stream_idx].offset_ = all_string_uncompress_len_;
             all_string_uncompress_len_ += ctx->meta_.uncompressed_len_;
             buf += sizeof(ObStringStreamDecoderCtx);
-            LOG_DEBUG("build string stream decoding ctx", K(stream_idx), K(*ctx), K(sizeof(ObStringStreamDecoderCtx)));
+
           }
         }
       }
@@ -1450,7 +1450,7 @@ int ObCSMicroBlockTransformHelper::build_integer_column_decoder_ctx_(
         ctx.null_flag_ = ObBaseColumnDecoderCtx::HAS_NO_NULL;
         ctx.null_desc_ = nullptr;
       }
-      LOG_TRACE("build_integer_column_decoder_ctx", K(col_first_stream_idx), K(col_end_stream_idx), K(col_idx), K(ctx));
+
     }
   }
   return ret;
@@ -1506,7 +1506,7 @@ int ObCSMicroBlockTransformHelper::build_string_column_decoder_ctx_(
           ctx.offset_data_ = buf + transform_desc_.stream_data_pos_arr_[col_second_stream_idx].offset_;
         }
       }
-      LOG_TRACE("build_string_column_decoder_ctx", K(col_first_stream_idx), K(col_end_stream_idx), K(col_idx), K(ctx));
+
     }
   }
 
@@ -1714,7 +1714,7 @@ int ObCSMicroBlockTransformHelper::build_semistruct_column_decoder_ctx_(
       sub_col_type.set_type(static_cast<ObObjType>(sub_col_header.obj_type_));
       decoder_ctx.reset();
       decoder_ctx.type_ = static_cast<ObCSColumnHeader::Type>(sub_col_header.type_);
-      LOG_TRACE("sub column info", K(i), K(sub_col_header));
+
       switch(sub_col_header.type_) {
         case ObCSColumnHeader::Type::INTEGER : {
           if (OB_FAIL(build_integer_sub_column_decoder_ctx_(sub_col_type, sub_col_header,

@@ -156,7 +156,7 @@ TestConcurrencyDefenses::~TestConcurrencyDefenses()
 void TestConcurrencyDefenses::SetUpTestCase()
 {
   int ret = OB_SUCCESS;
-  STORAGE_LOG(INFO, "SetUpTestCase");
+
   EXPECT_EQ(OB_SUCCESS, MockTenantModuleEnv::get_instance().init());
 }
 void TestConcurrencyDefenses::TearDownTestCase()
@@ -374,7 +374,7 @@ int TestConcurrencyDefensesStressMacroWriter::init(uint64_t tenant_id, const int
   int ret = OB_SUCCESS;
   if (thread_cnt < 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(thread_cnt));
+
   } else {
     tenant_id_ = tenant_id;
     thread_cnt_ = thread_cnt;
@@ -453,7 +453,7 @@ int TestConcurrencyDefensesStressIndexBuilder::init(uint64_t tenant_id, const in
   int ret = OB_SUCCESS;
   if (thread_cnt < 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(thread_cnt));
+
   } else {
     tenant_id_ = tenant_id;
     thread_cnt_ = thread_cnt;
@@ -490,7 +490,7 @@ void TestConcurrencyDefensesStressIndexBuilder::run1()
 
 TEST_F(TestConcurrencyDefenses, test_macro_writer_concurrency_defense)
 {
-  LOG_INFO("BEGIN TestConcurrencyDefenses.test_macro_writer_concurrency_defense");
+
   int ret = OB_SUCCESS;
 
   ObWholeDataStoreDesc data_desc;
@@ -509,12 +509,12 @@ TEST_F(TestConcurrencyDefenses, test_macro_writer_concurrency_defense)
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(OB_SUCCESS, macro_writer->close());
   delete macro_writer;
-  LOG_INFO("FINISH TestConcurrencyDefenses.test_macro_writer_concurrency_defense");
+
 }
 
 TEST_F(TestConcurrencyDefenses, test_index_builder_concurrency_defense)
 {
-  LOG_INFO("BEGIN TestConcurrencyDefenses.test_index_builder_concurrency_defense");
+
   int ret = OB_SUCCESS;
   ObSSTableIndexBuilder sstable_builder(false /* not need writer buffer*/);
 
@@ -537,12 +537,12 @@ TEST_F(TestConcurrencyDefenses, test_index_builder_concurrency_defense)
   ret = sstable_builder.close(res);
   ASSERT_EQ(OB_SUCCESS, ret);
   
-  LOG_INFO("FINISH TestConcurrencyDefenses.test_index_builder_concurrency_defense");
+
 }
 
 TEST_F(TestConcurrencyDefenses, test_concurrency_defense_effect)
 {
-  LOG_INFO("BEGIN TestConcurrencyDefenses.test_concurrency_defense_effect");
+
   int ret = OB_SUCCESS;
   
   ObWholeDataStoreDesc data_desc;
@@ -577,7 +577,7 @@ TEST_F(TestConcurrencyDefenses, test_concurrency_defense_effect)
   LOG_INFO("macro_block_writer append costs ns",
             K(std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count()));
   ASSERT_EQ(OB_SUCCESS, data_writer.close());
-  LOG_INFO("FINISH TestConcurrencyDefenses.test_concurrency_defense_effect");
+
 }
 
 }//end namespace unittest

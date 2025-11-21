@@ -71,7 +71,7 @@ void ObStorageTableGuard::throttle_if_needed_()
         ObLS *ls = nullptr;
         const ObLSID &ls_id = tablet_->get_tablet_meta().ls_id_;
         if (OB_FAIL(MTL(ObLSService *)->get_ls(ls_id, ls_handle, ObLSGetMod::STORAGE_MOD))) {
-          STORAGE_LOG(WARN, "get ls handle failed", KR(ret), K(ls_id));
+
         } else if (OB_ISNULL(ls = ls_handle.get_ls())) {
         } else {
           (void)TxShareMemThrottleUtil::do_throttle<ObMemstoreAllocator>(for_replay_,
@@ -191,7 +191,7 @@ int ObStorageTableGuard::refresh_and_protect_memtable_for_replay()
 
   if (OB_LS_OFFLINE == ret) {
     ret = OB_EAGAIN;
-    STORAGE_LOG(INFO, "reset ret code to OB_EAGAIN to avoid error log", KR(ret), K(ls_id), K(tablet_id));
+
   }
   return ret;
 }
@@ -201,7 +201,7 @@ int ObStorageTableGuard::create_data_memtable_for_replay_(const share::ObLSID &l
                                                           bool &need_retry)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("there is no boundary memtable", K(ret), K(ls_id), K(tablet_id));
+
   ObLSHandle ls_handle;
   ObTabletHandle tmp_handle;
   SCN clog_checkpoint_scn;
@@ -329,7 +329,7 @@ int ObStorageTableGuard::check_freeze_to_inc_write_ref(ObMemtable *memtable, boo
   ObProtectedMemtableMgrHandle *protected_handle = NULL;
 
   if (OB_ISNULL(memtable)) {
-    LOG_INFO("table is null, need to refresh", K(need_retry), K(ls_id), K(tablet_id));
+
   } else if (FALSE_IT(old_freeze_flag = memtable->get_freeze_flag())) {
   } else if (FALSE_IT(is_tablet_freeze = memtable->get_is_tablet_freeze())) {
   } else if (memtable->is_active_memtable()) {

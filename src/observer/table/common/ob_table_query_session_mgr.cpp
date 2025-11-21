@@ -177,7 +177,7 @@ void ObTableQueryASyncMgr::destroy_all_query_session()
         uint64_t sess_id = session_id_array.at(i);
         ObITableQueryAsyncSession *query_session = nullptr;
         if (OB_FAIL(query_session_map_.get_refactored(sess_id, query_session))) {
-          LOG_DEBUG("query session already deleted by worker", K(ret), K(sess_id));
+
         } else if (OB_ISNULL(query_session)) {
           ret = OB_ERR_NULL_VALUE;
           (void)query_session_map_.erase_refactored(sess_id);
@@ -213,7 +213,7 @@ void ObTableQueryASyncMgr::clean_timeout_query_session()
         ObITableQueryAsyncSession *query_session = nullptr;
         get_locker(sess_id).lock();
         if (OB_FAIL(query_session_map_.get_refactored(sess_id, query_session))) {
-          LOG_DEBUG("query session already deleted by worker", K(ret), K(sess_id));
+
         } else if (OB_ISNULL(query_session)) {
           ret = OB_ERR_NULL_VALUE;
           (void)query_session_map_.erase_refactored(sess_id);
@@ -238,7 +238,7 @@ void ObTableQueryASyncMgr::clean_timeout_query_session()
     if (OB_FAIL(TG_SCHEDULE(MTL(omt::ObSharedTimer*)->get_tg_id(), *this, refresh_period_ms))) {
       LOG_ERROR("fail to refresh schedule query session clean task. ", K(ret));
     } else {
-      LOG_TRACE("schedule timer task for refresh next time", K(refresh_period_ms));
+
     }
   }
 }
@@ -280,7 +280,7 @@ int ObTableQueryASyncMgr::destory_query_session(ObITableQueryAsyncSession *query
       LOG_WARN("fail to erase query session from query sync mgr", K(ret));
     } else {
       MTL(ObTableQueryASyncMgr*)->free_query_session(query_session);
-      LOG_DEBUG("destory query session success", K(ret), K(query_session_id));
+
     }
     MTL(ObTableQueryASyncMgr*)->get_locker(query_session_id).unlock();
   }

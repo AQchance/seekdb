@@ -152,7 +152,7 @@ TEST_F(TestZoneManager, common)
   ASSERT_EQ(OB_SUCCESS, zone_mgr_.get_config_version(config_version));
   ASSERT_EQ(now, config_version);
 
-  LOG_INFO("mgr", K_(zone_mgr));
+
 }
 
 TEST_F(TestZoneManager, admin)
@@ -411,7 +411,7 @@ TEST_F(TestZoneManager, check_merge_order)
       if (OB_FAIL(merge_list.push_back(zone))) {
         LOG_WARN("push back to array failed", K(ret));
       } else {
-        LOG_INFO("push back zone", K(zone));
+
       }
     }
   }

@@ -57,7 +57,7 @@ public:
     : ls_id_(1),
       fake_t3m_(common::OB_SERVER_TENANT_ID)
   {
-    LOG_INFO("construct TestLockTableCallback");
+
   }
   ~TestLockTableCallback() {}
 
@@ -67,11 +67,11 @@ public:
   {
     create_memtable();
     init_mem_ctx(handle_);
-    LOG_INFO("set up success");
+
   }
   virtual void TearDown() override
   {
-    LOG_INFO("tear down success");
+
   }
 private:
   void create_memtable()
@@ -127,13 +127,13 @@ private:
 
 void TestLockTableCallback::SetUpTestCase()
 {
-  LOG_INFO("SetUpTestCase");
+
   init_default_lock_test_value();
 }
 
 void TestLockTableCallback::TearDownTestCase()
 {
-  LOG_INFO("TearDownTestCase");
+
 }
 
 TEST_F(TestLockTableCallback, callback)
@@ -145,18 +145,18 @@ TEST_F(TestLockTableCallback, callback)
   storage::ObIMemtable *memtable = nullptr;
   ObOBJLockCallback *cb = nullptr;
   // 1. UNNSED CALLBACK TYPE
-  LOG_INFO("TestLockTableCallback::callback 1.");
+
   static const int UNUSED_TYPE_NUM = 4;
   create_callback(DEFAULT_IN_TRANS_LOCK_OP, cb);
   ret = cb->elr_trans_preparing();
   ASSERT_EQ(OB_SUCCESS, ret);
   // 2. TCB_PRINT_CALLBACK
-  LOG_INFO("TestLockTableCallback::callback 2.");
+
   ret = cb->print_callback();
   ASSERT_EQ(OB_SUCCESS, ret);
   // 3. IN_TRANS_LOCK
   // 3.1 intrans commit
-  LOG_INFO("TestLockTableCallback::callback 3.1");
+
   ret = mt_ctx_.check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                  DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
                                  DEFAULT_IN_TRANS_LOCK_OP.lock_mode_,
@@ -175,7 +175,7 @@ TEST_F(TestLockTableCallback, callback)
                                  lock_mode_cnt_in_same_trans);
   ASSERT_EQ(lock_exist, false);
   // 3.2 intrans abort
-  LOG_INFO("TestLockTableCallback::callback 3.2");
+
   create_callback(DEFAULT_IN_TRANS_LOCK_OP, cb);
   ret = mt_ctx_.check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                  DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
@@ -195,7 +195,7 @@ TEST_F(TestLockTableCallback, callback)
                                  lock_mode_cnt_in_same_trans);
   ASSERT_EQ(lock_exist, false);
   // 3.3 intrans stmt abort
-  LOG_INFO("TestLockTableCallback::callback 3.3");
+
   create_callback(DEFAULT_IN_TRANS_LOCK_OP, cb);
   ret = mt_ctx_.check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                  DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
@@ -218,7 +218,7 @@ TEST_F(TestLockTableCallback, callback)
 
 TEST_F(TestLockTableCallback, basic)
 {
-  LOG_INFO("TestLockTableCallback::basic");
+
   int ret = OB_SUCCESS;
   ObOBJLockCallback *cb = nullptr;
 

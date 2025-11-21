@@ -774,7 +774,7 @@ int ObRestoreMacroBlockIdMgr::inner_init_v1_(
               if (OB_FAIL(block_id_array_.push_back(block_id))) {
                 LOG_WARN("failed to push block id into array", K(ret), K(block_id));
               } else {
-                LOG_DEBUG("push back block id", K(tablet_id), K(table_key), K(pair), K(block_id));
+
               }
             }
 
@@ -890,7 +890,7 @@ int ObRestoreMacroBlockIdMgr::inner_init_v2_(
       } else if (OB_FAIL(get_macro_block_index_list_from_iter_(*iterator, block_id_array_))) {
         LOG_WARN("failed to get macro block index list from iter", K(ret), K(tablet_id), K(table_key), K(restore_base_info));
       } else {
-        LOG_INFO("get macro block index list", K(block_id_array_));
+
       }
       if (OB_NOT_NULL(iterator)) {
         backup::ObLSBackupFactory::free(iterator);
@@ -1028,7 +1028,7 @@ int ObRestoreMacroBlockIdMgr::get_macro_block_index_list_from_iter_(
       } else if (OB_FAIL(macro_id_list.push_back(restore_macro_id))) {
         LOG_WARN("failed to push back", K(ret), K(restore_macro_id));
       } else {
-        LOG_DEBUG("get macro id", K(restore_macro_id));
+
       }
     }
   }

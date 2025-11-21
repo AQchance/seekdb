@@ -162,7 +162,7 @@ void ObTxDataTableTest::insert_rollback_tx_data()
     WRITE_SQL_BY_CONN(connection, "rollback to savepoint x");
     if (0 == first_rollback_ts_) {
       first_rollback_ts_ = ObTimeUtil::current_time_ns();
-      STORAGE_LOG(INFO, "", K(first_rollback_ts_));
+
     }
 
     WRITE_SQL_FMT_BY_CONN(connection, "insert into test_tx_data_t values(%ld, %ld)", i, i);
@@ -186,7 +186,7 @@ void ObTxDataTableTest::freeze_tx_data(ObTxDataTable *tx_data_table)
     EXE_SQL("alter system minor freeze tenant all_meta;");
   }
   ATOMIC_STORE(&stop, true);
-  STORAGE_LOG(INFO, "freeze done");
+
 }
 
 void ObTxDataTableTest::check_start_tx_scn(ObTxDataTable *tx_data_table)
@@ -248,7 +248,7 @@ void ObTxDataTableTest::basic_test()
 
   ls = ls_handle.get_ls();
   int64_t clog_checkpoint_before_freeze = ls->get_ls_meta().get_clog_checkpoint_scn().get_val_for_tx();
-  LOG_INFO("get clog checkpint before freeze:", K(clog_checkpoint_before_freeze));
+
 
   // get tx data table
   ObTxTable *tx_table = nullptr;
@@ -274,7 +274,7 @@ void ObTxDataTableTest::basic_test()
   // check_start_tx_scn_thread.join();
 
   {
-    LOG_INFO("start advance checkpoint by flush", K(first_rollback_ts_));
+
     share::SCN tmp;
     tmp.convert_for_logservice(first_rollback_ts_);
     int ret = ls->get_checkpoint_executor()->advance_checkpoint_by_flush(tmp);
@@ -291,7 +291,7 @@ void ObTxDataTableTest::basic_test()
       break;
     }
   }
-  LOG_INFO("get clog checkpint after freeze: ", K(clog_checkpoint_after_freeze));
+
   ASSERT_NE(clog_checkpoint_before_freeze, clog_checkpoint_after_freeze);
   ASSERT_GT(clog_checkpoint_after_freeze, first_rollback_ts_);
 
@@ -516,10 +516,10 @@ void ObTxDataTableRestartTest::select_existed_data()
 
     if (row_cnt > 0) {
       select_succ = true;
-      LOG_INFO("select done", K(try_select_cnt));
+
       break;
     } else {
-      LOG_INFO("select once", K(try_select_cnt));
+
       ::sleep(1);
     }
   }

@@ -250,7 +250,7 @@ int ObZoneTableOperation::update_info_item(common::ObISQLClient &sql_client,
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected affected rows", K(ret), K(affected_rows));
   } else {
-    LOG_TRACE("execute sql success", K(sql));
+
   }
   return ret;
 }
@@ -570,7 +570,7 @@ int ObZoneTableOperation::update_global_config_version_with_lease(
   int64_t lease_info_version_to_update = 0;
   int64_t start_time = ObTimeUtility::current_time();
 
-  LOG_INFO("begin to update global config version with lease version", K(global_config_version));
+
   if (OB_UNLIKELY(0 >= global_config_version)) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", KR(ret), K(global_config_version));

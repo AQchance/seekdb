@@ -297,7 +297,7 @@ int ObAllVirtualProxySchema::inner_open()
           } else if (OB_FAIL(schema_guard_.get_tenant_info(tenant_name, tenant_schema))) {
             LOG_WARN("fail to get tenant info", KR(ret), K(tenant_name));
           } else if (OB_ISNULL(tenant_schema)) {
-            LOG_TRACE("tenant not exist", K(tenant_name)); // skip
+ // skip
           } else {
             tenant_id = tenant_schema->get_tenant_id();
             is_oracle_tenant = tenant_schema->is_oracle_tenant();
@@ -305,7 +305,7 @@ int ObAllVirtualProxySchema::inner_open()
               ret = OB_ERR_UNEXPECTED;
               LOG_WARN("invalid effective_tenant_id", KR(ret), K_(effective_tenant_id));
             } else if (!is_sys_tenant(effective_tenant_id_) && (tenant_id != effective_tenant_id_)) {
-              LOG_TRACE("unprivileged tenant", K(tenant_name), K(tenant_id), K_(effective_tenant_id)); // skip
+ // skip
               tenant_id = OB_INVALID_TENANT_ID;  // vtable return nothing
             } else if (is_sys_tenant(effective_tenant_id_) && (tenant_id != effective_tenant_id_)) {
               exec_tenant_id = tenant_id;
@@ -510,7 +510,7 @@ int ObAllVirtualProxySchema::init_data_(
                                                  table_schema))) {
         LOG_WARN("get table schema failed", KR(ret), K(tenant_name), K(database_name), K(table_name));
       } else if (OB_ISNULL(table_schema)) {
-        LOG_TRACE("table does not exist", KR(ret), K(tenant_name), K(database_name), K(table_name));
+
       } // unknown table, return succ
     }
 
@@ -778,13 +778,13 @@ int ObAllVirtualProxySchema::get_view_decoded_schema_(
                 ret = OB_ERR_UNEXPECTED;
                 LOG_WARN("view item is null", KR(ret));
               } else if (!view_item->is_basic_table()) {
-                LOG_TRACE("only support base table now, try next table", KPC(view_item));
+
                 view_item = NULL;
               }
             }
             if (OB_FAIL(ret)) {
             } else if (OB_ISNULL(view_item)) {
-              LOG_TRACE("only support base table now, do nothing here", KPC(select_stmt));
+
             } else if (CT_DEFAULT == complex_table_type_) {
               if (view_item->synonym_name_.empty()) {
                 if (OB_FAIL(ob_write_string(*allocator_, view_item->database_name_, level1_decoded_db_name_))) {
@@ -935,7 +935,7 @@ int ObAllVirtualProxySchema::get_next_tablet_location_(
           dup_replica_type))) {
         LOG_WARN("fail to fill row", KR(ret));
       } else {
-        LOG_TRACE("success to fill row", K(replica), K(tablet_id), K(dup_replica_type));
+
       }
     }
   }
@@ -1107,7 +1107,7 @@ int ObAllVirtualProxySchema::fill_tenant_servers_(
     if (OB_FAIL(first_idx_in_zone.push_back(svr_idx))) {
       LOG_WARN("fail to push back first_idx_in_zone", KR(ret), K(svr_idx));
     } else {
-      LOG_INFO("succ to fill tenant servers", K_(tenant_servers), K(first_idx_in_zone));
+
     }
   }
   return ret;
@@ -1155,7 +1155,7 @@ int ObAllVirtualProxySchema::get_tenant_servers_by_join_(
       } else if (OB_FAIL(fill_tenant_servers_(tenant_id, *result, first_idx_in_zone))) {
         LOG_WARN("failed to fill_tenant_servers", KR(ret), K(tenant_id));
       } else {
-        LOG_INFO("succ to get tenant_servers by join", K_(tenant_servers));
+
       }
     }
   }
@@ -1221,7 +1221,7 @@ int ObAllVirtualProxySchema::get_tenant_servers_(const uint64_t tenant_id)
             }
           }
         }
-        LOG_INFO("succ to get tenant_servers_", K(tenant_servers_), K(tablet_count), K(replica_count));
+
       }
     }
   } //end of order servers
@@ -1442,13 +1442,13 @@ int ObAllVirtualProxySchema::get_table_tablet_location_(const int64_t table_idx)
       if (OB_FAIL(location_.init_fake_location())) {
         LOG_WARN("fail to init fake location", KR(ret), KPC(table_schema));
       } else {
-        LOG_TRACE("init fake location success", KR(ret), K_(location), KPC(table_schema));
+
       }
     } else if (OB_FAIL(fetch_tablet_location_(*table_schema, actual_tablet_ids_.at(table_idx)))) {
       LOG_WARN("fail to fetch tablet location", KR(ret), KPC(table_schema), 
           "actual_tablet_id", actual_tablet_ids_.at(table_idx));
     } else {
-      LOG_TRACE("success to get location", K_(location), "actual_tablet_id", actual_tablet_ids_.at(table_idx));
+
     }
   }
   return ret;
@@ -1510,7 +1510,7 @@ int ObAllVirtualProxySchema::get_actual_tablet_id_(
     ObTabletID &tablet_id)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("begin to get actual tablet id", K(tablet_id), K(table_schema));
+
   ObTabletID first_tablet_id;
   ObTabletID tmp_tablet_id;
   ObPartitionSchemaIter iter(table_schema, ObCheckPartitionMode::CHECK_PARTITION_MODE_NORMAL);
@@ -1535,7 +1535,7 @@ int ObAllVirtualProxySchema::get_actual_tablet_id_(
       ret = OB_SUCCESS;
     }
   }
-  LOG_TRACE("finish to get actual tablet id", K(tablet_id), K(table_schema));
+
   return ret;
 }
 

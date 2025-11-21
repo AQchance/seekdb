@@ -48,7 +48,7 @@ int ObCreateInnerSchemaTask::process()
 {
   int ret = OB_SUCCESS;
   const int64_t start = ObTimeUtility::current_time();
-  LOG_INFO("[UPGRADE] start to execute create inner schema task", K(start));
+
   if (OB_ISNULL(executor_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, executor must not be NULL", K(ret));
@@ -196,7 +196,7 @@ int ObCreateInnerSchemaExecutor::do_create_inner_schema()
   ObSchemaGetterGuard schema_guard;
   ObArray<uint64_t> tenant_ids;
   const int64_t start = ObTimeUtility::current_time();
-  LOG_INFO("[UPGRADE] execute job create_inner_schema start", K(start));
+
   int ret = OB_SUCCESS;
   if (!is_inited_) {
     ret = OB_NOT_INIT;

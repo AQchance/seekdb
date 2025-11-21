@@ -85,11 +85,11 @@ int TestArchiveCheckpointMgr::run_test_func(TEST_FUNCTION f)
     if (OB_FAIL(get_root_path(type, path))) {
       LOG_WARN("failed to get root patch", K(ret), K(type));
     } else if (path.is_empty()) {
-      LOG_INFO("path is not set, skip unittest", K(type));
+
     } else if (OB_FAIL(get_storage_info(type, storage_info))) {
       LOG_WARN("failed to get storage info", K(ret), K(type));
     } else if (OB_FAIL(storage_info_.set(type, storage_info.ptr()))) {
-      LOG_INFO("path is not set, skip unittest", K(type));
+
     } else if (OB_FAIL(clean_root_dir(type))) {
       LOG_WARN("failed to clean root dir", K(ret), K(type));
     } else if (OB_FAIL((this->*f)(type))) {
@@ -148,7 +148,7 @@ int TestArchiveCheckpointMgr::generate_simple_files(const ObStorageType &type)
   char buf[] = "test";
   int64_t start_ts = ObTimeUtility::current_time();
 
-  LOG_INFO("start generate_simple_files", K(type));
+
   if (OB_FAIL(get_root_path(type, root_path))) {
     LOG_WARN("failed to get root path", K(ret), K(root_path));
   }
@@ -172,7 +172,7 @@ int TestArchiveCheckpointMgr::generate_simple_files(const ObStorageType &type)
   }
 
   const int64_t cost_ts = ObTimeUtility::current_time() - start_ts;
-  LOG_INFO("finish prepare simple dir", K(type), K(cost_ts), K(ret));
+
   return ret;
 }
 
@@ -209,7 +209,7 @@ int TestArchiveCheckpointMgr::clean_dir(const ObStorageType &type, const ObStrin
       } else if (OB_FAIL(util.del_file(path, &storage_info_))) {
         LOG_WARN("failed to clean dir", K(ret), K(type), K(path));
       }
-      LOG_INFO("del_file", K(path));
+
     }
   }
 
@@ -217,7 +217,7 @@ int TestArchiveCheckpointMgr::clean_dir(const ObStorageType &type, const ObStrin
     if (OB_FAIL(util.del_dir(dir_uri, &storage_info_))) {
       LOG_WARN("failed to del dir", K(ret), K(dir_uri));
     }
-    LOG_INFO("del_dir",  K(dir_uri));
+
   }
 
   return ret;
@@ -290,7 +290,7 @@ int TestArchiveCheckpointMgr::test_write_and_read_checkpoint(const ObStorageType
   }
 
   const int64_t cost_ts = ObTimeUtility::current_time() - start_ts;
-  LOG_INFO("finish test_list_util", K(type), K(cost_ts), K(ret));
+
   return ret;
 }
 

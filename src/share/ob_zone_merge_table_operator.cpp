@@ -240,7 +240,7 @@ int ObZoneMergeTableOperator::delete_tenant_merge_info_by_zone(
     if (FAILEDx(sql_client.write(meta_tenant_id, sql.ptr(), affected_rows))) {
       LOG_WARN("fail to execute sql", KR(ret), K(tenant_id), K(meta_tenant_id), K(sql));
     } else {
-      LOG_INFO("succ to delete zone_merge_info", K(tenant_id), K(sql), K(affected_rows));
+
     }
   }
   return ret;
@@ -350,7 +350,7 @@ int ObZoneMergeTableOperator::inner_load_zone_merge_infos_(
       }
     }
     if (print_sql) {
-      LOG_INFO("finish load_zone_merge_info", KR(ret), K(tenant_id), K(sql));
+
     }
   }
   return ret;

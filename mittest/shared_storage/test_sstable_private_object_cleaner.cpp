@@ -71,7 +71,7 @@ int generate_table(const uint64_t table_id, const int64_t column_count,
     column.set_column_id(i + OB_APP_MIN_COLUMN_ID);
     sprintf(name, "test%020ld", i);
     if (OB_FAIL(column.set_column_name(name))) {
-      STORAGE_LOG(WARN, "set_column_name failed", K(ret));
+
     } else {
       set_column_type(obj_type, column);
       column.set_data_length(1);
@@ -84,7 +84,7 @@ int generate_table(const uint64_t table_id, const int64_t column_count,
     }
     if (OB_SUCC(ret)) {
       if (OB_FAIL(table_schema.add_column(column))) {
-        STORAGE_LOG(WARN, "add_column failed", K(ret), K(column));
+
       }
     }
   }
@@ -173,7 +173,7 @@ void TestSSTablePrivateObjectCleaner::create_ls(
   for (int i = 0; OB_SUCC(ret) && i < 15; i++) {
     int64_t proposal_id = 0;
     if (OB_FAIL(ls->get_log_handler()->get_role(role, proposal_id))) {
-      STORAGE_LOG(WARN, "failed to get role", K(ret));
+
     } else if (role == ObRole::LEADER) {
       break;
     }
@@ -183,7 +183,7 @@ void TestSSTablePrivateObjectCleaner::create_ls(
   if (OB_FAIL(ret)) {
   } else if (OB_UNLIKELY(ObRole::LEADER != role)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected error, role is not leader", K(ret), K(role));
+
   }
   return ;
 }

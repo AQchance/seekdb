@@ -113,7 +113,7 @@ ObDtlLinkedBuffer *ObDtlChannelMemManager::alloc(int64_t chid, int64_t size)
       }
     } else {
       if (OB_ENTRY_NOT_EXIST == ret) {
-        LOG_TRACE("queue has no element", K(ret), K(seqno_), K(free_queue_.size()));
+
         ret = OB_SUCCESS;
       } else {
         LOG_WARN("failed to pop back buffer", K(ret), K(seqno_), K(free_queue_.size()));
@@ -140,7 +140,7 @@ ObDtlLinkedBuffer *ObDtlChannelMemManager::alloc(int64_t chid, int64_t size)
       if (nullptr != allocated_buf) {
         ++real_alloc_cnt_;
       }
-      LOG_TRACE("Trace to allocate memory", K(ret), K(seqno_), K(allocated_buf), K(lbt()));
+
     }
   }
   if (nullptr != allocated_buf) {
@@ -149,7 +149,7 @@ ObDtlLinkedBuffer *ObDtlChannelMemManager::alloc(int64_t chid, int64_t size)
   uint64_t opt = std::abs(EVENT_CALL(EventTable::EN_PX_DTL_TRACE_LOG_ENABLE));
   if (0 != opt) {
     share::ObTaskController::get().allow_next_syslog();
-    LOG_INFO("alloc dtl buffer", KP(allocated_buf));
+
   }
   LOG_TRACE("channel memory status", K(get_alloc_cnt()), K(get_free_cnt()),
     K(get_free_queue_length()), K(get_max_tenant_memory_limit_size()), K(get_max_dtl_memory_size()),
@@ -164,7 +164,7 @@ int ObDtlChannelMemManager::free(ObDtlLinkedBuffer *buf, bool auto_free)
     buf->reset_batch_info();
     if (auto_free && buf->size() == size_per_buffer_) {
       if (OB_FAIL(free_queue_.push(buf))) {
-        LOG_TRACE("failed to push back buffer", K(ret), K(seqno_), K(free_queue_.size()));
+
       } else {
         increase_free_cnt();
         buf = NULL;
@@ -174,7 +174,7 @@ int ObDtlChannelMemManager::free(ObDtlLinkedBuffer *buf, bool auto_free)
       real_free(buf);
       increase_free_cnt();
     }
-    LOG_TRACE("channel memory status", K(get_alloc_cnt()), K(get_free_cnt()), K(get_free_queue_length()), KP(buf), K(seqno_), K(auto_free));
+
   }
   return ret;
 }
@@ -185,7 +185,7 @@ void ObDtlChannelMemManager::real_free(ObDtlLinkedBuffer *buf)
     ++real_free_cnt_;
     buf->~ObDtlLinkedBuffer();
     allocator_.free(buf);
-    LOG_TRACE("Trace to free buffer", K(seqno_), KP(buf));
+
   }
 }
 
@@ -196,7 +196,7 @@ int ObDtlChannelMemManager::auto_free_on_time(int64_t cur_max_reserve_count)
   if (cur_max_reserve_count <= 0) {
     cur_max_reserve_count = 1;
   }
-  LOG_TRACE("trace auto free", K(get_alloc_cnt()), K(get_free_cnt()), K(get_free_queue_length()),  K(seqno_), K(cur_max_reserve_count));
+
   if (free_queue_.size() > cur_max_reserve_count) {
     int64_t delta = alloc_cnt_ - pre_alloc_cnt_;
     int64_t delta_per_sec = delta / ts;

@@ -277,7 +277,7 @@ int ObLogJoin::adjust_join_conds(ObIArray<ObRawExpr *> &dest_exprs)
                 *cur_expr, is_opposite))) {
             LOG_WARN("failed to calc equal condition opposite", K(ret));
           } else {
-            LOG_INFO("do is_opposite", K(ret), K(is_opposite));
+
             // Before generating column replacement, determine whether the dependent expression
             // is a constant expression. If so, you need to change the left and right node positions
             // in advance.
@@ -906,7 +906,7 @@ int ObLogJoin::allocate_granule_pre(AllocGIContext &ctx)
 {
   int ret = OB_SUCCESS;
   if (!ctx.exchange_above()) {
-    LOG_TRACE("no exchange above, do nothing", K(ctx));
+
   } else if (!ctx.is_in_partition_wise_state()
              && !ctx.is_in_pw_affinity_state()
              && DistAlgo::DIST_PARTITION_WISE == join_dist_algo_) {
@@ -926,7 +926,7 @@ int ObLogJoin::allocate_granule_pre(AllocGIContext &ctx)
      *   reset the state of gi-allocate ctx.
      */
     ctx.set_in_partition_wise_state(this);
-    LOG_TRACE("in find partition wise state", K(ctx));
+
   } else if (ctx.is_in_partition_wise_state()) {
     /**
      *       (partition wise join with pkey reshuffle)
@@ -955,7 +955,7 @@ int ObLogJoin::allocate_granule_pre(AllocGIContext &ctx)
       if (OB_FAIL(ctx.set_pw_affinity_state())) {
         LOG_WARN("set affinity state failed", K(ret), K(ctx));
       }
-      LOG_TRACE("partition wise affinity", K(ret));
+
     }
   }
   return ret;
@@ -979,7 +979,7 @@ int ObLogJoin::allocate_granule_post(AllocGIContext &ctx)
    *   so JOIN(2) can not reset this state.
    */
   if (!ctx.exchange_above()) {
-    LOG_TRACE("no exchange above, do nothing");
+
 	} else if (ctx.is_in_partition_wise_state()) {
     if (ctx.is_op_set_pw(this)) {
       ctx.alloc_gi_ = true;
@@ -1000,12 +1000,12 @@ int ObLogJoin::allocate_granule_post(AllocGIContext &ctx)
     if (OB_FAIL(set_granule_nodes_affinity(ctx, 0))) {
       LOG_WARN("set granule nodes affinity failed", K(ret));
     }
-    LOG_TRACE("set left child gi to affinity");
+
   } else if (DIST_PARTITION_NONE == join_dist_algo_) {
     if (OB_FAIL(set_granule_nodes_affinity(ctx, 1))) {
       LOG_WARN("set granule nodes affinity failed", K(ret));
     }
-    LOG_TRACE("set right child gi to affinity");
+
   } else if (DIST_BC2HOST_NONE == join_dist_algo_ && HASH_JOIN != join_algo_) {
     ObLogicalOperator *op = NULL;
     if (OB_FAIL(get_child(second_child)->find_first_recursive(LOG_GRANULE_ITERATOR, op))) {

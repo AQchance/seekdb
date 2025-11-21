@@ -228,7 +228,7 @@ int ObUdfUtil::calc_udf_result_type(common::ObIAllocator &allocator,
       }
     }
   }
-  LOG_DEBUG("udf get result type", K(type));
+
   return ret;
 }
 
@@ -249,7 +249,7 @@ int ObUdfUtil::load_so(const common::ObString dl, ObUdfSoHandler &handler)
   } else {
     /* we got the so handler success */
     handler = handler_tmp;
-    LOG_DEBUG("udf get dll handler", K(handler));
+
   }
   return ret;
 }
@@ -712,7 +712,7 @@ void ObUdfUtil::print_udf_args_to_log(const ObUdfArgs &args)
       }
     }
   }
-  LOG_DEBUG("UDF ARGS", K(ret), K(args.arg_count), K(args_strings), K(atts_strings), K(maybe_nulls), K(arg_type_strings), K(lbt()));
+
 }
 
 
@@ -731,7 +731,7 @@ int ObUdfUtil::convert_ob_type_to_udf_type(common::ObObjType ob_type, UdfItemRes
   } else if (OB_FAIL(convert_mysql_type_to_udf_type(mysql_type, udf_type))) {
     LOG_WARN("get udf type failed", K(ret));
   }
-  LOG_DEBUG("udf type change", K(ob_type), K(mysql_type), K(udf_type));
+
   return ret;
 }
 

@@ -96,7 +96,7 @@ void ObTabletPointer::reset_obj()
 {
   if (nullptr != obj_.ptr_) {
     if (OB_UNLIKELY(nullptr == obj_.pool_ && nullptr == obj_.allocator_)) {
-      STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "object pool is nullptr", K_(obj));
+
       ob_abort();
     } else {
       const int64_t ref_cnt = obj_.ptr_->dec_ref();
@@ -108,7 +108,7 @@ void ObTabletPointer::reset_obj()
           obj_.allocator_->free(obj_.ptr_);
         }
       } else if (OB_UNLIKELY(ref_cnt < 0)) {
-        STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "obj ref cnt may be leaked", K(ref_cnt), KPC(this));
+
       }
       // The pool ptr on tablet pointer cann't be reset nullptr here. Otherwise, you will
       // encounter the following bug when the tablet is deleted from the map.
@@ -144,13 +144,13 @@ int ObTabletPointer::hook_obj(const ObTabletAttr &attr, ObTablet *&t,  ObMetaObj
 
   if (OB_ISNULL(t)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(ERROR, "load null obj from disk", K(ret), K(phy_addr_));
+
   } else if (OB_NOT_NULL(obj_.ptr_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(ERROR, "obj already hooked", K(ret), K(phy_addr_), KP(t), KP(obj_.ptr_));
+
   } else if (OB_UNLIKELY(0 != t->get_ref())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(ERROR, "obj ref cnt not 0", K(ret), K(phy_addr_), K(t->get_ref()));
+
   } else {
     t->inc_ref();
     t->set_tablet_addr(phy_addr_);
@@ -158,7 +158,7 @@ int ObTabletPointer::hook_obj(const ObTabletAttr &attr, ObTablet *&t,  ObMetaObj
     guard.set_obj(obj_);
     ObMetaObjBufferHelper::set_in_map(reinterpret_cast<char *>(t), true/*in_map*/);
     if (!is_attr_valid() && OB_FAIL(set_tablet_attr(attr))) { // only set tablet attr when first hook obj
-      STORAGE_LOG(WARN, "failed to update tablet attr", K(ret), K(guard));
+
     }
   }
 
@@ -178,10 +178,10 @@ int ObTabletPointer::get_in_memory_obj(ObMetaObjGuard<ObTablet> &guard)
 
   if (OB_UNLIKELY(phy_addr_.is_none())) {
     ret = OB_ITEM_NOT_SETTED;
-    STORAGE_LOG(DEBUG, "meta disk addr is none, no object to be got", K(ret), K(phy_addr_));
+
   } else if (OB_UNLIKELY(!is_in_memory())) {
     ret = OB_NOT_SUPPORTED;
-    STORAGE_LOG(ERROR, "object isn't in memory, not support", K(ret), K(phy_addr_));
+
   } else {
     guard.set_obj(obj_);
   }
@@ -217,7 +217,7 @@ void ObTabletPointer::set_obj(const ObMetaObjGuard<ObTablet> &guard)
   get_attr_for_obj(obj_.ptr_);
   if (nullptr != obj_.ptr_) {
     if (OB_UNLIKELY(nullptr == obj_.pool_ && nullptr == obj_.allocator_)) {
-      STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "object pool is nullptr", K_(obj));
+
       ob_abort();
     } else {
       obj_.ptr_->inc_ref();
@@ -235,11 +235,11 @@ int ObTabletPointer::deserialize(
   int64_t pos = 0;
   if (OB_UNLIKELY(buf_len <= 0) || OB_ISNULL(buf) || OB_ISNULL(t)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(buf), K(buf_len), KP(t));
+
   } else if (OB_FAIL(get_attr_for_obj(t))) {
-    STORAGE_LOG(WARN, "fail to set attr for obj", K(ret));
+
   } else if (OB_FAIL(t->load_deserialize(allocator, buf, buf_len, pos))) {
-    STORAGE_LOG(WARN, "fail to de-serialize T", K(ret), KP(buf), K(buf_len), KP(t));
+
   }
   return ret;
 }
@@ -253,11 +253,11 @@ int ObTabletPointer::deserialize(
   int64_t pos = 0;
   if (OB_UNLIKELY(buf_len <= 0) || OB_ISNULL(buf) || OB_ISNULL(t)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(buf), K(buf_len), KP(t));
+
   } else if (OB_FAIL(get_attr_for_obj(t))) {
-    STORAGE_LOG(WARN, "fail to set attr for obj", K(ret));
+
   } else if (OB_FAIL(t->deserialize(buf, buf_len, pos))) {
-    STORAGE_LOG(WARN, "fail to de-serialize T", K(ret), KP(buf), K(buf_len), KP(t));
+
   }
   return ret;
 }
@@ -288,9 +288,9 @@ int ObTabletPointer::dump_meta_obj(ObMetaObjGuard<ObTablet> &guard, void *&free_
   int ret = OB_SUCCESS;
   ObMetaObj<ObTablet> meta_obj;
   if (OB_ISNULL(obj_.ptr_)) {
-    LOG_INFO("tablet may be washed", KPC(obj_.ptr_));
+
   } else if (OB_UNLIKELY(obj_.ptr_->get_ref() > 1)) {
-    LOG_INFO("tablet may be attached again, continue", KPC(obj_.ptr_));
+
   } else if (OB_UNLIKELY(obj_.ptr_->get_ref() < 1)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected error, tablet ref is less than 1", K(ret), KPC(obj_.ptr_));
@@ -298,7 +298,7 @@ int ObTabletPointer::dump_meta_obj(ObMetaObjGuard<ObTablet> &guard, void *&free_
     ret = OB_ERR_UNEXPECTED;
     LOG_ERROR("obj is not allocated from pool", K(ret), K(*this));
   } else if (OB_UNLIKELY(!phy_addr_.is_disked())) {
-    LOG_INFO("tablet may be removed, and created again, continue", K(phy_addr_));
+
   } else if (0 != obj_.ptr_->dec_ref()) {
     ret = OB_ERR_UNEXPECTED;
     LOG_ERROR("obj is still being used", K(ret), K(*this));
@@ -449,7 +449,7 @@ int ObTabletPointer::set_ddl_kv_mgr(const ObDDLKvMgrHandle &ddl_kv_mgr_handle)
   } else {
     ObByteLockGuard guard(ddl_kv_mgr_lock_);
     if (ddl_kv_mgr_handle_.get_obj() != ddl_kv_mgr_handle.get_obj()) {
-      LOG_INFO("ddl kv mgr changed", KPC(ddl_kv_mgr_handle_.get_obj()));
+
     }
     ddl_kv_mgr_handle_ = ddl_kv_mgr_handle;
   }
@@ -492,7 +492,7 @@ int ObTabletPointer::get_mds_table(const ObTabletID &tablet_id,
     LOG_ERROR("invalid ls_handle_, maybe not init yet", K(ret));
   } else if (!tablet_id.is_valid()) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "tablet_id is invalid", K(ret));
+
   } else if (OB_FAIL(mds_table_handler_.get_mds_table_handle(handle,
                                                              tablet_id,
                                                              ls_handle_.get_ls()->get_ls_id(),
@@ -542,7 +542,7 @@ int ObTabletPointer::release_memtable_and_mds_table_for_ls_offline(const ObTable
   mds::MdsTableHandle mds_table;
   reset_tablet_status_written();
   if (tablet_id.is_ls_inner_tablet()) {
-    LOG_INFO("skip inner tablet", K(tablet_id));
+
   } else if (OB_FAIL(protected_memtable_mgr_handle_.reset())) {
     LOG_WARN("failed to reset protected_memtable_mgr_handle", K(ret));
   } else if (OB_FAIL(get_mds_table(tablet_id, mds_table, false/*not_exist_create*/))) {
@@ -560,7 +560,7 @@ int ObTabletPointer::release_memtable_and_mds_table_for_ls_offline(const ObTable
         LOG_WARN("failed to cleanup ddl kv mgr", K(ret));
     }
     ddl_kv_mgr_handle_.reset();
-    LOG_INFO("ddl kv mgr reset", K(ret), KPC(this));
+
   }
 
   return ret;
@@ -584,7 +584,7 @@ int ObTabletPointer::release_mds_nodes_redo_scn_below(const ObTabletID &tablet_i
     if (OB_SUCC(ret)) {
       ret = EN_RELEASE_MDS_NODE_FAILED ? : OB_SUCCESS;
       if (OB_FAIL(ret)) {
-        STORAGE_LOG(ERROR, "fake EN_RELEASE_MDS_NODE_FAILED", K(ret));
+
       }
     }
 #endif
@@ -614,7 +614,7 @@ int ObTabletPointer::add_tablet_to_old_version_chain(ObTablet *tablet)
       old_version_chain_ = tablet;
     }
   }
-  LOG_DEBUG("add_tablet_to_old_version_chain", K(ret), KP(tablet));
+
   return ret;
 }
 
@@ -640,7 +640,7 @@ int ObTabletPointer::remove_tablet_from_old_version_chain(ObTablet *tablet)
       cur = next;
     }
   }
-  LOG_DEBUG("remove_tablet_from_old_version_chain", K(ret), KP(tablet), KP(old_version_chain_));
+
   return ret;
 }
 
@@ -650,11 +650,11 @@ int ObTabletPointer::scan_all_tablets_on_chain(const ObFunction<int(ObTablet &)>
   ObTablet *cur = old_version_chain_;
   if (!op.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "receive an invalid operator", K(ret), K(obj_));
+
   } else {
     while (OB_SUCC(ret) && OB_NOT_NULL(cur)) {
       if (OB_FAIL(op(*cur))) {
-        STORAGE_LOG(WARN, "failed to apply op on old version tablet", K(ret), K(obj_));
+
       }
       cur = cur->get_next_tablet();
     }
@@ -673,9 +673,9 @@ int ObTabletPointer::acquire_obj(ObTablet *&t)
   void *buf = nullptr;
   if (OB_ISNULL(obj_.pool_) || OB_ISNULL(obj_.t3m_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "object pool is nullptr", K(ret), K(obj_));
+
   } else if (OB_FAIL(obj_.t3m_->acquire_tablet(obj_.pool_, t))) {
-    STORAGE_LOG(WARN, "fail to acquire tablet buffer", K(ret), K(phy_addr_));
+
   }
   return ret;
 }
@@ -687,7 +687,7 @@ int ObTabletPointer::release_obj(ObTablet *&t)
     // do nothing
   } else if (OB_UNLIKELY(nullptr == obj_.pool_ && nullptr == obj_.allocator_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "object pool or allocator is nullptr", K(ret), K(obj_));
+
   } else if (nullptr == t->get_allocator()) {
     obj_.t3m_->release_tablet_from_pool(t, true/*give_back_tablet_into_pool*/);
     t = nullptr;

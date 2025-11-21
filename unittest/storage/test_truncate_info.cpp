@@ -92,7 +92,7 @@ TEST_F(TestTruncateInfo, serialize_truncate_list_part)
   ASSERT_TRUE(part.is_valid());
   ASSERT_EQ(OB_SUCCESS, part.serialize(buf, BUF_LEN, write_pos));
   ASSERT_EQ(write_pos, part.get_serialize_size());
-  LOG_INFO("part after serialize", K(part));
+
 
   ObTruncatePartition tmp_part;
   int64_t read_pos = 0;
@@ -102,7 +102,7 @@ TEST_F(TestTruncateInfo, serialize_truncate_list_part)
 
   MEMSET(buf, '\0', sizeof(char) * BUF_LEN);
   bool equal = false;
-  LOG_INFO("part after deserialize", K(tmp_part));
+
   ASSERT_EQ(OB_SUCCESS, part.compare(tmp_part, equal));
   ASSERT_TRUE(equal);
 

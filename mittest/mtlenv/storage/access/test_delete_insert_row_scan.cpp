@@ -96,7 +96,7 @@ int ObTxTable::check_with_tx_data(ObReadTxDataArg &read_tx_data_arg, ObITxDataCh
         ret = fn(TX_DATA_ARR[i]);
       }
       if (OB_FAIL(ret)) {
-        STORAGE_LOG(ERROR, "check with tx data failed", KR(ret), K(read_tx_data_arg), K(TX_DATA_ARR.at(i)));
+
       }
       break;
     }
@@ -444,7 +444,7 @@ int TestDeleteInsertRowScan::create_pushdown_filter(
   ExprFixedArray *column_exprs = nullptr;
   if (!is_white) {
     ret = OB_NOT_SUPPORTED;
-    STORAGE_LOG(WARN, "Not support to create not white filter", K(ret));
+
   } else {
     ObPushdownWhiteFilterNode* white_node =
         OB_NEWx(ObPushdownWhiteFilterNode, allocator_ptr, query_allocator_);
@@ -460,25 +460,25 @@ int TestDeleteInsertRowScan::create_pushdown_filter(
     const common::ObIArray<ObColDesc> &cols_desc = read_info.get_columns_desc();
     const ObColumnIndexArray &cols_index = read_info.get_columns_index();
     if (OB_FAIL(column_exprs->init(1))) {
-      STORAGE_LOG(WARN, "Fail to init column exprs", K(ret));
+
     } else if (OB_FAIL(column_exprs->push_back(nullptr))) {
-      STORAGE_LOG(WARN, "Fail to push back col expr", K(ret));
+
     } else if (OB_FAIL(filter->filter_.col_ids_.init(1))) {
-      STORAGE_LOG(WARN, "Fail to init col ids", K(ret));
+
     } else if (OB_FAIL(filter->filter_.col_ids_.push_back(col_id))) {
-      STORAGE_LOG(WARN, "Fail to push back col id", K(ret));
+
     } else if (OB_FAIL(filter->datum_params_.init(1))) {
-      STORAGE_LOG(WARN, "Fail to init datum params", K(ret));
+
     } else if (OB_FAIL(filter->datum_params_.push_back(datum))) {
-      STORAGE_LOG(WARN, "Fail to push back datum", K(ret), K(datum));
+
     } else if (OB_FAIL(filter->cg_col_exprs_.init(1))) {
-      STORAGE_LOG(WARN, "Fail to init cg col exprs", K(ret));
+
     } else if (OB_FAIL(filter->cg_col_exprs_.push_back(access_param_.output_exprs_->at(col_id - common::OB_APP_MIN_COLUMN_ID)))) {
-      STORAGE_LOG(WARN, "Fail to push back col expr", K(ret));
+
     } else {
       filter->cmp_func_ = get_datum_cmp_func(cols_desc.at(col_id - common::OB_APP_MIN_COLUMN_ID).col_type_,
                                              cols_desc.at(col_id - common::OB_APP_MIN_COLUMN_ID).col_type_);
-      STORAGE_LOG(INFO, "finish create pushdown filter");
+
     }
   }
   return ret;
@@ -523,7 +523,7 @@ TEST_F(TestDeleteInsertRowScan, test_row_scan)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[1];
@@ -542,7 +542,7 @@ TEST_F(TestDeleteInsertRowScan, test_row_scan)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   table_store_iter.add_table(handle2.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = INT64_MAX;
@@ -582,7 +582,7 @@ TEST_F(TestDeleteInsertRowScan, test_row_scan)
   while (OB_SUCC(ret)) {
     ret = scan_merge.get_next_rows(count, SQL_BATCH_SIZE);
     if (ret != OB_SUCCESS && ret != OB_ITER_END) {
-      STORAGE_LOG(ERROR, "error return value", K(ret), K(count));
+
       ASSERT_EQ(1, 0);
     }
     if (count > 0) {
@@ -593,7 +593,7 @@ TEST_F(TestDeleteInsertRowScan, test_row_scan)
       ASSERT_TRUE(is_equal);
 
       total_count += count;
-      STORAGE_LOG(INFO, "get next rows", K(count), K(total_count));
+
     } else {
       break;
     }
@@ -634,7 +634,7 @@ TEST_F(TestDeleteInsertRowScan, test_border_key)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = INT64_MAX;
@@ -693,7 +693,7 @@ TEST_F(TestDeleteInsertRowScan, test_border_key)
   ASSERT_EQ(OB_SUCCESS, iter->refresh_blockscan_checker(border_rowkey));
   ASSERT_EQ(OB_PUSHDOWN_STATUS_CHANGED, iter->get_next_rows());
   ASSERT_EQ(4, vector_store->get_row_count());
-  STORAGE_LOG(INFO, "get next rows", K(vector_store->get_row_count()));
+
   ObMockScanMergeIterator merge_iter(vector_store->get_row_count());
   ASSERT_EQ(OB_SUCCESS, merge_iter.init(vector_store, query_allocator_, *access_param_.iter_param_.get_read_info()));
   bool is_equal = res_iter.equals<ObMockScanMergeIterator, ObStoreRow>(merge_iter, false, false, false, true);
@@ -705,7 +705,7 @@ TEST_F(TestDeleteInsertRowScan, test_border_key)
   ASSERT_EQ(OB_SUCCESS, iter->refresh_blockscan_checker(border_rowkey));
   ASSERT_EQ(OB_SUCCESS, iter->get_next_rows());
   ASSERT_EQ(4, vector_store->get_row_count());
-  STORAGE_LOG(INFO, "get next rows", K(vector_store->get_row_count()));
+
   ObMockScanMergeIterator merge_iter2(vector_store->get_row_count());
   ASSERT_EQ(OB_SUCCESS, merge_iter2.init(vector_store, query_allocator_, *access_param_.iter_param_.get_read_info()));
   is_equal = res_iter.equals<ObMockScanMergeIterator, ObStoreRow>(merge_iter2, false, false, false, true);
@@ -749,7 +749,7 @@ TEST_F(TestDeleteInsertRowScan, test_border_key_reverse)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = INT64_MAX;
@@ -809,7 +809,7 @@ TEST_F(TestDeleteInsertRowScan, test_border_key_reverse)
   ASSERT_EQ(OB_SUCCESS, iter->refresh_blockscan_checker(border_rowkey));
   ASSERT_EQ(OB_PUSHDOWN_STATUS_CHANGED, iter->get_next_rows());
   ASSERT_EQ(4, vector_store->get_row_count());
-  STORAGE_LOG(INFO, "get next rows", K(vector_store->get_row_count()));
+
   ObMockScanMergeIterator merge_iter(vector_store->get_row_count());
   ASSERT_EQ(OB_SUCCESS, merge_iter.init(vector_store, query_allocator_, *access_param_.iter_param_.get_read_info()));
   bool is_equal = res_iter.equals<ObMockScanMergeIterator, ObStoreRow>(merge_iter, false, false, false, true);
@@ -821,7 +821,7 @@ TEST_F(TestDeleteInsertRowScan, test_border_key_reverse)
   ASSERT_EQ(OB_SUCCESS, iter->refresh_blockscan_checker(border_rowkey));
   ASSERT_EQ(OB_SUCCESS, iter->get_next_rows());
   ASSERT_EQ(4, vector_store->get_row_count());
-  STORAGE_LOG(INFO, "get next rows", K(vector_store->get_row_count()));
+
   ObMockScanMergeIterator merge_iter2(vector_store->get_row_count());
   ASSERT_EQ(OB_SUCCESS, merge_iter2.init(vector_store, query_allocator_, *access_param_.iter_param_.get_read_info()));
   is_equal = res_iter.equals<ObMockScanMergeIterator, ObStoreRow>(merge_iter2, false, false, false, true);
@@ -862,7 +862,7 @@ TEST_F(TestDeleteInsertRowScan, test_border_key_not_equal)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = INT64_MAX;
@@ -919,7 +919,7 @@ TEST_F(TestDeleteInsertRowScan, test_border_key_not_equal)
   ASSERT_EQ(OB_SUCCESS, iter->refresh_blockscan_checker(border_rowkey));
   ASSERT_EQ(OB_PUSHDOWN_STATUS_CHANGED, iter->get_next_rows());
   ASSERT_EQ(2, vector_store->get_row_count());
-  STORAGE_LOG(INFO, "get next rows", K(vector_store->get_row_count()));
+
   ObMockScanMergeIterator merge_iter(vector_store->get_row_count());
   ASSERT_EQ(OB_SUCCESS, merge_iter.init(vector_store, query_allocator_, *access_param_.iter_param_.get_read_info()));
   bool is_equal = res_iter.equals<ObMockScanMergeIterator, ObStoreRow>(merge_iter, false, false, false, true);
@@ -932,7 +932,7 @@ TEST_F(TestDeleteInsertRowScan, test_border_key_not_equal)
   ASSERT_EQ(OB_SUCCESS, iter->refresh_blockscan_checker(border_rowkey));
   ASSERT_EQ(OB_PUSHDOWN_STATUS_CHANGED, iter->get_next_rows());
   ASSERT_EQ(2, vector_store->get_row_count());
-  STORAGE_LOG(INFO, "get next rows", K(vector_store->get_row_count()));
+
   ObMockScanMergeIterator merge_iter2(vector_store->get_row_count());
   ASSERT_EQ(OB_SUCCESS, merge_iter2.init(vector_store, query_allocator_, *access_param_.iter_param_.get_read_info()));
   is_equal = res_iter.equals<ObMockScanMergeIterator, ObStoreRow>(merge_iter2, false, false, false, true);
@@ -944,7 +944,7 @@ TEST_F(TestDeleteInsertRowScan, test_border_key_not_equal)
   ASSERT_EQ(OB_SUCCESS, iter->refresh_blockscan_checker(border_rowkey));
   ASSERT_EQ(OB_SUCCESS, iter->get_next_rows());
   ASSERT_EQ(2, vector_store->get_row_count());
-  STORAGE_LOG(INFO, "get next rows", K(vector_store->get_row_count()));
+
   ObMockScanMergeIterator merge_iter3(vector_store->get_row_count());
   ASSERT_EQ(OB_SUCCESS, merge_iter3.init(vector_store, query_allocator_, *access_param_.iter_param_.get_read_info()));
   is_equal = res_iter.equals<ObMockScanMergeIterator, ObStoreRow>(merge_iter3, false, false, false, true);
@@ -988,7 +988,7 @@ TEST_F(TestDeleteInsertRowScan, test_row_filter)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = INT64_MAX;
@@ -1030,7 +1030,7 @@ TEST_F(TestDeleteInsertRowScan, test_row_filter)
   while (OB_SUCC(ret)) {
     ret = scan_merge.get_next_rows(count, SQL_BATCH_SIZE);
     if (ret != OB_SUCCESS && ret != OB_ITER_END) {
-      STORAGE_LOG(ERROR, "error return value", K(ret), K(count));
+
       ASSERT_EQ(1, 0);
     }
     if (count > 0) {
@@ -1041,7 +1041,7 @@ TEST_F(TestDeleteInsertRowScan, test_row_filter)
       ASSERT_TRUE(is_equal);
 
       total_count += count;
-      STORAGE_LOG(INFO, "get next rows", K(count), K(total_count));
+
     } else {
       break;
     }
@@ -1102,7 +1102,7 @@ TEST_F(TestDeleteInsertRowScan, test_multi_version_row_filter)
   prepare_one_macro(micro_data1, 3);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   // case 1: return insert row without delete version
   ObTableHandleV2 handle2;
@@ -1121,7 +1121,7 @@ TEST_F(TestDeleteInsertRowScan, test_multi_version_row_filter)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   table_store_iter.add_table(handle2.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   // case 2: return insert row with delete version
   ObTableHandleV2 handle3;
@@ -1140,7 +1140,7 @@ TEST_F(TestDeleteInsertRowScan, test_multi_version_row_filter)
   prepare_one_macro(micro_data3, 1);
   prepare_data_end(handle3);
   table_store_iter.add_table(handle3.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable3");
+
 
   // case 3: return delete row
   ObTableHandleV2 handle4;
@@ -1159,7 +1159,7 @@ TEST_F(TestDeleteInsertRowScan, test_multi_version_row_filter)
   prepare_one_macro(micro_data4, 1);
   prepare_data_end(handle4);
   table_store_iter.add_table(handle4.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable4");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = INT64_MAX;
@@ -1224,7 +1224,7 @@ TEST_F(TestDeleteInsertRowScan, test_multi_version_row_filter)
   while (OB_SUCC(ret)) {
     ret = scan_merge.get_next_rows(count, SQL_BATCH_SIZE);
     if (ret != OB_SUCCESS && ret != OB_ITER_END) {
-      STORAGE_LOG(ERROR, "error return value", K(ret), K(count));
+
       ASSERT_EQ(1, 0);
     }
     if (count > 0) {
@@ -1235,7 +1235,7 @@ TEST_F(TestDeleteInsertRowScan, test_multi_version_row_filter)
       ASSERT_TRUE(is_equal);
 
       total_count += count;
-      STORAGE_LOG(INFO, "get next rows", K(count), K(total_count));
+
     } else {
       break;
     }
@@ -1274,7 +1274,7 @@ TEST_F(TestDeleteInsertRowScan, test_delete_scan)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[1];
@@ -1290,7 +1290,7 @@ TEST_F(TestDeleteInsertRowScan, test_delete_scan)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   table_store_iter.add_table(handle2.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = INT64_MAX;
@@ -1328,7 +1328,7 @@ TEST_F(TestDeleteInsertRowScan, test_delete_scan)
   while (OB_SUCC(ret)) {
     ret = scan_merge.get_next_rows(count, SQL_BATCH_SIZE);
     if (ret != OB_SUCCESS && ret != OB_ITER_END) {
-      STORAGE_LOG(ERROR, "error return value", K(ret), K(count));
+
       ASSERT_EQ(1, 0);
     }
     if (count > 0) {
@@ -1339,7 +1339,7 @@ TEST_F(TestDeleteInsertRowScan, test_delete_scan)
       ASSERT_TRUE(is_equal);
 
       total_count += count;
-      STORAGE_LOG(INFO, "get next rows", K(count), K(total_count));
+
     } else {
       break;
     }
@@ -1381,7 +1381,7 @@ TEST_F(TestDeleteInsertRowScan, test_complex_update)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[1];
@@ -1444,7 +1444,7 @@ TEST_F(TestDeleteInsertRowScan, test_complex_update)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   table_store_iter.add_table(handle2.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = INT64_MAX;
@@ -1482,9 +1482,9 @@ TEST_F(TestDeleteInsertRowScan, test_complex_update)
   ASSERT_EQ(OB_SUCCESS, res_iter.from(result1));
   while (OB_SUCC(ret)) {
     ret = scan_merge.get_next_rows(count, SQL_BATCH_SIZE);
-    STORAGE_LOG(INFO, "scan_merge.get_next_rows", K(ret), K(count), K(total_count));
+
     if (ret != OB_SUCCESS && ret != OB_ITER_END) {
-      STORAGE_LOG(ERROR, "error return value", K(ret), K(count));
+
       ASSERT_EQ(1, 0);
     }
     if (count > 0) {
@@ -1536,7 +1536,7 @@ TEST_F(TestDeleteInsertRowScan, test_delete_only)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[1];
@@ -1551,7 +1551,7 @@ TEST_F(TestDeleteInsertRowScan, test_delete_only)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   table_store_iter.add_table(handle2.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = INT64_MAX;
@@ -1591,7 +1591,7 @@ TEST_F(TestDeleteInsertRowScan, test_delete_only)
   while (OB_SUCC(ret)) {
     ret = scan_merge.get_next_rows(count, SQL_BATCH_SIZE);
     if (ret != OB_SUCCESS && ret != OB_ITER_END) {
-      STORAGE_LOG(ERROR, "error return value", K(ret), K(count));
+
       ASSERT_EQ(1, 0);
     }
     if (count > 0) {
@@ -1602,7 +1602,7 @@ TEST_F(TestDeleteInsertRowScan, test_delete_only)
       ASSERT_TRUE(is_equal);
 
       total_count += count;
-      STORAGE_LOG(INFO, "get next rows", K(count), K(total_count));
+
     } else {
       break;
     }
@@ -1644,7 +1644,7 @@ TEST_F(TestDeleteInsertRowScan, test_rowkey_cross_mb)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[3];
@@ -1711,7 +1711,7 @@ TEST_F(TestDeleteInsertRowScan, test_rowkey_cross_mb)
   prepare_one_macro(micro_data2, 3);
   prepare_data_end(handle2);
   table_store_iter.add_table(handle2.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = INT64_MAX;
@@ -1749,9 +1749,9 @@ TEST_F(TestDeleteInsertRowScan, test_rowkey_cross_mb)
   ASSERT_EQ(OB_SUCCESS, res_iter.from(result1));
   while (OB_SUCC(ret)) {
     ret = scan_merge.get_next_rows(count, SQL_BATCH_SIZE);
-    STORAGE_LOG(INFO, "scan_merge.get_next_rows", K(ret), K(count), K(total_count));
+
     if (ret != OB_SUCCESS && ret != OB_ITER_END) {
-      STORAGE_LOG(ERROR, "error return value", K(ret), K(count));
+
       ASSERT_EQ(1, 0);
     }
     if (count > 0) {
@@ -1801,7 +1801,7 @@ TEST_F(TestDeleteInsertRowScan, test_one_mb_all_normal_rows)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[3];
@@ -1839,7 +1839,7 @@ TEST_F(TestDeleteInsertRowScan, test_one_mb_all_normal_rows)
   prepare_one_macro(micro_data2, 3);
   prepare_data_end(handle2);
   table_store_iter.add_table(handle2.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = INT64_MAX;
@@ -1876,9 +1876,9 @@ TEST_F(TestDeleteInsertRowScan, test_one_mb_all_normal_rows)
   ASSERT_EQ(OB_SUCCESS, res_iter.from(result1));
   while (OB_SUCC(ret)) {
     ret = scan_merge.get_next_rows(count, SQL_BATCH_SIZE);
-    STORAGE_LOG(INFO, "scan_merge.get_next_rows", K(ret), K(count), K(total_count));
+
     if (ret != OB_SUCCESS && ret != OB_ITER_END) {
-      STORAGE_LOG(ERROR, "error return value", K(ret), K(count));
+
       ASSERT_EQ(1, 0);
     }
     if (count > 0) {
@@ -1926,7 +1926,7 @@ TEST_F(TestDeleteInsertRowScan, test_cross_version_filter)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[1];
@@ -1971,7 +1971,7 @@ TEST_F(TestDeleteInsertRowScan, test_cross_version_filter)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   table_store_iter.add_table(handle2.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObTableHandleV2 handle3;
   const char *micro_data3[1];
@@ -2045,7 +2045,7 @@ TEST_F(TestDeleteInsertRowScan, test_cross_version_filter)
   prepare_one_macro(micro_data3, 1);
   prepare_data_end(handle3);
   table_store_iter.add_table(handle3.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable3");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = INT64_MAX;
@@ -2098,7 +2098,7 @@ TEST_F(TestDeleteInsertRowScan, test_cross_version_filter)
   while (OB_SUCC(ret)) {
     ret = scan_merge.get_next_rows(count, SQL_BATCH_SIZE);
     if (ret != OB_SUCCESS && ret != OB_ITER_END) {
-      STORAGE_LOG(ERROR, "error return value", K(ret), K(count));
+
       ASSERT_EQ(1, 0);
     }
     if (count > 0) {
@@ -2109,7 +2109,7 @@ TEST_F(TestDeleteInsertRowScan, test_cross_version_filter)
       ASSERT_TRUE(is_equal);
 
       total_count += count;
-      STORAGE_LOG(INFO, "get next rows", K(count), K(total_count));
+
     } else {
       break;
     }
@@ -2145,7 +2145,7 @@ TEST_F(TestDeleteInsertRowScan, test_cross_version_partial_filter)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[1];
@@ -2166,7 +2166,7 @@ TEST_F(TestDeleteInsertRowScan, test_cross_version_partial_filter)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   table_store_iter.add_table(handle2.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObTableHandleV2 handle3;
   const char *micro_data3[1];
@@ -2195,7 +2195,7 @@ TEST_F(TestDeleteInsertRowScan, test_cross_version_partial_filter)
   prepare_one_macro(micro_data3, 1);
   prepare_data_end(handle3);
   table_store_iter.add_table(handle3.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable3");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = INT64_MAX;
@@ -2239,7 +2239,7 @@ TEST_F(TestDeleteInsertRowScan, test_cross_version_partial_filter)
   while (OB_SUCC(ret)) {
     ret = scan_merge.get_next_rows(count, SQL_BATCH_SIZE);
     if (ret != OB_SUCCESS && ret != OB_ITER_END) {
-      STORAGE_LOG(ERROR, "error return value", K(ret), K(count));
+
       ASSERT_EQ(1, 0);
     }
     if (count > 0) {
@@ -2250,7 +2250,7 @@ TEST_F(TestDeleteInsertRowScan, test_cross_version_partial_filter)
       ASSERT_TRUE(is_equal);
 
       total_count += count;
-      STORAGE_LOG(INFO, "get next rows", K(count), K(total_count));
+
     } else {
       break;
     }
@@ -2289,7 +2289,7 @@ TEST_F(TestDeleteInsertRowScan, test_cross_version_without_filter)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[1];
@@ -2333,7 +2333,7 @@ TEST_F(TestDeleteInsertRowScan, test_cross_version_without_filter)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   table_store_iter.add_table(handle2.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObTableHandleV2 handle3;
   const char *micro_data3[1];
@@ -2407,7 +2407,7 @@ TEST_F(TestDeleteInsertRowScan, test_cross_version_without_filter)
   prepare_one_macro(micro_data3, 1);
   prepare_data_end(handle3);
   table_store_iter.add_table(handle3.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable3");
+
 
   ObDatumRange range;
   range.set_whole_range();
@@ -2441,7 +2441,7 @@ TEST_F(TestDeleteInsertRowScan, test_cross_version_without_filter)
   while (OB_SUCC(ret)) {
     ret = scan_merge.get_next_rows(count, SQL_BATCH_SIZE);
     if (ret != OB_SUCCESS && ret != OB_ITER_END) {
-      STORAGE_LOG(ERROR, "error return value", K(ret), K(count));
+
       ASSERT_EQ(1, 0);
     }
     if (count > 0) {
@@ -2452,7 +2452,7 @@ TEST_F(TestDeleteInsertRowScan, test_cross_version_without_filter)
       ASSERT_TRUE(is_equal);
 
       total_count += count;
-      STORAGE_LOG(INFO, "get next rows", K(count), K(total_count));
+
     } else {
       break;
     }
@@ -2500,7 +2500,7 @@ TEST_F(TestDeleteInsertRowScan, test_multi_sstables_cross_version)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
   
   // minor sstable 1
   ObTableHandleV2 handle2;
@@ -2522,7 +2522,7 @@ TEST_F(TestDeleteInsertRowScan, test_multi_sstables_cross_version)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   table_store_iter.add_table(handle2.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   // minor sstable 2, cross range
   ObTableHandleV2 handle3;
@@ -2546,7 +2546,7 @@ TEST_F(TestDeleteInsertRowScan, test_multi_sstables_cross_version)
   prepare_one_macro(micro_data3, 1);
   prepare_data_end(handle3);
   table_store_iter.add_table(handle3.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable3");
+
 
   // minor sstable 3
   ObTableHandleV2 handle4;
@@ -2571,7 +2571,7 @@ TEST_F(TestDeleteInsertRowScan, test_multi_sstables_cross_version)
   prepare_one_macro(micro_data4, 1);
   prepare_data_end(handle4);
   table_store_iter.add_table(handle4.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable4");
+
 
   ObDatumRange range;
   range.set_whole_range();
@@ -2623,7 +2623,7 @@ TEST_F(TestDeleteInsertRowScan, test_multi_sstables_cross_version)
   while (OB_SUCC(ret)) {
     ret = scan_merge.get_next_rows(count, SQL_BATCH_SIZE);
     if (ret != OB_SUCCESS && ret != OB_ITER_END) {
-      STORAGE_LOG(ERROR, "error return value", K(ret), K(count));
+
       ASSERT_EQ(1, 0);
     }
     if (count > 0) {
@@ -2634,7 +2634,7 @@ TEST_F(TestDeleteInsertRowScan, test_multi_sstables_cross_version)
       ASSERT_TRUE(is_equal);
 
       total_count += count;
-      STORAGE_LOG(INFO, "get next rows", K(count), K(total_count));
+
     } else {
       break;
     }
@@ -2676,7 +2676,7 @@ TEST_F(TestDeleteInsertRowScan, test_crossed_minor_and_major)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[1];
@@ -2703,7 +2703,7 @@ TEST_F(TestDeleteInsertRowScan, test_crossed_minor_and_major)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   table_store_iter.add_table(handle2.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObDatumRange range;
   range.set_whole_range();
@@ -2744,7 +2744,7 @@ TEST_F(TestDeleteInsertRowScan, test_crossed_minor_and_major)
   while (OB_SUCC(ret)) {
     ret = scan_merge.get_next_rows(count, SQL_BATCH_SIZE);
     if (ret != OB_SUCCESS && ret != OB_ITER_END) {
-      STORAGE_LOG(ERROR, "error return value", K(ret), K(count));
+
       ASSERT_EQ(1, 0);
     }
     if (count > 0) {
@@ -2755,7 +2755,7 @@ TEST_F(TestDeleteInsertRowScan, test_crossed_minor_and_major)
       ASSERT_TRUE(is_equal);
 
       total_count += count;
-      STORAGE_LOG(INFO, "get next rows", K(count), K(total_count));
+
     } else {
       break;
     }
@@ -2793,7 +2793,7 @@ TEST_F(TestDeleteInsertRowScan, test_filtered_row_and_blockscan)
   prepare_one_macro(micro_data1, 1);
   prepare_data_end(handle1, ObITable::MAJOR_SSTABLE);
   table_store_iter.add_table(handle1.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[1];
@@ -2810,7 +2810,7 @@ TEST_F(TestDeleteInsertRowScan, test_filtered_row_and_blockscan)
   prepare_one_macro(micro_data2, 1);
   prepare_data_end(handle2);
   table_store_iter.add_table(handle2.get_table());
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObDatumRange range;
   range.set_whole_range();
@@ -2854,7 +2854,7 @@ TEST_F(TestDeleteInsertRowScan, test_filtered_row_and_blockscan)
   while (OB_SUCC(ret)) {
     ret = scan_merge.get_next_rows(count, SQL_BATCH_SIZE);
     if (ret != OB_SUCCESS && ret != OB_ITER_END) {
-      STORAGE_LOG(ERROR, "error return value", K(ret), K(count));
+
       ASSERT_EQ(1, 0);
     }
     if (count > 0) {
@@ -2865,7 +2865,7 @@ TEST_F(TestDeleteInsertRowScan, test_filtered_row_and_blockscan)
       ASSERT_TRUE(is_equal);
 
       total_count += count;
-      STORAGE_LOG(INFO, "get next rows", K(count), K(total_count));
+
     } else {
       break;
     }

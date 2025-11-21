@@ -66,11 +66,11 @@ int prepare_partition_merge_iter(ObMergeParameter &merge_param,
   void *buf = nullptr;
   if (OB_ISNULL(buf = allocator.alloc(sizeof(T)))) {
     ret = common::OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "failed to alloc memory", K(ret));
+
   } else {
     merge_iter = new (buf) T(allocator);
     if (OB_FAIL(merge_iter->init(merge_param, iter_idx, read_info))) {
-      STORAGE_LOG(WARN, "failed to init merge iter", K(ret));
+
     }
   }
   return ret;
@@ -185,7 +185,7 @@ TEST_F(ObMajorRowsMergerTest, test_compare_func)
   prepare_one_macro(&micro_data[2], 1);
   prepare_data_end(handle1);
   merge_context.static_param_.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[2];
@@ -206,7 +206,7 @@ TEST_F(ObMajorRowsMergerTest, test_compare_func)
   prepare_one_macro(&micro_data2[1], 1);
   prepare_data_end(handle2);
   merge_context.static_param_.tables_handle_.add_table(handle2);
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = 100;
@@ -301,7 +301,7 @@ TEST_F(ObMajorRowsMergerTest, single)
   prepare_one_macro(micro_data, 1);
   prepare_data_end(handle1);
   merge_context.static_param_.tables_handle_.add_table(handle1);
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[2];
@@ -322,7 +322,7 @@ TEST_F(ObMajorRowsMergerTest, single)
   prepare_one_macro(&micro_data2[1], 1);
   prepare_data_end(handle2);
   merge_context.static_param_.tables_handle_.add_table(handle2);
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = 100;
@@ -415,7 +415,7 @@ TEST_F(ObMajorRowsMergerTest, two_iters)
   merge_context.static_param_.tables_handle_.add_table(handle1);
 
 
-  STORAGE_LOG(INFO, "finish prepare sstable1");
+
 
   ObTableHandleV2 handle2;
   const char *micro_data2[2];
@@ -436,7 +436,7 @@ TEST_F(ObMajorRowsMergerTest, two_iters)
   //prepare_one_macro(&micro_data2[1], 1);
   prepare_data_end(handle2);
   merge_context.static_param_.tables_handle_.add_table(handle2);
-  STORAGE_LOG(INFO, "finish prepare sstable2");
+
 
   ObVersionRange trans_version_range;
   trans_version_range.snapshot_version_ = 100;

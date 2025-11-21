@@ -210,7 +210,7 @@ int ObHDFSStorageInfo::get_info_str_(char *storage_info, const int64_t info_len)
     // Setup storage info for simple auth on hdfs, more related auth configs will get in 
     // append_extension_str_.
     if (OB_ISNULL(hdfs_extension_) || 0 == strlen(hdfs_extension_)) {
-      LOG_TRACE("access hdfs with simple auth and hdfs extension is empty", K(ret));
+
     }
   }
   return ret;

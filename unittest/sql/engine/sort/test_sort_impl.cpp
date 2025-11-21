@@ -157,7 +157,7 @@ public:
         }
         if (0 == ret) {
           if (i < 10) {
-            LOG_INFO("get row", K(*r));
+
           }
           if (i > 0) {
             int cmp = 0;

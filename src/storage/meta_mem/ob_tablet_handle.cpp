@@ -93,7 +93,7 @@ void ObTabletHandle::reset()
     int ret = OB_SUCCESS;
     obj_->update_wash_score(calc_wash_score(wash_priority_));
     if (OB_UNLIKELY(!is_valid())) {
-      STORAGE_LOG(ERROR, "object pool and allocator is nullptr", K_(obj), K_(obj_pool), K_(allocator));
+
       ob_abort();
     } else {
       const int64_t ref_cnt = obj_->dec_ref();
@@ -104,7 +104,7 @@ void ObTabletHandle::reset()
             "than two hours ", K(ref_cnt), KP(this), K(hold_time), K(hold_start_time_), KPC(this), K(common::lbt()));
       }
       if (OB_UNLIKELY(ref_cnt < 0)) {
-        STORAGE_LOG(ERROR, "obj ref cnt may be leaked", K(ref_cnt), KPC(this));
+
       } else if (0 == ref_cnt) {
         if (obj_->is_external_tablet()) {
           int tmp_ret = OB_SUCCESS; // let tablet finish deconstruct in case some resource can't be released
@@ -126,7 +126,7 @@ void ObTabletHandle::reset()
           obj_->~ObTablet();
           allocator_->free(obj_);
         } else if (OB_FAIL(t3m_->push_tablet_into_gc_queue(obj_))) {
-          STORAGE_LOG(ERROR, "fail to gc tablet", K(ret), KPC_(obj), K_(obj_pool), K_(allocator));
+
         }
       }
       obj_ = nullptr;
@@ -361,7 +361,7 @@ int ObTabletTableIterator::get_read_tables_from_tablet(
           ret = OB_SUCCESS;
           break;
         } else {
-          STORAGE_LOG(WARN, "failed to get next table iter", K(ret), KPC(this));
+
         }
       } else if (OB_ISNULL(table)) {
         ret = OB_ERR_UNEXPECTED;

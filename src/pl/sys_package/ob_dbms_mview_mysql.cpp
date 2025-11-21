@@ -99,7 +99,7 @@ int ObDBMSMViewMysql::refresh(ObExecContext &ctx, ParamStore &params, ObObj &res
             ret = OB_INVALID_ARGUMENT;
             LOG_WARN("invalid argument", K(ret), K(nested_refresh_mode));
           }
-          LOG_INFO("get consistent param", KR(ret), K(nested_refresh_mode), K(nested_consistent_refresh));
+
         }
       } else {
         nested_consistent_refresh = false;

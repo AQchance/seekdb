@@ -341,7 +341,7 @@ int ObMacroBlockBloomFilterLoadTG::init()
     LOG_WARN("fail to init allocator", K(ret), K(MTL_ID()));
   } else {
     is_inited_ = true;
-    LOG_INFO("init macro block bloom filter load tg", K(ret), K(MTL_ID()), K(tg_id_));
+
   }
   return ret;
 }
@@ -362,7 +362,7 @@ int ObMacroBlockBloomFilterLoadTG::start()
 void ObMacroBlockBloomFilterLoadTG::stop()
 {
   TG_STOP(tg_id_);
-  LOG_INFO("stop macro block bloom filter load tg", K(MTL_ID()));
+
 }
 
 void ObMacroBlockBloomFilterLoadTG::wait()
@@ -380,7 +380,7 @@ void ObMacroBlockBloomFilterLoadTG::destroy()
   idle_cond_.destroy();
   allocator_.reset();
   is_inited_ = false;
-  LOG_INFO("destroy macro block bloom filter load tg", K(MTL_ID()));
+
 }
 
 void ObMacroBlockBloomFilterLoadTG::run1()

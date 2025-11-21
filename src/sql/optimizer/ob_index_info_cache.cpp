@@ -79,7 +79,7 @@ int ObIndexInfoCache::get_query_range(const uint64_t table_id,
     } else if (entry->get_range_info().is_valid()){
       range_info = &entry->get_range_info();
     } else {
-      LOG_TRACE("entry is invalid", K(table_id), K(index_id));
+
     }
   }
   return ret;

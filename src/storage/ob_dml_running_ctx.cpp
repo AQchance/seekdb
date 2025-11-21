@@ -219,9 +219,9 @@ int ObDMLRunningCtx::init_cmp_funcs()
   int64_t column_cnt = col_descs.count();
   if (OB_UNLIKELY(column_cnt < 0 || column_cnt > OB_ROW_MAX_COLUMNS_COUNT)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to init compare functions", K(ret), K(column_cnt), K(col_descs));
+
   } else if (OB_FAIL(cmp_funcs_.init(column_cnt, allocator_))) {
-    STORAGE_LOG(WARN, "Failed to reserve cmp func array", K(ret));
+
   } else {
     bool is_oracle_mode = lib::is_oracle_mode();
     ObCmpFunc cmp_func;
@@ -243,16 +243,16 @@ int ObDMLRunningCtx::init_cmp_funcs()
                                                                         precision);
       if (OB_UNLIKELY(nullptr == basic_funcs || nullptr == basic_funcs->null_last_cmp_)) {
         ret = OB_ERR_SYS;
-        STORAGE_LOG(ERROR, "Unexpected null basic funcs", K(ret), K(col_desc));
+
       } else {
         if (is_ascending) {
           cmp_func.cmp_func_ = is_oracle_mode ? basic_funcs->null_last_cmp_ : basic_funcs->null_first_cmp_;
           if (OB_FAIL(cmp_funcs_.push_back(ObStorageDatumCmpFunc(cmp_func)))) {
-            STORAGE_LOG(WARN, "Failed to push back cmp func", K(ret), K(i), K(col_desc));
+
           }
         } else {
           ret = OB_ERR_SYS;
-          STORAGE_LOG(WARN, "Unsupported desc column order", K(ret), K(col_desc), K(i));
+
         }
       }
     }

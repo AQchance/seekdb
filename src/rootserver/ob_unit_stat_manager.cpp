@@ -106,7 +106,7 @@ int ObUnitStatManager::gather_stat()
                                       unit->migrate_from_server_.is_valid()/*is_migrating*/))) {
               LOG_WARN("fail to init unit_stat", KR(ret), K(unit->unit_id_));
             } else {
-              LOG_INFO("unit not in unit_stat_map, set required_size as 0", KR(ret), K(unit->unit_id_));
+
             }
           }
         }

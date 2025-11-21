@@ -455,13 +455,13 @@ int ObRowkey::to_collation_free_rowkey(ObRowkey &collation_free_rowkey, Allocato
   int ret = OB_SUCCESS;
   if (obj_cnt_ <= 0 || NULL == obj_ptr_) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(obj_cnt_), K(obj_ptr_));
+
   } else {
     ObObj *endkey = NULL;
     if (NULL == (endkey = reinterpret_cast<ObObj*>(allocator.alloc(
               sizeof(ObObj) * obj_cnt_)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed to alloc endkey", K(ret));
+
     } else {
       const bool is_copy_all = true;
       bool is_obj_collation_free_valid = false;
@@ -495,11 +495,11 @@ int ObRowkey::to_collation_free_rowkey_on_demand(ObRowkey &collation_free_rowkey
   bool need_transform = false;
   if (obj_cnt_ <= 0 || NULL == obj_ptr_) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(obj_cnt_), K(obj_ptr_));
+
   } else if (OB_FAIL(need_transform_to_collation_free(need_transform))) {
-    STORAGE_LOG(WARN, "fail to get if need to transform to collation free rowkey", K(ret));
+
   } else if (need_transform && OB_FAIL(to_collation_free_rowkey(collation_free_rowkey, allocator))) {
-    STORAGE_LOG(WARN, "fail to get collation free rowkey", K(ret));
+
   }
   return ret;
 }

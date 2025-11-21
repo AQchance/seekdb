@@ -357,7 +357,7 @@ ObParser::State ObParser::transform_normal(ObString &normal)
   }
 #define ELSE() \
   else { \
-    LOG_DEBUG("transform_normal", K(state), K(normal)); \
+ \
   }
 
   IF(6, S_CREATE, "create")
@@ -886,7 +886,7 @@ int ObParser::parse_sql(const ObString &stmt,
     }
 #endif
     if (!no_throw_parser_error) {
-      LOG_INFO("failed to parse stmt as sql", K(stmt_str), K(ret));
+
     }
   } else if (parse_result.is_dynamic_sql_) {
     memmove(parse_result.no_param_sql_ + parse_result.no_param_sql_len_,

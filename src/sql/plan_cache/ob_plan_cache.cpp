@@ -658,7 +658,7 @@ int ObPlanCache::construct_fast_parser_result(common::ObIAllocator &allocator,
             } else {
               pc_ctx.sql_ctx_.set_is_do_insert_batch_opt(batch_count);
               fp_result.pc_key_.name_.assign_ptr(first_truncated_sql.ptr(), first_truncated_sql.length());
-              LOG_DEBUG("print new fp_result.pc_key_.name_", K(fp_result.pc_key_.name_));
+
             }
           }
         } else if (!is_insert_values &&
@@ -762,7 +762,7 @@ int ObPlanCache::restore_param_to_truncated_sql(ObPlanCacheCtx &pc_ctx)
     buf[pos] = ';';
     pos++;
     pc_ctx.insert_batch_opt_info_.new_reconstruct_sql_.assign_ptr(buf, pos);
-    LOG_TRACE("print new_truncated_sql", K(pc_ctx.insert_batch_opt_info_.new_reconstruct_sql_), K(pos));
+
   }
   return ret;
 }
@@ -915,7 +915,7 @@ int ObPlanCache::check_can_do_insert_opt(common::ObIAllocator &allocator,
       // Only the insert ... values ​​... on duplicate key update ... statement will print this log
       // after trying to do insert batch optimization failure
       can_do_batch = false;
-      LOG_TRACE("can not do batch insert opt", K(ret), K(can_do_batch), K(ins_params_count), K(batch_count), K(pc_ctx.raw_sql_));
+
     } else {
       pc_ctx.insert_batch_opt_info_.insert_params_count_ = ins_params_count;
       pc_ctx.insert_batch_opt_info_.update_params_count_ = upd_params_count;
@@ -1131,7 +1131,7 @@ int ObPlanCache::add_cache_obj(ObILibCacheCtx &ctx,
       }
     }
   } else {  /* node exist, add cache obj to it */
-    LOG_TRACE("inner add cache obj", K(key), K(cache_node));
+
     if (cache_node->is_invalid()) {
       ctx.need_destroy_node_ = true;
     } else if (OB_FAIL(cache_node->add_cache_obj(ctx, key, cache_obj))) {
@@ -1171,14 +1171,14 @@ int ObPlanCache::get_cache_obj(ObILibCacheCtx &ctx,
     ret = OB_SQL_PC_NOT_EXIST;
     SQL_PC_LOG(DEBUG, "cache obj does not exist!", K(key));
   } else {
-    LOG_DEBUG("inner_get_cache_obj", K(key), K(cache_node));
+
     if (cache_node->is_invalid()) {
       ret = OB_SQL_PC_NOT_EXIST;
     } else if (OB_FAIL(cache_node->update_node_stat(ctx))) {
       SQL_PC_LOG(WARN, "failed to update node stat",  K(ret));
     } else if (OB_FAIL(cache_node->get_cache_obj(ctx, key, cache_obj))) {
       if (OB_SQL_PC_NOT_EXIST != ret) {
-        LOG_DEBUG("cache_node fail to get cache obj", K(ret));
+
       }
     } else {
       if (OB_SUCC(ret) && cache_obj != NULL && ObLibCacheNameSpace::NS_CRSR == cache_obj->get_ns()
@@ -1187,7 +1187,7 @@ int ObPlanCache::get_cache_obj(ObILibCacheCtx &ctx,
         static_cast<ObPlanCacheCtx&>(ctx).regenerating_expired_plan_ = true;
       }
       guard.cache_obj_ = cache_obj;
-      LOG_DEBUG("succ to get cache obj", KPC(key));
+
     }
     // release lock whatever
     (void)cache_node->unlock();
@@ -1614,7 +1614,7 @@ int ObPlanCache::add_cache_obj_stat(ObILibCacheCtx &ctx, ObILibCacheObject *cach
       co_mgr_.free(cache_obj, LC_REF_CACHE_OBJ_STAT_HANDLE);
       cache_obj = NULL;
     } else {
-      LOG_TRACE("succeeded to add cache object stat", K(cache_obj->get_object_id()), K(cache_obj));
+
     }
   }
   return ret;
@@ -2086,7 +2086,7 @@ int ObPlanCache::need_late_compile(ObPhysicalPlan *plan,
       need_late_compilation = false;
     }
   }
-  LOG_TRACE("will use late compilation", K(need_late_compilation));
+
   return ret;
 }
 
@@ -2137,7 +2137,7 @@ int ObPlanCache::dump_all_objs() const
   if (OB_FAIL(co_mgr_.foreach_alloc_cache_obj(get_all_objs_op))) {
     LOG_WARN("failed to traverse alloc cache obj map", K(ret));
   } else {
-    LOG_INFO("Dumping All Cache Objs", K(alloc_obj_list.count()), K(alloc_obj_list));
+
   }
   return ret;
 }
@@ -2212,7 +2212,7 @@ int ObPlanCache::flush_plan_cache()
     int tmp_ret = OB_SUCCESS;
     tmp_ret = OB_E(EventTable::EN_FLUSH_PC_NOT_CLEANUP_LEAK_MEM_ERROR) OB_SUCCESS;
     if (OB_SUCCESS == tmp_ret) {
-      LOG_INFO("Deleted Cache Objs", K(deleted_objs));
+
       for (int64_t i = 0; i < deleted_objs.count(); i++) { // ignore error code and continue
         if (OB_FAIL(ObCacheObjectFactory::destroy_cache_obj(true,
                                                             deleted_objs.at(i).obj_id_,
@@ -2245,7 +2245,7 @@ int ObPlanCache::flush_plan_cache_by_sql_id(uint64_t db_id, common::ObString sql
     int tmp_ret = OB_SUCCESS;
     tmp_ret = OB_E(EventTable::EN_FLUSH_PC_NOT_CLEANUP_LEAK_MEM_ERROR) OB_SUCCESS;
     if (OB_SUCCESS == tmp_ret) {
-      LOG_INFO("Deleted Cache Objs", K(deleted_objs));
+
       for (int64_t i = 0; i < deleted_objs.count(); i++) { // ignore error code and continue
         if (OB_FAIL(ObCacheObjectFactory::destroy_cache_obj(true,
                                                             deleted_objs.at(i).obj_id_,
@@ -2277,7 +2277,7 @@ int ObPlanCache::flush_lib_cache()
     int tmp_ret = OB_SUCCESS;
     tmp_ret = OB_E(EventTable::EN_FLUSH_PC_NOT_CLEANUP_LEAK_MEM_ERROR) OB_SUCCESS;
     if (OB_SUCCESS == tmp_ret) {
-      LOG_INFO("Deleted Cache Objs", K(deleted_objs));
+
       for (int64_t i = 0; i < deleted_objs.count(); i++) { // ignore error code and continue
         if (OB_FAIL(ObCacheObjectFactory::destroy_cache_obj(true,
                                                             deleted_objs.at(i).obj_id_,
@@ -2307,7 +2307,7 @@ int ObPlanCache::flush_lib_cache_by_ns(const ObLibCacheNameSpace ns)
     int tmp_ret = OB_SUCCESS;
     tmp_ret = OB_E(EventTable::EN_FLUSH_PC_NOT_CLEANUP_LEAK_MEM_ERROR) OB_SUCCESS;
     if (OB_SUCCESS == tmp_ret) {
-      LOG_INFO("Deleted Cache Objs", K(deleted_objs));
+
       for (int i = 0; i < deleted_objs.count(); i++) {  // ignore error code and continue
         if (OB_FAIL(ObCacheObjectFactory::destroy_cache_obj(true,
                                                             deleted_objs.at(i).obj_id_,
@@ -2341,7 +2341,7 @@ int ObPlanCache::flush_pl_cache_single_cache_obj(uint64_t db_id, EvictAttr &attr
     int tmp_ret = OB_SUCCESS;
     tmp_ret = OB_E(EventTable::EN_FLUSH_PC_NOT_CLEANUP_LEAK_MEM_ERROR) OB_SUCCESS;
     if (OB_SUCCESS == tmp_ret) {
-      LOG_INFO("Deleted Cache Objs", K(deleted_objs));
+
       for (int64_t i = 0; i < deleted_objs.count(); i++) { // ignore error code and continue
         if (OB_FAIL(ObCacheObjectFactory::destroy_cache_obj(true,
                                                             deleted_objs.at(i).obj_id_,
@@ -2375,7 +2375,7 @@ int ObPlanCache::flush_pl_cache()
     int tmp_ret = OB_SUCCESS;
     tmp_ret = OB_E(EventTable::EN_FLUSH_PC_NOT_CLEANUP_LEAK_MEM_ERROR) OB_SUCCESS;
     if (OB_SUCCESS == tmp_ret) {
-      LOG_INFO("Deleted Cache Objs", K(deleted_objs));
+
       for (int i = 0; i < deleted_objs.count(); i++) {  // ignore error code and continue
         if (OB_FAIL(ObCacheObjectFactory::destroy_cache_obj(true,
                                                             deleted_objs.at(i).obj_id_,

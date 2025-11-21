@@ -42,7 +42,7 @@ int ForeignKeyHandle::do_handle(ObTableModifyOp &op,
     const bool save_in_ignore_cascading = op.get_exec_ctx().get_das_ctx().in_ignore_cascading_;
     op.get_exec_ctx().get_das_ctx().is_fk_cascading_ = true;
     op.get_exec_ctx().get_das_ctx().in_ignore_cascading_ = dml_ctdef.das_base_ctdef_.is_ignore_;
-    LOG_DEBUG("do foreign_key_handle", K(old_row), K(new_row));
+
     if (OB_FAIL(op.check_stack())) {
       LOG_WARN("fail to check stack", K(ret));
     }
@@ -61,7 +61,7 @@ int ForeignKeyHandle::do_handle(ObTableModifyOp &op,
 
           if (is_foreign_key_cascade && !in_ignore_cascading) {
             // nested update can not check parent row.
-            LOG_DEBUG("skip foreign_key_check_exist in nested session");
+
           } else if (OB_FAIL(check_exist(op, fk_arg, new_row, fk_checker, false, fk_arg.use_das_scan_))) {
             LOG_WARN("failed to check exist", K(ret), K(fk_arg), K(new_row));
           }
@@ -127,7 +127,7 @@ int ForeignKeyHandle::do_handle(ObTableModifyOp &op,
     op.get_exec_ctx().get_das_ctx().is_fk_cascading_ = false;
     op.get_exec_ctx().get_das_ctx().in_ignore_cascading_ = save_in_ignore_cascading;
   } else {
-    LOG_DEBUG("skip foreign_key_handle");
+
   }
   return ret;
 }
@@ -251,7 +251,7 @@ int ForeignKeyHandle::check_exist_inner_sql(ObTableModifyOp &op,
     if (iter_uncommitted_row) {
       op.get_exec_ctx().get_das_ctx().iter_uncommitted_row_ = true;
     }
-    LOG_DEBUG("foreign_key_check_exist", "stmt", stmt_buf, K(row), K(fk_arg));
+
     SMART_VAR(ObMySQLProxy::MySQLResult, res) {
       if (OB_FAIL(op.begin_nested_session(fk_arg.is_self_ref_))) {
         LOG_WARN("failed to begin nested session", K(ret), K(stmt_buf));
@@ -399,7 +399,7 @@ int ForeignKeyHandle::cascade(ObTableModifyOp &op,
     }
   }
   if (OB_SUCC(ret) && stmt_pos > 0) {
-    LOG_DEBUG("foreign_key_cascade", "stmt", stmt_buf, K(old_row), K(new_row), K(fk_arg));
+
     if (OB_FAIL(op.begin_nested_session(fk_arg.is_self_ref_))) {
       LOG_WARN("failed to begin nested session", K(ret));
     } else {
@@ -466,7 +466,7 @@ int ForeignKeyHandle::set_null(ObTableModifyOp &op,
   }
   
   if (OB_SUCC(ret) && stmt_pos > 0) {
-    LOG_DEBUG("foreign key cascade set null", "stmt", stmt_buf, K(old_row), K(fk_arg));
+
     if (OB_FAIL(op.begin_nested_session(fk_arg.is_self_ref_))) {
       LOG_WARN("failed to begin nested session", K(ret));
     } else {
@@ -746,21 +746,21 @@ ObDasParallelType ObTableModifyOp::check_das_parallel_type()
     type = DAS_SERIALIZATION;
   } else if (!is_user_tenant(MTL_ID())) {
     type = DAS_SERIALIZATION;
-    LOG_TRACE("not user tenant, can't submit task parallel", K(MTL_ID()));
+
   } else if (execute_single_row_) {
     type = DAS_SERIALIZATION;
-    LOG_TRACE("execute_single_row is true, can't submit task parallel", K(execute_single_row_));
+
   } else if (session->is_inner()) {
     type = DAS_SERIALIZATION;
-    LOG_TRACE("session is inner, can't submit task parallel", K(session->is_inner()));
+
   } else if (MY_SPEC.plan_->has_nested_sql()) {
     type = DAS_SERIALIZATION;
-    LOG_TRACE("has nested sql, can't submit task parallel", K(MY_SPEC.plan_->has_nested_sql()));
+
   } else if (MY_SPEC.plan_->get_das_dop() > 1 && MY_SPEC.das_dop_ > 1) {
     type = DAS_STREAMING_PARALLEL;
   } else {
     type = DAS_SERIALIZATION;
-    LOG_TRACE("das dop not larger than 1", K(MY_SPEC.plan_->get_das_dop()), K(MY_SPEC.das_dop_));
+
   }
   return type;
 }
@@ -795,7 +795,7 @@ OB_INLINE int ObTableModifyOp::init_das_dml_ctx()
   dml_rtctx_.das_ref_.get_das_parallel_ctx().set_das_parallel_type(check_das_parallel_type());
   dml_rtctx_.das_ref_.get_das_parallel_ctx().set_das_dop(ctx_.get_das_ctx().get_real_das_dop());
   if (check_das_parallel_type() != DAS_SERIALIZATION) {
-    LOG_TRACE("this sql use das parallel submit", K(check_das_parallel_type()));
+
   }
   return OB_SUCCESS;
 }
@@ -844,7 +844,7 @@ int ObTableModifyOp::prepare_implict_cursor(int64_t affected_rows,
     implicit_cursor.affected_rows_ += affected_rows;
     implicit_cursor.duplicated_rows_ += duplicated_rows;
     implicit_cursor.last_insert_id_ = plan_ctx->get_autoinc_col_value();
-    LOG_DEBUG("merge implicit cursor", K(ret), K(implicit_cursor));
+
   }
   return ret;
 }
@@ -1205,7 +1205,7 @@ int ObTableModifyOp::discharge_das_write_buffer()
     ret = submit_all_dml_task();
   } else if (execute_single_row_) {
     if (REACH_COUNT_INTERVAL(100)) { // print log per 100 times.
-      LOG_TRACE("DML task excute single row", K(execute_single_row_));
+
     }
     ret = submit_all_dml_task();
   }
@@ -1221,7 +1221,7 @@ int ObTableModifyOp::get_next_row_from_child()
       LOG_WARN("fail to get next row", K(ret));
     }
   } else {
-    LOG_DEBUG("child output row", "row", ROWEXPR2STR(eval_ctx_, child_->get_spec().output_));
+
   }
   return ret;
 }
@@ -1230,7 +1230,7 @@ int ObTableModifyOp::inner_get_next_row()
 {
   int ret = OB_SUCCESS;
   if (iter_end_) {
-    LOG_DEBUG("can't get gi task, iter end", K(MY_SPEC.id_), K(iter_end_));
+
     ret = OB_ITER_END;
   } else {
     int64_t row_count = 0;

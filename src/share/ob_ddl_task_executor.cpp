@@ -44,7 +44,7 @@ void ObDDLTaskQueue::destroy()
   while (OB_SUCC(ret) && task_list_.get_size() > 0) {
     if (OB_ISNULL(task = task_list_.remove_first())) {
       ret = common::OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "fail to remove first task", K(ret));
+
     } else {
       allocator_.free(task);
       task = NULL;
@@ -66,9 +66,9 @@ int ObDDLTaskQueue::init(const int64_t bucket_num, const int64_t total_mem_limit
     STORAGE_LOG(WARN, "invalid argument", K(ret), K(bucket_num), K(total_mem_limit),
         K(hold_mem_limit), K(page_size));
   } else if (OB_FAIL(task_set_.create(bucket_num))) {
-    STORAGE_LOG(WARN, "fail to create task set", K(ret), K(bucket_num));
+
   } else if (OB_FAIL(allocator_.init(total_mem_limit, hold_mem_limit, page_size))) {
-    STORAGE_LOG(WARN, "fail to init allocator", K(ret));
+
   } else {
     is_inited_ = true;
   }
@@ -85,16 +85,16 @@ int ObDDLTaskQueue::push_task(const ObIDDLTask &task)
   const int64_t deep_copy_size = task.get_deep_copy_size();
   if (OB_UNLIKELY(!is_inited_)) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObBuildIndexTaskQueue has not been inited", K(ret));
+
   } else if (OB_ISNULL(buf = static_cast<char *>(allocator_.alloc(deep_copy_size)))) {
     ret = common::OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to allocate memory for ObBuildIndexTask", K(ret));
+
   } else if (OB_ISNULL(task_copy = task.deep_copy(buf, deep_copy_size))) {
     ret = common::OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to deep copy task", K(ret));
+
   } else if (!task_list_.add_last(task_copy)) {
     ret = common::OB_ERR_UNEXPECTED;
-    STORAGE_LOG(ERROR, "unexpected error, add build index task failed", K(ret));
+
   } else {
     int is_overwrite = 0; // do not overwrite
     task_add_to_list = true;
@@ -102,10 +102,10 @@ int ObDDLTaskQueue::push_task(const ObIDDLTask &task)
       if (common::OB_HASH_EXIST == ret) {
         ret = common::OB_ENTRY_EXIST;
       } else {
-        STORAGE_LOG(WARN, "fail to set task to task set", K(ret));
+
       }
     } else {
-      STORAGE_LOG(INFO, "add task", K(*task_copy), KP(task_copy), K(common::lbt()));
+
     }
   }
   if (OB_FAIL(ret) && NULL != buf) {
@@ -113,7 +113,7 @@ int ObDDLTaskQueue::push_task(const ObIDDLTask &task)
       int tmp_ret = OB_SUCCESS;
       if (!task_list_.remove(task_copy)) {
         tmp_ret = common::OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "fail to remove task", K(tmp_ret), K(*task_copy));
+
       }
     }
     allocator_.free(buf);
@@ -129,12 +129,12 @@ int ObDDLTaskQueue::get_next_task(ObIDDLTask *&task)
   common::ObSpinLockGuard guard(lock_);
   if (OB_UNLIKELY(!is_inited_)) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObBuildIndexTaskQueue has not been inited", K(ret));
+
   } else if (0 == task_list_.get_size()) {
     ret = common::OB_EAGAIN;
   } else if (OB_ISNULL(task = task_list_.remove_first())) {
     ret = common::OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "error unexpected, task must not be NULL", K(ret));
+
   }
   return ret;
 }
@@ -145,14 +145,14 @@ int ObDDLTaskQueue::remove_task(ObIDDLTask *task)
   common::ObSpinLockGuard guard(lock_);
   if (OB_UNLIKELY(!is_inited_)) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObBuildIndexTaskQueue has not been inited", K(ret));
+
   } else if (OB_ISNULL(task)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(task));
+
   } else if (OB_FAIL(task_set_.erase_refactored(task))) {
-    STORAGE_LOG(WARN, "fail to erase from task set", K(ret));
+
   } else {
-    STORAGE_LOG(INFO, "succ to remove task", K(*task), KP(task));
+
   }
   if (NULL != task) {
     allocator_.free(task);
@@ -167,13 +167,13 @@ int ObDDLTaskQueue::add_task_to_last(ObIDDLTask *task)
   common::ObSpinLockGuard guard(lock_);
   if (OB_UNLIKELY(!is_inited_)) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObBuildIndexTaskQueue has not been inited", K(ret));
+
   } else if (OB_ISNULL(task)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(task));
+
   } else if (!task_list_.add_last(task)) {
     ret = common::OB_ERR_UNEXPECTED;
-    STORAGE_LOG(ERROR, "error unexpected, fail to move task to last", K(ret));
+
   }
   return ret;
 }
@@ -205,16 +205,16 @@ void ObDDLTaskExecutor::run1()
         if (common::OB_EAGAIN == ret) {
           break;
         } else {
-          STORAGE_LOG(WARN, "fail to get next task", K(ret));
+
           break;
         }
       } else if (OB_ISNULL(task)) {
         ret = OB_ERR_SYS;
-        STORAGE_LOG(WARN, "error unexpected, task must not be NULL", K(ret));
+
       } else if (task == first_retry_task) {
         // add the task back to the queue
         if (OB_FAIL(task_queue_.add_task_to_last(task))) {
-          STORAGE_LOG(ERROR, "fail to add task to last, which should not happen", K(ret), K(*task));
+
         }
         break;
       } else {
@@ -223,12 +223,12 @@ void ObDDLTaskExecutor::run1()
         ++executed_task_count;
         if (task->need_retry()) {
           if (OB_FAIL(task_queue_.add_task_to_last(task))) {
-            STORAGE_LOG(ERROR, "fail to add task to last, which should not happen", K(ret), K(*task));
+
           }
           first_retry_task = task;
         } else {
           if (OB_FAIL(task_queue_.remove_task(task))) {
-            STORAGE_LOG(WARN, "fail to remove task, which should not happen", K(ret), K(*task), KP(task));
+
           }
         }
       }
@@ -263,7 +263,7 @@ int ObDDLReplicaBuilder::init()
   FLOG_INFO("[DDL_REPLICA_BUILDER] begin init ddl replica builder",
             K(is_thread_started_), K(is_stopped_), K(tg_id_), "tenant_id", MTL_ID());
   if (!is_sys_tenant(MTL_ID())) {
-    LOG_INFO("ddl replica builder should run on SYS tenant", "tenant_id", MTL_ID());
+
   } else if (OB_UNLIKELY(is_thread_started_)) {
     ret = OB_STATE_NOT_MATCH;
     LOG_WARN("ddl replica builder thread is already started", KR(ret), K(is_thread_started_));
@@ -286,7 +286,7 @@ int ObDDLReplicaBuilder::start()
             K(is_thread_started_), K(is_stopped_), K(tg_id_), "tenant_id", MTL_ID());
   int ret = OB_SUCCESS;
   if (!is_sys_tenant(MTL_ID())) {
-    LOG_INFO("ddl replica builder should run on SYS tenant", "tenant_id", MTL_ID());
+
   } else if (OB_UNLIKELY(!is_thread_started_)) {
     ret = OB_STATE_NOT_MATCH;
     LOG_WARN("ddl replica builder thread is not started", KR(ret), K(is_thread_started_));
@@ -303,7 +303,7 @@ void ObDDLReplicaBuilder::stop()
   FLOG_INFO("[DDL_REPLICA_BUILDER] begin stop ddl replica builder",
             K(is_thread_started_), K(is_stopped_), K(tg_id_), "tenant_id", MTL_ID());
   if (!is_sys_tenant(MTL_ID())) {
-    LOG_INFO("ddl replica builder should run on SYS tenant", "tenant_id", MTL_ID());
+
   } else {
     is_stopped_ = true;
   }
@@ -316,7 +316,7 @@ void ObDDLReplicaBuilder::mtl_thread_stop()
   FLOG_INFO("[DDL_REPLICA_BUILDER] begin mtl_thread_stop ddl replica builder",
             K(is_thread_started_), K(is_stopped_), K(tg_id_), "tenant_id", MTL_ID());
   if (!is_sys_tenant(MTL_ID())) {
-    LOG_INFO("ddl replica builder should run on SYS tenant", "tenant_id", MTL_ID());
+
   } else if (-1 != tg_id_) {
     TG_STOP(tg_id_);
   }
@@ -329,7 +329,7 @@ void ObDDLReplicaBuilder::mtl_thread_wait()
   FLOG_INFO("[DDL_REPLICA_BUILDER] begin mtl_thread_wait ddl replica builder",
             K(is_thread_started_), K(is_stopped_), K(tg_id_), "tenant_id", MTL_ID());
   if (!is_sys_tenant(MTL_ID())) {
-    LOG_INFO("ddl replica builder should run on SYS tenant", "tenant_id", MTL_ID());
+
   } else if (-1 != tg_id_) {
     TG_WAIT(tg_id_);
   }
@@ -342,7 +342,7 @@ void ObDDLReplicaBuilder::destroy()
   FLOG_INFO("[DDL_REPLICA_BUILDER] begin destroy ddl replica builder",
             K(is_thread_started_), K(is_stopped_), K(tg_id_), "tenant_id", MTL_ID());
   if (!is_sys_tenant(MTL_ID())) {
-    LOG_INFO("ddl replica builder should run on SYS tenant", "tenant_id", MTL_ID());
+
   } else {
     if (-1 != tg_id_) {
       is_stopped_ = true;

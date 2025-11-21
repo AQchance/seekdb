@@ -122,16 +122,16 @@ int ObDirectLoadDataBlockDecoder<Header>::init(int64_t data_block_size,
   int ret = common::OB_SUCCESS;
   if (IS_INIT) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObDirectLoadDataBlockEncoder init twice", KR(ret), KP(this));
+
   } else if (OB_UNLIKELY(data_block_size <= 0 || data_block_size % DIO_ALIGN_SIZE != 0 ||
                          compressor_type <= common::ObCompressorType::INVALID_COMPRESSOR)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", KR(ret), K(data_block_size), K(compressor_type));
+
   } else {
     if (common::ObCompressorType::NONE_COMPRESSOR != compressor_type) {
       if (OB_FAIL(common::ObCompressorPool::get_instance().get_compressor(compressor_type,
                                                                           compressor_))) {
-        STORAGE_LOG(WARN, "fail to get compressor, ", KR(ret), K(compressor_type));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -156,7 +156,7 @@ int ObDirectLoadDataBlockDecoder<Header>::realloc_decompress_buf(const int64_t s
     decompress_buf_ = (char *)ob_malloc(size, ObMemAttr(MTL_ID(), "TLD_DBDecoder"));
     if (decompress_buf_ == nullptr) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "fail to alloc mem", KR(ret), K(size));
+
     } else {
       decompress_buf_size_ = size;
     }
@@ -171,18 +171,18 @@ int ObDirectLoadDataBlockDecoder<Header>::prepare_data_block(char *buf, int64_t 
   int ret = common::OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObDirectLoadDataBlockDecoder not init", KR(ret), KP(this));
+
   } else if (OB_UNLIKELY(nullptr == buf || buf_size <= 0)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", KR(ret), KP(buf), K(buf_size));
+
   } else if (buf_size <= header_size_) {
     ret = common::OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected buf size", KR(ret), K(buf_size), K(header_size_));
+
   } else {
     pos_ = 0;
     // deserialize header
     if (OB_FAIL(header_.deserialize(buf, buf_size, pos_))) {
-      STORAGE_LOG(WARN, "fail to deserialize header", KR(ret), K(buf_size), K(pos_));
+
     } else {
       data_size = header_.occupy_size_;
       if (OB_UNLIKELY(data_size > buf_size)) {
@@ -197,7 +197,7 @@ int ObDirectLoadDataBlockDecoder<Header>::prepare_data_block(char *buf, int64_t 
       const int64_t checksum = ob_crc64_sse42(0, buf + pos_, header_.occupy_size_ - pos_);
       if (OB_UNLIKELY(checksum != header_.checksum_)) {
         ret = common::OB_CHECKSUM_ERROR;
-        STORAGE_LOG(WARN, "fail to valid checksum", KR(ret), K(header_), K(checksum));
+
       }
     }
     // do decompress
@@ -205,25 +205,25 @@ int ObDirectLoadDataBlockDecoder<Header>::prepare_data_block(char *buf, int64_t 
       int64_t decompress_size = 0;
       if (header_.data_size_ > data_block_size_) {
         if (OB_FAIL(realloc_decompress_buf(header_.data_size_))) {
-          STORAGE_LOG(WARN, "fail to realloc_decompress_buf", KR(ret));
+
         }
       } else {
         if (OB_FAIL(realloc_decompress_buf(data_block_size_))) {
-          STORAGE_LOG(WARN, "fail to realloc_decompress_buf", KR(ret));
+
         }
       }
       if (OB_FAIL(ret)) {
         // pass
       } else if (OB_UNLIKELY(common::ObCompressorType::NONE_COMPRESSOR == compressor_type_)) {
         ret = common::OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected compressor type", KR(ret));
+
       } else if (OB_FAIL(compressor_->decompress(buf + pos_, header_.occupy_size_ - pos_,
                                                  decompress_buf_ + pos_,
                                                  decompress_buf_size_ - pos_, decompress_size))) {
-        STORAGE_LOG(WARN, "fail to decompress", KR(ret));
+
       } else if (OB_UNLIKELY(decompress_size + pos_ != header_.data_size_)) {
         ret = common::OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected decompress size", KR(ret), K(header_), K(decompress_size));
+
       } else {
         buf_ = decompress_buf_;
         buf_size_ = decompress_size + pos_;
@@ -239,7 +239,7 @@ int ObDirectLoadDataBlockDecoder<Header>::set_pos(int64_t pos)
   int ret = common::OB_SUCCESS;
   if (OB_UNLIKELY(pos < header_size_ || pos > buf_size_)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", KR(ret), K(pos), K(header_size_), K(buf_size_));
+
   } else {
     pos_ = pos;
   }
@@ -254,7 +254,7 @@ int ObDirectLoadDataBlockDecoder<Header>::read_next_item(T &item)
   if (pos_ >= buf_size_) {
     ret = common::OB_ITER_END;
   } else if (OB_FAIL(item.deserialize(buf_, buf_size_, pos_))) {
-    STORAGE_LOG(WARN, "fail to deserialize item", KR(ret), K(buf_size_), K(pos_));
+
   }
   return ret;
 }
@@ -266,9 +266,9 @@ int ObDirectLoadDataBlockDecoder<Header>::read_item(int64_t pos, T &item)
   int ret = common::OB_SUCCESS;
   if (OB_UNLIKELY(pos >= buf_size_)) {
     ret = common::OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected read pos", KR(ret));
+
   } else if (OB_FAIL(item.deserialize(buf_, buf_size_, pos))) {
-    STORAGE_LOG(WARN, "fail to deserialize item", KR(ret), K(buf_size_), K(pos));
+
   }
   return ret;
 }

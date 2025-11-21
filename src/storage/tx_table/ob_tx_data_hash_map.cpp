@@ -46,7 +46,7 @@ int ObTxDataHashMap::init()
   void *ptr = allocator_.alloc(alloc_size);
   if (OB_ISNULL(ptr)) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "allocate memory failed when init tx data hash map", KR(ret), K(alloc_size), K(BUCKETS_CNT));
+
   } else {
     buckets_ = new (ptr) ObTxDataHashHeader[BUCKETS_CNT];
     for (int i = 0; i < BUCKETS_CNT; i++) {
@@ -62,13 +62,13 @@ int ObTxDataHashMap::insert(const transaction::ObTransID &key, ObTxData *value)
   int ret = OB_SUCCESS;
   if (!key.is_valid() || OB_ISNULL(value)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(key), KP(value));
+
   } else {
     int64_t pos = get_pos(key);
 
     if (OB_UNLIKELY(ObTxData::ExclusiveType::NORMAL != value->exclusive_flag_)) {
       if (ObTxData::ExclusiveType::EXCLUSIVE != value->exclusive_flag_) {
-        STORAGE_LOG(ERROR, "invalid exclusive flag", KPC(value));
+
       } else {
         ObTxData *iter = buckets_[pos].next_;
         while (OB_NOT_NULL(iter)) {
@@ -87,7 +87,7 @@ int ObTxDataHashMap::insert(const transaction::ObTransID &key, ObTxData *value)
       if (next_value == ATOMIC_CAS(&buckets_[pos].next_, next_value, value)) {
         if (value->inc_ref() <= 0) {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(ERROR, "unexpected ref cnt on tx data", KR(ret), KPC(value));
+
           ob_abort();
         }
         ATOMIC_INC(&total_cnt_);
@@ -105,7 +105,7 @@ int ObTxDataHashMap::get(const transaction::ObTransID &key, ObTxDataGuard &guard
 
   if (!key.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(key));
+
   } else {
     const int64_t pos = get_pos(key);
     ObTxData *cache_val = buckets_[pos].hot_cache_val_;
@@ -129,7 +129,7 @@ int ObTxDataHashMap::get(const transaction::ObTransID &key, ObTxDataGuard &guard
   if (OB_ISNULL(value)) {
     ret = OB_ENTRY_NOT_EXIST;
   } else if (OB_FAIL(guard.init(value))) {
-    STORAGE_LOG(WARN, "get tx data from tx data hash map failed", KR(ret), KP(this), KPC(value));
+
   }
   return ret;
 }
@@ -157,7 +157,7 @@ int ObTxDataHashMap::Iterator::get_next(ObTxDataGuard &guard)
   }
 
   if (OB_SUCC(ret) && OB_NOT_NULL(next_val) && OB_FAIL(guard.init(next_val))) {
-    STORAGE_LOG(WARN, "init tx data guard failed when get next from iterator", KR(ret), KPC(next_val));
+
   }
   return ret;
 }

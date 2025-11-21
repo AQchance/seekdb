@@ -70,7 +70,7 @@ TEST(test_ddl_task_struct, ddl_slice_info)
   ASSERT_SUCC(deep_copied_slice_info.deep_copy(slice_info, arena));
   ASSERT_TRUE(assign_slice_info.part_ranges_.count() == 2);
   memset(test_string, 0, sizeof(test_string));
-  LOG_INFO("after deep copy", K(slice_info), K(deep_copied_slice_info), K(assign_slice_info));
+
   ASSERT_EQ(0, strcmp(deep_copied_slice_info.part_ranges_.at(1).range_cut_.at(0).at(1).get_string().ptr(), hello_str));
   ASSERT_NE(0, strcmp(     assign_slice_info.part_ranges_.at(1).range_cut_.at(0).at(1).get_string().ptr(), hello_str));
 

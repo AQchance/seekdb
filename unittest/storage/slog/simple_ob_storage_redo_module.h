@@ -227,13 +227,13 @@ int SimpleObStorageModule::get_tablet_svr(
   int ret = OB_SUCCESS;
   ObLS *ls = nullptr;
   if (OB_FAIL(MTL(ObLSService *)->get_ls(ls_id, ls_handle, ObLSGetMod::STORAGE_MOD))) {
-    STORAGE_LOG(WARN, "fail to get ls handle", K(ret), K(ls_id));
+
   } else if (OB_ISNULL(ls = ls_handle.get_ls())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "ls is null", K(ret), K(ls_id));
+
   } else if (OB_ISNULL(ls_tablet_svr = ls->get_tablet_svr())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "tablet service is null", K(ret), K(ls_id));
+
   }
   return ret;
 }
@@ -250,13 +250,13 @@ int SimpleObStorageModule::inner_replay_empty_shell_tablet(const ObRedoModuleRep
   ObEmptyShellTabletLog slog;
   ObTabletTransferInfo tablet_transfer_info;
   if (OB_FAIL(slog.deserialize_id(param.buf_, param.disk_addr_.size(), pos))) {
-    STORAGE_LOG(WARN, "failed to serialize tablet_id_", K(ret), K(param.disk_addr_.size()), K(pos));
+
   } else if (OB_FAIL(read_from_disk(param.disk_addr_, allocator, buf, buf_len))) {
-    STORAGE_LOG(WARN, "read from disk failed", K(ret), K(param.disk_addr_), K(buf_len));
+
   } else if (OB_FAIL(get_tablet_svr(slog.ls_id_, ls_tablet_svr, ls_handle))) {
-    STORAGE_LOG(WARN, "get tablet svr failed", K(ret), K(slog.ls_id_));
+
   } else if (OB_FAIL(ls_tablet_svr->replay_create_tablet(param.disk_addr_, buf, buf_len, slog.tablet_id_, tablet_transfer_info))) {
-    STORAGE_LOG(WARN, "replay empty shell tablet failed", K(ret), K(param.disk_addr_), K(slog.tablet_id_));
+
   }
 
   return ret;
@@ -284,9 +284,9 @@ int SimpleObStorageModule::read_from_disk(
 
     if (OB_SUCC(ret)) {
       if (OB_FAIL(read_from_slog(addr, buf, buf_len, pos))) {
-        STORAGE_LOG(WARN, "fail to read from slog", K(ret), K(addr), KP(buf), K(buf_len), K(pos));
+
       } else if (OB_FAIL(slog.deserialize_id(buf, buf_len, pos))) {
-        STORAGE_LOG(WARN, "fail to deserialize id", K(ret), K(addr), KP(buf), K(buf_len), K(pos));
+
       } else {
         buf += pos;
         buf_len -= pos;
@@ -294,9 +294,9 @@ int SimpleObStorageModule::read_from_disk(
     }
   } else if (OB_ISNULL(read_buf = static_cast<char*>(allocator.alloc(read_buf_len)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to allocate buffer", K(ret), K(read_buf_len), KP(read_buf));
+
   } else if (OB_FAIL(read_from_disk_addr(addr, read_buf, read_buf_len, buf, buf_len))) {
-    STORAGE_LOG(WARN, "fail to read tablet from addr", K(ret), K(addr), KP(read_buf), K(read_buf_len));
+
   }
   return ret;
 }
@@ -307,13 +307,13 @@ int SimpleObStorageModule::read_from_disk_addr(const ObMetaDiskAddr &addr,
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!addr.is_valid() || buf_len < addr.size()) || OB_ISNULL(buf)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(addr), KP(buf), K(buf_len));
+
   } else {
     switch (addr.type()) {
       case ObMetaDiskAddr::DiskType::FILE: {
         int64_t pos = 0;
         if (OB_FAIL(read_from_slog(addr, buf, buf_len, pos))) {
-          STORAGE_LOG(WARN, "fail to read from slog", K(ret), K(addr), KP(buf), K(buf_len));
+
         } else {
           r_buf = buf + pos;
           r_len = addr.size() - pos;
@@ -322,7 +322,7 @@ int SimpleObStorageModule::read_from_disk_addr(const ObMetaDiskAddr &addr,
       }
       default: {
         ret = OB_NOT_SUPPORTED;
-        STORAGE_LOG(WARN, "unknown meta disk address type", K(ret), K(addr), KP(buf), K(buf_len));
+
         break;
       }
     }
@@ -341,7 +341,7 @@ int SimpleObStorageModule::read_from_slog(const ObMetaDiskAddr &addr,
                || buf_len < addr.size())
                || OB_ISNULL(buf)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(addr), KP(buf), K(buf_len));
+
   } else {
     // The reason for retrying, here, is that the current SLOG didn't handle the read and write
     // concurrency for the latest item, and an -4103 error will be returned. At present, the

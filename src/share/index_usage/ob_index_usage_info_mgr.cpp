@@ -126,7 +126,7 @@ int ObIndexUsageInfoMgr::init(const uint64_t tenant_id)
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(ret), K(tenant_id));
   } else if (!is_user_tenant(tenant_id)) {
-    LOG_INFO("index monitoring only for user tenant", K(tenant_id));
+
   } else if (OB_FAIL(allocator_.init(ObMallocAllocator::get_instance(), OB_MALLOC_NORMAL_BLOCK_SIZE, attr))) {
     LOG_WARN("init allocator failed", K(ret));
   } else if (OB_FAIL(create_hash_map(tenant_id))) {
@@ -135,7 +135,7 @@ int ObIndexUsageInfoMgr::init(const uint64_t tenant_id)
   } else {
     is_inited_ = true;
     tenant_id_ = tenant_id;
-    LOG_TRACE("success to init ObIndexUsageInfoMgr", K(tenant_id_));
+
   }
   return ret;
 }
@@ -181,7 +181,7 @@ int ObIndexUsageInfoMgr::start()
     } else if (OB_FAIL(refresh_conf_task_.init((this)))) {
       LOG_WARN("fail to init refresh conf task", K(ret));
     } else {
-      LOG_TRACE("success to start ObIndexUsageInfoMgr", K(tenant_id_));
+
     }
   }
   return ret;
@@ -251,7 +251,7 @@ void ObIndexUsageInfoMgr::update(const uint64_t tenant_id, const uint64_t index_
       new_info.total_exec_count_ = 1;
       new_info.last_used_time_ = current_time_;
       if (max_entries_ <= index_usage_map_[idx].size()) {
-        LOG_TRACE("index usage hashmap reaches max entries");
+
       } else if (OB_FAIL(index_usage_map_[idx].set_or_update(key, new_info, update_op))) {
         LOG_WARN("failed to set or update index-usage map", K(ret));
       }

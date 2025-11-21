@@ -40,7 +40,7 @@ int ObSchemaStore::init(const uint64_t tenant_id,
     received_version_ = OB_CORE_SCHEMA_VERSION;
     checked_sys_version_ = OB_INVALID_VERSION;
     baseline_schema_version_ = OB_INVALID_VERSION;
-    LOG_INFO("[SCHEMA_STORE] schema store init", K(tenant_id));
+
   }
   return ret;
 }
@@ -51,7 +51,7 @@ void ObSchemaStore::reset_version()
   received_version_ = OB_INVALID_VERSION;
   checked_sys_version_ = OB_INVALID_VERSION;
   baseline_schema_version_ = OB_INVALID_VERSION;
-  LOG_INFO("[SCHEMA_STORE] schema store reset version", K_(tenant_id));
+
 }
 
 void ObSchemaStore::update_refreshed_version(int64_t version)

@@ -120,7 +120,7 @@ int ObPartitionBalance::process()
   } else if (GEN_BG_STAT == task_mode_) {
     // finish
   } else if (bg_map_.empty()) {
-    LOG_INFO("PART_BALANCE balance group is empty do nothing", K(tenant_id_));
+
   } else if (!job_generator_.need_gen_job() && OB_FAIL(process_balance_partition_inner_())) {
      LOG_WARN("process_balance_partition_inner fail", KR(ret), K(tenant_id_));
   } else if (!job_generator_.need_gen_job() && OB_FAIL(process_balance_partition_extend_())) {
@@ -421,7 +421,7 @@ int ObPartitionBalance::process_balance_partition_inner_()
       }
     }
   }
-  LOG_INFO("[PART_BALANCE] process_balance_partition_inner end", K(tenant_id_), K(ls_desc_array_));
+
   return ret;
 }
 
@@ -560,7 +560,7 @@ int ObPartitionBalance::process_balance_partition_extend_()
       }
     }
   }
-  LOG_INFO("[PART_BALANCE] process_balance_partition_extend end", K(ret), K(tenant_id_), K(ls_desc_array_));
+
   return ret;
 }
 
@@ -591,7 +591,7 @@ int ObPartitionBalance::process_balance_partition_disk_()
       // disk has balance
       break;
     }
-    LOG_INFO("[PART_BALANCE] disk_balance", K(ls_max), K(ls_min));
+
 
     /*
      * select swap part_group by size segment
@@ -609,7 +609,7 @@ int ObPartitionBalance::process_balance_partition_disk_()
       break;
     }
   }
-  LOG_INFO("[PART_BALANCE] process_balance_partition_disk end", KR(ret), K(tenant_id_), K(ls_desc_array_));
+
   return ret;
 }
 
@@ -663,7 +663,7 @@ int ObPartitionBalance::try_swap_part_group_(ObLSDesc &src_ls, ObLSDesc &dest_ls
     ObTransferPartGroup *dest_part_group = ls_less->get_part_groups().at(0);
     int64_t swap_size = src_part_group->get_data_size() - dest_part_group->get_data_size();
     if (swap_size >= part_group_min_size && src_ls.get_data_size() - dest_ls.get_data_size() > swap_size) {
-      LOG_INFO("[PART_BALANCE] swap_partition", K(*src_part_group), K(*dest_part_group), K(src_ls), K(dest_ls), K(swap_size), K(part_group_min_size));
+
       if (OB_FAIL(add_transfer_task_(ls_more->get_ls_id(), ls_less->get_ls_id(), src_part_group))) {
         LOG_WARN("add_transfer_task_ fail", KR(ret), K(ls_more->get_ls_id()), K(ls_less->get_ls_id()));
       } else if (OB_FAIL(ls_less->get_part_groups().push_back(src_part_group))) {
@@ -741,7 +741,7 @@ int ObPartitionBalance::save_balance_group_stat_()
     }
   }
   int64_t end_time = ObTimeUtility::current_time();
-  LOG_INFO("[PART_BALANCE] save_balance_group_stat", K(ret), "cost", end_time - start_time);
+
   return ret;
 }
 

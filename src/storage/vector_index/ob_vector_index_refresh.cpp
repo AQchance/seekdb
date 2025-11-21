@@ -132,12 +132,12 @@ int ObVectorIndexRefresher::lock_domain_tb(
       }
     }
     if (OB_SUCC(ret)) {
-      LOG_DEBUG("lock obj start", K(lock_arg));
+
       if (OB_FAIL(
               ObInnerConnectionLockUtil::lock_obj(tenant_id, lock_arg, conn))) {
         LOG_WARN("fail to lock obj", KR(ret));
       }
-      LOG_DEBUG("lock obj end", KR(ret));
+
     }
   }
   return ret;
@@ -379,7 +379,7 @@ int ObVectorIndexRefresher::do_refresh() {
                          domain_table_schema->is_in_recyclebin() ||
                          index_id_tb_schema->is_in_recyclebin())) {
     // do nothing
-    LOG_DEBUG("table or db in recyclebin");
+
   } else if (OB_FAIL(get_table_row_count(
                  db_schema->get_database_name_str(),
                  domain_table_schema->get_table_name_str(), refresh_ctx_->scn_,
@@ -535,7 +535,7 @@ int ObVectorIndexRefresher::do_refresh() {
             LOG_WARN("fail to execute major freeze sql, continue other tablet id", K(tablet_id),
                       K(tenant_id), K(freeze_sql));
           } else {
-            LOG_INFO("execute major freeze success", K(tablet_id), K(affected_rows));
+
           }
         }
       }
@@ -654,7 +654,7 @@ int ObVectorIndexRefresher::do_rebuild() {
                          (OB_NOT_NULL(index_id_tb_schema) && index_id_tb_schema->is_in_recyclebin()))) {
     // do nothing
     triggered = false;
-    LOG_DEBUG("table or db in recyclebin");
+
   } else if (OB_UNLIKELY(0 == refresh_ctx_->delta_rate_threshold_)) {
     // do nothing
   } else if (!domain_table_schema->is_vec_hnsw_index()) {
@@ -697,7 +697,7 @@ int ObVectorIndexRefresher::do_rebuild() {
 
   if (OB_FAIL(ret)) {
   } else if (triggered && (!is_hybrid_vector || need_embedding_when_rebuild)) {
-    LOG_INFO("start to rebuild vec index");
+
     const int64_t ddl_rpc_timeout = GCONF._ob_ddl_timeout;
     ObTimeoutCtx timeout_ctx;
     ObAddr rs_addr;
@@ -727,7 +727,7 @@ int ObVectorIndexRefresher::do_rebuild() {
       } else if (OB_FAIL(common_rpc_proxy->to(rs_addr).timeout(ddl_rpc_timeout).rebuild_vec_index(rebuild_index_arg, rebuild_index_res))) {
         LOG_WARN("failed to post backup ls data res", K(ret), K(ddl_rpc_timeout), K(rebuild_index_arg));
       } else {
-        LOG_INFO("succ to send rebuild vector index rpc", K(rs_addr), K(refresh_ctx_));
+
       }
       if (OB_SUCC(ret)) {
         if (OB_FAIL(ObDDLExecutorUtil::wait_ddl_finish(rebuild_index_arg.tenant_id_,
@@ -738,7 +738,7 @@ int ObVectorIndexRefresher::do_rebuild() {
                                                        is_support_cancel))) {
           LOG_WARN("fail wait rebuild vec index finish", K(ret));
         } else {
-          LOG_INFO("succ to wait rebuild vec index", K(ret), K(rebuild_index_res.task_id_), K(rebuild_index_arg));
+
         }
       }
     }

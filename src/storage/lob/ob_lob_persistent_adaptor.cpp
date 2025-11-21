@@ -36,7 +36,7 @@ ObPersistentLobApator::~ObPersistentLobApator()
 
 void ObPersistentLobApator::destroy()
 {
-  STORAGE_LOG(INFO, "[LOB] destroy lob persist", K(tenant_id_));
+
   if (OB_NOT_NULL(meta_table_param_)) {
     meta_table_param_->reset();
     meta_table_param_->~ObTableParam();
@@ -72,7 +72,7 @@ int ObPersistentLobApator::get_meta_table_param(const ObTableParam *&table_param
       if (OB_FAIL(init_table_param())) {
         LOG_ERROR("init_table_param fail", KR(ret));
       } else {
-        LOG_INFO("init_table_param success", KR(ret));
+
       }
     }
   }
@@ -90,7 +90,7 @@ int ObPersistentLobApator::get_meta_table_dml_param(const ObTableDMLParam *&tabl
       if (OB_FAIL(init_table_param())) {
         LOG_ERROR("init_table_param fail", KR(ret));
       } else {
-        LOG_INFO("init_table_param success", KR(ret));
+
       }
     }
   }
@@ -166,9 +166,9 @@ int ObPersistentLobApator::revert_scan_iter(ObLobMetaIterator *iter)
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("iter is null", K(ret));
   } else if (nullptr != iter->get_access_ctx()) {
-    LOG_DEBUG("alloced from ctx, no need actual release", KPC(iter));
+
   } else {
-    LOG_DEBUG("release scan iter", K(ret), KPC(iter));
+
     iter->reset();
     iter->~ObLobMetaIterator();
   }
@@ -189,7 +189,7 @@ int ObPersistentLobApator::fetch_lob_id(ObLobAccessParam& param, uint64_t &lob_i
     if (OB_FAIL(auto_inc.get_autoinc_seq(tenant_id, param.lob_meta_tablet_id_, lob_id, share::ObTabletAutoincrementService::LOB_CACHE_SIZE))) {
       LOG_WARN("get lob_id fail", K(ret), K(tenant_id), K(param));
     } else {
-      LOG_DEBUG("get lob_id succ", K(lob_id), K(tenant_id), K(param));
+
     }
 
     if (OB_TABLET_IS_SPLIT_SRC == ret) {
@@ -489,7 +489,7 @@ int ObPersistentLobApator::scan_lob_meta(
 
   if (OB_FAIL(ret)) {
     if (OB_NOT_NULL(tmp_iter)) {
-      LOG_INFO("release iter after failed", KPC(tmp_iter));
+
       tmp_iter->reset();
       tmp_iter->~ObLobMetaIterator();
     }
@@ -528,7 +528,7 @@ int ObPersistentLobApator::scan_with_ctx(
 
   if (OB_FAIL(ret)) {
     if (! is_hit && OB_NOT_NULL(reader)) {
-      LOG_INFO("release iter after failed", KPC(reader));
+
       reader->reset();
       reader->~ObLobMetaIterator();
     }
@@ -597,7 +597,7 @@ int ObPersistentLobApator::set_dml_seq_no(ObLobAccessParam &param)
     if (param.used_seq_cnt_ < param.total_seq_cnt_) {
       param.dml_base_param_->spec_seq_no_ = param.seq_no_st_ + param.used_seq_cnt_;
       // param.used_seq_cnt_++;
-      LOG_DEBUG("dml lob meta with seq no", K(param.dml_base_param_->spec_seq_no_));
+
     } else {
       ret = OB_INVALID_ARGUMENT;
       LOG_WARN("failed to get seq no from param", K(ret), K(param));

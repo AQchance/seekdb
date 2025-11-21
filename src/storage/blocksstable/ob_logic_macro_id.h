@@ -81,7 +81,7 @@ struct ObMacroDataSeq
     int ret = common::OB_SUCCESS;
     if (OB_UNLIKELY(sstable_logic_seq >= MAX_SSTABLE_SEQ || sstable_logic_seq < 0)) {
       ret = common::OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "Invalid sstable seq", K(ret), K(sstable_logic_seq));
+
     } else {
       sstable_logic_seq_ = sstable_logic_seq;
     }
@@ -92,7 +92,7 @@ struct ObMacroDataSeq
     int ret = common::OB_SUCCESS;
     if (OB_UNLIKELY(parallel_idx >= MAX_PARALLEL_IDX || parallel_idx < 0)) {
       ret = common::OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "Invalid parallel idx", K(parallel_idx));
+
     } else {
       parallel_idx_ = parallel_idx;
     }

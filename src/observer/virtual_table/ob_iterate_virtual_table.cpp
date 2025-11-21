@@ -115,7 +115,7 @@ int ObIterateVirtualTable::do_open()
       } else {
         lib::ob_sort(tenants_.begin(), tenants_.end());
       }
-      LOG_DEBUG("tenant id array", K(tenants_));
+
     }
 
     // Iterate virtual table add tenant_id to the head of primary key/index,
@@ -248,7 +248,7 @@ int ObIterateVirtualTable::next_tenant()
       sql_res_->~ReadResult();
       inner_sql_res_ = NULL;
       new (sql_res_) ObMySQLProxy::MySQLResult();
-      LOG_TRACE("execute sql", K(exec_tenant_id), K(sql_));
+
       if (OB_FAIL(sql_client_retry_weak.read(*sql_res_, exec_tenant_id, sql_.ptr()))) {
         LOG_WARN("execute sql failed", KR(ret), K(exec_tenant_id), K(sql_));
       } else if (OB_ISNULL(sql_res_->get_result())) {

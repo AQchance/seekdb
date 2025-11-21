@@ -60,7 +60,7 @@ int ObODPSCatalogUtils::create_odps_conf(const ObODPSCatalogProperties &odps_for
   conf.SetAccount(account);
   conf.SetEndpoint(std::string(odps_format.endpoint_.ptr(), odps_format.endpoint_.length()));
   if (!odps_format.tunnel_endpoint_.empty()) {
-    LOG_TRACE("set tunnel endpoint", K(ret), K(odps_format.tunnel_endpoint_));
+
     conf.SetTunnelEndpoint(std::string(odps_format.tunnel_endpoint_.ptr(), odps_format.tunnel_endpoint_.length()));
   }
   conf.SetUserAgent("OB_ACCESS_ODPS");

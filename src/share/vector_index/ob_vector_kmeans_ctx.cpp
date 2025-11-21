@@ -202,7 +202,7 @@ int ObKmeansAlgo::inner_build(const ObIArray<float*> &input_vectors)
       break;
     }
     case FINISH: {
-      LOG_INFO("finish kmeans build", K(ret));
+
       break;
     }
     default: {
@@ -677,7 +677,7 @@ int ObMultiKmeansExecutor::build_parallel(const common::ObTableID &table_id, con
     ret = OB_NOT_INIT;
     LOG_WARN("kmeans ctx is not inited", K(ret));
   } else {
-    LOG_INFO("start build_parallel", K(table_id), K(tablet_id), K(ctx_));
+
     ObArenaAllocator tmp_alloc;
     // init spilited_arrs, size: m * sample_vectors_.count()
     ObArrayArray<float *> splited_arrs(OB_MALLOC_NORMAL_BLOCK_SIZE, ModulePageAllocator(tmp_alloc, "MulKmeans"));
@@ -971,7 +971,7 @@ int ObElkanKmeansAlgo::do_kmeans(const ObIArray<float*> &input_vectors)
         prev_dis_obj = dis_obj;
         if (iter > 0 && diff <= EARLY_FINISH_THRESHOLD / 1000) {
           double imbalance_factor = this->calc_imbalance_factor(input_vectors, data_cnt_in_cluster);
-          LOG_INFO("finish do kmeans before all iters", K(ret), K(iter), K(dis_obj), K(diff), K(imbalance_factor));
+
           break; // finish
         } else {
           cur_idx_ = next_idx();
@@ -1076,7 +1076,7 @@ int64_t ObIvfBuildHelper::get_free_vector_mem_size()
   } else if (tenant_mem_size > curr_used) {
     free_vector_mem_size = tenant_mem_size - curr_used;
   }
-  LOG_INFO("free vector mem limit size.", K(ret), K(free_vector_mem_size), K(tenant_mem_size), K(curr_used));
+
   return free_vector_mem_size;
 }
 
@@ -1316,7 +1316,7 @@ bool ObIvfPqBuildHelper::can_use_parallel()
       res = true;
     }
   }
-  LOG_INFO("can use parallel", K(res), K(max_thread_cnt), K(parallel_need_max_mem), K(vector_free_mem));
+
   return res;
 }
 
@@ -1325,14 +1325,14 @@ int ObKmeansBuildTaskHandler::init(int tg_id)
 {
   int ret = OB_SUCCESS;
   if (is_inited_) {
-    LOG_INFO("init before", KR(ret));
+
   } else if (INVALID_TG_ID == tg_id) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid tg_id", KR(ret), K(tg_id));
   } else {
     tg_id_ = tg_id;
     is_inited_ = true;
-    LOG_INFO("init vector kmeans build task handler", K(ret), K_(tg_id));
+
   }
   return ret;
 }
@@ -1351,14 +1351,14 @@ int ObKmeansBuildTaskHandler::start()
   } else if (OB_FAIL(TG_SET_HANDLER_AND_START(tg_id_, *this))) {
     LOG_WARN("TG_SET_HANDLER_AND_START failed", KR(ret), K_(tg_id));
   } else {
-    LOG_INFO("succ to start vector kmeans build task handler", K_(tg_id), K(max_thread_cnt));
+
   }
   return ret;
 }
 
 void ObKmeansBuildTaskHandler::stop()
 {
-  LOG_INFO("vector kmeans build task start to stop", K_(tg_id));
+
   if (OB_LIKELY(INVALID_TG_ID != tg_id_)) {
     TG_STOP(tg_id_);
   }
@@ -1366,7 +1366,7 @@ void ObKmeansBuildTaskHandler::stop()
 
 void ObKmeansBuildTaskHandler::wait()
 {
-  LOG_INFO("vector kmeans build task handler start to wait", K_(tg_id));
+
   if (OB_LIKELY(INVALID_TG_ID != tg_id_)) {
     TG_WAIT(tg_id_);
   }
@@ -1374,7 +1374,7 @@ void ObKmeansBuildTaskHandler::wait()
 
 void ObKmeansBuildTaskHandler::destroy()
 {
-  LOG_INFO("vector kmeans build task handler start to destroy", K_(tg_id));
+
   // tg_id is managed by external service, no need to destroy here
   tg_id_ = INVALID_TG_ID;
   is_inited_ = false;
@@ -1396,7 +1396,7 @@ int ObKmeansBuildTaskHandler::push_task(ObKmeansBuildTask &build_task)
         LOG_WARN("fail to TG_PUSH_TASK", KR(ret), K(build_task));
       } else {
         // sleep 1s and retry
-        LOG_DEBUG("fail to TG_PUSH_TASK, queue is full will retry", KR(ret), K(build_task));
+
         ob_usleep(WAIT_RETRY_PUSH_TASK_TIME);
         ret = OB_SUCCESS;
       }

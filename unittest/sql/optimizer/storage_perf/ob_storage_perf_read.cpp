@@ -85,11 +85,11 @@ int FakePartitionMeta::initialize(blocksstable::ObDataFile *data_file,
   int ret = OB_SUCCESS;
   if(NULL == data_file || NULL == logger) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "argument is NULL", K(data_file), K(logger));
+
   } else if (OB_FAIL(ObBaseStorageMeta::init(data_file, logger))) {
-    STORAGE_LOG(WARN, "fail to init storage meta", K(ret));
+
   } else if(OB_FAIL(logger->register_redo_module(blocksstable::OB_REDO_LOG_PARTITION, this))) {
-    STORAGE_LOG(WARN, "fail to register redo module", K(ret));
+
   }
   return ret;
 }
@@ -358,10 +358,10 @@ int ObUpdateRowIter::init(ObRowGenerate *generate)
   int ret = OB_SUCCESS;
   if(is_inited_){
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init twice");
+
   } else if(NULL == generate){
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "row generate is NULL");
+
   } else {
     row_generate_ = generate;
     is_inited_ = true;
@@ -395,11 +395,11 @@ int ObUpdateRowIter::get_next_row(ObNewRow *&row)
 
   if(!is_inited_){
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "please init first");
+
   } else if(OB_SUCCESS != (ret = row_generate_->get_next_row(tmp_seed, store_row, old_value))){
-    STORAGE_LOG(WARN, "fail to get next row form row generate", K(ret));
+
   } else if(OB_SUCCESS != (ret = ob_write_row(allocator_, store_row->row_val_, row_))){
-    STORAGE_LOG(WARN, "fail to write ObNewRow", K(ret));
+
   } else {
     //STORAGE_LOG(INFO, " ", K(*store_row), K(row_));
     row = &row_;
@@ -444,12 +444,12 @@ int ObStoragePerfRead::init(ObStoragePerfConfig *config,
 
   if(is_inited_){
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init twice");
+
   } else if(NULL == config || NULL == cache_suite || NULL == schema_service){
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "argument is NULL", K(config), K(cache_suite));
+
   } else if (NULL == (string_buf_ = static_cast<char*>(ob_malloc(MAX_BUF_LENGTH)))) {
-    STORAGE_LOG(WARN, "allocate string buf failed");
+
   } else {
     config_ = config;
     thread_no_ = thread_no;
@@ -484,18 +484,18 @@ int ObStoragePerfRead::update_to_memtable()
   const ObTableSchema *schema = NULL;
 
   if(OB_FAIL(restore_schema_->parse_from_file("./storage_perf_update.schema", schema_guard))) {
-    STORAGE_LOG(WARN, "fail to init schema", K(ret));
+
   } else {
  //   schema_service_ = restore_schema_.schema_service_;
  //   schema_service_->get_schema_guard(schema_guard, INT64_MAX);
     schema_guard->get_table_schema(combine_id(tenant_id, pure_id+1), schema);
     if (schema == NULL) {
       ret = OB_SCHEMA_ERROR;
-      STORAGE_LOG(WARN, "schema is NULL");
+
     } else if(OB_SUCCESS != (ret = row_generate.init(*schema))) {
-      STORAGE_LOG(WARN, "fail to init table schema");
+
     } else if(OB_SUCCESS != (ret = insert_iter.init(&row_generate))) {
-      STORAGE_LOG(WARN, "fail to init ObUpdateRowIter", K(ret));
+
     }
   }
 
@@ -510,7 +510,7 @@ int ObStoragePerfRead::update_to_memtable()
     dml_param.schema_version_ = 0;
 
     if(OB_FAIL(storage_->update_rows(ins_ctx, dml_param, column_ids, update_column_ids,  &insert_iter, affected_rows))) {
-      STORAGE_LOG(WARN, "fail to insert row", K(ret));
+
       ob_print_mod_memory_usage();
     }
     ins_ctx.mem_ctx_->trans_end(true, 1);
@@ -524,21 +524,21 @@ int ObStoragePerfRead::single_get_speed()
   int ret = OB_SUCCESS;
   if(!is_inited_){
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "should init first");
+
   } else {
     ObRowGenerate row_generate;
     ObMemtableCtxFactory mem_ctx_fty;
     ObSchemaGetterGuard schema_guard;
     const ObTableSchema *schema = NULL;
     if (OB_FAIL(schema_service_->get_schema_guard(schema_guard, INT64_MAX))) {
-      STORAGE_LOG(WARN, "failed to get schema guard");
+
     } else if (OB_FAIL(schema_guard.get_table_schema(combine_id(tenant_id, pure_id), schema))) {
-      STORAGE_LOG(WARN, "failed to get table schema");
+
     } else if (schema == NULL) {
       ret = OB_SCHEMA_ERROR;
-      STORAGE_LOG(WARN, "schema is NULL");
+
     } else if(OB_SUCCESS != (ret = row_generate.init(*schema))) {
-      STORAGE_LOG(WARN, "fail to init table schema");
+
     } else {
       int64_t repeat_times = config_->get_single_get_times();
       while (OB_SUCC(ret) && repeat_times--) {
@@ -546,11 +546,11 @@ int ObStoragePerfRead::single_get_speed()
         ObStoreCtx get_ctx;
         if (OB_ISNULL(get_ctx.mem_ctx_ = mem_ctx_fty.alloc())) {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(WARN, "mem ctx is null");
+
         } else if (OB_FAIL(get_ctx.mem_ctx_->trans_begin())) {
-          STORAGE_LOG(WARN, "failed to begin trans");
+
         } else if (OB_FAIL(get_ctx.mem_ctx_->sub_trans_begin(1, query_timeout + ObTimeUtility::current_time()))) {
-          STORAGE_LOG(WARN, "failed to begin sub strans");
+
         } else {
           //param
           ObTransDesc trans_desc;
@@ -561,7 +561,7 @@ int ObStoragePerfRead::single_get_speed()
 //          scan_param.pkey_.partition_cnt_ = 1;
           for(int64_t i = 0; OB_SUCC(ret) && i < read_cols_.count(); ++i){
             if (OB_FAIL(scan_param.column_ids_.push_back(OB_APP_MIN_COLUMN_ID + read_cols_.at(i)))) {
-              STORAGE_LOG(WARN, "failed to push back");
+
             }
           }
           if (OB_SUCC(ret)) {
@@ -576,7 +576,7 @@ int ObStoragePerfRead::single_get_speed()
             scan_param.schema_version_ = 0;
 
             if(OB_FAIL(set_trans_desc(trans_desc))){
-              STORAGE_LOG(WARN, "fail to set trans", K(ret));
+
             } else {
               scan_param.trans_desc_ = &trans_desc;
               //get one row
@@ -597,7 +597,7 @@ int ObStoragePerfRead::single_get_speed()
               ObNewRange range;
               if (OB_FAIL(row_generate.get_rowkey_by_seed(rand() % config_->get_range_, rk))) {
                 //          if(OB_FAIL(row_generate.get_next_row(rand() % config_->get_range_, range_row))){
-                STORAGE_LOG(WARN, "fail to get next row", K(ret));
+
               } else {
                 range.table_id_ = combine_id(tenant_id, pure_id);
                 range.start_key_ = rk;
@@ -606,7 +606,7 @@ int ObStoragePerfRead::single_get_speed()
                 range.border_flag_.set_inclusive_end();
                 scan_param.key_ranges_.reset();
                 if (OB_FAIL(scan_param.key_ranges_.push_back(range))) {
-                  STORAGE_LOG(WARN, "fail to push back", K(ret));
+
                 }
               }
 
@@ -620,16 +620,16 @@ int ObStoragePerfRead::single_get_speed()
                 out_res_statics.reset();
                 pthread_barrier_wait(barrier_);
                 if (OB_FAIL(set_global_stat(out_bef_statics))) {
-                  STORAGE_LOG(WARN, "fail to set global stat", K(ret));
+
                 } else {
                   int64_t single_begin = ObTimeUtility::current_time();
                   if(OB_FAIL(storage_->table_scan(scan_param, get_iter))){
-                    STORAGE_LOG(WARN, "fail to table scan", K(ret));
+
                   } else if(OB_FAIL(get_iter->get_next_row(row))){
-                    STORAGE_LOG(WARN, "fail to get next row", K(ret));
+
                   } else if(NULL == row){
                     ret = OB_ERR_UNEXPECTED;
-                    STORAGE_LOG(WARN, "fail to get next row");
+
                   } else {
                     if (config_->print_row_) {
                       print_row(row, row_count);
@@ -637,7 +637,7 @@ int ObStoragePerfRead::single_get_speed()
                     int64_t t = ObTimeUtility::current_time() - single_begin;
                     pthread_barrier_wait(barrier_);
                     if (OB_FAIL(set_global_stat(out_aft_statics))) {
-                      STORAGE_LOG(WARN, "fail to set global stat", K(ret));
+
                     } else {
                       std::cout << t << std::endl;
                       total_time += t;
@@ -654,12 +654,12 @@ int ObStoragePerfRead::single_get_speed()
                       }
                       if(NULL != get_iter) {//ignore success
                         if(OB_FAIL(storage_->revert_scan_iter(get_iter))){
-                          STORAGE_LOG(WARN,"fail to revert inter", K(ret));
+
                         }
                       }
                       if (OB_SUCC(ret)) {
                         if (OB_FAIL(flush_cache_or_not())) {
-                          STORAGE_LOG(WARN,"fail to flush cache", K(ret));
+
                         }
                       }
                     }
@@ -668,7 +668,7 @@ int ObStoragePerfRead::single_get_speed()
               }
               pthread_barrier_wait(barrier_);
               if (OB_FAIL(get_ctx.mem_ctx_->trans_end(true, 1))) {
-                STORAGE_LOG(WARN,"fail to end trans", K(ret));
+
               } else {
                 mem_ctx_fty.free(get_ctx.mem_ctx_);
               }
@@ -687,7 +687,7 @@ int ObStoragePerfRead::multi_get_speed()
 
   if(!is_inited_){
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "should init first");
+
   } else {
     ObRowGenerate row_generate;
     ObArenaAllocator allocator(ObModIds::TEST);
@@ -697,12 +697,12 @@ int ObStoragePerfRead::multi_get_speed()
     const ObTableSchema *schema = NULL;
     schema_service_->get_schema_guard(schema_guard, INT64_MAX);
     if (OB_FAIL(schema_guard.get_table_schema(combine_id(tenant_id, pure_id), schema))) {
-      STORAGE_LOG(WARN, "failed to get table schema", K(ret));
+
     } else if (schema == NULL) {
       ret = OB_SCHEMA_ERROR;
-      STORAGE_LOG(WARN, "schema is NULL");
+
     } else if(OB_SUCCESS != (ret = row_generate.init(*schema, &allocator))){
-      STORAGE_LOG(WARN, "fail to init table schema");
+
     } else {
       int64_t repeat_times = config_->get_multi_get_times();
       while (OB_SUCC(ret) && repeat_times--) {
@@ -710,11 +710,11 @@ int ObStoragePerfRead::multi_get_speed()
         ObStoreCtx get_ctx;
         if (OB_ISNULL(get_ctx.mem_ctx_ = mem_ctx_fty.alloc())) {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(WARN, "failed to alloc mem ctx", K(ret));
+
         } else if (OB_FAIL(get_ctx.mem_ctx_->trans_begin())) {
-          STORAGE_LOG(WARN, "failed to begin trans", K(ret));
+
         } else if (OB_FAIL(get_ctx.mem_ctx_->sub_trans_begin(1, query_timeout + ObTimeUtility::current_time()))) {
-          STORAGE_LOG(WARN, "failed to begin sub trans", K(ret));
+
         } else {
           //param
           ObTransDesc trans_desc;
@@ -745,7 +745,7 @@ int ObStoragePerfRead::multi_get_speed()
             rowkey.reset();
             //row to store rowkey
             if(OB_FAIL(row_generate.get_rowkey_by_seed(rand() % config_->get_range_, rowkey))){
-              STORAGE_LOG(WARN, "fail to get next row", K(ret));
+
             } else {
               range.border_flag_.set_inclusive_start();
               range.border_flag_.set_inclusive_end();
@@ -757,7 +757,7 @@ int ObStoragePerfRead::multi_get_speed()
           }
           if (OB_SUCC(ret)) {
             if(OB_FAIL(set_trans_desc(trans_desc))){
-              STORAGE_LOG(WARN, "fail to set trans", K(ret));
+
             } else {
               scan_param.trans_desc_ = &trans_desc;
 
@@ -788,18 +788,18 @@ int ObStoragePerfRead::multi_get_speed()
                 out_aft_statics.reset();
                 out_res_statics.reset();
                 if (OB_FAIL(set_global_stat(out_bef_statics))) {
-                  STORAGE_LOG(WARN, "failed to get global stat", K(ret));
+
                 } else {
                   one_run_begin = ObTimeUtility::current_time();
                   if(OB_FAIL(storage_->table_scan(scan_param, get_iter))) {
-                    STORAGE_LOG(WARN, "fail to table scan", K(ret));
+
                   }
                   for(real_row_count = 0; OB_SUCCESS == ret; ++real_row_count){
                     if(OB_FAIL(get_iter->get_next_row(row))){
-                      STORAGE_LOG(WARN, "fail to get next row", K(ret), K(real_row_count));
+
                     } else if(NULL == row) {
                       ret = OB_ERR_UNEXPECTED;
-                      STORAGE_LOG(WARN, "fail to get next row");
+
                     } else {
                       if (config_->print_row_) {
                         print_row(row, row_count);
@@ -807,16 +807,16 @@ int ObStoragePerfRead::multi_get_speed()
                     }
                   }
                   if (OB_ITER_END != ret) {
-                    STORAGE_LOG(WARN,"fail to scan", K(ret));
+
                   } else {
                     ret = OB_SUCCESS;
                     int64_t one_run_end = ObTimeUtility::current_time();
                     if (OB_FAIL(set_global_stat(out_aft_statics))) {
-                      STORAGE_LOG(WARN, "failed to get global stat", K(ret));
+
                     } else {
                       if(NULL != get_iter) {//igonre ret
                         if(OB_FAIL(storage_->revert_scan_iter(get_iter))){
-                          STORAGE_LOG(WARN,"fail to revert inter", K(ret));
+
                         }
                       }
                       if (OB_SUCC(ret)) {
@@ -833,11 +833,11 @@ int ObStoragePerfRead::multi_get_speed()
                           }
                         }
                         if (OB_FAIL(get_ctx.mem_ctx_->trans_end(true, 1))) {
-                          STORAGE_LOG(WARN,"fail to revert inter", K(ret));
+
                         } else {
                           mem_ctx_fty.free(get_ctx.mem_ctx_);
                           if (OB_FAIL(flush_cache_or_not())) {
-                            STORAGE_LOG(WARN,"fail to flush cache", K(ret));
+
                           }
                         }
                       }
@@ -860,22 +860,22 @@ int ObStoragePerfRead::flush_cache_or_not()
   int ret = OB_SUCCESS;
   if (OB_SUCC(ret) && config_->flush_block_index_cache_) {
     if (OB_FAIL(ObKVGlobalCache::get_instance().erase_cache(OB_SYS_TENANT_ID, "block_index_cache"))) {
-      STORAGE_LOG(WARN, "failed to flush cache", K(ret));
+
     }
   }
   if (OB_SUCC(ret) && config_->flush_block_cache_) {
     if (OB_FAIL(ObKVGlobalCache::get_instance().erase_cache(OB_SYS_TENANT_ID, "user_block_cache"))) {
-      STORAGE_LOG(WARN, "failed to flush cache", K(ret));
+
     }
   }
   if (OB_SUCC(ret) && config_->flush_row_cache_) {
     if (OB_FAIL(ObKVGlobalCache::get_instance().erase_cache(OB_SYS_TENANT_ID, "user_row_cache"))) {
-      STORAGE_LOG(WARN, "failed to flush cache", K(ret));
+
     }
   }
   if (OB_SUCC(ret) && config_->flush_bf_cache_) {
     if (OB_FAIL(ObKVGlobalCache::get_instance().erase_cache(OB_SYS_TENANT_ID, "bf_cache"))) {
-      STORAGE_LOG(WARN, "failed to flush cache", K(ret));
+
     }
   }
   return ret;
@@ -886,7 +886,7 @@ int ObStoragePerfRead::scan_speed()
   int ret = OB_SUCCESS;
   if(!is_inited_){
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "should init first");
+
   } else {
     ObRowGenerate row_generate;
     ObRowGenerate row_generate2;
@@ -896,13 +896,13 @@ int ObStoragePerfRead::scan_speed()
     const ObTableSchema *schema = NULL;
     schema_service_->get_schema_guard(schema_guard, INT64_MAX);
     if (OB_FAIL(schema_guard.get_table_schema(combine_id(tenant_id, pure_id), schema))) {
-      STORAGE_LOG(WARN, "failed to get table schema", K(ret));
+
     } else if (schema == NULL) {
-      STORAGE_LOG(WARN, "schema is NULL");
+
     } else if(OB_SUCCESS != (ret = row_generate.init(*schema))){
-      STORAGE_LOG(WARN, "fail to init table schema");
+
     } else if(OB_SUCCESS != (ret = row_generate2.init(*schema))){
-      STORAGE_LOG(WARN, "fail to init table schema");
+
     } else {
       int64_t repeat_times = config_->get_scan_times();
       while (OB_SUCC(ret) && repeat_times--) {
@@ -910,11 +910,11 @@ int ObStoragePerfRead::scan_speed()
         ObStoreCtx get_ctx;
         if (OB_ISNULL(get_ctx.mem_ctx_ = mem_ctx_fty.alloc())) {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(WARN, "fail to alloc mem ctx", K(ret));
+
         } else if (OB_FAIL(get_ctx.mem_ctx_->trans_begin())) {
-          STORAGE_LOG(WARN, "fail to begin trans", K(ret));
+
         } else if (OB_FAIL(get_ctx.mem_ctx_->sub_trans_begin(1, query_timeout + ObTimeUtility::current_time()))) {
-          STORAGE_LOG(WARN, "fail to begin trans", K(ret));
+
         } else {
           //param
           ObTransDesc trans_desc;
@@ -936,7 +936,7 @@ int ObStoragePerfRead::scan_speed()
           scan_param.schema_version_ = 0;
 
           if(OB_FAIL(set_trans_desc(trans_desc))){
-            STORAGE_LOG(WARN, "fail to set trans", K(ret));
+
           } else {
             scan_param.trans_desc_ = &trans_desc;
             int64_t total_row_count = config_->get_partition_size() * 1024L * row_count_per_macro/2;
@@ -950,9 +950,9 @@ int ObStoragePerfRead::scan_speed()
             end_rowkey.reset();
             //row to store rowkey
             if(OB_FAIL(row_generate.get_rowkey_by_seed(start_seed, start_rowkey))){
-              STORAGE_LOG(WARN, "fail to get next row", K(ret));
+
             } else if(OB_FAIL(row_generate2.get_rowkey_by_seed(end_seed, end_rowkey))){
-              STORAGE_LOG(WARN, "fail to get next row", K(ret));
+
             } else {
               //get range
               range.border_flag_.set_inclusive_start();
@@ -985,7 +985,7 @@ int ObStoragePerfRead::scan_speed()
                     out_aft_statics.reset();
                     out_res_statics.reset();
                     if (OB_FAIL(set_global_stat(out_bef_statics))) {
-                      STORAGE_LOG(WARN, "fail to get global stat", K(ret));
+
                     }
                   }
                 }
@@ -994,7 +994,7 @@ int ObStoragePerfRead::scan_speed()
                   int64_t row_count = 1;
                   const int64_t begin = ObTimeUtility::current_time();
                   if(OB_FAIL(storage_->table_scan(scan_param, get_iter))){
-                    STORAGE_LOG(WARN, "fail to table scan", K(ret));
+
                   }
                   for(int64_t j = 0; OB_SUCC(ret) && j < end_seed - start_seed + 1; ++j, ++real_count) {
                     if(OB_FAIL(get_iter->get_next_row(row))) {
@@ -1004,7 +1004,7 @@ int ObStoragePerfRead::scan_speed()
                       }
                     } else if(NULL == row){
                       ret = OB_ERR_UNEXPECTED;
-                      STORAGE_LOG(WARN, "fail to get next row");
+
                     } else {
                       if (config_->print_row_) {
                         print_row(row, row_count);
@@ -1031,18 +1031,18 @@ int ObStoragePerfRead::scan_speed()
                     }
 
                     if(OB_ITER_END != get_iter->get_next_row(row)){
-                      STORAGE_LOG(WARN, "fail to get the end");
+
                     } else {
                       if(NULL != get_iter) {
                         if(OB_FAIL(storage_->revert_scan_iter(get_iter))){
-                          STORAGE_LOG(WARN,"fail to revert inter", K(ret));
+
                         }
                       }
                       if (OB_SUCC(ret)) {
                         if(real_count != end_seed - start_seed + 1) {
-                          STORAGE_LOG(WARN, "scan count not match", K(real_count), K(end_seed - start_seed + 1));
+
                         } else if (OB_FAIL(flush_cache_or_not())) {
-                          STORAGE_LOG(WARN, "failed to flush cache", K(ret));
+
                         }
                         pthread_barrier_wait(barrier_);
                       }
@@ -1053,7 +1053,7 @@ int ObStoragePerfRead::scan_speed()
             }
           }
           if (OB_FAIL(get_ctx.mem_ctx_->trans_end(true, 1))) {
-            STORAGE_LOG(WARN, "failed to end trans", K(ret));
+
           } else {
             mem_ctx_fty.free(get_ctx.mem_ctx_);
           }
@@ -1074,18 +1074,18 @@ int ObStoragePerfRead::init_partition_storage()
   memtable_.set_version(ObVersion(2));//TODO:const
 
   if(OB_FAIL(init_data_file())){
-    STORAGE_LOG(WARN, "fail to init data file", K(ret));
+
   } else if(OB_FAIL(ssstore_.init(&data_file_, &cp_fty_, meta_, cache_suite_, NULL))){
-    STORAGE_LOG(WARN, "fail to init ssstore", K(ret));
+
   } else if (OB_FAIL(ssstore_.create_new_sstable(sstable_, 1))){
-    STORAGE_LOG(WARN, "fail to create sstable");
+
   } else if(OB_SUCCESS != (ret = backup_sstable_meta(*sstable_))){
-    STORAGE_LOG(WARN, "fail to backup sstable meta", K(ret));
+
   } else if(!sstable_->is_valid()){
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "sstable is invalid");
+
   } else if(OB_FAIL(ssstore_.add_sstable(sstable_->get_meta().index_id_, sstable_))){
-    STORAGE_LOG(WARN, "fail to add sstable", K(ret));
+
   //} else if(OB_FAIL(memtable_.init(pkey))) {
   //  STORAGE_LOG(WARN, "fail to init mem table", K(ret));
   //} else if(OB_FAIL(storage_->init(pkey, pkey, &cp_fty_, &base_storage, schema_service_,
@@ -1113,23 +1113,23 @@ int ObStoragePerfRead::backup_sstable_meta(ObSSTable &sstable)
 
   if(-1 == (fd = open(sstable_meta_path_, O_RDONLY, 0777))){
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "fail to open meta file", K(sstable_meta_path_), K(fd));
+
   } else if(0 == (size = lseek(fd, 0, SEEK_END))){
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "fail to get file length", K(size), K(sstable_meta_path_));
+
   } else if(0 != lseek(fd, 0, SEEK_SET)){
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "fail to reset lseek");
+
   } else if(NULL == (buf = static_cast<char *>(allocator.alloc(size)))){
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to allocator memory", K(size), K(ret));
+
   } else if (size != read(fd, buf, size)){
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(ERROR, "fail to read meta");
+
   } else if(OB_SUCCESS != (ret = sstable.deserialize(allocator_, buf, size, pos))){
-    STORAGE_LOG(WARN, "fail to deserialize sstable", K(ret));
+
   } else {
-    STORAGE_LOG(INFO, "backup sstable meta success");
+
     close(fd);
   }
   return ret;
@@ -1145,7 +1145,7 @@ int ObStoragePerfRead::init_data_file()
 
   if (static_cast<int64_t>(strlen(data_file_path_)) > common::OB_MAX_FILE_NAME_LENGTH){
     ret = OB_SIZE_OVERFLOW;
-    STORAGE_LOG(WARN, "data file is too long", K(strlen(data_file_path_)));
+
   } else {
     strcpy(location.path_, data_file_path_);
     spec.macro_block_size_ = OB_DEFAULT_MACRO_BLOCK_SIZE;
@@ -1154,17 +1154,17 @@ int ObStoragePerfRead::init_data_file()
 
   if(OB_SUCC(ret)){
     if (OB_SUCCESS != (ret = data_file_.open(location, &image_))) {
-      STORAGE_LOG(WARN, "open data file error.", K(ret));
+
     } else if (OB_SUCCESS != (ret = image_.initialize(&data_file_, &logger_))) {
-        STORAGE_LOG(WARN, "initialize macro block meta error.", K(ret));
+
     } else if (OB_SUCCESS != (ret = pmeta_.initialize(&data_file_, &logger_))) {
-      STORAGE_LOG(WARN, "initialize partition meta error.", K(ret));
+
     } else if (OB_SUCCESS != (ret = logger_.init(data_file_, log_dir_path_, 1024L*1024L*1024L))) {
-      STORAGE_LOG(WARN, "initialize commit logger", K(ret));
+
     } else if (OB_SUCCESS != (ret = logger_.replay())) {
-      STORAGE_LOG(WARN, "replay commit log error.", K(ret));
+
     } else if (OB_SUCCESS != (ret = marker_.initialize(&data_file_, &image_))) {
-      STORAGE_LOG(WARN, "initialize macro block marker error.", K(ret));
+
     } else {
       for (int64_t i = 0; i < data_file_.get_total_macro_block_cnt(); ++i) {
         const ObMacroBlockMeta *meta = image_.get_meta_ptr(i);
@@ -1174,11 +1174,11 @@ int ObStoragePerfRead::init_data_file()
         }
       }
       if (OB_SUCCESS != (ret = marker_.register_storage_meta(&image_))) {
-        STORAGE_LOG(WARN, "register macro block meta error.", K(ret));
+
       }  else if (OB_SUCCESS != (ret = marker_.register_storage_meta(&pmeta_))) {
-        STORAGE_LOG(WARN, "register macro block meta error.", K(ret));
+
       } else if (OB_SUCCESS != (ret = marker_.mark_init())) {
-        STORAGE_LOG(WARN, "build first free list error.", K(ret));
+
       }
     }
   }
@@ -1196,11 +1196,11 @@ int ObStoragePerfRead::set_trans_desc(ObTransDesc &trans_desc)
   trans_param.set_isolation(ObTransIsolation::READ_COMMITED);
   int64_t snapshot_version = 2;
   if (OB_SUCCESS != (ret = trans_desc.set_trans_id(trans_id))) {
-    STORAGE_LOG(WARN, "set trans_id error", K(ret));
+
   } else if (OB_SUCCESS != (ret = trans_desc.set_snapshot_version(snapshot_version))) {
-    STORAGE_LOG(WARN, "set snapshot_version error", K(snapshot_version), K(ret));
+
   } else if (OB_SUCCESS != (ret = trans_desc.set_trans_param(trans_param))) {
-    STORAGE_LOG(WARN, "set trans_param error", K(ret));
+
   } else {
     trans_desc.inc_sql_no();
   }
@@ -1212,7 +1212,7 @@ int ObStoragePerfRead::set_global_stat(ObStoragePerfStatistics &statics)
   int ret = OB_SUCCESS;
   ObDiagnoseTenantInfo *tenant_info = NULL;
   if (OB_FAIL(ObDIGlobalTenantCache::get_instance().get_all_stat_event(allocator_, tenant_dis_))) {
-    STORAGE_LOG(WARN, "failed to get stat event", K(ret));
+
   } else {
     for (int64_t i = 0; i < tenant_dis_.count(); ++i) {
       if (tenant_dis_.at(i).first == 1) {
@@ -1222,7 +1222,7 @@ int ObStoragePerfRead::set_global_stat(ObStoragePerfStatistics &statics)
     }
     if (tenant_info == NULL) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "tenant_info not found", K(ret));
+
     } else {
       statics.row_cache_hit_ = GLOBAL_EVENT_GET(ObStatEventIds::ROW_CACHE_HIT);
       statics.row_cache_miss_ = GLOBAL_EVENT_GET(ObStatEventIds::ROW_CACHE_MISS);
@@ -1248,7 +1248,7 @@ int ObStoragePerfRead::set_global_stat(ObStoragePerfStatistics &statics)
     allocator_.reuse();
     tenant_dis_.reuse();
     if (OB_FAIL(ObDIGlobalTenantCache::get_instance().get_all_wait_event(allocator_, tenant_dis_))) {
-      STORAGE_LOG(WARN, "failed to get stat event", K(ret));
+
     } else {
       for (int64_t i = 0; i < tenant_dis_.count(); ++i) {
         if (tenant_dis_.at(i).first == 1) {
@@ -1258,7 +1258,7 @@ int ObStoragePerfRead::set_global_stat(ObStoragePerfStatistics &statics)
       }
       if (tenant_info == NULL) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "tenant_info not found");
+
       } else {
         GLOBAL_WAIT_GET(ObWaitEventIds::DB_FILE_DATA_READ, statics.db_file_data_read_);
         GLOBAL_WAIT_GET(ObWaitEventIds::DB_FILE_DATA_INDEX_READ,statics.db_file_data_index_read_);

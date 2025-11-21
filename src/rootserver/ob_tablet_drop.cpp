@@ -336,7 +336,7 @@ int ObTabletDrop::execute()
       } else if (OB_FAIL(arg.init(*(tablet_ids), iter->first))) {
         LOG_WARN("failed to find leader", KR(ret), K(iter->first), KPC(tablet_ids));
       } else {
-        LOG_INFO("generate remove arg", K(arg), K(lbt()), KPC(tablet_ids));
+
         int64_t buf_len = arg.get_serialize_size();
         int64_t pos = 0;
         char *buf = (char*)allocator_.alloc(buf_len);
@@ -356,7 +356,7 @@ int ObTabletDrop::execute()
                                 transaction::ObTxDataSourceType::DELETE_TABLET_NEW_MDS, buf, buf_len))) {
               LOG_WARN("fail to register_tx_data", KR(ret), K(arg), K(buf), K(buf_len));
               if (OB_LS_LOCATION_LEADER_NOT_EXIST == ret || OB_NOT_MASTER == ret) {
-                LOG_INFO("fail to find leader, try again", K_(tenant_id), K(arg));
+
                 ob_usleep(SLEEP_INTERVAL);
               }
             }

@@ -175,7 +175,7 @@ int ObBackupWrapperIODevice::alloc_block(const ObIODOpts *opts, ObIOFd &block_id
   } else if (OB_FAIL(convert_block_id_to_addr_(idx, block_id))) {
     LOG_WARN("failed to convert block id to addr", K(ret), K(idx));
   } else {
-    LOG_INFO("success alloc block id", K(block_id));
+
   }
   return ret;
 }
@@ -205,7 +205,7 @@ int ObBackupWrapperIODevice::pread(const ObIOFd &fd, const int64_t offset, const
                                     checker))) {
     LOG_WARN("failed to pread", K(ret), K(fd), K(offset), K(io_offset), K(size));
   } else {
-    LOG_INFO("backup wrapper io device pread", K(fd), K(offset), K(io_offset), K(size), K(read_size));
+
   }
   return ret;
 }
@@ -235,7 +235,7 @@ int ObBackupWrapperIODevice::pwrite(const ObIOFd &fd, const int64_t offset,
                                      write_size))) {
     LOG_WARN("failed to pwrite", K(ret), K(macro_id), K(offset), K(io_offset), K(size));
   } else {
-    LOG_INFO("backup wrapper io device pwrite", K(fd), K(macro_id), K(offset), K(io_offset), K(size), K(write_size));
+
   }
   return ret;
 }
@@ -249,7 +249,7 @@ int ObBackupWrapperIODevice::close(const ObIOFd &fd)
     LOG_WARN("failed to close fd", K(ret), K(fd));
   } else {
     is_opened_ = false;
-    LOG_DEBUG("success close io fd", K(ret), K_(io_fd));
+
   }
   return ret;
 }
@@ -276,7 +276,7 @@ int ObBackupWrapperIODevice::alloc_mem_block(const int64_t size, char *&buf)
     ret = OB_ALLOCATE_MEMORY_FAILED;
     LOG_WARN("failed to allocate memory", K(ret), K(size));
   } else {
-    LOG_INFO("alloc mem block", K(size), KP(buf));
+
   }
   return ret;
 }
@@ -575,7 +575,7 @@ int ObBackupDeviceHelper::get_companion_index_file_path_(const uint64_t tenant_i
       backup_dest, ls_id, backup_data_type, turn_id, retry_id, file_id, tree_type, backup_path))) {
     LOG_WARN("failed to get intermediate layer index backup path", K(ret), K(backup_dest), K(backup_set_desc), K(tree_type));
   } else {
-    LOG_DEBUG("get intermediate layer index backup path", K(backup_dest), K(backup_path));
+
   }
   return ret;
 }
@@ -602,7 +602,7 @@ int ObBackupDeviceHelper::get_backup_data_file_path_(const uint64_t tenant_id,
       backup_dest, ls_id, backup_data_type, turn_id, retry_id, file_id, backup_path))) {
     LOG_WARN("failed to get backup data file backup path", K(ret), K(backup_dest), K(backup_set_desc));
   } else {
-    LOG_INFO("get backup data file backup path", K(backup_dest), K(backup_path));
+
   }
   return ret;
 }
@@ -638,7 +638,7 @@ int ObBackupDeviceHelper::get_backup_dest_(const uint64_t tenant_id, const int64
     } else if (OB_FAIL(mgr->get_backup_dest(backup_set_id, backup_dest))) {
       LOG_WARN("failed to get backup dest", K(ret), K(backup_set_id));
     } else {
-      LOG_INFO("get backup dest", K(backup_set_id), K(backup_dest));
+
     }
   }
   return ret;
@@ -655,7 +655,7 @@ int ObBackupDeviceHelper::get_backup_type_(const uint64_t tenant_id, const int64
     } else if (OB_FAIL(mgr->get_backup_type(backup_set_id, backup_type))) {
       LOG_WARN("failed to get backup type", K(ret), K(backup_set_id));
     } else {
-      LOG_INFO("get backup type", K(backup_set_id), K(backup_type));
+
     }
   }
   return ret;
@@ -677,7 +677,7 @@ int ObBackupDeviceHelper::get_restore_dest_id_(const uint64_t tenant_id, ObStora
         LOG_WARN("failed to get backup type", K(ret), K(tenant_id));
       } else {
         mod.storage_id_ = dest_id;
-        LOG_INFO("get backup dest id", K(mod));
+
       }
     }
   }

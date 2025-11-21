@@ -252,7 +252,7 @@ int ObTabletReorganizeHistoryTableOperator::insert_(
         } else if (OB_FAIL(sql_proxy.write(complete_record.tenant_id_, insert_sql.ptr(), affected_rows))) {
           LOG_WARN("failed to write sql", K(ret), K(insert_sql));
         } else {
-          LOG_INFO("insert tablet reorganize history table success", K(ret), K(affected_rows), K(complete_record.tenant_id_));
+
           insert_sql.reuse();
           if (OB_FAIL(insert_sql.assign_fmt("INSERT INTO %s (tenant_id, ls_id, src_tablet_id, dest_tablet_id, "
               "type, create_time, finish_time) VALUES ", OB_ALL_TABLET_REORGANIZE_HISTORY_TNAME))) {

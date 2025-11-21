@@ -25,7 +25,7 @@ void ObAsyncTimerTask::runTimerTask()
   if (OB_FAIL(work_queue_.add_async_task(*this))) {
     LOG_ERROR("failed to submit async task", K(ret), KPC(this));
   } else {
-    LOG_INFO("add async task", KPC(this));
+
   }
 }
 ////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ void ObWorkQueue::destroy()
     timer_.destroy();
     task_queue_.destroy();
     inited_ = false;
-    LOG_INFO("work queue destroy");
+
   }
 }
 
@@ -141,7 +141,7 @@ int ObWorkQueue::start()
   } else if (OB_FAIL(timer_.start())) {
     LOG_WARN("failed to start timer", K(ret));
   } else {
-    LOG_INFO("work queue started");
+
   }
   return ret;
 }
@@ -156,7 +156,7 @@ int ObWorkQueue::stop()
     timer_.cancel_all();
     timer_.stop();
     task_queue_.stop();
-    LOG_INFO("work queue stopped");
+
   }
   return ret;
 }
@@ -171,7 +171,7 @@ int ObWorkQueue::wait()
   } else {
     timer_.wait();
     task_queue_.wait();
-    LOG_INFO("work queue waited");
+
   }
   return ret;
 }

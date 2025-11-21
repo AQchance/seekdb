@@ -71,7 +71,7 @@ int ObColumnChecksumCalculator::calc_column_checksum(
     LOG_WARN("ObColumnChecksumCalculator has not been inited", K(ret));
   } else if (OB_ISNULL(new_row)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), KP(new_row), KP(old_row));
+
   } else if (new_row->row_flag_.is_delete()) {
     // When the row is not in base sstable, it will not be purged
     // NULL means checksums of all columns need to be calculated
@@ -79,10 +79,10 @@ int ObColumnChecksumCalculator::calc_column_checksum(
     // true means checksum of the row needes to be added
     if (OB_ISNULL(old_row)) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "error unexpected, old row must not be NULL", K(ret), KP(old_row));
+
     } else if (old_row->row_flag_.is_exist_without_delete()) {
       if (OB_FAIL(calc_column_checksum(col_descs, *old_row, false, NULL, column_checksum_))) {
-        STORAGE_LOG(WARN, "fail to calculate checksum of old row", K(*old_row), K(ret));
+
       }
     }
   } else if (new_row->row_flag_.is_exist_without_delete()) {
@@ -90,24 +90,24 @@ int ObColumnChecksumCalculator::calc_column_checksum(
     if (nullptr != old_row) {
       if (old_row->row_flag_.is_exist_without_delete()) {
         if (OB_FAIL(calc_column_checksum(col_descs, *old_row, false, is_column_changed, column_checksum_))) {
-          STORAGE_LOG(WARN, "fail to calculate checksum of old row", K(*old_row), K(ret));
+
         } else if (OB_FAIL(calc_column_checksum(col_descs, *new_row, true, is_column_changed, column_checksum_))) {
-          STORAGE_LOG(WARN, "fail to calculate checksum of new row", K(*new_row), K(ret));
+
         }
       } else if (old_row->row_flag_.is_not_exist()) {
         if (OB_FAIL(calc_column_checksum(col_descs, *new_row, true, is_column_changed, column_checksum_))) {
-          STORAGE_LOG(WARN, "fail to calculate checksum of new row", K(*new_row), K(ret));
+
         }
       } else {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected flag of old row ", K(*old_row), K(ret));
+
       }
     } else if (OB_FAIL(calc_column_checksum(col_descs, *new_row, true, is_column_changed, column_checksum_))) {
-      STORAGE_LOG(WARN, "fail to calculate checksum of new row", K(*new_row), K(ret));
+
     }
   } else {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected flag of new row ", K(*new_row), K(ret));
+
   }
   return ret;
 }

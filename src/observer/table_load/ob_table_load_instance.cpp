@@ -223,7 +223,7 @@ int ObTableLoadInstance::start_stmt(
   }
   if (OB_SUCC(ret)) {
     stmt_ctx_.is_started_ = true;
-    LOG_INFO("start stmt succeed", KR(ret), K(stmt_ctx_), K(param));
+
   }
   return ret;
 }
@@ -248,7 +248,7 @@ int ObTableLoadInstance::end_stmt(const bool commit)
     }
   }
   stmt_ctx_.is_started_ = false;
-  LOG_INFO("end stmt succeed", KR(ret));
+
 
   SERVER_EVENT_ADD("direct_load", "end",
                  "tenant_id", MTL_ID(),
@@ -307,7 +307,7 @@ int ObTableLoadInstance::start_sql_tx()
     } else {
       stmt_ctx_.tx_desc_ = tx_desc;
       execute_ctx_->tx_desc_ = tx_desc;
-      LOG_INFO("use insert into select tx", KPC(tx_desc));
+
     }
   } else { // other path, tx_desc could be null, tx_param needs to be set manually
     if (OB_UNLIKELY(nullptr != tx_desc && tx_desc->is_in_tx())) {
@@ -330,7 +330,7 @@ int ObTableLoadInstance::start_sql_tx()
     } else {
       stmt_ctx_.tx_desc_ = tx_desc;
       execute_ctx_->tx_desc_ = tx_desc;
-      LOG_INFO("start tx succeed", KPC(tx_desc));
+
     }
   }
   return ret;
@@ -355,13 +355,13 @@ int ObTableLoadInstance::end_sql_tx(const bool commit)
         if (OB_FAIL(txs->commit_tx(*tx_desc, stmt_timeout_ts))) {
           LOG_WARN("failed to commit tx", KR(ret), KPC(tx_desc));
         } else {
-          LOG_INFO("commit tx succeed", KPC(tx_desc));
+
         }
       } else {
         if (OB_FAIL(txs->rollback_tx(*tx_desc))) {
           LOG_WARN("failed to rollback tx", KR(ret), KPC(tx_desc));
         } else {
-          LOG_INFO("rollback tx succeed", KPC(tx_desc));
+
         }
       }
       if (OB_TMP_FAIL(txs->release_tx(*tx_desc))) {
@@ -411,7 +411,7 @@ int ObTableLoadInstance::lock_table_in_tx()
   } else if (OB_FAIL(try_lock_in_tx(lock_table_arg))) {
     LOG_WARN("fail to try lock in tx", KR(ret), K(lock_table_arg));
   } else {
-    LOG_INFO("lock table in tx succeed", K(lock_table_arg));
+
   }
   return ret;
 }
@@ -435,7 +435,7 @@ int ObTableLoadInstance::lock_tablets_in_tx(const ObIArray<ObTabletID> &tablet_i
   } else if (OB_FAIL(try_lock_in_tx(lock_tablets_arg))) {
     LOG_WARN("fail to try lock in tx", KR(ret), K(lock_tablets_arg));
   } else {
-    LOG_INFO("lock tablets in tx succeed", K(lock_tablets_arg), K(tablet_ids));
+
   }
   return ret;
 }
@@ -506,7 +506,7 @@ int ObTableLoadInstance::init_ddl_param_for_inc_direct_load()
     ddl_param.snapshot_version_ = current_scn.get_val_for_tx();
     ddl_param.data_version_ = tenant_data_version;
     ddl_param.cluster_version_ = GET_MIN_CLUSTER_VERSION();
-    LOG_INFO("init ddl param for inc direct load succeed", K(ddl_param));
+
   }
   return ret;
 }
@@ -541,7 +541,7 @@ int ObTableLoadInstance::start_redef_table(
     ddl_param.data_version_ = start_res.data_format_version_;
     ddl_param.cluster_version_ = GET_MIN_CLUSTER_VERSION();
     ddl_param.is_no_logging_ = start_res.is_no_logging_;
-    LOG_INFO("start redef table succeed", K(ddl_param));
+
   }
   return ret;
 }
@@ -558,7 +558,7 @@ int ObTableLoadInstance::commit_redef_table()
   if (OB_FAIL(ObTableLoadRedefTable::finish(arg, *stmt_ctx_.session_info_))) {
     LOG_WARN("fail to finish redef table", KR(ret), K(arg));
   } else {
-    LOG_INFO("commit redef table succeed");
+
   }
   return ret;
 }
@@ -572,7 +572,7 @@ int ObTableLoadInstance::abort_redef_table()
   if (OB_FAIL(ObTableLoadRedefTable::abort(arg, *stmt_ctx_.session_info_))) {
     LOG_WARN("fail to abort redef table", KR(ret), K(arg));
   } else {
-    LOG_INFO("abort redef table succeed");
+
   }
   return ret;
 }
@@ -744,7 +744,7 @@ int ObTableLoadInstance::add_tx_result_to_user_session()
       LOG_WARN("failed to add tx exec result", KR(ret), K(exec_result));
     } else {
       stmt_ctx_.has_added_tx_result_ = true;
-      LOG_INFO("add tx result to user session succeed");
+
     }
   }
   return ret;

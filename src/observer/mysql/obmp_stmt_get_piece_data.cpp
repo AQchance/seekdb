@@ -73,7 +73,7 @@ int ObMPStmtGetPieceData::before_process()
     ObMySQLUtil::get_int4(pos, offset_);
     ObMySQLUtil::get_int2(pos, column_id_);
     ObMySQLUtil::get_int8(pos, piece_size_);
-    LOG_DEBUG("get piece data", K(stmt_id_), K(column_id_), K(piece_size_));
+
   }
   return ret;
 }
@@ -147,7 +147,7 @@ int ObMPStmtGetPieceData::process()
       LOG_WARN("fail get process extra info", K(ret));
     } else if (OB_FAIL(session.check_tenant_status())) {
       need_disconnect = false;
-      LOG_INFO("unit has been migrated, need deny new request", K(ret), K(MTL_ID()));
+
     } else {
       need_disconnect = false;
       THIS_WORKER.set_timeout_ts(get_receive_timestamp() + query_timeout);

@@ -458,7 +458,7 @@ int ObTriggerInfo::gen_package_source(const uint64_t tenant_id,
       OX (source = is_header ? spec_source : body_source);
     }
   }
-  LOG_INFO("generate trigger package end", K(source), K(ret));
+
   return ret;
 }
 
@@ -832,7 +832,7 @@ int ObTriggerInfo::fill_package_body_source(const ObTriggerInfo &trigger_info,
   }
   OZ (BUF_PRINTF(is_ora ? BODY_END : BODY_END_MYSQL));
   OX (body_source.assign_ptr(buf, static_cast<int32_t>(pos)));
-  LOG_DEBUG("TRIGGER", K(body_source));
+
   return ret;
 }
 
@@ -1084,7 +1084,7 @@ int ObTriggerInfo::gen_procedure_source(const common::ObString &base_object_data
                    delimiter, base_object_name.length(), base_object_name.ptr(), delimiter,
                    tg_body.length(), tg_body.ptr()));
     OX (procedure_source.assign_ptr(buf, static_cast<int32_t>(pos)));
-    LOG_DEBUG("TRIGGER PROCEDURE", K(procedure_source));
+
   }
   return ret;
 }
@@ -1180,7 +1180,7 @@ int ObTriggerInfo::replace_table_name_in_body(ObTriggerInfo &trigger_info,
                    trg_tail_str));
     OZ (trigger_info.set_trigger_body(ObString(buf)));
   }
-  LOG_INFO("rebuild trigger body end", K(trigger_info), K(base_object_name), K(lbt()), K(ret));
+
   return ret;
 }
 

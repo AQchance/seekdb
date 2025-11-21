@@ -158,10 +158,10 @@ int ObPxCoordOp::init_dfc(ObDfo &dfo, dtl::ObDtlChTotalInfo *ch_info)
     int ret = OB_SUCCESS;
     ret = OB_E(EventTable::EN_FORCE_DFC_BLOCK) ret;
     force_block = (OB_HASH_NOT_EXIST == ret);
-    LOG_TRACE("Worker init dfc", K(dfo_key), K(dfc_.is_receive()), K(force_block), K(ret));
+
     ret = OB_SUCCESS;
 #endif
-    LOG_TRACE("QC init dfc", K(dfo_key), K(dfc_.is_receive()), K(force_block));
+
   }
   return ret;
 }
@@ -171,7 +171,7 @@ void ObPxCoordOp::debug_print(ObDfo &root)
   // print plan tree
   const ObPhysicalPlan *phy_plan = root.get_phy_plan();
   if (NULL != phy_plan) {
-    LOG_TRACE("ObPxCoord PLAN", "plan", *phy_plan);
+
   }
   // print dfo tree
   debug_print_dfo_tree(0, root);
@@ -351,7 +351,7 @@ int64_t ObPxCoordOp::get_adaptive_px_dop(int64_t dop) const
   } else {
     px_dop = px_dop >= 1 ? px_dop : dop;
   }
-  LOG_TRACE("adaptive px dop", K(get_spec().get_id()), K(px_dop));
+
   return px_dop;
 }
 
@@ -549,7 +549,7 @@ int ObPxCoordOp::inner_close()
   }
   ctx_.del_extra_check(server_alive_checker_);
   clean_dfos_dtl_interm_result();
-  LOG_TRACE("byebye. exit QC Coord", K(spec_.id_), K(enable_px_batch_rescan()));
+
   return ret;
 }
 
@@ -637,7 +637,7 @@ int ObPxCoordOp::destroy_all_channel()
   // must erase after unlink channel
   tmp_ret = erase_dtl_interm_result();
   if (tmp_ret != common::OB_SUCCESS) {
-    LOG_TRACE("release interm result failed", KR(tmp_ret));
+
   }
   return ret;
 }
@@ -721,7 +721,7 @@ int ObPxCoordOp::wait_all_running_dfos_exit()
       } else if (all_dfo_terminate) {
         wait_msg = false;
         collect_trans_result_ok = true;
-        LOG_TRACE("all dfo has been terminate", K(ret));
+
         break;
       } else if (OB_FAIL(ctx_.fast_check_status_ignore_interrupt())) {
         if (OB_TIMEOUT == ret) {
@@ -740,7 +740,7 @@ int ObPxCoordOp::wait_all_running_dfos_exit()
       if (OB_FAIL(ret)) {
       } else if (OB_FAIL(loop.process_one_if(&control_channels, nth_channel))) {
         if (OB_DTL_WAIT_EAGAIN == ret) {
-          LOG_DEBUG("no message, waiting sqc report", K(ret));
+
           ret = OB_SUCCESS;
         } else if (OB_ITER_END != ret) {
           LOG_WARN("fail process message", K(ret));
@@ -803,7 +803,7 @@ int ObPxCoordOp::check_all_sqc(ObIArray<ObDfo *> &active_dfos,
     ARRAY_FOREACH_X(sqcs, idx, cnt, OB_SUCC(ret)) {
       ObPxSqcMeta &sqc = sqcs.at(idx);
       if (sqc.need_report()) {
-        LOG_DEBUG("wait for sqc", K(sqc));
+
         int64_t cur_timestamp = ObTimeUtility::current_time();
         // > 1s, increase gradually
         // In order to get the dfo to propose as soon as possible and
@@ -856,7 +856,7 @@ int ObPxCoordOp::register_interrupt()
   } else {
     register_interrupted_ = true;
   }
-  LOG_TRACE("QC register interrupt", K(ret));
+
   return ret;
 }
 
@@ -866,7 +866,7 @@ void ObPxCoordOp::clear_interrupt()
     UNSET_INTERRUPTABLE(interrupt_id_);
     register_interrupted_ = false;
   }
-  LOG_TRACE("unregister interrupt");
+
 }
 
 int ObPxCoordOp::receive_channel_root_dfo(
@@ -1077,7 +1077,7 @@ int ObPxCoordOp::erase_dtl_interm_result()
         for (int j = 0; j < last_px_batch_rescan_size_; ++j) {
           key.batch_id_ = j;
           if (OB_FAIL(MTL(ObDTLIntermResultManager*)->erase_interm_result_info(key))) {
-            LOG_TRACE("fail to release receive internal result", K(ret));
+
           }
         }
       }

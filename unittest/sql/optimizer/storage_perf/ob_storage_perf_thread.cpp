@@ -37,16 +37,16 @@ int MultiThreadInit::init(MockSchemaService *schema_service, ObRestoreSchema *re
 
   if(is_inited_){
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "inited twice");
+
   } else if (NULL == schema_service) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "schema_service is null", K(ret));
+
   } else {
 
     config_ = config;
 
     if(OB_SUCCESS != (ret = cache_suite_.init(10, 1, 1, 1, 100))){
-      STORAGE_LOG(WARN, "fail to init cache suite", K(ret));
+
     } else {
       schema_service_ = schema_service;
       restore_schema_ = restore_schema;
@@ -66,9 +66,9 @@ int MultiThreadRead::init(MockSchemaService *schema_service, ObRestoreSchema *re
   int ret = OB_SUCCESS;
   MultiThreadInit::init(schema_service, restore_schema, config);
   if (OB_FAIL(data_.init(&config_, schema_service_, &cache_suite_, restore_schema_))) {
-    STORAGE_LOG(WARN, "init data failed, ", K(ret));
+
   } else if (0 != pthread_barrier_init(&barrier_, NULL, read_thread_no_)) {
-    STORAGE_LOG(WARN, "init barrier failed");
+
   }
   return ret;
 }
@@ -90,11 +90,11 @@ void MultiThreadWrite::run(obsys::CThread *thread, void *arg)
   ObStoragePerfWrite write;
 
   if(OB_FAIL(write.init(&config_, (long)arg, restore_schema_, schema_service_))){
-    STORAGE_LOG(WARN, "fail to init", K(ret));
+
   } else if(OB_FAIL(write.create_sstable(cache_suite_, used_macro_num))){
-    STORAGE_LOG(WARN, "fail to create sstable", K(ret));
+
   } else if(OB_FAIL(write.close_sstable())){
-    STORAGE_LOG(WARN, "fail to close sstable", K(ret));
+
   }
 
   {
@@ -121,9 +121,9 @@ void MultiThreadSingleGet::run(obsys::CThread *thread, void *arg)
  // const int partition_num = config_.get_total_partition_num();
   if(OB_FAIL(read.init(&config_, (int64_t)arg, &cache_suite_, restore_schema_,
           schema_service_, data_.get_partition_storage(), &barrier_))){
-    STORAGE_LOG(WARN, "fail to init read", K(ret));
+
   } else if(OB_FAIL(read.single_get_speed())){
-    STORAGE_LOG(WARN, "fail to test single row speed", K(ret));
+
   }
   ret_[(long)(arg)] = ret;
 }
@@ -144,9 +144,9 @@ void MultiThreadMultiGet::run(obsys::CThread *thread, void *arg)
   read.assign_read_cols(this->read_cols_);
   if(OB_FAIL(read.init(&config_, (int64_t)arg, &cache_suite_, restore_schema_,
           schema_service_, data_.get_partition_storage(), &barrier_))){
-    STORAGE_LOG(WARN, "fail to init read", K(ret));
+
   } else if(OB_FAIL(read.multi_get_speed())){
-    STORAGE_LOG(WARN, "fail to get sstable", K(ret));
+
   }
   ret_[(long)(arg)] = ret;
 }
@@ -168,9 +168,9 @@ void MultiThreadScan::run(obsys::CThread *thread, void *arg)
   read.assign_read_cols(this->read_cols_);
   if(OB_FAIL(read.init(&config_, (int64_t)arg, &cache_suite_, restore_schema_,
           schema_service_, data_.get_partition_storage(), &barrier_))){
-    STORAGE_LOG(WARN, "fail to init read", K(ret));
+
   } else if(OB_FAIL(read.scan_speed())){
-    STORAGE_LOG(WARN, "fail to get sstable", K(ret));
+
   }
   ret_[(long)(arg)] = ret;
 }

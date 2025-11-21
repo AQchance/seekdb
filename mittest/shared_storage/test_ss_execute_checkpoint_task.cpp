@@ -127,7 +127,7 @@ int TestSSExecuteCheckpointTask::restart_micro_cache()
     do {
       is_cache_enabled = micro_cache_->is_enabled_;
       if (!is_cache_enabled) {
-        LOG_INFO("ss_micro_cache is still disabled");
+
         ob_usleep(1000 * 1000);
       }
     } while (!is_cache_enabled && ObTimeUtility::current_time_s() - start_time_s < REPLAY_CKPT_TIMEOUT_S);
@@ -776,10 +776,10 @@ TEST_F(TestSSExecuteCheckpointTask, test_micro_cache_ckpt_after_restart)
   ASSERT_EQ(OB_SUCCESS, super_block1.assign(phy_blk_mgr_->super_block_));
 
   // 3. restart micro cache
-  LOG_INFO("TEST: start first restart");
+
   ASSERT_EQ(OB_SUCCESS, restart_micro_cache());
   micro_cache_->task_runner_.disable_task();
-  LOG_INFO("TEST: finish first restart");
+
   
   // 4. check super_block, micro_meta and phy_block_info
   check_phy_blk_info(phy_block_arr1, 1);
@@ -822,10 +822,10 @@ TEST_F(TestSSExecuteCheckpointTask, test_micro_cache_ckpt_after_restart)
   ObSSMicroCacheSuperBlock super_block3;
   ASSERT_EQ(OB_SUCCESS, super_block3.assign(phy_blk_mgr_->super_block_));
 
-  LOG_INFO("TEST: start second restart");
+
   ASSERT_EQ(OB_SUCCESS, restart_micro_cache());
   micro_cache_->task_runner_.disable_task();
-  LOG_INFO("TEST: finish second restart");
+
 
   // 8. check super_block, micro_meta and phy_block_info
   if (phy_blk_mgr_->super_block_.modify_time_us_ == super_block2.modify_time_us_) {
@@ -844,7 +844,7 @@ TEST_F(TestSSExecuteCheckpointTask, test_micro_cache_ckpt_after_restart)
 /* After micro_ckpt_task execucte scan_blocks_to_reuse, must set need_scan_blk_ = false */
 TEST_F(TestSSExecuteCheckpointTask, test_micro_ckpt_task_exec_scan_block)
 {
-  LOG_INFO("TEST: test_micro_ckpt_task_exec_scan_block");
+
   int ret = OB_SUCCESS;
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ASSERT_NE(nullptr, micro_cache);
@@ -873,7 +873,7 @@ TEST_F(TestSSExecuteCheckpointTask, test_micro_ckpt_task_exec_scan_block)
  * by micro_ckpt exceeds meta_blk.min_cnt_ */
 TEST_F(TestSSExecuteCheckpointTask, test_reserve_micro_ckpt_blk)
 {
-  LOG_INFO("TEST_CASE: start test_reserve_micro_ckpt_blk");
+
   int ret = OB_SUCCESS;
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ASSERT_NE(nullptr, micro_cache);
@@ -924,7 +924,7 @@ TEST_F(TestSSExecuteCheckpointTask, test_reserve_micro_ckpt_blk)
 
 TEST_F(TestSSExecuteCheckpointTask, test_dynamic_update_arc_limit)
 {
-  LOG_INFO("TEST_CASE: start test_dynamic_update_arc_limit");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSARCInfo &arc_info = micro_cache->micro_meta_mgr_.arc_info_;
   ObSSPhysicalBlockManager &phy_blk_mgr = micro_cache->phy_blk_mgr_;
@@ -996,7 +996,7 @@ TEST_F(TestSSExecuteCheckpointTask, test_dynamic_update_arc_limit)
 
 TEST_F(TestSSExecuteCheckpointTask, test_estimate_micro_meta_persist_cost)
 {
-  LOG_INFO("TEST_CASE: start test_estimate_micro_meta_persist_cost");
+
   int ret = OB_SUCCESS;
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ASSERT_NE(nullptr, micro_cache);
@@ -1029,7 +1029,7 @@ TEST_F(TestSSExecuteCheckpointTask, test_estimate_micro_meta_persist_cost)
     const int64_t block_idx = meta_blk_arr.at(i);
     ASSERT_EQ(OB_SUCCESS, block_reader.inner_read_block_(block_idx));
     total_item_cnt += block_reader.linked_header_.item_count_;
-    LOG_INFO("print block header", K(i), K(block_idx), K_(block_reader.common_header), K_(block_reader.linked_header));
+
   }
 
   const int64_t total_blk_cnt = meta_blk_arr.count() - 1;

@@ -303,7 +303,7 @@ int ObValuesTableCompression::try_batch_exec_params(ObIAllocator &allocator,
                                             is_valid))) {
         LOG_WARN("fail to parser insert string", K(ret), K(fp_result.pc_key_.name_));
       } else if (!is_valid || param_count <= 0 || batch_count <= 1 || delta_len <= 0) {
-        LOG_TRACE("can not do batch opt", K(ret), K(is_valid), K(param_count), K(batch_count), K(delta_len));
+
       } else if (OB_FAIL(add_raw_array_params(allocator, pc_ctx, fp_result, param_idx, batch_count,
                                               param_count))) {
         LOG_WARN("fail to rebuild raw_param", K(ret));
@@ -374,7 +374,7 @@ int ObValuesTableCompression::try_batch_exec_params(ObIAllocator &allocator,
     // handle error.
     if (ret != OB_SUCCESS) {
       // Here whatever error can be swallowed, just cannot do batch optimization after the error
-      LOG_TRACE("failed to try fold params for values table", K(ret));
+
       phy_ctx->get_array_param_groups().reset();
       pc_ctx.fp_result_.array_params_.reset();
       pc_ctx.new_raw_sql_.reset();
@@ -676,7 +676,7 @@ int ObValuesTableCompression::resolve_params_for_values_clause(ObPlanCacheCtx &p
                                                                         type_ctx))) {
               LOG_WARN("failed to aggregate result type for merge", K(ret));
             } else {
-              LOG_TRACE("get result type", K(new_res_type), K(res_types));
+
             }
           }
           if (OB_SUCC(ret)) {

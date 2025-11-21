@@ -238,7 +238,7 @@ void ObTabletLeakChecker::dump_pinned_tablet_info()
   if (OB_FAIL(ObTabletHandleIndexMap::get_instance()->foreach(callback))) {
     LOG_WARN("fail to foreach on tb_map_", K(ret));
   } else {
-    LOG_INFO("dump pinned tablet info finished");
+
   }
 }
 

@@ -924,7 +924,7 @@ int ObRFRangeFilterVecMsg::prepare_query_range()
       is_query_range_ready_ = true;
     }
   }
-  LOG_TRACE("range filter prepare query range", K(ret), K(is_query_range_ready_), K(query_range_));
+
   return ret;
 }
 

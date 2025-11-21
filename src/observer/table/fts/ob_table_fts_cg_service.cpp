@@ -526,7 +526,7 @@ int ObTableFtsDmlCgService::check_is_main_table_in_fts_ddl(ObTableCtx &ctx,
     LOG_WARN("table schema is null", K(ret), K(table_schema));
   } else if (!table_schema->is_user_table() || table_schema->is_fts_index()) {
     das_dml_ctdef.is_main_table_in_fts_ddl_ = false;
-    LOG_TRACE("neither user table nor fts index, nothing to do", K(ret), K(table_id));
+
   } else {
     bool has_fts_index = false;
     bool is_main_table_in_fts_ddl = false;

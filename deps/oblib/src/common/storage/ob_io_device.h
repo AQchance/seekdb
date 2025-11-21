@@ -93,7 +93,7 @@ public:
     int ret = OB_SUCCESS;
     if (OB_UNLIKELY(is_inited_)) {
       ret = OB_INIT_TWICE;
-      STORAGE_LOG(WARN, "cannot initialize twice", K(ret));
+
     } else {
       allocator_ = &allocator;
       is_inited_ = true;
@@ -114,10 +114,10 @@ public:
     T *t = nullptr;
     if (OB_UNLIKELY(!is_inited_)) {
       ret = OB_NOT_INIT;
-      STORAGE_LOG(WARN, "IOCBPreAllocatedPool isn't initialized", K(ret));
+
     } else if (OB_ISNULL(t = static_cast<T *>(allocator_->alloc(sizeof(T))))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "fail to allocate iocb", K(ret));
+
     } else {
       ret = OB_SUCCESS;
     }
@@ -127,7 +127,7 @@ public:
   {
     if (OB_ISNULL(ptr)) {
     } else if (OB_ISNULL(allocator_)) {
-      STORAGE_LOG_RET(ERROR, OB_ERR_UNEXPECTED, "allocator is nullptr!!!", K_(is_inited), KP_(allocator), KP(ptr));
+
     } else {
       allocator_->free(ptr);
     }

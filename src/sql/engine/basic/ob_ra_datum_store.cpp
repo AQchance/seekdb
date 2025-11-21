@@ -137,7 +137,7 @@ int ObRADatumStore::StoredRow::to_expr(const common::ObIArray<ObExpr*> &exprs,
       } else {
         exprs.at(i)->locate_expr_datum(ctx) = cells()[i];
         exprs.at(i)->set_evaluated_projected(ctx);
-        LOG_DEBUG("succ to_expr", K(cnt_), K(i), KPC(exprs.at(i)), K(cells()[i]));
+
       }
     }
   }
@@ -154,7 +154,7 @@ int ObRADatumStore::StoredRow::assign(const StoredRow *sr)
                   this,
                   *(const char **)&src_cells[i].ptr_, sr);
   }
-  LOG_DEBUG("trace unswizzling", K(ret), KPC(this), KPC(sr));
+
   return ret;
 }
 
@@ -214,7 +214,7 @@ int ObRADatumStore::Block::add_row(ShrinkBuffer &buf,
         LOG_WARN("fill buffer head failed", K(ret), K(buf), K(row_size - ROW_INDEX_SIZE));
       } else {
         rows_++;
-        LOG_DEBUG("finish add_row", K(rows_), K(row_size), KPC(sr));
+
         if (NULL != stored_row) {
           *stored_row = sr;
         }
@@ -256,7 +256,7 @@ int ObRADatumStore::Block::add_row(ShrinkBuffer &buf,
         LOG_WARN("fill buffer head failed", K(ret), K(buf), K(row_size - ROW_INDEX_SIZE));
       } else {
         rows_++;
-        LOG_DEBUG("finish add_row", K(rows_), K(row_size), KPC(sr));
+
         if (NULL != stored_row) {
           *stored_row = sr;
         }
@@ -291,7 +291,7 @@ int ObRADatumStore::Block::copy_stored_row(ShrinkBuffer &buf, const StoredRow &s
         LOG_WARN("fill buffer head failed", K(ret), K(buf), K(row_size - ROW_INDEX_SIZE));
       } else {
         rows_++;
-        LOG_DEBUG("finish copy_stored_row", K(rows_), K(row_size), KPC(sr));
+
         if (nullptr != dst_sr) {
           *dst_sr = sr;
         }
@@ -415,7 +415,7 @@ void ObRADatumStore::reset()
     if (OB_FAIL(FILE_MANAGER_INSTANCE_WITH_MTL_SWITCH.remove(tenant_id_, fd_))) {
       LOG_WARN("remove file failed", K(ret), K_(fd));
     } else {
-      LOG_INFO("close file success", K(ret), K_(fd));
+
     }
     fd_ = -1;
     dir_id_ = -1;
@@ -446,7 +446,7 @@ void ObRADatumStore::reuse()
     if (OB_FAIL(FILE_MANAGER_INSTANCE_WITH_MTL_SWITCH.remove(tenant_id_, fd_))) {
       LOG_WARN("remove file failed", K(ret), K_(fd));
     } else {
-      LOG_INFO("close file success", K(ret), K_(fd));
+
     }
     fd_ = -1;
     dir_id_ = -1;
@@ -718,7 +718,7 @@ int ObRADatumStore::build_idx_block()
 //     dumps all blocks if needed
 int ObRADatumStore::dump(const bool all_dump, const int64_t target_dump_size)
 {
-  LOG_TRACE("before dump block", K(all_dump), K(target_dump_size), K(*this));
+
   int ret = OB_SUCCESS;
   int64_t tmp_dumped_size = 0;
   LinkNode *node = blk_mem_list_.get_first();
@@ -735,7 +735,7 @@ int ObRADatumStore::dump(const bool all_dump, const int64_t target_dump_size)
     } else if (has_index_block() && OB_FAIL(switch_idx_block(true /* finish_add */))) {
       LOG_WARN("fail to dump last index block", K(ret));
     }
-    LOG_TRACE("dump all blocks", K(blk_mem_list_.get_size()));
+
   }
 
   bool is_ib = false;
@@ -813,7 +813,7 @@ int ObRADatumStore::dump(const bool all_dump, const int64_t target_dump_size)
     }
   }
 
-  LOG_TRACE("after dump block", K(all_dump), K(tmp_dumped_size), K(*this));
+
   return ret;
 }
 
@@ -1224,7 +1224,7 @@ int ObRADatumStore::write_file(BlockIndex &bi, void *buf, int64_t size)
         LOG_WARN("open file failed", K(ret));
       } else {
         file_size_ = 0;
-        LOG_INFO("open file success", K_(fd), K_(dir_id));
+
       }
     }
     ret = OB_E(EventTable::EN_8) ret;
@@ -1377,7 +1377,7 @@ bool ObRADatumStore::need_dump(const int64_t extra_size)
   } else if (mem_limit_ > 0) {
     if (mem_hold_ + extra_size > mem_limit_) {
       need_to_dump = true;
-      LOG_TRACE("need dump", K(mem_hold_), K(mem_limit_));
+
     }
   } else {
     const int64_t mem_ctx_pct_trigger = 80;
@@ -1397,7 +1397,7 @@ bool ObRADatumStore::need_dump(const int64_t extra_size)
         need_to_dump = true;
       }
       if (need_to_dump) {
-        LOG_TRACE("check need dump", K(limit), K(hold), K(mod_hold));
+
       }
     }
   }

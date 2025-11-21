@@ -85,7 +85,7 @@ TestLSTabletService::TestLSTabletService()
 void TestLSTabletService::SetUpTestCase()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TestLSTabletService::SetUpTestCase");
+
   ret = MockTenantModuleEnv::get_instance().init();
   ASSERT_EQ(OB_SUCCESS, ret);
   SERVER_STORAGE_META_SERVICE.is_started_ = true;
@@ -100,7 +100,7 @@ void TestLSTabletService::SetUp()
 {
   ASSERT_TRUE(MockTenantModuleEnv::get_instance().is_inited());
   int ret = OB_SUCCESS;
-  LOG_INFO("TestLSTabletService::SetUp");
+
   ASSERT_TRUE(MockTenantModuleEnv::get_instance().is_inited());
 
   ObLSHandle ls_handle;
@@ -113,7 +113,7 @@ void TestLSTabletService::SetUp()
 
   while (true) {
     if (!MTL(ObTenantMetaMemMgr*)->tablet_gc_queue_.is_empty()) {
-      LOG_INFO("wait t3m gc tablet clean");
+
       usleep(300 * 1000); // wait 300ms
     } else {
       break;
@@ -656,7 +656,7 @@ TEST_F(TestLSTabletService, test_replay_empty_shell)
   ObTabletID tablet_id(10000009);
   share::schema::ObTableSchema schema;
   TestSchemaUtils::prepare_data_schema(schema);
-  LOG_INFO("FEIDU test_replay_empty_shell", K(ls_id_), K(tablet_id));
+
 
   ObLSHandle ls_handle;
   ObLSService *ls_svr = MTL(ObLSService*);
@@ -705,9 +705,9 @@ TEST_F(TestLSTabletService, test_replay_empty_shell)
   ASSERT_EQ(nullptr, wrapper.get_member()->get_major_sstables().get_boundary_table(true));
   ASSERT_EQ(tablet_addr, test_tablet_handle.get_obj()->tablet_addr_);
   test_tablet_handle.reset();
-  LOG_INFO("FEIDU first remove", K(ls_id_), K(tablet_id));
+
   ret = ls_tablet_service_->do_remove_tablet(ls_id_, tablet_id);
-  LOG_INFO("FEIDU first success", K(ls_id_), K(tablet_id));
+
   ASSERT_EQ(OB_SUCCESS, ret);
 
   ObLogCursor replay_start_cursor_;
@@ -736,9 +736,9 @@ TEST_F(TestLSTabletService, test_replay_empty_shell)
   ASSERT_EQ(true, empty_shell_tablet->is_empty_shell());
   tablet_handle.reset();
 
-  LOG_INFO("FEIDU seconde remove", K(ls_id_), K(tablet_id));
+
   ret = ls_tablet_service_->do_remove_tablet(ls_id_, tablet_id);
-  LOG_INFO("FEIDU seconde success", K(ls_id_), K(tablet_id));
+
   ASSERT_EQ(OB_SUCCESS, ret);
   valid_tablet_num(3);
 }
@@ -831,7 +831,7 @@ TEST_F(TestLSTabletService, test_migrate_empty_shell)
   ObMigrationTabletParam new_tablet_meta;
   pos = 0;
   ASSERT_EQ(OB_SUCCESS, new_tablet_meta.deserialize(buf, 4096, pos));
-  LOG_INFO("test_migrate_empty_shell", K(pos), "size", tablet_meta.get_serialize_size());
+
   ASSERT_EQ(pos, tablet_meta.get_serialize_size());
 
   ret = ls_tablet_service_->create_or_update_migration_tablet(new_tablet_meta, true);

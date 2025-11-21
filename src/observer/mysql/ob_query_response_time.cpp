@@ -293,7 +293,7 @@ int ObTenantQueryRespTimeCollector::init()
 
   if (OB_SUCC(ret)) {
     is_inited_ = true;
-    LOG_INFO("succ to init ObTenantQueryRespTimeCollector", K(MTL_ID()));
+
   }
   return ret;
 }
@@ -303,7 +303,7 @@ void ObTenantQueryRespTimeCollector::destroy()
   multi_collector_.destroy();
   flush_config_version_ = 0;
   is_inited_ = false;
-  LOG_INFO("succ to destroy ObTenantQueryRespTimeCollector", K(MTL_ID()));
+
 }
 
 int ObTenantQueryRespTimeCollector::mtl_init(ObTenantQueryRespTimeCollector *&t_resp_time_collector)

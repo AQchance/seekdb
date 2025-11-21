@@ -121,7 +121,7 @@ int ObCreateDirectoryResolver::resolve(const ParseNode &parse_tree)
     }
   }
 
-  LOG_INFO("resolve create directory finish", K(ret));
+
   return ret;
 }
 } // end namespace sql

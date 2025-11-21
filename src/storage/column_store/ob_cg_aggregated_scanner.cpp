@@ -192,7 +192,7 @@ int ObCGAggregatedScanner::inner_fetch_rows(const int64_t batch_size, uint64_t &
       if (end_of_scan()) {
         ret = OB_ITER_END;
       }
-      LOG_TRACE("all aggregate has been pushdown to decoder", K(ret), K(agg_group_vec->agg_row_id_), K(pd_row_id_ctx));
+
     } else if (OB_FAIL(convert_bitmap_to_cs_index(row_ids_,
                                                   row_cap,
                                                   current_,
@@ -213,7 +213,7 @@ int ObCGAggregatedScanner::inner_fetch_rows(const int64_t batch_size, uint64_t &
         LOG_WARN("fail to pushdown aggregate to decoder", K(ret), K(pd_row_id_ctx));
       } else if (agg_group_vec->is_agg_finish(pd_row_id_ctx)) {
         count += row_cap;
-        LOG_DEBUG("all aggregate has been pushdown to decoder", K(ret), K(agg_group_vec->agg_row_id_), K(pd_row_id_ctx));
+
       } else if (OB_FAIL(micro_scanner_->get_next_rows(*iter_param_->out_cols_project_,
                                                         col_params_,
                                                         row_ids_,

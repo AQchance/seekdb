@@ -79,7 +79,7 @@ void TestObMapQueueThread::generate_data(const int64_t count, Type *&datas)
 		datas[idx].reset(idx, idx % THREAD_NUM);
 	}
 	for (int64_t idx = 0; idx < count; idx++) {
-		LOG_DEBUG("data", K(datas[idx]));
+
 	}
 }
 
@@ -150,7 +150,7 @@ int DerivedQueueThread1::init()
 		end_handle_count_ = 0;
 		inited_ = true;
 
-		LOG_INFO("DerivedQueueThread1 init ok", K(ret));
+
 	}
 
 	return ret;
@@ -163,7 +163,7 @@ void DerivedQueueThread1::destroy()
 		EXPECT_TRUE(QueueThread::is_stoped());
 		inited_ = false;
 
-		LOG_INFO("DerivedQueueThread1 destory");
+
   }
 }
 
@@ -177,7 +177,7 @@ int DerivedQueueThread1::start()
 	} else if (OB_FAIL(QueueThread::start())) {
 		LOG_ERROR("DerivedQueueThread1 start error", K(ret));
 	} else {
-	  LOG_INFO("DerivedQueueThread1 start ok");
+
 	}
 	EXPECT_FALSE(QueueThread::is_stoped());
 
@@ -202,7 +202,7 @@ int DerivedQueueThread1::handle(void *data, const int64_t thread_index, volatile
 		ret = OB_INVALID_ARGUMENT;
 		LOG_ERROR("invalid argument", K(ret), KP(task), K(thread_index));
   } else {
-		LOG_DEBUG("DerivedQueueThread1 handle", K(ret), K(*task), K(thread_index));
+
 
 		handle_result_[thread_index].push_back(*task);
 		ATOMIC_INC(&end_handle_count_);
@@ -226,7 +226,7 @@ int DerivedQueueThread2::init()
 		end_handle_count_ = 0;
 		inited_ = true;
 
-		LOG_INFO("DerivedQueueThread2 init ok", K(ret));
+
 	}
 
 	return ret;
@@ -239,7 +239,7 @@ void DerivedQueueThread2::destroy()
 		EXPECT_TRUE(QueueThread::is_stoped());
 		inited_ = false;
 
-		LOG_INFO("DerivedQueueThread2 destory");
+
   }
 }
 
@@ -253,7 +253,7 @@ int DerivedQueueThread2::start()
 	} else if (OB_FAIL(QueueThread::start())) {
 		LOG_ERROR("DerivedQueueThread2 start error", K(ret));
 	} else {
-	  LOG_INFO("DerivedQueueThread2 start ok");
+
 	}
 	EXPECT_FALSE(QueueThread::is_stoped());
 
@@ -271,7 +271,7 @@ void DerivedQueueThread2::run(const int64_t thread_index)
 		LOG_ERROR("invalid argument", K(thread_index), K(get_thread_num()));
 		ret = OB_ERR_UNEXPECTED;
 	} else {
-		LOG_INFO("DerivedQueueThread2 run start", K(thread_index));
+
 
 		while (!stop_flag_ && OB_SUCCESS == ret) {
 			void *data = NULL;
@@ -282,7 +282,7 @@ void DerivedQueueThread2::run(const int64_t thread_index)
 					// empty
 					ret = OB_SUCCESS;
 					cond_timedwait(thread_index, IDLE_WAIT_TIME);
-					LOG_DEBUG("DerivedQueueThread2 pop empty");
+
 				} else {
 				  LOG_ERROR("DerivedQueueThread2 pop data error", K(ret));
 				}
@@ -290,7 +290,7 @@ void DerivedQueueThread2::run(const int64_t thread_index)
 				LOG_ERROR("invalid argument", KPC(task), K(thread_index));
 				ret = OB_ERR_UNEXPECTED;
 			} else {
-		    LOG_DEBUG("DerivedQueueThread2 handle", K(ret), K(*task), K(thread_index));
+
 
 				handle_result_[thread_index].push_back(*task);
 		    ATOMIC_INC(&end_handle_count_);
@@ -341,27 +341,27 @@ public:
 	{
 		// create threads
 		create();
-		LOG_INFO("TestPushWorker start", "push worker thread", "create OB_SUCCESS");
+
 	}
 
 	void stop()
 	{
 		join();
-		LOG_INFO("TestPushWorker join", "push worker thread", "join OB_SUCCESS");
+
 	}
 
 	virtual int routine()
 	{
 		int64_t start = thread_idx_ * interval_;
 		int64_t end = (thread_count_ - 1 != thread_idx_) ? start + interval_ - 1 : END_VALUE;
-		LOG_INFO("TestPushWorker", K(start), K(end));
+
 
 		int64_t idx = 0;
 		for (idx = start; idx <= end; idx++) {
 			Type *type = datas_ + idx;
 			EXPECT_EQ(OB_SUCCESS, host_->push(type, type->hash_val_));
 			push_count_++;
-			LOG_DEBUG("TestPushWorker", K(idx), KPC(type));
+
 		}
 
 		if (end + 1 == idx) {
@@ -431,18 +431,18 @@ TEST_F(TestObMapQueueThread, DerivedQueueThread1)
 					 && (end_handle_count < VALUE_COUNT)) {
 		end_handle_count = ATOMIC_LOAD(&derived1.end_handle_count_);
 	  usleep(static_cast<__useconds_t>(1000));
-		LOG_DEBUG("handle verify", K(end_handle_count));
+
 	}
 	EXPECT_EQ(VALUE_COUNT, end_handle_count);
 
 	int64_t handle_result_count = 0;
 	for (int64_t idx = 0; idx < THREAD_NUM; idx++) {
 		int64_t cnt = handle_result[idx].size();
-		LOG_INFO("DerivedQueueThread1 vector count", K(idx), K(cnt));
+
 		handle_result_count += cnt;
 		for (int64_t i = 0; i < cnt; i++) {
 			Type t = handle_result[idx][i];
-			LOG_DEBUG("type", K(t));
+
 			EXPECT_TRUE(idx == (t.value_ % THREAD_NUM));
 			EXPECT_TRUE(idx == t.hash_val_);
 		}
@@ -487,18 +487,18 @@ TEST_F(TestObMapQueueThread, DerivedQueueThread2)
 					 && (end_handle_count < VALUE_COUNT)) {
 		end_handle_count = ATOMIC_LOAD(&derived2.end_handle_count_);
 	  usleep(static_cast<__useconds_t>(1000));
-		LOG_DEBUG("handle verify", K(end_handle_count));
+
 	}
 	EXPECT_EQ(VALUE_COUNT, end_handle_count);
 
 	int64_t handle_result_count = 0;
 	for (int64_t idx = 0; idx < THREAD_NUM; idx++) {
 		int64_t cnt = handle_result[idx].size();
-		LOG_INFO("DerivedQueueThread2 vector count", K(idx), K(cnt));
+
 		handle_result_count += cnt;
 		for (int64_t i = 0; i < cnt; i++) {
 			Type t = handle_result[idx][i];
-			LOG_DEBUG("type", K(t));
+
 			EXPECT_TRUE(idx == (t.value_ % THREAD_NUM));
 			EXPECT_TRUE(idx == t.hash_val_);
 		}

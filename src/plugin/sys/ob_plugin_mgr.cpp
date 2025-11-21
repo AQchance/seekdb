@@ -47,7 +47,7 @@ int ObPluginMgr::init(const ObString &plugin_dir)
     inited_     = true;
     plugin_dir_ = plugin_dir;
   }
-  LOG_INFO("init plugin manager done", K(ret), K(plugin_dir));
+
   return ret;
 }
 ObPluginMgr::~ObPluginMgr()
@@ -159,7 +159,7 @@ int ObPluginMgr::find_plugin(ObPluginType plugin_type, const ObString &plugin_na
     ret = OB_FUNCTION_NOT_DEFINED;
     LOG_WARN("find the plugin but it's not ready", K(plugin_name), K(ret));
   } else {
-    LOG_DEBUG("find a plugin", K(plugin_type), K(plugin_name));
+
   }
   return ret;
 }
@@ -181,7 +181,7 @@ struct ObPluginEntryVersionComparator
     ObPluginVersion version1 = plugin_version(entry1);
 
     bret = (version1 > version2);
-    LOG_DEBUG("plugin entry version comparator", K(version1), K(version2));
+
     return bret;
   }
 };
@@ -217,7 +217,7 @@ int ObPluginMgr::find_plugin(ObPluginType type,
                              ObPluginEntryHandle *&entry_handle)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("find plugin", K(type), K(name), K(version));
+
 
   entry_handle = nullptr;
   PluginEntryList *plugin_entry_list = nullptr;
@@ -235,7 +235,7 @@ int ObPluginMgr::find_plugin(ObPluginType type,
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_FUNCTION_NOT_DEFINED;
     }
-    LOG_DEBUG("failed to find plugin entry", K(ret));
+
   } else if (entry_iterator == plugin_entry_list->end()) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("find plugin entry but got an end iterator", K(plugin_entry_list->count()));
@@ -246,7 +246,7 @@ int ObPluginMgr::find_plugin(ObPluginType type,
     ret = OB_FUNCTION_NOT_DEFINED;
     LOG_WARN("plugin is not ready", K(ret), KPC(entry_handle));
   } else {
-    LOG_DEBUG("got a plugin entry", KPC(entry_handle));
+
   }
   return ret;
 }
@@ -266,7 +266,7 @@ int ObPluginMgr::find_plugin_entry_list(ObPluginType type, const ObString &name,
   }
 
   if (OB_FUNCTION_NOT_DEFINED == ret) {
-    LOG_DEBUG("failed to find plugin entry list", K(type), K(name), K(ret));
+
   } else if (OB_FAIL(ret)) {
     LOG_WARN("failed to find plugin entry list", K(type), K(name), K(ret));
   }
@@ -415,7 +415,7 @@ int ObPluginMgr::load_builtin_plugins()
   } else if (OB_FAIL(plugin_register_global_plugins(builtin_plugins))) {
     LOG_WARN("failed to get global builtin plugins", K(ret));
   } else {
-    LOG_INFO("got builtin plugins", K(builtin_plugins.count()));
+
 
     for (int64_t i = 0; i < builtin_plugins.count() && OB_SUCC(ret); i++) {
       ObBuiltinPlugin &builtin_plugin = builtin_plugins.at(i);
@@ -460,7 +460,7 @@ int ObPluginMgr::load_builtin_plugin(const ObBuiltinPlugin &builtin_plugin)
   } else if (OB_FAIL(load_plugin(plugin_handle))) {
     LOG_WARN("failed load plugin in plugin suite", K(ret));
   } else {
-    LOG_INFO("load plugin suite success", KPC(plugin_handle));
+
   }
 
   return ret;
@@ -484,7 +484,7 @@ int ObPluginMgr::load_plugin(ObPluginHandle *plugin_handle)
   } else if (OB_FAIL(plugin->init(reinterpret_cast<ObPluginDatum>(&plugin_handle->plugin_param())))) {
     LOG_WARN("failed to call plugin init", K(ret), K(ObPluginAdaptor(plugin)), K(plugin_handle->plugin_param()));
   } else {
-    LOG_INFO("load plugin success", KPC(plugin_handle));
+
   }
   return ret;
 }
@@ -521,18 +521,18 @@ int ObPluginMgr::load_dynamic_plugins(const ObString &plugins_load)
         ret = OB_SUCCESS;
       } else if (ObPluginLoadOption::OFF == plugin_load_param.load_option.value()) {
         // ignore this plugin library
-        LOG_DEBUG("plugin ignored: option is off", K(plugin_load_param));
+
       } else if (OB_FAIL(install_library(plugin_load_param.library_name))) {
         LOG_WARN("failed to load library(ignore)", K(plugin_load_param), K(ret));
         LOG_DBA_WARN_V2(OB_SERVER_LOAD_DYNAMIC_PLUGIN_FAIL, ret,
                         "install dynamic library failed or init plugin failed: ", plugin_load_param.library_name);
         ret = OB_SUCCESS; // ignore the error
       } else {
-        LOG_INFO("load plugin library success", K(plugin_load_param));
+
       }
     }
   }
-  LOG_INFO("load shared library plugins done", K(ret), K(plugins_load));
+
   return ret;
 }
 
@@ -548,7 +548,7 @@ public:
     int ret = OB_SUCCESS;
     ObPluginMgr::PluginEntryList *entry_list = node.second;
     if (OB_ISNULL(entry_list)) {
-      LOG_DEBUG("got a nullptr", K(node.first));
+
     } else {
       for (int64_t i = 0; i < entry_list->count() && OB_SUCC(ret); i++) {
         ObPluginEntryHandle *entry = entry_list->at(i);
@@ -582,7 +582,7 @@ int ObPluginMgr::list_all_plugin_entries(ObIArray<ObPluginEntryHandle *> &plugin
       }
     }
   }
-  LOG_DEBUG("list plugins", K(plugin_entries.count()), K(ret));
+
   return ret;
 }
 

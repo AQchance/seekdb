@@ -71,7 +71,7 @@ int ObTenantThreadHelper::start()
   } else if (OB_FAIL(TG_REENTRANT_LOGICAL_START(tg_id_))) {
     LOG_WARN("failed to start", KR(ret));
   }
-  LOG_INFO("[TENANT THREAD] thread start", KR(ret), K(tg_id_), K(thread_name_));
+
   return ret;
 }
 
@@ -79,37 +79,37 @@ ERRSIM_POINT_DEF(ERRSIM_SKIP_TENANT_THREAD_STOP);
 void ObTenantThreadHelper::stop()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("[TENANT THREAD] thread stop start", K(tg_id_), K(thread_name_));
+
   ret = ERRSIM_SKIP_TENANT_THREAD_STOP;
   if (OB_UNLIKELY(ERRSIM_SKIP_TENANT_THREAD_STOP)) {
     LOG_ERROR("[TENANT THREAD] skip tenant thread stop");
   } else if (-1 != tg_id_) {
     TG_REENTRANT_LOGICAL_STOP(tg_id_);
   }
-  LOG_INFO("[TENANT THREAD] thread stop finish", K(tg_id_), K(thread_name_), KR(ret));
+
 }
 
 void ObTenantThreadHelper::wait()
 {
-  LOG_INFO("[TENANT THREAD] thread wait start", K(tg_id_), K(thread_name_));
+
   if (-1 != tg_id_) {
     TG_REENTRANT_LOGICAL_WAIT(tg_id_);
   }
-  LOG_INFO("[TENANT THREAD] thread wait finish", K(tg_id_), K(thread_name_));
+
 }
 
 void ObTenantThreadHelper::mtl_thread_stop()
 {
-  LOG_INFO("[TENANT THREAD] thread stop start", K(tg_id_), K(thread_name_));
+
   if (-1 != tg_id_) {
     TG_STOP(tg_id_);
   }
-  LOG_INFO("[TENANT THREAD] thread stop finish", K(tg_id_), K(thread_name_));
+
 }
 
 void ObTenantThreadHelper::mtl_thread_wait()
 {
-  LOG_INFO("[TENANT THREAD] thread wait start", K(tg_id_), K(thread_name_));
+
   if (-1 != tg_id_) {
     {
       ObThreadCondGuard guard(thread_cond_);
@@ -118,11 +118,11 @@ void ObTenantThreadHelper::mtl_thread_wait()
     TG_WAIT(tg_id_);
     is_first_time_to_start_ = true;
   }
-  LOG_INFO("[TENANT THREAD] thread wait finish", K(tg_id_), K(thread_name_));
+
 }
 void ObTenantThreadHelper::destroy()
 {
-  LOG_INFO("[TENANT THREAD] thread destory start", K(tg_id_), K(thread_name_));
+
   if (-1 != tg_id_) {
     TG_STOP(tg_id_);
     {
@@ -135,7 +135,7 @@ void ObTenantThreadHelper::destroy()
   }
   is_created_ = false;
   is_first_time_to_start_ = true;
-  LOG_INFO("[TENANT THREAD] thread destory finish", K(tg_id_), K(thread_name_));
+
 }
 
 void ObTenantThreadHelper::switch_to_follower_forcedly()
@@ -145,7 +145,7 @@ void ObTenantThreadHelper::switch_to_follower_forcedly()
 int ObTenantThreadHelper::switch_to_leader()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("[TENANT THREAD] thread start", K(tg_id_), K(thread_name_));
+
   if (OB_FAIL(start())) {
     LOG_WARN("failed to start thread", KR(ret));
   } else {
@@ -154,7 +154,7 @@ int ObTenantThreadHelper::switch_to_leader()
       LOG_WARN("failed to weakup thread cond", KR(ret));
     }
   }
-  LOG_INFO("[TENANT THREAD] thread start finish", K(tg_id_), K(thread_name_));
+
   return ret;
 }
 
@@ -209,7 +209,7 @@ void ObTenantThreadHelper::run1() {
     LOG_WARN("not init", K(ret));
   } else {
     lib::set_thread_name(thread_name_);
-    LOG_INFO("thread run", K(thread_name_));
+
     do_work();
   }
 }
@@ -260,7 +260,7 @@ int ObTenantThreadHelper::get_zone_priority(const ObZone &primary_zone,
           tenant_schema, primary_zone_str))) {
     LOG_WARN("failed to get ls primary zone priority", KR(ret), K(primary_zone), K(tenant_schema));
   }
-  LOG_DEBUG("get zone priority", KR(ret), K(primary_zone_str), K(tenant_schema));
+
   return ret;
 }
 

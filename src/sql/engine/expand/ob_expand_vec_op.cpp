@@ -67,7 +67,7 @@ int ObExpandVecOp::init()
   if (OB_FAIL(ret)) {
   } else {
     reset_status();
-    LOG_TRACE("expand open", K(MY_SPEC.expand_exprs_), K(MY_SPEC.gby_exprs_));
+
   }
   return ret;
 }

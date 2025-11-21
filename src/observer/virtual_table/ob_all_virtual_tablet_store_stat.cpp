@@ -57,10 +57,10 @@ int ObAllVirtualTabletStoreStat::inner_get_next_row(common::ObNewRow *&row)
     SERVER_LOG(WARN, "ObAllVirtualTabletStoreStat has not been inited", K(ret));
   } else if (OB_FAIL(stat_iter_.get_next_stat(stat_))) {
     if (OB_ITER_END != ret) {
-      STORAGE_LOG(WARN, "Fail to get stat info", K(ret));
+
     }
   } else if (OB_FAIL(fill_cells(stat_))) {
-    STORAGE_LOG(WARN, "Fail to fill cells, ", K(ret), K(stat_));
+
   } else {
     row = &cur_row_;
   }

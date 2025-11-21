@@ -47,7 +47,7 @@ int ObTransformGroupByPullup::transform_one_stmt(common::ObIArray<ObParentDMLStm
     StmtUniqueKeyProvider unique_key_provider;
     try_trans_helper.unique_key_provider_ = &unique_key_provider;
     bool partial_cost_check = false;
-    LOG_DEBUG("begin pull up", K(valid_views.count()), K(valid_views.at(i).need_merge_));
+
     if (OB_FAIL(ObTransformUtils::deep_copy_stmt(*ctx_->stmt_factory_,
                                                  *ctx_->expr_factory_,
                                                  stmt,
@@ -71,14 +71,14 @@ int ObTransformGroupByPullup::transform_one_stmt(common::ObIArray<ObParentDMLStm
     } else if (OB_FAIL(try_trans_helper.finish(trans_happened, stmt->get_query_ctx(), ctx_))) {
       LOG_WARN("failed to finish try trans helper", K(ret));
     } else if (!trans_happened) {
-      LOG_DEBUG("pull up not happen", K(trans_happened));
+
     } else if (OB_ISNULL(view) || !view->is_generated_table()) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("view is not valid", K(ret));
     } else if (OB_FAIL(add_transform_hint(*stmt, view->ref_query_))) {
       LOG_WARN("failed to add transform hint", K(ret));
     } else {
-      LOG_DEBUG("add transform hint", K(view));
+
     }
   }
   return ret;
@@ -572,7 +572,7 @@ int ObTransformGroupByPullup::is_valid_group_stmt(ObSelectStmt *sub_stmt,
   } else if (OB_FAIL(check_groupby_validity(*sub_stmt, is_valid_group))) {
     LOG_WARN("failed to check is valid group", K(ret));
   }
-  LOG_DEBUG("if valid group stmt", K(is_valid_group));
+
   return ret;
 }
 
@@ -623,7 +623,7 @@ int ObTransformGroupByPullup::check_null_propagate(ObDMLStmt *parent_stmt,
         LOG_WARN("failed to find not null column", K(ret));
       } else if (OB_ISNULL(not_null_column)) {
         is_valid = false;
-        LOG_TRACE("can not find not null column");
+
       } else if (!not_null_column->is_column_ref_expr()) {
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("expr is not column expr", K(ret));
@@ -919,7 +919,7 @@ int ObTransformGroupByPullup::do_groupby_pull_up(ObSelectStmt *stmt,
     if (OB_FAIL(stmt->get_condition_exprs().assign(new_conds))) {
       LOG_WARN("failed to assign where conditions", K(ret));
     } else {
-      LOG_TRACE("group pull up stmt", K(*stmt));
+
     }
   }
   return ret;
@@ -1179,14 +1179,14 @@ int ObTransformGroupByPullup::need_transform(const common::ObIArray<ObParentDMLS
       } else {
         need_trans = query_hint->is_valid_outline_transform(ctx_->trans_list_loc_,
                                                   get_hint(table->ref_query_->get_stmt_hint()));
-        LOG_DEBUG("need trans pullup0", K(need_trans));
+
       }
     }
     if (OB_SUCC(ret) && !need_trans) {
       OPT_TRACE("outline reject transform");
     }
   }
-  LOG_DEBUG("need trans pullup", K(need_trans));
+
   return ret;
 }
 
@@ -1257,7 +1257,7 @@ int ObTransformGroupByPullup::check_original_plan_validity(ObLogicalOperator* ro
   } else {
     double expansion_rate = card / group_ndv;
     is_valid = expansion_rate < groupby_nopushdown_cut_ratio;
-    LOG_TRACE("check original plan", K(is_valid), K(group_exprs), K(group_ndv), K(expansion_rate));
+
     OPT_TRACE("check original plan group by exprs:", group_exprs);
     OPT_TRACE("check original plan group by ndv:", group_ndv);
     OPT_TRACE("check original plan expansion rate:", expansion_rate);

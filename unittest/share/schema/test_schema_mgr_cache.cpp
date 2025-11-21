@@ -64,7 +64,7 @@ static void refresh(ObSchemaMgrCache *mgr_cache)
 {
   int ret = OB_SUCCESS;
 
-  LOG_INFO("refresh thread");
+
   for (int64_t i = 0; i < 128; ++i) {
     int64_t new_schema_version = gen_new_schema_version();
     ObSchemaMgr *mgr = new ObSchemaMgr;
@@ -83,7 +83,7 @@ static void consume(ObSchemaMgrCache *mgr_cache)
 {
   int ret = OB_SUCCESS;
 
-  LOG_INFO("consume thread");
+
   for (int64_t i = 0; i < 100; ++i) {
     int64_t schema_version = get_schema_version();
     const ObSchemaMgr *mgr = NULL;
@@ -109,7 +109,7 @@ static void consume(ObSchemaMgrCache *mgr_cache)
     ret = mgr_cache->get(schema_version, mgr, handle);
     if (OB_ENTRY_NOT_EXIST == ret) {
       mgr_cache->dump();
-      LOG_INFO("schema version", K(schema_version));
+
       OB_ASSERT(0);
     }
     ASSERT_EQ(OB_SUCCESS, ret);

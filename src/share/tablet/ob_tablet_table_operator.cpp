@@ -432,7 +432,7 @@ int ObTabletTableOperator::construct_tablet_replica_(
     LOG_WARN("fail to init replica", KR(ret),
         K(tenant_id), K(tablet_id), K(server), K(ls_id), K(data_size), K(required_size));
   }
-  LOG_TRACE("construct tablet replica", KR(ret), K(replica));
+
   return ret;
 }
 
@@ -731,7 +731,7 @@ int ObTabletTableOperator::remove_residual_tablet(
   } else if (OB_FAIL(sql_client.write(sql_tenant_id, sql.ptr(), group_id_, affected_rows))) {
     LOG_WARN("execute sql failed", KR(ret), K(sql), K(sql_tenant_id));
   } else if (affected_rows > 0) {
-    LOG_INFO("finish to remove residual tablet", KR(ret), K(tenant_id), K(affected_rows));
+
   }
   return ret;
 }

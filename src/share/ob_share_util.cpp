@@ -256,7 +256,7 @@ int ObShareUtil::parse_all_server_list(
   config_all_server_list.reset();
   common::ObArenaAllocator allocator(lib::ObLabel("AllSvrList"));
   ObString all_server_list;
-  LOG_TRACE("get all_server_list from GCONF", K(GCONF.all_server_list));
+
   if (OB_FAIL(GCONF.all_server_list.deep_copy_value_string(allocator, all_server_list))) {
     LOG_WARN("fail to deep copy GCONF.all_server_list", KR(ret), K(GCONF.all_server_list));
   } else {
@@ -351,7 +351,7 @@ bool ObShareUtil::is_tenant_enable_transfer(const uint64_t tenant_id)
        LOG_WARN_RET(OB_ERR_UNEXPECTED, "tenant config is invalid", K(tenant_id));
      } else if (GCONF.in_upgrade_mode()) {
       bret = false;
-      LOG_TRACE("in upgrade, transfer is not allowed", K(tenant_id), K(bret));
+
      } else {
       bret = tenant_config->enable_transfer;
       LOG_TRACE("show enable_transfer state", K(tenant_id), K(bret),

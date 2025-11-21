@@ -41,7 +41,7 @@ int ObTenantStatusCache::during_restore(bool &during_restore) const
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
     if (REACH_THREAD_TIME_INTERVAL(30_s)) {
-      LOG_INFO("not refresh valid tenant status", KR(ret), KPC(this));
+
     }
   } else {
     during_restore = during_restore_;
@@ -99,7 +99,7 @@ int ObTenantStatusCache::inner_refresh_remote_tenant()
     }
   } else if (restore_data_mode.is_remote_mode()) {
     is_remote_tenant_ = true;
-    LOG_INFO("tenant restore data mode is remote, should not loop tablet to schedule", K(ret), "tenant_id", MTL_ID());
+
   } else {
     is_remote_tenant_ = false;
   }

@@ -154,7 +154,7 @@ int ObBackupTaskIndexRebuilderMgr::close_index_block_rebuilder_if_need(const ObB
   } else if (OB_FAIL(index_block_rebuilder_->close())) {
     LOG_WARN("failed to close rebuilder", K(ret));
   } else {
-    LOG_INFO("succeed to close index block rebuilder", K(tablet_id), K(table_key));
+
     is_closed = true;
   }
   if (OB_FAIL(ret) || is_last) {
@@ -203,7 +203,7 @@ int ObBackupTaskIndexRebuilderMgr::prepare_index_block_rebuilder_(
                                      &device_handle_array))) {
     LOG_WARN("failed to init index block rebuilder", K(ret), KPC(sstable_index_builder));
   } else {
-    LOG_INFO("succeed to prepare index block rebuilder", K(tablet_id), K(table_key));
+
   }
   if (OB_FAIL(ret)) {
     if (OB_NOT_NULL(rebuilder)) {
@@ -352,7 +352,7 @@ int ObBackupTabletIndexBlockBuilderMgr::prepare_sstable_index_builders_without_l
       } else if (OB_FAIL(sstable_builder_map_.set_refactored(tablet_id, mgr))) {
         LOG_WARN("failed to set tablet sstable index builder mgr into map", K(ret), K(tablet_id));
       } else {
-        LOG_INFO("[INDEX_BUILDER_MGR] prepare sstable index builders", K(tablet_id), K(table_keys));
+
         mgr = NULL;
       }
 
@@ -395,7 +395,7 @@ int ObBackupTabletIndexBlockBuilderMgr::open_sstable_index_builders_without_lock
           } else if (OB_FAIL(mgr->add_sstable_index_builder(ls_id_, tablet_handle, table_key, sstable_ptr))) {
             LOG_WARN("failed to add sstable index builder", K(ret), K(tablet_id), K(table_key), KPC(sstable_ptr));
           } else {
-            LOG_INFO("[INDEX_BUILDER_MGR] open sstable index builder", K(tablet_id), K(table_key));
+
           }
         }
       }
@@ -424,7 +424,7 @@ int ObBackupTabletIndexBlockBuilderMgr::get_sstable_index_builder_mgr(
       LOG_WARN("backup tablet sstable index builder mgr should not be null", K(ret));
     } else {
       builder_mgr = mgr;
-      LOG_INFO("[INDEX_BUILDER_MGR] get sstable index builder", K(tablet_id), KP(mgr));
+
     }
   }
   return ret;
@@ -452,7 +452,7 @@ int ObBackupTabletIndexBlockBuilderMgr::get_sstable_index_builder(const common::
     } else if (OB_FAIL(builder_mgr->get_sstable_index_builder(table_key, sstable_index_builder))) {
       LOG_WARN("failed to get copy table key info", K(ret), K(tablet_id), K(table_key));
     } else {
-      LOG_INFO("[INDEX_BUILDER_MGR] get sstable index builder", K(tablet_id), K(table_key));
+
     }
   }
   return ret;
@@ -578,7 +578,7 @@ int ObBackupTabletIndexBlockBuilderMgr::get_sstable_merge_result(const common::O
     } else if (OB_FAIL(builder_mgr->get_sstable_merge_result(table_key, merge_res))) {
       LOG_WARN("failed to get copy table key info", K(ret), K(tablet_id), K(table_key));
     } else {
-      LOG_INFO("[INDEX_BUILDER_MGR] get sstable merge result", K(tablet_id), K(table_key), KPC(merge_res));
+
     }
   }
   return ret;
@@ -606,7 +606,7 @@ int ObBackupTabletIndexBlockBuilderMgr::close_sstable_index_builder(
     } else if (OB_FAIL(builder_mgr->close_sstable_index_builder(table_key, device_handle))) {
       LOG_WARN("failed to get sstable index builders", K(ret), K(tablet_id), K(table_key));
     } else {
-      LOG_INFO("[INDEX_BUILDER_MGR] close sstable index builder", K(tablet_id), K(table_key));
+
     }
   }
   return ret;
@@ -634,7 +634,7 @@ int ObBackupTabletIndexBlockBuilderMgr::free_sstable_index_builder(
     } else if (OB_FAIL(builder_mgr->free_sstable_index_builder(table_key))) {
       LOG_WARN("failed to get sstable index builders", K(ret), K(tablet_id), K(table_key));
     } else {
-      LOG_INFO("[INDEX_BUILDER_MGR] close sstable index builder", K(tablet_id), K(table_key));
+
     }
   }
   return ret;
@@ -712,7 +712,7 @@ int ObBackupTabletSSTableIndexBuilderMgr::init(const uint64_t tenant_id, const c
     } else {
       tablet_id_ = tablet_id;
       is_major_compaction_mview_dep_tablet_ = is_major_compaction_mview_dep_tablet;
-      LOG_INFO("init backup tablet sstable index builder mgr", K(tablet_id), K(is_major_compaction_mview_dep_tablet));
+
       is_inited_ = true;
     }
   }
@@ -835,7 +835,7 @@ int ObBackupTabletSSTableIndexBuilderMgr::close_sstable_index_builder(
   } else if (OB_FAIL(merge_results_.at(idx).assign(sstable_merge_res))) {
     LOG_WARN("failed to assign res", K(ret), K(sstable_merge_res));
   } else {
-    LOG_INFO("close sstable index builders", K_(tablet_id), K(table_key), K(idx), K(sstable_merge_res));
+
   }
   return ret;
 }
@@ -1055,7 +1055,7 @@ int ObBackupTabletSSTableIndexBuilderMgr::insert_place_holder_macro_index(
     if (OB_FAIL(local_reuse_map_.set_refactored(logic_id, macro_index))) {
       LOG_WARN("failed to set macro index", K(ret), K(logic_id), K(macro_index));
     } else {
-      LOG_INFO("insert place holder macro index", K(logic_id));
+
     }
   }
   return ret;
@@ -1084,7 +1084,7 @@ int ObBackupTabletSSTableIndexBuilderMgr::update_logic_id_to_macro_index(
     } else if (OB_FAIL(local_reuse_map_.set_refactored(logic_id, macro_index, 1))) {
       LOG_WARN("failed to set macro index", K(ret));
     } else {
-      LOG_INFO("update logic id to macro index", K(logic_id), K(macro_index));
+
     }
   } 
   return ret;
@@ -1134,7 +1134,7 @@ int ObBackupTabletSSTableIndexBuilderMgr::check_real_macro_index_exist(
     exist = true;
     index = tmp_index;
   }
-  LOG_INFO("check macro index exist", K(logic_id), K(exist), K(index));
+
   return ret;
 }
 

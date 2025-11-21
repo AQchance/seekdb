@@ -127,7 +127,7 @@ void TestLogStreamBackup::SetUp()
   ASSERT_EQ(OB_SUCCESS, ret);
   ret = databuff_printf(test_dir_uri_, sizeof(test_dir_uri_), "file://%s", test_dir_);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("clean test_storage dir");
+
   // ASSERT_EQ(0, ::system("rm -fr test_storage"));
   ASSERT_EQ(OB_SUCCESS, util.mkdir(test_dir_uri_, storage_info));
   job_desc_.job_id_ = 1;
@@ -182,7 +182,7 @@ void TestLogStreamBackup::TearDown()
   ObKVGlobalCache::get_instance().destroy();
   ObTenantManager::get_instance().destroy();
   TestDataFilePrepare::TearDown();
-  LOG_INFO("clean test_storage dir");
+
   // ASSERT_EQ(0, ::system("rm -fr test_storage"));
 }
 
@@ -226,13 +226,13 @@ TEST_F(TestLogStreamBackup, test_backup_path)
   const char *expect_path = "file:///obbackup/tenant_1_incarnation_1/data/backup_set_1_full";
   ret = ObBackupPathUtil::get_backup_set_dir_path(root_path, tenant_id_, backup_set_desc_, path);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("dump path", K(path), K(expect_path));
+
   ASSERT_EQ(0, path.get_obstr().compare(expect_path));
 
   expect_path = "file:///obbackup/tenant_1_incarnation_1/data/backup_set_1_full/logstream_1";
   ret = ObBackupPathUtil::get_ls_backup_dir_path(root_path, tenant_id_, backup_set_desc_, ls_id_, path);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("dump path", K(path), K(expect_path));
+
   ASSERT_EQ(0, path.get_obstr().compare(expect_path));
 
   expect_path = "file:///obbackup/tenant_1_incarnation_1/data/backup_set_1_full/logstream_1/"
@@ -240,7 +240,7 @@ TEST_F(TestLogStreamBackup, test_backup_path)
   ret = ObBackupPathUtil::get_ls_backup_data_dir_path(
       root_path, tenant_id_, backup_set_desc_, ls_id_, backup_data_type_, turn_id_, retry_id_, path);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("dump path", K(path), K(expect_path));
+
   ASSERT_EQ(0, path.get_obstr().compare(expect_path));
 
   expect_path = "file:///obbackup/tenant_1_incarnation_1/data/backup_set_1_full/logstream_1/"
@@ -248,7 +248,7 @@ TEST_F(TestLogStreamBackup, test_backup_path)
   ret = ObBackupPathUtil::get_macro_block_backup_path(
       root_path, tenant_id_, backup_set_desc_, ls_id_, backup_data_type_, turn_id_, retry_id_, file_id_, path);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("dump path", K(path), K(expect_path));
+
   ASSERT_EQ(0, path.get_obstr().compare(expect_path));
 
   expect_path = "file:///obbackup/tenant_1_incarnation_1/data/backup_set_1_full/logstream_1/"
@@ -256,7 +256,7 @@ TEST_F(TestLogStreamBackup, test_backup_path)
   ret = ObBackupPathUtil::get_ls_macro_range_index_backup_path(
       root_path, tenant_id_, backup_set_desc_, ls_id_, backup_data_type_, turn_id_, retry_id_, path);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("dump path", K(path), K(expect_path));
+
   ASSERT_EQ(0, path.get_obstr().compare(expect_path));
 
   expect_path = "file:///obbackup/tenant_1_incarnation_1/data/backup_set_1_full/logstream_1/"
@@ -264,13 +264,13 @@ TEST_F(TestLogStreamBackup, test_backup_path)
   ret = ObBackupPathUtil::get_ls_meta_index_backup_path(
       root_path, tenant_id_, backup_set_desc_, ls_id_, backup_data_type_, turn_id_, retry_id_, path);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("dump path", K(path), K(expect_path));
+
   ASSERT_EQ(0, path.get_obstr().compare(expect_path));
 
   expect_path = "file:///obbackup/tenant_1_incarnation_1/data/backup_set_1_full/infos/ls_meta_info";
   ret = ObBackupPathUtil::get_ls_meta_info_backup_path(root_path, tenant_id_, backup_set_desc_, path);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("dump path", K(path), K(expect_path));
+
   ASSERT_EQ(0, path.get_obstr().compare(expect_path));
 
   expect_path = "file:///obbackup/tenant_1_incarnation_1/data/backup_set_1_full/infos/info_turn_1/"
@@ -278,7 +278,7 @@ TEST_F(TestLogStreamBackup, test_backup_path)
   ret = ObBackupPathUtil::get_tenant_macro_range_index_backup_path(
       root_path, tenant_id_, backup_set_desc_, backup_data_type_, turn_id_, path);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("dump path", K(path), K(expect_path));
+
   ASSERT_EQ(0, path.get_obstr().compare(expect_path));
 
   expect_path = "file:///obbackup/tenant_1_incarnation_1/data/backup_set_1_full/infos/info_turn_1/"
@@ -286,11 +286,11 @@ TEST_F(TestLogStreamBackup, test_backup_path)
   ret = ObBackupPathUtil::get_tenant_meta_index_backup_path(
       root_path, tenant_id_, backup_set_desc_, backup_data_type_, turn_id_, path);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("dump path", K(path), K(expect_path));
+
   ASSERT_EQ(0, path.get_obstr().compare(expect_path));
 
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("dump path", K(path), K(expect_path));
+
   ASSERT_EQ(0, path.get_obstr().compare(expect_path));
 }
 
@@ -452,7 +452,7 @@ TEST_F(TestLogStreamBackup, test_backup_utils)
     ret = provider.inner_get_batch_items_(batch_size, provider_items);
     ASSERT_EQ(OB_SUCCESS, ret);
     if (provider_items.empty()) {
-      LOG_INFO("provider items empty", K(round));
+
       break;
     }
     for (int64_t i = 0; OB_SUCC(ret) && i < provider_items.count() - 1; ++i) {
@@ -495,7 +495,7 @@ TEST_F(TestLogStreamBackup, test_backup_ctx)
     ASSERT_EQ(OB_SUCCESS, ret);
     ret = backup_data_ctx.write_macro_block_data(buffer_reader, logic_id);
     ASSERT_EQ(OB_SUCCESS, ret);
-    LOG_INFO("write macro block data", K(i), K(logic_id));
+
   }
   for (int64_t i = 1; OB_SUCC(ret) && i <= 10; ++i) {
     common::ObTabletID tablet_id(i);
@@ -504,7 +504,7 @@ TEST_F(TestLogStreamBackup, test_backup_ctx)
     ASSERT_EQ(OB_SUCCESS, ret);
     ret = backup_data_ctx.write_meta_data(buffer_reader, tablet_id, meta_type);
     ASSERT_EQ(OB_SUCCESS, ret);
-    LOG_INFO("write meta data", K(i), K(tablet_id));
+
   }
   ret = backup_data_ctx.close();
   ASSERT_EQ(OB_SUCCESS, ret);
@@ -524,7 +524,7 @@ TEST_F(TestLogStreamBackup, test_backup_iterator)
     ASSERT_EQ(OB_SUCCESS, ret);
     ret = macro_index_iterator.next();
     ASSERT_EQ(OB_SUCCESS, ret);
-    LOG_INFO("get backup macro range index", K(range_index));
+
   }
 
   ObBackupMetaIndexIterator meta_index_iterator;
@@ -538,7 +538,7 @@ TEST_F(TestLogStreamBackup, test_backup_iterator)
     ASSERT_EQ(OB_SUCCESS, ret);
     ret = meta_index_iterator.next();
     ASSERT_EQ(OB_SUCCESS, ret);
-    LOG_INFO("get backup meta index", K(meta_index));
+
   }
 }
 
@@ -634,7 +634,7 @@ TEST_F(TestLogStreamBackup, test_backup_index_store)
     blocksstable::ObLogicMacroBlockId logic_id(1, 1, i);
     ret = macro_index_store.get_macro_block_index(logic_id, macro_index);
     ASSERT_EQ(OB_SUCCESS, ret);
-    LOG_INFO("get backup macro block index", K(logic_id), K(macro_index));
+
     ASSERT_EQ(logic_id, macro_index.logic_id_);
   }
 
@@ -655,7 +655,7 @@ TEST_F(TestLogStreamBackup, test_backup_index_store)
     ObBackupMetaType meta_type = BACKUP_TABLET_META;
     ret = meta_index_store.get_backup_meta_index(tablet_id, meta_type, meta_index);
     ASSERT_EQ(OB_SUCCESS, ret);
-    LOG_INFO("get backup meta index", K(tablet_id), K(meta_index));
+
     ASSERT_EQ(tablet_id, meta_index.meta_key_.tablet_id_);
   }
 }
@@ -773,7 +773,7 @@ TEST_F(TestLogStreamBackup, test_macro_range_index_iterator)
     ASSERT_EQ(OB_SUCCESS, ret);
     ret = full_iter.next();
     ASSERT_EQ(OB_SUCCESS, ret);
-    LOG_INFO("get full backup macro range index", K(range_index));
+
   }
 
   ObBackupMacroRangeIndexIterator inc_iter;
@@ -787,7 +787,7 @@ TEST_F(TestLogStreamBackup, test_macro_range_index_iterator)
     ASSERT_EQ(OB_SUCCESS, ret);
     ret = inc_iter.next();
     ASSERT_EQ(OB_SUCCESS, ret);
-    LOG_INFO("get inc backup macro range index", K(range_index));
+
   }
 
   ObBackupIndexKVCache kv_cache;

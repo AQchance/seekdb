@@ -375,7 +375,7 @@ int ObRawExprDeduceType::push_back_types(const ObRawExpr *param_expr, ObIExprRes
       (my_session_ != NULL && ObStmt::is_ddl_stmt(my_session_->get_stmt_type(), false));
     bool is_show_stmt = (my_session_ != NULL && ObStmt::is_show_stmt(my_session_->get_stmt_type()));
 
-    LOG_DEBUG("stmt type", K(is_explain_stmt), K(lbt()), K(is_ddl_stmt));
+
     // `select integer_column + 1.123 from t1`
     // integer_column's precision should be deduced as max_integer_precision
     // same as `create table t2 as select integer_column + 1.234 from t1`
@@ -629,7 +629,7 @@ int ObRawExprDeduceType::calc_result_type(ObNonTerminalRawExpr &expr,
         const ObCollationType from_cs_type = ori_types.at(i).get_collation_type();
         const ObObjType to = types.at(i).get_calc_type();
         const ObCollationType to_cs_type = types.at(i).get_calc_collation_type();
-        LOG_DEBUG("check parameters can cast to expected type", K(ret), K(i), K(from), K(to));
+
         // for most exprs in oracle mode, do not allow bool type param
         if (ObExtendType == from && ob_is_character_type(to, to_cs_type) && !op->is_called_in_sql()) {
           ret = OB_ERR_CALL_WRONG_ARG;
@@ -647,7 +647,7 @@ int ObRawExprDeduceType::calc_result_type(ObNonTerminalRawExpr &expr,
       }
     }
 
-    LOG_DEBUG("debug for expr params calc meta", K(types));
+
     // Here is a validation:
     // New framework oracle mode string type result's character set is consistent with the charset defined on the session
     // Inconsistency may be due to a problem with expression derivation
@@ -710,7 +710,7 @@ int ObRawExprDeduceType::calc_result_type(ObNonTerminalRawExpr &expr,
         }
       }
     }
-    LOG_DEBUG("calc_result_type", K(ret), K(expr), K(types), K(cast_mode));
+
   }
 #undef GET_TYPE_ARRAY
   return ret;
@@ -1959,7 +1959,7 @@ int ObRawExprDeduceType::visit(ObAggFunRawExpr &expr)
         expr.unset_result_flag(ZEROFILL_FLAG);
       }
     }
-    LOG_DEBUG("aggregate function deduced result type", K(result_type), K(need_add_cast), K(expr));
+
     if (OB_SUCC(ret) && need_add_cast) {
       if (override_calc_meta) {
         result_type.set_calc_type(result_type.get_type());
@@ -2692,7 +2692,7 @@ int ObRawExprDeduceType::visit(ObWinFunRawExpr &expr)
         LOG_USER_ERROR(OB_ERR_WINDOW_RANGE_FRAME_TEMPORAL_TYPE, tmp_name.length(), tmp_name.ptr());
       }
     }
-    LOG_DEBUG("finish add cast for window function", K(result_number_type), K(expr.lower_), K(expr.upper_));
+
   }
 
   if (OB_FAIL(ret) || OB_UNLIKELY(expr.win_type_ != WINDOW_RANGE)
@@ -3402,7 +3402,7 @@ int ObRawExprDeduceType::add_implicit_cast(ObCaseOpRawExpr &parent,
                                                 K(input_types_reorder));
       }
     }
-    LOG_DEBUG("input types reorder done", K(ret), K(input_types_reorder), K(input_types));
+
     ObRawExpr *child_ptr = NULL;
     // Start inserting implicit cast
     for (int64_t child_idx = 0; OB_SUCC(ret) && (child_idx < parent.get_param_count());
@@ -3495,7 +3495,7 @@ int ObRawExprDeduceType::add_implicit_cast(ObOpRawExpr &parent,
           idx += 1;
         }
       }
-      LOG_DEBUG("add_implicit_cast debug", K(parent));
+
     } // for end
   }
   return ret;
@@ -3531,7 +3531,7 @@ int ObRawExprDeduceType::add_implicit_cast(ObAggFunRawExpr &parent,
       } else if (OB_FAIL(try_add_cast_expr(parent, i, result_type, cast_mode))) {
         LOG_WARN("try_add_cast_expr failed", K(ret));
       } else {
-        LOG_DEBUG("add_implicit_cast for ObAggFunRawExpr", K(i), K(res_type), KPC(child_ptr));
+
       }
     } else if ((parent.get_expr_type() == T_FUN_REGR_SXX && i == 0) ||
                (parent.get_expr_type() == T_FUN_REGR_SYY && i == 1) ||
@@ -3568,13 +3568,13 @@ int ObRawExprDeduceType::add_implicit_cast(ObAggFunRawExpr &parent,
         if (OB_FAIL(try_add_cast_expr(parent, i, result_type, cast_mode))) {
           LOG_WARN("try_add_cast_expr failed", K(ret));
         } else {
-          LOG_DEBUG("add_implicit_cast for ObAggFunRawExpr", K(i), K(res_type), KPC(child_ptr));
+
         }
       }
     } else if (OB_FAIL(try_add_cast_expr(parent, i, res_type, cast_mode))) {
       LOG_WARN("try_add_cast_expr failed", K(ret));
     } else {
-      LOG_DEBUG("add_implicit_cast for ObAggFunRawExpr", K(i), K(res_type), KPC(child_ptr));
+
     }
   }
   return ret;
@@ -3844,7 +3844,7 @@ int ObRawExprDeduceType::try_replace_cast_with_questionmark_ora(ObRawExpr &paren
           parent.get_param_expr(child_idx) = param_expr;
         }
       }
-      LOG_DEBUG("replace cast with questionmark", KPC(cast_expr), K(is_nmb2decint));
+
     }
   }
   return ret;

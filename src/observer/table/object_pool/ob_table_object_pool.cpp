@@ -154,7 +154,7 @@ void ObTableObjectPoolMgr::destroy()
     ls_res_pool_.destroy();
     allocator_.reset(); // when mtl_destroy, all worker thread has beed existed, no need to lock allocator
     is_inited_ = false;
-    LOG_INFO("ObTableObjectPoolMgr destroy successfully");
+
   }
 }
 

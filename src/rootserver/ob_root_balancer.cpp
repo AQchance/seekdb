@@ -59,7 +59,7 @@ int ObRootBalancer::idle() const
   } else if (OB_FAIL(idling_.idle())) {
     LOG_WARN("idle failed", K(ret));
   } else {
-    LOG_INFO("root balance idle", "idle_time", idling_.get_idle_interval_us());
+
   }
   return ret;
 }
@@ -106,7 +106,7 @@ void ObRootBalancer::set_active()
 
 void ObRootBalancer::run3()
 {
-  LOG_INFO("root balance start");
+
   int ret = OB_SUCCESS;
   if (!inited_) {
     ret = OB_NOT_INIT;
@@ -114,7 +114,7 @@ void ObRootBalancer::run3()
   } else if (OB_FAIL(do_balance())) {
     LOG_WARN("all balance failed", K(ret));
   }
-  LOG_INFO("root balance stop", K(ret), K(stop_));
+
 }
 
 int ObRootBalancer::do_balance()

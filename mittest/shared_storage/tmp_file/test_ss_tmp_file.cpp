@@ -142,7 +142,7 @@ void TestTmpFile::check_final_status()
 // 2. test write after reading
 TEST_F(TestTmpFile, test_unaligned_data_read_write)
 {
-  STORAGE_LOG(INFO, "=======================test_unaligned_data_read_write begin=======================");
+
   int ret = OB_SUCCESS;
   const int64_t write_size = 2 * 1024 * 1024;
   const int64_t wbp_mem_limit = MTL(ObTenantTmpFileManager *)->get_ss_file_manager().wbp_.get_memory_limit();
@@ -244,7 +244,7 @@ TEST_F(TestTmpFile, test_unaligned_data_read_write)
   ASSERT_EQ(OB_SUCCESS, ret);
   check_final_status();
 
-  STORAGE_LOG(INFO, "=======================test_unaligned_data_read_write end=======================");
+
 }
 
 // generate 7MB random data
@@ -260,7 +260,7 @@ TEST_F(TestTmpFile, test_unaligned_data_read_write)
 // 2.2 read unaligned data
 TEST_F(TestTmpFile, test_read)
 {
-  STORAGE_LOG(INFO, "=======================test_read begin=======================");
+
   int ret = OB_SUCCESS;
   const int64_t write_size = 7 * 1024 * 1024; // 7MB
   const int64_t wbp_mem_limit = MTL(ObTenantTmpFileManager *)->get_ss_file_manager().wbp_.get_memory_limit();
@@ -436,15 +436,15 @@ TEST_F(TestTmpFile, test_read)
   ASSERT_EQ(OB_SUCCESS, ret);
   check_final_status();
 
-  LOG_INFO("io time", K(write_time), K(read_time));
-  STORAGE_LOG(INFO, "=======================test_read end=======================");
+
+
 }
 
 // generate 27206784 random data
 // this test will check whether kv_cache caches correct pages in disk
 TEST_F(TestTmpFile, test_cached_read)
 {
-  STORAGE_LOG(INFO, "=======================test_cached_read begin=======================");
+
   int ret = OB_SUCCESS;
   // 27206784: 24MB + 249 * 8KB + 1152B (12 * 256 + 250 pages)
   const int64_t write_size = 24 * 1024 * 1024 + 249 * 8 * 1024 + 1152;
@@ -574,13 +574,13 @@ TEST_F(TestTmpFile, test_cached_read)
   ASSERT_EQ(OB_SUCCESS, ret);
   check_final_status();
 
-  LOG_INFO("io time", K(write_time), K(read_time));
-  STORAGE_LOG(INFO, "=======================test_cached_read end=======================");
+
+
 }
 
 TEST_F(TestTmpFile, test_prefetch_read)
 {
-  STORAGE_LOG(INFO, "=======================test_prefetch_read begin=======================");
+
   int ret = OB_SUCCESS;
   ObTmpWriteBufferPool &wbp = MTL(ObTenantTmpFileManager *)->get_ss_file_manager().wbp_;
   // const int64_t write_size = 8 * 1024 * 1024; // 8MB
@@ -636,7 +636,7 @@ TEST_F(TestTmpFile, test_prefetch_read)
     task_handle.wait(30 * 1000);
   }
   EXPECT_EQ(file_handle.get()->cached_page_nums_, 0);
-  LOG_INFO("wash all page complete");
+
 
   // 2. enable prefetch and read data from disk
   ObTmpFileIOHandle handle;
@@ -652,7 +652,7 @@ TEST_F(TestTmpFile, test_prefetch_read)
       read_size = 10;
       read_offset = write_size - 20;
     }
-    LOG_INFO("test_prefetch_read pread", K(i), K(read_offset));
+
     read_buf = new char [read_size];
     io_info.buf_ = read_buf;
     io_info.size_ = read_size;
@@ -707,14 +707,14 @@ TEST_F(TestTmpFile, test_prefetch_read)
   ASSERT_EQ(OB_SUCCESS, ret);
   check_final_status();
 
-  STORAGE_LOG(INFO, "=======================test_prefetch_read end=======================");
+
 }
 
 // 1. append write a uncompleted tail page in memory
 // 2. append write a uncompleted tail page in disk
 TEST_F(TestTmpFile, test_write_tail_page)
 {
-  STORAGE_LOG(INFO, "=======================test_write_tail_page begin=======================");
+
   int ret = OB_SUCCESS;
   const int64_t write_size = 10 * 1024; // 10KB
   int64_t already_write_size = 0;
@@ -859,7 +859,7 @@ TEST_F(TestTmpFile, test_write_tail_page)
   ASSERT_EQ(OB_SUCCESS, ret);
   check_final_status();
 
-  STORAGE_LOG(INFO, "=======================test_write_tail_page end=======================");
+
 }
 
 // 1. truncate special cases
@@ -869,7 +869,7 @@ TEST_F(TestTmpFile, test_write_tail_page)
 // 5. invalid truncate_offset checking
 TEST_F(TestTmpFile, test_tmp_file_truncate)
 {
-  STORAGE_LOG(INFO, "=======================test_tmp_file_truncate begin=======================");
+
   int ret = OB_SUCCESS;
   const int64_t data_size = 30 * 1024 * 1024; // 30MB
   const int64_t wbp_mem_limit = MTL(ObTenantTmpFileManager *)->get_ss_file_manager().wbp_.get_memory_limit();
@@ -1155,7 +1155,7 @@ TEST_F(TestTmpFile, test_tmp_file_truncate)
   ret = MTL(ObTenantTmpFileManager *)->remove(fd);
   ASSERT_EQ(OB_SUCCESS, ret);
   check_final_status();
-  STORAGE_LOG(INFO, "=======================test_tmp_file_truncate end=======================");
+
 }
 
 // this test will trigger flush and evict logic for both data and meta pages.
@@ -1258,7 +1258,7 @@ void test_big_file(const int64_t write_size, const int64_t wbp_mem_limit, ObTmpF
     std::string filename = "check_result";
     bool is_equal = compare_and_print_hex_data(write_buf + read_offset, handle.get_buffer(), read_size, 300, filename);
     if (!is_equal) {
-      LOG_INFO("different data", K(i), K(read_offset), K(read_size));
+
       std::string file_name = "write_buffer";
       dump_hex_data(write_buf + read_offset, read_size, file_name);
       file_name = "read_buffer";
@@ -1276,13 +1276,13 @@ void test_big_file(const int64_t write_size, const int64_t wbp_mem_limit, ObTmpF
   ret = MTL(ObTenantTmpFileManager *)->remove(fd);
   ASSERT_EQ(OB_SUCCESS, ret);
 
-  STORAGE_LOG(INFO, "test_big_file", K(io_info.disable_page_cache_), K(io_info.disable_block_cache_));
-  STORAGE_LOG(INFO, "io time", K(write_time), K(read_time));
+
+
 }
 
 TEST_F(TestTmpFile, test_big_file_with_small_wbp)
 {
-  STORAGE_LOG(INFO, "=======================test_big_file_with_small_wbp begin=======================");
+
   const int64_t write_size = 150 * 1024 * 1024;  // write 150MB data
   const int64_t wbp_mem_limit = SMALL_WBP_MEM_LIMIT;
   ObTmpFileIOInfo io_info;
@@ -1290,12 +1290,12 @@ TEST_F(TestTmpFile, test_big_file_with_small_wbp)
   io_info.disable_block_cache_ = true;
   test_big_file(write_size, wbp_mem_limit, io_info);
   check_final_status();
-  STORAGE_LOG(INFO, "=======================test_big_file_with_small_wbp end=======================");
+
 }
 
 TEST_F(TestTmpFile, test_big_file_with_small_wbp_disable_page_cache)
 {
-  STORAGE_LOG(INFO, "=======================test_big_file_with_small_wbp_disable_page_cache begin=======================");
+
   const int64_t write_size = 150 * 1024 * 1024;  // write 150MB data
   const int64_t wbp_mem_limit = SMALL_WBP_MEM_LIMIT;
   ObTmpFileIOInfo io_info;
@@ -1303,7 +1303,7 @@ TEST_F(TestTmpFile, test_big_file_with_small_wbp_disable_page_cache)
   io_info.disable_block_cache_ = true;
   test_big_file(write_size, wbp_mem_limit, io_info);
   check_final_status();
-  STORAGE_LOG(INFO, "=======================test_big_file_with_small_wbp_disable_page_cache end=======================");
+
 }
 
 // generate 16MB random data for four files. (total 64MB)
@@ -1473,15 +1473,15 @@ void test_multi_file_single_thread_read_write(bool disable_block_cache)
 
 TEST_F(TestTmpFile, test_multi_file_single_thread_read_write_with_disable_block_cache)
 {
-  STORAGE_LOG(INFO, "=======================test_multi_file_single_thread_read_write_with_disable_block_cache begin=======================");
+
   test_multi_file_single_thread_read_write(true);
   check_final_status();
-  STORAGE_LOG(INFO, "=======================test_multi_file_single_thread_read_write_with_disable_block_cache end=======================");
+
 }
 
 TEST_F(TestTmpFile, test_single_file_multi_thread_read_write)
 {
-  STORAGE_LOG(INFO, "=======================test_single_file_multi_thread_read_write begin=======================");
+
   int ret = OB_SUCCESS;
   const int64_t read_thread_cnt = 4;
   const int64_t file_cnt = 1;
@@ -1500,13 +1500,13 @@ TEST_F(TestTmpFile, test_single_file_multi_thread_read_write)
   io_time = ObTimeUtility::current_time() - io_time;
   check_final_status();
 
-  STORAGE_LOG(INFO, "io time", K(io_time));
-  STORAGE_LOG(INFO, "=======================test_single_file_multi_thread_read_write end=======================");
+
+
 }
 
 TEST_F(TestTmpFile, test_multi_file_multi_thread_read_write)
 {
-  STORAGE_LOG(INFO, "=======================test_multi_file_multi_thread_read_write begin=======================");
+
   int ret = OB_SUCCESS;
   MTL(ObTenantTmpFileManager *)->get_ss_file_manager().wbp_.set_max_data_page_usage_ratio_(0.99);
   const int64_t read_thread_cnt = 4;
@@ -1526,13 +1526,13 @@ TEST_F(TestTmpFile, test_multi_file_multi_thread_read_write)
   io_time = ObTimeUtility::current_time() - io_time;
   MTL(ObTenantTmpFileManager *)->get_ss_file_manager().wbp_.set_max_data_page_usage_ratio_(0.90);
   check_final_status();
-  STORAGE_LOG(INFO, "io time", K(io_time));
-  STORAGE_LOG(INFO, "=======================test_multi_file_multi_thread_read_write end=======================");
+
+
 }
 
 TEST_F(TestTmpFile, test_more_files_more_threads_read_write)
 {
-  STORAGE_LOG(INFO, "=======================test_more_files_more_threads_read_write begin=======================");
+
   int ret = OB_SUCCESS;
   const int64_t read_thread_cnt = 2;
   const int64_t file_cnt = 128;
@@ -1551,13 +1551,13 @@ TEST_F(TestTmpFile, test_more_files_more_threads_read_write)
   io_time = ObTimeUtility::current_time() - io_time;
 
   check_final_status();
-  STORAGE_LOG(INFO, "io time", K(io_time));
-  STORAGE_LOG(INFO, "=======================test_more_files_more_threads_read_write end=======================");
+
+
 }
 
 TEST_F(TestTmpFile, test_multiple_small_files)
 {
-  STORAGE_LOG(INFO, "=======================test_multiple_small_files begin=======================");
+
   int ret = OB_SUCCESS;
   const int64_t read_thread_cnt = 2;
   const int64_t file_cnt = 256;
@@ -1576,8 +1576,8 @@ TEST_F(TestTmpFile, test_multiple_small_files)
   io_time = ObTimeUtility::current_time() - io_time;
 
   check_final_status();
-  STORAGE_LOG(INFO, "io time", K(io_time));
-  STORAGE_LOG(INFO, "=======================test_multiple_small_files end=======================");
+
+
 }
 
 // ATTENTION
@@ -1585,7 +1585,7 @@ TEST_F(TestTmpFile, test_multiple_small_files)
 // And it will never be decreased as long as it has been increased
 TEST_F(TestTmpFile, test_big_file)
 {
-  STORAGE_LOG(INFO, "=======================test_big_file begin=======================");
+
   const int64_t write_size = 750 * 1024 * 1024;  // write 750MB data
   const int64_t wbp_mem_limit = BIG_WBP_MEM_LIMIT;
   ObTmpFileIOInfo io_info;
@@ -1595,12 +1595,12 @@ TEST_F(TestTmpFile, test_big_file)
   MTL(ObTenantTmpFileManager *)->get_ss_file_manager().wbp_.default_wbp_memory_limit_ = SMALL_WBP_MEM_LIMIT;
   usleep(1 * 1000 * 1000); // 1s
   check_final_status();
-  STORAGE_LOG(INFO, "=======================test_big_file end=======================");
+
 }
 
 TEST_F(TestTmpFile, test_big_file_disable_page_cache)
 {
-  STORAGE_LOG(INFO, "=======================test_big_file_disable_page_cache begin=======================");
+
   const int64_t write_size = 750 * 1024 * 1024;  // write 750MB data
   const int64_t wbp_mem_limit = BIG_WBP_MEM_LIMIT;
   ObTmpFileIOInfo io_info;
@@ -1610,12 +1610,12 @@ TEST_F(TestTmpFile, test_big_file_disable_page_cache)
   MTL(ObTenantTmpFileManager *)->get_ss_file_manager().wbp_.default_wbp_memory_limit_ = SMALL_WBP_MEM_LIMIT;
   usleep(1 * 1000 * 1000); // 1s
   check_final_status();
-  STORAGE_LOG(INFO, "=======================test_big_file_disable_page_cache end=======================");
+
 }
 
 TEST_F(TestTmpFile, test_aio_pread)
 {
-  STORAGE_LOG(INFO, "=======================test_aio_pread begin=======================");
+
   int ret = OB_SUCCESS;
   const int64_t write_size = 10 * 1024 * 1024; // 10MB
   char *write_buf = new char [write_size];
@@ -1698,7 +1698,7 @@ TEST_F(TestTmpFile, test_aio_pread)
   ASSERT_EQ(OB_SUCCESS, ret);
   check_final_status();
 
-  STORAGE_LOG(INFO, "=======================test_aio_pread begin=======================");
+
 }
 
 int mock_flush_file(const int64_t flush_page_num, ObSharedStorageTmpFile &file, ObSSTmpFileAsyncFlushWaitTask& task)
@@ -1790,7 +1790,7 @@ int check_flush_over(ObSharedStorageTmpFile &file)
 
 TEST_F(TestTmpFile, test_flush_with_write_tail_page_and_truncate)
 {
-  STORAGE_LOG(INFO, "=======================test_flush_with_write_tail_page_and_truncate begin=======================");
+
   int ret = OB_SUCCESS;
   int64_t dir = -1;
   int64_t fd = -1;
@@ -1949,12 +1949,12 @@ TEST_F(TestTmpFile, test_flush_with_write_tail_page_and_truncate)
   ASSERT_EQ(OB_SUCCESS, MTL(ObTenantTmpFileManager *)->remove(fd));
 
   check_final_status();
-  STORAGE_LOG(INFO, "=======================test_flush_with_write_tail_page_and_truncate end=======================");
+
 }
 
 TEST_F(TestTmpFile, test_flush_with_io_error)
 {
-  STORAGE_LOG(INFO, "=======================test_flush_with_io_error begin=======================");
+
   int ret = OB_SUCCESS;
   // 1. write and flush pages with uncompleted tail page; fill page to full (try to cancel the flushing for tail page);
   //    then, exec wait with io timeout for tail page, leading to file discard (although we try to give up flushing it)
@@ -2263,7 +2263,7 @@ TEST_F(TestTmpFile, test_flush_with_io_error)
   }
 
   check_final_status();
-  STORAGE_LOG(INFO, "=======================test_flush_with_io_error end=======================");
+
 }
 
 int check_file_is_sealed(ObSharedStorageTmpFile &ss_tmp_file)
@@ -2271,7 +2271,7 @@ int check_file_is_sealed(ObSharedStorageTmpFile &ss_tmp_file)
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!ss_tmp_file.is_sealed())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "file is not sealed", K(ret), K(ss_tmp_file));
+
   } else {
     blocksstable::MacroBlockId block_id = ss_tmp_file.id_;
     block_id.set_third_id(ss_tmp_file.get_block_virtual_id_(ss_tmp_file.file_size_, true));
@@ -2280,7 +2280,7 @@ int check_file_is_sealed(ObSharedStorageTmpFile &ss_tmp_file)
     int cnt = 0;
     while (OB_SUCC(ret) && is_exist && cnt++ < 10) {
       if (OB_FAIL(MTL(ObTenantFileManager*)->is_exist_local_file(block_id, ls_epoch_id, is_exist))) {
-        STORAGE_LOG(WARN, "check file is exist in local failed", K(ret), K(block_id));
+
       } else {
         usleep(1 * 1000 * 1000); // 1s
       }
@@ -2290,7 +2290,7 @@ int check_file_is_sealed(ObSharedStorageTmpFile &ss_tmp_file)
       cnt = 0;
       while (OB_SUCC(ret) && !is_exist && cnt++ < 10) {
         if (OB_FAIL(MTL(ObTenantFileManager*)->is_exist_remote_file(block_id, ls_epoch_id, is_exist))) {
-          STORAGE_LOG(WARN, "check file is exist in remote failed", K(ret), K(block_id));
+
         } else {
           usleep(1 * 1000 * 1000); // 1s
         }
@@ -2303,7 +2303,7 @@ int check_file_is_sealed(ObSharedStorageTmpFile &ss_tmp_file)
 
 TEST_F(TestTmpFile, test_seal)
 {
-  STORAGE_LOG(INFO, "=======================test_seal begin=======================");
+
   int ret = OB_SUCCESS;
   ObTmpFileIOInfo io_info;
   io_info.io_desc_.set_wait_event(2);
@@ -2465,7 +2465,7 @@ TEST_F(TestTmpFile, test_seal)
 
   flush_mgr.start();
   check_final_status();
-  STORAGE_LOG(INFO, "=======================test_seal end=======================");
+
 }
 
 } // namespace oceanbase

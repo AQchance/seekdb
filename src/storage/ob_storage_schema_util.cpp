@@ -134,7 +134,7 @@ int ObStorageSchemaUtil::alloc_storage_schema(
 
   if (OB_ISNULL(buffer)) {
     ret = common::OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to allocate mem for storage schema", K(ret));
+
   } else {
     new_storage_schema = new (buffer) ObStorageSchema();
   }

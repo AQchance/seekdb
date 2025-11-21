@@ -70,7 +70,7 @@ int ObDDLKV::flush(ObLSID ls_id)
     EXPECT_EQ(OB_SUCCESS, mgr->get_first_frozen_memtable(handle));
     if (handle.get_table() == this) {
       mgr->release_head_memtable_(this);
-      STORAGE_LOG(INFO, "flush and release one ddl kv ddl_kv", KP(this));
+
     }
   }
   return ret;
@@ -193,7 +193,7 @@ void TestTabletMemtable::basic_test() {
   ASSERT_EQ(OB_ENTRY_NOT_EXIST, protected_handle->get_active_memtable(memtable_handle));
   ASSERT_EQ(OB_SUCCESS, protected_handle->get_boundary_memtable(memtable_handle));
   ASSERT_EQ(OB_SUCCESS, memtable_handle.get_tablet_memtable(memtable));
-  STORAGE_LOG(INFO, "finish freeze data memtable", KPC(memtable));
+
 
   // *********** CREATE DIRECT LOAD MEMTABLE ************
   arg.reset();
@@ -203,7 +203,7 @@ void TestTabletMemtable::basic_test() {
   ASSERT_EQ(OB_SUCCESS, protected_handle->get_active_memtable(memtable_handle));
   ASSERT_EQ(OB_SUCCESS, memtable_handle.get_tablet_memtable(memtable));
   ASSERT_EQ(ObITable::TableType::DIRECT_LOAD_MEMTABLE, memtable->get_table_type());
-  STORAGE_LOG(INFO, "finish create direct load memtable", KPC(memtable));
+
 
   // *********** GET DIRECT LOAD MEMTABLE FOR WRITE ************
   memtable->inc_write_ref();
@@ -218,18 +218,18 @@ void TestTabletMemtable::basic_test() {
 
   sleep(2);
   ASSERT_EQ(TabletMemtableFreezeState::ACTIVE, memtable->get_freeze_state());
-  STORAGE_LOG(INFO, "waiting write finish", KPC(memtable));
+
 
   // *********** DIRECT LOAD MEMTABLE WRITE FINISH ************
   memtable->dec_write_ref();
-  STORAGE_LOG(INFO, "write_ref_cnt should be zero", KPC(memtable));
+
   sleep(1);
 
   // *********** CHECK FREEZE RESULT ************
   ASSERT_EQ(OB_ENTRY_NOT_EXIST, protected_handle->get_active_memtable(memtable_handle));
   ASSERT_EQ(OB_SUCCESS, protected_handle->get_boundary_memtable(memtable_handle));
   ASSERT_EQ(OB_SUCCESS, memtable_handle.get_tablet_memtable(memtable));
-  STORAGE_LOG(INFO, "get boundary memtable", KPC(memtable));
+
 
   ASSERT_EQ(ObITable::TableType::DIRECT_LOAD_MEMTABLE, memtable->get_table_type());
   ASSERT_NE(TabletMemtableFreezeState::ACTIVE, memtable->get_freeze_state());
@@ -242,7 +242,7 @@ void TestTabletMemtable::basic_test() {
   ASSERT_EQ(OB_SUCCESS, tablet->create_memtable(arg));
   ASSERT_EQ(OB_SUCCESS, protected_handle->get_active_memtable(memtable_handle));
   ASSERT_EQ(OB_SUCCESS, memtable_handle.get_tablet_memtable(memtable));
-  STORAGE_LOG(INFO, "create a new direct load memtable", KPC(memtable));
+
 
   // *********** CONSTURCT A DIRECT LOAD TABLE GUARD ************
   SCN fake_ddl_redo_scn = SCN::plus(SCN::min_scn(), 10);
@@ -263,7 +263,7 @@ void TestTabletMemtable::basic_test() {
                                              true, /* is_sync */
                                              0,
                                              ObFreezeSourceFlag::TEST_MODE));
-  STORAGE_LOG(INFO, "finish logstream freeze");
+
 
   // *********** CHECK LOGSTREAM FREEZE RESULT ************
   ASSERT_EQ(OB_ENTRY_NOT_EXIST, protected_handle->get_active_memtable(memtable_handle));
@@ -273,7 +273,7 @@ void TestTabletMemtable::basic_test() {
 
   ASSERT_NE(TabletMemtableFreezeState::ACTIVE, memtable->get_freeze_state());
   ASSERT_EQ(true, memtable->is_in_prepare_list_of_data_checkpoint());
-  STORAGE_LOG(INFO, "finish check logstream freeze result", KPC(memtable));
+
 
   // *********** WAIT ALL MEMTABLES FLUSH ************
   FLUSH_DISABLED = false;
@@ -283,10 +283,10 @@ void TestTabletMemtable::basic_test() {
     if (protected_handle->has_memtable()) {
       ObSEArray<ObTableHandleV2, 2> handles;
       ASSERT_EQ(OB_SUCCESS, protected_handle->get_all_memtables(handles));
-      STORAGE_LOG(INFO, "wait all memtable flushed", K(retry_times));
+
       for (int i = 0; i < handles.count(); i++) {
         ObITabletMemtable *memtable = static_cast<ObITabletMemtable*>(handles.at(i).get_table());
-        STORAGE_LOG(INFO, "PRINT Table", K(memtable->key_), K(memtable->get_freeze_state()));
+
       }
       retry_times++;
     } else {

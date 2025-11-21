@@ -194,7 +194,7 @@ int ObScanner::add_row(const ObNewRow &row)
        * the row length is within 64MB.
        * This allows the row to be written even if it exceeds the memory limit.
        * */
-      LOG_INFO("add a large row, exceeds the memory limit", "row_len", row_store_.get_data_size(), K_(mem_size_limit));
+
     } else if (OB_FAIL(row_store_.rollback_last_row())) {
       LOG_WARN("fail to rollback last row", K(ret));
     } else {

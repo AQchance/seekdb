@@ -278,7 +278,7 @@ int ObExtInfoCbRegister::register_cb(
       } else {
         seq_no_cur = seq_no_cur + 1;
         ++cb_cnt;
-        LOG_DEBUG("register ext info callback success", K(*cb));
+
       }
       if (OB_FAIL(ret) && OB_NOT_NULL(cb)) {
         mvcc_ctx_->free_ext_info_callback(cb);

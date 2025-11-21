@@ -44,7 +44,7 @@ int ObTenantSnapshotMgr::init(ObLSSnapshotMgr* ls_snapshot_mgr,
     ls_snapshot_mgr_ = ls_snapshot_mgr;
     meta_handler_ = meta_handler;
     is_inited_ = true;
-    LOG_INFO("tenant snapshot manager thread init succ", KPC(this));
+
   }
 
   return ret;
@@ -110,7 +110,7 @@ void ObTenantSnapshotMgr::destroy()
     int64_t map_cnt = tenant_snapshot_map_.count();
     if (0 == map_cnt) {
       tenant_snapshot_map_.destroy();
-      LOG_INFO("tenant snapshot mgr destroy succ");
+
     } else {
       LOG_ERROR("tenant snapshot map cnt is not zero", K(map_cnt));
     }

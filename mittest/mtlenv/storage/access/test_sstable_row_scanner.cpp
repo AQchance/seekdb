@@ -308,7 +308,7 @@ TEST_F(TestSSTableRowScanner, test_border)
   test_border(is_reverse_scan);
   is_reverse_scan = true;
   test_border(is_reverse_scan);
-  STORAGE_LOG(INFO, "memory usage", K(lib::get_memory_hold()), K(lib::get_memory_limit()));
+
   ObMallocAllocator::get_instance()->print_tenant_ctx_memory_usage(500);
   ObMallocAllocator::get_instance()->print_tenant_memory_usage(500);
   ObMallocAllocator::get_instance()->print_tenant_memory_usage(1);

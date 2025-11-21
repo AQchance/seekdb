@@ -91,7 +91,7 @@ int check_exist(const ObLockTaskBatchRequest<T> &arg,
   } else if (OB_UNLIKELY(data.tablet_status_.is_deleted_for_gc())) {
     // tablet shell
     ret = OB_TABLET_NOT_EXIST;
-    LOG_INFO("tablet is already deleted", KR(ret), "ls_id", ls->get_ls_id(), K(tablet_id));
+
   } else {
     // do nothing
   }
@@ -204,7 +204,7 @@ int ObTableLockTaskP::process()
   }
 
   result_.ret_code_ = ret;
-  LOG_DEBUG("ObTableLockTaskP::process", KR(ret), K(result_), K(arg_));
+
   ret = OB_SUCCESS;
 
   return ret;
@@ -259,7 +259,7 @@ int ObHighPriorityTableLockTaskP::process()
   }
 
   result_.ret_code_ = ret;
-  LOG_DEBUG("ObHighPriorityTableLockTaskP::process", KR(ret), K(result_), K(arg_));
+
   ret = OB_SUCCESS;
 
   return ret;
@@ -318,7 +318,7 @@ int ObBatchLockTaskP::process()
   }
 
   result_.ret_code_ = ret;
-  LOG_DEBUG("ObBatchLockTaskP::process", KR(ret), K(result_), K(arg_));
+
   ret = OB_SUCCESS;
 
   return ret;
@@ -372,7 +372,7 @@ int ObBatchReplaceLockTaskP::process()
   }
 
   result_.ret_code_ = ret;
-  LOG_DEBUG("ObBatchReplaceLockTaskP::process", KR(ret), K(result_), K(arg_));
+
   ret = OB_SUCCESS;
 
   return ret;
@@ -487,7 +487,7 @@ int ObHighPriorityBatchLockTaskP::process()
   }
 
   result_.ret_code_ = ret;
-  LOG_DEBUG("ObHighPriorityBatchLockTaskP::process", KR(ret), K(result_), K(arg_));
+
   ret = OB_SUCCESS;
 
   return ret;
@@ -519,7 +519,7 @@ int ObOutTransUnlockTableP::process()
 int ObAdminRemoveLockP::process()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("ObAdminRemoveLockP::process", K(arg_));
+
   uint64_t tenant_id = arg_.tenant_id_;
   MAKE_TENANT_SWITCH_SCOPE_GUARD(guard);
   ObLSService *ls_service = nullptr;
@@ -550,7 +550,7 @@ int ObAdminRemoveLockP::process()
 int ObAdminUpdateLockP::process()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("ObAdminUpdateLockP::process", K(arg_));
+
   uint64_t tenant_id = arg_.tenant_id_;
   MAKE_TENANT_SWITCH_SCOPE_GUARD(guard);
   ObLSService *ls_service = nullptr;

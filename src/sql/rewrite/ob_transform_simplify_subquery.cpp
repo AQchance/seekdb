@@ -32,7 +32,7 @@ int ObTransformSimplifySubquery::transform_one_stmt(common::ObIArray<ObParentDML
   } else {
     trans_happened |= is_happened;
     OPT_TRACE("push down outer join condition:", is_happened);
-    LOG_TRACE("succeed to push down outer join condition", K(is_happened));
+
   }
   if (OB_SUCC(ret)) {
     if (OB_FAIL(transform_subquery_as_expr(stmt, is_happened))) {
@@ -40,7 +40,7 @@ int ObTransformSimplifySubquery::transform_one_stmt(common::ObIArray<ObParentDML
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("transform subquery to expr:", is_happened);
-      LOG_TRACE("succeed to transform subquery to expr", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -49,7 +49,7 @@ int ObTransformSimplifySubquery::transform_one_stmt(common::ObIArray<ObParentDML
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("remove simple select:", is_happened);
-      LOG_TRACE("succeed to remove simple select", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -58,7 +58,7 @@ int ObTransformSimplifySubquery::transform_one_stmt(common::ObIArray<ObParentDML
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("transform not expr:", is_happened);
-      LOG_TRACE("succeed to transform not expr", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -67,7 +67,7 @@ int ObTransformSimplifySubquery::transform_one_stmt(common::ObIArray<ObParentDML
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("add limit for exists subquery:", is_happened);
-      LOG_TRACE("succeed to add limit for exists subquery", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -76,7 +76,7 @@ int ObTransformSimplifySubquery::transform_one_stmt(common::ObIArray<ObParentDML
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("simply any/all subquery:", is_happened);
-      LOG_TRACE("succeed to transform_any_all", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -85,7 +85,7 @@ int ObTransformSimplifySubquery::transform_one_stmt(common::ObIArray<ObParentDML
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("simply exists subquery:", is_happened);
-      LOG_TRACE("succeed to transform_exists_query", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -94,7 +94,7 @@ int ObTransformSimplifySubquery::transform_one_stmt(common::ObIArray<ObParentDML
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("transform any/all as exists/not exists:", is_happened);
-      LOG_TRACE("succeed to transform_any_all_as_exists", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret) && trans_happened) {
@@ -1251,7 +1251,7 @@ int ObTransformSimplifySubquery::eliminate_subquery(ObDMLStmt *stmt,
         if (OB_FAIL(eliminate_subquery_in_exists(stmt, expr, trans_happened))) {
           LOG_WARN("failed to eliminate subquery in exists", K(ret), KP(expr));
         }
-        LOG_TRACE("finish to eliminate subquery", K(can_be_eliminated), K(ret));
+
 
       } else if (OB_FAIL(empty_table_subquery_can_be_eliminated_in_exists(expr, can_be_eliminated))) {
         LOG_WARN("failed to check empty table subquery can be eliminate", K(ret));
@@ -1259,14 +1259,14 @@ int ObTransformSimplifySubquery::eliminate_subquery(ObDMLStmt *stmt,
         if (OB_FAIL(do_trans_empty_table_subquery_as_expr(expr, trans_happened))) {
           LOG_WARN("failed to do trans empty table subquery as expr", K(ret));
         }
-        LOG_TRACE("finish to eliminate empty table subquery", K(ret));
+
       } else {
         bool is_happened = false;
         if (OB_FAIL(simplify_select_items(stmt, expr->get_expr_type(), subquery, false, is_happened))) {
           LOG_WARN("Simplify select items in EXISTS fails", K(ret));
         } else if (is_happened) {
           trans_happened |= is_happened;
-          LOG_TRACE("simplify select item happened", K(is_happened), K(trans_happened));
+
         }
         if (OB_SUCC(ret)) {
           is_happened = false;
@@ -1275,13 +1275,13 @@ int ObTransformSimplifySubquery::eliminate_subquery(ObDMLStmt *stmt,
             LOG_WARN("Subquery elimination of group by in EXISTS fails", K(ret));
           } else if (is_happened) {
             trans_happened |= is_happened;
-            LOG_TRACE("eliminate group by in exists happened", K(is_happened), K(trans_happened));
+
           }
         }
         if (OB_SUCC(ret) && subquery->get_order_items().count() > 0) {
           trans_happened = true;
           subquery->get_order_items().reset();
-          LOG_TRACE("eliminate order by in exists happened", K(trans_happened));
+
         }
         if (OB_SUCC(ret) && trans_happened) {
           subq_expr->set_output_column(subquery->get_select_item_size());
@@ -1690,7 +1690,7 @@ int ObTransformSimplifySubquery::eliminate_groupby_distinct_in_any_all(ObRawExpr
       LOG_WARN("Subquery elimination of group by in ANY, ALL fails", K(ret));
     } else {
       trans_happened |= is_happened;
-      LOG_TRACE("eliminate group by in ANY, ALL happened", K(is_happened), K(trans_happened));
+
     }
     if (OB_SUCC(ret) && !subq_expr->get_exec_params().empty()) {
       is_happened = false;
@@ -1698,7 +1698,7 @@ int ObTransformSimplifySubquery::eliminate_groupby_distinct_in_any_all(ObRawExpr
         LOG_WARN("Subquery elimination of distinct in ANY, ALL fails", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("eliminate distinct in ANY, ALL happened", K(is_happened), K(trans_happened));
+
       }
     }
   }

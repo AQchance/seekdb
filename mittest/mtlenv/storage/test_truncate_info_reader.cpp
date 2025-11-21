@@ -66,7 +66,7 @@ TEST_F(TestTruncateInfoReader, read_multi_truncate_info_from_minor)
   {
     // insert data into mds table
     ASSERT_EQ(OB_SUCCESS, insert_truncate_info(*mock_array.at(idx)));
-    LOG_INFO("insert truncate info", KR(ret), K(idx), KPC(mock_array.at(idx)));
+
     // exist new node in mds_table
     truncate_info_array.reset();
     ObMdsReadInfoCollector collector;
@@ -78,11 +78,11 @@ TEST_F(TestTruncateInfoReader, read_multi_truncate_info_from_minor)
     ASSERT_EQ(OB_SUCCESS, wait_mds_mini_finish(tablet_id, mock_array.at(idx)->commit_version_));
     ++idx;
     ASSERT_EQ(OB_SUCCESS, insert_truncate_info(*mock_array2.at(0)));
-    LOG_INFO("insert truncate info", KR(ret), K(idx), KPC(mock_array2.at(0)));
+
   }
   {
     ASSERT_EQ(OB_SUCCESS, insert_truncate_info(*mock_array.at(idx)));
-    LOG_INFO("insert truncate info", KR(ret), K(idx), KPC(mock_array.at(idx)));
+
     ASSERT_EQ(OB_SUCCESS, wait_mds_mini_finish(tablet_id, mock_array.at(idx)->commit_version_));
   }
 
@@ -112,7 +112,7 @@ TEST_F(TestTruncateInfoReader, read_multi_truncate_info_from_minor)
     ASSERT_EQ(1, truncate_info_array.count());
     COMPARE(1, 0);
 
-    LOG_INFO("read from mds sstable", KR(ret));
+
     // exist new node in mds_sstable
     truncate_info_array.reset();
     ObMdsReadInfoCollector collector;
@@ -331,7 +331,7 @@ TEST_F(TestTruncateInfoReader, test_truncate_info_cache)
   for (int64_t idx = 0; idx < mock_array.count(); ++idx) {
     ASSERT_EQ(OB_SUCCESS, insert_truncate_info(*mock_array.at(idx)));
   } // for
-  LOG_INFO("print truncate info array", KR(ret), K(mock_array));
+
   ASSERT_EQ(OB_SUCCESS, wait_mds_mini_finish(tablet_id, mock_array.at(mock_array.count() - 1)->commit_version_));
 
   for (int64_t idx = 0; idx < mock_array2.count(); ++idx) {
@@ -514,7 +514,7 @@ TEST_F(TestTruncateInfoReader, test_random_key_with_same_part_def)
   ASSERT_EQ(OB_SUCCESS, distinct_mgr.init(allocator_, *tablet_handle.get_obj(), nullptr, version_range, false/*access*/));
   // read all truncate info, should get 2 distinct info
   READ_DISTINC_ARRAY(ObVersionRange(1, EXIST_READ_SNAPSHOT_VERSION));
-  LOG_INFO("read all truncate info", KR(ret), K(distinct_mgr));
+
   ASSERT_EQ(2, distinct_mgr.get_distinct_truncate_info_array().count());
   ASSERT_EQ(mock_array.at(2)->commit_version_, distinct_mgr.get_distinct_truncate_info_array().at(0)->commit_version_);
   ASSERT_EQ(mock_array.at(3)->commit_version_, distinct_mgr.get_distinct_truncate_info_array().at(1)->commit_version_);
@@ -523,7 +523,7 @@ TEST_F(TestTruncateInfoReader, test_random_key_with_same_part_def)
     ObTruncateInfoCache &truncate_info_cache = tablet_handle.get_obj()->truncate_info_cache_;
     truncate_info_cache.reset();
     READ_DISTINC_ARRAY(ObVersionRange(1000, EXIST_READ_SNAPSHOT_VERSION));
-    LOG_INFO("read all truncate info", KR(ret), K(distinct_mgr));
+
     ASSERT_EQ(2, distinct_mgr.get_distinct_truncate_info_array().count());
     ASSERT_EQ(mock_array.at(2)->commit_version_, distinct_mgr.get_distinct_truncate_info_array().at(0)->commit_version_);
     ASSERT_EQ(mock_array.at(3)->commit_version_, distinct_mgr.get_distinct_truncate_info_array().at(1)->commit_version_);

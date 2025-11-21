@@ -263,7 +263,7 @@ int ObTmpFileIOCtx::wait()
     // there are no asynchronous io tasks need to wait
     // do nothing
   } else if (OB_FAIL(wait_read_finish_())) {
-    STORAGE_LOG(WARN, "wait read finish failed", KR(ret), K(fd_), K(is_read_));
+
   }
 
   return ret;

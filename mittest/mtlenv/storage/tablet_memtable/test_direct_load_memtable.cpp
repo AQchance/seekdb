@@ -121,7 +121,7 @@ void TestDirectLoadPlusOffline::create_tablets(const ObLSID ls_id){
   // 2. test tablet
   ObTabletHandle tablet_handle;
   ObTablet *tablet = nullptr;
-  STORAGE_LOG(INFO, "TestLSService::tablet_test 2.");
+
   ASSERT_EQ(OB_SUCCESS, ls->get_tablet(tablet_id, tablet_handle));
   tablet = tablet_handle.get_obj();
   ASSERT_NE(nullptr, tablet);

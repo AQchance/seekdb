@@ -253,7 +253,7 @@ void ObMetaObjGuard<T>::set_obj(ObMetaObj<T> &obj)
   reset();
   if (nullptr != obj.ptr_) {
     if (OB_UNLIKELY((nullptr == obj.pool_ && nullptr == obj.allocator_) || nullptr == obj.t3m_)) {
-      STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "object pool is nullptr", K(obj));
+
       ob_abort();
     } else {
       obj_pool_ = obj.pool_;
@@ -273,11 +273,11 @@ void ObMetaObjGuard<T>::set_obj(T *obj, common::ObIAllocator *allocator, ObTenan
   allocator_ = allocator;
   t3m_ = t3m;
   if (nullptr == obj && nullptr == allocator && nullptr == t3m) {
-    STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "invalid args to set", KP(obj), KP(allocator), KP(t3m));
+
     ob_abort();
   } else if (nullptr != obj) {
     if (nullptr == allocator || nullptr == t3m) {
-      STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "allocator is nullptr", KP(obj), KP(allocator), KP(t3m));
+
       ob_abort();
     } else {
       obj_ = obj;
@@ -321,14 +321,14 @@ ObMetaObjGuard<T> &ObMetaObjGuard<T>::operator = (const ObMetaObjGuard<T> &other
     t3m_ = other.t3m_;
     if (nullptr != other.obj_) {
       if (OB_UNLIKELY(!other.is_valid())) {
-        STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "object pool and allocator is nullptr", K(other), KPC(this));
+
         ob_abort();
       } else {
         obj_ = other.obj_;
         hold_start_time_ = ObClockGenerator::getClock();
         other.obj_->inc_ref();
         if (OB_UNLIKELY(other.obj_->get_ref() < 2)) {
-          STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "obj guard may be accessed by multiple threads or ref cnt leak", KP(obj_), KP(obj_pool_));
+
         }
       }
     }
@@ -362,7 +362,7 @@ void ObMetaObjGuard<T>::reset_obj()
 {
   if (nullptr != obj_) {
     if (OB_UNLIKELY(!is_valid())) {
-      STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "object pool and allocator is nullptr", K_(obj), K_(obj_pool), K_(allocator));
+
       ob_abort();
     } else {
       const int64_t ref_cnt = obj_->dec_ref();
@@ -376,13 +376,13 @@ void ObMetaObjGuard<T>::reset_obj()
         if (nullptr != obj_pool_) {
           obj_pool_->free_obj(obj_);
         } else {
-          STORAGE_LOG(DEBUG, "release obj from allocator", KP(obj_), KP(allocator_));
+
           obj_->reset();
           obj_->~T();
           allocator_->free(obj_);
         }
       } else if (OB_UNLIKELY(ref_cnt < 0)) {
-        STORAGE_LOG_RET(ERROR, OB_ERR_UNEXPECTED, "obj ref cnt may be leaked", K(ref_cnt), KPC(this));
+
       }
       obj_ = nullptr;
       t3m_ = nullptr;

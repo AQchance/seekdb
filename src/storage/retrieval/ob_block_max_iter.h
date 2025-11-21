@@ -124,7 +124,7 @@ inline int ObBlockMaxScoreCalc<ObBlockMaxBM25RankingParam>::calc_max_score(const
   const ObDatum &min_doc_length_datum = agg_row.storage_datums_[ranking_param_.doc_length_col_idx_];
   if (OB_UNLIKELY(max_token_freq_datum.is_null() || min_doc_length_datum.is_null())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected null value", K(ret), K(max_token_freq_datum), K(min_doc_length_datum));
+
   } else {
     max_score = sql::ObExprBM25::eval(
         max_token_freq_datum.get_int(),
@@ -143,7 +143,7 @@ inline int ObBlockMaxScoreCalc<ObBlockMaxIPRankingParam>::calc_max_score(const O
   const ObDatum &score_datum = agg_row.storage_datums_[ranking_param_.score_col_idx_];
   if (OB_UNLIKELY(score_datum.is_null())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected null score", K(ret), K(score_datum));
+
   } else {
     max_score = score_datum.get_float() * ranking_param_.query_value_;
   }
@@ -224,12 +224,12 @@ int ObBlockMaxScoreIterator::init(
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(inner_init(block_max_scan_param, scan_param))) {
-    STORAGE_LOG(WARN, "fail to init", K(ret));
+
   } else if (OB_FAIL(check_ranking_param(ranking_param, block_max_scan_param))) {
-    STORAGE_LOG(WARN, "fail to check ranking param", K(ret));
+
   } else if (OB_ISNULL(scorer_ = new (scorer_buf_) ObBlockMaxScoreCalc<RankingParam>(ranking_param))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to allocate memory", K(ret));
+
   } else {
     is_inited_ = true;
   }
@@ -254,7 +254,7 @@ inline int ObBlockMaxScoreIterator::check_ranking_param(
   if (OB_UNLIKELY(ranking_param.token_freq_col_idx_ >= block_max_scan_param.stat_cols_.count()
       || ranking_param.doc_length_col_idx_ >= block_max_scan_param.stat_cols_.count())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(ranking_param), K(block_max_scan_param));
+
   }
   return ret;
 }
@@ -267,7 +267,7 @@ inline int ObBlockMaxScoreIterator::check_ranking_param(
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(ranking_param.score_col_idx_ >= block_max_scan_param.stat_cols_.count())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(ranking_param), K(block_max_scan_param));
+
   }
   return ret;
 }

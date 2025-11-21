@@ -73,14 +73,14 @@ TEST_F(TestBalanceOperator, BalanceJob)
   unit_group_num = 1;
   ASSERT_EQ(OB_SUCCESS, job.init(tenant_id_, job_id, job_type, job_status, primary_zone_num, unit_group_num, comment, balance_strategy));
   ASSERT_EQ(OB_SUCCESS, get_curr_simple_server().init_sql_proxy2("sys", "oceanbase"));
-  LOG_INFO("[MITTEST]balance_job", K(job));
+
   common::ObMySQLProxy &sql_proxy = get_curr_simple_server().get_sql_proxy2();
   //insert
   ASSERT_EQ(OB_SUCCESS, ObBalanceJobTableOperator::insert_new_job(job, sql_proxy));
   ObBalanceJob new_job;
   //select
   ASSERT_EQ(OB_SUCCESS, ObBalanceJobTableOperator::get_balance_job(OB_SYS_TENANT_ID, false, sql_proxy, new_job, job_start_time, job_finish_time));
-  LOG_INFO("[MITTEST]balance_job", K(new_job));
+
   ASSERT_EQ(new_job.get_tenant_id(), job.get_tenant_id());
   ASSERT_EQ(new_job.get_job_id(), job.get_job_id());
   ASSERT_EQ(new_job.get_primary_zone_num(), job.get_primary_zone_num());
@@ -108,7 +108,7 @@ TEST_F(TestBalanceOperator, BalanceJob)
     ASSERT_EQ(OB_SUCCESS, result->next());
     ASSERT_EQ(OB_SUCCESS, result->get_time("create_time", start_time));
     ASSERT_EQ(OB_SUCCESS, result->get_time("finish_time", finish_time));
-    LOG_INFO("[MITTEST]job status", K(start_time), K(finish_time));
+
   }
 }
 
@@ -176,7 +176,7 @@ TEST_F(TestBalanceOperator, BalanceTask)
  ObBalanceTask new_task;
  ASSERT_EQ(OB_SUCCESS, ObBalanceTaskTableOperator::get_balance_task(OB_SYS_TENANT_ID, task_id , false, sql_proxy, new_task, start_time, finish_time));
  ASSERT_EQ(new_task.get_parent_task_list().at(0), ObBalanceTaskID(1));
- LOG_INFO("[MITTEST]balance_task", K(new_task));
+
  //update balance task
  ObBalanceTaskStatus transfer_status = ObBalanceTaskStatus::BALANCE_TASK_STATUS_TRANSFER;
  common::ObMySQLTransaction trans2;
@@ -184,25 +184,25 @@ TEST_F(TestBalanceOperator, BalanceTask)
  ASSERT_EQ(OB_SUCCESS, ObBalanceTaskTableOperator::update_task_status(new_task, transfer_status, trans2));
  ASSERT_EQ(OB_SUCCESS, trans2.end(true));  
  ASSERT_EQ(OB_SUCCESS, ObBalanceTaskTableOperator::get_balance_task(OB_SYS_TENANT_ID, task_id , false, sql_proxy, new_task, start_time, finish_time));
- LOG_INFO("[MITTEST]balance_task", K(new_task));
+
  //start transfer task
  transfer_task_id = 1;
  ASSERT_EQ(OB_SUCCESS, ObBalanceTaskTableOperator::start_transfer_task(OB_SYS_TENANT_ID, task_id, transfer_task_id, sql_proxy));
  ASSERT_EQ(OB_SUCCESS, ObBalanceTaskTableOperator::get_balance_task(OB_SYS_TENANT_ID, task_id , false, sql_proxy, new_task, start_time, finish_time));
- LOG_INFO("[MITTEST]balance_task", K(new_task));
+
  //finish transfer task
  finished_part_list.reset();
  ObTransferPartList to_do_part_list;
  bool all_part_transferred = false;
  ASSERT_EQ(OB_SUCCESS, ObBalanceTaskTableOperator::finish_transfer_task(new_task, transfer_task_id, finished_part_list, sql_proxy, to_do_part_list, all_part_transferred));
  ASSERT_EQ(OB_SUCCESS, ObBalanceTaskTableOperator::get_balance_task(OB_SYS_TENANT_ID, task_id , false, sql_proxy, new_task, start_time, finish_time));
- LOG_INFO("[MITTEST]balance_task", K(new_task));
+
  //remove parent task
  ASSERT_EQ(OB_SUCCESS, ObBalanceTaskTableOperator::remove_parent_task(OB_SYS_TENANT_ID, task_id, parent_task_id, sql_proxy));
  ASSERT_EQ(OB_SUCCESS, ObBalanceTaskTableOperator::get_balance_task(OB_SYS_TENANT_ID, task_id , false, sql_proxy, new_task, start_time, finish_time));
  ObBalanceTaskArray task_array;
  ASSERT_EQ(OB_SUCCESS, ObBalanceTaskTableOperator::load_can_execute_task(OB_SYS_TENANT_ID, task_array, sql_proxy));
- LOG_INFO("[MITTEST]balance_task", K(new_task), K(task_array));
+
 
  //clean task
  //update task status into completed before clean task
@@ -228,7 +228,7 @@ TEST_F(TestBalanceOperator, BalanceTask)
     ASSERT_EQ(OB_SUCCESS, result->next());
     ASSERT_EQ(OB_SUCCESS, result->get_time("create_time", start_time));
     ASSERT_EQ(OB_SUCCESS, result->get_time("finish_time", finish_time));
-    LOG_INFO("[MITTEST]balance_task", K(start_time), K(finish_time));
+
   }
 }
 
@@ -256,7 +256,7 @@ TEST_F(TestBalanceOperator, balance_execute)
     ObLSBalanceTaskHelper ls_balance;
     //case 1. init
     ASSERT_EQ(OB_SUCCESS, ls_balance.init(tenant_id, ls_array, unit_group, primary_zone_num, sql_proxy));
-    LOG_INFO("testtest1", K(ls_balance.unit_group_balance_array_));
+
     //case 2. no need balance
 
     bool need_balance = false;
@@ -270,7 +270,7 @@ TEST_F(TestBalanceOperator, balance_execute)
   MTL_SWITCH(tenant_id) {
     ObLSBalanceTaskHelper ls_balance;
     ASSERT_EQ(OB_SUCCESS, ls_balance.init(tenant_id,ls_array, unit_group, primary_zone_num, sql_proxy));
-    LOG_INFO("testtest3", K(ls_balance.unit_group_balance_array_));
+
     bool need_balance = false;
     ASSERT_EQ(OB_SUCCESS, ls_balance.check_need_ls_balance(need_balance));
     ASSERT_EQ(true, need_balance);
@@ -287,7 +287,7 @@ TEST_F(TestBalanceOperator, balance_execute)
   MTL_SWITCH(tenant_id) {
     ObLSBalanceTaskHelper ls_balance;
     ASSERT_EQ(OB_SUCCESS, ls_balance.init(tenant_id,ls_array, unit_group, primary_zone_num, sql_proxy));
-    LOG_INFO("testtest4", K(ls_balance.unit_group_balance_array_));
+
     bool need_balance = false;
     ASSERT_EQ(OB_SUCCESS, ls_balance.check_need_ls_balance(need_balance));
     ASSERT_EQ(true, need_balance);
@@ -308,7 +308,7 @@ TEST_F(TestBalanceOperator, balance_execute)
     ASSERT_EQ(OB_SUCCESS, info2.init(tenant_id, ls_id2, 1, share::OB_LS_NORMAL, 1001, "z2", ls_flag));
     ASSERT_EQ(OB_SUCCESS, ls_array.push_back(info2));
     ASSERT_EQ(OB_SUCCESS, ls_balance.init(tenant_id,ls_array, unit_group, primary_zone_num, sql_proxy));
-    LOG_INFO("testtest5", K(ls_balance.unit_group_balance_array_));
+
     bool need_balance = false;
     ASSERT_EQ(OB_SUCCESS, ls_balance.check_need_ls_balance(need_balance));
     ASSERT_EQ(true, need_balance);
@@ -331,12 +331,12 @@ TEST_F(TestBalanceOperator, balance_execute)
     ASSERT_EQ(OB_SUCCESS, info3.init(tenant_id, ls_id3, 1, share::OB_LS_NORMAL, 1002, "z2", ls_flag));
     ASSERT_EQ(OB_SUCCESS, ls_array.push_back(info3));
     ASSERT_EQ(OB_SUCCESS, ls_balance.init(tenant_id,ls_array, unit_group, primary_zone_num, sql_proxy));
-    LOG_INFO("testtest6", K(ls_balance.unit_group_balance_array_));
+
     bool need_balance = false;
     ASSERT_EQ(OB_SUCCESS, ls_balance.check_need_ls_balance(need_balance));
     ASSERT_EQ(true, need_balance);
     ASSERT_EQ(OB_SUCCESS, ls_balance.generate_ls_balance_task());
-    LOG_INFO("testtest6", K(ls_balance.get_balance_job()), K(ls_balance.get_balance_tasks()));
+
     ASSERT_EQ(1, ls_balance.get_balance_tasks().count());
     ASSERT_EQ(ObBalanceTaskType(ObBalanceTaskType::BALANCE_TASK_ALTER), ls_balance.task_array_[0].get_task_type());
 
@@ -359,12 +359,12 @@ TEST_F(TestBalanceOperator, balance_execute)
       ASSERT_EQ(OB_SUCCESS, ls_array.push_back(info));
     }
     ASSERT_EQ(OB_SUCCESS, ls_balance.init(tenant_id,ls_array, unit_group, primary_zone_num, sql_proxy));
-    LOG_INFO("testtest7", K(ls_balance.unit_group_balance_array_));
+
     bool need_balance = false;
     ASSERT_EQ(OB_SUCCESS, ls_balance.check_need_ls_balance(need_balance));
     ASSERT_EQ(true, need_balance);
     ASSERT_EQ(OB_SUCCESS, ls_balance.generate_ls_balance_task());
-    LOG_INFO("testtest7", K(ls_balance.get_balance_job()), K(ls_balance.get_balance_tasks()));
+
     ASSERT_EQ(6, ls_balance.get_balance_tasks().count());
     ASSERT_EQ(ObBalanceTaskType(ObBalanceTaskType::BALANCE_TASK_TRANSFER), ls_balance.task_array_[0].get_task_type());
     ASSERT_EQ(ObBalanceTaskType(ObBalanceTaskType::BALANCE_TASK_TRANSFER), ls_balance.task_array_[1].get_task_type());
@@ -390,12 +390,12 @@ TEST_F(TestBalanceOperator, balance_execute)
       ASSERT_EQ(OB_SUCCESS, ls_array.push_back(info));
     }
     ASSERT_EQ(OB_SUCCESS, ls_balance.init(tenant_id,ls_array, unit_group, primary_zone_num, sql_proxy));
-    LOG_INFO("testtest8", K(ls_balance.unit_group_balance_array_));
+
     bool need_balance = false;
     ASSERT_EQ(OB_SUCCESS, ls_balance.check_need_ls_balance(need_balance));
     ASSERT_EQ(true, need_balance);
     ASSERT_EQ(OB_SUCCESS, ls_balance.generate_ls_balance_task());
-    LOG_INFO("testtest8", K(ls_balance.get_balance_job()), K(ls_balance.get_balance_tasks()));
+
     ASSERT_EQ(15, ls_balance.get_balance_tasks().count());
     ASSERT_EQ(ObBalanceTaskType(ObBalanceTaskType::BALANCE_TASK_SPLIT), ls_balance.task_array_[0].get_task_type());
     ASSERT_EQ(ObBalanceTaskType(ObBalanceTaskType::BALANCE_TASK_SPLIT), ls_balance.task_array_[1].get_task_type());
@@ -422,12 +422,12 @@ TEST_F(TestBalanceOperator, balance_execute)
     }
     primary_zone_num = 1;
     ASSERT_EQ(OB_SUCCESS, ls_balance.init(tenant_id,ls_array, unit_group, primary_zone_num, sql_proxy));
-    LOG_INFO("testtest9", K(ls_balance.unit_group_balance_array_));
+
     bool need_balance = false;
     ASSERT_EQ(OB_SUCCESS, ls_balance.check_need_ls_balance(need_balance));
     ASSERT_EQ(true, need_balance);
     ASSERT_EQ(OB_SUCCESS, ls_balance.generate_ls_balance_task());
-    LOG_INFO("testtest9", K(ls_balance.get_balance_job()), K(ls_balance.get_balance_tasks()));
+
     ASSERT_EQ(2, ls_balance.get_balance_tasks().count());
     ASSERT_EQ(ObBalanceTaskType(ObBalanceTaskType::BALANCE_TASK_ALTER), ls_balance.task_array_[0].get_task_type());
     ASSERT_EQ(ObBalanceTaskType(ObBalanceTaskType::BALANCE_TASK_ALTER), ls_balance.task_array_[1].get_task_type());
@@ -449,11 +449,11 @@ TEST_F(TestBalanceOperator, balance_execute)
     {
       ObLSBalanceTaskHelper ls_balance;
       ASSERT_EQ(OB_SUCCESS, ls_balance.init(tenant_id,ls_array, unit_group, primary_zone_num, sql_proxy));
-      LOG_INFO("testtest9", K(ls_balance.unit_group_balance_array_));
+
       ASSERT_EQ(OB_SUCCESS, ls_balance.check_need_ls_balance(need_balance));
       ASSERT_EQ(true, need_balance);
       ASSERT_EQ(OB_SUCCESS, ls_balance.generate_ls_balance_task());
-      LOG_INFO("testtest9", K(ls_balance.get_balance_job()), K(ls_balance.get_balance_tasks()));
+
       ASSERT_EQ(9, ls_balance.get_balance_tasks().count());
       ASSERT_EQ(ObBalanceTaskType(ObBalanceTaskType::BALANCE_TASK_TRANSFER), ls_balance.task_array_[0].get_task_type());
       ASSERT_EQ(ObBalanceTaskType(ObBalanceTaskType::BALANCE_TASK_ALTER), ls_balance.task_array_[1].get_task_type());
@@ -512,7 +512,7 @@ TEST_F(TestBalanceOperator, merge_task)
       ObLSID(src_ls_id), ObLSID(dest_ls_id),
       transfer_task_id, part_list, finished_part_list,
       parent_list, child_list, comment));
-  LOG_INFO("testtest7: start set part list");
+
   common::ObMySQLTransaction trans;
   ASSERT_EQ(OB_SUCCESS, trans.start(&sql_proxy, tenant_id));
   ASSERT_EQ(OB_SUCCESS, ObBalanceTaskTableOperator::update_task_part_list(tenant_id, task_id, part_list, trans));
@@ -523,7 +523,7 @@ TEST_F(TestBalanceOperator, merge_task)
   ASSERT_EQ(OB_SUCCESS, ObBalanceTaskTableOperator::finish_transfer_task(task, transfer_task_id, part_list, sql_proxy, to_do_part_list, all_part_transferred));
   ASSERT_EQ(0, to_do_part_list.count());
   ASSERT_EQ(true, all_part_transferred); 
-  LOG_INFO("testtest8: start set part list");
+
   common::ObMySQLTransaction trans1;
   ASSERT_EQ(OB_SUCCESS, trans1.start(&sql_proxy, tenant_id));
   ASSERT_EQ(OB_SUCCESS, ObBalanceTaskTableOperator::update_task_part_list(tenant_id, task_id, part_list, trans1));
@@ -532,7 +532,7 @@ TEST_F(TestBalanceOperator, merge_task)
   ASSERT_EQ(OB_SUCCESS, ObBalanceTaskTableOperator::finish_transfer_task(task, transfer_task_id, part_list, sql_proxy, to_do_part_list, all_part_transferred));
   ASSERT_EQ(0, to_do_part_list.count());
   ASSERT_EQ(true, all_part_transferred);
-  LOG_INFO("testtest9: start set part list");
+
   common::ObMySQLTransaction trans2;
   ASSERT_EQ(OB_SUCCESS, trans2.start(&sql_proxy, tenant_id));
   ASSERT_EQ(OB_SUCCESS, ObBalanceTaskTableOperator::update_task_part_list(tenant_id, task_id, part_list, trans2));

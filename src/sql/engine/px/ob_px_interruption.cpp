@@ -168,7 +168,7 @@ void ObInterruptUtil::update_schema_error_code(ObExecContext *exec_ctx, int &cod
     LOG_TRACE("update_schema_error_code, exec_ctx is not null", K(ret), K(prev_code), K(code), K(tenant_id), K(px_worker_execute_start_schema_version), K(current_moment_schema_version),
               K(exec_ctx->get_task_exec_ctx().get_query_tenant_begin_schema_version()), K(lbt()));
   } else {
-    LOG_TRACE("update_schema_error_code, exec_ctx is null", K(lbt()));
+
   }
 }
 // SQC sends interrupt to QC

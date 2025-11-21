@@ -89,7 +89,7 @@ int ObServerCompactionEventHistory::init()
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(ObInfoRingArray::init(SERVER_EVENT_MAX_CNT))) {
-    STORAGE_LOG(WARN, "failed to init ObInfoRingArray", K(ret));
+
   }
   return ret;
 }
@@ -138,7 +138,7 @@ int ObServerCompactionEventIterator::open(const int64_t tenant_id)
     LOG_WARN("The ObServerCompactionEventIterator has been opened", K(ret));
   } else if (!::is_valid_tenant_id(tenant_id)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(tenant_id));
+
   } else if (OB_SYS_TENANT_ID == tenant_id) { // sys tenant can get all tenants' info
     GCTX.omt_->get_tenant_ids(all_tenants);
   } else if (OB_FAIL(all_tenants.push_back(tenant_id))) {
@@ -152,7 +152,7 @@ int ObServerCompactionEventIterator::open(const int64_t tenant_id)
         }
       } else {
         if (OB_TENANT_NOT_IN_SERVER != ret) {
-          STORAGE_LOG(WARN, "switch tenant failed", K(ret), K(all_tenants[i]));
+
         } else {
           ret = OB_SUCCESS;
           continue;

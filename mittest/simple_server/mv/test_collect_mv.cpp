@@ -86,7 +86,7 @@ int ObCollectMV::wait_major_mv_refresh_finish(uint64_t scn)
     } else if (val >= scn) {
       break;
     } else {
-      LOG_INFO("wait major mv refresh", K(scn), K(val));
+
       ::sleep(2);
     }
   }
@@ -104,7 +104,7 @@ int ObCollectMV::wait_acquired_snapshot_advance(uint64_t scn)
     } else if (val >= scn) {
       break;
     } else {
-      LOG_INFO("wait acquired_snapshot_advance", K(scn), K(val));
+
       MTL_SWITCH(R.tenant_id_) {
         storage::ObTenantFreezeInfoMgr *mgr = MTL(storage::ObTenantFreezeInfoMgr *);
         const int64_t snapshot_for_tx = mgr->get_min_reserved_snapshot_for_tx();
@@ -127,7 +127,7 @@ int ObCollectMV::wait_old_sstable_gc_end(uint64_t scn)
     } else if (val >= scn) {
       break;
     } else {
-      LOG_INFO("wait old sstable gc", K(scn), K(val));
+
       ::sleep(2);
     }
   }
@@ -154,7 +154,7 @@ int ObCollectMV::do_balance_inner_(uint64_t tenant_id)
   static std::mutex mutex;
   mutex.lock();
   MTL_SWITCH(tenant_id) {
-    LOG_INFO("worker to do partition_balance");
+
     auto b_svr = MTL(rootserver::ObTenantBalanceService*);
     b_svr->reset();
     b_svr->stop();
@@ -824,7 +824,7 @@ int main(int argc, char **argv)
   oceanbase::unittest::init_log_and_gtest(argc, argv);
   OB_LOGGER.set_log_level(log_level);
 
-  LOG_INFO("main>>>");
+
 
   oceanbase::unittest::R.time_sec_ = time_sec;
   ::testing::InitGoogleTest(&argc, argv);

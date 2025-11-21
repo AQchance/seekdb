@@ -595,7 +595,7 @@ int ObBackupCheckFile::check_multipart_upload_permission_(const ObBackupDest &ba
   } else if (OB_FAIL(device_handle->pwrite(fd, offset, strlen(data), data, write_size))) {
     LOG_WARN("fail to write file", K(ret), K(path.get_ptr()), K(data));
   } else if (OB_FAIL(device_handle->complete(fd))) {
-    STORAGE_LOG(WARN, "fail to complete multipart upload", K(ret), K(device_handle), K(fd));
+
   } else if (!backup_dest.is_enable_worm() 
                 && OB_FAIL(util.del_file(path.get_obstr(), backup_dest.get_storage_info()))) {
     LOG_WARN("failed to del file", K(ret));
@@ -604,12 +604,12 @@ int ObBackupCheckFile::check_multipart_upload_permission_(const ObBackupDest &ba
   if (OB_FAIL(ret)) {
     if (OB_NOT_NULL(device_handle) && OB_TMP_FAIL(device_handle->abort(fd))) {
       ret = COVER_SUCC(tmp_ret);
-      STORAGE_LOG(WARN, "fail to abort multipart upload", K(ret), K(tmp_ret), K(device_handle), K(fd));
+
     }
   }
   if (OB_TMP_FAIL(util.close_device_and_fd(device_handle, fd))) {
     ret = COVER_SUCC(tmp_ret);
-    STORAGE_LOG(WARN, "fail to close device and fd", K(ret), K(tmp_ret), K(device_handle), K(fd));
+
   }
   return ret;
 }
@@ -722,7 +722,7 @@ int ObBackupDestCheck::check_backup_dest_connectivity(
   if (OB_FAIL(ObBackupStorageInfoOperator::get_backup_dest(*sql_proxy, tenant_id, backup_path, backup_dest))) {
     LOG_WARN("failed to get backup dest", K(ret), K(backup_path), K(tenant_id));
   } else if (ObStorageGlobalIns::get_instance().is_io_prohibited()) {
-    LOG_INFO("io prohibited, don't check connectivity");
+
   } else if (OB_FAIL(check_check_file_exist_(backup_dest, check_path, is_exist))) {
     LOG_WARN("failed to check file exist", K(ret), K(check_path), K(backup_dest));
   } else if (!is_exist) {
@@ -788,7 +788,7 @@ int ObBackupStorageInfoOperator::insert_backup_storage_info(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", K(ret), K(affected_rows));
   } else {
-    LOG_INFO("success insert/update backup storage info", K(sql), K(tenant_id), K(backup_dest));
+
   }
 
   return ret;
@@ -832,7 +832,7 @@ int ObBackupStorageInfoOperator::insert_backup_storage_info(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", K(ret), K(affected_rows));
   } else {
-    LOG_INFO("succ insert/update backup storage info", K(sql), K(tenant_id), K(backup_dest));
+
   }
   return ret;
 }
@@ -856,7 +856,7 @@ int ObBackupStorageInfoOperator::remove_backup_storage_info(
   } else if (OB_FAIL(proxy.write(gen_meta_tenant_id(tenant_id), sql.ptr(), affected_rows))) {
     LOG_WARN("fail to execute sql", K(ret));
   } else {
-    LOG_INFO("succ delete backup storage info", K(sql), K(tenant_id), K(backup_dest));
+
   }
   return ret;
 }
@@ -880,7 +880,7 @@ int ObBackupStorageInfoOperator::remove_backup_storage_info(
   } else if (OB_FAIL(proxy.write(gen_meta_tenant_id(tenant_id), sql.ptr(), affected_rows))) {
     LOG_WARN("fail to execute sql", K(ret));
   } else {
-    LOG_INFO("succ delete backup storage info", K(sql), K(tenant_id), K(affected_rows), K(backup_dest_type));
+
   }
   return ret;
 }
@@ -913,7 +913,7 @@ int ObBackupStorageInfoOperator::update_backup_authorization(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", K(ret), K(sql), K(tenant_id), K(affected_rows));
   } else {
-    LOG_INFO("update backup authorization in storage info", K(sql), K(tenant_id), K(backup_dest));
+
   }
   return ret;
 }
@@ -946,7 +946,7 @@ int ObBackupStorageInfoOperator::update_backup_dest_attribute(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", K(ret), K(affected_rows));
   } else {
-    LOG_INFO("update backup attribute in storage info", K(sql), K(tenant_id), K(backup_dest));
+
   }
   return ret;
 }
@@ -978,7 +978,7 @@ int ObBackupStorageInfoOperator::update_last_check_time(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", K(ret), K(affected_rows));
   } else {
-    LOG_INFO("update backup last check time in storage info", K(sql), K(tenant_id), K(backup_dest));
+
   }
   return ret;
 }
@@ -1271,7 +1271,7 @@ int ObBackupStorageInfoOperator::get_backup_dest(
   } else if (OB_FAIL(backup_dest.set(path, endpoint, encrypt_authorization, extension))) {
     LOG_WARN("fail to set backup dest", K(ret), K(tenant_id)); 
   } else {
-    LOG_INFO("success get backup dest", K(sql), K(tenant_id), K(backup_dest)); 
+ 
   }
   return ret;
 }

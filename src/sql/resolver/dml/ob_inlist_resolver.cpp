@@ -343,7 +343,7 @@ int ObInListResolver::check_inlist_rewrite_enable(const ParseNode &in_list,
     }
     if (OB_SUCC(ret)) {
       if (in_list.num_child_ < threshold) {
-        LOG_TRACE("check rewrite inlist threshold", K(threshold), K(in_list.num_child_));
+
       } else {
         is_enable = true;
       }

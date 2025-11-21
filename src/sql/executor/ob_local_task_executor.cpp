@@ -49,7 +49,7 @@ int ObLocalTaskExecutor::execute(ObExecContext &ctx, ObJob *job, ObTaskInfo *tas
     } else if (OB_FAIL(build_task_op_input(ctx, *task_info, *root_spec_))) {
       LOG_WARN("fail to build op input", K(ret));
     } else {
-      LOG_DEBUG("static engine remote execute");
+
       ObOperator *op = NULL;
       if (OB_FAIL(root_spec_->create_operator(ctx, op))) {
         LOG_WARN("create operator from spec failed", K(ret));

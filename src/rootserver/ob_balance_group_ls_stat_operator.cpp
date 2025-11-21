@@ -393,7 +393,7 @@ int ObBalanceGroupLSStatOperator::generate_inc_sql_(
                 group_name_str))) {
       LOG_WARN("fail to append fmt", KR(ret), K(bg_ls_stat));
     } else {
-      LOG_INFO("balance group ls inc sql", K(sql_string));
+
     }
   }
   return ret;
@@ -440,7 +440,7 @@ int ObBalanceGroupLSStatOperator::generate_insert_update_sql(
             group_name_str))) {
       LOG_WARN("fail to append fmt", KR(ret), K(bg_ls_stat));
     } else {
-      LOG_INFO("balance group ls update sql", K(sql_string));
+
     }
   }
   return ret;
@@ -826,7 +826,7 @@ int ObNewTableTabletAllocator::alloc_tablet_for_add_balance_group(
     for (int64_t i = 0; OB_SUCC(ret) && i < bg_ls_stat_array.count(); ++i) {
       const share::ObLSID &ls_id = bg_ls_stat_array.at(i).get_ls_id();
       int tmp_ret = ls_id_set.exist_refactored(ls_id);
-      LOG_INFO("balance group ls stat", "bg_ls_stat", bg_ls_stat_array.at(i));
+
       if (OB_HASH_NOT_EXIST == tmp_ret) {
         // ls not available
       } else if (OB_HASH_EXIST == tmp_ret) {
@@ -1782,7 +1782,7 @@ int ObNewTableTabletAllocator::lock_and_check_ls_(
       if (OB_ENTRY_NOT_EXIST == ret) {
         ls_attr.reset();
         ret = OB_STATE_NOT_MATCH;
-        LOG_INFO("ls has been deleted when creating tablet", KR(ret), K(ls_id));
+
       } else {
         LOG_WARN("get ls attr failed", KR(ret), K(ls_id), K(ls_attr));
       }

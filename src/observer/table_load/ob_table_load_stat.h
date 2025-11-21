@@ -152,7 +152,7 @@ OB_INLINE ObTableLoadStat *get_local_table_load_stat()
 #define OB_TABLE_LOAD_STATISTICS_PRINT_AND_RESET()                           \
   {                                                                          \
     observer::ObTableLoadStat *stat = observer::get_local_table_load_stat(); \
-    LOG_INFO("table load stat", KPC(stat));                                  \
+                                  \
     stat->reset();                                                           \
   }
 

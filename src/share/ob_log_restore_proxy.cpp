@@ -429,7 +429,7 @@ int ObLogRestoreProxyUtil::check_different_cluster_with_same_cluster_id(
         } else if (0 == cnt) {
           res = true;
         }
-        LOG_INFO("check if cluster_id duplicated", K(res), K(cnt), K(sql));
+
       }
     }
   }
@@ -517,7 +517,7 @@ int ObLogRestoreProxyUtil::check_begin_lsn(const uint64_t tenant_id)
             LOG_WARN("primary tenant LS log may be recycled, create standby tenant is not allow", KR(ret), K(tenant_id), K(sql));
             LOG_USER_ERROR(OB_OP_NOT_ALLOW, "primary tenant LS log may be recycled, create standby tenant is");
           }
-          LOG_INFO("check begion lsn", K(cnt), K(sql));
+
         }
       }
     )
@@ -672,7 +672,7 @@ void ObLogRestoreProxyUtil::destroy_tg_()
     int origin_tg_id = tg_id_;
     TG_DESTROY(tg_id_);
     tg_id_ = -1;
-    LOG_INFO("destroy_tg_ succ", K(origin_tg_id));
+
   }
 }
 
@@ -681,7 +681,7 @@ int ObLogRestoreProxyUtil::detect_tenant_mode_(common::sqlclient::ObMySQLServerP
                                                const char *user_password,
                                                common::ObIArray<common::ObAddr> *fixed_server_list)
 {
-  LOG_INFO("start to detec tenant mode");
+
   int ret = OB_SUCCESS;
   common::ObArray<int64_t> invalid_ip_array;
   if (OB_ISNULL(server_provider)) {
@@ -722,7 +722,7 @@ int ObLogRestoreProxyUtil::detect_tenant_mode_(common::sqlclient::ObMySQLServerP
             } else {
               is_oracle_mode_ = false;
               detect_succ = true;
-              LOG_INFO("[RESTORE PROXY] detect tenant mode success", KR(ret), K(host), K(port));
+
             }
             if (OB_NOT_NULL(mysql)) {
               mysql_close(mysql);
@@ -740,7 +740,7 @@ int ObLogRestoreProxyUtil::detect_tenant_mode_(common::sqlclient::ObMySQLServerP
             LOG_WARN("[RESTORE PROXY] fail to remove from fixed_server_list", K(invalid_ip_array), K(*fixed_server_list), K(idx));
           }
         }
-        LOG_INFO("[RESTORE PROXY] fixed server list", K_(tenant_id), K(*fixed_server_list));
+
       }
       if (fixed_server_list->count() <= 0) {
         ret = OB_CONNECT_ERROR;

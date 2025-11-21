@@ -167,7 +167,7 @@ int ObBackupLinkedBlockItemWriter::init(const ObLSBackupDataParam &param,
     write_ctx_ = &write_ctx;
     is_closed_ = false;
     is_inited_ = true;
-    LOG_INFO("init backup linked item writer", K(tablet_id), K(table_key), K(file_id));
+
   }
   return ret;
 }
@@ -272,7 +272,7 @@ int ObBackupLinkedBlockItemWriter::construct_linked_header_(char *header_buf)
     linked_header->table_key_ = table_key_;
     linked_header->prev_block_addr_ = prev_block_addr_;
     linked_header->has_prev_ = has_prev_;
-    LOG_INFO("construct linked header", KPC(linked_header));
+
   }
   return ret;
 }
@@ -326,7 +326,7 @@ int ObBackupLinkedBlockItemWriter::check_remain_size_enough_(
 {
   int ret = OB_SUCCESS;
   is_enough = (buf_size_ - buffer_writer_.pos()) >= item.get_serialize_size();
-  LOG_INFO("check remain size enough", K(is_enough), K(buf_size_), K(buffer_writer_.pos()), K(item.get_serialize_size()), K(item));
+
   return ret;
 }
 
@@ -345,7 +345,7 @@ int ObBackupLinkedBlockItemWriter::close_and_write_block_()
   } else {
     cur_block_write_item_cnt_ = 0;
     buffer_writer_.reuse();
-    LOG_INFO("close and write block", K(ret));
+
   }
   return ret;
 }

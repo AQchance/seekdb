@@ -415,7 +415,7 @@ int ObBlockStatIterator::prepare_scan_tables()
       LOG_WARN("unexpected major sstable", K(ret), KPC(table_ptr));
     } else if (OB_UNLIKELY(0 == scan_tables_.count() && !table_ptr->is_major_sstable())){
       ret = OB_NOT_SUPPORTED;
-      LOG_INFO("block stat iterator not supported for tablet without major sstable", K(ret), KPC(table_ptr));
+
     } else if (OB_FAIL(scan_tables_.push_back(table_ptr))) {
       LOG_WARN("failed to push back table", K(ret), K(*table_ptr));
     } else if (scan_param_->is_scan_single_major_only() ) {
@@ -435,7 +435,7 @@ int ObBlockStatIterator::prepare_scan_tables()
     }
   }
 
-  LOG_DEBUG("prepare scan tables", K(ret), K_(scan_tables), K_(get_table_param));
+
 
   return ret;
 }

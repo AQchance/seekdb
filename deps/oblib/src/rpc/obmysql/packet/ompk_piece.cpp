@@ -46,7 +46,7 @@ int OMPKPiece::serialize(char* buffer, int64_t length, int64_t& pos) const
       } else {
         // need OB_SIZE_OVERFLOW to extend easy_buf size in  try_encode_with
         ret = OB_SIZE_OVERFLOW;
-        LOG_DEBUG("piece size overflow", K(data_length_));
+
       }
     } else {
       // is_array_ must be true

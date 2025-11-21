@@ -38,7 +38,7 @@ int ObPluginHelper::find_ftparser_entry(const ObString &parser_name, ObPluginEnt
   int ret = OB_SUCCESS;
   entry_handle = nullptr;
   if (OB_FAIL(GCTX.plugin_mgr_->find_plugin(OBP_PLUGIN_TYPE_FT_PARSER, parser_name, entry_handle))) {
-    LOG_DEBUG("failed to find parser", K(parser_name), K(ret));
+
   } else if (OB_ISNULL(entry_handle)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("find plugin success but got null", K(parser_name), K(ret));
@@ -54,7 +54,7 @@ int ObPluginHelper::find_ftparser_entry(const ObString &parser_name, ObPluginEnt
     ret = OB_FUNCTION_NOT_DEFINED;
     LOG_WARN("find ftparser but descriptor is null", K(ret), K(parser_name));
   } else {
-    LOG_TRACE("find ftparser plugin", K(parser_name));
+
   }
   return ret;
 }
@@ -66,7 +66,7 @@ int ObPluginHelper::find_ftparser(const ObString &parser_name, ObFTParser &ftpar
   if (OB_FAIL(find_ftparser_entry(parser_name, entry_handle))) {
     if (OB_FUNCTION_NOT_DEFINED == ret) {
       LOG_USER_ERROR(OB_FUNCTION_NOT_DEFINED, parser_name.length(), parser_name.ptr());
-      LOG_DEBUG("no such parser", K(parser_name));
+
     } else {
       LOG_WARN("failed to find ftparser", K(parser_name), K(ret));
     }
@@ -74,7 +74,7 @@ int ObPluginHelper::find_ftparser(const ObString &parser_name, ObFTParser &ftpar
     share::ObPluginName plugin_name;
     plugin_name.set_name(parser_name);
     ftparser.set_name_and_version(plugin_name, static_cast<int64_t>(entry_handle->library_version()));
-    LOG_TRACE("find ftparser plugin", K(parser_name), K(entry_handle->library_version()));
+
   }
   return ret;
 }
@@ -88,7 +88,7 @@ int ObPluginHelper::find_ftparser(const ObString &parser_name, ObIFTParserDesc *
   if (OB_FAIL(find_ftparser_entry(parser_name, entry_handle))) {
     if (OB_FUNCTION_NOT_DEFINED == ret) {
       LOG_USER_ERROR(OB_FUNCTION_NOT_DEFINED, parser_name.length(), parser_name.ptr());
-      LOG_DEBUG("no such parser", K(parser_name));
+
     } else {
       LOG_WARN("failed to find ftparser", K(parser_name), K(ret));
     }
@@ -98,7 +98,7 @@ int ObPluginHelper::find_ftparser(const ObString &parser_name, ObIFTParserDesc *
   } else {
     ftparser = reinterpret_cast<ObIFTParserDesc *>(entry_handle->entry().descriptor);
     param = &entry_handle->entry().plugin_handle->plugin_param();
-    LOG_TRACE("find ftparser plugin", K(parser_name));
+
   }
   return ret;
 }
@@ -128,7 +128,7 @@ int ObPluginHelper::register_plugin_entry(ObPluginParamPtr param,
     if (OB_FAIL(param_ptr->plugin_mgr_->register_plugin(plugin_entry))) {
       LOG_WARN("failed to register plugin", KPC(param_ptr->plugin_handle_), K(ret), K(plugin_entry));
     } else {
-      LOG_INFO("register plugin susccess", K(plugin_entry));
+
     }
   }
   return ret;

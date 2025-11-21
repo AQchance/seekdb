@@ -69,7 +69,7 @@ public:
         int_arr[i] = first_value;
       }
 
-      LOG_TRACE("generate_data", K(i), K(int_arr[i]), K(min), K(max));
+
     }
   }
 
@@ -91,7 +91,7 @@ public:
       } else {
         datum.pack_ = sizeof(T);
       }
-      LOG_DEBUG("generate_datum", K(datum), K(i));
+
       ASSERT_EQ(OB_SUCCESS, datums->push_back(datum));
     }
   }
@@ -172,7 +172,7 @@ public:
       T min,
       T max)
   {
-    LOG_INFO("test_and_check_int_encoding", K(size), K(type), K(attribute));
+
     ObIntegerStreamEncoderCtx ctx;
     ObCSEncodingOpt encoding_opt;
     ObArenaAllocator alloctor;
@@ -256,7 +256,7 @@ public:
       int64_t random = ObTimeUtility::current_time()%13 + 1 + 1;
       for (int64_t i = 1; i < 100000; i=i * random) {
         type = (ObIntegerStream::EncodingType)(m);
-        LOG_INFO("round", K(i), K(m), K(type), K(loop), K(mon), K(min), K(max));
+
         test_and_check_int_datums<T>(i, type, attribute, has_null, min, max,
                                      null_replace_value, actual_uint_width,
                                      use_nullbitmap, loop, mon, use_null_replace_ref);
@@ -378,7 +378,7 @@ public:
 
     for (int64_t i = 0; i < size; i++) {
       if (!ObDatum::binary_equal(datums->at(row_ids[i]), datums2[i])) {
-        LOG_INFO("missmatch", K(datums->at(row_ids[i])), K(datums2[i]), K(i));
+
         ::abort();
       }
     }
@@ -424,9 +424,9 @@ public:
       is_equal = ObDatum::binary_equal(*tmp_datum, datums2[i]);
       if (!is_equal) {
         for (int64_t j = 0; j < size; j++) {
-          LOG_INFO("compare", K(datums->at(j)), K(datums2[j]), K(j), K(row_ids[j]));
+
         }
-        LOG_INFO("missmatch", KPC(tmp_datum), K(datums2[i]), K(i), K(random_idx), K(row_ids[i]), K(size));
+
         ::abort();
       }
     }
@@ -471,7 +471,7 @@ TEST_F(TestIntegerStream, test_uint32_encoding)
       attribute = ObIntegerStream::Attribute::USE_BASE;
     }
     for (int64_t i = 1; i < 1000000; i=i * (i + 1)) {
-      LOG_INFO("round", K(j), K(i));
+
       type = ObIntegerStream::RAW;
       test_and_check_int_encoding<uint32_t>(i, type, attribute, 2, UINT32_MAX);
       type = ObIntegerStream::SIMD_FIXEDPFOR;

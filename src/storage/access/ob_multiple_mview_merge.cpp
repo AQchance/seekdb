@@ -172,7 +172,7 @@ int ObMviewIncrMerge::get_incr_row(
             ret = OB_SUCCESS;
           }
         } else {
-          LOG_DEBUG("[MVIEW QUERY]: get base row", K(ret), K(base_row), K(version_include_base), K_(scan_old_row));
+
         }
         if (FAILEDx(generate_output_row(param, merge.get_nop_pos(), base_row, row))) {
           LOG_WARN("Failed to generate row", K(ret));
@@ -185,7 +185,7 @@ int ObMviewIncrMerge::get_incr_row(
   if (FAILEDx(set_old_new_row_flag(param, context, row))) {
     LOG_WARN("Failed to set old new row flag", K(ret));
   } 
-  LOG_DEBUG("[MVIEW QUERY]: get next row", K(ret), K(row), K(version_include_base), K_(scan_old_row));
+
   return ret;
 }
 
@@ -249,9 +249,9 @@ int ObMviewIncrMerge::generate_output_row(
     }
   } else {
     row.row_flag_.set_flag(ObDmlFlag::DF_NOT_EXIST);
-    LOG_DEBUG("[MVIEW QUERY]: no need to output row", K(ret), K(base_row), K(row), K_(scan_old_row));
+
   }
-  LOG_DEBUG("[MVIEW QUERY]: generate row", K(ret), K(base_row), K(row), K_(scan_old_row));
+
   return ret;
 }
 
@@ -284,7 +284,7 @@ int ObMviewIncrMerge::open_base_data_merge(
   }
   if (OB_FAIL(ret)) {
   } else if (is_table_store_refreshed_) {
-    LOG_INFO("table store refreshed", K(is_table_store_refreshed_), K(param.iter_param_.tablet_id_));
+
     if (OB_FAIL(base_access_info_->construct_access_ctx(&rowkey_allocator_, context))) {
       LOG_WARN("Failed to cons version range and ctx", K(ret));
     } else if (OB_FAIL(base_data_merge_->switch_param(param, base_access_info_->access_ctx_, get_table_param))) {
@@ -295,7 +295,7 @@ int ObMviewIncrMerge::open_base_data_merge(
   }
   if (OB_FAIL(ret)) {
   } else if (base_data_merge_->is_empty()) {
-    LOG_TRACE("[MVIEW QUERY]: base data is empty", K(ret));
+
   } else if (OB_FAIL(base_rowkey_.prepare_memtable_readable(*col_descs_, rowkey_allocator_))) {
     LOG_WARN("Failed to prepare memtable rowkey", K(ret));
   } else if (OB_FAIL(base_data_merge_->open(rowkey))) {
@@ -445,7 +445,7 @@ int ObMviewMergeWrapper::get_mview_merge(
     } else if (OB_FAIL(tmp_merge->init(param, context, get_table_param))) {
       LOG_WARN("Failed to init merge", K(ret));
     }
-    LOG_DEBUG("[MVIEW QUERY]: get version range merge", K(ret), K(merge_type), KP(tmp_merge));
+
   }
   if (FAILEDx(tmp_merge->open(table_scan_range))) {
     LOG_WARN("Failed to open mview merge", K(ret));

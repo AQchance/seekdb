@@ -315,7 +315,7 @@ int ObTableLoadStoreCtx::init(
 
 void ObTableLoadStoreCtx::stop()
 {
-  LOG_INFO("store ctx stop");
+
   if (nullptr != write_ctx_.pre_sorter_) {
     write_ctx_.pre_sorter_->stop();
   }
@@ -401,7 +401,7 @@ int ObTableLoadStoreCtx::set_status_abort(int error_code)
   {
     obsys::ObWLockGuard guard(status_lock_);
     if (ObTableLoadStatusType::ABORT == status_) {
-      LOG_INFO("LOAD DATA STORE already abort");
+
     } else {
       status_ = ObTableLoadStatusType::ABORT;
       if (OB_SUCCESS == error_code_) {
@@ -464,7 +464,7 @@ int ObTableLoadStoreCtx::init_trans_param(storage::ObDirectLoadTransParam &trans
     trans_param.tx_desc_ = tx_desc;
     trans_param.tx_id_ = tx_desc->get_tx_id();
     trans_param.tx_seq_ = tx_desc->inc_and_get_tx_seq(0);
-    LOG_INFO("init trans param", K(trans_param));
+
   }
   return ret;
 }

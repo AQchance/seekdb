@@ -383,7 +383,7 @@ int ObLSAttrOperator::insert_ls(
       }
     }
   }
-  LOG_INFO("[LS_OPERATOR] insert ls", KR(ret), K(ls_attr), K(sql));
+
   ALL_LS_EVENT_ADD(tenant_id_, ls_attr.get_ls_id(), "insert_ls", ret, sql);
   return ret;
 }
@@ -462,7 +462,7 @@ int ObLSAttrOperator::process_sub_trans_(const ObLSAttr &ls_attr, ObMySQLTransac
                                                    length))) {
         LOG_WARN("failed to register tx data", KR(ret), KPC(trans_desc), K(expire_ts));
       }
-      LOG_INFO("process sub trans", KR(ret), K(ls_attr));
+
     }
   }
   return ret;
@@ -537,7 +537,7 @@ int ObLSAttrOperator::update_ls_status_in_trans(const ObLSID &id,
                                       working_sw_status, trans))) {
         LOG_WARN("failed to operator ls", KR(ret), K(new_ls_attr), K(sql));
       }
-      LOG_INFO("[LS_OPERATOR] update ls status", KR(ret), K(ls_attr), K(new_ls_attr));
+
     }
     ALL_LS_EVENT_ADD(tenant_id_, id, "update_ls_status", ret, sql);
   }
@@ -577,7 +577,7 @@ int ObLSAttrOperator::get_ls_attr(const ObLSID &id,
         LOG_ERROR("more than one ls is unexpected", KR(ret), K(ls_array), K(sql));
       } else if (only_existing_ls && ls_array.at(0).ls_is_dropped_create_abort()) {
         ret = OB_ENTRY_NOT_EXIST;
-        LOG_INFO("ls is dropped or create abort", KR(ret), K(ls_array));
+
       } else if (OB_FAIL(ls_attr.assign(ls_array.at(0)))) {
         LOG_WARN("failed to assign ls attr", KR(ret), K(ls_array));
       }
@@ -633,7 +633,7 @@ int ObLSAttrOperator::get_duplicate_ls_attr(const bool for_update,
         ARRAY_FOREACH(ls_array, idx) {
           const ObLSAttr &ls_attr = ls_array.at(idx);
           if (ls_attr.ls_is_dropped_create_abort()) {
-            LOG_INFO("ls id dropped or create abort", KR(ret), K(ls_attr));
+
           } else if (OB_FAIL(ls_attrs.push_back(ls_attr))) {
             LOG_WARN("push back failed", KR(ret), K(ls_array));
           }
@@ -781,7 +781,7 @@ int ObLSAttrOperator::get_tenant_gts(const uint64_t &tenant_id, SCN &gts_scn)
       }
     }
   }
-  LOG_INFO("[LS_OPERATOR] get tenant gts", KR(ret), K(tenant_id), K(gts_scn));
+
   return ret;
 }
 

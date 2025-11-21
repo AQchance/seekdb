@@ -54,7 +54,7 @@ void ObAtomicGetIntermResultInfoCall::operator() (common::hash::HashMapPair<ObDT
   } else {
     ret_ = OB_HASH_NOT_EXIST;
   }
-  LOG_DEBUG("debug start read", K(entry.second->is_read_), K(entry.first));
+
 }
 
 void ObAtomicGetIntermMemProfileCall::operator() (common::hash::HashMapPair<ObDTLMemProfileKey,
@@ -194,7 +194,7 @@ int ObDTLIntermResultManager::clear_mem_profile_map()
       ++bucket_it;
     }
     if (OB_SUCC(ret)) {
-      LOG_INFO("clear_mem_profile_map", K(MTL_ID()), K(mem_profile_map_size));
+
     }
   }
   mem_profile_map_.destroy();
@@ -216,7 +216,7 @@ int ObDTLIntermResultManager::get_interm_result_info(ObDTLIntermResultKey &key,
   int ret = OB_SUCCESS;
   ObDTLIntermResultInfo *tmp_result_info = NULL;
   if (OB_FAIL(interm_res_map_.get_refactored(key, tmp_result_info))) {
-    LOG_TRACE("fail to get row store in result manager", K(ret), K(key.channel_id_));
+
   } else {
     result_info = *tmp_result_info;
   }
@@ -295,7 +295,7 @@ int ObDTLIntermResultManager::insert_interm_result_info(ObDTLIntermResultKey &ke
       LOG_WARN("fail to set row store in result manager", K(ret));
       dec_interm_result_ref_count(result_info);
     } else {
-      LOG_DEBUG("debug insert interm result info", K(key));
+
     }
   }
   return ret;
@@ -357,7 +357,7 @@ int ObDTLIntermResultManager::erase_interm_result_info(const ObDTLIntermResultKe
   int ret = OB_SUCCESS;
   ObDTLIntermResultInfo *result_info = NULL;
   if (OB_FAIL(interm_res_map_.erase_refactored(key, &result_info))) {
-    LOG_TRACE("fail to get row store in result manager", K(key), K(ret));
+
   } else {
     if (OB_FAIL(dec_interm_result_ref_count(result_info))) {
       LOG_WARN("Fail to dec interm_result ref_count", K(ret));
@@ -388,10 +388,10 @@ int ObDTLIntermResultManager::atomic_get_interm_result_info(ObDTLIntermResultKey
   int ret = OB_SUCCESS;
   ObAtomicGetIntermResultInfoCall call(guard, this);
   if (OB_FAIL(interm_res_map_.atomic_refactored(key, call))) {
-    LOG_TRACE("fail to get row store in result manager", K(ret));
+
   } else if (OB_SUCCESS != call.ret_) {
     ret = call.ret_;
-    LOG_TRACE("fail to get row store in result manager", K(ret));
+
   }
   return ret;
 }
@@ -405,7 +405,7 @@ int ObDTLIntermResultManager::atomic_append_block(ObDTLIntermResultKey &key,
   } else if (OB_FAIL(call.ret_)) {
     LOG_WARN("ObAtomicAppendBlockCall fail", K(ret));
   } else {
-    LOG_DEBUG("debug append block to interm result info", K(key));
+
   }
   return ret;
 }
@@ -419,7 +419,7 @@ int ObDTLIntermResultManager::atomic_append_part_block(ObDTLIntermResultKey &key
   } else if (OB_FAIL(call.ret_)) {
     LOG_WARN("ObAtomicAppendPartBlockCall fail", K(ret));
   } else {
-    LOG_DEBUG("debug append part block to interm result info", K(key));
+
   }
   return ret;
 }
@@ -446,7 +446,7 @@ int ObDTLIntermResultManager::generate_monitor_info_rows(
       ret = OB_SUCCESS;
     }
   }
-  LOG_TRACE("generate monitor info rows", K(ret), K(interm_res_map_.size()));
+
   return ret;
 }
 
@@ -472,7 +472,7 @@ int ObDTLIntermResultManager::erase_tenant_interm_result_info()
     ++bucket_it;
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("erase_tenant_interm_result_info", K(MTL_ID()), K(interm_res_map_.size()));
+
   }
   return ret;
 }

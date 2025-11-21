@@ -140,7 +140,7 @@ void ObTenantSQLSessionMgr::mtl_wait(ObTenantSQLSessionMgr *&t_session_mgr)
       usleep(1000 * 1000);
     }
   }
-  LOG_INFO("success to wait tenant session mgr");
+
 }
 
 void ObTenantSQLSessionMgr::mtl_destroy(ObTenantSQLSessionMgr *&t_session_mgr)
@@ -257,7 +257,7 @@ ObSQLSessionInfo *ObSQLSessionMgr::ValueAlloc::alloc_value(uint64_t tenant_id)
     }
     OX (alloc_total_count = ATOMIC_FAA(&alloc_total_count_, 1));
     if (alloc_total_count > 0 && alloc_total_count % 10000 == 0) {
-      LOG_INFO("alloc_session_count", K(alloc_total_count));
+
     }
   } else {
     LOG_WARN("switch tenant failed", K(ret), K(tenant_id));
@@ -310,7 +310,7 @@ void ObSQLSessionMgr::ValueAlloc::free_value(ObSQLSessionInfo *session)
     }
     OX (free_total_count = ATOMIC_FAA(&free_total_count_, 1));
     if (free_total_count > 0 && free_total_count % 10000 == 0) {
-      LOG_INFO("free_session_count", K(free_total_count));
+
     }
   }
 }
@@ -778,7 +778,7 @@ int ObSQLSessionMgr::kill_tenant(const uint64_t tenant_id, bool force_kill)
   OZ (for_each_session(kt_func));
   OX (ret = kt_func.get_ret_code());
   OZ (sessinfo_map_.clean_tenant(tenant_id));
-  LOG_INFO("kill tenant", K(tenant_id), K(force_kill));
+
   return ret;
 }
 
@@ -835,7 +835,7 @@ bool ObSQLSessionMgr::CheckSessionFunctor::operator()(sql::ObSQLSessionMgr::Key 
         } else if (OB_FAIL(sess_info->is_timeout(is_timeout))) {
           LOG_WARN("fail to check is timeout", K(ret));
         } else if (true == is_timeout) {
-          LOG_INFO("session is timeout, kill this session", K(key.sessid_));
+
           ret = sess_mgr_->kill_session(*sess_info);
         } else {
           //with the help ofsession traversaloffunctionality，tryrevert sessioncacheofschema guard，
@@ -847,12 +847,12 @@ bool ObSQLSessionMgr::CheckSessionFunctor::operator()(sql::ObSQLSessionMgr::Key 
           if (OB_FAIL(sess_info->is_trx_commit_timeout(commit_cb, callback_retcode))) {
             LOG_WARN("fail to check transaction commit timeout", K(ret));
           } else if (commit_cb) {
-            LOG_INFO("transaction commit reach timeout", K(callback_retcode), K(key.sessid_));
+
           } else if (OB_FAIL(sess_info->is_trx_idle_timeout(is_timeout))) {
             // kill transaction which is idle more than configuration 'ob_trx_idle_timeout'
             LOG_WARN("fail to check transaction idle timeout", K(ret));
           } else if (true == is_timeout && !sess_info->associated_xa()) {
-            LOG_INFO("transaction is idle timeout, start to rollback", K(key.sessid_));
+
             int tmp_ret;
             if (OB_SUCCESS != (tmp_ret = sess_mgr_->kill_idle_timeout_tx(sess_info))) {
               LOG_WARN("fail to kill transaction", K(ret), K(key.sessid_));
@@ -931,9 +931,9 @@ bool ObSQLSessionMgr::KillTenant::operator() (
         LOG_WARN("failed to check can gc immediately");
       } else if (!need_kill) {
         ret_ = OB_EAGAIN;
-        LOG_TRACE("unit gc needs to wait", K(ret_));
+
       } else if (need_kill) {
-        LOG_INFO("force kill session", K(sess_info->get_server_sid()));
+
         ret = mgr_->kill_session(*sess_info);
       }
     }
@@ -988,7 +988,7 @@ int ObSQLSessionMgr::DumpHoldSession::operator()(
 {
   int ret = common::OB_SUCCESS;
   if (OB_ISNULL(entry.second)) {
-    LOG_INFO("session is null", "sess_ptr", entry.first);
+
   } else {
     LOG_INFO("dump session", "sid", entry.second->get_server_sid(),
                              "ref_count", entry.second->get_sess_ref_cnt(),
@@ -1028,7 +1028,7 @@ bool ObSQLSessionMgr::CleanKillClientSessionFin::operator()(
   if (entry.first == cs_id_ && entry.second == cs_connect_time_) {
     judge = true;
   } else {
-    LOG_DEBUG("Not match clean", K(entry.first),K(entry.second),K(cs_id_),K(cs_connect_time_),K(ret));
+
   }
   return judge;
 }

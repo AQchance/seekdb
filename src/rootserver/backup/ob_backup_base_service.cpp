@@ -39,7 +39,7 @@ void ObBackupBaseService::run1()
 {
   int tmp_ret = OB_SUCCESS;
   lib::set_thread_name(thread_name_);
-  LOG_INFO("ObBackupBaseService thread run", K(thread_name_));
+
   if (OB_UNLIKELY(!is_created_)) {
     tmp_ret = OB_NOT_INIT;
     LOG_WARN_RET(OB_NOT_INIT, "not init", K(tmp_ret));
@@ -69,14 +69,14 @@ int ObBackupBaseService::create(const char* thread_name, ObBackupBaseService &te
     wakeup_cnt_ = 0;
     is_created_ = true;
     stop();
-    LOG_INFO("[BACKUP_SERVICE] thread create", K(tg_id_), K(thread_name_));
+
   }
   return ret;
 }
 
 void ObBackupBaseService::destroy()
 {
-  LOG_INFO("[BACKUP_SERVICE] thread destory start", K(tg_id_), K(thread_name_));
+
   if (-1 != tg_id_) {
     TG_STOP(tg_id_);
     {
@@ -88,7 +88,7 @@ void ObBackupBaseService::destroy()
     tg_id_ = -1;
   }
   is_created_ = false;
-  LOG_INFO("[BACKUP_SERVICE] thread destory finish", K(tg_id_), K(thread_name_));
+
 }
 
 int ObBackupBaseService::start()
@@ -100,27 +100,27 @@ int ObBackupBaseService::start()
   } else if (OB_FAIL(TG_REENTRANT_LOGICAL_START(tg_id_))) {
     LOG_WARN("failed to start", KR(ret));
   } 
-  LOG_INFO("[BACKUP_SERVICE] thread start", K(ret), K(tg_id_), K(thread_name_));
+
   return ret;
 }
 
 void ObBackupBaseService::stop()
 {
-  LOG_INFO("[BACKUP_SERVICE] thread ready to stop", K(tg_id_), K(thread_name_));
+
   if (-1 != tg_id_) {
     TG_REENTRANT_LOGICAL_STOP(tg_id_);
     wakeup();
   }
-  LOG_INFO("[BACKUP_SERVICE] thread stopped", K(tg_id_), K(thread_name_));
+
 }
 
 void ObBackupBaseService::wait()
 {
-  LOG_INFO("[BACKUP_SERVICE] thread ready to wait", K(tg_id_), K(thread_name_));
+
   if (-1 != tg_id_) {
     TG_REENTRANT_LOGICAL_WAIT(tg_id_);
   }
-  LOG_INFO("[BACKUP_SERVICE] thread in wait", K(tg_id_), K(thread_name_));
+
 }
 
 void ObBackupBaseService::wakeup()
@@ -144,7 +144,7 @@ void ObBackupBaseService::idle()
 void ObBackupBaseService::switch_to_follower_forcedly()
 {
   stop();
-  LOG_INFO("[BACKUP_SERVICE]switch to follower finish", K(tg_id_), K(thread_name_));
+
 }
 
 int ObBackupBaseService::switch_to_leader()
@@ -159,7 +159,7 @@ int ObBackupBaseService::switch_to_leader()
   } else {
     proposal_id_ = proposal_id;
     wakeup();
-    LOG_INFO("[BACKUP_SERVICE]switch to leader finish", K(tg_id_), K(thread_name_));
+
   }
   return ret;
 }
@@ -167,7 +167,7 @@ int ObBackupBaseService::switch_to_leader()
 int ObBackupBaseService::switch_to_follower_gracefully()
 {
   stop();
-  LOG_INFO("[BACKUP_SERVICE]switch to follower gracefully", K(tg_id_), K(thread_name_));
+
   return OB_SUCCESS;
 }
 
@@ -183,7 +183,7 @@ int ObBackupBaseService::resume_leader()
   } else {
     proposal_id_ = proposal_id;
     wakeup();
-    LOG_INFO("[BACKUP_SERVICE]resume leader finish", K(tg_id_), K(thread_name_));
+
   }
   return ret;
 }
@@ -231,16 +231,16 @@ int ObBackupBaseService::check_leader()
 
 void ObBackupBaseService::mtl_thread_stop()
 {
-  LOG_INFO("[BACKUP_SERVICE] thread stop start", K(tg_id_), K(thread_name_));
+
   if (-1 != tg_id_) {
     TG_STOP(tg_id_);
   }
-  LOG_INFO("[BACKUP_SERVICE] thread stop finish", K(tg_id_), K(thread_name_));
+
 }
 
 void ObBackupBaseService::mtl_thread_wait()
 {
-  LOG_INFO("[BACKUP_SERVICE] thread wait start", K(tg_id_), K(thread_name_));
+
   if (-1 != tg_id_) {
     {
       ObThreadCondGuard guard(thread_cond_);
@@ -248,5 +248,5 @@ void ObBackupBaseService::mtl_thread_wait()
     }
     TG_WAIT(tg_id_);
   }
-  LOG_INFO("[BACKUP_SERVICE] thread wait finish", K(tg_id_), K(thread_name_));
+
 }

@@ -680,7 +680,7 @@ int ObPartitionExchange::check_table_conditions_in_common_(
       LOG_WARN("including foreign key of exchanging partition tables", K(ret), K(base_table_schema.get_foreign_key_infos().count()), K(inc_table_schema.get_foreign_key_infos().count()));
     } else {
       is_equal = true;
-      LOG_INFO("pass table level conditions check in common", K(ret), K(base_table_schema.get_table_id()), K(inc_table_schema.get_table_id()));
+
     }
   }
   if (OB_SUCC(ret) && !is_equal) {
@@ -2681,7 +2681,7 @@ int ObPartitionExchange::build_modify_tablet_binding_args_v1_(const uint64_t ten
       }
     }
   }
-  LOG_DEBUG("build modify tablet binding args", K(ret), K(modify_args));
+
   return ret;
 }
 

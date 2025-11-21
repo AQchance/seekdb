@@ -399,7 +399,7 @@ int ObRecordHeaderV3::serialize(char *buf, const int64_t buf_len, int64_t &pos) 
   int ret = OB_SUCCESS;
   if (nullptr == buf || buf_len <= 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), KP(buf), K(buf_len));
+
   } else {
     const int64_t serialize_size = get_serialize_size();
     int64_t pos_orig = pos;
@@ -407,7 +407,7 @@ int ObRecordHeaderV3::serialize(char *buf, const int64_t buf_len, int64_t &pos) 
     pos = 0;
     if (serialize_size + pos_orig > buf_len) {
       ret = OB_BUF_NOT_ENOUGH;
-      STORAGE_LOG(WARN, "buffer not enough", K(ret), K(serialize_size), K(buf_len), K(pos_orig));
+
     } else {
       ObRecordCommonHeader *common_header = reinterpret_cast<ObRecordCommonHeader *>(buf + pos);
       common_header->magic_ = magic_;
@@ -437,7 +437,7 @@ int ObRecordHeaderV3::deserialize(const char *buf, int64_t buf_len, int64_t &pos
   int ret = OB_SUCCESS;
   if (nullptr == buf || buf_len < 8) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), KP(buf), K(buf_len));
+
   } else {
     int64_t pos_orig = pos;
     const ObRecordCommonHeader *common_header = reinterpret_cast<const ObRecordCommonHeader *>(buf);

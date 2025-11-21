@@ -179,7 +179,7 @@ int ObExternLSMetaMgr::write_ls_meta_info(const ObBackupLSMetaInfo &ls_meta)
                                             mod))) {
     LOG_WARN("failed to write tenant tablet logstream info.", K(ret), K(path), K(ls_meta));
   } else {
-    LOG_INFO("succeed to write ls meta info", K(path), K(ls_meta));
+
   }
   return ret;
 }
@@ -206,11 +206,11 @@ int ObExternLSMetaMgr::read_ls_meta_info(ObBackupLSMetaInfo &ls_meta)
     if (OB_OBJECT_NOT_EXIST != ret) {
       LOG_WARN("failed to get ls meta backup path file length.", K(ret), K(path));
     } else {
-      LOG_INFO("tablet to ls info file not exist.", K(ret), K(path));
+
     }
   } else if (0 == file_length) {
     ret = OB_ERR_UNEXPECTED;
-    LOG_INFO("tablet to ls info file is empty.", K(ret), K(path));
+
   } else if (OB_ISNULL(buf = reinterpret_cast<char *>(allocator.alloc(file_length)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     LOG_WARN("failed to alloc buf", K(ret), K(path), K(file_length));
@@ -227,7 +227,7 @@ int ObExternLSMetaMgr::read_ls_meta_info(ObBackupLSMetaInfo &ls_meta)
   } else if (OB_FAIL(ls_meta.deserialize_from(buf, file_length))) {
     LOG_WARN("failed to deserialize tablet to ls info.", K(ret), K(path), K(file_length));
   } else {
-    LOG_INFO("succeed to read ls meta info", K(path), K(ls_meta));
+
   }
   return ret;
 }
@@ -427,7 +427,7 @@ int ObExternTabletMetaWriter::prepare_backup_file_(const int64_t file_id)
   } else {
     file_trailer_.reset();
     file_trailer_.file_id_ = file_id;
-    LOG_INFO("open file writer", K(ret), K(backup_path));
+
   }
   return ret;
 }
@@ -447,7 +447,7 @@ int ObExternTabletMetaWriter::write_meta_data(
   } else if (OB_FAIL(write_meta_data_(meta_data, tablet_id))) {
     LOG_WARN("failed to write meta data", K(ret), K(tablet_id));
   } else {
-    LOG_INFO("write meta data", K(meta_data), K(tablet_id));
+
   }
   return ret;
 }
@@ -539,7 +539,7 @@ int ObExternTabletMetaWriter::flush_trailer_()
     if (OB_FAIL(file_write_ctx_.append_buffer(buffer_reader))) {
       LOG_WARN("failed to append buffer", K(ret), K(buffer_reader));
     } else {
-      LOG_INFO("flush data file trailer", K(file_trailer_));
+
     }
   }
   return ret;
@@ -648,7 +648,7 @@ int ObExternTabletMetaReader::fill_tablet_info_trailer_(const share::ObBackupDes
       cur_trailer_idx_ = 0;
       cur_buf_offset_ = tablet_info_trailer_array_.at(cur_trailer_idx_).offset_;
       cur_tablet_idx_ = 0;
-      LOG_INFO("fill tablet info trailer", K(tablet_info_trailer_array_));
+
     }
   }
   return ret;
@@ -688,7 +688,7 @@ int ObExternTabletMetaReader::read_file_trailer_(
   } else if (OB_FAIL(trailer.assign(tmp_trailer))) {
     LOG_WARN("failed to assign trailer", K(tmp_trailer));
   } else {
-    LOG_INFO("read trailer succeed", K(trailer));
+
   }
   return ret;
 }
@@ -766,7 +766,7 @@ int ObExternTabletMetaReader::read_next_range_tablet_metas_()
       const ObBackupCommonHeader *common_header = NULL;
       if (buffer_reader.remain() == 0) {
         cur_total_len = buffer_reader.capacity();
-        LOG_INFO("read buf finish", K(cur_total_len), K(buffer_reader));
+
         break;
       } else if (OB_FAIL(buffer_reader.get(common_header))) {
         LOG_WARN("failed to get common_header", K(ret), K(path), K(buffer_reader));
@@ -777,7 +777,7 @@ int ObExternTabletMetaReader::read_next_range_tablet_metas_()
         LOG_WARN("common_header is not valid", K(ret), K(path), K(buffer_reader));
       } else if (common_header->data_zlength_ > buffer_reader.remain()) {
         cur_total_len = buffer_reader.pos() - sizeof(ObBackupCommonHeader);
-        LOG_INFO("buf not enough, wait later", K(cur_total_len), K(buffer_reader), KPC(common_header));
+
         break;
       } else if (OB_FAIL(common_header->check_data_checksum(buffer_reader.current(), common_header->data_zlength_))) {
         LOG_WARN("failed to check data checksum", K(ret), K(*common_header), K(path), K(buffer_reader));
@@ -788,7 +788,7 @@ int ObExternTabletMetaReader::read_next_range_tablet_metas_()
       } else if (OB_FAIL(buffer_reader.advance(common_header->data_length_ + common_header->align_length_))) {
         LOG_WARN("failed to advance buffer", K(ret));
       } else {
-        LOG_INFO("read tablet meta", K(path), K(tablet_meta));
+
       }
     }
 
@@ -803,7 +803,7 @@ int ObExternTabletMetaReader::read_next_range_tablet_metas_()
       } else {
         cur_buf_offset_ += cur_total_len;
         cur_tablet_idx_ = 0;
-        LOG_INFO("read range tablet metas", K(cur_tablet_idx_), K(tablet_meta_array_));
+
       }
     }
   }
@@ -847,7 +847,7 @@ int ObExternBackupInfoIdGetter::get_max_turn_id_and_retry_id(const share::ObLSID
   } else {
     turn_id = filter.turn_id();
     retry_id = filter.retry_id();
-    LOG_INFO("get max turn_id and retry_id", K(turn_id), K(retry_id), K(backup_path));
+
   }
   return ret;
 }
@@ -877,7 +877,7 @@ int ObExternBackupInfoIdGetter::get_tablet_info_file_ids(
   } else if (OB_FAIL(filter.get_file_id_array(file_id_array))) {
     LOG_WARN("failed to get file id array", K(ret));
   } else {
-    LOG_INFO("succeed get tablet info file ids", K(file_id_array));
+
   }
   return ret;
 }
@@ -890,11 +890,11 @@ int ObExternBackupInfoIdGetter::ObLSMetaInfoDirFilter::func(const dirent *entry)
   int64_t cur_retry_id = 0;
   if (is_final_fuse_) {
     if (2 != sscanf(dir_name.ptr(), "fused_meta_info_turn_%ld_retry_%ld", &cur_turn_id, &cur_retry_id)) {
-      LOG_INFO("ls meta info do filter", K(dir_name));
+
     }
   } else {
     if (2 != sscanf(dir_name.ptr(), "meta_info_turn_%ld_retry_%ld", &cur_turn_id, &cur_retry_id)) {
-      LOG_INFO("ls meta info do filter", K(dir_name));
+
     }
   }
   if (cur_turn_id > turn_id_) {

@@ -31,7 +31,7 @@ int ObHbaseNormalCellIter::get_next_cell(ObNewRow *&row)
     LOG_WARN("iterator is not opened", K(ret));
   } else if (OB_FAIL(tb_row_iter_.get_next_row(row))) {
     if (ret == OB_ITER_END) {
-      LOG_DEBUG("iterator is end", K(ret));
+
     } else{
       LOG_WARN("fail to get next cell", K(ret));
     }

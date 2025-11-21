@@ -320,7 +320,7 @@ int ObMicroBlockRawEncoder::build_block(char *&buf, int64_t &size)
     ret = OB_INNER_STAT_ERROR;
     LOG_WARN("empty micro block", K(ret));
   } else if (OB_FAIL(set_datum_rows_ptr())) {
-    STORAGE_LOG(WARN, "fail to set datum rows ptr", K(ret));
+
   } else if (OB_FAIL(pivot())) {
     LOG_WARN("pivot rows to columns failed", K(ret));
   } else if (OB_FAIL(row_indexs_.reserve(datum_rows_.count()))) {
@@ -349,7 +349,7 @@ int ObMicroBlockRawEncoder::build_block(char *&buf, int64_t &size)
     for (int64_t i = 0; OB_SUCC(ret) && i < encoders_.count(); i++) {
       int64_t need_size = 0;
       if (OB_FAIL(encoders_.at(i)->get_encoding_store_meta_need_space(need_size))) {
-        STORAGE_LOG(WARN, "fail to get_encoding_store_meta_need_space", K(ret), K(i), K(encoders_));
+
       } else {
         need_size += encoders_.at(i)->calc_encoding_fix_data_need_space();
         encoders_need_size += need_size;
@@ -359,10 +359,10 @@ int ObMicroBlockRawEncoder::build_block(char *&buf, int64_t &size)
 
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(data_buffer_.ensure_space(col_header_size + encoders_need_size))) {
-    STORAGE_LOG(WARN, "fail to ensure space", K(ret), K(data_buffer_));
+
   } else if (OB_ISNULL(encoding_meta_buf = static_cast<char *>(encoding_meta_allocator_.alloc(encoders_need_size)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to alloc fix header buf", K(ret), K(encoders_need_size));
+
   } else {
     STORAGE_LOG(DEBUG, "[debug] build micro block", K_(estimate_size), K_(header_size), K_(expand_pct),
         K(datum_rows_.count()), K(ctx_));
@@ -375,7 +375,7 @@ int ObMicroBlockRawEncoder::build_block(char *&buf, int64_t &size)
       LOG_WARN("failed to store encoding meta and fixed col data", K(ret));
     } else if (FALSE_IT(encoding_meta_size = meta_buf_writer.length())) {
     } else if (OB_FAIL(data_buffer_.write_nop(encoding_meta_size))) {
-      STORAGE_LOG(WARN, "failed to write nop", K(ret), K(meta_buf_writer), K(data_buffer_));
+
     }
 
     // <2> set row data store offset
@@ -407,7 +407,7 @@ int ObMicroBlockRawEncoder::build_block(char *&buf, int64_t &size)
         ObIntegerArrayGenerator gen;
         const int64_t row_index_size = row_indexs_.count() * get_header(data_buffer_)->row_index_byte_;
         if (OB_FAIL(data_buffer_.ensure_space(row_index_size))) {
-          STORAGE_LOG(WARN, "fail to ensure space", K(ret), K(row_index_size), K(data_buffer_));
+
         } else if (OB_FAIL(gen.init(data_buffer_.data() + data_buffer_.length(), get_header(data_buffer_)->row_index_byte_))) {
           LOG_WARN("init integer array generator failed",
               K(ret), "byte", get_header(data_buffer_)->row_index_byte_);
@@ -653,37 +653,37 @@ int TestDecoderFilterPerf::prepare(
   build_table_schema(cs_table, true/*is_column_store*/);
 
   if (OB_FAIL(add_column_into_table(pax_table))) {
-    STORAGE_LOG(WARN, "fail to add_column_into_table", KR(ret));
+
   } else if (OB_FAIL(add_column_into_table(cs_table))) {
-    STORAGE_LOG(WARN, "fail to add_column_into_table", KR(ret));
+
   } else if (OB_FAIL(row_generate_.init(pax_table, is_multi_version))) {
-    STORAGE_LOG(WARN, "fail to init row_generate", KR(ret));
+
   } else if (is_multi_version && OB_FAIL(pax_table.get_multi_version_column_descs(col_descs_))) {
-    STORAGE_LOG(WARN, "fail to get column ids", KR(ret));
+
   } else if (!is_multi_version && OB_FAIL(row_generate_.get_schema().get_column_ids(col_descs_))) {
-    STORAGE_LOG(WARN, "fail to get column ids", KR(ret));
+
   } else if (OB_FAIL(read_info_.init(allocator_, pax_table.get_column_count(),
             pax_table.get_rowkey_column_num(), lib::is_oracle_mode(), col_descs_))) {
-    STORAGE_LOG(WARN, "fail to init read info", KR(ret));
+
   } else if (OB_FAIL(cs_row_generate_.init(cs_table, is_multi_version))) {
-    STORAGE_LOG(WARN, "fail to init row_generate", KR(ret));
+
   } else if (is_multi_version && OB_FAIL(cs_table.get_multi_version_column_descs(cs_col_descs_))) {
-    STORAGE_LOG(WARN, "fail to get column ids", KR(ret));
+
   } else if (!is_multi_version && OB_FAIL(cs_row_generate_.get_schema().get_column_ids(cs_col_descs_))) {
-    STORAGE_LOG(WARN, "fail to get column ids", KR(ret));
+
   } else if (OB_FAIL(cs_read_info_.init(cs_allocator_, cs_table.get_column_count(),
             cs_table.get_rowkey_column_num(), lib::is_oracle_mode(), cs_col_descs_))) {
-    STORAGE_LOG(WARN, "fail to init read info", KR(ret));
+
   } else {
-    STORAGE_LOG(INFO, "read info", K(read_info_), K(cs_read_info_));
+
     init_encoding_ctx(ctx_, false/*is_cs*/);
     init_encoding_ctx(cs_ctx_, true/*is_cs*/);
     if (OB_FAIL(cs_encoder_.init(cs_ctx_))) {
-      STORAGE_LOG(WARN, "fail to init cs_encoder", KR(ret));
+
     } else if (is_raw_encoder && OB_FAIL(raw_encoder_.init(ctx_))) {
-      STORAGE_LOG(WARN, "fail to init raw_encoder", KR(ret));
+
     } else if (!is_raw_encoder && OB_FAIL(encoder_.init(ctx_))) {
-      STORAGE_LOG(WARN, "fail to init encoder", KR(ret));
+
     }
   }
 
@@ -857,7 +857,7 @@ int TestDecoderFilterPerf::add_column_into_table(ObTableSchema &table_schema)
       col.set_rowkey_position(0);
     }
     if (OB_FAIL(table_schema.add_column(col))) {
-      STORAGE_LOG(WARN, "fail to add column", KR(ret), K(i), K(col));
+
     }
   }
   return ret;

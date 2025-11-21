@@ -39,7 +39,7 @@ do  \
 { \
   const int64_t size = sizeof(T); \
   const int64_t count = OB_MALLOC_BIG_BLOCK_SIZE / size; \
-  STORAGE_LOG(INFO, "print size", K(#T), K(size), K(count)); \
+ \
 } while(0); 
 
 TEST(TestRPCStruct, print_size)

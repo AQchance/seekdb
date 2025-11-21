@@ -201,7 +201,7 @@ int ObTransformerImpl::get_random_order_array(uint64_t need_types,
         }
       }
       
-      LOG_TRACE("the random order will be ",K(index_array));
+
       for (int64_t i = 0; i < index_array.count() && OB_SUCC(ret); ++i) {
         int need_types_pos = index_array.at(i);
         uint64_t need_types_local = 1u << need_types_pos;
@@ -363,7 +363,7 @@ int ObTransformerImpl::do_transform_pre_precessing(ObDMLStmt *&stmt)
     if (OB_FAIL(trans.transform(stmt, dummy_value))) {
       LOG_WARN("failed to do transform pre processing", K(ret));
     } else {
-      LOG_TRACE("succeed to do transform pre processing");
+
     }
   }
   return ret;
@@ -381,7 +381,7 @@ int ObTransformerImpl::do_prepare_mv_rewrite(const ObDMLStmt *stmt)
     if (OB_FAIL(trans.prepare_mv_rewrite_info(stmt))) {
       LOG_WARN("failed to do transform mv rewrite prepare", K(ret));
     } else {
-      LOG_TRACE("succeed to do transform mv rewrite prepare");
+
     }
   }
   return ret;
@@ -416,7 +416,7 @@ int ObTransformerImpl::transform_rule_set(ObDMLStmt *&stmt,
     for (i = 0; OB_SUCC(ret) && need_next_iteration && i < iteration_count; ++i) {
       bool trans_happened_in_iteration = false;
       ctx_->iteration_level_ = i;
-      LOG_TRACE("start to transform one iteration", K(i));
+
       OPT_TRACE("-- begin ", i, " iteration");
       if (OB_FAIL(transform_rule_set_in_one_iteration(stmt,
                                                       needed_types,
@@ -434,7 +434,7 @@ int ObTransformerImpl::transform_rule_set(ObDMLStmt *&stmt,
         need_next_iteration = true;
         trans_happened = true;
       }
-      LOG_TRACE("succeed to transform one iteration", K(i), K(need_next_iteration), K(ret));
+
       OPT_TRACE("-- end ", i, " iteration");
     }
     if (OB_SUCC(ret) && need_next_iteration && i == max_iteration_count_) {
@@ -442,7 +442,7 @@ int ObTransformerImpl::transform_rule_set(ObDMLStmt *&stmt,
       if (OB_FAIL(ret)) {
         LOG_WARN("transformer ends without convergence", K(ret), K(max_iteration_count_), K(ctx_->outline_trans_hints_));
       } else {
-        LOG_INFO("transformer ends without convergence", K(max_iteration_count_));
+
       }
     }
   }
@@ -529,7 +529,7 @@ int ObTransformerImpl::collect_trans_stat(const ObTransformRule &rule)
 void ObTransformerImpl::print_trans_stat()
 {
   for (int64_t i = 1; i < TRANSFORM_TYPE_COUNT_PLUS_ONE; ++i) {
-    LOG_TRACE("Transform Stat ", "Rule", i, "Happened", trans_count_[i]);
+
   }
 }
 

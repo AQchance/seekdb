@@ -148,7 +148,7 @@ int ObSubPlanScanOp::next_batch(const int64_t max_row_cnt)
 int ObSubPlanScanOp::next_vector(const int64_t max_row_cnt)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("subplan scan next vector");
+
   clear_evaluated_flag();
   const ObBatchRows *child_brs = nullptr;
   if (OB_FAIL(child_->get_next_batch(max_row_cnt, child_brs))) {

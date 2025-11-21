@@ -201,10 +201,10 @@ int ObMigrationStatusHelper::check_transfer_dest_tablet_for_ls_gc(ObLS *ls, cons
     LOG_WARN("tablet should not be NULL", K(ret), "ls_id", ls->get_ls_id(), K(tablet_id));
   } else if (tablet->get_tablet_meta().has_transfer_table()) {
     allow_gc = false;
-    LOG_INFO("dest tablet has transfer table", "ls_id", ls->get_ls_id(), K(tablet_id));
+
   } else {
     allow_gc = true;
-    LOG_INFO("dest tablet has no transfer table", "ls_id", ls->get_ls_id(), K(tablet_id));
+
   }
   return ret;
 }
@@ -222,7 +222,7 @@ int ObMigrationStatusHelper::set_ls_migrate_gc_status_(
   if (OB_FAIL(ls.set_ls_migration_gc(allow_gc))) {
     LOG_WARN("failed to set migration status", K(ret));
   } else if (!allow_gc) {
-    LOG_INFO("ls is not allow gc", K(ret), K(ls));
+
   } else if (OB_FAIL(ls.get_log_handler()->disable_sync())) {
     LOG_WARN("failed to disable replay", K(ret));
   }
@@ -266,7 +266,7 @@ int ObMigrationStatusHelper::check_ls_transfer_tablet_(
     LOG_WARN("failed to get restore status", K(ret), KPC(ls));
   } else if (restore_status.is_in_restoring_or_failed()) {
     allow_gc = true;
-    LOG_INFO("ls ls in restore status, allow gc", K(ret), K(restore_status), K(ls_id));
+
   } else if (OB_FAIL(check_transfer_dest_ls_(ls_id, allow_gc))) {
     LOG_WARN("failed to check transfer dest ls", K(ret), K(ls_id));
   }
@@ -311,13 +311,13 @@ int ObMigrationStatusHelper::check_transfer_dest_ls_(
         LOG_WARN("failed to get transfer meta info", K(ret), KPC(ls));
       } else if (transfer_meta_info.src_ls_ != ls_id || transfer_meta_info.allow_src_ls_gc()) {
         allow_gc = true;
-        LOG_INFO("transfer dest ls is not rely on transfer src ls", "src_ls", ls_id, "dest_ls", ls->get_ls_id());
+
       } else if (OB_FAIL(ls->get_migration_status(status))) {
         LOG_WARN("failed to get migration status", K(ret), KPC(ls));
       } else if (OB_FAIL(allow_transfer_src_ls_gc_(status, allow_gc))) {
         LOG_WARN("failed to check allow transfer src ls gc", K(ret), KPC(ls));
       } else if (allow_gc) {
-        LOG_INFO("transfer dest ls check transfer status passed", K(status), KPC(ls));
+
       } else if (OB_FAIL(check_transfer_dest_tablets_(transfer_meta_info, *ls, allow_gc))) {
         LOG_WARN("failed to check transfer dest tablets", K(ret), K(transfer_meta_info));
       }
@@ -648,7 +648,7 @@ int ObMigrationStatusHelper::check_ls_transfer_tablet_v1_(
     LOG_WARN("failed to get restore status", K(ret), KPC(ls));
   } else if (restore_status.is_in_restoring()) {
     allow_gc = true;
-    LOG_INFO("ls ls in restore status, allow gc", K(ret), K(restore_status), K(ls_id));
+
   } else if (OB_FAIL(check_ls_with_transfer_task_v1_(*ls, need_check_allow_gc, need_wait_dest_ls_replay))) {
     LOG_WARN("failed to check ls with transfer task", K(ret), KPC(ls));
   } else if (!need_check_allow_gc) {
@@ -683,7 +683,7 @@ int ObMigrationStatusHelper::check_ls_transfer_tablet_v1_(
       } else if (OB_FAIL(tablet->get_latest(user_data,
           unused_writer, unused_trans_stat, unused_trans_version))) {
         if (OB_EMPTY_RESULT == ret) {
-          LOG_INFO("tablet_status is null, ls is allowed to be GC", KR(ret), "tablet_id", tablet->get_tablet_meta().tablet_id_, K(ls_id));
+
           ret = OB_SUCCESS;
         } else {
           LOG_WARN("failed to get latest tablet status", K(ret), KP(tablet), K(ls_id));
@@ -693,7 +693,7 @@ int ObMigrationStatusHelper::check_ls_transfer_tablet_v1_(
         // do nothing
       } else if (user_data.transfer_scn_.is_min()) {
         allow_gc = true;
-        LOG_INFO("transfer out is not committed, allow gc", K(ret), K(user_data));
+
       } else if (OB_FAIL(check_transfer_dest_ls_status_for_ls_gc_v1_(
           user_data.transfer_ls_id_, tablet->get_tablet_meta().tablet_id_,
           user_data.transfer_scn_, need_wait_dest_ls_replay, allow_gc))) {
@@ -753,7 +753,7 @@ int ObMigrationStatusHelper::check_ls_with_transfer_task_v1_(
     LOG_WARN("failed to get ObLSService from MTL", K(ret), KP(ls_service));
   } else if (OB_FAIL(ls_service->get_ls(task_info.dest_ls_id_, dest_ls_handle, ObLSGetMod::HA_MOD))) {
     if (OB_LS_NOT_EXIST == ret) {
-      LOG_INFO("transfer dest ls not exist", K(ret), K(task_info));
+
       need_check_allow_gc = true;
       need_wait_dest_ls_replay = false;
       ret = OB_SUCCESS;
@@ -766,11 +766,11 @@ int ObMigrationStatusHelper::check_ls_with_transfer_task_v1_(
     } else if (max_decided_scn < task_info.start_scn_) {
       need_check_allow_gc = false;
       need_wait_dest_ls_replay = false;
-      LOG_INFO("transfer src ls is not replay to transfer scn, do not allow gc", K(max_decided_scn), K(task_info));
+
     } else {
       need_check_allow_gc = true;
       need_wait_dest_ls_replay = true;
-      LOG_INFO("transfer src ls is in doing status, need wait dest ls replay", K(max_decided_scn), K(task_info));
+
     }
   }
   return ret;
@@ -797,7 +797,7 @@ int ObMigrationStatusHelper::check_transfer_dest_ls_status_for_ls_gc_v1_(
     LOG_WARN("failed to get ObLSService from MTL", K(ret), KP(ls_service));
   } else if (OB_FAIL(ls_service->get_ls(transfer_ls_id, ls_handle, ObLSGetMod::HA_MOD))) {
     if (OB_LS_NOT_EXIST == ret) {
-      LOG_INFO("transfer dest ls not exist", K(ret), K(transfer_ls_id));
+
       allow_gc = true;
       ret = OB_SUCCESS;
     } else {
@@ -814,7 +814,7 @@ int ObMigrationStatusHelper::check_transfer_dest_ls_status_for_ls_gc_v1_(
       && ObMigrationStatus::OB_MIGRATION_STATUS_REBUILD_WAIT != dest_ls_status
       && ObMigrationStatus::OB_MIGRATION_STATUS_HOLD != dest_ls_status) {
     allow_gc = true;
-    LOG_INFO("transfer dest ls check transfer status passed", K(ret), K(transfer_ls_id), K(dest_ls_status));
+
   } else if (OB_FAIL(check_transfer_dest_tablet_for_ls_gc_v1_(dest_ls, tablet_id, transfer_scn, need_wait_dest_ls_replay, allow_gc))) {
     LOG_WARN("failed to check transfer dest tablet", K(ret), KPC(dest_ls), K(tablet_id));
   }
@@ -868,10 +868,10 @@ int ObMigrationStatusHelper::check_transfer_dest_tablet_for_ls_gc_v1_(
         K(tablet_id), "src_transfer_scn", transfer_scn, "dest_transfer_scn", dest_transfer_scn, KPC(tablet));
   } else if (tablet->get_tablet_meta().has_transfer_table()) {
     allow_gc = false;
-    LOG_INFO("dest tablet has transfer table", "ls_id", ls->get_ls_id(), K(tablet_id));
+
   } else {
     allow_gc = true;
-    LOG_INFO("dest tablet has no transfer table", "ls_id", ls->get_ls_id(), K(tablet_id));
+
   }
   return ret;
 }
@@ -1446,7 +1446,7 @@ int ObMacroBlockReuseMgr::init()
     LOG_WARN("failed to init reuse maps", K(ret), K(tenant_id));
   } else {
     is_inited_ = true;
-    LOG_INFO("success to init macro block reuse mgr", K(ret), K(reuse_maps_.is_inited()));
+
   }
 
   return OB_SUCCESS;
@@ -1457,7 +1457,7 @@ void ObMacroBlockReuseMgr::reset()
   int ret = OB_SUCCESS;
 
   if (!is_inited_) {
-    LOG_INFO("macro block reuse mgr has not been inited, no need to reset", K_(is_inited));
+
   } else {
     ReuseMaps::BlurredIterator iter(reuse_maps_);
     ReuseMajorTableKey reuse_key;
@@ -1497,7 +1497,7 @@ int ObMacroBlockReuseMgr::destroy()
   int ret = OB_SUCCESS;
 
   if (!is_inited_) {
-    LOG_INFO("macro block reuse mgr has not been inited, no need to destroy", K_(is_inited));
+
   } else {
     reset();
     if (OB_FAIL(reuse_maps_.destroy())) {
@@ -1664,26 +1664,26 @@ int ObMacroBlockReuseMgr::update_single_reuse_map(const ObITable::TableKey &tabl
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
       need_build = true;
-      LOG_INFO("major not in reuse mgr, no need to remove", K(ret), K(need_build), K(table_key));
+
     } else {
       LOG_WARN("failed to get major snapshot version in mgr", K(ret), K(table_key));
     }
   } else if (FALSE_IT(input_snapshot_version = table_key.get_snapshot_version())) {
   } else if (max_snapshot_version >= table_key.get_snapshot_version()) {
-    LOG_INFO("major snapshot version of mgr is equal to or greater than input snapshot version, no need to build", K(need_build), K(max_snapshot_version), K(input_snapshot_version), K(table_key));
+
   } else if (OB_FAIL(remove_single_reuse_map_(reuse_key))) {
-    LOG_INFO("failed to remove reuse map", K(ret), K(reuse_key));
+
   } else {
     need_build = true;
-    LOG_INFO("major snapshot version of mgr is less than input snapshot version, remove old reuse map then build", K(need_build), K(max_snapshot_version), K(input_snapshot_version), K(table_key));
+
   }
 
   if (OB_SUCC(ret) && need_build) {
-    LOG_INFO("build reuse map for major sstable", K(ret), K(need_build), K(table_key));
+
     if (OB_FAIL(build_single_reuse_map_(table_key, tablet_handle, sstable))) {
       LOG_WARN("failed to build reuse map", K(ret), K(table_key));
     } else {
-      LOG_INFO("success to update reuse map", K(ret), K(max_snapshot_version), K(input_snapshot_version), K(table_key));
+
     }
   }
 

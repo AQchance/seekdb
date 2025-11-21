@@ -71,7 +71,7 @@ int ObAllVirtualTabletCompactionHistory::process_curr_tenant(ObNewRow *&row)
   int n = 0;
   if (!major_merge_info_iter_.is_opened() && !minor_merge_info_iter_.is_opened()) {
     if (OB_FAIL(MTL(ObTenantSSTableMergeInfoMgr *)->open_iter(major_merge_info_iter_, minor_merge_info_iter_))) {
-      STORAGE_LOG(WARN, "fail to open ObTenantSSTableMergeInfoMgr::Iterator", K(ret));
+
     }
   }
   
@@ -82,7 +82,7 @@ int ObAllVirtualTabletCompactionHistory::process_curr_tenant(ObNewRow *&row)
                 minor_merge_info_iter_,
                 merge_history_, other_info_, sizeof(other_info_)))) {
       if (OB_ITER_END != ret) {
-        STORAGE_LOG(WARN, "fail to get next sstable merge info", K(ret));
+
       }
     }
   }

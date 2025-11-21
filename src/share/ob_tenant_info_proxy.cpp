@@ -498,7 +498,7 @@ int ObAllTenantInfoProxy::update_tenant_recovery_status_in_trans(
     if (old_tenant_info.get_sync_scn() == new_sync_scn
         && old_tenant_info.get_replayable_scn() == new_replayable_scn
         && old_tenant_info.get_readable_scn() == new_readable_scn) {
-      LOG_DEBUG("no need update", K(old_tenant_info), K(new_sync_scn), K(new_replayable_scn), K(new_readable_scn));
+
     } else if (OB_FAIL(sql.assign_fmt(
                  "update %s set sync_scn = %ld, replayable_scn = %ld, "
                  "readable_scn = %ld where tenant_id = %lu "
@@ -634,7 +634,7 @@ int ObAllTenantInfoProxy::update_tenant_max_ls_id(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("expect updating one row", KR(ret), K(affected_rows), K(sql));
   }
-  LOG_INFO("update max ls id", KR(ret), K(tenant_id), K(max_ls_id), K(sql));
+
   return ret;
 }
 

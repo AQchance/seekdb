@@ -119,7 +119,7 @@ TEST_F(ObRoutePolicyTest, READONLY_ZONE_FIRST)
   ASSERT_EQ(OB_SUCCESS, add_candi_replica(candi_replicas, ObRoutePolicy::SAME_IDC, ObRoutePolicy::NOMERGING, ZONE_TYPE_READONLY, ObZoneStatus::ACTIVE));
   //  ASSERT_EQ(OB_SUCCESS, add_candi_replica(candi_replicas, ObRoutePolicy::SAME_SERVER, ObRoutePolicy::NOMERGING, ZONE_TYPE_READONLY, ObZoneStatus::ACTIVE));
   ASSERT_EQ(OB_SUCCESS, route_policy_.calculate_replica_priority(candi_replicas, route_policy_ctx_));
-  LOG_INFO("READONLY_ZONE_FIRST sort result", K(candi_replicas));
+
   for (int64_t i = 0; i < candi_replicas.count(); ++i) {
     ASSERT_EQ(candi_replicas.count() - i -1, candi_replicas.at(i).replica_idx_);
   }
@@ -152,7 +152,7 @@ TEST_F(ObRoutePolicyTest, UNMERGE_ZONE_FIRST)
   ASSERT_EQ(OB_SUCCESS, add_candi_replica(candi_replicas, ObRoutePolicy::SAME_IDC, ObRoutePolicy::NOMERGING, ZONE_TYPE_READONLY, ObZoneStatus::ACTIVE));
   //  ASSERT_EQ(OB_SUCCESS, add_candi_replica(candi_replicas, ObRoutePolicy::SAME_SERVER, ObRoutePolicy::NOMERGING, ZONE_TYPE_READONLY, ObZoneStatus::ACTIVE));
   ASSERT_EQ(OB_SUCCESS, route_policy_.calculate_replica_priority(candi_replicas, route_policy_ctx_));
-  LOG_INFO("UNMERGE_ZONE_FIRST sort result", K(candi_replicas));
+
   for (int64_t i = 0; i < candi_replicas.count(); ++i) {
     ASSERT_EQ(candi_replicas.count() - i -1, candi_replicas.at(i).replica_idx_);
   }
@@ -184,7 +184,7 @@ TEST_F(ObRoutePolicyTest, ONLY_READONLY_ZONE)
   //  ASSERT_EQ(OB_SUCCESS, add_candi_replica(candi_replicas, ObRoutePolicy::SAME_SERVER, ObRoutePolicy::NOMERGING, ZONE_TYPE_READONLY, ObZoneStatus::ACTIVE));
 
   ASSERT_EQ(OB_SUCCESS, route_policy_.calculate_replica_priority(candi_replicas, route_policy_ctx_));
-  LOG_INFO("ONLY_READONLY_ZONE sort result", K(candi_replicas));
+
   for (int64_t i = 0; i < candi_replicas.count(); ++i) {
     ASSERT_EQ(candi_replicas.count() - i -1, candi_replicas.at(i).replica_idx_);
     if (candi_replicas.at(i).attr_.zone_type_ == ZONE_TYPE_READWRITE) {
@@ -318,7 +318,7 @@ TEST_F(ObRoutePolicyTest, SELECT_NO_INTERSECT)
   ASSERT_EQ(OB_SUCCESS, route_policy_.calculate_replica_priority(candi_replicas, route_policy_ctx_));
   ASSERT_EQ(OB_SUCCESS, route_policy_.select_replica_with_priority(route_policy_ctx_, candi_replicas, phy_part_loc_info));
 
-  LOG_INFO("SELECT NO INTERSET", K(candi_replicas));
+
   //assert result
   ASSERT_EQ(2, phy_part_loc_info.get_priority_replica_idxs().count());
 
@@ -389,7 +389,7 @@ TEST_F(ObRoutePolicyTest, CANDI_PRELICA_EMPTY)
   ASSERT_EQ(OB_SUCCESS, route_policy_.select_replica_with_priority(route_policy_ctx_, candi_replicas, phy_part_loc_info));
 
   //test result
-  LOG_INFO("CANDI_PRELICA_EMPTY", K(candi_replicas));
+
   ASSERT_EQ(1, phy_part_loc_info.get_priority_replica_idxs().count());
   ASSERT_EQ(1, phy_part_loc_info.get_priority_replica_idxs().at(0));
 
@@ -435,7 +435,7 @@ TEST_F(ObRoutePolicyTest, LOCAL_CANDI_EMPTY)
 
 
   //test result
-  LOG_INFO("LOCAL_CANDI_EMPTY", K(candi_replicas));
+
   ASSERT_EQ(1, phy_part_loc_info.get_priority_replica_idxs().count());
   ASSERT_EQ(0, phy_part_loc_info.get_priority_replica_idxs().at(0));
 
@@ -473,7 +473,7 @@ TEST_F(ObRoutePolicyTest, ALL_EMPTY)
 
 
   //test result
-  LOG_INFO("LOCAL_CANDI_EMPTY", K(candi_replicas));
+
   ASSERT_EQ(1, phy_part_loc_info.get_priority_replica_idxs().count());
   //ASSERT_EQ(0, phy_part_loc_info.get_priority_replica_idxs().at(0));
 

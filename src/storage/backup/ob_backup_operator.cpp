@@ -50,7 +50,7 @@ int ObLSBackupOperator::insert_ls_backup_task_info(const uint64_t tenant_id, con
   } else if (OB_FAIL(sql_client.write(gen_meta_tenant_id(tenant_id), sql.ptr(), affected_rows))) {
     LOG_WARN("failed to execute sql", K(ret), K(sql));
   } else {
-    LOG_INFO("insert ls task result", K(sql));
+
   }
   return ret;
 }
@@ -85,7 +85,7 @@ int ObLSBackupOperator::report_ls_backup_task_info(const uint64_t tenant_id, con
   } else if (OB_FAIL(sql_client.write(gen_meta_tenant_id(tenant_id), sql.ptr(), affected_rows))) {
     LOG_WARN("failed to execute sql", K(ret), K(sql));
   } else {
-    LOG_INFO("report ls backup task info", K(sql));
+
   }
   return ret;
 }
@@ -328,7 +328,7 @@ int ObLSBackupOperator::report_tablet_skipped(
   } else if (OB_FAIL(sql_client.write(gen_meta_tenant_id(tenant_id), sql.ptr(), affected_rows))) {
     LOG_WARN("failed to execute sql", K(ret), K(sql));
   } else {
-    LOG_INFO("report backup tablet skipped", K(sql));
+
   }
   return ret;
 }

@@ -503,7 +503,7 @@ int ObIntegerBaseDiffDecoder::comparison_operator(
             || col_ctx.obj_meta_.get_type_class() == ObDoubleTC) {
     // Can't compare by uint directly, support this later with float point number compare later
     ret = OB_NOT_SUPPORTED;
-    LOG_DEBUG("Double/Float with INT_DIFF encoding, back to retro path", K(col_ctx));
+
   } else if (OB_FAIL(filter.get_filter_node().get_filter_val_meta(filter_val_meta))) {
     LOG_WARN("Fail to find datum meta", K(ret), K(filter));
   } else {
@@ -632,7 +632,7 @@ int ObIntegerBaseDiffDecoder::bt_operator(
             || col_ctx.obj_meta_.get_type_class() == ObDoubleTC) {
     // Can't compare by uint directly, support this later with float point number compare later
     ret = OB_NOT_SUPPORTED;
-    LOG_DEBUG("Double/Float with INT_DIFF encoding, back to retro path", K(col_ctx));
+
   } else if (ObUIntSC == get_store_class_map()[col_ctx.obj_meta_.get_type_class()]
         || ObIntSC == get_store_class_map()[col_ctx.obj_meta_.get_type_class()]) {
     if (OB_FAIL(traverse_all_data(parent, col_ctx, col_data,

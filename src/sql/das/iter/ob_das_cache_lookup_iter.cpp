@@ -142,7 +142,7 @@ int ObDASCacheLookupIter::inner_init(ObDASIterParam &param)
   const bool use_simulate_batch_row_cnt = simulate_batch_row_cnt > 0 && simulate_batch_row_cnt < default_batch_row_count;
 
   lookup_param.default_batch_row_count_  = use_simulate_batch_row_cnt ? simulate_batch_row_cnt : default_batch_row_count;
-  LOG_DEBUG("simulate lookup row batch count", K(simulate_batch_row_cnt), K(default_batch_row_count));
+
 
   if (OB_FAIL(ObDASLocalLookupIter::inner_init(param))) {
     LOG_WARN("failed to init das lookup iter", K(ret));

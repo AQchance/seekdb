@@ -44,7 +44,7 @@ public:
       ls_id_(ObLSID(100)),
       ls_handle_()
   {
-    LOG_INFO("construct TestLockMemtableCheckpoint");
+
   }
   ~TestLockMemtableCheckpoint() = default;
 
@@ -64,11 +64,11 @@ public:
     ASSERT_NE(nullptr, ls_ = ls_handle_.get_ls());
     ASSERT_EQ(OB_SUCCESS, ls_->get_lock_table()->get_lock_memtable(table_handle_));
     ASSERT_EQ(OB_SUCCESS, table_handle_.get_lock_memtable(memtable_));
-    LOG_INFO("set up success");
+
   }
   void TearDown() override
   {
-    LOG_INFO("tear down success");
+
   }
 
 private:
@@ -85,7 +85,7 @@ private:
 
 void TestLockMemtableCheckpoint::SetUpTestCase()
 {
-  LOG_INFO("SetUpTestCase");
+
   init_default_lock_test_value();
   EXPECT_EQ(OB_SUCCESS, MockTenantModuleEnv::get_instance().init());
   SERVER_STORAGE_META_SERVICE.is_started_ = true;
@@ -93,13 +93,13 @@ void TestLockMemtableCheckpoint::SetUpTestCase()
 
 void TestLockMemtableCheckpoint::TearDownTestCase()
 {
-  LOG_INFO("TearDownTestCase");
+
   MockTenantModuleEnv::get_instance().destroy();
 }
 
 TEST_F(TestLockMemtableCheckpoint, replay_disorder)
 {
-  LOG_INFO("TestLockMemtableCheckpoint::replay_disorder");
+
   EXPECT_EQ(OB_SYS_TENANT_ID, MTL_ID());
   int ret = OB_SUCCESS;
   ObCreateLSArg arg;
@@ -110,14 +110,14 @@ TEST_F(TestLockMemtableCheckpoint, replay_disorder)
   commit_scn.set_base();
 
   // 1.recover unlock op and lock op
-  LOG_INFO("TestLockMemtableCheckpoint::replay_disorder 1");
+
   ret = memtable_->recover_obj_lock(DEFAULT_OUT_TRANS_UNLOCK_OP);
   ASSERT_EQ(OB_SUCCESS, ret);
   ret = memtable_->recover_obj_lock(DEFAULT_OUT_TRANS_LOCK_OP);
   ASSERT_EQ(OB_SUCCESS, ret);
 
   // 2. update lock status disorder
-  LOG_INFO("TestLockMemtableCheckpoint::replay_disorder 2");
+
   commit_version.val_ = 3;
   commit_scn.val_ = 3;
   ret = memtable_->update_lock_status(DEFAULT_OUT_TRANS_UNLOCK_OP,
@@ -136,12 +136,12 @@ TEST_F(TestLockMemtableCheckpoint, replay_disorder)
 
   // 3. check checkpoint
   // The rec_scn should be equal with the smaller commit_scn
-  LOG_INFO("TestLockMemtableCheckpoint::replay_disorder 3");
+
   ASSERT_EQ(commit_scn.val_, memtable_->get_rec_scn().val_);
 
   // 4. flush and get a previous commit log
   // You will find the log about disordered replay in the log file.
-  LOG_INFO("TestLockMemtableCheckpoint::replay_disorder 4");
+
   ret = memtable_->recover_obj_lock(DEFAULT_OUT_TRANS_UNLOCK_OP);
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(OB_SUCCESS, memtable_->flush(share::SCN::max_scn(), 0));
@@ -156,12 +156,12 @@ TEST_F(TestLockMemtableCheckpoint, replay_disorder)
   // 5. check checkpoint
   // The rec_scn should be equal with the smaller commit_scn
   // during flushing (i.e. it's get from pre_rec_scn)
-  LOG_INFO("TestLockMemtableCheckpoint::replay_disorder 5");
+
   ASSERT_EQ(commit_scn.val_, memtable_->get_rec_scn().val_);
 
   // 6. get a commit log with a commit_scn which
   // is larger than freeze_scn during flushing
-  LOG_INFO("TestLockMemtableCheckpoint::replay_disorder 6");
+
   ret = memtable_->recover_obj_lock(DEFAULT_OUT_TRANS_LOCK_OP);
   ASSERT_EQ(OB_SUCCESS, ret);
   commit_version.val_ = 4;
@@ -174,22 +174,22 @@ TEST_F(TestLockMemtableCheckpoint, replay_disorder)
   // 7. check checkpoint
   // The rec_scn should still be equal with the smaller
   // commit_scn during flushing (i.e. it's get from pre_rec_scn)
-  LOG_INFO("TestLockMemtableCheckpoint::replay_disorder 7");
+
   ASSERT_EQ(1, memtable_->get_rec_scn().val_);
 
   // 8. flush finish
-  LOG_INFO("TestLockMemtableCheckpoint::replay_disorder 8");
+
   ret = memtable_->on_memtable_flushed();
   ASSERT_EQ(OB_SUCCESS, ret);
 
   // 9. check checkpoint
   // The rec_scn should be equal with the latest commit_scn
   // which got during previous flushing (i.e. it's get from rec_scn)
-  LOG_INFO("TestLockMemtableCheckpoint::replay_disorder 9");
+
   ASSERT_EQ(commit_scn.val_, memtable_->get_rec_scn().val_);
 
   // 10. clean up
-  LOG_INFO("TestLockMemtableCheckpoint::replay_disorder 10");
+
   table_handle_.reset();
   ls_handle_.reset();
   ASSERT_EQ(OB_SUCCESS, MTL(ObLSService*)->remove_ls(ls_id_));

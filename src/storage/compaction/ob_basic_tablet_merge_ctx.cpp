@@ -428,7 +428,7 @@ int ObBasicTabletMergeCtx::prepare_merge_progress(
     progress->reset();
     LOG_WARN("failed to init merge progress", K(ret));
   } else {
-    LOG_TRACE("succeed to init merge progress", K(ret), KPC(progress));
+
   }
   if (OB_FAIL(ret) && nullptr != progress) {
     progress->~ObPartitionMergeProgress();
@@ -502,7 +502,7 @@ int ObBasicTabletMergeCtx::check_merge_ctx_valid()
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("column store table with valid co merge type should do co merge", K(ret), KPC(tablet), K(get_co_major_merge_type()));
       } else {
-        LOG_INFO("column store table with invalid co merge type, should be delayed column transform", K(ret), KPC(tablet), K(get_co_major_merge_type()));
+
       }
     }
   }
@@ -606,7 +606,7 @@ int ObBasicTabletMergeCtx::get_ls_and_tablet()
     LOG_WARN("failed to get log stream", K(ret), K(static_param_.get_ls_id()));
   } else if (ls_handle.get_ls()->is_offline()) {
     ret = OB_CANCELED;
-    LOG_INFO("ls offline, skip merge", K(ret), "param", get_dag_param());
+
   } else if (FALSE_IT(static_param_.ls_rebuild_seq_ = ls_handle.get_ls()->get_rebuild_seq())) {
   } else if (get_dag_param().need_swap_tablet_flag_) {
     if (OB_FAIL(swap_tablet())) {
@@ -675,7 +675,7 @@ bool ObBasicTabletMergeCtx::need_swap_tablet(
   int ret = OB_E(EventTable::EN_SWAP_TABLET_IN_COMPACTION) OB_SUCCESS;
   if (OB_FAIL(ret)) {
     ret = OB_SUCCESS;
-    STORAGE_LOG(INFO, "ERRSIM EN_SWAP_TABLET_IN_COMPACTION");
+
     bret = true;
   }
 #endif
@@ -923,7 +923,7 @@ int ObBasicTabletMergeCtx::init_static_desc()
                                 static_param_.encoding_granularity_))) {
     LOG_WARN("failed to init static desc", KR(ret), KPC(this));
   } else {
-    LOG_TRACE("[SharedStorage] success to set exec mode", KR(ret), "exec_mode", exec_mode_to_str(static_desc_.exec_mode_));
+
   }
   return ret;
 }
@@ -1039,7 +1039,7 @@ int ObBasicTabletMergeCtx::build_update_table_store_param(
                      filter_ctx_.mds_filter_info_.has_truncate_info())))) {
     LOG_WARN("failed to init with compaction info", KR(ret));
   } else {
-    LOG_INFO("success to init ObUpdateTableStoreParam", KR(ret), K(param));
+
   }
   return ret;
 }
@@ -1299,7 +1299,7 @@ int ObBasicTabletMergeCtx::alloc_mds_info_compaction_filter()
   } else if (OB_FAIL(mds_info_mgr.check_mds_filter_info(filter_ctx_.mds_filter_info_))) {
     LOG_WARN("failed to check mds filter info", KR(ret), K(read_version_range));
   } else if (filter_ctx_.mds_filter_info_.is_empty()) {
-    LOG_DEBUG("mds filter info is empty", KR(ret), K_(filter_ctx), K(read_version_range));
+
   } else if (FALSE_IT(schema_rowkey_cnt = static_param_.rowkey_read_info_->get_schema_rowkey_count())) {
   } else if (OB_FAIL(ObCompactionFilterFactory::alloc_compaction_filter<ObMdsInfoCompactionFilter>(
       mem_ctx_.get_allocator(),
@@ -1311,7 +1311,7 @@ int ObBasicTabletMergeCtx::alloc_mds_info_compaction_filter()
       mds_info_mgr))) {
     LOG_WARN("failed to build compaction filter", KR(ret), K(filter_ctx_.mds_filter_info_));
   } else {
-    LOG_INFO("success to build compaction_filter", KR(ret), "param", get_dag_param(), K_(filter_ctx), K(read_version_range));
+
   }
   return ret;
 }
@@ -1511,7 +1511,7 @@ int ObBasicTabletMergeCtx::get_convert_compaction_info()
   int64_t base_major_column_cnt = 0; // include 2 multi version column
 
   if (OB_FAIL(OB_UNLIKELY(EN_COMPACTION_DISABLE_CONVERT_CO))) {
-    LOG_INFO("EN_COMPACTION_DISABLE_CONVERT_CO: disable convert co merge", K(ret));
+
   } else if (OB_FAIL(GET_MIN_DATA_VERSION(MTL_ID(), min_data_version))) {
     LOG_WARN("failed to get min data version", K(ret));
   } else if (OB_FAIL(static_param_.tablet_schema_guard_.load(schema_on_tablet))) {

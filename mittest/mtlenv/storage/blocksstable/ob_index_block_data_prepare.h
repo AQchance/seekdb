@@ -264,9 +264,9 @@ int TestIndexBlockDataPrepare::gen_create_tablet_arg(const int64_t tenant_id,
   for(int64_t i = 0; OB_SUCC(ret) && i < count; i++) {
     ObTabletID tablet_id_insert(tablet_id.id() + i);
     if (OB_FAIL(index_tablet_ids.push_back(tablet_id_insert))) {
-      STORAGE_LOG(WARN, "failed to push back tablet id", KR(ret), K(tablet_id_insert));
+
     } else if (OB_FAIL(index_tablet_schema_idxs.push_back(0))) {
-      STORAGE_LOG(WARN, "failed to push back index id", KR(ret));
+
     }
   }
 
@@ -281,11 +281,11 @@ int TestIndexBlockDataPrepare::gen_create_tablet_arg(const int64_t tenant_id,
     STORAGE_LOG(WARN, "failed to init tablet info", KR(ret), K(index_tablet_ids),
         K(tablet_id), K(index_tablet_schema_idxs));
   } else if (OB_FAIL(arg.init_create_tablet(ls_id, share::SCN::min_scn(), false))) {
-    STORAGE_LOG(WARN, "failed to init create tablet", KR(ret), K(tenant_id), K(ls_id));
+
   } else if (OB_FAIL(arg.table_schemas_.push_back(table_schema))) {
-    STORAGE_LOG(WARN, "failed to push back table schema", KR(ret), K(table_schema));
+
   } else if (OB_FAIL(arg.tablets_.push_back(tablet_info))) {
-    STORAGE_LOG(WARN, "failed to push back tablet info", KR(ret), K(tablet_info));
+
   }
   return ret;
 }
@@ -533,7 +533,7 @@ void TestIndexBlockDataPrepare::close_builder_and_prepare_sstable(const int64_t 
     root_buf = root_desc.buf_;
     root_size = root_desc.addr_.size_;
   } else {
-    STORAGE_LOG(INFO, "not supported root block", K(root_desc));
+
     ASSERT_TRUE(false);
   }
 
@@ -615,7 +615,7 @@ void TestIndexBlockDataPrepare::close_builder_and_prepare_sstable(const int64_t 
   }
   sstable_.reset();
   ASSERT_EQ(OB_SUCCESS, sstable_.init(param, &allocator_));
-  STORAGE_LOG(INFO, "create sstable param", K(param));
+
 
 }
 
@@ -734,7 +734,7 @@ int TestIndexBlockDataPrepare::prepare_cg_read_info(const ObColDesc &col_desc)
   cg_read_info_.reset();
   if (OB_FAIL(MTL(ObTenantCGReadInfoMgr *)->construct_cg_read_info(
               allocator_, lib::is_oracle_mode(), col_desc, nullptr, cg_read_info_))) {
-    STORAGE_LOG(WARN, "Fail to construct cg read info", K(ret));
+
   }
   return ret;
 }
@@ -834,7 +834,7 @@ void TestIndexBlockDataPrepare::prepare_ddl_memtable()
     while (OB_SUCC(ret)) {
       if (OB_FAIL(meta_iter.get_next(data_macro_meta))) {
         if (OB_ITER_END != ret) {
-          STORAGE_LOG(WARN, "get data macro meta failed", K(ret));
+
         }
       } else {
         ObDDLMacroHandle macro_handle;
@@ -1111,7 +1111,7 @@ void TestIndexBlockDataPrepare::prepare_partial_sstable(const int64_t column_cnt
     root_buf = root_desc.buf_;
     root_size = root_desc.addr_.size_;
   } else {
-    STORAGE_LOG(INFO, "not supported root block", K(root_desc));
+
     ASSERT_TRUE(false);
   }
   ObMicroBlockReaderHelper reader_helper;
@@ -1129,7 +1129,7 @@ void TestIndexBlockDataPrepare::prepare_partial_sstable(const int64_t column_cnt
     OK(micro_reader->get_row(it, row));
     OK(idx_row_parser.init(TEST_ROWKEY_COLUMN_CNT + 2, row));
     int64_t before_last_idx = last_idx;
-    STORAGE_LOG(INFO, "check offset", K(idx_row_parser.get_row_offset()), K(it));
+
   }
 
   // deserialize micro block header in root block buf
@@ -1214,7 +1214,7 @@ void TestIndexBlockDataPrepare::prepare_partial_sstable(const int64_t column_cnt
   }
   partial_sstable_.reset();
   ASSERT_EQ(OB_SUCCESS, partial_sstable_.init(param, &allocator_));
-  STORAGE_LOG(INFO, "create partial_sstable param", K(param));
+
 }
 
 void TestIndexBlockDataPrepare::insert_partial_data(ObMacroBlockWriter &data_writer, const int64_t row_cnt)
@@ -1368,10 +1368,10 @@ void TestIndexBlockDataPrepare::prepare_merge_ddl_kvs()
     while (OB_SUCC(ret)) {
       if (OB_FAIL(meta_iter.get_next(data_macro_meta))) {
         if (OB_ITER_END != ret) {
-          STORAGE_LOG(WARN, "get data macro meta failed", K(ret));
+
         }
       } else {
-        STORAGE_LOG(INFO, "data_macro_meta_key", K(data_macro_meta));
+
         ++macro_idx;
         ObDDLMacroHandle macro_handle;
         macro_handle.set_block_id(data_macro_meta.get_macro_id());

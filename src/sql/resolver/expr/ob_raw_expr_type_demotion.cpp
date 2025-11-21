@@ -187,11 +187,11 @@ int ObRawExprTypeDemotion::init_query_ctx_flags(bool &disabled)
           || OB_ISNULL(query_ctx_ = expr_factory_->get_query_ctx())) {
     // exec ctx and query ctx may be null, in which case the type demotion is disabled.
     disabled = true;
-    LOG_TRACE("Type demotion is disabled because of null ctx", KP(exec_ctx), KP_(query_ctx));
+
   } else if (query_ctx_->is_prepare_stmt_) {
     // the actual type of the question mark expr in prepare stage cannot be determined.
     disabled = true;
-    LOG_TRACE("Type demotion is disabled because of prepare statement");
+
   } else if (query_ctx_->type_demotion_flag_inited_) {
     // type demotion flag has been initialized and can be accessed directly.
   } else {
@@ -542,7 +542,7 @@ int ObRawExprTypeDemotion::add_range_placement_constraint(
     if (OB_FAIL(add_var_to_array_no_dup(query_ctx_->all_expr_constraints_, cons))) {
       LOG_WARN("failed to push back pre calc constraints", K(ret));
     } else {
-      LOG_TRACE("add constraints", K(rp), K(const_expr), K(query_ctx_->all_expr_constraints_));
+
     }
   }
   return ret;

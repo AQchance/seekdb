@@ -104,7 +104,7 @@ int ObMViewUpdateDepsTask::need_schedule(bool &need_sche)
       EXTRACT_BOOL_FIELD_MYSQL(*result, "exist_nested", need_sche);
     }
   }
-  LOG_INFO("check mview update deps task need schedule", K(ret), K(need_sche), K(tenant_id_));
+
   return ret; 
 }
 

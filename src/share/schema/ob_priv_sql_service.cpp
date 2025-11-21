@@ -941,7 +941,7 @@ int ObPrivSqlService::add_db_priv_history(
   ObDMLExecHelper exec(sql_client, exec_tenant_id);
   ObDMLSqlSplicer dml;
   int64_t affected_rows = 0;
-  LOG_INFO("for test", K(priv_set));
+
   if (OB_FAIL(gen_db_priv_dml(exec_tenant_id, db_priv_key, priv_set, dml))) {
     LOG_WARN("gen_db_dml failed", K(db_priv_key), K(ret));
   } else {

@@ -1165,7 +1165,7 @@ TEST(ObSyncWashRt, sync_wash_mb_rt)
         OB_SYS_TENANT_ID, 2 * 1024 * 1024, false, wash_blocks));
   }
   const int64_t end = ObTimeUtility::current_time();
-  STORAGE_LOG(INFO, "wash cost time", "avg", (end - start) / sync_wash_count);
+
 }
 */
 

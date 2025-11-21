@@ -172,7 +172,7 @@ int ObSubPlanFilterVecOp::init_subplan_iters()
 {
   int ret = OB_SUCCESS;
   CK(child_cnt_ >= 2);
-  LOG_TRACE("init subplan iters in ObSubPlanFilterVecOp", K(child_cnt_));
+
   if (OB_SUCC(ret)) {
     OZ(subplan_iters_.prepare_allocate(child_cnt_ - 1));
     for (int32_t i = 1; OB_SUCC(ret) && i < child_cnt_; ++i) {
@@ -224,7 +224,7 @@ int ObSubPlanFilterVecOp::inner_open()
 {
   int ret = OB_SUCCESS;
   max_group_size_ = OB_MAX_BULK_JOIN_ROWS;
-  LOG_TRACE("max group size of SPF is", K(max_group_size_));
+
   if (OB_FAIL(drive_iter_.init(this,
                               max_group_size_,
                               &MY_SPEC.rescan_params_,
@@ -270,7 +270,7 @@ int ObSubPlanFilterVecOp::inner_get_next_batch(const int64_t max_row_cnt)
     } else if (child_brs->end_) {
       iter_end_ = true;
     }
-    LOG_TRACE("child_brs size", K(child_brs->size_), K(spec_.id_));
+
     ObEvalCtx::BatchInfoScopeGuard guard(eval_ctx_);
     guard.set_batch_size(child_brs->size_);
     brs_.size_ = child_brs->size_;
@@ -300,9 +300,9 @@ int ObSubPlanFilterVecOp::inner_get_next_batch(const int64_t max_row_cnt)
           LOG_WARN("fail to filter row", K(ret), K(l_idx), K(spec_.id_));
         } else if (filtered) {
           brs_.skip_->set(l_idx);
-          LOG_TRACE("left rows is filterd", K(l_idx), K(spec_.id_));
+
         } else {
-          LOG_TRACE("left rows is not filterd", K(l_idx), K(spec_.id_));
+
           all_filtered = false;
           // ObDatum *datum = NULL;
           EvalBound eval_bound(eval_ctx_.get_batch_size(), l_idx, l_idx + 1, false);

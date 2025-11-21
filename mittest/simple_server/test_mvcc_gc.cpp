@@ -58,17 +58,17 @@ int ObLSTabletService::table_scan(ObTableScanIterator &iter, ObTableScanParam &p
 
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret), K_(is_inited));
+
   } else if (FALSE_IT(allow_to_read_mgr_.load_allow_to_read_info(allow_to_read))) {
   } else if (!allow_to_read) {
     ret = OB_REPLICA_NOT_READABLE;
-    STORAGE_LOG(WARN, "ls is not allow to read", K(ret), KPC(ls_));
+
   } else if (OB_FAIL(prepare_scan_table_param(param, *(MTL(ObTenantSchemaService*)->get_schema_service())))) {
-    STORAGE_LOG(WARN, "failed to prepare scan table param", K(ret), K(param));
+
   } else if (OB_FAIL(get_tablet_with_timeout(param.tablet_id_, data_tablet, param.timeout_))) {
-    STORAGE_LOG(WARN, "failed to check and get tablet", K(ret), K(param));
+
   } else if (OB_FAIL(inner_table_scan(data_tablet, iter, param))) {
-    STORAGE_LOG(WARN, "failed to do table scan", K(ret), KP(&iter), K(param));
+
   }
   NG_TRACE(S_table_scan_end);
 
@@ -95,17 +95,17 @@ int ObLSTabletService::insert_rows(
 
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret), K_(is_inited));
+
   } else if (OB_UNLIKELY(!ctx.is_valid())
       || !ctx.is_write()
       || OB_UNLIKELY(!dml_param.is_valid())
       || OB_UNLIKELY(column_ids.count() <= 0)
       || OB_ISNULL(row_iter)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", K(ret), K(ctx), K(dml_param), K(column_ids), KP(row_iter));
+
   } else if (OB_FAIL(get_tablet_with_timeout(
       ctx.tablet_id_, tablet_handle, dml_param.timeout_))) {
-    STORAGE_LOG(WARN, "failed to check and get tablet", K(ret), K(ctx.tablet_id_));
+
   } else {
     ObArenaAllocator lob_allocator(ObModIds::OB_LOB_ACCESS_BUFFER, OB_MALLOC_NORMAL_BLOCK_SIZE, MTL_ID());
     ObDMLRunningCtx run_ctx(ctx,
@@ -125,22 +125,22 @@ int ObLSTabletService::insert_rows(
     const ObRelativeTable &data_table = run_ctx.relative_table_;
 
     if (OB_FAIL(prepare_dml_running_ctx(&column_ids, nullptr, tablet_handle, run_ctx))) {
-      STORAGE_LOG(WARN, "failed to prepare dml running ctx", K(ret));
+
     }
 
     while (OB_SUCC(ret) && OB_SUCC(get_next_rows(row_iter, rows, row_count))) {
       if (row_count <= 0) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "row_count should be greater than 0", K(ret));
+
       } else if (first_bulk) {
         first_bulk = false;
         row_count_first_bulk = row_count;
         const ObITableReadInfo &full_read_info = tablet_handle.get_obj()->get_rowkey_read_info();
         if (OB_FAIL(rows_info.init(data_table, ctx, full_read_info))) {
-          STORAGE_LOG(WARN, "Failed to init rows info", K(ret), K(data_table));
+
         } else if (OB_ISNULL(ptr = work_allocator.alloc(row_count * sizeof(ObStoreRow)))) {
           ret = OB_ALLOCATE_MEMORY_FAILED;
-          STORAGE_LOG(ERROR, "fail to allocate memory", K(ret), K(row_count));
+
         } else {
           tbl_rows = new (ptr) ObStoreRow[row_count];
           for (int64_t i = 0; i < row_count; i++) {
@@ -152,10 +152,10 @@ int ObLSTabletService::insert_rows(
       if (OB_FAIL(ret)) {
       } else if (OB_ISNULL(tbl_rows)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected error, tbl_rows is NULL", K(ret), KP(tbl_rows));
+
       } else if (OB_FAIL(insert_rows_to_tablet(tablet_handle, run_ctx, rows,
           row_count, rows_info, tbl_rows, afct_num, dup_num))) {
-        STORAGE_LOG(WARN, "insert to each tablets fail", K(ret));
+
       }
     }
 
@@ -167,7 +167,7 @@ int ObLSTabletService::insert_rows(
     }
     lob_allocator.reset();
     if (OB_SUCC(ret)) {
-      STORAGE_LOG(DEBUG, "succeeded to insert rows", K(ret));
+
       affected_rows = afct_num;
       EVENT_ADD(STORAGE_INSERT_ROW_COUNT, afct_num);
     }

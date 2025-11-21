@@ -205,7 +205,7 @@ int ObDASSortIter::inner_get_next_row()
   int ret = OB_SUCCESS;
   if (limit_param_.limit_ >= 0 && output_row_cnt_ >= limit_param_.limit_) {
     ret = OB_ITER_END;
-    LOG_DEBUG("das sort iter got enough rows", K_(limit_param), K_(output_row_cnt), K_(input_row_cnt), K(ret));
+
   } else if (!sort_finished_ && OB_FAIL(do_sort(false))) {
     LOG_WARN("failed to do sort", K(ret));
   } else {
@@ -232,7 +232,7 @@ int ObDASSortIter::inner_get_next_rows(int64_t &count, int64_t capacity)
   int ret = OB_SUCCESS;
   if (limit_param_.limit_ >= 0 && output_row_cnt_ >= limit_param_.limit_) {
     ret = OB_ITER_END;
-    LOG_DEBUG("das sort iter got enough rows", K_(limit_param), K_(output_row_cnt), K_(input_row_cnt), K(ret));
+
   } else if (!sort_finished_ && OB_FAIL(do_sort(true))) {
     LOG_WARN("failed to do sort", K(ret));
   } else {

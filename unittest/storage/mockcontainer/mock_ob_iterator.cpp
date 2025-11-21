@@ -38,13 +38,13 @@ int malloc_datum_row(
   row = NULL;
   if (cell_count <= 0) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", K(cell_count));
+
   } else {
     void *ptr = NULL;
     int64_t size = sizeof(ObDatumRow) + sizeof(blocksstable::ObStorageDatum) * cell_count;
     if (NULL == (ptr = allocator.alloc(size))) {
       ret = common::OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(ERROR, "fail to alloc ObDatumRow", K(size), K(cell_count));
+
     } else {
       void *cell_ptr = static_cast<char *>(ptr) + sizeof(ObDatumRow);
       row = new (ptr) ObDatumRow;
@@ -163,7 +163,7 @@ int ObMockIterator::get_row(const int64_t idx, const ObDatumRow *&row) const
 {
   int ret = OB_SUCCESS;
   if (idx < 0 || idx >= rows_.count()) {
-    STORAGE_LOG(WARN, "failed to idx", K(idx), K(rows_.count()));
+
     row = NULL;
     ret = OB_ITER_END;
   } else {
@@ -176,7 +176,7 @@ int ObMockIterator::get_row(const int64_t idx, ObDatumRow *&row) const
 {
   int ret = OB_SUCCESS;
   if (idx < 0 || idx >= rows_.count()) {
-    STORAGE_LOG(WARN, "failed to idx", K(idx), K(rows_.count()));
+
     row = NULL;
     ret = OB_ITER_END;
   } else {
@@ -189,7 +189,7 @@ int ObMockIterator::get_row(const int64_t idx, const ObStoreRow *&row) const
 {
   int ret = OB_SUCCESS;
   if (idx < 0 || idx >= rows_.count()) {
-    STORAGE_LOG(WARN, "failed to idx", K(idx), K(rows_.count()));
+
     row = NULL;
     ret = OB_ITER_END;
   } else {
@@ -202,7 +202,7 @@ int ObMockIterator::get_row(const int64_t idx, ObStoreRow *&row) const
 {
   int ret = OB_SUCCESS;
   if (idx < 0 || idx >= rows_.count()) {
-    STORAGE_LOG(WARN, "failed to idx", K(idx), K(rows_.count()));
+
     row = NULL;
     ret = OB_ITER_END;
   } else {
@@ -215,7 +215,7 @@ int ObMockIterator::get_row(const int64_t idx, ObNewRow *&row) const
 {
   int ret = OB_SUCCESS;
   if (idx < 0 || idx >= rows_.count()) {
-    STORAGE_LOG(WARN, "failed to idx", K(idx), K(rows_.count()));
+
     row = NULL;
     ret = OB_ITER_END;
   } else {
@@ -233,7 +233,7 @@ int ObMockIterator::add_row(blocksstable::ObDatumRow *row)
   } else {
     ObRowStoreType row_type = FLAT_ROW_STORE;
     if (OB_FAIL(malloc_datum_row(allocator_, row->count_, row_clone))) {
-      STORAGE_LOG(WARN, "failed to malloc datum row", K(ret));
+
     } else {
       row_clone->row_flag_ = row->row_flag_;
       if (row->mvcc_row_flag_.is_uncommitted_row()) { // make all row point to the same trans_id
@@ -242,13 +242,13 @@ int ObMockIterator::add_row(blocksstable::ObDatumRow *row)
       row_clone->count_ = row->count_;
       for (int64_t i = 0; OB_SUCC(ret) && i < row->count_; ++i) {
         if (OB_SUCCESS != (ret = row_clone->storage_datums_[i].deep_copy(row->storage_datums_[i], allocator_))) {
-          STORAGE_LOG(WARN, "ob write datum error.", K(ret) ,K(row));
+
         }
       }
 
       if  (OB_SUCC(ret)) {
         if (OB_SUCCESS != (ret = datum_rows_.push_back(row_clone))) {
-          STORAGE_LOG(WARN, "add datum row failed", K(ret), K(row_clone));
+
         } else {
           setup_start_cursor();
         }
@@ -272,7 +272,7 @@ int ObMockIterator::add_row(ObStoreRow *row)
   } else {
     ObRowStoreType row_type = FLAT_ROW_STORE;
     if (OB_FAIL(malloc_store_row(allocator_, row->row_val_.count_, row_clone, row_type))) {
-      STORAGE_LOG(WARN, "failed to malloc store row", K(ret));
+
     } else {
       row_clone->flag_ = row->flag_;
       row_clone->from_base_ = row->from_base_;
@@ -286,13 +286,13 @@ int ObMockIterator::add_row(ObStoreRow *row)
       for (int64_t i = 0; OB_SUCC(ret) && i < row->row_val_.count_; ++i) {
         if (OB_SUCCESS != (ret = ob_write_obj(allocator_, row->row_val_.cells_[i],
                      row_clone->row_val_.cells_[i]))) {
-          STORAGE_LOG(WARN, "ob write obj error.", K(ret) ,K(row));
+
         }
       }
 
       if  (OB_SUCC(ret)) {
         if (OB_SUCCESS != (ret = rows_.push_back(row_clone))) {
-          STORAGE_LOG(WARN, "add row failed", K(ret), K(row));
+
         } else {
           setup_start_cursor();
         }
@@ -338,7 +338,7 @@ int ObMockIterator::from(const ObString &str, char escape, uint16_t *col_id_arra
   ObMockIteratorBuilder builder;
   ObArenaAllocator buffer("StTemp");
   if (OB_SUCCESS != (ret != builder.init(&buffer, escape))) {
-    STORAGE_LOG(WARN, "init builder failed");
+
   } else {
     if (OB_ISNULL(result_col_id_array)) {
       ret = builder.parse(str, *this, col_id_array);
@@ -362,7 +362,7 @@ int ObMockIterator::from_for_datum(const ObString &str, char escape, uint16_t *c
   ObMockIteratorBuilder builder;
   ObArenaAllocator buffer("StTemp");
   if (OB_SUCCESS != (ret != builder.init(&buffer, escape))) {
-    STORAGE_LOG(WARN, "init builder failed");
+
   } else {
     if (OB_ISNULL(result_col_id_array)) {
       ret = builder.parse_for_datum(str, *this, col_id_array);
@@ -404,22 +404,22 @@ bool ObMockIterator::equals(const blocksstable::ObDatumRow &r1, const blocksstab
 {
   int ret = OB_SUCCESS;
   bool bool_ret = false;
-  STORAGE_LOG(INFO, "compare two rows", K(r1), K(r2));
+
   if (r1.row_flag_ != r2.row_flag_) {
-    STORAGE_LOG(WARN, "flag not equals", K(r1), K(r2));
+
   } else if (!cmp_multi_version_row_flag && (r1.row_flag_.is_not_exist() || r1.row_flag_.is_delete())) {
-    STORAGE_LOG(DEBUG, "flag is not row exist, return true", K(r1), K(r2));
+
     bool_ret = true;
   } else if (cmp_multi_version_row_flag && r1.mvcc_row_flag_.flag_ != r2.mvcc_row_flag_.flag_) {
-    STORAGE_LOG(WARN, "row_type_flag not equals", K(r1), K(r2));
+
     bool_ret = false;
   } else if (cmp_is_get_and_scan_index
       && (r1.scan_index_ != r2.scan_index_)) {
-    STORAGE_LOG(WARN, "scan_index not equals", K(r1), K(r2));
+
     bool_ret = false;
   } else {
     bool_ret = inner_equals(r1, r2);
-    STORAGE_LOG(INFO, "compare two rows", K(bool_ret), K(r1), K(r2));
+
   }
   return bool_ret;
 }
@@ -430,7 +430,7 @@ bool ObMockIterator::equals(int64_t idx, blocksstable::ObDatumRow &other_row) co
   int ret = OB_SUCCESS;
   const blocksstable::ObDatumRow *this_row = NULL;
   if (OB_SUCCESS != get_row(idx, this_row)) {
-    STORAGE_LOG(WARN, "invalid idx");
+
     bool_ret = false;
   } else {
     bool_ret = inner_equals(*this_row, other_row);
@@ -492,26 +492,26 @@ bool ObMockIterator::equals(const ObStoreRow &r1, const ObStoreRow &r2,
 {
   int ret = OB_SUCCESS;
   bool bool_ret = false;
-  STORAGE_LOG(INFO, "compare two rows", K(r1), K(r2));
+
   if (!cmp_multi_version_row_flag && (r1.flag_.is_not_exist() || r1.flag_.is_delete())) {
-    STORAGE_LOG(DEBUG, "flag is not row exist, return true", K(r1), K(r2));
+
     bool_ret = true;
   } else if (cmp_multi_version_row_flag && r1.row_type_flag_.flag_ != r2.row_type_flag_.flag_) {
-    STORAGE_LOG(WARN, "row_type_flag not equals", K(r1), K(r2));
+
     bool_ret = false;
   } else if (cmp_row_flag && reinterpret_cast<const uint8_t &>(r1.flag_) != reinterpret_cast<const uint8_t &>(r2.flag_)) {
-    STORAGE_LOG(WARN, "row_dml_flag not equals", K(r1), K(r2));
+
     bool_ret = false;
   } else if (cmp_is_get_and_scan_index
       && (r1.is_get_ != r2.is_get_ || r1.scan_index_ != r2.scan_index_)) {
-    STORAGE_LOG(WARN, "is_get or scan_index not equals", K(r1), K(r2));
+
     bool_ret = false;
   } else if (r1.is_sparse_row_ != r2.is_sparse_row_){
-    STORAGE_LOG(WARN, "is_sparse_row not equals", K(r1), K(r2));
+
     bool_ret = false;
   } else {
     bool_ret = equals(r1.row_val_, r2.row_val_);
-    STORAGE_LOG(INFO, "compare two rows", K(bool_ret), K(r1), K(r2));
+
   }
   if (bool_ret && r1.is_sparse_row_){ // both are sparse row
     bool_ret = equals(r1.column_ids_, r2.column_ids_, r1.row_val_.count_);
@@ -524,7 +524,7 @@ bool ObMockIterator::equals(int64_t idx, ObNewRow &other_row) const
   bool bool_ret = false;
   const ObStoreRow *this_row = NULL;
   if (OB_SUCCESS != get_row(idx, this_row)) {
-    STORAGE_LOG_RET(WARN, OB_INVALID_ARGUMENT, "invalid idx");
+
     bool_ret = false;
   } else {
     bool_ret = equals(this_row->row_val_, other_row);
@@ -542,7 +542,7 @@ bool ObMockIterator::equals(int64_t idx, ObStoreRow &other_row) const
   int ret = OB_SUCCESS;
   const ObStoreRow *this_row = NULL;
   if (OB_SUCCESS != get_row(idx, this_row)) {
-    STORAGE_LOG(WARN, "invalid idx");
+
     bool_ret = false;
   } else {
     bool_ret = equals(*this_row, other_row);
@@ -617,7 +617,7 @@ int ObMockIteratorBuilder::parse_datum_varchar(ObIAllocator *allocator,
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(prepare_parse_varchar(allocator, word, row.count_, idx))) {
-    STORAGE_LOG(WARN, "failed to parse datum varchar");
+
   } else {
     ObStorageDatum datum_tmp;
     datum_tmp.set_string(word);
@@ -633,7 +633,7 @@ int ObMockIteratorBuilder::parse_obj_varchar(ObIAllocator *allocator,
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(prepare_parse_varchar(allocator, word, row.row_val_.count_, idx))) {
-    STORAGE_LOG(WARN, "failed to parse obj varchar");
+
   } else {
     ObObj obj_tmp;
     obj_tmp.set_varchar(word);
@@ -674,14 +674,14 @@ int ObMockIteratorBuilder::prepare_parse_lob(ObIAllocator *allocator,
     if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN))
         || (errno != 0 && val == 0)
         || (INT_MAX < val || INT_MIN > val)) {
-      STORAGE_LOG(WARN, "strtol fail", K(val), K(word), K(errno));
+
       ret = OB_NUMERIC_OVERFLOW;
     } else if (str == end_ptr) {
-      STORAGE_LOG(WARN, "no digits found");
+
       ret = OB_ERR_CAST_VARCHAR_TO_NUMBER;
     } else if (val > 48) {
       ret = OB_NUMERIC_OVERFLOW;
-      STORAGE_LOG(WARN, "too big lob index cnt", K(val), K(word));
+
     } else {
       lob_data = new (buf) ObLobCommon();
     }
@@ -698,7 +698,7 @@ int ObMockIteratorBuilder::parse_datum_lob(ObIAllocator *allocator,
   int64_t val = 0;
   ObLobCommon *lob_data = nullptr;
   if (OB_FAIL(prepare_parse_lob(allocator, word, row.count_, idx, lob_data, val))) {
-    STORAGE_LOG(WARN, "failed to parse datum lob");
+
   } else {
     const int64_t block_size = 1 << 20;
     ObStorageDatum datum_tmp;
@@ -717,7 +717,7 @@ int ObMockIteratorBuilder::parse_obj_lob(ObIAllocator *allocator,
   int64_t val = 0;
   ObLobCommon *lob_data = nullptr;
   if (OB_FAIL(prepare_parse_lob(allocator, word, row.row_val_.count_, idx, lob_data, val))) {
-    STORAGE_LOG(WARN, "failed to parse obj lob");
+
   } else {
     const int64_t block_size = 1 << 20;
     ObObj obj_tmp;
@@ -772,7 +772,7 @@ int ObMockIteratorBuilder::prepare_parse_timestamp(ObIAllocator *allocator,
   if (idx >= count) {
     ret = OB_ARRAY_OUT_OF_RANGE;
   } else if (OB_SUCCESS != (ret = ObTimeUtility2::str_to_usec(word, usec))) {
-    STORAGE_LOG(WARN, "str to microsecond failed", K(word), K(usec), K(ret));
+
   }
   return ret;
 }
@@ -785,7 +785,7 @@ int ObMockIteratorBuilder::parse_datum_timestamp(ObIAllocator *allocator,
   int ret = OB_SUCCESS;
   int64_t usec = 0;
   if (OB_FAIL(prepare_parse_timestamp(allocator, word, row.count_, idx, usec))) {
-    STORAGE_LOG(WARN, "failed to parse datum timestamp");
+
   } else {
     row.storage_datums_[idx++].set_timestamp(usec);
   }
@@ -800,7 +800,7 @@ int ObMockIteratorBuilder::parse_obj_timestamp(ObIAllocator *allocator,
   int ret = OB_SUCCESS;
   int64_t usec = 0;
   if (OB_FAIL(prepare_parse_timestamp(allocator, word, row.row_val_.count_, idx, usec))) {
-    STORAGE_LOG(WARN, "failed to parse obj timestamp");
+
   } else {
     row.row_val_.cells_[idx++].set_timestamp(usec);
   }
@@ -836,10 +836,10 @@ int ObMockIteratorBuilder::prepare_parse_int(ObIAllocator *allocator,
     if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN))
         || (errno != 0 && val == 0)
         || (INT_MAX < val || INT_MIN > val)) {
-      STORAGE_LOG(WARN, "strtol fail", K(val), K(word), K(errno));
+
       ret = OB_NUMERIC_OVERFLOW;
     } else if (str == end_ptr) {
-      STORAGE_LOG(WARN, "no digits found");
+
       ret = OB_ERR_CAST_VARCHAR_TO_NUMBER;
     }
   }
@@ -855,7 +855,7 @@ int ObMockIteratorBuilder::parse_datum_int(ObIAllocator *allocator,
   int ret = OB_SUCCESS;
   int64_t val = 0;
   if (OB_FAIL(prepare_parse_int(allocator, word, row.count_, idx, val))) {
-    STORAGE_LOG(WARN, "failed to parse datum int");
+
   } else {
     row.storage_datums_[idx++].set_int32(static_cast<int32_t>(val));
   }
@@ -870,7 +870,7 @@ int ObMockIteratorBuilder::parse_obj_int(ObIAllocator *allocator,
   int ret = OB_SUCCESS;
   int64_t val = 0;
   if (OB_FAIL(prepare_parse_int(allocator, word, row.row_val_.count_, idx, val))) {
-    STORAGE_LOG(WARN, "failed to parse obj int");
+
   } else {
     row.row_val_.cells_[idx++].set_int32(static_cast<int32_t>(val));
   }
@@ -905,10 +905,10 @@ int ObMockIteratorBuilder::prepare_parse_bigint(ObIAllocator *allocator,
 
     if ((errno == ERANGE && (val == LLONG_MAX || val == LLONG_MIN))
         || (errno != 0 && val == 0)) {
-      STORAGE_LOG(WARN, "strtoll fail", K(val), K(word), K(errno));
+
       ret = OB_NUMERIC_OVERFLOW;
     } else if (str == end_ptr) {
-      STORAGE_LOG(WARN, "no digits found");
+
       ret = OB_ERR_CAST_VARCHAR_TO_NUMBER;
     }
   }
@@ -924,7 +924,7 @@ int ObMockIteratorBuilder::parse_datum_bigint(ObIAllocator *allocator,
   int ret = OB_SUCCESS;
   int64_t val = 0;
   if (OB_FAIL(prepare_parse_bigint(allocator, word, row.count_, idx, val))) {
-    STORAGE_LOG(WARN, "failed to parse datum bigint");
+
   } else {
     row.storage_datums_[idx++].set_int(val);
   }
@@ -939,7 +939,7 @@ int ObMockIteratorBuilder::parse_obj_bigint(ObIAllocator *allocator,
   int ret = OB_SUCCESS;
   int64_t val = 0;
   if (OB_FAIL(prepare_parse_bigint(allocator, word, row.row_val_.count_, idx, val))) {
-    STORAGE_LOG(WARN, "failed to parse obj bigint");
+
   } else {
     row.row_val_.cells_[idx++].set_int(val);
   }
@@ -958,7 +958,7 @@ int ObMockIteratorBuilder::prepare_parse_number(ObIAllocator *allocator,
   if (idx >= count) {
     ret = OB_ARRAY_OUT_OF_RANGE;
   } else if (OB_SUCCESS != (ret = nmb.from(word.ptr(), word.length(), *allocator))) {
-    STORAGE_LOG(WARN, "parse number failed", K(ret), K(word));
+
   }
   return ret;
 }
@@ -971,7 +971,7 @@ int ObMockIteratorBuilder::parse_datum_number(ObIAllocator *allocator,
   int ret = OB_SUCCESS;
   number::ObNumber nmb;
   if (OB_FAIL(prepare_parse_number(allocator, word, row.count_, idx, nmb))) {
-    STORAGE_LOG(WARN, "failed to parse datum int");
+
   } else {
     row.storage_datums_[idx++].set_number(nmb);
   }
@@ -986,7 +986,7 @@ int ObMockIteratorBuilder::parse_obj_number(ObIAllocator *allocator,
   int ret = OB_SUCCESS;
   number::ObNumber nmb;
   if (OB_FAIL(prepare_parse_number(allocator, word, row.row_val_.count_, idx, nmb))) {
-    STORAGE_LOG(WARN, "failed to parse obj int");
+
   } else {
     row.row_val_.cells_[idx++].set_number(nmb);
   }
@@ -1022,7 +1022,7 @@ int ObMockIteratorBuilder::parse_flag_type(ObIAllocator *allocator,
   int ret = OB_SUCCESS;
   int64_t flag_type = 0;
   if (OB_SUCCESS != str_to_flag_type_.get_refactored(word, flag_type)) {
-    STORAGE_LOG(WARN, "failed to parse flag type", K(word));
+
     ret = OB_HASH_NOT_EXIST;
   } else {
     if (0 == flag_type) {
@@ -1043,7 +1043,7 @@ int ObMockIteratorBuilder::prepare_parse_flag(ObIAllocator *allocator,
 
   int ret = OB_SUCCESS;
   if (OB_SUCCESS != str_to_flag_.get_refactored(word, flag)) {
-    STORAGE_LOG(WARN, "failed to parse flag", K(word));
+
     ret = OB_HASH_NOT_EXIST;
   }
   return ret;
@@ -1059,7 +1059,7 @@ int ObMockIteratorBuilder::parse_datum_flag(ObIAllocator *allocator,
   int ret = OB_SUCCESS;
   int64_t flag = 0;
   if (OB_FAIL(prepare_parse_flag(allocator, word, idx, flag))) {
-    STORAGE_LOG(WARN, "failed to parse datum row dml flag");
+
   } else {
     row.row_flag_.set_flag((ObDmlFlag)flag);
   }
@@ -1076,7 +1076,7 @@ int ObMockIteratorBuilder::parse_obj_flag(ObIAllocator *allocator,
   int ret = OB_SUCCESS;
   int64_t flag = 0;
   if (OB_FAIL(prepare_parse_flag(allocator, word, idx, flag))) {
-    STORAGE_LOG(WARN, "failed to parse obj row dml flag");
+
   } else {
     row.flag_.set_flag((ObDmlFlag)flag);
   }
@@ -1094,7 +1094,7 @@ int ObMockIteratorBuilder::parse_base(ObIAllocator *allocator,
 
   int ret = OB_SUCCESS;
   if (OB_SUCCESS != str_to_base_.get_refactored(word, row.from_base_)) {
-    STORAGE_LOG(WARN, "failed to parse from base", K(word));
+
     ret = OB_HASH_NOT_EXIST;
   }
   return ret;
@@ -1111,10 +1111,10 @@ int ObMockIteratorBuilder::parse_is_get(ObIAllocator *allocator,
 
   int ret = OB_SUCCESS;
   if (OB_SUCCESS != str_to_is_get_.get_refactored(word, row.is_get_)) {
-    STORAGE_LOG(WARN, "failed to parse is_get", K(word));
+
     ret = OB_HASH_NOT_EXIST;
   } else {
-    STORAGE_LOG(DEBUG, "parse is_get", K(row));
+
   }
   return ret;
 }
@@ -1130,10 +1130,10 @@ int ObMockIteratorBuilder::parse_datum_trans_id(ObIAllocator *allocator,
 
   int ret = OB_SUCCESS;
   if (OB_SUCCESS != str_to_trans_id_.get_refactored(word, row.trans_id_)) {
-    STORAGE_LOG(WARN, "failed to parse trans_id", K(word));
+
     ret = OB_HASH_NOT_EXIST;
   } else {
-    STORAGE_LOG(DEBUG, "parse str_to_trans_id_", K(row), K(word), K(row.trans_id_));
+
   }
   return ret;
 }
@@ -1149,10 +1149,10 @@ int ObMockIteratorBuilder::parse_obj_trans_id(ObIAllocator *allocator,
 
   int ret = OB_SUCCESS;
   if (OB_SUCCESS != str_to_trans_id_.get_refactored(word, row.trans_id_)) {
-    STORAGE_LOG(WARN, "failed to parse trans_id", K(word));
+
     ret = OB_HASH_NOT_EXIST;
   } else {
-    STORAGE_LOG(DEBUG, "parse str_to_trans_id_", K(row), K(word), K(row.trans_id_));
+
   }
   return ret;
 }
@@ -1181,10 +1181,10 @@ int ObMockIteratorBuilder::prepare_parse_scan_index(ObIAllocator *allocator,
 
   if ((errno == ERANGE && (val == LLONG_MAX || val == LLONG_MIN))
       || (errno != 0 && val == 0)) {
-    STORAGE_LOG(WARN, "strtoll fail", K(val), K(word), K(errno));
+
     ret = OB_NUMERIC_OVERFLOW;
   } else if (str == end_ptr) {
-    STORAGE_LOG(WARN, "no digits found");
+
     ret = OB_ERR_CAST_VARCHAR_TO_NUMBER;
   }
   return ret;
@@ -1200,10 +1200,10 @@ int ObMockIteratorBuilder::parse_datum_scan_index(ObIAllocator *allocator,
   int ret = OB_SUCCESS;
   int64_t val = 0;
   if (OB_FAIL(prepare_parse_scan_index(allocator, word, idx, val))) {
-    STORAGE_LOG(WARN, "failed to parse datum row scan_index");
+
   } else {
     row.scan_index_ = val;
-    STORAGE_LOG(DEBUG, "parse scan_index", K(row));
+
   }
   return ret;
 }
@@ -1218,10 +1218,10 @@ int ObMockIteratorBuilder::parse_obj_scan_index(ObIAllocator *allocator,
   int ret = OB_SUCCESS;
   int64_t val = 0;
   if (OB_FAIL(prepare_parse_scan_index(allocator, word, idx, val))) {
-    STORAGE_LOG(WARN, "failed to parse obj row scan_index");
+
   } else {
     row.scan_index_ = val;
-    STORAGE_LOG(DEBUG, "parse scan_index", K(row));
+
   }
   return ret;
 }
@@ -1237,7 +1237,7 @@ int ObMockIteratorBuilder::parse_datum_multi_version_row_flag(ObIAllocator *allo
 
   int ret = OB_SUCCESS;
   if (OB_SUCCESS != str_to_multi_version_row_flag_.get_refactored(word, row.mvcc_row_flag_.flag_)) {
-    STORAGE_LOG(WARN, "failed to parse multi version row flag for datum row", K(word));
+
     ret = OB_HASH_NOT_EXIST;
   }
   return ret;
@@ -1254,7 +1254,7 @@ int ObMockIteratorBuilder::parse_obj_multi_version_row_flag(ObIAllocator *alloca
 
   int ret = OB_SUCCESS;
   if (OB_SUCCESS != str_to_multi_version_row_flag_.get_refactored(word, row.row_type_flag_.flag_)) {
-    STORAGE_LOG(WARN, "failed to parse multi version row flag for obj row", K(word));
+
     ret = OB_HASH_NOT_EXIST;
   }
   return ret;
@@ -1283,7 +1283,7 @@ int ObMockIteratorBuilder::static_init()
   if (OB_SUCCESS != (ret = str_to_datum_parse_func_.create(
                                cal_next_prime(TYPE_NUM * 10),
                                ObModIds::OB_HASH_BUCKET))) {
-    STORAGE_LOG(WARN, "out of memory");
+
   } else if (OB_SUCCESS != str_to_datum_parse_func_.set_refactored(
                  ObString::make_string("int"),
                  ObMockIteratorBuilder::parse_datum_int)
@@ -1312,15 +1312,15 @@ int ObMockIteratorBuilder::static_init()
                  ObString::make_string("number"),
                  ObMockIteratorBuilder::parse_datum_number)) {
     ret = OB_INIT_FAIL;
-    STORAGE_LOG(WARN, "obj parse func hashtable insert failed");
+
   } else {
-    STORAGE_LOG(DEBUG, "init obj parse func hashtable");
+
   }
 
   if (OB_SUCCESS != (ret = str_to_obj_parse_func_.create(
                                cal_next_prime(TYPE_NUM * 10),
                                ObModIds::OB_HASH_BUCKET))) {
-    STORAGE_LOG(WARN, "out of memory");
+
   } else if (OB_SUCCESS != str_to_obj_parse_func_.set_refactored(
                  ObString::make_string("int"),
                  ObMockIteratorBuilder::parse_obj_int)
@@ -1349,15 +1349,15 @@ int ObMockIteratorBuilder::static_init()
                  ObString::make_string("number"),
                  ObMockIteratorBuilder::parse_obj_number)) {
     ret = OB_INIT_FAIL;
-    STORAGE_LOG(WARN, "obj parse func hashtable insert failed");
+
   } else {
-    STORAGE_LOG(DEBUG, "init obj parse func hashtable");
+
   }
 
   if (OB_SUCCESS != (ret = str_to_obj_type_.create(
                                cal_next_prime(TYPE_NUM * 10),
                                ObModIds::OB_HASH_BUCKET))) {
-    STORAGE_LOG(WARN, "out of memory");
+
   } else if (OB_SUCCESS != str_to_obj_type_.set_refactored(
                  ObString::make_string("int"), &INT_TYPE)
              || OB_SUCCESS != str_to_obj_type_.set_refactored(
@@ -1377,15 +1377,15 @@ int ObMockIteratorBuilder::static_init()
              || OB_SUCCESS != str_to_obj_type_.set_refactored(
                  ObString::make_string("number"), &NU_TYPE)) {
     ret = OB_INIT_FAIL;
-    STORAGE_LOG(WARN, "obj type hashtable insert failed");
+
   } else {
-    STORAGE_LOG(DEBUG, "init obj type hashtable");
+
   }
 
   if (OB_SUCCESS != (ret = str_to_datum_info_parse_func_.create(
                                cal_next_prime(INFO_NUM),
                                ObModIds::OB_HASH_BUCKET))) {
-    STORAGE_LOG(DEBUG, "out of memory");
+
   } else if (OB_SUCCESS != str_to_datum_info_parse_func_.set_refactored(
                  ObString::make_string("flag"),
                  ObMockIteratorBuilder::parse_datum_flag)
@@ -1402,15 +1402,15 @@ int ObMockIteratorBuilder::static_init()
                  ObString::make_string("trans_id"),
                  ObMockIteratorBuilder::parse_datum_trans_id)) {
     ret = OB_INIT_FAIL;
-    STORAGE_LOG(WARN, "info parse func hashtable insert failed");
+
   } else {
-    STORAGE_LOG(DEBUG, "init info parse func hashtable");
+
   }
 
   if (OB_SUCCESS != (ret = str_to_info_parse_func_.create(
                                cal_next_prime(INFO_NUM),
                                ObModIds::OB_HASH_BUCKET))) {
-    STORAGE_LOG(DEBUG, "out of memory");
+
   } else if (OB_SUCCESS != str_to_info_parse_func_.set_refactored(
                  ObString::make_string("flag"),
                  ObMockIteratorBuilder::parse_obj_flag)
@@ -1430,16 +1430,16 @@ int ObMockIteratorBuilder::static_init()
                  ObString::make_string("trans_id"),
                  ObMockIteratorBuilder::parse_obj_trans_id)) {
     ret = OB_INIT_FAIL;
-    STORAGE_LOG(WARN, "info parse func hashtable insert failed");
+
   } else {
-    STORAGE_LOG(DEBUG, "init info parse func hashtable");
+
   }
 
   if (ret == OB_SUCCESS
       && OB_SUCCESS != (ret = str_to_flag_.create(
                                   cal_next_prime(FLAG_NUM * 2),
                                   ObModIds::OB_HASH_BUCKET))) {
-    STORAGE_LOG(WARN, "out of memory");
+
   } else if (OB_SUCCESS != str_to_flag_.set_refactored(
                  ObString::make_string("RF_ROW_DOES_NOT_EXIST"),
                  ObDmlFlag::DF_NOT_EXIST)
@@ -1465,31 +1465,31 @@ int ObMockIteratorBuilder::static_init()
                  ObString::make_string("DELETE"),
                  ObDmlFlag::DF_DELETE)) {
     ret = OB_INIT_FAIL;
-    STORAGE_LOG(WARN, "flag hashtable insert failed");
+
   } else {
-    STORAGE_LOG(DEBUG, "init flag hashtable");
+
   }
 
   if (ret == OB_SUCCESS
       && OB_SUCCESS != (ret = str_to_flag_type_.create(
                                   cal_next_prime(FLAG_NUM * 2),
                                   ObModIds::OB_HASH_BUCKET))) {
-    STORAGE_LOG(WARN, "out of memory");
+
   } else if (OB_SUCCESS != str_to_flag_type_.set_refactored(
                  ObString::make_string("NORMAL"), 0)
              || OB_SUCCESS != str_to_flag_type_.set_refactored(
                  ObString::make_string("INSERT_DELETE"), 1)) {
     ret = OB_INIT_FAIL;
-    STORAGE_LOG(WARN, "flag type hashtable insert failed");
+
   } else {
-    STORAGE_LOG(DEBUG, "init flag type hashtable");
+
   }
 
   if (ret == OB_SUCCESS
       && OB_SUCCESS != (ret = str_to_dml_.create(
                                   cal_next_prime(DML_NUM * 2),
                                   ObModIds::OB_HASH_BUCKET))) {
-    STORAGE_LOG(WARN, "out of memory");
+
   } else if (OB_SUCCESS != str_to_dml_.set_refactored(
                  ObString::make_string("INSERT"), ObDmlFlag::DF_INSERT)
              || OB_SUCCESS != str_to_dml_.set_refactored(
@@ -1499,16 +1499,16 @@ int ObMockIteratorBuilder::static_init()
              || OB_SUCCESS != str_to_dml_.set_refactored(
                  ObString::make_string("LOCK"), ObDmlFlag::DF_LOCK)) {
     ret = OB_INIT_FAIL;
-    STORAGE_LOG(WARN, "dml hashtable insert failed");
+
   } else {
-    STORAGE_LOG(DEBUG, "init flag hashtable");
+
   }
 
   if (ret == OB_SUCCESS
       && OB_SUCCESS != (ret = str_to_trans_id_.create(
                                   cal_next_prime(BASE_NUM * 3),
                                   ObModIds::OB_HASH_BUCKET))) {
-    STORAGE_LOG(WARN, "out of memory");
+
   } else if (OB_SUCCESS != str_to_trans_id_.set_refactored(
           ObString::make_string("trans_id_1"), trans_id_list_[0])
       || OB_SUCCESS != str_to_trans_id_.set_refactored(
@@ -1538,15 +1538,15 @@ int ObMockIteratorBuilder::static_init()
           != str_to_trans_id_.set_refactored(
               ObString::make_string("trans_id_0"), transaction::ObTransID(0))) {
     ret = OB_INIT_FAIL;
-    STORAGE_LOG(WARN, "str_to_trans_id_ hashtable insert failed");
+
   } else {
-    STORAGE_LOG(DEBUG, "init str_to_trans_id_ hashtable");
+
   }
 
   if (ret == OB_SUCCESS
       && OB_SUCCESS != (ret = str_to_multi_version_row_flag_.create(
       cal_next_prime(MULTI_VERSION_ROW_FLAG_NUM * 2), ObModIds::OB_HASH_BUCKET))) {
-    STORAGE_LOG(WARN, "out of memory");
+
   } else if (OB_SUCCESS != str_to_multi_version_row_flag_.set_refactored(ObString::make_string("N"), 0)
       || OB_SUCCESS != str_to_multi_version_row_flag_.set_refactored(ObString::make_string("C"), 8)
       || OB_SUCCESS != str_to_multi_version_row_flag_.set_refactored(ObString::make_string("L"), 32)
@@ -1569,9 +1569,9 @@ int ObMockIteratorBuilder::static_init()
       || OB_SUCCESS != str_to_multi_version_row_flag_.set_refactored(ObString::make_string("UCFL"), 43)
       ) {
     ret = OB_INIT_FAIL;
-    STORAGE_LOG(WARN, "multi version row flag hashtable insert failed");
+
   } else {
-    STORAGE_LOG(DEBUG, "init multi version row flag hashtable");
+
   }
 
   // for sstable row
@@ -1595,9 +1595,9 @@ int ObMockIteratorBuilder::static_init()
                  ObString::make_string("row_cnt"),
                  ObMockIteratorBuilder::parse_obj_bigint))) {
     ret = OB_INIT_FAIL;
-    STORAGE_LOG(WARN, "obj parse func hashtable insert failed");
+
   } else {
-    STORAGE_LOG(DEBUG, "init obj parse func hashtable");
+
   }
 
   if (ret == OB_SUCCESS
@@ -1614,9 +1614,9 @@ int ObMockIteratorBuilder::static_init()
               || OB_SUCCESS != str_to_obj_type_.set_refactored(
                   ObString::make_string("row_cnt"), &BIGINT_TYPE))) {
     ret = OB_INIT_FAIL;
-    STORAGE_LOG(WARN, "obj type hashtable insert failed");
+
   } else {
-    STORAGE_LOG(DEBUG, "init obj type hashtable");
+
   }
 
     if (ret == OB_SUCCESS
@@ -1631,9 +1631,9 @@ int ObMockIteratorBuilder::static_init()
               || OB_SUCCESS != str_to_obj_parse_func_.set_refactored(
                   ObString::make_string("upper_bound"), ObMockIteratorBuilder::parse_obj_bigint))) {
     ret = OB_INIT_FAIL;
-    STORAGE_LOG(WARN, "obj type hashtable insert failed");
+
   } else {
-    STORAGE_LOG(DEBUG, "init obj type hashtable");
+
   }
   if (ret == OB_SUCCESS
       && (OB_SUCCESS != str_to_obj_type_.set_refactored(
@@ -1647,9 +1647,9 @@ int ObMockIteratorBuilder::static_init()
               || OB_SUCCESS != str_to_obj_type_.set_refactored(
                   ObString::make_string("upper_bound"),&BIGINT_TYPE))) {
     ret = OB_INIT_FAIL;
-    STORAGE_LOG(WARN, "obj type hashtable insert failed");
+
   } else {
-    STORAGE_LOG(DEBUG, "init obj type hashtable");
+
   }
 
   if (OB_SUCC(ret)) {
@@ -1670,7 +1670,7 @@ int ObMockIteratorBuilder::init(ObIAllocator *allocator, char escape)
   } else if (OB_SUCCESS == (ret = static_init())) {
     is_inited_ = true;
   } else {
-    STORAGE_LOG(WARN, "init static hashtable failed", K(ret));
+
   }
 
   return ret;
@@ -1692,23 +1692,23 @@ int ObMockIteratorBuilder::parse_for_datum(
     ret = parse_datum_header(str, pos, header, obj_num, iter);
     if (OB_ITER_END == ret) {
       ret = OB_EMPTY_RESULT;
-      STORAGE_LOG(WARN, "no data input");
+
     } else if (OB_FAIL(ret)) {
       //OB_ASSERT(false);
       // will not happen
-      STORAGE_LOG(WARN, "parse header error", K(ret));
+
     } else if (0 == obj_num) {
       ret = OB_EMPTY_RESULT;
-      STORAGE_LOG(WARN, "no data(such as int, var) col", K(str));
+
     } else if (OB_FAIL(iter.set_column_cnt(obj_num))) {
-      STORAGE_LOG(WARN, "set column cnt failed", K(ret), K(obj_num));
+
     } else {
-      STORAGE_LOG(TRACE, "get header success", K(header.count()), K(obj_num));
+
       int idx = 0;
       while (OB_SUCC(ret)) {
         ObDatumRow *row = NULL;
         if (OB_FAIL(malloc_datum_row(*allocator_, obj_num, row))) {
-          STORAGE_LOG(WARN, "failed to malloc store row", K(ret));
+
         } else  {
           // set default value
           row->row_flag_.set_flag(ObDmlFlag::DF_INSERT);
@@ -1719,12 +1719,12 @@ int ObMockIteratorBuilder::parse_for_datum(
           ret = parse_datum_row(str, pos, header, col_id_array_list, *row);
           if (OB_ITER_END == ret) {
             ret = OB_SUCCESS;
-            STORAGE_LOG(INFO, "parse successfully");
+
             break;
           } else if (OB_FAIL(ret)) {
-            STORAGE_LOG(WARN, "failed to get row", K(ret), K(pos));
+
           } else {
-            STORAGE_LOG(WARN, "add row", K(ret), KPC(row));
+
             iter.add_row(row);
           }
         }
@@ -1751,23 +1751,23 @@ int ObMockIteratorBuilder::parse(
     ret = parse_header(str, pos, header, obj_num, iter);
     if (OB_ITER_END == ret) {
       ret = OB_EMPTY_RESULT;
-      STORAGE_LOG(WARN, "no data input");
+
     } else if (OB_FAIL(ret)) {
       //OB_ASSERT(false);
       // will not happen
-      STORAGE_LOG(WARN, "parse header error", K(ret));
+
     } else if (0 == obj_num) {
       ret = OB_EMPTY_RESULT;
-      STORAGE_LOG(WARN, "no data(such as int, var) col", K(str));
+
     } else if (OB_FAIL(iter.set_column_cnt(obj_num))) {
-      STORAGE_LOG(WARN, "set column cnt failed", K(ret), K(obj_num));
+
     } else {
-      STORAGE_LOG(TRACE, "get header success", K(header.count()), K(obj_num));
+
       int idx = 0;
       while (OB_SUCC(ret)) {
         ObStoreRow *row = NULL;
         if (OB_FAIL(malloc_store_row(*allocator_, obj_num, row, FLAT_ROW_STORE))) {
-          STORAGE_LOG(WARN, "failed to malloc store row", K(ret));
+
         } else  {
           // set default value
           row->flag_.set_flag(ObDmlFlag::DF_INSERT);
@@ -1778,10 +1778,10 @@ int ObMockIteratorBuilder::parse(
           ret = parse_row(str, pos, header, col_id_array_list, *row);
           if (OB_ITER_END == ret) {
             ret = OB_SUCCESS;
-            STORAGE_LOG(INFO, "parse successfully");
+
             break;
           } else if (OB_FAIL(ret)) {
-            STORAGE_LOG(WARN, "failed to get row", K(ret), K(pos));
+
           } else {
             iter.add_row(row);
           }
@@ -1811,10 +1811,10 @@ int ObMockIteratorBuilder::parse_datum_header(const ObString &str,
     ret = get_next_word(str, pos, word, ext);
     if (OB_FAIL(ret)) {
       // will be OB_ITER_END only
-      STORAGE_LOG(WARN, "fail", K(ret), K(str), K(pos), K(word), K(obj_num));
+
     } else if (obj_num >= OB_ROW_MAX_COLUMNS_COUNT) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "too many columns", K(ret), K(obj_num));
+
     } else if (EXT_END == ext) {
       // header parse end
       break;
@@ -1834,10 +1834,10 @@ int ObMockIteratorBuilder::parse_datum_header(const ObString &str,
       // match data col, such as var, int, num...
       if (OB_SUCCESS == str_to_datum_parse_func_.get_refactored(word, fp) && NULL != fp) {
         if (OB_SUCCESS != str_to_obj_type_.get_refactored(word, type)) {
-          STORAGE_LOG(WARN, "get obj type from hashmap failed", K(ret));
+
         } else if (NULL == type) {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(WARN, "type is null", K(ret));
+
         } else {
           iter.set_column_type(obj_num, *type);
           ret = header.push_back(fp);
@@ -1873,10 +1873,10 @@ int ObMockIteratorBuilder::parse_header(const ObString &str,
     ret = get_next_word(str, pos, word, ext);
     if (OB_FAIL(ret)) {
       // will be OB_ITER_END only
-      STORAGE_LOG(WARN, "fail", K(ret), K(str), K(pos), K(word), K(obj_num));
+
     } else if (obj_num >= OB_ROW_MAX_COLUMNS_COUNT) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "too many columns", K(ret), K(obj_num));
+
     } else if (EXT_END == ext) {
       // header parse end
       break;
@@ -1896,10 +1896,10 @@ int ObMockIteratorBuilder::parse_header(const ObString &str,
       // match data col, such as var, int, num...
       if (OB_SUCCESS == str_to_obj_parse_func_.get_refactored(word, fp) && NULL != fp) {
         if (OB_SUCCESS != str_to_obj_type_.get_refactored(word, type)) {
-          STORAGE_LOG(WARN, "get obj type from hashmap failed", K(ret));
+
         } else if (NULL == type) {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(WARN, "type is null", K(ret));
+
         } else {
           iter.set_column_type(obj_num, *type);
           ret = header.push_back(fp);
@@ -1934,18 +1934,18 @@ int ObMockIteratorBuilder::parse_datum_with_specified_col_ids(
     ret = parse_datum_header(str, pos, header, obj_num, iter);
     if (OB_ITER_END == ret) {
       ret = OB_EMPTY_RESULT;
-      STORAGE_LOG(WARN, "no data input");
+
     } else if (OB_FAIL(ret)) {
       //OB_ASSERT(false);
       // will not happen
-      STORAGE_LOG(WARN, "parse header error", K(ret));
+
     } else if (0 == obj_num) {
       ret = OB_EMPTY_RESULT;
-      STORAGE_LOG(WARN, "no data(such as int, var) col");
+
     } else if (OB_FAIL(iter.set_column_cnt(obj_num))) {
-      STORAGE_LOG(WARN, "set column cnt failed", K(ret), K(obj_num));
+
     } else {
-      STORAGE_LOG(TRACE, "get header success", K(header.count()), K(obj_num));
+
       bool init_col_id_flag = false;
       if (OB_NOT_NULL(col_id_array_list) && OB_NOT_NULL(result_col_id_array)) {
         init_col_id_flag = true;
@@ -1955,7 +1955,7 @@ int ObMockIteratorBuilder::parse_datum_with_specified_col_ids(
       while (OB_SUCC(ret)) {
         ObDatumRow *row = NULL;
         if (OB_FAIL(malloc_datum_row(*allocator_, obj_num, row))) {
-          STORAGE_LOG(WARN, "failed to malloc store row", K(ret));
+
         } else  {
           // set default value
           row->row_flag_.set_flag(ObDmlFlag::DF_INSERT);
@@ -1966,15 +1966,15 @@ int ObMockIteratorBuilder::parse_datum_with_specified_col_ids(
           ret = parse_datum_row(str, pos, header, nullptr, *row);
           if (OB_ITER_END == ret) {
             ret = OB_SUCCESS;
-            STORAGE_LOG(INFO, "parse successfully");
+
             break;
           } else if (OB_FAIL(ret)) {
-            STORAGE_LOG(WARN, "failed to get row", K(ret), K(pos));
+
           } else {
             if (init_col_id_flag) {
               row->count_ = result_col_id_array[idx];
               col_id_pos += result_col_id_array[idx]; // move forward
-              STORAGE_LOG(TRACE, "get row successfully", K(idx), K(*row), K(row->trans_id_));
+
               ++idx;
             }
             iter.add_row(row);
@@ -2004,18 +2004,18 @@ int ObMockIteratorBuilder::parse_with_specified_col_ids(
     ret = parse_header(str, pos, header, obj_num, iter);
     if (OB_ITER_END == ret) {
       ret = OB_EMPTY_RESULT;
-      STORAGE_LOG(WARN, "no data input");
+
     } else if (OB_FAIL(ret)) {
       //OB_ASSERT(false);
       // will not happen
-      STORAGE_LOG(WARN, "parse header error", K(ret));
+
     } else if (0 == obj_num) {
       ret = OB_EMPTY_RESULT;
-      STORAGE_LOG(WARN, "no data(such as int, var) col");
+
     } else if (OB_FAIL(iter.set_column_cnt(obj_num))) {
-      STORAGE_LOG(WARN, "set column cnt failed", K(ret), K(obj_num));
+
     } else {
-      STORAGE_LOG(TRACE, "get header success", K(header.count()), K(obj_num));
+
       bool init_col_id_flag = false;
       if (OB_NOT_NULL(col_id_array_list) && OB_NOT_NULL(result_col_id_array)) {
         init_col_id_flag = true;
@@ -2025,7 +2025,7 @@ int ObMockIteratorBuilder::parse_with_specified_col_ids(
       while (OB_SUCC(ret)) {
         ObStoreRow *row = NULL;
         if (OB_FAIL(malloc_store_row(*allocator_, obj_num, row))) {
-          STORAGE_LOG(WARN, "failed to malloc store row", K(ret));
+
         } else  {
           // set default value
           row->flag_.set_flag(ObDmlFlag::DF_INSERT);
@@ -2036,17 +2036,17 @@ int ObMockIteratorBuilder::parse_with_specified_col_ids(
           ret = parse_row(str, pos, header, nullptr, *row);
           if (OB_ITER_END == ret) {
             ret = OB_SUCCESS;
-            STORAGE_LOG(INFO, "parse successfully");
+
             break;
           } else if (OB_FAIL(ret)) {
-            STORAGE_LOG(WARN, "failed to get row", K(ret), K(pos));
+
           } else {
             if (init_col_id_flag) {
               row->is_sparse_row_ = true;
               row->column_ids_ = col_id_array_list + col_id_pos;
               row->row_val_.count_ = result_col_id_array[idx];
               col_id_pos += result_col_id_array[idx]; // move forward
-              STORAGE_LOG(TRACE, "get row successfully", K(idx), K(*row), K(row->trans_id_));
+
               ++idx;
             }
             iter.add_row(row);
@@ -2084,7 +2084,7 @@ int ObMockIteratorBuilder::parse_datum_row(const ObString &str,
       // check col num if flag is RF_ROW_EXIST
       break;
     } else if (OB_SUCCESS != (ret = header.at(i, fp))) {
-      STORAGE_LOG(WARN, "invalid array index");
+
     } else {
       //STORAGE_LOG(DEBUG, "parsing word", K(word));
       switch (ext) {
@@ -2122,9 +2122,9 @@ int ObMockIteratorBuilder::parse_datum_row(const ObString &str,
           // use parse func to parse a word
           ret = (*fp)(allocator_, word, row, idx);
           if (OB_ARRAY_OUT_OF_RANGE == ret) {
-            STORAGE_LOG(WARN, "data col out of range, you may missing '\\n'?");
+
           } else if (OB_FAIL(ret)) {
-            STORAGE_LOG(WARN, "failed to parse word", K(ret), K(word));
+
           }
           break;
         default:
@@ -2163,7 +2163,7 @@ int ObMockIteratorBuilder::parse_row(const ObString &str,
       // check col num if flag is RF_ROW_EXIST
       break;
     } else if (OB_SUCCESS != (ret = header.at(i, fp))) {
-      STORAGE_LOG(WARN, "invalid array index");
+
     } else {
       //STORAGE_LOG(DEBUG, "parsing word", K(word));
       switch (ext) {
@@ -2219,9 +2219,9 @@ int ObMockIteratorBuilder::parse_row(const ObString &str,
           // use parse func to parse a word
           ret = (*fp)(allocator_, word, row, idx);
           if (OB_ARRAY_OUT_OF_RANGE == ret) {
-            STORAGE_LOG(WARN, "data col out of range, you may missing '\\n'?");
+
           } else if (OB_FAIL(ret)) {
-            STORAGE_LOG(WARN, "failed to parse word", K(ret), K(word));
+
           }
           break;
         default:
@@ -2353,7 +2353,7 @@ int ObMockIteratorBuilder::write_next_char(const ObString &str,
 
   if (OB_SUCCESS == ret && 1 != word.write(&c, 1)) {
     ret = OB_ARRAY_OUT_OF_RANGE;
-    STORAGE_LOG(WARN, "out of buffer");
+
   }
   return ret;
 }

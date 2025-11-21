@@ -89,7 +89,7 @@ ObPxRepartTransmitOp::ObPxRepartTransmitOp(
 int ObPxRepartTransmitOp::inner_open()
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("Inner open px fifo transmit", "op_id", MY_SPEC.id_);
+
   if (OB_FAIL(ObPxTransmitOp::inner_open())) {
     LOG_WARN("initialize operator context failed", K(ret));
   }

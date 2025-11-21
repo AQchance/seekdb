@@ -66,7 +66,7 @@ int FlashBackItem::set_flashback_query_info(ObEvalCtx &eval_ctx, ObDASScanRtDef 
       } else if (OB_FAIL(scan_rtdef.fb_snapshot_.convert_for_sql(datum->get_int()))) {
         LOG_WARN("failed to convert for gts", K(ret));
       } else {
-        LOG_TRACE("fb_snapshot_ result", K(scan_rtdef.fb_snapshot_), K(*datum));
+
       }
     }
   }
@@ -442,7 +442,7 @@ int ObTableScanOpInput::init(ObTaskInfo &task_info)
 {
   int ret = OB_SUCCESS;
   if (PHY_FAKE_CTE_TABLE == MY_SPEC.type_) {
-    LOG_DEBUG("CTE TABLE do not need init", K(ret));
+
   } else if (ObTaskSpliter::INVALID_SPLIT == task_info.get_task_split_type()) {
     ret = OB_NOT_INIT;
     LOG_WARN("exec type is INVALID_SPLIT", K(ret));
@@ -1179,7 +1179,7 @@ OB_INLINE int ObTableScanOp::init_das_scan_rtdef(const ObDASScanCtDef &das_ctdef
   das_rtdef.timeout_ts_ = plan_ctx->get_ps_timeout_timestamp();
   das_rtdef.tx_lock_timeout_ = my_session->get_trx_lock_timeout();
   das_rtdef.scan_flag_ = MY_CTDEF.scan_flags_;
-  LOG_DEBUG("scan flag", K(MY_CTDEF.scan_flags_));
+
   das_rtdef.scan_flag_.is_show_seed_ = plan_ctx->get_show_seed();
   das_rtdef.tsc_monitor_info_ = &tsc_monitor_info_;
   das_rtdef.scan_op_id_ = MY_SPEC.get_id();
@@ -1316,7 +1316,7 @@ int ObTableScanOp::prepare_batch_scan_range()
   for (int64_t i = 0; OB_SUCC(ret) && i < tsc_rtdef_.group_size_; ++i) {
     //replace real param to param store to extract scan range
     grp_guard.switch_group_rescan_param(i);
-    LOG_DEBUG("replace bnlj param to extract range", K(plan_ctx->get_param_store()));
+
 
     // When using batch rescan, the actual scan order of storage must be KEEP_ORDER，thus the original ordering
     // may be disrupted when dealing with multiple range segments.
@@ -1325,7 +1325,7 @@ int ObTableScanOp::prepare_batch_scan_range()
       LOG_WARN("prepare single scan range failed", K(ret));
     }
   }
-  LOG_DEBUG("after prepare batch scan range", K(MY_INPUT.key_ranges_), K(MY_INPUT.ss_key_ranges_));
+
   return ret;
 }
 
@@ -1337,7 +1337,7 @@ int ObTableScanOp::build_bnlj_params()
     // do nothing
   } else if (tsc_rtdef_.bnlj_params_.empty()) {
     tsc_rtdef_.bnlj_params_.set_capacity(MY_CTDEF.bnlj_param_idxs_.count());
-    LOG_TRACE("prepare batch scan range",K(MY_CTDEF.bnlj_param_idxs_), KPC(group_params_above));
+
     for (int64_t i = 0; OB_SUCC(ret) && i < MY_CTDEF.bnlj_param_idxs_.count(); ++i) {
       int64_t param_idx = MY_CTDEF.bnlj_param_idxs_.at(i);
       uint64_t array_idx = OB_INVALID_ID;
@@ -1347,7 +1347,7 @@ int ObTableScanOp::build_bnlj_params()
       } else if (!exist) {
         // ret = OB_ERR_UNEXPECTED;
         // LOG_WARN("failed to find group param", K(ret), K(exist), K(i), K(array_idx));
-        LOG_TRACE("bnlj params is not a array", K(i), K(param_idx));
+
       } else {
         const GroupRescanParam &group_param = group_params_above->at(array_idx);
         OZ(tsc_rtdef_.bnlj_params_.push_back(GroupRescanParamInfo(param_idx, group_param.gr_param_)));
@@ -1636,7 +1636,7 @@ int ObTableScanOp::set_need_check_outrow_lob()
       break;
     }
   }
-  LOG_TRACE("set need check outrow lob", K(ret), K(MY_SPEC.need_check_outrow_lob_), K(need_check_outrow_lob_), K(MY_SPEC.output_));
+
   return ret;
 }
 
@@ -1771,9 +1771,9 @@ int ObTableScanOp::do_init_before_get_row()
 {
   int ret = OB_SUCCESS;
   if (need_init_before_get_row_) {
-    LOG_DEBUG("do init before get row", K(MY_SPEC.id_), K(MY_SPEC.use_dist_das_), K(MY_SPEC.gi_above_));
+
     if (OB_UNLIKELY(iter_end_)) {
-      LOG_DEBUG("do init before get row meet iter end", K(MY_SPEC.id_));
+
     } else {
       if (MY_SPEC.gi_above_) {
         ObGranuleTaskInfo info;
@@ -1865,7 +1865,7 @@ int ObTableScanOp::fill_storage_feedback_info()
       table_scan_stat.query_range_row_count_ = scan_param.main_table_scan_stat_.access_row_cnt_;
       table_scan_stat.indexback_row_count_ = -1;
       table_scan_stat.output_row_count_ = scan_param.main_table_scan_stat_.out_row_cnt_;
-      LOG_DEBUG("table scan feedback info for acs", K(scan_param.main_table_scan_stat_), K(table_scan_stat));
+
     }
     // Fill in the feedback information required by the plan phase-out strategy
     ObIArray<ObTableRowCount> &table_row_count_list =
@@ -1962,7 +1962,7 @@ int ObTableScanOp::inner_rescan_for_tsc()
       ret = local_iter_rescan();
     }
     if (OB_SUCC(ret) && need_perform_real_batch_rescan()) {
-      LOG_TRACE("[group rescan] need perform real batch rescan");
+
       fold_iter_->init_group_range(0, tsc_rtdef_.bnlj_params_.at(0).gr_param_->count_);
     }
   }
@@ -2160,7 +2160,7 @@ int ObTableScanOp::check_need_real_rescan(bool &bret)
       // need perform batch rescan, the output of tsc is changed to fold_iter_
       if (ctx_.get_das_ctx().get_skip_scan_group_id() > 0) {
         output_ = iter_tree_;
-        LOG_TRACE("[group rescan] skip read is found");
+
       } else {
         output_ = fold_iter_;
       }
@@ -2182,7 +2182,7 @@ int ObTableScanOp::check_need_real_rescan(bool &bret)
         // if enable spf batch rescan in this paln, the rescan of tsc will called by px_partition_iterator, which need perform a real rescan
         bret = true;
         output_ = iter_tree_;
-        LOG_TRACE("[group rescan] gi rescan is supportted in batch rescan");
+
       } else {
         if (enable_group_rescan_test_mode) {
           ret = OB_ERR_UNEXPECTED;
@@ -2191,7 +2191,7 @@ int ObTableScanOp::check_need_real_rescan(bool &bret)
         } else {
           bret = true;
           output_ = iter_tree_;
-          LOG_TRACE("[group rescan] found unexpected group id", K(group_rescan_cnt_), K(group_id_), K(ctx_.get_das_ctx().get_skip_scan_group_id()));
+
         }
       }
     } else {
@@ -2203,7 +2203,7 @@ int ObTableScanOp::check_need_real_rescan(bool &bret)
       } else {
         bret = true;
         output_ = iter_tree_;
-        LOG_TRACE("[group rescan] found unexpected group rescan cnt", K(group_rescan_cnt_), K(ctx_.get_das_ctx().get_group_rescan_cnt()));
+
       }
     }
   }
@@ -2233,7 +2233,7 @@ int ObTableScanOp::check_need_real_rescan(bool &bret)
             if (group_size * partition_cnt > 100000) {
               // to many key ranges, fall back to single-row rescan
               output_ = iter_tree_;
-              LOG_TRACE("[group rescan] too many key ranges, fall back to single-row rescan", K(group_size), K(partition_cnt));
+
             }
           }
         }
@@ -2275,7 +2275,7 @@ int ObTableScanOp::get_next_row_with_das()
   //need to calc final limit row
   if (need_final_limit_ && limit_param_.limit_ > 0 && output_row_cnt_ >= limit_param_.limit_) {
     ret = OB_ITER_END;
-    LOG_DEBUG("get next row with das iter end", K(ret), K_(limit_param), K_(output_row_cnt));
+
   }
   while (OB_SUCC(ret) && !got_row) {
     clear_evaluated_flag();
@@ -2375,7 +2375,7 @@ int ObTableScanOp::get_next_batch_with_das(int64_t &count, int64_t capacity)
     count = 0;
     if (output_row_cnt_ >= limit_param_.limit_) {
       ret = OB_ITER_END;
-      LOG_DEBUG("get next row with das iter end", K(ret), K_(limit_param), K_(output_row_cnt));
+
     } else if (output_row_cnt_ + batch_size > limit_param_.limit_) {
       batch_size = limit_param_.limit_ - output_row_cnt_;
     }
@@ -2451,7 +2451,7 @@ int ObTableScanOp::inner_get_next_row_for_tsc()
   } else if (iter_end_) {
     // Ensure that multiple calls return OB_ITER_END when there is no data, or directly return iter end for an empty scan
     ret = OB_ITER_END;
-    LOG_DEBUG("inner get next row meet a iter end", K(MY_SPEC.id_), K(this), K(lbt()));
+
   } else if (0 == (++iterated_rows_ % CHECK_STATUS_ROWS_INTERVAL)
              && OB_FAIL(ctx_.check_status())) {
     LOG_WARN("check physical plan status failed", K(ret));
@@ -2477,7 +2477,7 @@ int ObTableScanOp::inner_get_next_row_for_tsc()
   if (OB_SUCC(ret)) {
     const ExprFixedArray &storage_output = MY_CTDEF.get_das_output_exprs();
     if (!MY_SPEC.is_global_index_back()) {
-      LOG_DEBUG("storage output row", "row", ROWEXPR2STR(eval_ctx_, storage_output), K(MY_CTDEF.scan_ctdef_.ref_table_id_));
+
     }
     if (OB_FAIL(add_ddl_column_checksum())) {
       LOG_WARN("add ddl column checksum failed", K(ret));
@@ -2509,7 +2509,7 @@ int ObTableScanOp::inner_get_next_row_for_tsc()
         if (OB_NOT_NULL(lookup_param)) {
           fill_table_scan_stat(lookup_param->main_table_scan_stat_, table_scan_stat);
         }
-        LOG_DEBUG("[ROW_CACHE_ADJUST] fill cache stat for local index lookup followed by table access", KP(lookup_param), K(table_scan_stat));
+
       }
       scan_param.main_table_scan_stat_.reset_cache_stat();
       iter_end_ = true;
@@ -2552,7 +2552,7 @@ int ObTableScanOp::inner_get_next_batch_for_tsc(const int64_t max_row_cnt)
     // Ensure that multiple calls return OB_ITER_END when there is no data, or directly return iter end for an empty scan
     brs_.size_ = 0;
     brs_.end_ = true;
-    LOG_DEBUG("inner get next row meet a iter end", K(MY_SPEC.id_), K(this), K(lbt()));
+
   } else {
     access_expr_sanity_check();
     ObEvalCtx::BatchInfoScopeGuard batch_info_guard(eval_ctx_);
@@ -2625,7 +2625,7 @@ int ObTableScanOp::inner_get_next_batch_for_tsc(const int64_t max_row_cnt)
       if (OB_NOT_NULL(lookup_param)) {
         fill_table_scan_stat(lookup_param->main_table_scan_stat_, table_scan_stat);
       }
-      LOG_DEBUG("[ROW_CACHE_ADJUST] fill cache stat for local index lookup followed by table access", KP(lookup_param), K(table_scan_stat));
+
     }
     scan_param.main_table_scan_stat_.reset_cache_stat();
     if (OB_FAIL(report_ddl_column_checksum())) {
@@ -2662,7 +2662,7 @@ OB_INLINE int ObTableScanOp::do_table_scan()
     LOG_WARN("unexpected nullptr scan iter", K(ret));
   } else if (scan_iter_->has_task()) {
     //execute with das
-    LOG_DEBUG("do table scan with DAS", K(MY_SPEC.ref_table_id_), K(MY_SPEC.table_loc_id_));
+
     if (OB_FAIL(prepare_pushdown_limit_param())) {
       LOG_WARN("prepare pushdow limit param failed", K(ret));
     } else if (OB_FAIL(scan_iter_->do_table_scan())) {
@@ -2888,7 +2888,7 @@ int ObTableScanOp::construct_partition_range(ObArenaAllocator &allocator,
                                                     allocator))) {
           LOG_WARN("get partition real range failed", K(ret));
         }
-        LOG_DEBUG("part range info", K(part_range), K(can_prune), K(ret));
+
       }
     }
   }
@@ -2913,7 +2913,7 @@ int ObTableScanOp::reassign_task_ranges(ObGranuleTaskInfo &info)
       MY_INPUT.key_ranges_.reuse();
       MY_INPUT.ss_key_ranges_.reuse();
       MY_INPUT.mbr_filters_.reuse();
-      LOG_DEBUG("do prepare!!!");
+
     }
   }
   return ret;
@@ -2945,7 +2945,7 @@ int ObTableScanOp::get_access_tablet_loc(ObGranuleTaskInfo &info)
       LOG_WARN("get tablet loc by id failed", K(ret), KPC(info.tablet_loc_), KPC(tsc_rtdef_.scan_rtdef_.table_loc_));
     } else {
       ctx_.set_granule_type(info.granule_type_);
-      LOG_DEBUG("TSC consume a task", K(info), K(info.granule_type_), KPC(MY_INPUT.tablet_loc_), K(MY_INPUT.tablet_loc_->loc_meta_));
+
     }
   }
   return ret;
@@ -3253,7 +3253,7 @@ int ObTableScanOp::report_ddl_column_checksum()
     }
 
     if (OB_SUCC(ret)) {
-      LOG_INFO("report ddl checksum table scan", K(tablet_id), K(checksum_items));
+
       uint64_t data_format_version = 0;
       int64_t snapshot_version = 0;
       share::ObDDLTaskStatus unused_task_status = share::ObDDLTaskStatus::PREPARE;
@@ -3322,7 +3322,7 @@ int ObTableScanOp::inner_get_next_row()
   if (OB_SUCC(ret)) {
     ret = EN_TABLE_SCAN_RETRY_WAIT_EVENT_ERRSIM ? : OB_SUCCESS;
     if (OB_FAIL(ret)) {
-      STORAGE_LOG(ERROR, "ERRSIM EN_TABLE_SCAN_RETRY_WAIT_EVENT_ERRSIM", K(ret));
+
     }
   }
 #endif
@@ -4177,7 +4177,7 @@ int ObRandScanProcessor::init(const ObTableScanSpec *tsc_spec,
         tsc_op_ = tsc_op;
         tsc_spec_ = tsc_spec;
       }
-      LOG_DEBUG("enable random tsc", K(ret), K(rand_seed_));
+
     }
   }
   return ret;

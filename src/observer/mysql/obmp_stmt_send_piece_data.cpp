@@ -93,7 +93,7 @@ int ObMPStmtSendPieceData::before_process()
       pos += buffer_len_;
       LOG_INFO("resolve send_piece protocol packet successfully", 
                K(ret), K(stmt_id_), K(param_id_), K(buffer_len_));
-      LOG_DEBUG("send_piece packet content", K(buffer_));
+
     }
 
     LOG_INFO("resolve send_piece protocol packet",
@@ -175,7 +175,7 @@ int ObMPStmtSendPieceData::process()
     } else if (OB_FAIL(process_extra_info(session, pkt, need_response_error))) {
       LOG_WARN("fail get process extra info", K(ret));
     } else if (OB_FAIL(session.check_tenant_status())) {
-      LOG_INFO("unit has been migrated, need deny new request", K(ret));
+
     } else {
       THIS_WORKER.set_timeout_ts(get_receive_timestamp() + query_timeout);
       session.partition_hit().reset();
@@ -417,7 +417,7 @@ int ObPiece::piece_init(ObSQLSessionInfo &session,
       LOG_WARN("alloc buffer array fail.", K(ret), K(stmt_id), K(param_id));
     }
   }
-  LOG_DEBUG("piece init.", K(ret), K(stmt_id), K(param_id));
+
   // The failure is handed over to the upper layer to release the memory space
   return ret;
 }
@@ -430,7 +430,7 @@ int ObPieceCache::init_piece_cache(ObSQLSessionInfo &session)
       LOG_WARN("piece_cache init fail", K(ret));
     }
   }
-  LOG_DEBUG("init piece cache. ", K(session.get_effective_tenant_id()));
+
   return ret;
 }
 
@@ -465,7 +465,7 @@ int ObPieceCache::make_piece(int32_t stmt_id,
       }
     }
   }
-  LOG_DEBUG("make piece: ", K(ret), K(stmt_id), K(param_id), K(session.get_effective_tenant_id()));
+
   return ret;
 }
 
@@ -495,7 +495,7 @@ int ObPieceCache::remove_piece(int64_t key, ObSQLSessionInfo &session)
     LOG_WARN("session_info is null", K(ret));
   } else {
     close_piece(piece, session);
-    LOG_DEBUG("remove piece success.", K(key));
+
   }
   return ret;
 }
@@ -540,7 +540,7 @@ int ObPieceCache::get_piece(int32_t stmt_id, uint16_t param_id, ObPiece *&piece)
   int ret = OB_SUCCESS;
   piece = NULL;
   if (!is_inited()) {
-    LOG_DEBUG("piece_cache_ is not init.", K(stmt_id), K(param_id));
+
     // do nothing, do not init piece_cache_ here
   } else {
     if (OB_FAIL(piece_map_.get_refactored(
@@ -673,7 +673,7 @@ int ObPieceCache::get_oracle_buffer(int32_t stmt_id,
       piece->get_is_null_map(is_null_map, count);
     }
   }
-  LOG_DEBUG("get buffer.", K(ret), K(stmt_id), K(param_id), K(length));
+
   return ret;
 }
 
@@ -705,7 +705,7 @@ int ObPieceCache::get_mysql_buffer(int32_t stmt_id,
     length += get_length_length(str_buf.length());
     length += str_buf.length();
   }
-  LOG_DEBUG("get buffer.", K(ret), K(stmt_id), K(param_id), K(length));
+
   return ret;
 }
 
@@ -723,7 +723,7 @@ int ObPieceCache::make_piece_buffer(ObIAllocator *allocator,
   OV (OB_NOT_NULL(piece_buffer = new (piece_mem) ObPieceBuffer(allocator, mode)));
   CK (OB_NOT_NULL(piece_buffer));
   OZ (piece_buffer->set_piece_buffer(buf));
-  LOG_DEBUG("make piece buffer.", K(ret), K(mode), K(buf->length()));
+
   return ret;
 }
 
@@ -788,7 +788,7 @@ int ObPieceCache::add_piece_buffer(ObPiece *piece,
       }
     } else { /* mysql do nothing */ }
   }
-  LOG_DEBUG("add piece buffer.", K(ret), K(piece_mode));
+
   return ret;
 }
 

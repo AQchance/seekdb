@@ -84,7 +84,7 @@ int ObMajorFreezeHelper::tablet_major_freeze(const ObTabletMajorFreezeParam &par
     ret = OB_MAJOR_FREEZE_NOT_ALLOW;
     LOG_WARN("enable_major_freeze is off, refuse to to major_freeze", K(param), KR(ret));
   } else {
-    LOG_INFO("tablet major freeze", K(ret), K(param));
+
     const int64_t start_time = ObTimeUtility::fast_current_time();
     obrpc::ObTabletMajorFreezeRpcProxy proxy;
     ObAddr leader;
@@ -135,7 +135,7 @@ int ObMajorFreezeHelper::tablet_major_freeze(const ObTabletMajorFreezeParam &par
       }
     }
     const int64_t cost_time = ObTimeUtility::current_time() - start_time;
-    LOG_INFO("do tenant major freeze", KR(ret), K(tenant_id), K(leader), K(param), K(cost_time));
+
   }
   return ret;
 }
@@ -172,7 +172,7 @@ int ObMajorFreezeHelper::get_freeze_info(
       if (OB_FAIL(check_tenant_is_restore(tenant_id, is_restore))) {
         LOG_WARN("fail to check tenant is restore", KR(ret), K(i), "freeze_info", tmp_info_array.at(i));
       } else if (is_restore) {
-        LOG_INFO("skip restoring tenant to do major freeze", K(tenant_id));
+
         const char *warn_buf = "tenant is in restore, major freeze is not allowed now";
         int tmp_ret = OB_SUCCESS;
         if (OB_TMP_FAIL(add_user_warning(tenant_id, warn_buf))) {
@@ -190,7 +190,7 @@ int ObMajorFreezeHelper::get_freeze_info(
       // Skip major freeze for standby tenants and thus avoid OB_MAJOR_FREEZE_NOT_ALLOW incurred by
       // standby tenants, only when launching major freeze on more than one tenant or all_user or all.
       else if (tenant_info.is_standby() && ((info_cnt > 1) || param.freeze_all_user_ || param.freeze_all_)) {
-        LOG_INFO("skip major freeze for standby tenant", K(tenant_info));
+
         const char *warn_buf = "standby tenant sync freeze info from primary tenant, not allowed to launch major freeze";
         int tmp_ret = OB_SUCCESS;
         if (OB_TMP_FAIL(add_user_warning(tenant_id, warn_buf))) {
@@ -395,7 +395,7 @@ int ObMajorFreezeHelper::do_one_tenant_major_freeze(
     }
 
     const int64_t launch_cost_time = ObTimeUtility::current_time() - launch_start_time;
-    LOG_INFO("do tenant major freeze", KR(ret), K(tenant_id), K(leader), K(freeze_info), K(launch_cost_time));
+
   }
   // TODO oushen
   // 1. parallel major_freeze
@@ -534,7 +534,7 @@ int ObMajorFreezeHelper::do_one_tenant_admin_merge(
       }
     }
 
-    LOG_INFO("finish to do tenant admin mrege", K(tenant_id), K(leader), K(admin_type), KR(ret));
+
   }
   return ret;
 }

@@ -56,7 +56,7 @@ void TestRsJobTableOperator::SetUp()
   ASSERT_EQ(OB_SUCCESS, db_initer_.create_virtual_table(
                 ObInnerTableSchema::all_virtual_partition_info_schema));
 
-  LOG_INFO("DB INITER FINISHED");
+
 }
 
 void TestRsJobTableOperator::TearDown()
@@ -84,9 +84,9 @@ TEST_F(TestRsJobTableOperator, test_api)
   ASSERT_EQ(OB_SUCCESS, trans.start(&db_initer_.get_sql_proxy()));
   int64_t job_id1 = RS_JOB_CREATE(ALTER_TENANT_LOCALITY, trans, "tenant_id", 1010, "tenant_name", "tt1");
   ASSERT_EQ(1, job_id1);
-  LOG_INFO("created job id", K(job_id1));
+
   int64_t job_id2 = RS_JOB_CREATE(ALTER_TABLE_LOCALITY, trans, "table_id", 1011, "table_name", "t1");
-  LOG_INFO("created job id", K(job_id2));
+
   ASSERT_EQ(2, job_id2);
   ASSERT_EQ(OB_SUCCESS, trans.end(true));
 
@@ -94,7 +94,7 @@ TEST_F(TestRsJobTableOperator, test_api)
   ObRsJobInfo job_info;
   ret = RS_JOB_GET(job_id1, job_info);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("get job", K(job_info));
+
   ASSERT_EQ(job_id1, job_info.job_id_);
   ASSERT_EQ(0, job_info.progress_);
   ASSERT_EQ(1010, job_info.tenant_id_);

@@ -103,9 +103,9 @@ int ObTabletAutoincMgr::clear_cache_if_fallback_for_mlog(
 
     if (OB_FAIL(ret)) {
     } else if (0 == cache_value) {
-      LOG_INFO("inc cache is empty, skip check", KPC(this));
+
     } else if (cache_value + 1 < current_value) {
-      LOG_INFO("auto inc seq fallback, need clear cache", K(ret), KPC(this), K(current_value));
+
       curr_node_.reset();
       prefetch_node_.reset();
       next_value_ = 1;
@@ -238,7 +238,7 @@ int ObTabletAutoincMgr::fetch_new_range(const ObTabletAutoincParam &param,
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("failed to get autoinc cache", K(ret));
       } else {
-        LOG_INFO("fetch new range success", K(tablet_id), K(node));
+
       }
     }
   }

@@ -182,7 +182,7 @@ int ObDASDMLIterator::get_next_row(blocksstable::ObDatumRow *&datum_row)
         LOG_WARN("project storage row failed", K(ret));
       } else {
         datum_row = cur_datum_row_;
-        LOG_TRACE("get next row from dml das iterator", KPC(sr), KPC(datum_row), K(das_ctdef_));
+
       }
     }
   }
@@ -229,7 +229,7 @@ int ObDASDMLIterator::get_next_rows(blocksstable::ObDatumRow *&rows, int64_t &ro
           LOG_WARN("Failed to project storage row", K(ret));
         } else {
           ++row_count;
-          LOG_TRACE("Get next rows from dml das iterator", KPC(sr), K(cur_datum_rows_[row_count - 1]), K_(das_ctdef));
+
         }
       }
       if (OB_SUCC(ret) || OB_LIKELY(OB_ITER_END == ret)) {
@@ -471,7 +471,7 @@ int ObDASWriteBuffer::add_row(const common::ObIArray<ObExpr*> &exprs,
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("stored row is null", K(ret));
     } else {
-      LOG_DEBUG("succ add dml_row", KPC(stored_row));
+
     }
   }
   return ret;
@@ -527,7 +527,7 @@ int ObDASWriteBuffer::try_add_row(const DmlShadowRow &sr,
   int64_t final_mem_limit = memory_limit;
   int64_t simulate_mem_limit = - EVENT_CALL(EventTable::EN_DAS_SIMULATE_DAS_TASK_SIZE);
   if (simulate_mem_limit != 0 && final_mem_limit > simulate_mem_limit) {
-    LOG_TRACE("simulate_mem_limit", K(simulate_mem_limit));
+
     final_mem_limit = simulate_mem_limit;
   }
   if (OB_UNLIKELY(row_size + get_mem_used() > final_mem_limit && get_mem_used() > 0)) {

@@ -898,12 +898,12 @@ int Iterator<BtreeKey, BtreeVal>::estimate_element_count(int64_t &physical_row_c
                                  level_element_count,
                                  node_count))) {
     if (OB_ITER_END != ret) {
-      STORAGE_LOG(WARN, "failed to estimate level 0", K(ret));
+
     }
   }
   physical_row_count += level_physical_row_count;
   element_count += level_element_count;
-  STORAGE_LOG(TRACE, "finish sample leaf level", K(physical_row_count), K(element_count), K(node_count));
+
   if (OB_SUCCESS == ret && node_count >= MAX_SAMPLE_LEAF_COUNT) {
     avg_element_count_per_leaf = MAX(std::lround(static_cast<double>(level_element_count) / static_cast<double>(node_count)), 1);
     if (OB_FAIL(estimate_one_level(1,         /*level*/
@@ -914,13 +914,13 @@ int Iterator<BtreeKey, BtreeVal>::estimate_element_count(int64_t &physical_row_c
                                    level_element_count,
                                    node_count))) {
       if (OB_ITER_END != ret) {
-        STORAGE_LOG(WARN, "failed to estimate level 1", K(ret));
+
       }
     }
     physical_row_count += level_physical_row_count * avg_element_count_per_leaf;
     element_count += level_element_count * avg_element_count_per_leaf;
   }
-  STORAGE_LOG(TRACE, "finish sample second level", K(physical_row_count), K(element_count), K(node_count));
+
   if (OB_SUCCESS != ret) {
     scan_handle_.release_ref();
   }

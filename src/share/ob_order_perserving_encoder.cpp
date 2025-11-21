@@ -70,7 +70,7 @@ int ObOrderPerservingEncoder::make_order_perserving_encode_from_object(
     case ObTinyIntType: {
       if (to_len + sizeof(int8_t) > max_buf_len) {
         ret = OB_BUF_NOT_ENOUGH;
-        LOG_TRACE("no enough memory to do encoding", K(ret), K(param.type_));
+
       } else {
         encode_from_int8(data.get_tinyint(), to, to_len);
       }
@@ -79,7 +79,7 @@ int ObOrderPerservingEncoder::make_order_perserving_encode_from_object(
     case ObSmallIntType: {
       if (to_len + sizeof(int16_t) > max_buf_len) {
         ret = OB_BUF_NOT_ENOUGH;
-        LOG_TRACE("no enough memory to do encoding", K(ret), K(param.type_));
+
       } else {
         encode_from_int16(data.get_smallint(), to, to_len);
       }
@@ -91,7 +91,7 @@ int ObOrderPerservingEncoder::make_order_perserving_encode_from_object(
     case ObInt32Type: {
       if (to_len + sizeof(int32_t) > max_buf_len) {
         ret = OB_BUF_NOT_ENOUGH;
-        LOG_TRACE("no enough memory to do encoding", K(ret), K(param.type_));
+
       } else {
         encode_from_int32(data.get_int32(), to, to_len);
       }
@@ -104,7 +104,7 @@ int ObOrderPerservingEncoder::make_order_perserving_encode_from_object(
     case ObIntType: {
       if (to_len + sizeof(int64_t) > max_buf_len) {
         ret = OB_BUF_NOT_ENOUGH;
-        LOG_TRACE("no enough memory to do encoding", K(ret), K(param.type_));
+
       } else {
         encode_from_int(data.get_int(), to, to_len);
       }
@@ -114,7 +114,7 @@ int ObOrderPerservingEncoder::make_order_perserving_encode_from_object(
     case ObUTinyIntType: {
       if (to_len + sizeof(uint8_t) > max_buf_len) {
         ret = OB_BUF_NOT_ENOUGH;
-        LOG_TRACE("no enough memory to do encoding", K(ret), K(param.type_));
+
       } else {
         encode_from_uint8(data.get_utinyint(), to, to_len);
       }
@@ -123,7 +123,7 @@ int ObOrderPerservingEncoder::make_order_perserving_encode_from_object(
     case ObUSmallIntType: {
       if (to_len + sizeof(uint16_t) > max_buf_len) {
         ret = OB_BUF_NOT_ENOUGH;
-        LOG_TRACE("no enough memory to do encoding", K(ret), K(param.type_));
+
       } else {
         encode_from_uint16(data.get_usmallint(), to, to_len);
       }
@@ -133,7 +133,7 @@ int ObOrderPerservingEncoder::make_order_perserving_encode_from_object(
     case ObUInt32Type: {
       if (to_len + sizeof(uint32_t) > max_buf_len) {
         ret = OB_BUF_NOT_ENOUGH;
-        LOG_TRACE("no enough memory to do encoding", K(ret), K(param.type_));
+
       } else {
         encode_from_uint32(data.get_uint32(), to, to_len);
       }
@@ -142,7 +142,7 @@ int ObOrderPerservingEncoder::make_order_perserving_encode_from_object(
     case ObUInt64Type: {
       if (to_len + sizeof(uint64_t) > max_buf_len) {
         ret = OB_BUF_NOT_ENOUGH;
-        LOG_TRACE("no enough memory to do encoding", K(ret), K(param.type_));
+
       } else {
         encode_from_uint(data.get_uint(), to, to_len);
       }
@@ -153,7 +153,7 @@ int ObOrderPerservingEncoder::make_order_perserving_encode_from_object(
     case ObUFloatType: {
       if (to_len + sizeof(float) > max_buf_len) {
         ret = OB_BUF_NOT_ENOUGH;
-        LOG_TRACE("no enough memory to do encoding", K(ret), K(param.type_));
+
       } else {
         encode_from_float(data.get_float(), to, to_len);
       }
@@ -163,7 +163,7 @@ int ObOrderPerservingEncoder::make_order_perserving_encode_from_object(
     case ObUDoubleType: {
       if (to_len + sizeof(double) > max_buf_len) {
         ret = OB_BUF_NOT_ENOUGH;
-        LOG_TRACE("no enough memory to do encoding", K(ret), K(param.type_));
+
       } else {
         encode_from_double(data.get_double(), to, to_len);
       }
@@ -206,7 +206,7 @@ int ObOrderPerservingEncoder::make_order_perserving_encode_from_object(
     case ObDecimalIntType: {
       if (to_len + data.len_ > max_buf_len) {
         ret = OB_BUF_NOT_ENOUGH;
-        LOG_TRACE("no enough memory to do encoding", K(ret), K(data.len_), K(param.type_));
+
       } else if (OB_FAIL(encode_from_decint(data.get_decimal_int(), data.len_, to, to_len))) {
         LOG_WARN("encode from decimal int failed", K(ret));
       }
@@ -327,7 +327,7 @@ int ObOrderPerservingEncoder::encode_from_string_varlen(
   // therefore src will expand (10+4)/2=>7 times at most when encoding
   if ((to_len + 7 * str.length() + safty_buf_size) > max_buf_len) {
     ret = OB_BUF_NOT_ENOUGH;
-    LOG_TRACE("no enough memory to do encoding for string", K(ret));
+
   } else if (str.empty() || (str.length()==1 && *str.ptr()=='\0')) {
     if (OB_FAIL(encode_tails(to, max_buf_len, to_len, param.is_memcmp_, cs, str.length()==1 && *str.ptr()=='\0'))) {
       LOG_WARN("failed to encode tails", K(ret));
@@ -437,7 +437,7 @@ int ObOrderPerservingEncoder::encode_from_string_varlen(
     }
   } else {
     ret = OB_NOT_SUPPORTED;
-    LOG_TRACE("not support collation", K(cs));
+
   }
   return ret;
 }
@@ -552,7 +552,7 @@ int ObOrderPerservingEncoder::encode_from_number(ObNumber val,
   ObNumberDesc desc = val.d_;
   if (to_len + sizeof(int8_t) + desc.len_ * sizeof(uint32_t) + 2 * sizeof(int32_t) > max_buf_len) {
     ret = OB_BUF_NOT_ENOUGH;
-    LOG_TRACE("no enough memory to do encoding for obnumber", K(ret));
+
   } else {
     int8_t se = desc.se_;
     // int: neg pad FF, pos pad 00
@@ -709,7 +709,7 @@ int ObSortkeyConditioner::process_key_conditioning(
     LOG_WARN("invalid arg", K(ret), K(to));
   } else if (max_buf_len < 1) {
     ret = OB_BUF_NOT_ENOUGH;
-    LOG_TRACE("no enough memory to do encoding for obnumber", K(ret));
+
   } else if (param.is_nullable_) {
     if (param.is_null_first_)
       *to = (param.type_ == ObNullType || data.is_null()) ? 0x00 : 0x01;
@@ -729,7 +729,7 @@ int ObSortkeyConditioner::process_key_conditioning(
     }
   } else if (max_buf_len < to_len) {
     ret = OB_BUF_NOT_ENOUGH;
-    LOG_TRACE("no enough memory to do encoding for obnumber", K(ret));
+
   } else if (!param.is_asc_) {
     if (param.is_nullable_) {
       process_decrease(to + 1, to_len - 1);

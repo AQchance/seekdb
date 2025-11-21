@@ -127,7 +127,7 @@ TEST_F(TestCompactionTimeGuard, time_guard_to_string)
   ASSERT_EQ(ObStorageCompactionTimeGuard::COMPACTION_EVENT_MAX, storage_guard.size_);
   storage_guard.event_times_[ObStorageCompactionTimeGuard::DAG_WAIT_TO_SCHEDULE] += 2 * ObStorageCompactionTimeGuard::COMPACTION_SHOW_TIME_THRESHOLD;
   storage_guard.event_times_[ObStorageCompactionTimeGuard::DAG_FINISH] += 2 * ObCompactionTimeGuard::WARN_THRESHOLD;
-  STORAGE_LOG(INFO, "storage guard is", K(storage_guard));
+
 
   ObRSCompactionTimeGuard rs_guard;
   for (uint16_t i = 0; i < ObRSCompactionTimeGuard::COMPACTION_EVENT_MAX; i++) {
@@ -137,7 +137,7 @@ TEST_F(TestCompactionTimeGuard, time_guard_to_string)
   }
   ASSERT_EQ(ObRSCompactionTimeGuard::COMPACTION_EVENT_MAX, rs_guard.size_);
   rs_guard.event_times_[ObRSCompactionTimeGuard::CKM_VERIFICATION] += 2 * ObCompactionTimeGuard::WARN_THRESHOLD;
-  STORAGE_LOG(INFO, "rs guard is", K(rs_guard));
+
   
   ObCompactionScheduleTimeGuard schedule_guard;
   for (uint16_t i = 0; i < ObCompactionScheduleTimeGuard::COMPACTION_EVENT_MAX; i++) {
@@ -147,7 +147,7 @@ TEST_F(TestCompactionTimeGuard, time_guard_to_string)
   }
   ASSERT_EQ(ObCompactionScheduleTimeGuard::COMPACTION_EVENT_MAX, schedule_guard.size_);
   schedule_guard.event_times_[ObCompactionScheduleTimeGuard::SCHEDULER_NEXT_ROUND] += 2 * ObCompactionTimeGuard::WARN_THRESHOLD;
-  STORAGE_LOG(INFO, "schedule guard is", K(schedule_guard));
+
 }
 
 } // namespace unittest

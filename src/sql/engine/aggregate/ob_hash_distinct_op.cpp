@@ -120,7 +120,7 @@ void ObHashDistinctOp::reset()
     get_next_row_func_ = &ObHashDistinctOp::do_unblock_distinct;
     get_next_batch_func_ = &ObHashDistinctOp::do_unblock_distinct_for_batch;
   }
-  LOG_TRACE("trace block mode", K(MY_SPEC.is_block_mode_), K(spec_.id_));
+
 }
 
 int ObHashDistinctOp::inner_rescan()
@@ -234,7 +234,7 @@ int ObHashDistinctOp::build_distinct_data(bool is_block)
       if (OB_FAIL(ret)) {
       } else if (is_block) {
         // If it is block mode, then after processing a batch of data (which may come from child or dump partition), start returning the data
-        LOG_TRACE("trace block", K(is_block));
+
         break;
       } else if (OB_FAIL(hp_infras_.end_round())) {
         LOG_WARN("failed to end round", K(ret));
@@ -355,7 +355,7 @@ int ObHashDistinctOp::build_distinct_data_for_batch(const int64_t batch_size, bo
         LOG_WARN("failed to finish insert row", K(ret));
       } else if (!has_got_part_) {
         has_got_part_ = true;
-        LOG_DEBUG("start get dumped partition", K(group_cnt_));
+
       } else {
         if (OB_FAIL(hp_infras_.close_cur_part(InputSide::LEFT))) {
           LOG_WARN("failed to close curr part", K(ret));
@@ -365,7 +365,7 @@ int ObHashDistinctOp::build_distinct_data_for_batch(const int64_t batch_size, bo
       } else if (is_block) {
         //if true, means we have process a full partition, then break the loop and return rows
         break;
-        LOG_TRACE("trace block", K(is_block));
+
       } else if (OB_FAIL(hp_infras_.end_round())) {
         LOG_WARN("failed to end round", K(ret));
       } else if (OB_FAIL(hp_infras_.start_round())) {
@@ -510,7 +510,7 @@ int ObHashDistinctOp::do_unblock_distinct()
     if (OB_ITER_END != ret) {
       LOG_WARN("failed to build distinct data", K(ret));
     } else {
-      LOG_TRACE("trace iter end", K(ret));
+
     }
   }
   return ret;
@@ -518,7 +518,7 @@ int ObHashDistinctOp::do_unblock_distinct()
 
 int ObHashDistinctOp::do_unblock_distinct_for_batch(const int64_t batch_size)
 {
-  LOG_DEBUG("calc unblock hash distinct batch mode", K(batch_size));
+
   int ret = OB_SUCCESS;
   if (first_got_row_) {
     if (OB_FAIL(init_hash_partition_infras_for_batch())) {
@@ -588,7 +588,7 @@ int ObHashDistinctOp::do_block_distinct()
 }
 
 int ObHashDistinctOp::do_block_distinct_for_batch(const int64_t batch_size) {
-  LOG_DEBUG("calc block hash distinct batch mode", K(batch_size));
+
   int ret = OB_SUCCESS;
   if (first_got_row_) {
     if (OB_FAIL(init_hash_partition_infras_for_batch())) {
@@ -674,7 +674,7 @@ int ObHashDistinctOp::inner_get_next_row()
       iter_end_ = true;
     }
   } else {
-    LOG_DEBUG("trace output row", K(ROWEXPR2STR(eval_ctx_, MY_SPEC.output_)));
+
   }
   return ret;
 }

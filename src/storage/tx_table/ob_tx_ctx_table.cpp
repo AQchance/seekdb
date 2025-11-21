@@ -123,17 +123,17 @@ int ObTxCtxTableRecoverHelper::recover_one_tx_ctx_(transaction::ObLSTxCtxMgr* ls
   if (OB_FAIL(ls_tx_ctx_mgr->create_tx_ctx(arg,
                                            tx_ctx_existed, /*tx_ctx_existed*/
                                            tx_ctx))) {
-    STORAGE_LOG(WARN, "failed to create tx ctx", K(ret));
+
   } else if (OB_FAIL(tx_ctx->recover_tx_ctx_table_info(ctx_info))) {
-    STORAGE_LOG(WARN, "recover from trans sstable durable ctx info failed", K(ret), K(*tx_ctx));
+
   } else {
-    STORAGE_LOG(INFO, "restore trans state in memory", K(ctx_info));
+
   }
 
   if (NULL != tx_ctx) {
     int tmp_ret = 0;
     if (OB_TMP_FAIL(ls_tx_ctx_mgr->revert_tx_ctx(tx_ctx))) {
-      STORAGE_LOG(WARN, "failed to revert trans ctx", K(ret));
+
     }
     tx_ctx = NULL;
   }
@@ -153,7 +153,7 @@ int ObTxCtxTableRecoverHelper::recover(const blocksstable::ObDatumRow &row,
 
   if (NULL == ls_tx_ctx_mgr) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ls tx ctx mgr is null", K(ret));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -166,12 +166,12 @@ int ObTxCtxTableRecoverHelper::recover(const blocksstable::ObDatumRow &row,
     bool need_to_append_buf = false;
     int64_t pos = 0;
     if (OB_FAIL(curr_meta.deserialize(meta_str.ptr(), meta_str.length(), pos))) {
-      STORAGE_LOG(WARN, "failed to deserialize ctx meta", K(ret), K(curr_meta));
+
     } else {
-      STORAGE_LOG(INFO, "deserialize ctx meta succ", K(ret), K(curr_meta));
+
       if (is_in_multi_row_state_()) {
         if (OB_FAIL(validate_extend_meta_(curr_meta))) {
-          STORAGE_LOG(WARN, "validate_extend_meta failed", K(ret), K(*this));
+
         } else {
           need_to_append_buf = true;
         }
@@ -181,7 +181,7 @@ int ObTxCtxTableRecoverHelper::recover(const blocksstable::ObDatumRow &row,
         } else {
           set_in_multi_row_state_();
           if (OB_FAIL(buf_reserve_(curr_meta.get_tx_ctx_serialize_size()))) {
-            STORAGE_LOG(WARN, "Failed to reserve tx local buffer", K(ret));
+
           } else {
             need_to_append_buf = true;
           }
@@ -191,7 +191,7 @@ int ObTxCtxTableRecoverHelper::recover(const blocksstable::ObDatumRow &row,
 
     if (OB_SUCC(ret) && need_to_append_buf) {
       if (OB_FAIL(append_curr_value_buf_(value_str.ptr(), value_str.length()))) {
-        STORAGE_LOG(WARN, "append buf failed", K(ret), K(*this));
+
       }
     }
 
@@ -201,12 +201,12 @@ int ObTxCtxTableRecoverHelper::recover(const blocksstable::ObDatumRow &row,
         deserialize_buf = get_buf_ptr_();
         deserialize_buf_length = curr_meta.get_tx_ctx_serialize_size();
         clear_in_multi_row_state_();
-        STORAGE_LOG(INFO, "curr meta is multi row last extent", K(curr_meta));
+
       } else if (curr_meta.is_single_row_tx_ctx()) {
         buf_completed = true;
         deserialize_buf = value_str.ptr();
         deserialize_buf_length = value_str.length();
-        STORAGE_LOG(INFO, "curr meta is is_single_row_tx_ctx", K(curr_meta));
+
       } else {
         // do nothing
       }
@@ -221,14 +221,14 @@ int ObTxCtxTableRecoverHelper::recover(const blocksstable::ObDatumRow &row,
     ctx_info_.set_compatible_version(curr_meta.get_version());
     if (FALSE_IT(TLOCAL_P_TX_BUFFER_NODE_ARRAY = &ctx_info_.exec_info_.multi_data_source_)) {// FIXME: for compat issue, should be removed after barrier version
     } else if (OB_FAIL(ctx_info_.deserialize(deserialize_buf, deserialize_buf_length, pos, tx_data_table))) {
-      STORAGE_LOG(WARN, "failed to deserialize status_info", K(ret), K_(ctx_info));
+
       TLOCAL_P_TX_BUFFER_NODE_ARRAY = nullptr;// FIXME: for compat issue, should be removed after barrier version
     } else if (FALSE_IT(TLOCAL_P_TX_BUFFER_NODE_ARRAY = nullptr)) {// FIXME: for compat issue, should be removed after barrier version
     } else if (FALSE_IT(ctx_info_.exec_info_.mrege_buffer_ctx_array_to_multi_data_source())) {
     } else if (OB_FAIL(recover_one_tx_ctx_(ls_tx_ctx_mgr, ctx_info_))) {
       // heap memory needed be freed, but can not do this in destruction, cause tx_buffer_node has no value sematics
       ctx_info_.exec_info_.clear_buffer_ctx_in_multi_data_source();
-      STORAGE_LOG(WARN, "failed to recover_one_tx_ctx_", K(ret), K(ctx_info_));
+
     } else {
       // heap memory needed be freed, but can not do this in destruction, cause tx_buffer_node has no value sematics
       ctx_info_.exec_info_.clear_buffer_ctx_in_multi_data_source();

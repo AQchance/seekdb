@@ -64,7 +64,7 @@ int ObRoutePolicy::filter_replica(const ObAddr &local_server,
                                                      can_read))) {
       LOG_WARN("fail to check ls readable", K(ctx), K(cur_replica), K(ret));
     } else {
-      LOG_TRACE("check ls readable", K(ctx), K(ls_id), K(cur_replica.get_server()), K(can_read));
+
       if ((policy_type == ONLY_READONLY_ZONE && cur_replica.attr_.zone_type_ == ZONE_TYPE_READWRITE)
           || (policy_type == COLUMN_STORE_ONLY && !ObReplicaTypeCheck::is_columnstore_replica(cur_replica.get_replica_type()))
           || (policy_type != COLUMN_STORE_ONLY && ObReplicaTypeCheck::is_columnstore_replica(cur_replica.get_replica_type()))
@@ -474,7 +474,7 @@ bool ObRoutePolicy::is_same_idc(const share::ObServerLocality &locality1, const 
   } else if (locality1.get_idc().is_empty() || locality2.get_idc().is_empty()) {
     // If the IDC is not set for the zone, it is impossible to determine if they are in the same IDC
     ret_bool = false;
-    LOG_TRACE("zone idc is not set", K(locality1), K(locality2));
+
   } else if (locality1.get_region() == locality2.get_region()) {
     // First determine if the region is the same, to avoid having the same name idc in different regions
     if (locality1.get_idc() == locality2.get_idc()) {

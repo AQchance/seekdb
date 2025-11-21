@@ -740,7 +740,7 @@ int ObDBMSSchedTableOperator::get_dbms_sched_job_infos_in_tenant(
       } else {
         do {
           if (OB_FAIL(result.get_result()->next())) {
-            LOG_INFO("failed to get result", K(ret));
+
           } else {
             ObDBMSSchedJobInfo job_info;
             OZ (extract_info(*(result.get_result()), tenant_id, is_oracle_tenant, allocator, job_info));
@@ -811,7 +811,7 @@ int ObDBMSSchedTableOperator::get_dbms_sched_job_class_info(
             }
           }
         } else if (OB_ITER_END == ret) {
-          LOG_INFO("job_class_name not exists, may delete alreay!", K(ret), K(tenant_id), K(job_class_name));
+
           ret = OB_SUCCESS; // job not exist, do nothing ...
         } else {
           LOG_WARN("failed to get next", K(ret), K(tenant_id), K(job_class_name));
@@ -844,7 +844,7 @@ int ObDBMSSchedTableOperator::get_dbms_sched_job_class_infos_in_tenant(
       } else {
         do {
           if (OB_FAIL(result.get_result()->next())) {
-            LOG_INFO("failed to get result", K(ret));
+
           } else {
             ObDBMSSchedJobClassInfo job_class_info;
             OZ (extract_job_class_info(*(result.get_result()), tenant_id, is_oracle_tenant, allocator, job_class_info));
@@ -877,7 +877,7 @@ int ObDBMSSchedTableOperator::_purge(uint64_t tenant_id, const ObString &job_cla
       break;
     }
   }
-  LOG_INFO("purge class run detail finish", K(ret), K(tenant_id), K(job_class_name), K(log_history), K(THIS_WORKER.is_timeout()), K(purge_rows), K(sql));
+
   return ret;
 }
 
@@ -898,7 +898,7 @@ int ObDBMSSchedTableOperator::_purge_fallback(uint64_t tenant_id, int64_t log_hi
       break;
     }
   }
-  LOG_INFO("purge max history run detail finish", K(ret), K(tenant_id), K(log_history), K(THIS_WORKER.is_timeout()), K(purge_rows), K(sql));
+
   return ret;
 }
 
@@ -920,7 +920,7 @@ int ObDBMSSchedTableOperator::_purge_old(uint64_t tenant_id)
       break;
     }
   }
-  LOG_INFO("purge old run detail finish", K(ret), K(tenant_id), K(THIS_WORKER.is_timeout()), K(purge_rows), K(sql));
+
   return ret;
 }
 

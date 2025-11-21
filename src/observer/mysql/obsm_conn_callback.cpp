@@ -58,7 +58,7 @@ static int create_scramble_string(char *scramble_buf, const int64_t buf_len, com
       const uint64_t tmp_seed = GCTX.scramble_rand_->get_uint64();
       thread_rand.init(tmp_seed + reinterpret_cast<uint64_t>(&thread_rand),
                        tmp_seed + static_cast<uint64_t>(ObTimeUtility::current_time()));
-      LOG_INFO("init thread_rand succ", K(ret));
+
     }
   }
 
@@ -118,7 +118,7 @@ static int sm_conn_build_handshake(ObSMConnection& conn, obmysql::OMPKHandshake&
   } else if (OB_FAIL(hsp.set_scramble(conn.scramble_buf_, BUF_LEN))) {
     LOG_WARN("set scramble failed", K(ret));
   } else {
-    LOG_INFO("new mysql sessid created", K(conn.sessid_), K(support_ssl));
+
   }
   return ret;
 }
@@ -138,7 +138,7 @@ int ObSMConnectionCallback::init(ObSqlSockSession& sess, ObSMConnection& conn)
     uint64_t tls_version_option = ob_calculate_tls_version_option(
                                    GCONF.sql_protocol_min_tls_version.str());
     sess.set_tls_version_option(tls_version_option);
-    LOG_INFO("sm conn init succ", K(conn.sessid_), K(sess.client_addr_));
+
   }
   //If the current function encounters an error, it should mark_sessid_unused within the current function
   if (OB_SUCCESS == ret && OB_SUCCESS == conn.ret_) {
@@ -221,7 +221,7 @@ void ObSMConnectionCallback::destroy(ObSMConnection& conn)
         LOG_ERROR("fail to mark sessid unused", K(ret), K(conn.sessid_),
                   "proxy_sessid", conn.proxy_sessid_);
       } else {
-        LOG_INFO("mark session id unused", K(conn.sessid_));
+
       }
     }
   }
@@ -268,7 +268,7 @@ int ObSMConnectionCallback::on_disconnect(observer::ObSMConnection& conn)
       sess_info->set_mark_killed(true);
     }
   }
-  LOG_INFO("kill and revert session", K(conn.sessid_), "proxy_sessid", conn.proxy_sessid_, K(ret));
+
   return ret;
 }
 

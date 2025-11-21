@@ -220,7 +220,7 @@ Reading symbols from usr/lib/debug/home/admin/oceanbase/bin/observer.debug...
 
 可以在源码中找到日志代码，比如
 ```cpp
-LOG_DEBUG("insert sql generated", K(insert_sql));
+
 ```
 
 `LOG_DEBUG` 是打印DEBUG级别的日志宏。
@@ -271,7 +271,7 @@ alter system set enable_async_syslog='False';
 
 在日志中可以这样打印调用栈
 ```cpp
-LOG_DEBUG("insert sql generated", K(insert_sql), K(lbt()));
+
 ```
 假设看到这样的信息：
 ```txt

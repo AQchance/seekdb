@@ -319,7 +319,7 @@ int ObTableDeleteOp::write_rows_post_proc(int last_errno)
     ObPhysicalPlanCtx *plan_ctx = GET_PHY_PLAN_CTX(ctx_);
     for (int64_t i = 0; OB_SUCC(ret) && i < del_rtdefs_.count(); ++i) {
       plan_ctx->add_affected_rows(del_rtdefs_.at(i).at(0).das_rtdef_.affected_rows_);
-      LOG_DEBUG("del rows post proc", K(plan_ctx->get_affected_rows()), K(del_rtdefs_.at(i).at(0)));
+
     }
     if (OB_SUCC(ret) && GCONF.enable_defensive_check()) {
       if (OB_FAIL(check_delete_affected_row())) {

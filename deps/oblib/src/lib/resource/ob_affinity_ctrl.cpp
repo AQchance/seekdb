@@ -73,13 +73,13 @@ int ObAffinityCtrl::init()
           num_nodes_ = 0;
           ret = OB_ERR_UNEXPECTED;
         } else {
-          LOG_INFO("Detected node topology", K(node));
+
           CPU_ZERO(&nodes_[node].cpu_set_mask);
           while ((de = readdir(dir))) {
             if (de->d_type == DT_LNK && strncmp(de->d_name, "cpu", 3) == 0) {
               int cpu;
               if (sscanf(de->d_name + 3, "%d", &cpu) == 1) {
-                LOG_INFO("   cpu ", K(cpu));
+
                 CPU_SET(cpu, &nodes_[node].cpu_set_mask);
               }
             }

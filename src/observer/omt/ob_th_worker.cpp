@@ -397,7 +397,7 @@ void ObThWorker::worker(int64_t &tenant_id, int64_t &req_recv_timestamp, int32_t
 #ifdef ENABLE_DEBUG_LOG
                 if (OB_ISNULL(di)) {
                   if (REACH_TIME_INTERVAL(60 * 1000 * 1000)) {
-                    LOG_TRACE("empty diagnostic info, disable it", KPC(req));
+
                   }
                 }
 #endif

@@ -367,7 +367,7 @@ int ObRangeGenerator::generate_one_range(ObTmpRange &tmp_range)
         all_single_value_ranges_ = false;
       }
     }
-    LOG_TRACE("succeed to generate one range", KPC(range), K(tmp_range));
+
   }
   return ret;  
 }
@@ -1842,7 +1842,7 @@ int ObRangeGenerator::get_intersects_tmp_geo_param(uint32_t input_srid,
       LOG_WARN("Push back to mbr_filters array failed", K(ret));
     } else if (mbr_filter.is_empty()) {
       if (cells.size() == 0) {
-        LOG_INFO("it's might be empty geometry collection", K(wkb_str));
+
         geo_param->always_true_ = true;
       } else {
         ret = OB_ERR_GIS_INVALID_DATA;
@@ -1941,7 +1941,7 @@ int ObRangeGenerator::get_coveredby_tmp_geo_param(uint32_t input_srid,
       LOG_WARN("Push back to mbr_filters array failed", K(ret));
     } else if (mbr_filter.is_empty()) {
       if (cells.size() == 0) {
-        LOG_INFO("it's might be empty geometry collection", K(wkb_str));
+
         geo_param->always_true_ = true;
       } else {
         ret = OB_ERR_GIS_INVALID_DATA;

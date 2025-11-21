@@ -86,13 +86,13 @@ int ObSingleConnectionProxy::read(ReadResult &res,
     errno_ = ret;
     const int ERR_LOCK_WAIT_TIMEOUT = -1205;
     if (ERR_LOCK_WAIT_TIMEOUT == ret) {
-      LOG_INFO("execute query failed", K(ret), KCSTRING(sql), K_(conn));
+
     } else {
       LOG_WARN("execute query failed", K(ret), KCSTRING(sql), K_(conn));
     }
   }
   ++statement_count_;
-  LOG_TRACE("execute sql", KCSTRING(sql), K(ret));
+
   return ret;
 }
 
@@ -109,13 +109,13 @@ int ObSingleConnectionProxy::read(ReadResult &res,
     errno_ = ret;
     const int ERR_LOCK_WAIT_TIMEOUT = -1205;
     if (ERR_LOCK_WAIT_TIMEOUT == ret) {
-      LOG_INFO("execute query failed", K(ret), K(sql), K_(conn), K(cluster_id));
+
     } else {
       LOG_WARN("execute query failed", K(ret), K(sql), K_(conn), K(cluster_id));
     }
   }
   ++statement_count_;
-  LOG_TRACE("execute sql", K(sql), K(ret));
+
   return ret;
 }
 
@@ -138,7 +138,7 @@ int ObSingleConnectionProxy::write(
     LOG_WARN("execute sql failed", K(ret), KCSTRING(sql), K_(conn));
   }
   ++statement_count_;
-  LOG_TRACE("execute sql", KCSTRING(sql), K(ret));
+
   return ret;
 }
 

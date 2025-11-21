@@ -126,7 +126,7 @@ int ObVecIndexBuilderUtil::append_vec_args(
       LOG_WARN("fail to append hybrid vec hnsw args", K(ret));
     }
   }
-  LOG_DEBUG("finish append vec index args", K(index_arg), K(index_arg_list));
+
   return ret;
 }
 
@@ -184,7 +184,7 @@ int ObVecIndexBuilderUtil::append_vec_hnsw_args(
       }
     }
   }
-  LOG_DEBUG("finish append vec index args", K(index_arg), K(index_arg_list));
+
   return ret;
 }
 
@@ -261,7 +261,7 @@ int ObVecIndexBuilderUtil::append_vec_ivfflat_args(
       }
     }
   }
-  LOG_DEBUG("finish append vec ivfflat index args", K(index_arg), K(index_arg_list));
+
   return ret;
 }
 
@@ -294,7 +294,7 @@ int ObVecIndexBuilderUtil::append_vec_ivfsq8_args(
       }
     }
   }
-  LOG_DEBUG("finish append vec ivfsq8 index args", K(index_arg), K(index_arg_list));
+
   return ret;
 }
 
@@ -327,7 +327,7 @@ int ObVecIndexBuilderUtil::append_vec_ivfpq_args(
       }
     }
   }
-  LOG_DEBUG("finish append vec ivfpq index args", K(index_arg), K(index_arg_list));
+
   return ret;
 }
 
@@ -389,7 +389,7 @@ int ObVecIndexBuilderUtil::append_hybrid_vec_hnsw_args(
       }
     }
   }
-  LOG_DEBUG("finish append hybrid vec index args", K(index_arg), K(index_arg_list));
+
   return ret;
 }
 
@@ -902,7 +902,7 @@ int ObVecIndexBuilderUtil::generate_vec_index_name(
       LOG_WARN("failed to generate vec aux index name", K(ret));
     }
   }
-  LOG_DEBUG("finish generate_vec_index_name", K(ret), K(index_name), K(new_index_name));
+
   return ret;
 }
 
@@ -1156,11 +1156,11 @@ int ObVecIndexBuilderUtil::set_vec_ivf_table_columns(
       if (FAILEDx(index_schema.sort_column_array_by_column_id())) {
         LOG_WARN("failed to sort column", K(ret));
       } else {
-        LOG_INFO("succeed to set ivf table columns", K(arg.index_type_), K(index_schema));
+
       }
     } // ObRowDesc
   }
-  LOG_DEBUG("finish set ivf table column", K(ret), K(arg), K(index_schema), K(data_schema));
+
   return ret;
 }
 
@@ -1241,11 +1241,11 @@ int ObVecIndexBuilderUtil::set_vec_rowkey_vid_table_columns(
       } else if (OB_FAIL(index_schema.sort_column_array_by_column_id())) {
         LOG_WARN("failed to sort column", K(ret));
       } else {
-        LOG_INFO("succeed to set rowkey vid table columns", K(index_schema));
+
       }
     }
   }
-  LOG_DEBUG("finish set rowkey vid table column", K(ret), K(arg), K(index_schema), K(data_schema));
+
   return ret;
 }
 
@@ -1319,11 +1319,11 @@ int ObVecIndexBuilderUtil::set_vec_vid_rowkey_table_columns(
       } else if (OB_FAIL(index_schema.sort_column_array_by_column_id())) {
         LOG_WARN("failed to sort column", K(ret));
       } else {
-        LOG_INFO("succeed to set vec vid rowkey table columns", K(index_schema));
+
       }
     }
   }
-  LOG_DEBUG("finish set vec vid rowkey table columns", K(ret), K(arg), K(index_schema), K(data_schema));
+
   return ret;
 }
 
@@ -1419,10 +1419,10 @@ int ObVecIndexBuilderUtil::set_vec_delta_buffer_table_columns(
     if (FAILEDx(index_schema.sort_column_array_by_column_id())) {
       LOG_WARN("failed to sort column", K(ret));
     } else {
-      LOG_INFO("succeed to set vec delta buffer table columns", K(index_schema));
+
     }
   }
-  LOG_DEBUG("finish set vec delta buffer table column", K(ret), K(arg), K(index_schema), K(data_schema));
+
   return ret;
 }
 
@@ -1519,10 +1519,10 @@ int ObVecIndexBuilderUtil::set_vec_index_id_table_columns(
     if (FAILEDx(index_schema.sort_column_array_by_column_id())) {
       LOG_WARN("failed to sort column", K(ret));
     } else {
-      LOG_INFO("succeed to set vec index id table columns", K(index_schema));
+
     }
   }
-  LOG_DEBUG("finish set vec index id table column", K(ret), K(arg), K(index_schema), K(data_schema));
+
   return ret;
 }
 
@@ -1616,10 +1616,10 @@ int ObVecIndexBuilderUtil::set_vec_index_snapshot_data_table_columns(
     if (FAILEDx(index_schema.sort_column_array_by_column_id())) {
       LOG_WARN("failed to sort column", K(ret));
     } else {
-      LOG_INFO("succeed to set vec index table columns", K(index_schema));
+
     }
   }
-  LOG_DEBUG("finish set vec index snapshot data table column", K(ret), K(arg), K(index_schema), K(data_schema));
+
   return ret;
 }
 
@@ -1716,10 +1716,10 @@ int ObVecIndexBuilderUtil::set_hybrid_vec_log_table_columns(
     if (FAILEDx(index_schema.sort_column_array_by_column_id())) {
       LOG_WARN("failed to sort column", K(ret));
     } else {
-      LOG_INFO("succeed to set hybrid vec log table columns", K(index_schema));
+
     }
   }
-  LOG_DEBUG("finish set hybrid vec log table column", K(ret), K(arg), K(index_schema), K(data_schema));
+
   return ret;
 }
 
@@ -1815,10 +1815,10 @@ int ObVecIndexBuilderUtil::set_hybrid_vec_embedded_vec_table_columns(
     if (FAILEDx(index_schema.sort_column_array_by_column_id())) {
       LOG_WARN("failed to sort column", K(ret));
     } else {
-      LOG_INFO("succeed to set hybrid vec embedded table columns", K(index_schema));
+
     }
   }
-  LOG_DEBUG("finish set hybrid vec embedded table column", K(ret), K(arg), K(index_schema), K(data_schema));
+
   return ret;
 }
 
@@ -1854,7 +1854,7 @@ int ObVecIndexBuilderUtil::adjust_vec_args(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("fail to adjust vec args", K(ret), K(index_type));
   }
-  LOG_INFO("finish adjust_vec_args", K(ret), K(index_type), K(index_arg), K(gen_columns));
+
   return ret;
 }
 
@@ -2447,7 +2447,7 @@ int ObVecIndexBuilderUtil::adjust_vec_ivfflat_args(
       }
     }
   }
-  LOG_DEBUG("finish adjust_vec_ivfflat_args", K(ret), K(index_arg.index_type_), K(data_schema));
+
   return ret;
 }
 
@@ -2611,7 +2611,7 @@ int ObVecIndexBuilderUtil::adjust_vec_ivfsq8_args(
       }
     }
   }
-  LOG_DEBUG("finish adjust_vec_ivfsq8_args", K(ret), K(index_arg.index_type_), K(data_schema));
+
   return ret;
 }
 
@@ -2768,7 +2768,7 @@ int ObVecIndexBuilderUtil::adjust_vec_ivfpq_args(
       }
     }
   }
-  LOG_DEBUG("finish adjust_vec_ivfpq_args", K(ret), K(index_arg.index_type_), K(data_schema));
+
   return ret;
 }
 
@@ -3503,7 +3503,7 @@ int ObVecIndexBuilderUtil::generate_vec_ivf_column(
               ret = OB_ERR_UNEXPECTED;
               LOG_WARN("generate ivf column failed", K(ret), KP(col_schema));
             } else {
-              LOG_INFO("succeed to generate ivf column", KCSTRING(col_name_buf), K(col_id), K(data_schema));
+
             }
           }
         }
@@ -3577,7 +3577,7 @@ int ObVecIndexBuilderUtil::generate_vid_column(
             ret = OB_ERR_UNEXPECTED;
             LOG_WARN("generate vid column schema failed", K(ret), KP(vid_col));
           } else {
-            LOG_INFO("succeed to generate vid column schema", KCSTRING(col_name_buf), K(col_id), K(data_schema));
+
           }
         }
       }
@@ -3676,7 +3676,7 @@ int ObVecIndexBuilderUtil::generate_type_column(
               ret = OB_ERR_UNEXPECTED;
               LOG_WARN("generate type column failed", K(ret), KP(type_col));
             } else {
-              LOG_INFO("succeed to generate type column", KCSTRING(col_name_buf), K(col_id), K(data_schema));
+
             }
           }
         }
@@ -3967,7 +3967,7 @@ int ObVecIndexBuilderUtil::generate_vector_column(
               ret = OB_ERR_UNEXPECTED;
               LOG_WARN("generate vector column failed", K(ret), KP(vector_col));
             } else {
-              LOG_INFO("succeed to generate vector column", KCSTRING(col_name_buf), K(col_id), K(data_schema));
+
             }
           }
         }
@@ -4065,7 +4065,7 @@ int ObVecIndexBuilderUtil::generate_scn_column(
               ret = OB_ERR_UNEXPECTED;
               LOG_WARN("generate scn column failed", K(ret), KP(scn_col));
             } else {
-              LOG_INFO("succeed to generate scn column", KCSTRING(col_name_buf), K(col_id), K(data_schema));
+
             }
           }
         }
@@ -4163,7 +4163,7 @@ int ObVecIndexBuilderUtil::generate_key_column(
               ret = OB_ERR_UNEXPECTED;
               LOG_WARN("generate key col failed", K(ret), KP(key_col));
             } else {
-              LOG_INFO("succeed to generate key column", KCSTRING(col_name_buf), K(col_id), K(data_schema));
+
             }
           }
         }
@@ -4261,7 +4261,7 @@ int ObVecIndexBuilderUtil::generate_data_column(
               ret = OB_ERR_UNEXPECTED;
               LOG_WARN("generate data col failed", K(ret), KP(data_col));
             } else {
-              LOG_INFO("succeed to generate data column", KCSTRING(col_name_buf), K(col_id), K(data_schema));
+
             }
           }
         }
@@ -4363,7 +4363,7 @@ int ObVecIndexBuilderUtil::generate_chunk_column(
               ret = OB_ERR_UNEXPECTED;
               LOG_WARN("generate vector column failed", K(ret), KP(chunk_col));
             } else {
-              LOG_INFO("succeed to generate vector column", KCSTRING(col_name_buf), K(col_id), K(data_schema));
+
             }
           }
         }
@@ -4490,7 +4490,7 @@ int ObVecIndexBuilderUtil::generate_embedded_vec_column(
               ret = OB_ERR_UNEXPECTED;
               LOG_WARN("generate vector column failed", K(ret), KP(embedded_vec_col));
             } else {
-              LOG_INFO("succeed to generate vector column", KCSTRING(col_name_buf), K(col_id), K(data_schema));
+
             }
           }
         }
@@ -4533,7 +4533,7 @@ int ObVecIndexBuilderUtil::set_part_key_columns(
                                                    true /*is_specified_storing_col*/))) {
           LOG_WARN("add_column failed", K(ret), KPC(col_schema), K(index_schema));
         } else {
-          LOG_INFO("success to add part key column", K(ret), KPC(col_schema));
+
         }
       }
     }
@@ -4576,7 +4576,7 @@ int ObVecIndexBuilderUtil::del_extra_info_columns(const ObTableSchema &data_sche
       } else if (!col_schema->is_rowkey_column() || col_schema->is_hidden_pk_column_id(col_schema->get_column_id())) {
       } else if (col_schema->is_tbl_part_key_column()) { // partition key column is not extra info
       } else if (!is_column_exist(index_schema, *col_schema)) {
-        LOG_INFO("extra info column is not exist", K(ret), KPC(col_schema));
+
       } else if (OB_FAIL(index_schema.delete_column(col_schema->get_column_name()))) {
         LOG_WARN("fail to del extra info column", K(ret), KPC(col_schema));
       }
@@ -4664,7 +4664,7 @@ int ObVecIndexBuilderUtil::set_extra_info_columns(const ObTableSchema &data_sche
                                                     true /*is_specified_storing_col*/))) {
             LOG_WARN("add_column failed", K(ret), K(column), K(index_schema));
           } else {
-            LOG_INFO("success to add extra_info column", K(ret), KPC(col_schema), K(column));
+
           }
         }
       }
@@ -5846,7 +5846,7 @@ int ObVecIndexBuilderUtil::get_vec_table_schema_by_name(
     LOG_WARN("fail to get table schema",
       K(ret), K(tenant_id), K(database_id), K(index_name), K(full_index_name), K(index_type));
   } else if (OB_ISNULL(index_schema)) {
-    LOG_INFO("get vec table schema is null, maybe index has been drop", K(ret), K(full_index_name));
+
   }
   return ret;
 }

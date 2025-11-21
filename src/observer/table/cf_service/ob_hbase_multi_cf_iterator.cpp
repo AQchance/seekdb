@@ -228,7 +228,7 @@ int ObHbaseMultiCFIterator::init_cf_iters()
       cf_iter = nullptr;
     }
   }
-  LOG_DEBUG("finish init cf iters", K(ret), K(cf_queries_), K(cf_iters_));
+
   return ret;
 }
 
@@ -302,7 +302,7 @@ int ObHbaseMultiCFIterator::update_tablet_ids_by_part_ids(ObIArray<std::pair<int
           LOG_WARN("fail to clip partition", K(ret), K(src_tablet_ids));
         } else if (tablet_ids.empty()) {
           ret = OB_ITER_END;
-          LOG_DEBUG("all partitions are clipped", K(query));
+
         }
       }
 

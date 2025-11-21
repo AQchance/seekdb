@@ -151,7 +151,7 @@ int ObEncodingHashTableBuilder::build(const ObColDatums &col_datums, const ObCol
   int ret = common::OB_SUCCESS;
   if (OB_UNLIKELY(!is_created_)) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (OB_UNLIKELY(col_datums.empty() || node_num_ < col_datums.count())) {
     ret = common::OB_INVALID_ARGUMENT;
     STORAGE_LOG(WARN, "invalid argument", K(ret), K_(node_num),
@@ -184,7 +184,7 @@ int ObEncodingHashTableBuilder::build(const ObColDatums &col_datums, const ObCol
       col_datums.get_continuous_array(i, datum_arry, datum_array_size);
       if (OB_ISNULL(datum_arry)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected null datum array", K(ret), K(i), K(datum_arr_cnt));
+
       } else {
         skip_bit_->init(datum_array_size);
         for (int64_t idx = 0; OB_SUCC(ret) && idx < datum_array_size && list_cnt_ < list_num_; ++idx) {
@@ -203,11 +203,11 @@ int ObEncodingHashTableBuilder::build(const ObColDatums &col_datums, const ObCol
           } else if (!need_batch_hash) {
             uint64_t pos = 0;
             if (OB_FAIL(hash(datum, hash_func, need_binary_hash, pos))) {
-              STORAGE_LOG(WARN, "hash failed", K(ret));
+
             } else {
               pos = pos & mask;
               if (OB_FAIL(add_to_table(datum, pos, row_id))) {
-                STORAGE_LOG(WARN, "fail to add to table", K(ret), K(row_id));
+
               }
             }
           }
@@ -230,7 +230,7 @@ int ObEncodingHashTableBuilder::build(const ObColDatums &col_datums, const ObCol
             int64_t row_id = i * dimension_size + idx;
             uint64_t pos = hash_val_[idx] & mask;
             if (OB_FAIL(add_to_table(col_datums.at(row_id), pos, row_id))) {
-              STORAGE_LOG(WARN, "fail to add to table", K(ret), K(row_id), K(pos));
+
             }
           }
         }

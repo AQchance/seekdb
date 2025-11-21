@@ -248,7 +248,7 @@ int ObShowCreateCatalog::print_catalog_definition(const uint64_t tenant_id,
       }
     }
   }
-  LOG_DEBUG("print catalog schema", K(ret), K(*catalog_schema));
+
   return ret;
 }
 

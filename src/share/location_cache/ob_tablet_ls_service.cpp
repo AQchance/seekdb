@@ -171,7 +171,7 @@ int ObTabletLSService::nonblock_renew(
     if (OB_FAIL(add_update_task(task))) {
       LOG_WARN("add tablet_cache update task failed", KR(ret), K(task));
     } else {
-      LOG_TRACE("add update task succeed", KR(ret), K(task));
+
     }
   }
   return ret;
@@ -191,7 +191,7 @@ int ObTabletLSService::add_update_task(const ObTabletLSUpdateTask &task)
       LOG_WARN("fail to add task", KR(ret), K(task));
     } else {
       ret = OB_SUCCESS;
-      LOG_TRACE("task already exists", KR(ret), K(task));
+
     }
   }
   return ret;
@@ -364,13 +364,13 @@ int ObTabletLSService::get_from_cache_(
       if (OB_ENTRY_NOT_EXIST == ret) {
         EVENT_INC(TABLET_LS_CACHE_MISS);
         ret = OB_CACHE_NOT_HIT;
-        LOG_TRACE("tablet is not hit in inner cache", KR(ret), K(cache_key));
+
       } else {
         LOG_WARN("get tablet from inner cache failed", K(cache_key), KR(ret));
       }
     } else {
       EVENT_INC(TABLET_LS_CACHE_HIT);
-      LOG_TRACE("tablet_cache hit in inner cache", KR(ret), K(cache_key), K(tablet_cache));
+
     }
   }
   return ret;
@@ -432,7 +432,7 @@ int ObTabletLSService::update_cache(
   } else if (OB_FAIL(inner_cache_.update(tablet_cache, update_only))) {
     LOG_WARN("put tablet_cache to user inner_cache failed", KR(ret), K(tablet_cache), K(update_only));
   } else {
-    LOG_TRACE("renew tablet_cache in inner_cache succeed", KR(ret), K(tablet_cache), K(update_only));
+
   }
   return ret;
 }
@@ -567,7 +567,7 @@ int ObTabletLSService::batch_renew_tablet_ls_cache(
             LOG_WARN("erase cache failed", KR(ret), K(tenant_id), K(tablet_id));
           } else {
             ++erase_count;
-            LOG_INFO("[TABLET_LOCATION] tablet ls mapping not exist", KR(ret), K(tenant_id), K(tablet_id));
+
           }
         }
       } // end ARRAY_FOREACH tablet_ids
@@ -592,12 +592,12 @@ int ObTabletLSService::erase_cache_(const uint64_t tenant_id, const ObTabletID &
     if (OB_FAIL(inner_cache_.del(cache_key))) {
       if (OB_ENTRY_NOT_EXIST == ret) {
         ret = OB_SUCCESS;
-        LOG_TRACE("not exist in inner_cache_", K(cache_key));
+
       } else {
         LOG_WARN("fail to erase cache from inner_cache_", KR(ret), K(cache_key));
       }
     } else {
-      LOG_TRACE("erase cache from inner_cache_", K(cache_key));
+
     }
   }
   return ret;

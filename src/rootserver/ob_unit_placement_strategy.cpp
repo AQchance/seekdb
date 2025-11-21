@@ -96,7 +96,7 @@ int ObUnitPlacementDPStrategy::choose_server(ObArray<ObUnitPlacementDPStrategy::
   }
   ARRAY_FOREACH(servers, i) {
     const ObServerResource &server_resource = servers.at(i);
-    LOG_DEBUG("consider this server", K(i), K(server_resource));
+
     for (int j = RES_CPU; j < RES_MAX; ++j) {
       const double capacity = server_resource.capacity_[j];
       const double remain = capacity - server_resource.assigned_[j];
@@ -162,7 +162,7 @@ int ObUnitPlacementDPStrategy::choose_server(ObArray<ObUnitPlacementDPStrategy::
           K(max_dot_product), K(servers), K(demand_resource));
     } else {
       server = servers[found_idx].addr_;
-      LOG_INFO("[CHOOSE_SERVER_FOR_UNIT] choose server succ", K(module), K(server), K(demand_resource), "server_resource", servers[found_idx]);
+
     }
   }
   return ret;

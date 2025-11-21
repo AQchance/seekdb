@@ -136,13 +136,13 @@ int ObTabletPointerMap::for_each_value_store(Operator &op)
   int ret = common::OB_SUCCESS;
   if (OB_UNLIKELY(!ResourceMap::is_inited_)) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObMetaPointerMap has not been inited", K(ret));
+
   } else {
     bool locked = false;
     while (OB_SUCC(ret) && !locked) {
       common::ObBucketTryRLockAllGuard lock_guard(ResourceMap::bucket_lock_);
       if (OB_FAIL(lock_guard.get_ret()) && OB_EAGAIN != ret) {
-        STORAGE_LOG(WARN, "fail to lock all tablet id set", K(ret));
+
       } else if (OB_EAGAIN == ret) {
         // try again after 1ms sleep.
         ob_usleep(1000);
@@ -150,7 +150,7 @@ int ObTabletPointerMap::for_each_value_store(Operator &op)
       } else {
         locked = true;
         if (OB_FAIL(ResourceMap::map_.foreach_refactored(op))) {
-          STORAGE_LOG(WARN, "fail to foreach refactored", K(ret));
+
         }
       }
     }

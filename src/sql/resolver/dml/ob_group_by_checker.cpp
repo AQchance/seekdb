@@ -198,7 +198,7 @@ bool ObGroupByChecker::find_in_rollup(ObRawExpr &expr)
       check_ctx.override_query_compare_ = true;
       if (expr.same_as(*rollup_exprs_->at(nth_rollup), &check_ctx)) {
         found = true;
-        LOG_DEBUG("found in rollup exprs", K(expr));
+
       }
     }
     if (OB_SUCCESS == check_ctx.err_code_ && !found && is_top_select_stmt()) {
@@ -211,7 +211,7 @@ bool ObGroupByChecker::find_in_rollup(ObRawExpr &expr)
           check_ctx.override_query_compare_ = true;
           if (expr.same_as(*rollup_exprs_->at(nth_rollup), &check_ctx)) {
             found_same_structure = true;
-            LOG_DEBUG("found same structure in rollup exprs", K(expr));
+
           }
         }
       }
@@ -246,7 +246,7 @@ bool ObGroupByChecker::find_in_group_by(ObRawExpr &expr)
       check_ctx.override_query_compare_ = !is_check_order_by_;
       if (expr.same_as(*group_by_exprs_->at(nth_group_by), &check_ctx)) {
         found = true;
-        LOG_DEBUG("found in group by exprs", K(expr));
+
       }
     }
   }
@@ -296,9 +296,9 @@ int ObGroupByChecker::belongs_to_check_stmt(ObRawExpr &expr, bool &belongs_to)
     if (is_top_select_stmt()) {
       // the expr is not from checked stmt
       belongs_to = true;
-      LOG_DEBUG("same level", K(ret), K(expr));
+
     } else {
-      LOG_DEBUG("different level", K(ret), K(expr));
+
     }
   }
   return ret;
@@ -334,9 +334,9 @@ int ObGroupByChecker::colref_belongs_to_check_stmt(ObColumnRefRawExpr &expr, boo
     } else if (NULL != top_stmt->get_column_expr_by_id(expr.get_table_id(), expr.get_column_id())) {
       // the expr is not from checked stmt
       belongs_to = true;
-      LOG_DEBUG("same level", K(ret), K(expr));
+
     } else {
-      LOG_DEBUG("different level", K(ret), K(expr));
+
     }
   }
   return ret;
@@ -382,7 +382,7 @@ int ObGroupByChecker::check_select_stmt(const ObSelectStmt *ref_stmt)
 {
   int ret = OB_SUCCESS;
   ++level_;
-  LOG_DEBUG("check group by start stmt", K(ret));
+
 
   if (is_top_select_stmt()) {
     top_stmt_ = ref_stmt;
@@ -445,7 +445,7 @@ int ObGroupByChecker::check_select_stmt(const ObSelectStmt *ref_stmt)
       }
     }
   }
-  LOG_DEBUG("check group by end stmt", K(ret));
+
   --level_;
   return ret;
 }
@@ -492,7 +492,7 @@ int ObGroupByChecker::visit(ObColumnRefRawExpr &expr)
     if (OB_FAIL(dblink_groupby_expr_->push_back(static_cast<oceanbase::sql::ObRawExpr *>(&expr)))) {
       LOG_WARN("failed to push checked_expr into group_by_exprs", K(ret));
     } else {
-      LOG_DEBUG("succ to push checked_expr into group_by_exprs", K(expr));
+
     }
   } else {
     ret = OB_ERR_WRONG_FIELD_WITH_GROUP;
@@ -500,7 +500,7 @@ int ObGroupByChecker::visit(ObColumnRefRawExpr &expr)
                                                  expr.get_table_name(),
                                                  expr.get_column_name());
     LOG_USER_ERROR(OB_ERR_WRONG_FIELD_WITH_GROUP, column_name.length(), column_name.ptr());
-    LOG_DEBUG("column not in group by", K(*group_by_exprs_), K(expr));
+
   }
   return ret;
 }
@@ -638,7 +638,7 @@ int ObGroupByChecker::visit(ObPseudoColumnRawExpr &expr)
                NULL == dblink_groupby_expr_){
       ret = OB_ERR_WRONG_FIELD_WITH_GROUP;
       //LOG_USER_ERROR(ret, column_name.length(), column_name.ptr());
-      LOG_DEBUG("pseudo column not in group by", K(*group_by_exprs_), K(expr));
+
     }
   }
   return ret;

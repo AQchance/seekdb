@@ -94,7 +94,7 @@ int ObExprNot::eval_not(const ObExpr &expr,
       expr_datum.set_null();
     } else {
       expr_datum.set_int(param->get_int() == 0);
-      LOG_DEBUG("expr not calc result", K(expr_datum.is_null()), K(expr_datum.get_int()));
+
     }
   }
   return ret;

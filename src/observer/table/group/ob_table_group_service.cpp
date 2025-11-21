@@ -124,7 +124,7 @@ int ObTableGroupService::process_other_group()
       LOG_WARN("fail to get executable queue", K(ret));
     } else if (ops.count() == 0) {
       // do nothing
-      LOG_DEBUG("ops count is 0");
+
     } else {
       ObTableGroup *exec_group = group_factory.alloc();
       // currently, we only have class ObTableGroupValue and its meta type bind to ObTableGroupMeta
@@ -139,7 +139,7 @@ int ObTableGroupService::process_other_group()
       } else {
         is_executed = true;
       }
-      LOG_DEBUG("[group commit debug] process other group", K(ops.count()), K(group->get_group_size()));
+
     }
   }
 
@@ -169,7 +169,7 @@ int ObTableGroupService::process_expired_group()
         LOG_WARN("fail to get executable group", K(ret));
       } else if (ops.count() == 0) {
         // do nothing
-        LOG_DEBUG("ops count is 0");
+
       } else {
         ObTableGroup *exec_group = group_factory.alloc();
         ObTableGroupMeta &group_meta = static_cast<ObTableGroupValue *>(exp_group)->group_meta_;
@@ -191,7 +191,7 @@ int ObTableGroupService::process_expired_group()
     // overwrite ret
     LOG_WARN("fail to add expired ls group to clean group", K(tmp_ret), KPC(exp_group));
   } else {
-    LOG_DEBUG("[group commit debug] add clean group", K(ret), KP(exp_group), K(expired_groups.get_clean_group_counts()));
+
   }
 
   return ret;
@@ -239,7 +239,7 @@ int ObTableGroupService::process(ObTableGroupCtx &ctx, ObITableOp *op, bool is_d
         LOG_WARN("fail to execute batch", K(ret), K(is_direct_execute));
       }
     }
-    LOG_DEBUG("[group commit debug] process group", K(ret), K(need_execute_batch), K(is_direct_execute), K(ops.count()));
+
   }
 
   return ret;
@@ -331,7 +331,7 @@ int ObTableGroupService::execute_batch(ObTableGroupCtx &ctx,
     op_processor->~ObITableOpProcessor();
     op_processor = nullptr;
   }
-  LOG_DEBUG("[group commit debug] execute batch", K(ret), K(tmp_ret), K(is_direct_execute), K(add_fail_group), KPC(ctx.trans_param_));
+
   return ret;
 }
 

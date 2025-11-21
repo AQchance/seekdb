@@ -717,7 +717,7 @@ int ObPLPackageState::encode_info_to_string_kvs(ObPLExecCtx &pl_ctx,
   } else if (OB_FAIL(encode_pkg_var_value(pl_ctx, resolve_ctx, key, value, old_keys))) {
     LOG_WARN("package var value encode failed", K(ret));
   } else {
-    LOG_TRACE("encode_info_to_string_kvs", K(key), K(value), K(old_keys));
+
   }
 
   return ret;
@@ -770,7 +770,7 @@ int ObPLPackageState::convert_changed_info_to_string_kvs(ObPLExecCtx &pl_ctx, Ob
     if (OB_FAIL(check_package_state_valid(*pl_ctx.exec_ctx_, resolve_ctx, is_valid))) {
       LOG_WARN("check package state failed", K(ret), KPC(this));
     } else if (!is_valid) {
-      LOG_INFO("package state is invalid, ignore this package.", KPC(this));
+
       ObString key;
       if (OB_FAIL(encode_pkg_var_key(*pl_ctx.allocator_, key))) {
         LOG_WARN("fail to encode pkg var key", K(ret));
@@ -952,7 +952,7 @@ int ObPLPackageState::disable_expired_user_variables(sql::ObSQLSessionInfo &sess
     if (OB_FAIL(session.replace_user_variable(key, sess_var))) {
       LOG_WARN("fail to remove user var", K(ret), K(key));
     } else {
-      LOG_TRACE("disable user var", K(key));
+
     }
   }
 

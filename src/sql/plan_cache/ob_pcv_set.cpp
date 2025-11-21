@@ -57,7 +57,7 @@ int ObPCVSet::init(ObILibCacheCtx &ctx, const ObILibCacheObject *obj)
       }
       min_cluster_version_ = pc_ctx.exec_ctx_.get_min_cluster_version();
       normal_parse_const_cnt_ = pc_ctx.normal_parse_const_cnt_;
-      LOG_TRACE("inited pcv set", K(pc_key_), K(ObTimeUtility::current_time()));
+
     }
   }
   return ret;
@@ -159,26 +159,26 @@ int ObPCVSet::inner_get_cache_obj(ObILibCacheCtx &ctx,
     bool need_check_schema = true;
     DLIST_FOREACH(pcv, pcv_list_) {
       bool is_same = false;
-      LOG_DEBUG("get plan, pcv", K(pcv));
+
       if (OB_FAIL(pcv->get_all_dep_schema(pc_ctx,
                                           pc_ctx.sql_ctx_.session_info_->get_database_id(),
                                           new_tenant_schema_version,
                                           need_check_schema,
                                           schema_array))) {
         if (OB_OLD_SCHEMA_VERSION == ret) {
-          LOG_TRACE("failed to get all table schema", K(ret));
+
         } else {
           LOG_WARN("failed to get all table schema", K(ret));
         }
       } else if (OB_FAIL(pcv->match(pc_ctx, schema_array, is_same))) {
         LOG_WARN("fail to match pcv when get plan", K(ret));
       } else if (false == is_same) {
-        LOG_TRACE("failed to match param");
+
         /*do nothing*/
       } else {
         matched_pcv = pcv;
         if (OB_FAIL(pcv->choose_plan(pc_ctx, schema_array, plan))) {
-          LOG_TRACE("failed to get plan in plan cache value", K(ret));
+
         }
         break;
       }
@@ -228,7 +228,7 @@ int ObPCVSet::inner_add_cache_obj(ObILibCacheCtx &ctx,
     static const int64_t PRINT_PLAN_EXCEEDS_LOG_INTERVAL = 20 * 1000 * 1000; // 20s
     ret = OB_REACH_MEMORY_LIMIT;
     if (REACH_TIME_INTERVAL(PRINT_PLAN_EXCEEDS_LOG_INTERVAL)) {
-      LOG_INFO("number of plans in a single pcv_set reach limit", K(ret), K(get_plan_num()), K(pc_ctx));
+
     }
   } else if (OB_FAIL(ObPlanCacheValue::get_all_dep_schema(*pc_ctx.sql_ctx_.schema_guard_,
                                                           plan->get_dependency_table(),
@@ -237,16 +237,16 @@ int ObPCVSet::inner_add_cache_obj(ObILibCacheCtx &ctx,
   } else {
     DLIST_FOREACH(pcv, pcv_list_) {
       bool is_same = false;
-      LOG_DEBUG("add plan, pcv", K(pcv));
+
       if (OB_FAIL(pcv->match(pc_ctx, schema_array, is_same))) {
         LOG_WARN("fail to match pcv in pcv_set", K(ret));
       } else if (is_same) {
         is_new = false;
-        LOG_INFO("has identical pcv", K(is_same), K(pcv));
+
         if (OB_FAIL(pcv->add_plan(*plan, schema_array, pc_ctx))) {
           if (OB_SQL_PC_PLAN_DUPLICATE == ret
               || is_not_supported_err(ret)) {
-            LOG_TRACE("fail to add plan to pcv", K(ret));
+
           } else {
             LOG_WARN("fail to add plan to pcv", K(ret));
           }
@@ -489,7 +489,7 @@ int ObPCVSet::check_raw_param_for_dup_col(ObPlanCacheCtx &pc_ctx, bool &contain_
 
             if (0 != l_tmp_str.compare(r_tmp_str)) {
               all_same = false;
-              LOG_TRACE("raw text not matched", K(l_tmp_str), K(r_tmp_str));
+
             }
           }
         } // for end

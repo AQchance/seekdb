@@ -639,7 +639,7 @@ int ObTabletCreateSSTableParam::init_for_ddl(blocksstable::ObSSTableIndexBuilder
         } else {
           column_count = full_column_cnt;
           if (macro_block_column_count > 0 && macro_block_column_count < column_count) {
-            LOG_INFO("use macro block column count", K(ddl_param), K(macro_block_column_count), K(column_count));
+
             column_count = macro_block_column_count;
             full_column_cnt = macro_block_column_count;
           }
@@ -649,7 +649,7 @@ int ObTabletCreateSSTableParam::init_for_ddl(blocksstable::ObSSTableIndexBuilder
       if (OB_FAIL(storage_schema.get_stored_column_count_in_sstable(column_count))) {
         LOG_WARN("fail to get stored column count in sstable", K(ret));
       } else if (macro_block_column_count > 0 && macro_block_column_count < column_count) {
-        LOG_INFO("use macro block column count", K(ddl_param), K(macro_block_column_count), K(column_count));
+
         column_count = macro_block_column_count;
       }
     }
@@ -979,7 +979,7 @@ int ObTabletCreateSSTableParam::init_for_ss_ddl(blocksstable::ObSSTableMergeRes 
       LOG_WARN("unexpected column checksums", K(ret), K(column_count), KPC(this));
     }
   }
-  LOG_INFO("[SHARED STORAGE]init ddl param", K(ret), K(table_key), K(*this), K(column_count));
+
   return ret;
 }
 

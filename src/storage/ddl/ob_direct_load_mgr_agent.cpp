@@ -150,7 +150,7 @@ int ObDirectLoadMgrAgent::init_for_sn(
         ls_id, tablet_id, first_major_sstable, table_store_wrapper))) {
       LOG_WARN("check if major sstable exist failed", K(ret), K(ls_id), K(tablet_id));
     } else if (OB_NOT_NULL(first_major_sstable)) {
-      LOG_INFO("skip, mgr handle is invalid due to major exist under shared-nothing mode", K(tablet_id));
+
     } else {
       ret = OB_ERR_SYS;
       LOG_WARN("mgr handle is invalid but the major does not exist under shared-nothing mode", K(ret), K(tablet_id));
@@ -301,7 +301,7 @@ int ObDirectLoadMgrAgent::fill_sstable_slice_for_sn(
     if (OB_TRANS_COMMITED == ret && slice_info.is_full_direct_load_) {
       ret = OB_SUCCESS;
       need_consume_remained_rows = true;
-      LOG_INFO("trans commited", K(slice_info));
+
     } else {
       LOG_WARN("fill slice failed", K(ret), K(slice_info));
     }
@@ -373,7 +373,7 @@ int ObDirectLoadMgrAgent::fill_sstable_slice_for_sn(
   } else if (OB_FAIL(mgr_handle_.get_base_obj()->fill_sstable_slice(slice_info, start_scn_, datum_rows, insert_monitor))) {
     if (OB_TRANS_COMMITED == ret && slice_info.is_full_direct_load_) {
       ret = OB_SUCCESS;
-      LOG_INFO("trans commited", K(slice_info));
+
     } else {
       LOG_WARN("fill slice failed", K(ret), K(slice_info));
     }

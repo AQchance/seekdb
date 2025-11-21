@@ -161,7 +161,7 @@ int ObLogGranuleIterator::set_range_order()
       } else {
         add_flag(GI_DESC_ORDER);
       }
-      LOG_TRACE("affinitize partition order", K(is_asc_order), K(gi_attri_flag_), K(ret));
+
     }
   } else if (!op_ordering.empty()) {
     // Suppose (range) partition order is asc, so first order is same partition order
@@ -176,7 +176,7 @@ int ObLogGranuleIterator::set_range_order()
     } else {
       add_flag(GI_DESC_ORDER);
     }
-    LOG_TRACE("partition order", K(is_asc_order), K(gi_attri_flag_), K(ret));
+
   }
   return ret;
 }

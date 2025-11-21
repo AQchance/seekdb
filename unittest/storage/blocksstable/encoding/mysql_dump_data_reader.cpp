@@ -130,7 +130,7 @@ int MysqlDumpDataReader::parse_insert_sql()
 {
   int ret = OB_SUCCESS;
   if (cur_sql_.size() < 6 || strncmp(cur_sql_.c_str(), "INSERT", 6) != 0) {
-    LOG_INFO("not insert sql, ignore", K(ret), K(cur_sql_.c_str()));
+
   } else {
     char *sql = const_cast<char *>(cur_sql_.c_str());
     value_cnt_ = 0;
@@ -199,7 +199,7 @@ int MysqlDumpDataReader::parse_insert_sql()
         }
       }
     }
-    LOG_DEBUG("parsed data", K(value_cnt_), K(datas_.size()));
+
   }
   return ret;
 }

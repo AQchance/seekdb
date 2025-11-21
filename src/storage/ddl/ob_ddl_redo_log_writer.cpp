@@ -112,7 +112,7 @@ int ObDDLCtrlSpeedItem::refresh()
   } else if (OB_FAIL(log_service->get_palf_options(palf_opt))) {
     LOG_WARN("fail to get palf_options", K(ret));
   } else if (OB_FAIL(log_service->get_palf_disk_usage(total_used_space, total_disk_space))) {
-    STORAGE_LOG(WARN, "failed to get the disk space that clog used", K(ret));
+
   } else if (OB_ISNULL(GCTX.bandwidth_throttle_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected error, bandwidth throttle is null", K(ret), KP(GCTX.bandwidth_throttle_));
@@ -216,10 +216,10 @@ int ObDDLCtrlSpeedItem::do_sleep(
             unused_snapshot_version, task_status))) {
           if (OB_ITER_END == tmp_ret) {
             is_need_stop_write = false;
-            LOG_INFO("exit due to ddl task exit", K(tenant_id), K(task_id));
+
           } else if (loop_cnt >= 100 * 1000) { // wait_time = 100 * 1000 * SLEEP_INTERVAL = 100s.
             is_need_stop_write = false;
-            LOG_INFO("exit due to sql exceeds time limit", K(tmp_ret), K(tenant_id), K(task_id));
+
           } else {
             if (REACH_COUNT_INTERVAL(1000L)) {
               LOG_WARN("get ddl task info failed", K(tmp_ret), K(tenant_id), K(task_id));
@@ -227,7 +227,7 @@ int ObDDLCtrlSpeedItem::do_sleep(
           }
         } else if (!is_replica_build_ddl_task_status(task_status)) {
           is_need_stop_write = false;
-          LOG_INFO("exit due to mismatched status", K(tenant_id), K(task_id));
+
         }
       }
       if (REACH_TIME_INTERVAL(10 * 1000 * 1000)) {
@@ -399,7 +399,7 @@ int ObDDLCtrlSpeedHandle::init()
     LOG_WARN("fail to init refreshTimerTask", K(ret));
   } else {
     is_inited_ = true;
-    LOG_INFO("succeed to init ObDDLCtrlSpeedHandle", K(ret));
+
   }
   return ret;
 }
@@ -854,7 +854,7 @@ int ObDDLRedoLogWriter::local_write_ddl_start_log(
     LOG_WARN("fail to submit ddl start log", K(ret), K(buffer_size));
     if (ObDDLUtil::need_remote_write(ret)) {
       ret = OB_NOT_MASTER;
-      LOG_INFO("overwrite return to OB_NOT_MASTER");
+
     }
   } else {
     ObDDLStartClogCb *tmp_cb = cb;
@@ -878,7 +878,7 @@ int ObDDLRedoLogWriter::local_write_ddl_start_log(
           LOG_WARN("write ddl start log timeout", K(ret), K(current_time), K(start_time));
         } else {
           if (REACH_TIME_INTERVAL(10L * 1000L * 1000L)) { //10s
-            LOG_INFO("wait ddl start log callback", K(ret), K(finish), K(current_time), K(start_time));
+
           }
           ob_usleep(ObDDLRedoLogHandle::CHECK_DDL_REDO_LOG_FINISH_INTERVAL);
         }
@@ -1049,7 +1049,7 @@ int ObDDLRedoLogWriter::write_auto_split_log(
     LOG_WARN("fail to submit ddl start log", K(ret), K(buffer_size));
     if (ObDDLUtil::need_remote_write(ret)) {
       ret = OB_NOT_MASTER;
-      LOG_INFO("overwrite return to OB_NOT_MASTER");
+
     }
   } else {
     ObDDLClogCb *tmp_cb = cb;
@@ -1089,7 +1089,7 @@ int ObDDLRedoLogWriter::write_auto_split_log(
       "clog_type", clog_type,
       "scn", scn,
       "trace_id", *ObCurTraceId::get_trace_id());
-  LOG_INFO("write split log finished", K(ret), K(ls_id), K(clog_type), K(scn));
+
   return ret;
 }
 
@@ -1154,7 +1154,7 @@ int ObDDLRedoLogHandle::wait(const int64_t timeout)
           LOG_WARN("write ddl redo log timeout", K(ret), K(current_time), K(start_time));
         } else {
           if (REACH_TIME_INTERVAL(10L * 1000L * 1000L)) { //10s
-            LOG_INFO("wait ddl redo log callback", K(ret), K(finish), K(current_time), K(start_time));
+
           }
           ob_usleep(ObDDLRedoLogHandle::CHECK_DDL_REDO_LOG_FINISH_INTERVAL);
         }
@@ -1200,7 +1200,7 @@ int ObDDLCommitLogHandle::wait(const int64_t timeout)
           LOG_WARN("write ddl commit log timeout", K(ret), K(current_time), K(start_time));
         } else {
           if (REACH_TIME_INTERVAL(10L * 1000L * 1000L)) { //10s
-            LOG_INFO("wait ddl commit log callback", K(ret), K(finish), K(current_time), K(start_time));
+
           }
           ob_usleep(ObDDLRedoLogHandle::CHECK_DDL_REDO_LOG_FINISH_INTERVAL);
         }
@@ -1322,7 +1322,7 @@ int ObDDLRedoLogWriter::write_start_log(
     "task_id", ddl_task_id,
     "tablet_id", tablet_id_,
     "start_scn", start_scn);
-    LOG_INFO("write ddl start log", K(ret), K(table_key), K(start_scn));*/
+*/
   }
   return ret;
 }
@@ -1364,7 +1364,7 @@ int ObDDLRedoLogWriter::write_macro_block_log(
         LOG_WARN("fail to write ddl redo clog", K(ret), K(MTL_GET_TENANT_ROLE_CACHE()));
       }
     } else {
-      LOG_INFO("local write redo log of macro block", K(redo_info), K(macro_block_id));
+
     }
   }
 
@@ -1372,7 +1372,7 @@ int ObDDLRedoLogWriter::write_macro_block_log(
     if (OB_FAIL(retry_remote_write_macro_redo(task_id, redo_info))) {
       LOG_WARN("remote write redo failed", K(ret), K(task_id));
     } else {
-      LOG_INFO("remote write redo log of macro block", K(redo_info), K(macro_block_id));
+
     } 
   }
   return ret;
@@ -1430,7 +1430,7 @@ int ObDDLRedoLogWriter::write_commit_log_with_retry(
     if (ObDDLRedoLogWriter::need_retry(ret)) {
       ob_usleep(1000L * 1000L); // 1s
       ++retry_count;
-      LOG_INFO("retry write ddl commit log", K(ret), K(table_key), K(retry_count));
+
     } else {
       break;
     }
@@ -1494,7 +1494,7 @@ int ObDDLRedoLogWriter::write_commit_log(
               true/* is_full_direct_load */, lob_direct_load_mgr_handle, is_lob_major_sstable_exist))) {
         if (OB_ENTRY_NOT_EXIST == ret && is_lob_major_sstable_exist) {
           ret = OB_SUCCESS;
-          LOG_INFO("lob meta tablet exist major sstable, skip", K(ret), K(ddl_data.lob_meta_tablet_id_));
+
         } else {
           LOG_WARN("get tablet mgr failed", K(ret), K(ddl_data.lob_meta_tablet_id_));
         }
@@ -1514,7 +1514,7 @@ int ObDDLRedoLogWriter::write_commit_log(
       LOG_WARN("wait ddl commit log finish failed", K(ret), K(table_key));
     } else {
       commit_scn = handle.get_commit_scn();
-      LOG_INFO("local write ddl commit log", K(ret), K(table_key), K(commit_scn));
+
     }
   }
   if (OB_SUCC(ret) && remote_write_) {
@@ -1525,7 +1525,7 @@ int ObDDLRedoLogWriter::write_commit_log(
       LOG_WARN("remote write ddl commit log failed", K(ret), K(arg));
     } else {
       is_remote_write = !(leader_addr_ == GCTX.self_addr());
-      LOG_INFO("remote write ddl commit log", K(ret), K(table_key), K(commit_scn), K(is_remote_write));
+
     }
   }
   SERVER_EVENT_ADD("ddl", "ddl write commit log",
@@ -1536,7 +1536,7 @@ int ObDDLRedoLogWriter::write_commit_log(
     "tablet_id", tablet_id_,
     "commit_scn", commit_scn,
     is_remote_write);
-  LOG_INFO("ddl write commit log", K(ret), "ddl_event_info", ObDDLEventInfo());
+
   return ret;
 }
 
@@ -1568,7 +1568,7 @@ int ObDDLRedoLogWriter::switch_to_remote_write()
     LOG_WARN("leader is local", K(ret), K_(tablet_id), K_(leader_ls_id));
   } else {
     remote_write_ = true;
-    LOG_INFO("switch to remote write", K(ret), K_(tablet_id), K_(leader_ls_id), K_(leader_addr));
+
   }
   return ret;
 }
@@ -1889,12 +1889,12 @@ int ObDDLRedoLogWriterCallback::write(const ObStorageObjectHandle &macro_handle,
     } else if (nullptr != param_.macro_meta_store_ && OB_FAIL(param_.macro_meta_store_->append(buf, buf_len, macro_handle.get_macro_id()))) {
         LOG_WARN("append macro meta store failed", K(ret), KP(buf), K(buf_len), K(macro_handle.get_macro_id()));
     } else {
-      LOG_TRACE("append macro meta store", K(ret), K(param_.table_key_), KPC(param_.macro_meta_store_));
+
     }
 
     if (OB_SUCC(ret) && nullptr != param_.write_stat_) {
       ATOMIC_AAF(&param_.write_stat_->row_count_, row_count);
-      LOG_TRACE("update write stat", K(ret), K(param_.table_key_), K(row_count), KPC(param_.write_stat_));
+
     }
     
     if (OB_FAIL(ret)) {
@@ -2016,7 +2016,7 @@ int ObDDLRedoLogWriterCallback::retry(const int64_t timeout_us,
       if (ObDDLRedoLogWriter::need_retry(ret)) {
         ob_usleep(1000L * 1000L); // 1s
         ++retry_count;
-        LOG_INFO("retry write ddl macro redo log", K(ret), K(param_.table_key_), K(retry_count));
+
       } else {
         break;
       }
@@ -2186,7 +2186,7 @@ int ObDDLRedoLogWriter::write_finish_log_with_retry(
     if (ObDDLRedoLogWriter::need_retry(ret)) {
       usleep(1000L * 1000L); // 1s
       ++retry_count;
-      LOG_INFO("retry write ddl finish log", K(ret), K(log), K(retry_count));
+
     } else {
       break;
     }
@@ -2241,7 +2241,7 @@ int ObDDLRedoLogWriter::write_finish_log(
       LOG_WARN("failed to upload tablet meta", K(ret));
     } else {
       is_remote_write = !(leader_addr_ == GCTX.self_addr());
-      LOG_INFO("remote write ddl finish log", K(ret), K(table_key), K(is_remote_write));
+
     }
   }
 
@@ -2255,7 +2255,7 @@ int ObDDLRedoLogWriter::write_finish_log(
     "tablet_id", tablet_id_,
     "commit_scn", mock_commit_scn,
     is_remote_write);
-  LOG_INFO("ddl write finish log", K(ret), "ddl_event_info", ObDDLEventInfo());
+
   return ret;
 }
 /* used for update tablet meta*/
@@ -2309,7 +2309,7 @@ int ObDDLRedoLogWriter::wait_finish_log(
       LOG_WARN("failed to schedule tablet ddl merge", K(ret), K(ls_id), K(tablet_id));
     } else {
       ret = OB_SUCCESS;
-      LOG_INFO("freeze and schedule minor merge by the background", K(ret), K(ls_id), K(tablet_id));
+
     }
   }
   
@@ -2572,7 +2572,7 @@ int ObDDLFinishLogHandle::wait(const int64_t timeout)
           LOG_WARN("write ddl finish log timeout", K(ret), K(current_time), K(start_time));
         } else {
           if (REACH_TIME_INTERVAL(10L * 1000L * 1000L)) { //10s
-            LOG_INFO("wait ddl finish log callback", K(ret), K(finish), K(current_time), K(start_time));
+
           }
           ob_usleep(ObDDLRedoLogHandle::CHECK_DDL_REDO_LOG_FINISH_INTERVAL);
         }

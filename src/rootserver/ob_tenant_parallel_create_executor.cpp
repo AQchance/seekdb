@@ -74,7 +74,7 @@ int ObParallelCreateTenantExecutor::execute(obrpc::UInt64 &tenant_id)
       LOG_WARN("tenant_exist without if_not_exist_, the rpc create_tenant_schema should fail",
           KR(ret), K(create_tenant_arg_), K(create_tenant_schema_result_));
     } else {
-      LOG_INFO("tenant exists, not need to create tenant", KR(ret));
+
     }
   } else if (OB_FAIL(init_after_create_tenant_schema_())) {
     LOG_WARN("failed to init after create tenant schema", KR(ret));
@@ -337,7 +337,7 @@ int ObParallelCreateTenantExecutor::async_call_create_normal_tenant_(
   } else if (OB_FAIL(proxy.call(addr, ctx_.get_timeout(), OB_SYS_TENANT_ID, arg))) {
     LOG_WARN("failed to call parallel create normal tenant", KR(ret), K(addr), K(ctx_), K(arg));
   }
-  LOG_INFO("call create_normal_tenant", KR(ret), K(arg));
+
   return ret;
 }
 
@@ -434,7 +434,7 @@ int ObParallelCreateTenantExecutor::wait_ls_leader_(const uint64_t tenant_id, co
     }
     int64_t wait_leader_end = ObTimeUtility::current_time();
     wait_leader = wait_leader_end - wait_leader_start;
-    LOG_INFO("wait tenant ls elect", KR(ret), K(tenant_id), K(leader), "cost", wait_leader);
+
   }
   return ret;
 }
@@ -486,7 +486,7 @@ int ObParallelCreateTenantExecutor::check_can_create_user_ls_(ObParallelCreateNo
       } else if (OB_TMP_FAIL(ls_operator.get_all_ls_by_order(array))) {
         LOG_WARN("meta table is not created", KR(ret), K(user_tenant_id));
       } else if (array.count() == 0) {
-        LOG_INFO("sys ls is not in __all_ls, need wait", KR(tmp_ret));
+
       } else if (OB_TMP_FAIL(ObAllTenantInfoProxy::load_tenant_info(user_tenant_id, sql_proxy_,
             false/*for_update*/, tenant_info))) {
         LOG_WARN("failed to get tenant info, need wait", KR(tmp_ret), K(user_tenant_id));
@@ -543,7 +543,7 @@ int ObParallelCreateTenantExecutor::finish_create_tenant_(const int ret_code)
       } else if (OB_FAIL(ERRSIM_USER_CREATE_TENANT_END_FAIL)) {
         LOG_WARN("ERRSIM_USER_CREATE_TENANT_END_FAIL", KR(ret));
       } else {
-        LOG_INFO("successfully create tenant", KR(ret), K(user_tenant_id));
+
       }
     }
     if ((OB_FAIL(ret) || OB_FAIL(ret_code)) && tenant_role.is_primary()) {
@@ -558,7 +558,7 @@ int ObParallelCreateTenantExecutor::finish_create_tenant_(const int ret_code)
             .drop_tenant(drop_tenant_arg))) {
         LOG_WARN("failed to create tenant end", KR(tmp_ret), K(create_tenant_arg_), K(ctx_));
       } else {
-        LOG_INFO("failed to create tenant, drop tenant force", KR(tmp_ret), K(user_tenant_id));
+
       }
     }
   }

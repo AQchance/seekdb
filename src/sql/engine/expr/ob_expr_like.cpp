@@ -395,7 +395,7 @@ int ObExprLike::check_pattern_valid(const T &pattern,
     if (NULL == (like_ctx = static_cast<ObExprLikeContext *>
                                       (exec_ctx->get_expr_op_ctx(like_id)))) {
       if (OB_SUCCESS != (tmp_ret = exec_ctx->create_expr_op_ctx(like_id, like_ctx))) {
-        LOG_DEBUG("failed to create operator ctx", K(ret), K(like_id));
+
       } else {
         like_ctx->instr_info_.set_allocator(exec_ctx->get_allocator());
       }
@@ -832,7 +832,7 @@ bool ObExprLike::checked_already(const ObExprLikeContext &like_ctx, bool null_pa
   } else {
     res = like_ctx.is_checked();
   }
-  LOG_DEBUG("like check already end", K(null_pattern), K(pattern_val), K(escape_val), K(res));
+
   return res;
 }
 

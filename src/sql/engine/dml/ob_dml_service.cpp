@@ -587,7 +587,7 @@ int ObDMLService::filter_row_for_check_cst(const ExprFixedArray &cst_exprs,
     ObExpr *expr = cst_exprs.at(i);
     ObDatum *datum = nullptr;
     if (OB_FAIL(expr->eval(eval_ctx, datum))) {
-      LOG_INFO("cover original errno while calulating check expr in mysql mode", K(ret));
+
       filtered = true;
       ret = OB_SUCCESS;
     } else {
@@ -1701,13 +1701,13 @@ int ObDMLService::init_trigger_for_insert(
   int ret = OB_SUCCESS;
   if (!ins_ctdef.is_primary_index_ || 0 >= ins_ctdef.trig_ctdef_.tg_args_.count()) {
     // nothing
-    LOG_DEBUG("debug non-primary key insert trigger for merge", K(ret));
+
   } else if (OB_FAIL(TriggerHandle::init_trigger_params(dml_rtctx, ins_ctdef.trig_ctdef_.tg_event_,
                           ins_ctdef.trig_ctdef_, ins_rtdef.trig_rtdef_))) {
     LOG_WARN("failed to init trigger params", K(ret));
   } else {
     append(clear_exprs, ins_ctdef.trig_ctdef_.new_row_exprs_);
-    LOG_DEBUG("debug insert trigger for merge", K(ret));
+
   }
   return ret;
 }
@@ -1862,7 +1862,7 @@ int ObDMLService::init_del_rtdef(ObDMLRtCtx &dml_rtctx,
             // for table not deleted at parent session, create a new hash set and add to the list at root ctx
             DmlRowkeyDistCtx del_ctx;
             del_ctx.table_id_ = del_table_id;
-            LOG_TRACE("[FOREIGN KEY] create hash set used for checking duplicate rowkey due to cascade delete", K(del_table_id));
+
             if (OB_FAIL(ObDMLService::create_rowkey_check_hashset(dml_op.get_spec().rows_, root_ctx, del_ctx.deleted_rows_))) {
               LOG_WARN("failed to create hash set", K(ret));
             } else if (OB_FAIL(del_ctx_list.push_back(del_ctx))) {
@@ -1881,7 +1881,7 @@ int ObDMLService::init_del_rtdef(ObDMLRtCtx &dml_rtctx,
         DASDelCtxList& del_ctx_list = dml_op.get_exec_ctx().get_das_ctx().get_das_del_ctx_list();
         DmlRowkeyDistCtx del_ctx;
         del_ctx.table_id_ = del_table_id;
-        LOG_TRACE("[FOREIGN KEY] create hash set used for checking duplicate rowkey due to cascade delete", K(del_table_id));
+
         if (OB_FAIL(get_root_exec_ctx_for_fk_cascading(&dml_op.get_exec_ctx(), root_ctx))) {
           LOG_WARN("failed to get root exec ctx", K(ret));
         } else if (OB_ISNULL(root_ctx) || root_ctx != &dml_op.get_exec_ctx()) {
@@ -1909,7 +1909,7 @@ int ObDMLService::init_del_rtdef(ObDMLRtCtx &dml_rtctx,
           DASDelCtxList& del_ctx_list = root_ctx->get_das_ctx().get_das_del_ctx_list();
           if (ObDMLService::is_nested_dup_table(del_table_id, del_ctx_list)) {
             // A duplicate table was found
-            LOG_TRACE("[FOREIGN KEY] get hash set used for checking duplicate rowkey due to cascade delete", K(del_table_id));
+
             if (OB_FAIL(ObDMLService::get_nested_dup_table_ctx(del_table_id, del_ctx_list, del_rtdef.se_rowkey_dist_ctx_))) {
               LOG_WARN("failed to get nested duplicate delete table ctx for fk nested session", K(ret));
             }
@@ -1939,7 +1939,7 @@ int ObDMLService::init_trigger_for_update(
   int ret = OB_SUCCESS;
   if (!upd_ctdef.is_primary_index_ || 0 >= upd_ctdef.trig_ctdef_.tg_args_.count()) {
     // nothing
-    LOG_DEBUG("debug non-primary key update trigger for merge", K(ret));
+
   } else if (OB_FAIL(TriggerHandle::init_trigger_params(dml_rtctx, upd_ctdef.trig_ctdef_.tg_event_,
                           upd_ctdef.trig_ctdef_, upd_rtdef.trig_rtdef_))) {
     LOG_WARN("failed to init trigger params", K(ret));
@@ -1953,7 +1953,7 @@ int ObDMLService::init_trigger_for_update(
     if (OB_SUCC(ret)) {
       append(clear_exprs, new_exprs);
     }
-    LOG_DEBUG("debug update trigger for merge", K(ret));
+
   }
   return ret;
 }
@@ -2185,7 +2185,7 @@ int ObDMLService::check_agg_task_state(ObDMLRtCtx &dml_rtctx, ObIDASTaskOp *das_
     } else if (agg_task->get_mem_used() >= buffer_size_limit) {
       agg_task->start_status_ = DAS_AGG_TASK_REACH_MEM_LIMIT;
       reach_mem_limit = true;
-      LOG_TRACE("this agg_task buff is reach memory limit", K(agg_task->get_mem_used()), K(buffer_size_limit));
+
     }
   }
   return ret;
@@ -2196,7 +2196,7 @@ int ObDMLService::parallel_submit_das_task(ObDMLRtCtx &dml_rtctx, ObDasAggregate
   int ret = OB_SUCCESS;
   if (dml_rtctx.das_ref_.get_parallel_type() == DAS_SERIALIZATION) {
     // not support parallel_submit
-    LOG_TRACE("can't parallel submit", K(dml_rtctx.das_ref_.get_parallel_type()));
+
   } else if (dml_rtctx.das_ref_.get_parallel_type() == DAS_STREAMING_PARALLEL) {
     if (dml_rtctx.das_ref_.get_submitted_task_count() >= dml_rtctx.das_ref_.get_das_dop()) {
       LOG_INFO("submitted tasks reach dop", "submitted_cnt", dml_rtctx.das_ref_.get_submitted_task_count(),
@@ -2286,7 +2286,7 @@ int ObDMLService::write_row_to_das_op(const ObDASDMLBaseCtDef &ctdef,
     if (OB_FAIL(check_agg_task_state(dml_rtctx, dml_op, stored_row->row_size_, reach_agg_mem_limit))) {
       LOG_WARN("fail to check agg_task state", K(ret), K(stored_row->row_size_));
     } else if (!reach_agg_mem_limit) {
-      LOG_TRACE("not reach agg_task memory limit");
+
     } else if (OB_FAIL(parallel_submit_das_task(dml_rtctx, dml_op->get_agg_task()))) {
       LOG_WARN("fail to parallel submit this agg_task", K(ret));
     } else {
@@ -2406,7 +2406,7 @@ int ObDMLService::copy_heap_table_hidden_pk(ObEvalCtx &eval_ctx,
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("is not heap_table", K(ret), K(upd_ctdef));
   } else if (new_hidden_pk->type_ != T_TABLET_AUTOINC_NEXTVAL) {
-    LOG_TRACE("heap table not update the part_key", K(ret));
+
   } else if (OB_FAIL(old_hidden_pk->eval(eval_ctx, hidden_pk_datum))) {
     LOG_WARN("eval old_hidden_pk failed", K(ret), KPC(old_hidden_pk));
   } else if (OB_ISNULL(hidden_pk_datum)) {
@@ -2461,7 +2461,7 @@ int ObDMLService::get_heap_table_hidden_pk(uint64_t tenant_id,
     LOG_WARN("get_autoinc_seq fail", K(ret), K(tenant_id), K(tablet_id));
   } else {
     pk = autoinc_seq;
-    LOG_TRACE("after get autoinc_seq", K(pk), K(tenant_id), K(tablet_id));
+
   }
   return ret;
 }
@@ -2780,7 +2780,7 @@ int ObDMLService::handle_after_processing_multi_row(ObDMLModifyRowsList *dml_mod
         } else if (op.need_foreign_key_checks()) {
           ACTIVE_SESSION_FLAG_SETTER_GUARD(in_foreign_key_cascading);
           if (t_update == dml_event && !reinterpret_cast<ObUpdRtDef &>(dml_rtdef).is_row_changed_) {
-            LOG_DEBUG("update operation don't change any value, no need to perform foreign key check");
+
           } else {
             // if check foreign key in batch, build fk check tasks here
             if (dml_op->get_spec().check_fk_batch_) {
@@ -2890,7 +2890,7 @@ int ObDMLService::handle_after_row_processing(ObTableModifyOp *op,
   } else if (1 > dml_modify_rows->size()) {
     // after row processing list is empty, nothing to do
     #ifndef NDEBUG
-      LOG_INFO("No row need to perform foreign key check or after row trigger");
+
     #endif
   } else if (op->execute_single_row_) {
     ret = handle_after_processing_single_row(dml_modify_rows);

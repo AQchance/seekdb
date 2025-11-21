@@ -156,7 +156,7 @@ int ObBackupSSTableSecMetaIterator::get_next(ObDataMacroBlockMeta &macro_meta)
   } else if (OB_FAIL(sec_meta_iterator_.get_next(macro_meta))) {
     LOG_WARN("failed to get next", K(ret));
   } else {
-    LOG_INFO("get next macro block meta", K_(output_idx),K_(tablet_id), K_(table_key), K(macro_meta));
+
     output_idx_++;
   }
   return ret;
@@ -230,7 +230,7 @@ int ObBackupSSTableSecMetaIterator::get_backup_data_path_(
     LOG_WARN("failed to get macro block backup path", K(ret), K(backup_dest),
              K(backup_set_desc), K(backup_data_type), K(meta_index));
   } else {
-    LOG_INFO("get backup data path", K(backup_path));
+
   }
   return ret;
 }

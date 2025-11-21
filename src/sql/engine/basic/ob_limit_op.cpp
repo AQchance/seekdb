@@ -135,7 +135,7 @@ int ObLimitOp::inner_get_next_row()
 {
   int ret = OB_SUCCESS;
   clear_evaluated_flag();
-  LOG_DEBUG("limitop get_next_row start", K(limit_), K(offset_));
+
   while (OB_SUCC(ret) && input_cnt_ < offset_) {
     if (OB_FAIL(child_->get_next_row())) {
       if (OB_ITER_END != ret) {
@@ -179,7 +179,7 @@ int ObLimitOp::inner_get_next_row()
         ret = OB_ITER_END;
       } else {
         ++output_cnt_;
-        LOG_DEBUG("output row", "row", ROWEXPR2STR(eval_ctx_, MY_SPEC.output_));
+
         // If need to support fetch with ties feature, need to copy the last row taken out by limit for subsequent use
         if (MY_SPEC.is_fetch_with_ties_ && output_cnt_ == limit_ &&
             OB_FAIL(pre_sort_columns_.save_store_row(MY_SPEC.sort_columns_, eval_ctx_))) {
@@ -259,7 +259,7 @@ int ObLimitOp::inner_get_next_batch(const int64_t max_row_cnt)
     }
   } // end while
 
-  LOG_DEBUG("limitop get_next_batch", K(brs_), K(input_cnt_), K(batch_cnt), K(output_cnt_));
+
   auto skip_fetch_rows = false;
   if (input_cnt_ > offset_ && output_cnt_ == 0) {
     // offset error handling: child operator return more rows than expected

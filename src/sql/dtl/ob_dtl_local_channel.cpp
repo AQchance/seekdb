@@ -100,21 +100,21 @@ int ObDtlLocalChannel::send_shared_message(ObDtlLinkedBuffer *&buf)
       if (!buf->is_data_msg() && OB_FAIL(ObDtlLinkedBuffer::deserialize_msg_header(*buf, header, keep_pos))) {
         LOG_WARN("failed to deserialize msg header", K(ret));
       } else if (header.is_drain()) {
-        LOG_TRACE("receive drain cmd, unregister local channel", KP(peer_id_));
+
         ret = OB_SUCCESS;
         tmp_ret = OB_SUCCESS;
       } else if (buf->is_data_msg() && 1 == buf->seq_no()) {
         ret = tmp_ret;
         LOG_WARN("failed to get channel", K(ret), K(peer_id_));
       } else {
-        LOG_TRACE("get DTL channel fail", K(buf->seq_no()), KP(peer_id_), "peer", get_peer(), K(ret), K(tmp_ret), K(buf->is_data_msg()));
+
       }
     } else {
       ObDtlLocalChannel *local_chan = reinterpret_cast<ObDtlLocalChannel*>(chan);
       if (OB_FAIL(local_chan->feedup(buf))) {
         LOG_WARN("feed up DTL channel fail", KP(peer_id_), "peer", get_peer(), K(ret));
       } else if (OB_ISNULL(local_chan->get_dfc())) {
-        LOG_TRACE("dfc of rpc channel is null", K(msg_response_.is_block()), KP(peer_id_), K(ret), KP(local_chan->get_id()), K(local_chan->get_peer()));
+
       } else if (local_chan->belong_to_receive_data()) {
         // Must be the receive end, in order to actively send a response to block the transmit end
         is_block = local_chan->get_dfc()->is_block(local_chan);
@@ -175,9 +175,9 @@ int ObDtlLocalChannel::send_message(ObDtlLinkedBuffer *&buf)
       // 2) control message SQC and QC channel also must be linked
       // 3) bloom filter message rpc processor process, don't need channel
       // so channel is linked and don't retry
-      LOG_DEBUG("Data channel linked", K_(peer), K(ret), KP(peer_id_));
+
     }
-    LOG_TRACE("local channel status", K_(peer), K(ret), KP(peer_id_));
+
     if (is_eof) {
       set_eof();
     }

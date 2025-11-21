@@ -289,8 +289,8 @@ TEST_F(TestLSMigrationParam, test_migrate_tablet_param)
 
   const ObTabletMeta &src_meta = src_handle.get_obj()->get_tablet_meta();
   const ObTabletMeta &dst_meta = dst_handle.get_obj()->get_tablet_meta();
-  LOG_INFO("dump meta", K(src_meta));
-  LOG_INFO("dump meta", K(dst_meta));
+
+
   ASSERT_TRUE(src_meta.is_valid());
   ASSERT_TRUE(dst_meta.is_valid());
   ASSERT_EQ(true, src_meta.micro_index_clustered_);

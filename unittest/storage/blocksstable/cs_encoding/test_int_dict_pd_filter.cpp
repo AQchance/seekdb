@@ -121,7 +121,7 @@ TEST_F(TestIntDictPdFilter, test_int_dict_decoder)
       integer_type_filter_normal_check(true, ObWhiteFilterOperatorType::WHITE_OP_BT, 5, 2, res_arr);
     }
 
-    LOG_INFO(">>>>>>>>>>FINISH PD FILTER<<<<<<<<<<<");
+
 
     encoder.reuse();
   }
@@ -270,7 +270,7 @@ TEST_F(TestIntDictPdFilter, test_int_dict_const_decoder)
     int64_t res_arr[5] = {0, 115, 116, 1, 4};
     integer_type_filter_normal_check(true, ObWhiteFilterOperatorType::WHITE_OP_BT, 5, 2, res_arr);
   }
-  LOG_INFO(">>>>>>>>>>FINISH PD FILTER<<<<<<<<<<<");
+
 }
 
 TEST_F(TestIntDictPdFilter, test_int_dict_null_const_decoder)
@@ -334,7 +334,7 @@ TEST_F(TestIntDictPdFilter, test_int_dict_null_const_decoder)
     integer_type_filter_normal_check(true, ObWhiteFilterOperatorType::WHITE_OP_LE, 4, 1, res_arr_le);
   }
 
-  LOG_INFO(">>>>>>>>>>FINISH PD FILTER<<<<<<<<<<<");
+
 }
 
 TEST_F(TestIntDictPdFilter, test_int_dict_const_without_null_decoder)
@@ -427,7 +427,7 @@ TEST_F(TestIntDictPdFilter, test_int_dict_const_without_null_decoder)
     integer_type_filter_normal_check(true, ObWhiteFilterOperatorType::WHITE_OP_BT, 5, 2, res_arr);
   }
 
-  LOG_INFO(">>>>>>>>>>FINISH PD FILTER<<<<<<<<<<<");
+
 }
 
 TEST_F(TestIntDictPdFilter, test_all_null_int_dict_const_decoder)
@@ -479,7 +479,7 @@ TEST_F(TestIntDictPdFilter, test_all_null_int_dict_const_decoder)
     integer_type_filter_normal_check(true, ObWhiteFilterOperatorType::WHITE_OP_EQ, 2, 1, res_arr_eq);
   }
 
-  LOG_INFO(">>>>>>>>>>FINISH PD FILTER<<<<<<<<<<<");
+
 }
 
 //test fix of 
@@ -539,7 +539,7 @@ TEST_F(TestIntDictPdFilter, test_exceed_range_compare_filter)
     int64_t res_arr_ge[5] = {2, 2, 1, 0, 0};
     integer_type_filter_normal_check(true, ObWhiteFilterOperatorType::WHITE_OP_GE, 5, 1, res_arr_ge);
   }
-  LOG_INFO(">>>>>>>>>>FINISH PD FILTER<<<<<<<<<<<");
+
 }
 
 //
@@ -601,7 +601,7 @@ TEST_F(TestIntDictPdFilter, test_singed_and_unsigned_compare_filter)
     int64_t res_arr_ge[4] = {2, 2, 1, 0};
     integer_type_filter_normal_check(true, ObWhiteFilterOperatorType::WHITE_OP_GE, 4, 1, res_arr_ge);
   }
-  LOG_INFO(">>>>>>>>>>FINISH PD FILTER<<<<<<<<<<<");
+
 
   col_offset = 2;
   // check LT/LE/GT/GE
@@ -620,7 +620,7 @@ TEST_F(TestIntDictPdFilter, test_singed_and_unsigned_compare_filter)
     integer_type_filter_normal_check(true, ObWhiteFilterOperatorType::WHITE_OP_GE, 4, 1, res_arr_ge);
   }
 
-  LOG_INFO(">>>>>>>>>>FINISH PD FILTER<<<<<<<<<<<");
+
 }
 
 }

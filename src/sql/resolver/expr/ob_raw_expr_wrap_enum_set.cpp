@@ -115,7 +115,7 @@ int ObRawExprWrapEnumSet::wrap_sub_select(ObInsertStmt &stmt)
         conv_expr->get_param_expr(4) = wrapped_expr;
       }
     }
-    LOG_DEBUG("finish wrap_sub_select", K(i), KPC(conv_expr));
+
   }
   return ret;
 }
@@ -452,7 +452,7 @@ bool ObRawExprWrapEnumSet::can_wrap_type_to_str(const ObRawExpr &expr) const
       }
     }
   }
-  LOG_TRACE("succeed to check can wrap type to str", K(bret), K(expr));
+
   return bret;
 }
 
@@ -461,7 +461,7 @@ int ObRawExprWrapEnumSet::visit(ObSysFunRawExpr &expr)
   int ret = OB_SUCCESS;
   if (can_wrap_type_to_str(expr)) {
     if (T_FUN_SYS_NULLIF == expr.get_expr_type()) {
-      LOG_TRACE("wrap nullif expr", K(expr));
+
       if (OB_FAIL(wrap_nullif_expr(expr))) {
         LOG_WARN("failed to wrap nullif expr", K(ret));
       }

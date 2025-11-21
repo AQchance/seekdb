@@ -38,37 +38,37 @@ int ObWeakReadService::init(const rpc::frame::ObReqTransport *transport)
     LOG_WARN("init tenant map fail", KR(ret));
   } else {
     inited_ = true;
-    LOG_INFO("[WRS] weak read service init succ");
+
   }
   return ret;
 }
 
 void ObWeakReadService::destroy()
 {
-  LOG_INFO("[WRS] weak read service begin destroy");
+
   if (inited_) {
     stop();
     wait();
     inited_ = false;
   }
-  LOG_INFO("[WRS] weak read service destroy succ");
+
 }
 
 int ObWeakReadService::start()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("[WRS] weak read service thread start");
+
   return ret;
 }
 
 void ObWeakReadService::stop()
 {
-  LOG_INFO("[WRS] weak read service thread stop");
+
 }
 
 void ObWeakReadService::wait()
 {
-  LOG_INFO("[WRS] weak read service thread wait");
+
 }
 
 int ObWeakReadService::get_server_version(const uint64_t tenant_id, SCN &version) const
@@ -94,7 +94,7 @@ int ObWeakReadService::get_server_version(const uint64_t tenant_id, SCN &version
     LOG_WARN("get server version succ, but version is not valid snapshot version", K(ret), K(old_ret),
         K(tenant_id), K(version));
   }
-  LOG_DEBUG("[WRS] get_server_version", K(ret), K(tenant_id), K(version));
+
 
   return ret;
 }
@@ -124,7 +124,7 @@ int ObWeakReadService::get_cluster_version(const uint64_t tenant_id, SCN &versio
     LOG_ERROR("get cluster version succ, but version is not valid snapshot version", K(ret), K(old_ret),
         K(tenant_id), K(version));
   }
-  LOG_INFO("[WRS] get_cluster_version", K(ret), K(tenant_id), K(version));
+
 
   return ret;
 }

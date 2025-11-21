@@ -98,7 +98,7 @@ int ObChunkDatumStore::StoredRow::assign(const StoredRow *sr)
                   this,
                   *(const char **)&src_cells[i].ptr_, sr, 0);
   }
-  LOG_DEBUG("trace unswizzling", K(ret), K(this));
+
   return ret;
 }
 
@@ -114,7 +114,7 @@ int ObChunkDatumStore::StoredRow::set_null(int64_t nth_col)
       len = cells()[i].len_;
       if (0 < len) {
         move_len = row_size_ - (reinterpret_cast<const char *>(cells()[i].ptr_) - reinterpret_cast<const char *>(payload_)) - len;
-        LOG_DEBUG("chunk store mem move", K(move_len));
+
         if (0 < move_len) {
           MEMMOVE(const_cast<char *>(cells()[i].ptr_),
                 const_cast<char *>(cells()[i].ptr_) + len,
@@ -129,7 +129,7 @@ int ObChunkDatumStore::StoredRow::set_null(int64_t nth_col)
     }
   }
   row_size_ -= len;
-  LOG_DEBUG("trace unswizzling", K(ret), K(this));
+
   return ret;
 }
 
@@ -139,7 +139,7 @@ void ObChunkDatumStore::StoredRow::unswizzling(char *base/*= NULL*/)
     base = (char *)this;
   }
   unswizzling_datum(cells(), cnt_, base);
-  LOG_DEBUG("trace unswizzling", K(this));
+
 }
 
 void ObChunkDatumStore::StoredRow::unswizzling_datum(ObDatum *datum, uint32_t cnt, char *base)
@@ -323,7 +323,7 @@ int ObChunkDatumStore::BlockBufferWrap::append_row(
             K(max_size));
         }
       } else {
-        LOG_DEBUG("succ to copy_datums", K(sr->cnt_), K(i), K(max_size), K(pos));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -615,7 +615,7 @@ void ObChunkDatumStore::reset()
     if (OB_FAIL(FILE_MANAGER_INSTANCE_WITH_MTL_SWITCH.remove(tenant_id_, io_.fd_))) {
       LOG_WARN("remove file failed", K(ret), K_(io_.fd));
     } else {
-      LOG_INFO("close file success", K(ret), K_(io_.fd));
+
     }
     io_.fd_ = -1;
   }
@@ -656,7 +656,7 @@ void ObChunkDatumStore::reset()
     batch_ctx_ = NULL;
   }
 
-  LOG_DEBUG("mem usage after free", K(mem_hold_), K(mem_used_), K(blocks_.get_size()));
+
   mem_hold_ = 0;
   mem_used_ = mem_hold_;
   max_blk_size_ = default_block_size_;
@@ -694,7 +694,7 @@ void *ObChunkDatumStore::alloc_blk_mem(const int64_t size, const bool for_iterat
 void ObChunkDatumStore::free_blk_mem(void *mem, const int64_t size /* = 0 */)
 {
   if (NULL != mem) {
-    LOG_DEBUG("free blk memory", K(size), KP(mem));
+
     allocator_->free(mem);
     mem_hold_ -= size;
     if (nullptr != callback_) {
@@ -726,13 +726,13 @@ bool ObChunkDatumStore::shrink_block(int64_t size)
   bool succ = false;
   int ret = OB_SUCCESS;
   if ((0 == blocks_.get_size() && 0 == free_list_.get_size()) || 0 == size) {
-    LOG_DEBUG("RowStore no need to shrink", K(size), K(blocks_.get_size()));
+
   } else {
     Block* item = free_list_.remove_first();
     //free those blocks haven't been used yet
     while (NULL != item) {
       freed_size += item->get_buffer()->mem_size();
-      LOG_DEBUG("RowStore shrink free empty", K(size), K(freed_size), K_(item->blk_size));
+
       free_block(item);
       item = free_list_.remove_first();
     }
@@ -753,7 +753,7 @@ bool ObChunkDatumStore::shrink_block(int64_t size)
     }
     free_tmp_dump_blk();
   }
-  LOG_DEBUG("RowStore shrink_block", K(ret), K(freed_size), K(size));
+
   if (freed_size >= size) {
     succ = true;
   }
@@ -870,7 +870,7 @@ int ObChunkDatumStore::dump(bool reuse, bool all_dump, int64_t dumped_size)
   BlockBuffer* buf = NULL;
   if (!enable_dump_) {
     ret = OB_EXCEED_MEM_LIMIT;
-    LOG_DEBUG("ChunkRowStore exceed mem limit and dump is disabled");
+
   // } else if (OB_FAIL(blocks_.prefetch())) {
   //   LOG_WARN("failed to prefetch", K(ret));
   } else {
@@ -888,7 +888,7 @@ int ObChunkDatumStore::dump(bool reuse, bool all_dump, int64_t dumped_size)
       } else {
         buf = cur->get_buffer();
         int64_t tmp_size = buf->mem_size();
-        LOG_DEBUG("dumping", K(cur), K(*cur), K(*buf));
+
         if (buf->is_empty() || OB_FAIL(dump_one_block(buf))) {
           LOG_WARN("failed to dump block", K(ret));
         }
@@ -923,7 +923,7 @@ int ObChunkDatumStore::dump(bool reuse, bool all_dump, int64_t dumped_size)
         has_dumped_ = (org_n_block != blocks_.get_size());
       }
     }
-    LOG_DEBUG("dumped block", K(n_block), K(org_n_block), K(blocks_.get_size()));
+
   }
   return ret;
 }
@@ -936,14 +936,14 @@ bool ObChunkDatumStore::find_block_can_hold(const int64_t size, bool &need_shrin
     found = true;
   } else if (free_list_.get_size() > 0 && default_block_size_ >= size) {
     Block* next = free_list_.remove_first();
-    LOG_DEBUG("reuse block", K(next), K(*next), K(next->get_buffer()), K(*next->get_buffer()));
+
     found = true;
     use_block(next);
     blocks_.add_last(next);
     n_blocks_++;
   } else if (mem_limit_ > 0 && mem_hold_ > mem_used_ && mem_hold_ + size > mem_limit_) {
     need_shrink = true;
-    LOG_DEBUG("RowStore need shrink", K(size), K(mem_hold_));
+
   }
   return found;
 }
@@ -962,14 +962,14 @@ int ObChunkDatumStore::switch_block(const int64_t min_size)
       LOG_WARN("got error when dump blocks", K(ret));
     }
   } else {
-    LOG_DEBUG("RowStore switch block", K(min_size));
+
     Block *new_block = NULL;
     bool need_shrink = false;
     bool can_find = find_block_can_hold(min_size, need_shrink);
-    LOG_DEBUG("RowStore switch block", K(can_find), K(need_shrink), K(min_size));
+
     if (need_shrink) {
       if (shrink_block(min_size)) {
-        LOG_DEBUG("RowStore shrink succ", K(min_size));
+
       }
     }
     if (!can_find) { // need alloc new block
@@ -1563,7 +1563,7 @@ int ObChunkDatumStore::finish_add_row(bool need_dump)
       }
     }
   } else {
-    LOG_DEBUG("finish_add_row no need to dump", K(ret));
+
   }
   return ret;
 }
@@ -1631,7 +1631,7 @@ int ObChunkDatumStore::append_block(char *buf, int size,  bool need_swizzling)
     } else if (OB_FAIL(add_block(new_block, need_swizzling, &added))) {
       LOG_WARN("fail to add block", K(ret));
     } else {
-      LOG_TRACE("trace append block", K(src_block->rows_), K(size), K(mem_used_), K(mem_hold_));
+
     }
     if (OB_FAIL(ret) && !added) {
       free_blk_mem(new_block, block_buffer->mem_size());
@@ -1674,7 +1674,7 @@ int ObChunkDatumStore::append_block_payload(char *payload, int size, int rows, b
     } else if (OB_FAIL(add_block(new_block, need_swizzling, &added))) {
       LOG_WARN("fail to add block", K(ret));
     } else {
-      LOG_TRACE("trace append block", K(rows), K(size), K(mem_used_), K(mem_hold_));
+
     }
     if (OB_FAIL(ret) && !added) {
       free_blk_mem(new_block, block_buffer->mem_size());
@@ -2010,7 +2010,7 @@ int ObChunkDatumStore::write_file(void *buf, int64_t size)
         file_size_ = 0;
         io_.io_desc_.set_wait_event(ObWaitEventIds::ROW_STORE_DISK_WRITE);
         io_.io_timeout_ms_ = timeout_ms;
-        LOG_INFO("open file success", K_(io_.fd), K_(io_.dir_id));
+
       }
     }
     ret = OB_E(EventTable::EN_8) ret;

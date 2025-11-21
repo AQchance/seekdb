@@ -310,7 +310,7 @@ int ObRemoteBaseExecuteP<T>::sync_send_result(ObExecContext &exec_ctx,
             }
           }
         } else {
-          LOG_DEBUG("scanner add row", K(ret));
+
           last_row_used = true;
           total_row_cnt++;
         }
@@ -535,7 +535,7 @@ bool ObRemoteBaseExecuteP<T>::query_can_retry_in_remote(int &last_err,
           LOG_WARN_RET(err, "cehck execute status failed", K(err), K(last_err), K(bret));
           err = last_err; // return real value
         } else {
-          LOG_INFO("query retry in remote", K(retry_times), K(last_err));
+
           ++retry_times;
           int64_t base_sleep_us = 1000;
           ob_throttle_usleep(base_sleep_us * retry_times, err);
@@ -967,7 +967,7 @@ int ObRpcRemoteExecuteP::process()
     LOG_WARN("get schema version from schema_guard failed", K(ret));
   } else {
     enable_sql_audit = enable_sql_audit && session->get_local_ob_enable_sql_audit();
-    LOG_DEBUG("des_plan", K(task.get_des_phy_plan()));
+
   }
 
 

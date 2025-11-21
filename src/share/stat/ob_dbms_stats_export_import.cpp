@@ -499,7 +499,7 @@ int ObDbmsStatsExportImport::do_execute_sql(ObExecContext &ctx,
   } else if (OB_FAIL(sql_proxy->write(tenant_id, raw_sql.ptr(), affected_rows))) {
     LOG_WARN("fail to exec sql", K(raw_sql), K(ret));
   } else {
-    LOG_TRACE("Succeed to do execute sql", K(raw_sql));
+
   }
   return ret;
 }
@@ -1506,7 +1506,7 @@ int ObDbmsStatsExportImport::convert_bin_hex_text_to_obj(ObIAllocator &allocator
   } else if (OB_FAIL(ObOptStatSqlService::hex_str_to_obj(str.ptr(), str.length(), allocator, dst_obj))) {
     LOG_WARN("deserialize object value failed.", K(stat), K(ret));
   } else {
-    LOG_TRACE("Succeed to convert bin test str to obj", K(src_obj), K(str), K(dst_obj));
+
   }
   return ret;
 }

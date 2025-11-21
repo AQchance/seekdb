@@ -693,7 +693,7 @@ int main(int argc, char **argv)
   system("rm -rf test_simple_tx_commit.log*");
   OB_LOGGER.set_file_name("test_simple_tx_commit.log");
   OB_LOGGER.set_log_level("INFO");
-  STORAGE_LOG(INFO, "begin unittest: test simple mock ob tx ctx");
+
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

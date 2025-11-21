@@ -194,7 +194,7 @@ int ObConstEncoder::store_meta_without_dict(ObBufferWriter &buf_writer)
         }
       }
     }
-    LOG_DEBUG("const meta header", K_(column_index), K_(*const_meta_header));
+
   }
   return ret;
 }
@@ -356,7 +356,7 @@ int ObConstEncoder::store_meta(ObBufferWriter &buf_writer)
         }
       }
     }
-    LOG_DEBUG("test const meta header", K_(column_index), K_(*const_meta_header));
+
   }
   return ret;
 }

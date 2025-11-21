@@ -85,7 +85,7 @@ int ObHTableRowkeyMgr::register_rowkey_queue(const share::ObLSID &ls_id, HRowkey
   if (OB_FAIL(rowkey_queue_map_.set_refactored(ls_id, &queue))) {
     LOG_WARN("fail to insert rowkey queue into map", K(ret), K(ls_id));
   } else {
-    LOG_INFO("register htable rowkey queue in queue map", K(ret), K(ls_id));
+
   }
   return ret;
 }
@@ -104,7 +104,7 @@ int ObHTableRowkeyMgr::unregister_rowkey_queue(const share::ObLSID &ls_id, HRowk
       LOG_WARN("fail to delete rowkey queue from map", K(ret), K(ls_id));
     }
   } else if (is_erased) {
-    LOG_INFO("unregister htable rowkey queue in queue map", K(ret), K(ls_id));
+
   }
   return ret;
 }

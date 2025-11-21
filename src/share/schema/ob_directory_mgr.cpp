@@ -198,7 +198,7 @@ int ObDirectoryMgr::del_directory(const ObTenantDirectoryId &id)
     if (OB_ENTRY_NOT_EXIST == ret) {
       // if item does not exist, regard it as succeeded, schema will be refreshed later
       ret = OB_SUCCESS;
-      LOG_INFO("failed to remove directory schema, item may not exist", K(ret));
+
     } else {
       LOG_WARN("failed to remove directory schema", K(ret));
     }

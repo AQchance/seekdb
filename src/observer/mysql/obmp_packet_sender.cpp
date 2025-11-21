@@ -274,7 +274,7 @@ int ObMPPacketSender::response_compose_packet(obmysql::ObMySQLPacket &pkt,
                                        proto20_context_.is_proto20_used()))) {
       LOG_WARN("failed to encode packet", K(ret));
     } else {
-      LOG_DEBUG("succ encode packet", K(okp), K(seri_size));
+
       seq_ = okp.get_seq(); // here will point next avail seq
       EVENT_INC(MYSQL_PACKET_OUT);
       EVENT_ADD(MYSQL_PACKET_OUT_BYTES, seri_size);
@@ -285,7 +285,7 @@ int ObMPPacketSender::response_compose_packet(obmysql::ObMySQLPacket &pkt,
 
 int ObMPPacketSender::response_packet(obmysql::ObMySQLPacket &pkt, sql::ObSQLSessionInfo* session)
 {
-  LOG_DEBUG("response-packet", K(proto20_context_.is_proto20_used_), K(lbt()));
+
   int ret = OB_SUCCESS;
   extra_info_kvs_.reset();
   extra_info_ecds_.reset();
@@ -346,7 +346,7 @@ int ObMPPacketSender::response_packet(obmysql::ObMySQLPacket &pkt, sql::ObSQLSes
                                 0))) {
       LOG_WARN("failed to encode packet", K(ret));
     } else {
-      LOG_DEBUG("succ encode packet", K(pkt), K(seri_size));
+
       seq_ = pkt.get_seq(); // here will point next avail seq
       EVENT_INC(MYSQL_PACKET_OUT);
       EVENT_ADD(MYSQL_PACKET_OUT_BYTES, seri_size);
@@ -527,7 +527,7 @@ int ObMPPacketSender::send_error_packet(int err,
         if (OB_FAIL(ObSqlTransControl::rollback_trans(session, need_disconnect))) {
           LOG_WARN("rollback autocommit trans failed", K(ret), K(need_disconnect));
         } else {
-          LOG_INFO("rollback autocommit trans succeed", K(trans_id));
+
         }
       }
     }
@@ -540,7 +540,7 @@ int ObMPPacketSender::send_error_packet(int err,
     if (OB_FAIL(ret)) {
       disconnect();
     } else if (!conn_->need_send_extra_ok_packet()) {
-      LOG_TRACE("not need extra ok packet", K(ret), K(epacket.get_sql_state()), K(epacket.get_message()));
+
       comp_context_.update_last_pkt_pos(ez_buf_->last);
       if (OB_FAIL(response_packet(epacket, session))) {
         RPC_LOG(WARN, "failed to send error packet", K(epacket), K(ret));
@@ -550,7 +550,7 @@ int ObMPPacketSender::send_error_packet(int err,
       }
     } else if (conn_->need_send_extra_ok_packet()) {
       if (conn_->is_in_authed_phase()) {
-        LOG_TRACE("need extra ok packet", K(ret), K(epacket.get_sql_state()), K(epacket.get_message()));
+
         if (!has_pl() && NULL == session) {
           if (OB_FAIL(get_session(session))) {
             LOG_WARN("fail to get session", K(ret));
@@ -627,7 +627,7 @@ int ObMPPacketSender::get_session(ObSQLSessionInfo *&sess_info)
 int ObMPPacketSender::send_ok_packet(ObSQLSessionInfo &session, ObOKPParam &ok_param, obmysql::ObMySQLPacket* pkt)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("send-ok-packet", K(lbt()));
+
   ObSQLSessionInfo::LockGuard lock_guard(session.get_query_lock());
   OMPKOK okp;
   if (!conn_valid_ || OB_ISNULL(conn_)) {
@@ -1183,7 +1183,7 @@ int ObMPPacketSender::update_transmission_checksum_flag(const ObSQLSessionInfo &
     bool is_enable_checksum = false;
     if (OB_FAIL(session.is_use_transmission_checksum(is_enable_checksum))) {
       if (OB_ERR_SYS_VARIABLE_UNKNOWN == ret || OB_SYS_VARS_MAYBE_DIFF_VERSION == ret) {
-        LOG_INFO("is enable checksum system variable maby from diff version");
+
         ret = OB_SUCCESS;
       } else {
         LOG_WARN("is use transmission checksum failed", K(ret));
@@ -1244,7 +1244,7 @@ int ObMPPacketSender::init_read_handle()
     ret = OB_INVALID_ARGUMENT;
   } else {
     ret = SQL_REQ_OP.create_read_handle(req_, read_handle_);
-    LOG_DEBUG("create read handle", KP(req_), KP_(read_handle));
+
   }
   return ret;
 }
@@ -1253,7 +1253,7 @@ int ObMPPacketSender::release_read_handle()
 {
   int ret = OB_SUCCESS;
   if (OB_NOT_NULL(read_handle_)) {
-    LOG_DEBUG("release read handle", KP(req_), KP_(read_handle));
+
     ret = SQL_REQ_OP.release_read_handle(req_, read_handle_);
     read_handle_ = NULL;
   }

@@ -79,7 +79,7 @@ TEST_F(ObMultipleMergeTest, test_sort_sstables_overlap)
     if (OB_ISNULL(cur_table)
         || OB_ISNULL(last_table)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "cur_table or last_table is NULL", K(ret), KP(cur_table), KP(last_table));
+
     } else if (OB_UNLIKELY(last_table->get_base_version() > cur_table->get_snapshot_version())) {
 
       ret = OB_ERR_SYS;

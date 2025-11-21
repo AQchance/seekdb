@@ -88,7 +88,7 @@ int ObTenantWeakReadClusterService::init(const uint64_t tenant_id,
     cluster_version_mgr_.reset(tenant_id);
     inited_ = true;
     ISTAT("init succ", K(tenant_id), K_(cluster_service_tablet_id));
-    LOG_INFO("init TenantWeakReadClusterService succeed", K(tenant_id), K_(cluster_service_tablet_id));
+
   }
   return ret;
 }
@@ -356,7 +356,7 @@ int ObTenantWeakReadClusterService::start_service()
 
   ISTAT("begin start service", K(tenant_id), K(is_in_service()), K_(can_update_version));
 
-  LOG_INFO("start TenantWeakReadClusterService", K(tenant_id));
+
   // write lock
   WLockGuard guard(rwlock_);
 
@@ -452,7 +452,7 @@ int ObTenantWeakReadClusterService::start_service()
 
 void ObTenantWeakReadClusterService::stop_service()
 {
-  LOG_INFO("stop TenantWeakReadClusterService", "tenant_id", MTL_ID());
+
   // write lock
   WLockGuard guard(rwlock_);
 
@@ -464,7 +464,7 @@ void ObTenantWeakReadClusterService::stop_service()
 int ObTenantWeakReadClusterService::stop_service_if_leader_info_match(const int64_t target_leader_epoch)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("stop TenantWeakReadClusterService", "tenant_id", MTL_ID());
+
   // write lock
   WLockGuard guard(rwlock_);
 
@@ -793,7 +793,7 @@ void ObTenantWeakReadClusterService::self_check()
     if (need_change_leader) {
       if (OB_FAIL(force_change_leader_())) {
         if (OB_ENTRY_NOT_EXIST == ret) {
-          LOG_INFO("not find appropriate server to change leader", KR(ret), K(tenant_id));
+
         } else {
           LOG_WARN("weak read service force CHANGE LEADER failed", KR(ret), K(tenant_id));
         }

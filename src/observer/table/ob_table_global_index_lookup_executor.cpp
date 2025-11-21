@@ -157,7 +157,7 @@ int ObTableGlobalIndexLookupExecutor::process_data_table_rowkey()
     } else {
       scan_param.is_get_ = true;
     }
-    LOG_DEBUG("process data table rowkey: ", K(scan_param.key_ranges_), K(tablet_id));
+
   }
   return ret;
 }
@@ -196,7 +196,7 @@ int ObTableGlobalIndexLookupExecutor::build_data_table_range(common::ObNewRange 
     if (OB_FAIL(lookup_range.build_range(ref_table_id, table_rowkey))) {
       LOG_WARN("build lookup range failed", K(ret), K(ref_table_id), K(table_rowkey));
     }
-    LOG_DEBUG("build data table range", K(ret), K(table_rowkey), K(lookup_range));
+
   }
   return ret;
 }
@@ -219,7 +219,7 @@ int ObTableGlobalIndexLookupExecutor::get_next_row_from_data_table()
   bool got_row = false;
   if (OB_UNLIKELY(lookup_result_.is_end())) {
     ret = OB_ITER_END;
-    LOG_DEBUG("lookup task is empty", K(ret));
+
   }
   do_clear_evaluated_flag();
   while (OB_SUCC(ret) && !got_row) {
@@ -238,7 +238,7 @@ int ObTableGlobalIndexLookupExecutor::get_next_row_from_data_table()
       LOG_WARN("fail to check row filtered", K(ret));
     } else if (filter) {
       lookup_row_cnt_++;
-      LOG_DEBUG("the row is filtered", K(ret), K(lookup_row_cnt_), K(lookup_rowkey_cnt_));
+
     } else {
       got_row = true;
     }

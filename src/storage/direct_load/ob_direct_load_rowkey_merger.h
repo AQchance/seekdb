@@ -73,10 +73,10 @@ bool ObDirectLoadRowkeyMerger<Rowkey, Compare>::HeapCompare::operator()(const He
   bool bret = false;
   if (OB_ISNULL(compare_)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), KP(compare_));
+
   } else if (OB_ISNULL(lhs.item_) || OB_ISNULL(rhs.item_)) {
     ret = common::OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "invalid compare items", KR(ret), KP(lhs.item_), KP(rhs.item_));
+
   } else {
     bret = !compare_->operator()(lhs.item_, rhs.item_);
   }
@@ -103,17 +103,17 @@ int ObDirectLoadRowkeyMerger<Rowkey, Compare>::init(const common::ObIArray<Rowke
   int ret = common::OB_SUCCESS;
   if (IS_INIT) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObDirectLoadMacroBlockEndRowkeyMerger init twice", KR(ret), KP(this));
+
   } else if (OB_UNLIKELY(OB_ISNULL(compare) || step <= 0)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", KR(ret), K(iters.count()), KP(compare), K(step));
+
   } else {
     compare_.compare_ = compare;
     step_ = step;
     if (OB_FAIL(iters_.assign(iters))) {
-      STORAGE_LOG(WARN, "fail to assign iters", KR(ret));
+
     } else if (iters_.count() > 1 && OB_FAIL(build_heap())) {
-      STORAGE_LOG(WARN, "fail to build heap", KR(ret));
+
     } else {
       is_inited_ = true;
     }
@@ -127,7 +127,7 @@ int ObDirectLoadRowkeyMerger<Rowkey, Compare>::get_next_rowkey(const Rowkey *&ro
   int ret = common::OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObDirectLoadRowkeyMerger not init", KR(ret), KP(this));
+
   } else if (0 == iters_.count()) {
     ret = OB_ITER_END;
   } else {
@@ -137,13 +137,13 @@ int ObDirectLoadRowkeyMerger<Rowkey, Compare>::get_next_rowkey(const Rowkey *&ro
       if (1 == iters_.count()) {
         if (OB_FAIL(direct_get_next_rowkey(rowkey))) {
           if (OB_UNLIKELY(common::OB_ITER_END != ret)) {
-            STORAGE_LOG(WARN, "fail to direct get next rowkey", KR(ret));
+
           }
         }
       } else {
         if (OB_FAIL(heap_get_next_rowkey(rowkey))) {
           if (OB_UNLIKELY(common::OB_ITER_END != ret)) {
-            STORAGE_LOG(WARN, "fail to heap get next rowkey", KR(ret));
+
           }
         }
       }
@@ -158,7 +158,7 @@ int ObDirectLoadRowkeyMerger<Rowkey, Compare>::direct_get_next_rowkey(const Rowk
   int ret = common::OB_SUCCESS;
   if (OB_UNLIKELY(1 != iters_.count())) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K(iters_.count()));
+
   } else {
     ret = iters_.at(0)->get_next_rowkey(rowkey);
   }
@@ -171,27 +171,27 @@ int ObDirectLoadRowkeyMerger<Rowkey, Compare>::build_heap()
   int ret = common::OB_SUCCESS;
   if (OB_UNLIKELY(iters_.count() <= 1)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K(iters_.count()));
+
   } else {
     const Rowkey *rowkey = nullptr;
     HeapItem heap_item;
     for (int64_t i = 0; OB_SUCC(ret) && i < iters_.count(); ++i) {
       if (OB_FAIL(iters_.at(i)->get_next_rowkey(rowkey))) {
         if (OB_UNLIKELY(common::OB_ITER_END != ret)) {
-          STORAGE_LOG(WARN, "fail to get next item", KR(ret), K(i));
+
         } else {
           ret = common::OB_SUCCESS;
         }
       } else if (OB_ISNULL(rowkey)) {
         ret = common::OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "invalid rowkey", KR(ret), KP(rowkey));
+
       } else {
         heap_item.item_ = rowkey;
         heap_item.idx_ = i;
         if (OB_FAIL(heap_.push(heap_item))) {
-          STORAGE_LOG(WARN, "fail to push heap", KR(ret), K(i));
+
         } else if (OB_FAIL(compare_.get_error_code())) {
-          STORAGE_LOG(WARN, "fail to compare items", KR(ret));
+
         }
       }
     }
@@ -205,33 +205,33 @@ int ObDirectLoadRowkeyMerger<Rowkey, Compare>::heap_get_next_rowkey(const Rowkey
   int ret = common::OB_SUCCESS;
   if (OB_UNLIKELY(iters_.count() <= 1)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K(iters_.count()));
+
   } else if (last_iter_idx_ >= 0 && last_iter_idx_ < iters_.count()) {
     RowkeyIterator *iter = iters_.at(last_iter_idx_);
     HeapItem heap_item;
     heap_item.idx_ = last_iter_idx_;
     if (OB_FAIL(iter->get_next_rowkey(heap_item.item_))) {
       if (OB_UNLIKELY(common::OB_ITER_END != ret)) {
-        STORAGE_LOG(WARN, "fail to get next rowkey", KR(ret));
+
       } else {
         if (OB_FAIL(heap_.pop())) {
-          STORAGE_LOG(WARN, "fail to pop heap item", KR(ret));
+
         } else if (OB_FAIL(compare_.get_error_code())) {
-          STORAGE_LOG(WARN, "fail to compare items", KR(ret));
+
         } else {
-          STORAGE_LOG(DEBUG, "pop a heap item");
+
         }
       }
     } else if (OB_ISNULL(heap_item.item_)) {
       ret = common::OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "invalid item", KR(ret), KP(heap_item.item_));
+
     } else {
       if (OB_FAIL(heap_.replace_top(heap_item))) {
-        STORAGE_LOG(WARN, "fail to replace heap top", KR(ret));
+
       } else if (OB_FAIL(compare_.get_error_code())) {
-        STORAGE_LOG(WARN, "fail to compare items", KR(ret));
+
       } else {
-        STORAGE_LOG(DEBUG, "replace heap item", K(*heap_item.item_), K(last_iter_idx_));
+
       }
     }
     last_iter_idx_ = -1;
@@ -244,12 +244,12 @@ int ObDirectLoadRowkeyMerger<Rowkey, Compare>::heap_get_next_rowkey(const Rowkey
   if (OB_SUCC(ret)) {
     const HeapItem *head_item = nullptr;
     if (OB_FAIL(heap_.top(head_item))) {
-      STORAGE_LOG(WARN, "fail to get heap top item", KR(ret));
+
     } else if (OB_FAIL(compare_.get_error_code())) {
-      STORAGE_LOG(WARN, "fail to compare items", KR(ret));
+
     } else if (OB_ISNULL(head_item) || OB_ISNULL(head_item->item_)) {
       ret = common::OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "invalid heap item", KR(ret), KP(head_item));
+
     } else {
       rowkey = head_item->item_;
       last_iter_idx_ = head_item->idx_;

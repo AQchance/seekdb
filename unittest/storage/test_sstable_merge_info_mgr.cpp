@@ -256,7 +256,7 @@ TEST_F(TestSSTableMergeInfoMgr, resize)
   int64_t minor_item_cnt_after_purge = MIN(after_purge_minor_pool_size / sizeof(ObSSTableMergeHistory), max_cnt);
   int64_t major_item_cnt_after_purge = MIN(after_purge_major_pool_size / sizeof(ObSSTableMergeHistory), max_cnt);
   ASSERT_EQ(OB_SUCCESS, ret);
-  STORAGE_LOG(INFO, "print item cnt", K(minor_item_cnt_after_purge), K(major_item_cnt_after_purge));
+
   ASSERT_EQ(minor_item_cnt_after_purge + major_item_cnt_after_purge, MTL(ObTenantSSTableMergeInfoMgr*)->size());
   int64_t read_idx = 0;
   // read major merge info from {max_cnt-major_item_cnt_after_purge..max_cnt}

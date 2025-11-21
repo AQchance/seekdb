@@ -230,10 +230,10 @@ OB_INLINE int ObRowBuffer::extend_buf()
   void *buf = nullptr;
   if (buf_size_ >= MAX_ROW_BUFFER_SIZE) {
     ret = OB_BUF_NOT_ENOUGH;
-    STORAGE_LOG(WARN, "Failed to extend row buf", K(ret), K(*this));
+
   } else if (OB_ISNULL(buf_ = reinterpret_cast<char *>(common::ob_malloc(MAX_ROW_BUFFER_SIZE, ObMemAttr(MTL_ID(), "ObRowBuffer"))))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "Failed to alloc memory for row buffer", K(ret));
+
     reset();
   } else {
     buf_size_ = MAX_ROW_BUFFER_SIZE;

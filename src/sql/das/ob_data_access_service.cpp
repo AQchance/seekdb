@@ -233,7 +233,7 @@ int ObDataAccessService::retry_das_task(ObDASRef &das_ref, ObIDASTaskOp &task_op
         // disable das retry for rescan.
         need_retry = false;
         retry_continue = false;
-        LOG_INFO("[DAS RETRY] The rescan task has retried too many times and has exited the DAS retry process");
+
       }
       if (need_retry) {
         task_op.in_part_retry_ = true;
@@ -247,7 +247,7 @@ int ObDataAccessService::retry_das_task(ObDASRef &das_ref, ObIDASTaskOp &task_op
         } else if (OB_FAIL(refresh_task_location_info(das_ref, task_op))) {
           LOG_WARN("refresh task location failed", K(ret));
         } else {
-          LOG_INFO("[DAS RETRY] Start retrying the DAS task now", KPC(task_op.get_tablet_loc()));
+
           das_task_wrapper.reuse();
           task_op.set_task_status(ObDasTaskStatus::UNSTART);
           if (OB_FAIL(das_task_wrapper.push_back_task(&task_op))) {
@@ -279,7 +279,7 @@ int ObDataAccessService::retry_das_task(ObDASRef &das_ref, ObIDASTaskOp &task_op
         }
         if (retry_continue && IS_INTERRUPTED()) {
           retry_continue = false;
-          LOG_INFO("[DAS RETRY] Retry is interrupted by worker interrupt signal", KR(ret));
+
         }
         GET_DIAGNOSTIC_INFO->get_ash_stat().stop_das_retry_wait_event();
       } else {
@@ -340,7 +340,7 @@ int ObDataAccessService::do_local_das_task(ObIArray<ObIDASTaskOp*> &task_list) {
   int ret = OB_SUCCESS;
   FLTSpanGuard(do_local_das_task);
 
-  LOG_DEBUG("begin to do local das task", K(task_list));
+
   for (int64_t i = 0; OB_SUCC(ret) && i < task_list.count(); i++) {
     if (OB_FAIL(task_list.at(i)->start_das_task())) {
       LOG_WARN("start local das task failed", K(ret));
@@ -478,7 +478,7 @@ int ObDataAccessService::push_parallel_task(ObDASRef &das_ref, ObDasAggregatedTa
   } else if (OB_FAIL(omt->recv_request(MTL_ID(), *task))) {
     LOG_WARN("fail to push parallel_das_task", K(ret), KPC(task));
   } else {
-    LOG_TRACE("push parallel task succeed", K(agg_task));
+
   }
   if (OB_FAIL(ret)) {
     ObDASParallelTaskFactory::free(task);
@@ -504,7 +504,7 @@ int ObDataAccessService::parallel_submit_das_task(ObDASRef &das_ref, ObDasAggreg
   int64_t timeout_ts = session->get_query_timeout_ts();
   int32_t group_id = THIS_WORKER.get_group_id();
   int32_t das_group_id = group_id | das::OB_DAS_PARALLEL_POOL_MARK;
-  LOG_TRACE("print group_id", K(group_id), K(das::OB_DAS_PARALLEL_POOL_MARK), K(das_group_id));
+
   if (agg_task.server_ == ctrl_addr_) {
     // Concurrently submit local das task
     ObDASParallelTask *task = nullptr;
@@ -619,7 +619,7 @@ void ObDataAccessService::set_max_concurrency(int32_t cpu_count)
   } else {
     das_concurrency_limit_ = min(cpu_count / das_concurrent_factor + 1, das_concurrent_upper_limit);
   }
-  LOG_DEBUG("set current tenant's das max concurrency", K_(das_concurrency_limit), K(MTL_ID()));
+
 }
 
 }  // namespace sql

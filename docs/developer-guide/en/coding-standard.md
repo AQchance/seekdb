@@ -1177,7 +1177,7 @@ If an implicit check has been made within the function, for example by a check f
 // where the variable is assigned:
 if (!param.is_valid() || !context.is_valid()) {
      ret = OB_INVALID_ARGUMENT;
-     STORAGE_LOG(WARN, "Invalid argument", K(ret), K(param), K(param));
+
    } else {
      // block_cache_ not empty has been checked in the previous context.is_valid()
      ObMicroBlockCache *block_cache = context.cache_context_.block_cache_;

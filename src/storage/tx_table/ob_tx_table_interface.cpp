@@ -27,7 +27,7 @@ int ObTxTableGuard::init(ObTxTable *tx_table)
 
   if (OB_ISNULL(tx_table)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "tx_data_table is nullptr.");
+
   } else {
     mini_cache_.reset();
     epoch_ = tx_table->get_epoch();
@@ -145,7 +145,7 @@ bool ObTxTableGuard::check_ls_offline()
   if (OB_ISNULL(tx_table_)) {
     ret = OB_NOT_INIT;
     discover_ls_offline = false;
-    STORAGE_LOG(WARN, "tx table is nullptr", K(ret), K(discover_ls_offline));
+
   } else {
     int64_t cur_epoch = tx_table_->get_epoch();
     ObTxTable::TxTableState tx_table_state = tx_table_->get_state();

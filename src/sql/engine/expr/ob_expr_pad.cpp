@@ -78,7 +78,7 @@ int ObExprPad::calc_result_type3(ObExprResType &type,
       padding_str.set_calc_collation_level(type.get_collation_level());
     }
   }
-  LOG_DEBUG("varify calc meta", K(type), K(source.get_calc_meta()), K(padding_str.get_calc_meta()));
+
   return ret;
 }
 

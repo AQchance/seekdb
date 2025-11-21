@@ -89,7 +89,7 @@ int ObCreateTablegroupHelper::check_tablegroup_name_()
     // Raise error here to skip the following steps,
     // ret will be overwrite if if_not_exist_ is true before rpc returns.
     ret = OB_TABLEGROUP_EXIST;
-    LOG_INFO("create tablegroup while tablegroup exists", KR(ret), K(tablegroup_name), K(tablegroup_id));
+
   }
   return ret;
 }

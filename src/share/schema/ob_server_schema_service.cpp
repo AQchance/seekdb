@@ -199,7 +199,7 @@ int ObServerSchemaService::init(ObMySQLProxy *sql_proxy,
     } else if (OB_FAIL(init_tenant_basic_schema(OB_SYS_TENANT_ID))) {
       LOG_WARN("fail to init basic schema for sys", KR(ret));
     } else {
-      LOG_INFO("init schema service", KR(ret));
+
     }
   }
 
@@ -221,7 +221,7 @@ int ObServerSchemaService::destroy_schema_struct(uint64_t tenant_id)
     if (OB_FAIL(refresh_full_schema_map_.set_refactored(tenant_id, refresh_full_schema, overwrite))) {
       LOG_WARN("fail to erase refresh_full_schema_map_", K(ret), K(tenant_id));
     } else {
-      LOG_INFO("reset tenant refresh_full mark", K(ret), K(tenant_id));
+
     }
 
     ObSchemaMgr *schema_mgr = NULL;
@@ -246,7 +246,7 @@ int ObServerSchemaService::destroy_schema_struct(uint64_t tenant_id)
 
     if (OB_FAIL(ret)) {
     } else if (OB_ISNULL(schema_mgr)) {
-      LOG_INFO("schema_mgr_for_cache has been released, just skip", K(ret), K(tenant_id));
+
     } else if (OB_ISNULL(mem_mgr)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("mem_mgr is null", K(ret), K(tenant_id));
@@ -704,7 +704,7 @@ int ObServerSchemaService::get_increment_tenant_keys_reversely(
     // sys variable, for compatible
     if (OB_INVALID_TENANT_ID != schema_mgr.get_tenant_id()
         && schema_operation.tenant_id_ != schema_mgr.tenant_id_) {
-      LOG_INFO("sys variable key not match, just skip", KR(ret), K(schema_operation), "tenant_id", schema_mgr.get_tenant_id());
+
     } else {
       if (OB_SUCC(ret)) {
         const ObSimpleSysVariableSchema *sys_variable = NULL;
@@ -759,7 +759,7 @@ int ObServerSchemaService::get_increment_sys_variable_keys(const ObSchemaMgr &sc
   int ret = OB_SUCCESS;
   if (OB_INVALID_TENANT_ID != schema_mgr.get_tenant_id()
       && schema_operation.tenant_id_ != schema_mgr.tenant_id_) {
-    LOG_INFO("sys variable key not match, just skip", KR(ret), K(schema_operation), "tenant_id", schema_mgr.get_tenant_id());
+
   } else if (!((schema_operation.op_type_ > OB_DDL_TENANT_OPERATION_BEGIN
                 && schema_operation.op_type_ < OB_DDL_TENANT_OPERATION_END)
                || (schema_operation.op_type_ > OB_DDL_SYS_VAR_OPERATION_BEGIN
@@ -2976,7 +2976,7 @@ int ObServerSchemaService::add_tenant_schemas_to_cache(const TenantKeys &tenant_
           LOG_WARN("add tenant schema to cache failed", K(ret),
                    K(tenant_id), K(schema_key->schema_version_));
         } else {
-          LOG_INFO("add tenant schema to cache success", K(ret), K(schema_key));
+
         }
         break;
       }
@@ -3007,7 +3007,7 @@ int ObServerSchemaService::add_sys_variable_schemas_to_cache(
           LOG_WARN("add sys variable schema to cache failed", K(ret),
                    K(tenant_id), K(schema_key->schema_version_));
         } else {
-          LOG_INFO("add sys variable schema to cache success", K(ret), KPC(schema_key));
+
         }
         break;
       }
@@ -3038,7 +3038,7 @@ int ObServerSchemaService::fetch_increment_schemas(
       LOG_WARN("get batch "#SCHEMA"s failed", KR(ret), K(schema_keys));                   \
     } else {                                                                              \
       ALLOW_NEXT_LOG();                                                                   \
-      LOG_INFO("get batch "#SCHEMA"s success", K(schema_keys));                           \
+                           \
       if (schema_keys.size() != simple_schemas.size()) {                                  \
         ret = OB_ERR_UNEXPECTED;                                                          \
         LOG_ERROR("unexpected "#SCHEMA" result cnt",                                      \
@@ -3059,7 +3059,7 @@ int ObServerSchemaService::fetch_increment_schemas(
       LOG_WARN("get batch "#SCHEMA"s failed", KR(ret), K(schema_keys));                   \
     } else {                                                                              \
       ALLOW_NEXT_LOG();                                                                   \
-      LOG_INFO("get batch "#SCHEMA"s success", K(schema_keys));                           \
+                           \
       if (schema_keys.size() != simple_schemas.size()) {                                  \
         ret = OB_ERR_UNEXPECTED;                                                          \
         LOG_ERROR("unexpected "#SCHEMA" result cnt",                                      \
@@ -3080,7 +3080,7 @@ int ObServerSchemaService::fetch_increment_schemas(
       LOG_WARN("get batch "#SCHEMA"s failed", K(ret), K(schema_keys));                    \
     } else {                                                                              \
       ALLOW_NEXT_LOG();                                                                   \
-      LOG_INFO("get batch "#SCHEMA"s success", K(schema_keys));                           \
+                           \
       if (schema_keys.size() != simple_schemas.size()) {                                  \
         ret = OB_ERR_UNEXPECTED;                                                          \
         LOG_ERROR("unexpected "#SCHEMA" result cnt", K(ret), K(schema_version), K(schema_keys.size()), K(simple_schemas.size())); \
@@ -3275,7 +3275,7 @@ int ObServerSchemaService::apply_tenant_schema_to_cache(
         }
       }
       ALLOW_NEXT_LOG();
-      LOG_INFO("del tenants finish", K(schema_keys), K(ret));
+
     }
   }
 
@@ -3351,7 +3351,7 @@ int ObServerSchemaService::apply_##SCHEMA##_schema_to_cache( \
       }                                                                  \
     }                                                                    \
     ALLOW_NEXT_LOG();                                                    \
-    LOG_INFO("del "#SCHEMA"s finish", K(schema_keys), K(ret));           \
+           \
   }                                            \
   if (OB_SUCC(ret)) {                          \
     const ObArray<SCHEMA_TYPE> &schemas = simple_incre_schemas.simple_##SCHEMA##_schemas_;   \
@@ -3360,7 +3360,7 @@ int ObServerSchemaService::apply_##SCHEMA##_schema_to_cache( \
                #SCHEMA" schemas", schemas);                               \
     }                                                                     \
     ALLOW_NEXT_LOG();                                                     \
-    LOG_INFO("add "#SCHEMA"s finish", K(schemas), K(ret));  \
+  \
   }                                                         \
   return ret; \
 }
@@ -3620,7 +3620,7 @@ int ObServerSchemaService::replay_log(
     } else {
       for (int64_t i = 0; OB_SUCC(ret) && i < schema_operations.count(); ++i) {
         const ObSchemaOperation &schema_operation = schema_operations.at(i);
-        LOG_INFO("schema operation", K(schema_operation));
+
         if (schema_operation.op_type_ > OB_DDL_TENANT_OPERATION_BEGIN
             && schema_operation.op_type_ < OB_DDL_TENANT_OPERATION_END) {
           if (OB_FAIL(get_increment_sys_variable_keys(schema_mgr,
@@ -3804,7 +3804,7 @@ int ObServerSchemaService::replay_log_reversely(
   } else {
     for (int64_t i = schema_operations.count() - 1; OB_SUCC(ret) && i >= 0; --i) {
       const ObSchemaOperation &schema_operation = schema_operations.at(i);
-      LOG_INFO("schema operation", K(schema_operation));
+
       if (schema_operation.op_type_ > OB_DDL_TENANT_OPERATION_BEGIN
           && schema_operation.op_type_ < OB_DDL_TENANT_OPERATION_END) {
         if (OB_FAIL(get_increment_tenant_keys_reversely(schema_mgr, schema_operation, schema_keys))) {
@@ -4011,7 +4011,7 @@ int ObServerSchemaService::get_increment_schema_keys_for_data_dict_(
   } else {
     for (int64_t i = 0; OB_SUCC(ret) && i < schema_operations.count(); ++i) {
       const ObSchemaOperation &schema_operation = schema_operations.at(i);
-      LOG_TRACE("schema operation", K(schema_operation));
+
       if (schema_operation.op_type_ > OB_DDL_TENANT_OPERATION_BEGIN
           && schema_operation.op_type_ < OB_DDL_TENANT_OPERATION_END) {
         if (OB_FAIL(get_increment_tenant_keys(
@@ -4675,7 +4675,7 @@ int ObServerSchemaService::init_schema_struct(uint64_t tenant_id)
         } \
       } \
     } else { \
-      LOG_INFO("schema_mgr_for_cache exist", K(ret), K(tenant_id)); \
+ \
     }
 
     INIT_TENANT_MEM_MGR(mem_mgr_map_, tenant_id,
@@ -4693,7 +4693,7 @@ int ObServerSchemaService::init_schema_struct(uint64_t tenant_id)
         LOG_WARN("fail to set refresh full schema flag", K(ret), K(tenant_id));
       }
     } else {
-      LOG_INFO("refresh_full_schema_map exist", K(ret), K(tenant_id));
+
     }
 
     if (OB_FAIL(ret)) {
@@ -4720,7 +4720,7 @@ int ObServerSchemaService::init_schema_struct(uint64_t tenant_id)
         }
       }
     } else {
-      LOG_INFO("schema_mgr exist", K(ret), K(tenant_id));
+
     }
   }
   return ret;
@@ -4877,7 +4877,7 @@ int ObServerSchemaService::refresh_increment_schema(
           if (OB_FAIL(publish_schema(tenant_id))) {
             LOG_WARN("publish_schema failed", KR(ret), K(schema_status));
           } else {
-            LOG_INFO("change schema version", K(schema_status), K(schema_version), K(core_schema_version));
+
             break;
           }
         }

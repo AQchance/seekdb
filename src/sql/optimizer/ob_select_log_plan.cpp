@@ -113,7 +113,7 @@ int ObSelectLogPlan::candi_allocate_group_by()
     LOG_WARN("failed to check group by exprs is unique", K(ret));
   } else if (is_unique) {
     OPT_TRACE("group by expr is unique, no need group by", group_by_exprs);
-    LOG_TRACE("group by expr is unique, no need group by", K(group_by_exprs));
+
     if (!having_normal_exprs.empty() && OB_FAIL(candi_allocate_filter(having_normal_exprs))) {
       LOG_WARN("failed to allocate filter", K(ret));
     } else { /*do nothing*/ }
@@ -218,7 +218,7 @@ int ObSelectLogPlan::get_groupby_rollup_exprs(const ObLogicalOperator *top,
                                                                  group_directions))) {
       LOG_WARN("failed to find stmt expr direction", K (ret));
     } else {
-      LOG_TRACE("succeed to get group by exprs and rollup exprs", K(reduce_exprs), K(group_by_exprs), K(rollup_exprs));
+
     }
   }
   return ret;
@@ -263,7 +263,7 @@ int ObSelectLogPlan::candi_allocate_rollup_group_by(const ObIArray<ObRawExpr*> &
                                                    groupby_plans))) {
       LOG_WARN("failed to create merge rollup plan", K(ret));
     } else if (!groupby_plans.empty()) {
-      LOG_TRACE("succeed to allocate rollup group by using hint", K(groupby_plans.count()), K(groupby_helper));
+
       OPT_TRACE("success to generate rollup group plan with hint");
     } else if (OB_FALSE_IT(groupby_helper.set_ignore_hint())) {
     } else if (groupby_helper.enable_hash_rollup_ && 
@@ -289,7 +289,7 @@ int ObSelectLogPlan::candi_allocate_rollup_group_by(const ObIArray<ObRawExpr*> &
                                                    groupby_plans))) {
       LOG_WARN("failed to create merge rollup plan", K(ret));
     } else if (!groupby_plans.empty()) {
-      LOG_TRACE("succeed to allocate rollup group by without hint", K(groupby_plans.count()), K(groupby_helper));
+
       OPT_TRACE("success to generate rollup group plan without hint");
     } else {
       ret = OB_ERR_UNEXPECTED;
@@ -753,7 +753,7 @@ int ObSelectLogPlan::candi_allocate_normal_group_by(const ObIArray<ObRawExpr*> &
                                                       groupby_plans))) {
       LOG_WARN("failed to allocate group by with hash rollup disabled", K(ret));
     } else if (!groupby_plans.empty()) {
-      LOG_TRACE("succeed to allocate normal group by using hint", K(groupby_plans.count()), K(groupby_helper));
+
       OPT_TRACE("success to generate normal group plan with hint");
     } else if (OB_FALSE_IT(groupby_helper.set_ignore_hint())) {
     } else if (OB_FAIL(candi_allocate_normal_group_by(reduce_exprs, 
@@ -766,7 +766,7 @@ int ObSelectLogPlan::candi_allocate_normal_group_by(const ObIArray<ObRawExpr*> &
                                                       groupby_plans))) {
       LOG_WARN("failed to allocate group by with hash rollup disabled", K(ret));
     } else if (!groupby_plans.empty()) {
-      LOG_TRACE("succeed to allocate normal group by without hint", K(groupby_plans.count()), K(groupby_helper));
+
       OPT_TRACE("success to generate normal group plan without hint");
     } else {
       ret = OB_ERR_UNEXPECTED;
@@ -832,7 +832,7 @@ int ObSelectLogPlan::get_valid_aggr_algo(const ObIArray<ObRawExpr*> &group_by_ex
   } else if (OB_FAIL(update_part_sort_method(part_sort_valid, normal_sort_valid))) {
     LOG_WARN("fail to update part sort method", K(ret));
   }
-  LOG_TRACE("group by alogrithm", K(groupby_helper), K(use_hash_valid), K(use_merge_valid), K(part_sort_valid), K(normal_sort_valid));
+
   return ret;
 }
 
@@ -1736,7 +1736,7 @@ int ObSelectLogPlan::candi_allocate_distinct()
       LOG_WARN("failed to allocate limit operator", K(ret));
     } else {
       OPT_TRACE("distinct exprs is const, need limit op instead of distinct op");
-      LOG_TRACE("distinct exprs is const, need limit op instead of distinct op", K(distinct_exprs));
+
     }
   } else if (OB_FAIL(ObOptimizerUtil::is_exprs_unique(distinct_exprs,
                                                       best_plan->get_table_set(),
@@ -1747,7 +1747,7 @@ int ObSelectLogPlan::candi_allocate_distinct()
     LOG_WARN("failed to check whether distinct exprs is unique", K(ret));
   } else if (is_unique) {
     OPT_TRACE("distinct exprs is unique, no need distinct");
-    LOG_TRACE("distinct exprs is unique, no need distinct", K(distinct_exprs));
+
   } else {
     SMART_VAR(GroupingOpHelper, distinct_helper) {
       ObSEArray<CandidatePlan, 4> distinct_plans;
@@ -1765,7 +1765,7 @@ int ObSelectLogPlan::candi_allocate_distinct()
                                                        distinct_plans))) {
         LOG_WARN("failed to inner candi allocate distinct", K(ret));
       } else if (!distinct_plans.empty()) {
-        LOG_TRACE("succeed to allocate distinct using hint", K(distinct_plans.count()), K(distinct_helper));
+
         OPT_TRACE("success to generate distinct plan with hint");
       } else if (OB_FALSE_IT(distinct_helper.set_ignore_hint())) {
       } else if (OB_FAIL(inner_candi_allocate_distinct(distinct_helper,
@@ -1775,7 +1775,7 @@ int ObSelectLogPlan::candi_allocate_distinct()
 
         LOG_WARN("failed to inner candi allocate distinct", K(ret));
       } else {
-        LOG_TRACE("succeed to allocate distinct ignore hint", K(distinct_plans.count()), K(distinct_helper));
+
         OPT_TRACE("success to generate distinct plan without hint");
       }
 
@@ -2538,11 +2538,11 @@ int ObSelectLogPlan::candi_allocate_union_all(const ObIArray<ObSelectLogPlan*> &
   if (OB_FAIL(generate_union_all_plans(child_plans, false, all_plans))) {
     LOG_WARN("failed to generate union all plans", K(ret));
   } else if (!all_plans.empty()) {
-    LOG_TRACE("succeed to allocate union all using hint", K(all_plans.count()));
+
   } else if (OB_FAIL(generate_union_all_plans(child_plans, true, all_plans))) {
     LOG_WARN("failed to generate union all plans", K(ret));
   } else {
-    LOG_TRACE("succeed to allocate union all ignore hint", K(all_plans.count()));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -2996,7 +2996,7 @@ int ObSelectLogPlan::create_union_all_plan(const ObIArray<ObLogicalOperator*> &c
     if (OB_FAIL(allocate_union_all_as_top(set_child_ops, dist_set_method, top))) {
       LOG_WARN("failed to allocate union all as top", K(ret));
     } else {
-      LOG_TRACE("succeed to allocate union all as top", K(dist_set_method));
+
     }
   }
   return ret;
@@ -3050,7 +3050,7 @@ int ObSelectLogPlan::check_if_union_all_match_partition_wise(const ObIArray<ObLo
                                                                      is_partition_wise))) {
       LOG_WARN("failed to check if union all match strict partition-wise", K(ret));
     } else {
-      LOG_TRACE("succ to check union all matching pw", K(is_partition_wise));
+
     }
   }
   return ret;
@@ -3092,7 +3092,7 @@ int ObSelectLogPlan::check_if_union_all_match_set_partition_wise(const ObIArray<
       } else if (OB_FAIL(first_server_list.assign(child_op->get_server_list()))) {
         LOG_WARN("failed to get first server list", K(ret));
       } else {
-        LOG_TRACE("succ to check union all matching set pw", K(first_server_list));
+
       }
     } else if (OB_FAIL(check_sharding_inherit_from_access_all(child_op, 
                                                              is_inherit_from_access_all))) {
@@ -3165,7 +3165,7 @@ int ObSelectLogPlan::check_if_union_all_match_extended_partition_wise(const ObIA
       if (OB_FAIL(first_server_list.assign(child_op->get_server_list()))) {
         LOG_WARN("failed to get first server list", K(ret));
       } else {
-        LOG_TRACE("succ to check union all matching ext pw", K(first_server_list));
+
       }
     } else if (OB_FAIL(ObShardingInfo::is_physically_both_shuffled_serverlist(first_server_list,
                                                                               child_op->get_server_list(),
@@ -3272,7 +3272,7 @@ int ObSelectLogPlan::candi_allocate_recursive_union_all(const ObIArray<ObSelectL
                                                      all_plans))) {
     LOG_WARN("failed to create recursive union all plan", K(ret));
   } else if (!all_plans.empty()) {
-    LOG_TRACE("succeed to generate set plans using hint", K(all_plans.count()));
+
   } else if (OB_FAIL(create_recursive_union_all_plan(left_best_plans,
                                                      right_best_plans,
                                                      candi_order_items,
@@ -3280,7 +3280,7 @@ int ObSelectLogPlan::candi_allocate_recursive_union_all(const ObIArray<ObSelectL
                                                      all_plans))) {
     LOG_WARN("failed to create recursive union all plan", K(ret));
   } else {
-    LOG_TRACE("succeed to generate set plans ignore hint", K(all_plans.count()));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -3533,7 +3533,7 @@ int ObSelectLogPlan::candi_allocate_distinct_set(const ObIArray<ObSelectLogPlan*
       OPT_TRACE("succeed to generate set plans using hint");
       OPT_TRACE("   hash set plan count:", hash_set_plans.count());
       OPT_TRACE("   merge set plan count:", merge_set_plans.count());
-      LOG_TRACE("succeed to generate set plans using hint", K(set_algo), K(hash_set_plans.count()), K(merge_set_plans.count()));
+
     } else if (OB_FAIL(generate_hash_set_plans(equal_sets,
                                               left_select_exprs,
                                               right_select_exprs,
@@ -3971,7 +3971,7 @@ int ObSelectLogPlan::check_if_set_match_repart(const EqualSets &equal_sets,
                                                                     is_match_repart))) {
     LOG_WARN("failed to check if match repartition", K(ret));
   } else {
-    LOG_TRACE("succeed to check whether matching repartition", K(is_match_repart));
+
   }
   return ret;
 }
@@ -4005,7 +4005,7 @@ int ObSelectLogPlan::check_if_set_match_rehash(const EqualSets &equal_sets,
                                                                     is_match_single_side_hash))) {
     LOG_WARN("failed to check if set match single side hash", K(ret));
   } else {
-    LOG_TRACE("succeed to check whether set matching single side hash", K(is_match_single_side_hash));
+
   }
   return ret;
 }
@@ -4127,9 +4127,9 @@ int ObSelectLogPlan::inner_generate_merge_set_plans(const EqualSets &equal_sets,
                                                  set_methods))) {
     LOG_WARN("failed to get distributed set method", K(ret));
   } else if (set_methods == 0) {
-    LOG_TRACE("no distributed merge set methods");
+
   } else {
-    LOG_TRACE("distributed merge set methods", K(set_methods));
+
     for (int64_t i = 0; OB_SUCC(ret) && i < left_candidates.count(); i++) {
       if (OB_ISNULL(left_child = left_candidates.at(i).plan_tree_) ||
           OB_ISNULL(merge_key = left_merge_keys.at(i))) {
@@ -4371,7 +4371,7 @@ int ObSelectLogPlan::create_merge_set_key(const ObIArray<OrderItem> &set_order_i
     if (OB_FAIL(ObOptimizerUtil::create_interesting_merge_key(merge_exprs, set_order_items, equal_sets, sort_exprs, directions, sort_map))) {
       LOG_WARN("failed to create interesting key", K(ret));
     } else {
-      LOG_TRACE("succeed to create merge key use order by items", K(sort_exprs), K(directions));
+
     }
   }
   if (OB_SUCC(ret) && sort_exprs.empty()) {
@@ -4506,7 +4506,7 @@ int ObSelectLogPlan::init_merge_set_structure(ObIAllocator &allocator,
         LOG_WARN("failed to check is order by match", K(ret));
       } else if (!is_match) {
         merge_key->order_needed_ = false;
-        LOG_TRACE("ordering is not math order by");
+
       }
     }
   }
@@ -4724,7 +4724,7 @@ int ObSelectLogPlan::inner_generate_hash_set_plans(const EqualSets &equal_sets,
                                                        set_methods))) {
           LOG_WARN("failed to get distributed set methods", K(ret));
         } else {
-          LOG_TRACE("distributed hash set methods", K(set_methods));
+
           for (int64_t k = DistAlgo::DIST_BASIC_METHOD;
                OB_SUCC(ret) && k < DistAlgo::DIST_MAX_JOIN_METHOD; k = (k << 1)) {
             DistAlgo dist_algo = get_dist_algo(k);
@@ -4829,7 +4829,7 @@ int ObSelectLogPlan::create_hash_set_plan(const EqualSets &equal_sets,
                                                   hash_plan.plan_tree_))) {
     LOG_WARN("failed to allocate distinct set as top", K(ret));
   } else {
-    LOG_TRACE("succeed to create hash set plan");
+
     OPT_TRACE("succeed to generate hash set plan:", hash_plan.plan_tree_);
   }
   return ret;
@@ -5313,7 +5313,7 @@ int ObSelectLogPlan::generate_raw_plan_for_plain_select()
   } else if (OB_FAIL(allocate_plan_top())) {
     LOG_WARN("failed to allocate top operator of plan tree for plain select", K(ret));
   } else {
-    LOG_TRACE("succeed to generate best plan");
+
   }
   return ret;
 }
@@ -5329,11 +5329,11 @@ int ObSelectLogPlan::allocate_plan_top()
     bool need_limit = true;
     bool for_update_is_allocated = false;
     ObSEArray<OrderItem, 4> order_items;
-    LOG_TRACE("start to allocate operators for ", "sql", optimizer_context_.get_query_ctx()->get_sql_stmt());
+
     // step. allocate subplan filter if needed, mainly for the subquery in where statement
     if (OB_SUCC(ret)) {
       if (get_subquery_filters().count() > 0) {
-        LOG_TRACE("start to allocate subplan filter for where statement", K(ret));
+
         if (OB_FAIL(candi_allocate_subplan_filter_for_where())) {
           LOG_WARN("failed to allocate subplan filter for where statement", K(ret));
         } else {
@@ -5351,7 +5351,7 @@ int ObSelectLogPlan::allocate_plan_top()
           LOG_WARN("failed to allocate for update operator", K(ret));
         } else {
           for_update_is_allocated = true;
-          LOG_TRACE("succeed to allocate for update", K(candidates_.candidate_plans_.count()));
+
         }
       }
       if (OB_SUCC(ret)) {
@@ -5382,7 +5382,7 @@ int ObSelectLogPlan::allocate_plan_top()
           LOG_WARN("failed to allocate for update operator", K(ret));
         } else {
           for_update_is_allocated = true;
-          LOG_TRACE("succeed to allocate for update", K(candidates_.candidate_plans_.count()));
+
         }
       }
       if (OB_SUCC(ret)) {
@@ -5454,7 +5454,7 @@ int ObSelectLogPlan::allocate_plan_top()
       if (OB_FAIL(candi_allocate_for_update())) {
         LOG_WARN("failed to allocate for update operator", K(ret));
       } else {
-        LOG_TRACE("succeed to allocate for update", K(candidates_.candidate_plans_.count()));
+
       }
     }
 
@@ -5472,7 +5472,7 @@ int ObSelectLogPlan::allocate_plan_top()
       if (OB_FAIL(candi_allocate_err_log(get_insert_stmt()))) {
         LOG_WARN("failed to allocate err log", K(ret));
       } else {
-        LOG_TRACE("succeed to allocate err log", K(candidates_.candidate_plans_.count()));
+
       }
     }
 
@@ -5491,7 +5491,7 @@ int ObSelectLogPlan::allocate_plan_top()
       } else if (OB_FAIL(candi_allocate_root_exchange())) {
         LOG_WARN("failed to allocate root exchange", K(ret));
       } else {
-        LOG_TRACE("succeed to allocate root exchange", K(candidates_.candidate_plans_.count()));
+
       }
     }
   }
@@ -5536,7 +5536,7 @@ int ObSelectLogPlan::generate_raw_plan_for_expr_values()
       } else if (OB_FAIL(make_candidate_plans(top))) {
         LOG_WARN("failed to make candidate plans", K(ret));
       } else {
-        LOG_TRACE("succeed to allocate expr values operator", K(ret));
+
       }
     }
 
@@ -5545,7 +5545,7 @@ int ObSelectLogPlan::generate_raw_plan_for_expr_values()
       if (OB_FAIL(allocate_plan_top())) {
         LOG_WARN("failed to allocate top operators for expr select", K(ret));
       } else {
-        LOG_TRACE("succeed to allocate top operators for expr select", K(ret));
+
       }
     }
   }
@@ -5566,7 +5566,7 @@ int ObSelectLogPlan::candi_allocate_subplan_filter_for_select_item()
   } else if (OB_FAIL(candi_allocate_subplan_filter(select_exprs))) {
     LOG_WARN("failed to candi allocate subplan filter for exprs", K(ret));
   } else {
-    LOG_TRACE("succeed to allocate subplan filter for select item", K(select_stmt->get_stmt_id()));
+
   }
   return ret;
 }
@@ -5625,13 +5625,13 @@ int ObSelectLogPlan::candi_allocate_window_function()
                                                               win_func_plans))) {
     LOG_WARN("failed to allocate window function with hint", K(ret));
   } else if (!win_func_plans.empty()) {
-    LOG_TRACE("succeed to allocate window function using hint", K(win_func_plans.count()));
+
   } else if (OB_FAIL(candi_allocate_window_function(stmt->get_window_func_exprs(),
                                                     stmt->get_qualify_filters(),
                                                     win_func_plans))) {
     LOG_WARN("failed to allocate window function", K(ret));
   } else {
-    LOG_TRACE("succeed to allocate window function without hint", K(win_func_plans.count()));
+
   }
 
   // choose the best plan
@@ -5765,7 +5765,7 @@ int ObSelectLogPlan::check_is_win_func_hint_valid(const ObIArray<ObWinFunRawExpr
       is_valid = all_win_exprs.count() == win_func_cnt;
     }
   }
-  LOG_TRACE("finish check is win_func_hint valid. ", K(is_valid));
+
   return ret;
 }
 
@@ -5830,7 +5830,7 @@ int ObSelectLogPlan::init_win_func_helper_with_hint(const ObIArray<CandidatePlan
     if (OB_SUCC(ret) && is_valid) {
       win_func_helper.need_qualify_filter_ = remaining_exprs.empty();
     }
-    LOG_TRACE("finish init win_func_helper with hint. ", K(is_valid), K(win_func_helper));
+
   }
   return ret;
 }
@@ -6391,7 +6391,7 @@ int ObSelectLogPlan::init_win_func_helper(const ObIArray<ObWinFunRawExpr*> &orde
         LOG_WARN("choose topn filter failed", K(ret));
       }
     }
-    LOG_TRACE("finish init win_func_helper. ", K(win_func_helper));
+
   }
   return ret;
 }
@@ -6523,7 +6523,7 @@ int ObSelectLogPlan::gen_win_func_sort_keys(const ObIArray<OrderItem> &input_ord
     LOG_WARN("failed to classify window exprs", K(ret));
   } else if (OB_UNLIKELY(!rest_win_func_exprs.empty())) {
     is_valid = false;
-    LOG_TRACE("can not get a sort keys. ", K(input_ordering), K(win_func_exprs));
+
   } else if (OB_FAIL(win_func_helper.sort_keys_.assign(possible_sort_keys))) {
     LOG_WARN("failed to assign exprs", K(ret));
   }
@@ -7297,7 +7297,7 @@ int ObSelectLogPlan::get_range_list_win_func_exchange_info(const WinDistAlgo dis
   } else if (OB_FAIL(exch_info.sort_keys_.push_back(OrderItem(random_expr)))) {
     LOG_WARN("failed to push back", K(ret));
   }
-  LOG_TRACE("get range list win func exchange info", K(dist_method), KPC(random_expr), K(range_dist_keys));
+
   return ret;
 }
 

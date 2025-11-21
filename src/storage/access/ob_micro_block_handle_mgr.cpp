@@ -165,7 +165,7 @@ int ObMicroBlockDataHandle::get_micro_block_data(
       try_release_loaded_block();
       if (THIS_WORKER.get_timeout_remain() <= 0) {
         // already timeout, don't retry
-        LOG_INFO("get data block data already timeout", K(ret), K(THIS_WORKER.get_timeout_remain()));
+
       } else {
         //try sync io
         ObMicroBlockId micro_block_id;
@@ -306,7 +306,7 @@ void ObCacheMemController::init(const bool enable_limit)
     need_sync_io_func = &ObCacheMemController::need_sync_io_limit;
     reach_hold_limit_func = &ObCacheMemController::reach_hold_limit_limit;
     update_data_block_io_size_func = &ObCacheMemController::update_data_block_io_size_limit;
-    LOG_INFO("Start cache memory controller", K(enable_limit), KPC(this));
+
   }
 }
 
@@ -342,7 +342,7 @@ bool ObCacheMemController::need_sync_io_limit(
     LOG_WARN("Fail to update limit", K(ret));
   }
   if (current_hold_size_ > hold_limit_) {
-    LOG_DEBUG("Reach hold limit, submit sync io", K(current_hold_size_), K(hold_limit_));
+
     micro_block_handle.block_state_ = ObSSTableMicroBlockState::NEED_SYNC_IO;
     micro_block_handle.allocator_ = &block_io_allocator;
     cache->cache_bypass();
@@ -496,11 +496,11 @@ int ObMicroBlockHandleMgr::get_micro_block_handle(
         LOG_WARN("Fail to submit async io for prefetch", K(ret), K(index_block_info), K(micro_block_handle));
       } else {
         REALTIME_MONITOR_ADD_IO_READ_BYTES(access_ctx, size);
-        LOG_DEBUG("debug async io", K(ret), K(index_block_info), K(micro_block_handle));
+
       }
     } else {
       // get data / index block cache from cache
-      LOG_DEBUG("block cache hit", K(is_data_block), K(tenant_id), K(macro_id), K(offset), K(size), K(cur_level));
+
       micro_block_handle.block_state_ = ObSSTableMicroBlockState::IN_BLOCK_CACHE;
       cache_mem_ctrl_.add_hold_size(micro_block_handle.get_handle_size());
       cache->cache_hit(table_store_stat_->block_cache_hit_cnt_);
@@ -510,7 +510,7 @@ int ObMicroBlockHandleMgr::get_micro_block_handle(
                                     K(micro_block_handle), KP(ps_node), KPC(ps_node));
       }
     }
-    LOG_DEBUG("get cache block", K(ret), K(key), KPC(idx_header));
+
   }
   return ret;
 }

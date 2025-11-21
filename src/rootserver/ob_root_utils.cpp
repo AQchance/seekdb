@@ -71,7 +71,7 @@ bool ObRootServiceRoleChecker::is_rootserver()
       LOG_WARN("get role failed", KR(ret), K(tenant_id));
     } else {
       bret = (is_strong_leader(role));
-      LOG_DEBUG("get __all_core_table role", K(role), K(bret));
+
     }
   } else {
     if (OB_TENANT_NOT_IN_SERVER == ret) {
@@ -1584,7 +1584,7 @@ int ObRootUtils::get_stopped_zone_list(
       }
     }
   }
-  LOG_INFO("get stopped zone list", KR(ret), K(stopped_server_list), K(stopped_zone_list));
+
   return ret;
 }
 bool ObRootUtils::have_other_stop_task(const ObZone &zone)
@@ -1627,7 +1627,7 @@ bool ObRootUtils::have_other_stop_task(const ObZone &zone)
   if (OB_SUCC(ret) && 0 == cnt) {
     bret = false;
   }
-  LOG_INFO("have other stop task", KR(ret), K(bret), K(zone), K(cnt));
+
   return bret;
 }
 int ObRootUtils::get_tenant_intersection(ObUnitManager &unit_mgr,
@@ -1732,7 +1732,7 @@ int ObRootUtils::check_primary_region_in_zonelist(ObMultiVersionSchemaService *s
           LOG_WARN("fail to check tenant locality", KR(ret), K(tenant_id));
         } else if (!has) {
           is_in = true;
-          LOG_INFO("tenant primary zone has no full replica exist", K(tenant_id), K(zone_list));
+
         }
       }
     } //end for tenant_ids 
@@ -1822,7 +1822,7 @@ int ObRootUtils::check_left_f_in_primary_zone(ObZoneManager &zone_mgr,
   } else if (ObPrimaryZoneUtil::no_need_to_check_primary_zone(primary_zone.get_primary_zone())) {
     //if primary_zone is random, no need to check left f in primary zone
     has = true;
-    LOG_INFO("primary zone is RANDOM or empty, no need to check", KR(ret), K(primary_zone));
+
   } else if (OB_FAIL(schema_info.get_zone_replica_attr_array_inherit(schema_guard,
                                                                      zone_locality_array))) {
     LOG_WARN("fail to get zone replica array", KR(ret));
@@ -1846,7 +1846,7 @@ int ObRootUtils::check_left_f_in_primary_zone(ObZoneManager &zone_mgr,
       } //end for zone_locality_array
     } //end primary_zone_array
   }
-  LOG_INFO("check left f in primary zone", KR(ret), K(zone_list), K(has));
+
   return ret;
 }
 

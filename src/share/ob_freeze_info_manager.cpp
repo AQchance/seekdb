@@ -68,7 +68,7 @@ int ObFreezeInfoList::get_min_freeze_info_greater_than(
       freeze_info = frozen_statuses_.at(idx);
     } else { // not found in cache
       if (max_cache_frozen_scn == frozen_scn) {
-        LOG_TRACE("no more larger frozen_scn", K(frozen_scn), K_(frozen_statuses));
+
       } else if (max_cache_frozen_scn < frozen_scn) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("max cached frozen_scn should not less than frozen_scn", KR(ret), K(frozen_scn),
@@ -192,7 +192,7 @@ int ObFreezeInfoManager::update_freeze_info(
 
   if (OB_SUCC(ret)) {
     freeze_info_.latest_snapshot_gc_scn_ = latest_snapshot_gc_scn;
-    LOG_INFO("inner load succ", "latest_freeze_info", freeze_info_.frozen_statuses_.at(freeze_info_cnt - 1), K(freeze_info_));
+
   }
   return ret;
 }
@@ -303,7 +303,7 @@ int ObFreezeInfoManager::get_freeze_info_by_major_snapshot(
     LOG_WARN("failed to get frozen status", K(ret), K(frozen_scn));
   } else if (ret_pos < 0 || ret_pos >= freeze_info_.count()) {
     ret = OB_ENTRY_NOT_EXIST;
-    LOG_DEBUG("can not find the freeze info", K(ret), K(snapshot_version), K(freeze_info_));
+
   }
   return ret;
 }
@@ -378,7 +378,7 @@ int ObFreezeInfoManager::get_freeze_info_compare_with_major_snapshot(
     } else if (!found) {
       ret = OB_ENTRY_NOT_EXIST;
     } else {
-      LOG_DEBUG("get freeze info", K(ret), K(found), K(snapshot_version), K(frozen_status));
+
     }
   }
   return ret;

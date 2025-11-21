@@ -94,7 +94,7 @@ int ObLobWriteBuffer::move_to_remain_buffer(
     LOG_WARN("remain_byte_len invalid", K(ret), K(remain_byte_len), K(total_move_byte_len), K(real_move_byte_len));
   } else if (remain_byte_len == 0) {
     // no need move
-    LOG_DEBUG("remain_byte_len is zero, not move", K(remain_byte_len), K(total_move_byte_len), K(real_move_byte_len));
+
   } else {
     // need ensure remain buffer data is full char
     real_move_byte_len = ObLobWriteBuffer::max_bytes_charpos(
@@ -134,14 +134,14 @@ int ObLobWriteBuffer::move_data_for_write(
     LOG_WARN("invalid length", K(ret), K(total_move_byte_len), K(real_move_byte_len), K(write_byte_offset), K(write_old_byte_len), K(write_new_byte_len), K(byte_length()));
   } else if (move_src_byte_offset == move_dst_byte_offset) {
     // src and dst is same, no need move
-    LOG_DEBUG("src and dst is same, so not move", K(move_src_byte_offset), K(move_dst_byte_offset), K(total_move_byte_len));
+
   } else if (OB_FAIL(move_to_remain_buffer(remain_buf, move_src_byte_offset, total_move_byte_len, real_move_byte_len, real_move_char_len))) {
     LOG_WARN("move_to_remain_buffer fail", K(ret), K(move_src_byte_offset), K(total_move_byte_len), K(real_move_byte_len), K(real_move_char_len));
   } else {
     if (real_move_byte_len > 0) {
       MEMMOVE(buffer_ptr() + move_dst_byte_offset, buffer_ptr() + move_src_byte_offset, real_move_byte_len);
     } else {
-      LOG_DEBUG("no data move", K(total_move_byte_len), K(real_move_byte_len), K(write_byte_offset), K(write_old_byte_len), K(write_new_byte_len), K(byte_length()));
+
     }
     if (OB_FAIL(ret)) {
     } else if (inner_buffer_.set_length(move_dst_byte_offset + real_move_byte_len) != move_dst_byte_offset + real_move_byte_len) {
@@ -167,7 +167,7 @@ int ObLobWriteBuffer::do_write(
 {
   int ret = OB_SUCCESS;
   if (write_data.empty()) {
-    LOG_DEBUG("not write because write_data is empty");
+
   } else if (write_byte_offset + write_data.length() > buffer_size()) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("out of buffer range", K(ret), K(write_byte_offset), K(buffer_size()), K(write_data));

@@ -246,7 +246,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
         LOG_WARN("failed to collect const info from where condition", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to do const propagation while collect from condition", K(is_happened));
+
       }
     }
 
@@ -258,7 +258,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
         LOG_WARN("failed to collect const info from tables", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to do const propagation while collect from tables", K(is_happened));
+
       }
     }
 
@@ -270,7 +270,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
         LOG_WARN("failed to collect const info from semi info", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to do const propagation while collect from semi info", K(is_happened));
+
       }
     }
 
@@ -282,7 +282,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
         LOG_WARN("failed to replace join conditions", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to do const propagation for join conditions", K(is_happened));
+
       }
     }
 
@@ -294,7 +294,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
         LOG_WARN("failed to replace condition exprs", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to do const propagation for condition expr", K(is_happened));
+
       }
     }
 
@@ -309,7 +309,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
         LOG_WARN("failed to collect const info from sharding condition", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to do const propagation while collect from sharding", K(is_happened));
+
       }
     }
 
@@ -323,7 +323,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
         LOG_WARN("failed to repalce condition exprs", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to do const propagation for sharding expr", K(is_happened));
+
       }
     }
 
@@ -335,7 +335,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
         LOG_WARN("failed to replace semi conditions", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to do const propagation for semi conditions", K(is_happened));
+
       }
     }
 
@@ -353,7 +353,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
         LOG_WARN("failed to replace groupby exprs", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to do const propagation for groupby expr", K(is_happened));
+
       }
     }
 
@@ -374,7 +374,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
           LOG_WARN("failed to replace select exprs", K(ret));
         } else {
           trans_happened |= is_happened;
-          LOG_TRACE("succeed to do const propagation replace select exprs before get having exprs", K(is_happened));
+
         }
       }
     }
@@ -388,7 +388,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
         LOG_WARN("failed to collect const info from having condition", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to do const propagation while collect from having", K(is_happened));
+
       }
     }
 
@@ -400,7 +400,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
         LOG_WARN("failed to replace having exprs", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to do const propagation for having expr", K(is_happened));
+
       }
     }
 
@@ -412,7 +412,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
         LOG_WARN("failed to replace orderby exprs", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to do const propagation for orderby expr", K(is_happened));
+
       }
     }
 
@@ -426,7 +426,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
           LOG_WARN("failed to replace select exprs", K(ret));
         } else {
           trans_happened |= is_happened;
-          LOG_TRACE("succeed to do const propagation for select expr", K(is_happened));
+
         }
       } else if (OB_FAIL(replace_select_exprs(static_cast<ObSelectStmt*>(stmt),
                                        const_ctx,
@@ -434,7 +434,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
         LOG_WARN("failed to replace select exprs", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to do const propagation for select expr", K(is_happened));
+
       }
     }
 
@@ -453,7 +453,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
           LOG_WARN("failed to replace assignment exprs", K(ret));
         } else {
           trans_happened |= is_happened;
-          LOG_TRACE("succeed to do const propagation for assignment expr", K(is_happened));
+
         }
       }
     }
@@ -467,7 +467,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
         LOG_WARN("failed to replace condition exprs", K(ret));
       } else {
         trans_happened |= is_happened;
-        LOG_TRACE("succeed to do const propagation for check constraint expr", K(is_happened));
+
       }
     }
 
@@ -481,7 +481,7 @@ int ObTransformConstPropagate::do_transform(ObDMLStmt *stmt,
       } else if (OB_FAIL(stmt->formalize_stmt(ctx_->session_info_, false))) {
         LOG_WARN("failed to formalize stmt info", K(ret));
       } else {
-        LOG_TRACE("succeed to do replacement internal", KPC(stmt));
+
       }
     }
 
@@ -1032,7 +1032,7 @@ int ObTransformConstPropagate::replace_semi_conditions(ObDMLStmt *stmt,
       LOG_WARN("formalize child stmt failed", K(ret));
     } else {
       trans_happened |= is_happened;
-      LOG_TRACE("succeed to do const propagation for semi condition expr", K(is_happened));
+
     }
   }
   return ret;
@@ -1216,7 +1216,7 @@ int ObTransformConstPropagate::replace_internal(ObRawExpr *&cur_expr,
       cur_expr = need_cast ? expr_const_infos.at(i).new_expr_ : const_expr;
       expr_const_infos.at(i).is_used_ = true;
       trans_happened = true;
-      LOG_TRACE("succeed to replace expr", KPC(column_expr), KPC(cur_expr));
+
     }
   }
   return ret;
@@ -2050,7 +2050,7 @@ int ObTransformConstPropagate::replace_check_constraint_exprs(ObDMLStmt *stmt,
   } else if (!const_ctx.allow_trans_) {
     /* do nothing */
   } else {
-    LOG_TRACE("begin replace check constraint exprs", K(const_ctx), K(stmt->get_check_constraint_items()));
+
     for (int64_t i = 0; OB_SUCC(ret) && i < stmt->get_check_constraint_items().count(); ++i) {
       CheckConstraintItem &item = stmt->get_check_constraint_items().at(i);
       for (int64_t j = 0; OB_SUCC(ret) && j < item.check_constraint_exprs_.count(); ++j) {
@@ -2140,7 +2140,7 @@ int ObTransformConstPropagate::check_constraint_expr_validity(ObRawExpr *check_c
     } else if (is_valid) {
       part_column_expr = r_expr;
     }
-    LOG_TRACE("Succeed check constraint expr validity", KPC(check_constraint_expr), K(is_valid));
+
   }
   return ret;
 }
@@ -2400,7 +2400,7 @@ int ObTransformConstPropagate::do_replace_check_constraint_expr(ObDMLStmt *stmt,
           }
         }
         trans_happened = true;
-        LOG_TRACE("Succeed to do replace check constraint expr", KPC(new_check_cst_expr));
+
       } 
     }
   }
@@ -2477,7 +2477,7 @@ int ObTransformConstPropagate::build_new_in_condition_expr(ObRawExpr *check_cons
           LOG_WARN("failed to formalize", K(ret));
         } else {
           new_condititon_expr = in_expr;
-          LOG_TRACE("Succeed to build new in condition expr", KPC(new_condititon_expr));
+
         }
       }
     }

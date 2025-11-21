@@ -146,13 +146,13 @@ int ObLatestSchemaGuard::get_from_local_cache_(
     }
     if (!found) {
       ret = OB_ENTRY_NOT_EXIST;
-      LOG_TRACE("local cache miss [id to schema]", KR(ret), K(schema_type), K(tenant_id), K(schema_id));
+
     } else if (OB_ISNULL(tmp_schema)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("tmp schema is NULL", KR(ret), K(schema_type), K(tenant_id), K(schema_id));
     } else {
       schema = static_cast<const T *>(tmp_schema);
-      LOG_TRACE("schema cache hit", K(schema_type), K(tenant_id), K(schema_id));
+
     }
   }
   return ret;
@@ -194,7 +194,7 @@ int ObLatestSchemaGuard::get_tablegroup_id(
              *sql_client, tenant_id_, tablegroup_name, tablegroup_id))) {
     LOG_WARN("fail to get tablegroup id", KR(ret), K_(tenant_id), K(tablegroup_name));
   } else if (OB_UNLIKELY(OB_INVALID_ID == tablegroup_id)) {
-    LOG_INFO("tablegroup not exist", KR(ret), K_(tenant_id), K(tablegroup_name));
+
   }
   return ret;
 }
@@ -216,7 +216,7 @@ int ObLatestSchemaGuard::get_database_id(
              *sql_client, tenant_id_, database_name, database_id))) {
     LOG_WARN("fail to get database id", KR(ret), K_(tenant_id), K(database_name));
   } else if (OB_UNLIKELY(OB_INVALID_ID == database_id)) {
-    LOG_INFO("database not exist", KR(ret), K_(tenant_id), K(database_name));
+
   }
   return ret;
 }
@@ -247,7 +247,7 @@ int ObLatestSchemaGuard::get_table_id(
              table_name, table_id, table_type, schema_version))) {
     LOG_WARN("fail to get database id", KR(ret), K_(tenant_id), K(database_id), K(session_id), K(table_name));
   } else if (OB_UNLIKELY(OB_INVALID_ID == table_id)) {
-    LOG_INFO("table not exist", KR(ret), K_(tenant_id),  K(database_id), K(session_id), K(table_name));
+
   }
   return ret;
 }
@@ -271,7 +271,7 @@ int ObLatestSchemaGuard::get_mock_fk_parent_table_id(
              *sql_client, tenant_id_, database_id, table_name, mock_fk_parent_table_id))) {
     LOG_WARN("fail to get mock parent table id", KR(ret), K_(tenant_id), K(database_id), K(table_name));
   } else if (OB_UNLIKELY(OB_INVALID_ID == mock_fk_parent_table_id)) {
-    LOG_INFO("mock parent table not exist", KR(ret), K_(tenant_id), K(database_id), K(table_name));
+
   }
   return ret;
 }
@@ -296,7 +296,7 @@ int ObLatestSchemaGuard::get_constraint_id(
              *sql_client, tenant_id_, database_id, constraint_name, constraint_id))) {
     LOG_WARN("fail to get constraint id", KR(ret), K_(tenant_id), K(database_id), K(constraint_name));
   } else if (OB_UNLIKELY(OB_INVALID_ID == constraint_id)) {
-    LOG_INFO("constraint not exist", KR(ret), K_(tenant_id), K(database_id), K(constraint_name));
+
   }
   return ret;
 }
@@ -321,7 +321,7 @@ int ObLatestSchemaGuard::get_foreign_key_id(
              *sql_client, tenant_id_, database_id, foreign_key_name, foreign_key_id))) {
     LOG_WARN("fail to get foreign_key id", KR(ret), K_(tenant_id), K(database_id), K(foreign_key_name));
   } else if (OB_UNLIKELY(OB_INVALID_ID == foreign_key_id)) {
-    LOG_INFO("foreign_key not exist", KR(ret), K_(tenant_id), K(database_id), K(foreign_key_name));
+
   }
   return ret;
 }
@@ -349,7 +349,7 @@ int ObLatestSchemaGuard::get_sequence_id(
              sequence_name, sequence_id, is_system_generated))) {
     LOG_WARN("fail to get sequence id", KR(ret), K_(tenant_id), K(database_id), K(sequence_name));
   } else if (OB_UNLIKELY(OB_INVALID_ID == sequence_id)) {
-    LOG_INFO("sequence not exist", KR(ret), K_(tenant_id), K(database_id), K(sequence_id));
+
   }
   return ret;
 }
@@ -568,7 +568,7 @@ int ObLatestSchemaGuard::get_table_schema(
              tenant_id_, table_id, table_schema))) {
     LOG_WARN("fail to get table table", KR(ret), K_(tenant_id), K(table_id));
   } else if (OB_ISNULL(table_schema)) {
-    LOG_INFO("table not exist", KR(ret), K_(tenant_id), K(table_id));
+
   }
   return ret;
 }
@@ -584,7 +584,7 @@ int ObLatestSchemaGuard::get_mock_fk_parent_table_schema(
              tenant_id_, mock_fk_parent_table_id, mock_fk_parent_table_schema))) {
     LOG_WARN("fail to get mock fk parent table", KR(ret), K_(tenant_id), K(mock_fk_parent_table_id));
   } else if (OB_ISNULL(mock_fk_parent_table_schema)) {
-    LOG_INFO("mock fk parent table not exist", KR(ret), K_(tenant_id), K(mock_fk_parent_table_id));
+
   }
   return ret;
 }
@@ -647,7 +647,7 @@ int ObLatestSchemaGuard::get_tablegroup_schema(
   } 
 
   if (OB_SUCC(ret) && OB_ISNULL(tablegroup_schema)) {
-    LOG_INFO("tablegroup not exist", KR(ret), K_(tenant_id), K(tablegroup_id));
+
   }
   return ret;
 }
@@ -667,7 +667,7 @@ int ObLatestSchemaGuard::get_database_schema(
              tenant_id_, database_id, database_schema))) {
     LOG_WARN("fail to get database", KR(ret), K_(tenant_id), K(database_id));
   } else if (OB_ISNULL(database_schema)) {
-    LOG_INFO("database not exist", KR(ret), K_(tenant_id), K(database_id));
+
   }
   return ret;
 }
@@ -687,7 +687,7 @@ int ObLatestSchemaGuard::get_tenant_schema(
              OB_SYS_TENANT_ID, tenant_id, tenant_schema))) {
     LOG_WARN("fail to get tenant", KR(ret), K_(tenant_id), K(tenant_id));
   } else if (OB_ISNULL(tenant_schema)) {
-    LOG_INFO("tenant not exist", KR(ret), K_(tenant_id), K(tenant_id));
+
   }
   return ret;
 }
@@ -770,7 +770,7 @@ int ObLatestSchemaGuard::get_sequence_schema(const uint64_t sequence_id,
   } else if (OB_FAIL(get_schema_(SEQUENCE_SCHEMA, tenant_id_, sequence_id, sequence_schema))) {
     LOG_WARN("fail to get sequence", KR(ret), K_(tenant_id), K(sequence_id));
   } else if (OB_ISNULL(sequence_schema)) {
-    LOG_INFO("sequence not exist", KR(ret), K_(tenant_id));
+
   }
   return ret;
 }
@@ -788,7 +788,7 @@ int ObLatestSchemaGuard::get_trigger_info(const uint64_t trigger_id,
   } else if (OB_FAIL(get_schema_(TRIGGER_SCHEMA, tenant_id_, trigger_id, trigger_info))) {
     LOG_WARN("fail to get trigger", KR(ret), K_(tenant_id), K(trigger_id));
   } else if (OB_ISNULL(trigger_info)) {
-    LOG_INFO("trigger not exist", KR(ret), K_(tenant_id), K(trigger_info));
+
   }
   return ret;
 }

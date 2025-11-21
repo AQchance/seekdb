@@ -363,7 +363,7 @@ int ObStatTopKHist::build_histogram_from_topk_items(ObIAllocator &allocator,
                                          histogram))) {
       LOG_WARN("failed to build topk histogram", K(ret));
     } else {
-      LOG_TRACE("Succeed to build topk histogram", K(histogram), K(histogram.get_bucket_size()));
+
     }
   }
   return ret;
@@ -388,7 +388,7 @@ int ObStatTopKHist::try_build_topk_histogram(ObIAllocator &allocator,
 {
   int ret = OB_SUCCESS;
   int64_t num = std::min(bkts.count(), max_bucket_num);
-  LOG_TRACE("topk histogram info", K(bkts), K(max_bucket_num), K(total_row_count), K(not_null_count), K(num_distinct));
+
   if (OB_UNLIKELY(max_bucket_num <= 0)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("invalid bucket size", K(ret), K(max_bucket_num));
@@ -643,7 +643,7 @@ int ObGlobalSkipRateStat::add(const ObIArray<uint64_t> &skip_sample_cnt_arr, con
       }
     }
     count_++;
-    LOG_TRACE("OPT:skip rate stat add ",K(cg_skip_rate_arr_),K(skip_sample_cnt_arr), K(count_), K(ret));
+
   }
   return ret;
 }
@@ -665,7 +665,7 @@ int ObGlobalSkipRateStat::merge()
       }
     }
   }
-  LOG_TRACE("OPT:skip rate stat merge",K(cg_skip_rate_arr_), K(skip_sample_cnt_arr_), K(ret));
+
   return ret;
 }
 
@@ -858,7 +858,7 @@ int ObStatHybridHist::decode(ObObj &obj, ObIAllocator &allocator)
                                               hybrid_hist.get_pop_freq(),
                                               col_stat_->get_num_distinct(),
                                               hybrid_hist.get_pop_count());
-      LOG_TRACE("succeed to build hybrid hist", K(hybrid_hist), K(col_stat_->get_histogram()));
+
     }
   }
   return ret;

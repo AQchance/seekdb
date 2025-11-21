@@ -36,10 +36,10 @@ int ObHbaseCellRowIter::next_row()
       LOG_WARN("fail to get cell", K(ret));
     } else {
       set_valid(false);
-      LOG_DEBUG("one cell iter end", K(ret), KP(this));
+
     }
   } else {
-    LOG_DEBUG("one cell iter get row", K(ret), KP(this), K(cur_row_));
+
   }
   return ret;
 }
@@ -162,7 +162,7 @@ int ObHbaseTabletMergeIterator::init_cell_iters()
       }
     }
   }
-  LOG_DEBUG("ObHbaseTabletMergeIterator::init_cell_iters", K(ret), K(tablet_ids), K(query_));
+
   return ret;
 }
 
@@ -176,10 +176,10 @@ int ObHbaseTabletMergeIterator::get_next_cell(ObNewRow *&row)
     if (ret != OB_ITER_END) {
       LOG_WARN("fail to get cell", K(ret));
     } else {
-      LOG_DEBUG("tablet merge iter end", K(ret), KP(merge_iter_));
+
     }
   } else {
-    LOG_DEBUG("tablet merge iter get one cell", K(ret), KP(this), KPC(row));
+
   }
   return ret;
 }

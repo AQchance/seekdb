@@ -142,7 +142,7 @@ int ObPlanMonitorNodeList::register_monitor_node(ObMonitorNode &node)
   int ret = OB_SUCCESS;
   ObMonitorNodeKey key;
   key.node_id_ = ATOMIC_AAF(&rt_node_id_, 1);
-  LOG_TRACE("register monitor node", K(key.node_id_), K(&node), K(lbt()));
+
   node.set_rt_node_id(key.node_id_);
   if (OB_FAIL(node_map_.set_refactored(key, &node))) {
     LOG_WARN("fail to set moniotr node", K(ret), K(key));
@@ -156,7 +156,7 @@ int ObPlanMonitorNodeList::revert_monitor_node(ObMonitorNode &node)
   ObMonitorNodeKey key;
   key.node_id_ = node.get_rt_node_id();
   ObMonitorNode *node_ptr = NULL;
-  LOG_TRACE("revert monitor node", K(key.node_id_), K(&node));
+
   if (OB_FAIL(node_map_.erase_refactored(key, &node_ptr))) {
     LOG_WARN("fail to erase moniotr node", K(ret), K(key));
   }

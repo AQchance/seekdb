@@ -60,7 +60,7 @@ int ObSkipIndexSortedness::init(const ObSSTable &sstable,
   } else {
     is_inited_ = true;
 
-    LOG_DEBUG("Skip Index Init", K(sample_count_), K(micro_block_count_), K(col_idx_in_storage_));
+
   }
 
   return ret;
@@ -124,7 +124,7 @@ int ObSkipIndexSortedness::init_col_idx_in_storage(const ObSSTable &sstable,
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("Fail to calc col_idx_in_storage", KR(ret), K(cols_desc), K(column_id));
     } else {
-      LOG_DEBUG("calc col_idx_in_storage_", K(cols_desc), K(col_idx_in_storage_), K(schema));
+
     }
   }
 
@@ -159,7 +159,7 @@ int ObSkipIndexSortedness::init_compare_func(const ObTableSchema &schema, const 
       ObCmpFunc cmp_func;
       cmp_func.cmp_func_ = basic_func->null_last_cmp_;
       cmp_func_ = ObStorageDatumCmpFunc(cmp_func);
-      LOG_DEBUG("col desc type", K(col_type));
+
     }
   }
 
@@ -174,10 +174,10 @@ int ObSkipIndexSortedness::init_sample_count(const int64_t micro_block_count,
   // sample_count should in [MIN_SAMPLE_COUNT, MAX_SAMPLE_COUNT] and [0, mirco_block_count]
   if (sample_count_ > MAX_SAMPLE_COUNT || sample_count_ > micro_block_count) {
     sample_count_ = min(MAX_SAMPLE_COUNT, micro_block_count);
-    LOG_DEBUG("Too large sample count, limit it to upper limit", K(sample_count_));
+
   } else if (sample_count_ < MIN_SAMPLE_COUNT) {
     sample_count_ = min(MIN_SAMPLE_COUNT, micro_block_count);
-    LOG_DEBUG("Too small sample count, limit it to lower limit", K(sample_count_));
+
   }
   return ret;
 }
@@ -245,7 +245,7 @@ int ObSkipIndexSortedness::sample_data(ObArray<ObMinMaxDatum> &datums, int64_t &
       } else if (OB_FAIL(datums.push_back(tmp_min_max_datum))) {
         LOG_WARN("Fail to push back to sample datums");
       } else {
-        LOG_DEBUG("Sample skip index min max data", K(curr_index), K(tmp_min_max_datum));
+
       }
 
       if (OB_SUCC(ret)) {
@@ -257,7 +257,7 @@ int ObSkipIndexSortedness::sample_data(ObArray<ObMinMaxDatum> &datums, int64_t &
     if (OB_SUCC(ret) || OB_ITER_END == ret) {
       ret = OB_SUCCESS;
       tree_cursor_.reset();
-      LOG_DEBUG("Sample success", K(datums.count()), K(sample_step));
+
     } else {
       LOG_WARN("Fail to sample data", KR(ret), K(datums.count()));
     }

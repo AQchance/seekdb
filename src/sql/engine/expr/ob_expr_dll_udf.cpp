@@ -97,7 +97,7 @@ int ObExprDllUdf::deep_copy_udf_meta(share::schema::ObUDFMeta &dst,
   } else if (OB_FAIL(ob_write_string(alloc, src.dl_, dst.dl_))) {
     LOG_WARN("fail to write string", K(src.name_), K(ret));
   } else { }
-  LOG_DEBUG("set udf meta", K(src), K(dst));
+
   return ret;
 }
 

@@ -357,7 +357,7 @@ int ObHBaseModel::prepare(ObTableExecCtx &ctx,
   } else if (!is_batch_get && OB_FAIL(lock_rows(ctx, req))) {
     LOG_WARN("fail to lock rows", K(ret), K(req));
   }
-  LOG_DEBUG("hbase mode prepare", K(ret), K(is_same_part_key), K(is_hbase_put), K(is_batch_get), K(is_mix_batch), K(req), K(res));
+
   return ret;
 }
 
@@ -444,7 +444,7 @@ int ObHBaseModel::check_is_same_part_key(ObTableExecCtx &ctx,
     } // end for
     is_same = is_same_part_key;
   }
-  LOG_DEBUG("check is same part key", K(is_same), K(is_part_table), K(is_secondary_part));
+
   return ret;
 }
 

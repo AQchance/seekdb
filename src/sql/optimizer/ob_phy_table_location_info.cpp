@@ -90,13 +90,13 @@ int ObOptTabletLoc::assign_with_only_readable_replica(const ObObjectID &partitio
             (route_policy != COLUMN_STORE_ONLY && replica_loc.get_replica_type() == REPLICA_TYPE_COLUMNSTORE) ||
             (route_policy == FORCE_READONLY_ZONE && replica_loc.get_replica_type() != REPLICA_TYPE_READONLY)) {
           // skip the tmp_replica_loc
-          LOG_TRACE("skip the replica due to the replica policy.", K(ret), K(replica_loc));
+
         } else if (OB_FAIL(replica_locations_.push_back(replica_loc))) {
           LOG_WARN("Failed to push back replica locations",
                    K(ret), K(i), K(replica_loc), K(replica_locations_));
         }
       } else {
-        LOG_INFO("the replica location is invalid", K(bl_key), K(replica_loc));
+
       }
     }
   }
@@ -104,7 +104,7 @@ int ObOptTabletLoc::assign_with_only_readable_replica(const ObObjectID &partitio
   // all replicas are in blacklist, add leader replica forcibly.
   if (OB_SUCC(ret) && 0 == replica_locations_.count()) {
     if (OB_INVALID_INDEX == leader_replica_idx) {
-      LOG_INFO("there is no leader replica");
+
     } else if (OB_FAIL(replica_locations_.push_back(ls_location.get_replica_locations().at(leader_replica_idx)))) {
       LOG_WARN("failed to push back leader replica", K(ret));
     }
@@ -414,7 +414,7 @@ int ObCandiTableLoc::all_select_local_replica_or_leader(bool &is_on_same_server,
       replica_addr = replica_location.get_server();
       if (phy_part_loc_info.is_server_in_replica(local_server, local_replica_idx)) {
         if (replica_idx != local_replica_idx) {
-          LOG_TRACE("about to choose local replica rather than leader replica for duplicate table", K(replica_idx), K(local_replica_idx));
+
           replica_idx = local_replica_idx;
           replica_addr = local_server;
         }

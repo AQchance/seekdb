@@ -198,7 +198,7 @@ int ObPxFifoCoordOp::fetch_rows(const int64_t row_cnt)
       if (coord_info_.all_threads_finish_) {
         (void) msg_proc_.on_process_end(ctx_);
         ret = OB_ITER_END;
-        LOG_TRACE("all rows received, all sqcs reported, qc says: byebye!", K(ret));
+
         LOG_TRACE("TIMERECORD ",
                   "reserve:=1 name:=RQC dfoid:=-1 sqcid:=-1 taskid:=-1 end:",
                   ObTimeUtility::current_time());
@@ -209,9 +209,9 @@ int ObPxFifoCoordOp::fetch_rows(const int64_t row_cnt)
     } else if (OB_FAIL(ctx_.fast_check_status())) {
       LOG_WARN("fail check status, maybe px query timeout", K(ret));
     } else if (OB_FAIL(msg_loop_.process_any())) {
-      LOG_DEBUG("process one failed error", K(ret));
+
       if (OB_DTL_WAIT_EAGAIN == ret) {
-        LOG_TRACE("no message, try again", K(ret));
+
         ret = OB_SUCCESS;
       } else if (OB_ITER_END != ret) {
         LOG_WARN("fail process message", K(ret));
@@ -246,7 +246,7 @@ int ObPxFifoCoordOp::fetch_rows(const int64_t row_cnt)
   }
   if (ret == OB_ITER_END && !iter_end_) {
     iter_end_ = true;
-    LOG_TRACE("RECORDTIME", K(time_recorder_));
+
   } else if (OB_UNLIKELY(OB_SUCCESS != ret)) {
     int ret_terminate = terminate_running_dfos(coord_info_.dfo_mgr_);
     LOG_WARN("QC get error code", K(ret), K(ret_terminate));

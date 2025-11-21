@@ -497,7 +497,7 @@ int ObOptColumnStat::merge_min_max(ObObj &cur, const ObObj &other, bool is_cmp_m
       }
     }
   }
-  LOG_TRACE("succeed to merge min/max val", K(ret), K(cur), K(other), K(is_cmp_min), K(cmp));
+
   return ret;
 }
 

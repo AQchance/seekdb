@@ -87,7 +87,7 @@ int ObGlobalMergeTableOperator::load_global_merge_info(
       }
     }
     if (print_sql) {
-      LOG_INFO("finish load_gloal_merge_info", KR(ret), K(tenant_id), K(sql));
+
     }
   }
   return ret;

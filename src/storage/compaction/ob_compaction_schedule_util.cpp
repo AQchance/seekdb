@@ -77,7 +77,7 @@ bool ObBasicMergeScheduler::could_start_loop_task()
   if (!SERVER_STORAGE_META_SERVICE.is_started()) {
     can_start = false;
     if (REACH_THREAD_TIME_INTERVAL(PRINT_SLOG_REPLAY_INVERVAL)) {
-      LOG_INFO("slog replay hasn't finished, cannot start loop task");
+
     }
   }
   return can_start;
@@ -86,14 +86,14 @@ bool ObBasicMergeScheduler::could_start_loop_task()
 void ObBasicMergeScheduler::stop_major_merge()
 {
   ATOMIC_SET(&major_merge_status_, false);
-  LOG_INFO("major merge has been paused!");
+
 }
 
 void ObBasicMergeScheduler::resume_major_merge()
 {
   if (!could_major_merge_start()) {
     ATOMIC_SET(&major_merge_status_, true);
-    LOG_INFO("major merge has been resumed!");
+
   }
 }
 

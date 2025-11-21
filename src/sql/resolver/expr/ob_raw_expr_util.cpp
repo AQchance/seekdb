@@ -70,7 +70,7 @@ inline int ObRawExprUtils::resolve_op_expr_add_implicit_cast(ObRawExprFactory &e
         if (OB_FAIL(func_expr->formalize(session_info))) {
           LOG_WARN("formalize current expr failed", K(ret));
         }
-        LOG_DEBUG("succ to create to char expr", K(dst_type));
+
       }
     }
   } else {
@@ -127,7 +127,7 @@ int ObRawExprUtils::resolve_op_expr_implicit_cast(ObRawExprFactory &expr_factory
         LOG_WARN("INVALID ORACLE TYPE", K(type1), K(type2), K(*sub_expr1), K(*sub_expr2));
         RESOLVE_ORALCE_IMLICIT_CAST_WARN_OR_ERR(OB_OBJ_TYPE_ERROR, OB_ERR_INVALID_TYPE_FOR_OP);
       } else if (ObONullType == type1 || ObONullType == type2) {
-        LOG_DEBUG("No need to cast with null", K(type1), K(type2));
+
       } else {
         ImplicitCastDirection dir = ImplicitCastDirection::IC_NOT_SUPPORT;
         ObObjType middle_type = ObMaxType;
@@ -1254,7 +1254,7 @@ int ObRawExprUtils::make_raw_expr_from_str(const char *expr_str,
             parse_result.yylineno_);
   } else {
     if (OB_UNLIKELY(OB_LOGGER.get_log_level() >= OB_LOG_LEVEL_DEBUG)) {
-      LOG_DEBUG("", "parser result", SJ(ObParserResultPrintWrapper(*parse_result.result_tree_)));
+
     }
     ParseNode *stmt_node = NULL;
     ParseNode *select_node = NULL;
@@ -1369,7 +1369,7 @@ int ObRawExprUtils::parse_default_expr_from_str(const ObString &expr_str,
             parse_result.yylineno_);
   } else {
     if (OB_UNLIKELY(OB_LOGGER.get_log_level() >= OB_LOG_LEVEL_DEBUG)) {
-      LOG_DEBUG("", "parser result", SJ(ObParserResultPrintWrapper(*parse_result.result_tree_)));
+
     }
     ParseNode *expr_node = NULL;
     if (OB_ISNULL(expr_node = parse_result.result_tree_->children_[0])) {
@@ -1423,7 +1423,7 @@ int ObRawExprUtils::parse_expr_list_node_from_str(const ObString &expr_str,
             parse_result.yylineno_);
   } else {
     if (OB_UNLIKELY(OB_LOGGER.get_log_level() >= OB_LOG_LEVEL_DEBUG)) {
-      LOG_DEBUG("", "parser result", SJ(ObParserResultPrintWrapper(*parse_result.result_tree_)));
+
     }
     ParseNode *stmt_node = NULL;
     ParseNode *select_node = NULL;
@@ -1519,7 +1519,7 @@ int ObRawExprUtils::parse_bool_expr_node_from_str(const common::ObString &expr_s
             parse_result.yylineno_);
   } else {
     if (OB_UNLIKELY(OB_LOGGER.get_log_level() >= OB_LOG_LEVEL_DEBUG)) {
-      LOG_DEBUG("", "parser result", SJ(ObParserResultPrintWrapper(*parse_result.result_tree_)));
+
     }
     ParseNode *stmt_node = NULL;
     ParseNode *select_node = NULL;
@@ -1724,7 +1724,7 @@ int ObRawExprUtils::resolve_sequence_object(const ObQualifiedName &q_name,
   uint64_t dblink_id = OB_INVALID_ID;
   if (!q_name.tbl_name_.empty() &&
         ObSequenceNamespaceChecker::is_curr_or_next_val(q_name.col_name_)) {
-    LOG_DEBUG("sequence object", K(q_name));
+
     // don't check scope for sequence in definition of generated column.
     // sequence expr will only be used later when insert or update column with default value.
     ObStmtScope current_scope = NULL != dml_resolver && !is_generated_column
@@ -2004,7 +2004,7 @@ int ObRawExprUtils::build_generated_column_expr(const obrpc::ObCreateIndexArg *a
       && lib::is_mysql_mode()
       && expr->get_result_type().get_precision() > OB_MAX_DECIMAL_PRECISION) {
     // maximum stored precision is 65, need truncating
-    LOG_INFO("truncate precision to `OB_MAX_DECIMAL_PRECISION` for deicmal_int", K(*expr));
+
     ObAccuracy res_acc = expr->get_accuracy();
     res_acc.set_precision(OB_MAX_DECIMAL_PRECISION);
     expr->set_accuracy(res_acc);
@@ -2747,7 +2747,7 @@ int ObRawExprUtils::replace_all_ref_column(ObRawExpr *&raw_expr, const common::O
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("beyond the index", K(offset), K(exprs.count()));
   }else if (T_REF_COLUMN == raw_expr->get_expr_type()) {
-    LOG_DEBUG("replace leaf node", K(*raw_expr), K(*exprs.at(offset)), K(offset));
+
     raw_expr = exprs.at(offset);
     ++offset;
   } else {
@@ -3258,7 +3258,7 @@ int ObRawExprUtils::contain_virtual_generated_column(ObRawExpr *&expr, bool &is_
     } else if (OB_FAIL(SMART_CALL(contain_virtual_generated_column(expr->get_param_expr(j), is_contain_vir_gen_column)))) {
       LOG_WARN("fail to contain virtual gen column", K(j), K(ret));
     } else {
-      LOG_TRACE("conclude virtual generated column", K(is_contain_vir_gen_column));
+
     }
   }
   return ret;
@@ -3534,7 +3534,7 @@ int ObRawExprUtils::try_add_cast_expr_above(ObRawExprFactory *expr_factory,
                                           session, false, cm_zf, local_vars, local_var_id));
       CK(OB_NOT_NULL(new_expr = dynamic_cast<ObRawExpr*>(cast_expr)));
     }
-    LOG_DEBUG("in try_add_cast", K(ret), K(dst_type), K(src_type) ,K(cm));
+
   }
   return ret;
 }
@@ -5254,7 +5254,7 @@ int ObRawExprUtils::build_pad_expr(ObRawExprFactory &expr_factory,
     } else if (OB_FAIL(expr->formalize(session_info))) {
       LOG_WARN("fail to extract info", K(ret));
     }
-    LOG_DEBUG("build pad expr", KPC(pading_word_expr), KPC(pad_expr));
+
   }
   return ret;
 }
@@ -6293,7 +6293,7 @@ uint32_t ObRawExprUtils::calc_column_result_flag(const ObColumnSchemaV2 &column_
   if (column_schema.is_zero_fill()) {
     flag |= ZEROFILL_FLAG;
   }
-  LOG_DEBUG("calc result flag", K(column_schema), K(flag), K(flag & HAS_NOT_NULL_VALIDATE_CONSTRAINT_FLAG));
+
   return flag;
 }
 
@@ -6616,7 +6616,7 @@ int ObRawExprUtils::replace_level_column(ObRawExpr *&raw_expr, ObRawExpr *to, bo
   } else if (raw_expr->get_expr_type() == T_LEVEL) {
     raw_expr = to;
     replaced = true;
-    LOG_DEBUG("replace leaf node", K(*to), K(to));
+
   } else {
     int64_t N = raw_expr->get_param_count();
     for (int64_t i = 0; OB_SUCC(ret) && i < N; ++i) {
@@ -7012,7 +7012,7 @@ int ObRawExprUtils::try_add_bool_expr(ObCaseOpRawExpr *parent,
       LOG_WARN("in expr is NULL", K(ret));
   } else if (OB_UNLIKELY(T_OP_ARG_CASE == parent->get_expr_type())) {
     // ignore T_OP_ARG_CASE
-    LOG_DEBUG("ignore adding bool expr for arg_case expr", K(ret), K(*parent));
+
   } else {
     for (int64_t i = 0; OB_SUCC(ret) && i < parent->get_when_expr_size(); ++i) {
       ObRawExpr *when_expr = parent->get_when_param_expr(i);
@@ -7231,7 +7231,7 @@ int ObRawExprUtils::get_real_expr_without_cast(const ObRawExpr *expr,
     }
     if (OB_SUCC(ret)) {
       out_expr = expr;
-      LOG_DEBUG("get_real_expr_without_cast done", K(*out_expr));
+
     }
   }
   return ret;
@@ -7253,7 +7253,7 @@ int ObRawExprUtils::build_wrapper_inner_expr(ObRawExprFactory &factory,
     OZ(rc_expr->formalize(&session_info));
     OZ(rc_expr->add_flag(IS_INNER_ADDED_EXPR));
     OX(out = rc_expr);
-    LOG_DEBUG("debug build wrapper inner expr", K(ret), K(lbt()), K(*rc_expr));
+
   }
   return ret;
 }
@@ -7313,7 +7313,7 @@ int ObRawExprUtils::build_inner_aggr_code_expr(ObRawExprFactory &factory,
   OZ(expr->add_flag(IS_INNER_ADDED_EXPR));
   if (OB_SUCC(ret)) {
     out = expr;
-    LOG_DEBUG("debug build wrapper inner expr", K(ret), K(lbt()), K(expr));
+
   }
   return ret;
 }
@@ -7333,7 +7333,7 @@ int ObRawExprUtils::build_inner_wf_aggr_status_expr(ObRawExprFactory &factory,
   if (OB_SUCC(ret)) {
     expr->add_flag(IS_INNER_ADDED_EXPR);
     out = expr;
-    LOG_DEBUG("debug build wrapper inner expr", K(ret), K(lbt()), K(expr));
+
   }
   return ret;
 }
@@ -7356,7 +7356,7 @@ int ObRawExprUtils::build_pseudo_ddl_slice_id(ObRawExprFactory &factory,
   OZ(expr->add_flag(IS_INNER_ADDED_EXPR));
   if (OB_SUCC(ret)) {
     out = expr;
-    LOG_DEBUG("debug build ddl slice id inner expr", K(ret), K(lbt()), K(expr));
+
   }
   return ret;
 }
@@ -7510,7 +7510,7 @@ int ObRawExprUtils::check_need_cast_expr(const ObRawExprResType &src_type,
       ignore_dup_cast_error = true;
     }
   }
-  LOG_DEBUG("check_need_cast_expr", K(ret), K(need_cast), K(src_type), K(dst_type));
+
   return ret;
 }
 

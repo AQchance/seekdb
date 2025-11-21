@@ -111,7 +111,7 @@ void ObTTLService::stop()
 {
   FLOG_INFO("ttl_service: start to stop", K_(tenant_id));
   if (OB_NOT_NULL(tenant_ttl_mgr_)) {
-    LOG_INFO("tenant_ttl_mgr start to stop", K_(tenant_id));
+
     tenant_ttl_mgr_->stop();
   }
   FLOG_INFO("ttl_service: finish to stop", K_(tenant_id));
@@ -122,7 +122,7 @@ void ObTTLService::wait()
   FLOG_INFO("ttl_service: start to wait", K_(tenant_id));
   int ret = OB_SUCCESS;
   if (OB_NOT_NULL(tenant_ttl_mgr_)) {
-    LOG_INFO("tenant_ttl_mgr start to wait", K_(tenant_id));
+
     tenant_ttl_mgr_->wait();
   }
   FLOG_INFO("ttl_service: finish to wait", K_(tenant_id));
@@ -152,7 +152,7 @@ int ObTTLService::alloc_tenant_ttl_mgr()
     LOG_WARN("fail to init tenant_ttl_mgr", K_(tenant_id), KR(ret));
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("succ to alloc tenant_ttl_mgr", K_(tenant_id), KP_(tenant_ttl_mgr));
+
   } else {
     delete_tenant_ttl_mgr();
   }
@@ -168,7 +168,7 @@ void ObTTLService::delete_tenant_ttl_mgr()
     OB_DELETE(ObTenantTTLManager, "tenant_ttl_mgr", tenant_ttl_mgr_);
     tenant_ttl_mgr_ = nullptr;
   }
-  LOG_INFO("finish to delete tenant_ttl_mgr", K_(tenant_id));
+
 }
 
 int ObTTLService::check_inner_stat()

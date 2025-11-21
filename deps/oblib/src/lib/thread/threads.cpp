@@ -150,7 +150,7 @@ int Threads::do_thread_recycle(bool try_mode)
           if (OB_FAIL(threads_[i]->try_wait())) {
             if (OB_EAGAIN == ret) {
               ret = OB_SUCCESS;
-              LOG_INFO("try_wait return eagain", KP(this), "thread", threads_[i]);
+
             } else {
               LOG_ERROR("try_wait failed", K(ret), KP(this));
             }
@@ -167,7 +167,7 @@ int Threads::do_thread_recycle(bool try_mode)
           ob_free(threads_[i]);
           threads_[i] = nullptr;
           n_threads--;
-          LOG_INFO("recycle one thread", KP(this), "total", n_threads_, "remain", n_threads);
+
         }
       }
     }

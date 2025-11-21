@@ -237,7 +237,7 @@ int ObCGIterParamPool::generate_for_column_store(const ObTableIterParam &row_par
 
   if (OB_UNLIKELY(!row_param.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument", K(ret), K(row_param));
+
   } else { // get cg col desc from row_param, which contains read cols desc
     const ObITableReadInfo *read_info = row_param.get_read_info();
     const common::ObIArray<ObColDesc> &col_descs = read_info->get_columns_desc();

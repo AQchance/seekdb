@@ -199,7 +199,7 @@ int64_t ObColumnEqualEncoder::calc_size() const
   if (0 < exc_row_ids_.count()) {
     size += base_meta_writer_.size();
   }
-  LOG_DEBUG("column equal size", K(size), K(column_index_));
+
   return size;
 }
 

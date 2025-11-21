@@ -414,7 +414,7 @@ int ObTransformMVRewritePrepare::generate_mv_stmt(MvInfo &mv_info,
     } else if (OB_FAIL(resolve_temp_stmt(ObString::make_string(mv_sql.ptr()), ctx, temp_query_ctx, mv_info.select_mv_stmt_))) {
       LOG_WARN("failed to resolve mv define stmt", K(ret), K(mv_sql));
     } else {
-      LOG_DEBUG("generate mv stmt", KPC(mv_info.view_stmt_), KPC(mv_info.select_mv_stmt_));
+
     }
     OPT_TRACE("generate stmt for", mv_info.mv_schema_->get_table_name(), ":", mv_info.view_stmt_);
   }

@@ -391,7 +391,7 @@ int ObUserDefinedType::destruct_obj(ObObj &src, ObSQLSessionInfo *session, bool 
         common::ObIAllocator *record_allocator = record->get_allocator();
         if (NULL == record_allocator) {
           //The allocator for Record that was only defined but never used is empty, this is normal, skip it
-          LOG_DEBUG("Notice: a record declared but not used", K(src), K(ret));
+
         } else {
           ObPLAllocator1 *pl_allocator = dynamic_cast<ObPLAllocator1 *>(record_allocator);
           if (NULL == pl_allocator) {
@@ -443,7 +443,7 @@ int ObUserDefinedType::alloc_sub_composite(ObObj &dest_element, ObIAllocator &al
     } else {                                                          \
       TYPE *collection = static_cast<TYPE*>(dest_composite);                    \
       CK (OB_NOT_NULL(collection));                                   \
-      LOG_INFO("src is: ", KP(old_composite), KP(dest_composite), K(old_composite->get_init_size()));                                   \
+                                   \
       OX (new(collection)TYPE(old_composite->get_id()));                         \
       OZ (collection->init_allocator(allocator, false));  \
       if (OB_FAIL(ret)) {    \
@@ -892,7 +892,7 @@ int ObRecordType::is_compatble(const ObRecordType &other, bool &is_comp) const
       const ObPLDataType *right = other.get_record_member_type(i);
       CK (OB_NOT_NULL(left));
       CK (OB_NOT_NULL(right));
-      LOG_TRACE("check record member type", K(i), KPC(left), KPC(right));
+
       if (OB_SUCC(ret)) {
         if (left->is_obj_type() && right->is_obj_type()) {
           CK (OB_NOT_NULL(left->get_data_type()));
@@ -914,7 +914,7 @@ int ObRecordType::is_compatble(const ObRecordType &other, bool &is_comp) const
                                                                     : right->get_data_type()->get_udt_id();
           if (left_udt_id != right_udt_id) {
             is_comp = false;
-            LOG_TRACE("record type is not compatible", K(i), K(left_udt_id), K(right_udt_id));
+
           }
         } else {
           is_comp = false;
@@ -1769,7 +1769,7 @@ int ObPLComposite::copy_element(const ObObj &src,
     OZ (deep_copy_obj(allocator, result, dest));
   } else {
     if (src.is_null() && 0 != src.get_unknown()) {
-      LOG_INFO("here maybe a bug", K(src), K(&src), K(src.get_unknown()));
+
     }
     OZ (ObUserDefinedType::destruct_objparam(allocator, dest));
     OZ (deep_copy_obj(allocator, src, dest));
@@ -2035,19 +2035,19 @@ int ObPLRecord::set_data(const ObIArray<ObObj> &row)
 void ObPLRecord::print() const
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("ObPLRecord Header", K(this), K(*this), K(count_));
+
   ObObj obj;
   for (int64_t i= 0; i < get_count(); ++i) {
     OZ (get_element(i, obj));
     if (OB_SUCC(ret)) {
       if (obj.is_pl_extend()) {
         ObPLComposite *composite = reinterpret_cast<ObPLComposite*>(obj.get_ext());
-        LOG_INFO("ObPLRecord Data", K(i), K(get_count()), K(*composite));
+
         OX (composite->print());
       } else if (obj.is_varchar_or_char() && obj.get_data_length() > 100) {
-        LOG_INFO("ObPLRecord Data", K(i), K(get_count()), K("xxx...xxx"));
+
       } else {
-        LOG_INFO("ObPLRecord Data", K(i), K(get_count()), K(obj));
+
       }
     }
   }
@@ -2159,7 +2159,7 @@ int64_t ObPLCollection::get_actual_count()
     if (objs[i].is_invalid_type()) {
       cnt++;
     } else {
-      LOG_DEBUG("array out of range.", K(i), K(cnt), K(count));
+
     }
   }
   return count - cnt;
@@ -2267,7 +2267,7 @@ void ObPLCollection::print() const
   int ret = OB_SUCCESS;
   const int64_t *sort_array = nullptr;
   const ObObj *key_array = nullptr;
-  LOG_INFO("ObPLCollection Header", K(this), K(*this));
+
 
 
   for (int64_t i = 0; i < count_; ++i) {
@@ -2276,14 +2276,14 @@ void ObPLCollection::print() const
     const int64_t sort = sort_array != nullptr ? sort_array[i] : OB_INVALID_INDEX;
     if (obj.is_pl_extend()) {
       ObPLComposite *composite = reinterpret_cast<ObPLComposite*>(obj.get_ext());
-      LOG_INFO("ObPLCollection Data", K(i), K(get_count()), K(sort), KPC(key), K(*composite));
+
       OX (composite->print());
     } else if (obj.is_varchar_or_char() && obj.get_data_length() > 100) {
-      LOG_INFO("ObPLCollection Data", K(i), K(get_count()), K(sort), KPC(key), K("xxx...xxx"));
+
     } else if (obj.is_invalid_type()) {
-      LOG_INFO("ObPLCollection Data", K(i), K(get_count()), K(sort), KPC(key), K("deleted element"), K(obj));
+
     } else {
-      LOG_INFO("ObPLCollection Data", K(i), K(get_count()), K(sort), KPC(key), K(obj));
+
     }
   }
 }

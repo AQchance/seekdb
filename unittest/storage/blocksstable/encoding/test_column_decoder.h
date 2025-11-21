@@ -1371,7 +1371,7 @@ void TestColumnDecoder::batch_decode_to_datum_test(bool is_condensed)
                             ROW_CNT,
                             datums));
     for (int64_t j = 0; j < ROW_CNT; ++j) {
-      LOG_INFO("Current row: ", K(j), K(col_offset), K(rows[j].storage_datums_[col_offset]), K(datums[j]));
+
       ASSERT_TRUE(ObDatum::binary_equal(rows[j].storage_datums_[col_offset], datums[j]));
     }
   }
@@ -1427,7 +1427,7 @@ void TestColumnDecoder::cell_decode_to_datum_test()
       continue;
     }
     int32_t col_offset = i;
-    LOG_INFO("Current col: ", K(i), K(col_descs_.at(i)),  K(*decoder.decoders_[col_offset].ctx_));
+
 
     for (int64_t j = 0; j < ROW_CNT; ++j) {
       ObDatum datum;
@@ -1436,7 +1436,7 @@ void TestColumnDecoder::cell_decode_to_datum_test()
       ObBitStream bs(reinterpret_cast<unsigned char *>(const_cast<char *>(row_data)), row_len);
       ASSERT_EQ(OB_SUCCESS,
           decoder.decoders_[col_offset].decode(datum,j, bs, row_data, row_len));
-      LOG_INFO("Current row: ", K(j), K(col_offset), K(rows[j].storage_datums_[col_offset]), K(datum));
+
       ASSERT_TRUE(ObDatum::binary_equal(rows[j].storage_datums_[col_offset], datum));
     }
   }
@@ -1493,7 +1493,7 @@ void TestColumnDecoder::cell_decode_to_datum_test_without_hex()
       continue;
     }
     int32_t col_offset = i;
-    LOG_INFO("Current col: ", K(i), K(col_descs_.at(i)),  K(*decoder.decoders_[col_offset].ctx_));
+
 
     for (int64_t j = 0; j < ROW_CNT; ++j) {
       ObDatum datum;
@@ -1502,7 +1502,7 @@ void TestColumnDecoder::cell_decode_to_datum_test_without_hex()
       ObBitStream bs(reinterpret_cast<unsigned char *>(const_cast<char *>(row_data)), row_len);
       ASSERT_EQ(OB_SUCCESS,
           decoder.decoders_[col_offset].decode(datum,j, bs, row_data, row_len));
-      LOG_INFO("Current row: ", K(j), K(col_offset), K(rows[j].storage_datums_[col_offset]), K(datum));
+
       ASSERT_TRUE(ObDatum::binary_equal(rows[j].storage_datums_[col_offset], datum));
     }
   }
@@ -1573,7 +1573,7 @@ void TestColumnDecoder::cell_column_equal_decode_to_datum_test()
       continue;
     }
     int32_t col_offset = i;
-    LOG_INFO("Current col: ", K(i), K(col_descs_.at(i)),  K(*decoder.decoders_[col_offset].ctx_));
+
 
     for (int64_t j = 0; j < ROW_CNT; ++j) {
       ObDatum datum;
@@ -1582,7 +1582,7 @@ void TestColumnDecoder::cell_column_equal_decode_to_datum_test()
       ObBitStream bs(reinterpret_cast<unsigned char *>(const_cast<char *>(row_data)), row_len);
       ASSERT_EQ(OB_SUCCESS,
           decoder.decoders_[col_offset].decode(datum,j, bs, row_data, row_len));
-      LOG_INFO("Current row: ", K(j), K(col_offset), K(rows[j].storage_datums_[col_offset]), K(datum));
+
       ASSERT_TRUE(ObDatum::binary_equal(rows[j].storage_datums_[col_offset], datum));
     }
   }
@@ -1676,7 +1676,7 @@ void TestColumnDecoder::cell_inter_column_substring_to_datum_test()
       continue;
     }
     int32_t col_offset = i;
-    LOG_INFO("Current col: ", K(i), K(col_descs_.at(i)),  K(*decoder.decoders_[col_offset].ctx_));
+
 
     for (int64_t j = 0; j < ROW_CNT; ++j) {
       ObDatum datum;
@@ -1685,7 +1685,7 @@ void TestColumnDecoder::cell_inter_column_substring_to_datum_test()
       ObBitStream bs(reinterpret_cast<unsigned char *>(const_cast<char *>(row_data)), row_len);
       ASSERT_EQ(OB_SUCCESS,
           decoder.decoders_[col_offset].decode(datum,j, bs, row_data, row_len));
-      LOG_INFO("Current row: ", K(j), K(col_offset), K(rows[j].storage_datums_[col_offset]), K(datum));
+
       ASSERT_TRUE(ObDatum::binary_equal(rows[j].storage_datums_[col_offset], datum));
     }
   }
@@ -1863,7 +1863,7 @@ void TestColumnDecoder::batch_decode_to_vector_test(
     ASSERT_EQ(OB_SUCCESS, VectorDecodeTestUtil::generate_column_output_expr(
         ROW_CNT, col_meta, vector_format, eval_ctx, col_expr, frame_allocator));
     int32_t col_offset = i;
-    LOG_INFO("Current col: ", K(i), K(col_meta),  K(*decoder.decoders_[col_offset].ctx_), K(precision), K(vec_tc));
+
 
     int32_t row_ids[test_row_cnt];
     int32_t row_id_idx = 0;
@@ -1975,7 +1975,7 @@ void TestColumnDecoder::col_equal_batch_decode_to_vector_test(const VectorFormat
     ASSERT_EQ(OB_SUCCESS, VectorDecodeTestUtil::generate_column_output_expr(
         ROW_CNT, col_meta, vector_format, eval_ctx, col_expr, frame_allocator));
     int32_t col_offset = i;
-    LOG_INFO("Current col: ", K(i), K(col_meta),  K(*decoder.decoders_[col_offset].ctx_), K(precision), K(vec_tc));
+
 
     int32_t row_ids[ROW_CNT];
     for (int32_t datum_idx = 0; datum_idx < ROW_CNT; ++datum_idx) {
@@ -2098,7 +2098,7 @@ void TestColumnDecoder::col_substr_batch_decode_to_vector_test(const VectorForma
     ASSERT_EQ(OB_SUCCESS, VectorDecodeTestUtil::generate_column_output_expr(
         ROW_CNT, col_meta, vector_format, eval_ctx, col_expr, frame_allocator));
     int32_t col_offset = i;
-    LOG_INFO("Current col: ", K(i), K(col_meta),  K(*decoder.decoders_[col_offset].ctx_), K(precision), K(vec_tc));
+
 
     int32_t row_ids[ROW_CNT];
     for (int32_t datum_idx = 0; datum_idx < ROW_CNT; ++datum_idx) {
@@ -2177,13 +2177,13 @@ int VectorDecodeTestUtil::generate_column_output_expr(
   char *frame = (char *)frame_allocator.alloc(cur_total_size);
   if (nullptr == frame || nullptr == frame_arr) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "null frame", K(ret));
+
   } else {
     memset(frame, 0, cur_total_size);
     eval_ctx.frames_ = frame_arr;
     eval_ctx.frames_[0] = frame;
     if (OB_FAIL(col_expr.init_vector(eval_ctx, format, batch_cnt))) {
-      STORAGE_LOG(WARN, "failed to init vector", K(ret));
+
     } else {
       if (is_uniform_format(format)) {
         col_expr.reset_datums_ptr(frame, batch_cnt);
@@ -2212,7 +2212,7 @@ bool VectorDecodeTestUtil::verify_vector_and_datum_match(
     bret = ObDatum::binary_equal(vec_datum, datum);
   }
   if (!bret) {
-    LOG_INFO("datum not match with datum from vector", K(vec_idx), K(datum), K(vec_datum));
+
   }
   return bret;
 }

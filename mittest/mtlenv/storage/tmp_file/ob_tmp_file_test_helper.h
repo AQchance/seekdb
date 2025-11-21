@@ -252,13 +252,13 @@ int TestTmpFileStress::init(const int fd, const TmpFileOp op,
   int ret = OB_SUCCESS;
   if (thread_cnt < 0 || OB_ISNULL(buf) || offset < 0 || size <= 0 || timeout_ms <= 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(thread_cnt), KP(buf), K(offset), K(size), K(timeout_ms));
+
   } else if (TmpFileOp::OP_MAX == op) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(op));
+
   } else if ((op == TmpFileOp::WRITE || op == TmpFileOp::TRUNCATE) && 1 != thread_cnt) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(op), K(thread_cnt));
+
   } else {
     buf_ = buf;
     thread_cnt_ = thread_cnt;
@@ -286,7 +286,7 @@ void TestTmpFileStress::reset()
 
 void TestTmpFileStress::write_data_(const int64_t write_size)
 {
-  STORAGE_LOG(INFO, "TestTmpFileStress write thread", K(fd_), K(thread_idx_), KP(buf_), K(size_));
+
   int ret = OB_SUCCESS;
   ObArray<int64_t> size_array;
   ObTmpFileIOInfo io_info;
@@ -298,7 +298,7 @@ void TestTmpFileStress::write_data_(const int64_t write_size)
   std::vector<int64_t> turn_write_size = generate_random_sequence(1, write_size / 3, write_size, 3);
   for (int i = 0; i < turn_write_size.size(); ++i) {
     int64_t this_turn_write_size = turn_write_size[i];
-    STORAGE_LOG(INFO, "random write size", K(fd_), K(thread_idx_), KP(buf_), K(size_), K(this_turn_write_size));
+
     // write data
     io_info.buf_ = buf_ + already_write;
     if (this_turn_write_size % ObTmpFileGlobal::PAGE_SIZE == 0 && i == 0) {
@@ -331,12 +331,12 @@ void TestTmpFileStress::write_data_(const int64_t write_size)
   }
 
   ASSERT_EQ(OB_SUCCESS, ret);
-  STORAGE_LOG(INFO, "TestTmpFileStress write thread finished", K(fd_), K(thread_idx_), KP(buf_), K(size_));
+
 }
 
 void TestTmpFileStress::read_data_(const int64_t read_offset, const int64_t read_size)
 {
-  STORAGE_LOG(INFO, "TestTmpFileStress read thread start", K(fd_), K(thread_idx_), KP(buf_), K(read_offset), K(read_size));
+
   int ret = OB_SUCCESS;
   char *read_buf = new char[read_size];
   ObTmpFileIOInfo io_info;
@@ -351,14 +351,14 @@ void TestTmpFileStress::read_data_(const int64_t read_offset, const int64_t read
   int cmp = memcmp(handle.get_buffer(), buf_ + read_offset, io_info.size_);
   if (cmp != 0 || OB_FAIL(ret)) {
     printf("TestTmpFileStress read thread failed, fd_:%d, thread_idx_:%ld\n", fd_, thread_idx_);
-    STORAGE_LOG(ERROR, "TestTmpFileStress read thread failed", KR(ret), K(fd_), K(cmp), K(thread_idx_), KP(buf_), K(read_offset), K(read_size));
+
     ob_abort();
   }
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(0, cmp);
   handle.reset();
   delete[] read_buf;
-  STORAGE_LOG(INFO, "TestTmpFileStress read thread finished", K(fd_), K(thread_idx_), KP(buf_), K(read_offset), K(read_size));
+
 }
 
 void TestTmpFileStress::truncate_data_()
@@ -425,7 +425,7 @@ void TestTmpFileStress::truncate_data_()
   handle.reset();
   delete[] read_buf;
   delete[] zero_buf;
-  STORAGE_LOG(INFO, "TestTmpFileStress truncate thread finished", K(fd_), K(thread_idx_), KP(buf_), K(offset_), K(size_));
+
 }
 
 void TestTmpFileStress::run1()
@@ -435,10 +435,10 @@ void TestTmpFileStress::run1()
   ObCurTraceId::TraceId *cur_trace_id = ObCurTraceId::get_trace_id();
   if (nullptr != cur_trace_id && cur_trace_id->is_valid()) {
     trace_id = *cur_trace_id;
-    LOG_INFO("init TestTmpFileStress with an old trace_id", KPC(cur_trace_id), KPC(this));
+
   } else {
     trace_id.init(GCONF.self_addr_);
-    LOG_INFO("init TestTmpFileStress with a new trace_id", K(trace_id), KPC(this));
+
   }
   ObTraceIDGuard trace_guard(trace_id);
 
@@ -505,7 +505,7 @@ int TestMultiTmpFileStress::init(const int64_t file_cnt,
   int ret = OB_SUCCESS;
   if (file_cnt < 0 || thread_cnt < 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(file_cnt), K(thread_cnt));
+
   } else {
     file_cnt_ = file_cnt;
     dir_id_ = dir_id;
@@ -521,7 +521,7 @@ int TestMultiTmpFileStress::init(const int64_t file_cnt,
 
 void TestMultiTmpFileStress::run1()
 {
-  STORAGE_LOG(INFO, "TestMultiTmpFileStress thread run start");
+
   int ret = OB_SUCCESS;
   int64_t fd = 0;
   ObTenantEnv::set_tenant(tenant_ctx_);
@@ -529,7 +529,7 @@ void TestMultiTmpFileStress::run1()
   ret = MTL(ObTenantTmpFileManager *)->open(fd, dir_id_, "");
   std::cout << "normal case, fd: " << fd << std::endl;
   ASSERT_EQ(OB_SUCCESS, ret);
-  STORAGE_LOG(INFO, "open file success", K(fd));
+
   tmp_file::ObITmpFileHandle file_handle;
   ret = MTL(ObTenantTmpFileManager *)->get_tmp_file(fd, file_handle);
   ASSERT_EQ(OB_SUCCESS, ret);
@@ -553,48 +553,48 @@ void TestMultiTmpFileStress::run1()
       // truncate read data in previous round
       test_truncate.init(fd, TmpFileOp::TRUNCATE, 1, timeout_ms_, data_buffer, (i-1) * batch_size_, batch_size_, disable_block_cache_);
       ASSERT_EQ(OB_SUCCESS, ret);
-      STORAGE_LOG(INFO, "test_truncate run start", K(i), K(batch_size_));
+
       test_truncate.start();
     }
     TestTmpFileStress test_write(tenant_ctx_);
     ret = test_write.init(fd, TmpFileOp::WRITE, 1, timeout_ms_, data_buffer + i * batch_size_, 0, batch_size_, disable_block_cache_);
     ASSERT_EQ(OB_SUCCESS, ret);
-    STORAGE_LOG(INFO, "test_write run start");
+
     test_write.start();
     test_write.wait();
-    STORAGE_LOG(INFO, "test_write run end");
+
 
     TestTmpFileStress test_read(tenant_ctx_);
     ret = test_read.init(fd, TmpFileOp::READ, read_thread_cnt_perf_file_, timeout_ms_, data_buffer, i * batch_size_, batch_size_, disable_block_cache_);
     ASSERT_EQ(OB_SUCCESS, ret);
 
-    STORAGE_LOG(INFO, "test_read run start", K(i), K(batch_size_));
+
     test_read.start();
     test_read.wait();
-    STORAGE_LOG(INFO, "test_read run end");
+
 
     if (i > 0) {
       // wait to truncate read data in last round
       test_truncate.wait();
       test_truncate.reset();
-      STORAGE_LOG(INFO, "test_truncate run end", K(i));
+
     }
 
-    STORAGE_LOG(INFO, "TestMultiTmpFileStress thread run a batch end", K(i));
+
   }
 
   test_truncate.init(fd, TmpFileOp::TRUNCATE, 1, timeout_ms_, data_buffer, file_size - batch_size_, batch_size_, disable_block_cache_);
   ASSERT_EQ(OB_SUCCESS, ret);
-  STORAGE_LOG(INFO, "test_truncate run start");
+
   test_truncate.start();
   test_truncate.wait();
-  STORAGE_LOG(INFO, "test_truncate run end");
+
 
   ret = MTL(ObTenantTmpFileManager *)->remove(fd);
   ASSERT_EQ(OB_SUCCESS, ret);
 
   delete[] data_buffer;
-  STORAGE_LOG(INFO, "TestMultiTmpFileStress thread run end");
+
 }
 
 } // namespace oceanbase

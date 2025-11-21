@@ -126,7 +126,7 @@ int ObHybridHistEstimator::estimate(const ObOptStatGatherParam &param,
                                                         no_sample_idx))) {
     LOG_WARN("failed to estimate no sample col hydrid_hist", K(ret));
   } else {
-    LOG_TRACE("succeed to build hybrid histogram", K(hybrid_col_stats));
+
   }
   return ret;
 }
@@ -171,7 +171,7 @@ int ObHybridHistEstimator::extract_hybrid_hist_col_info(const ObOptStatGatherPar
         max_num_buckets = std::max(max_num_buckets, param.column_params_.at(i).bucket_num_);
       }
     }
-    LOG_TRACE("succeed to extract hybrid hist col info", K(param), K(hybrid_col_params), K(hybrid_col_stats));
+
   }
   return ret;
 }
@@ -328,7 +328,7 @@ int ObHybridHistEstimator::try_build_hybrid_hist(const ObColumnStatParam &param,
                                                 num_distinct,
                                                 hybrid_hist.get_pop_count());
           is_done = true;
-          LOG_TRACE("succeed to build hybrid hist", K(hybrid_hist), K(col_stat));
+
         }
       }
     }
@@ -670,7 +670,7 @@ int ObHybridHistograms::build_prefix_str_datum_for_lob(ObIAllocator &allocator,
         LOG_WARN("failed to append realdata", K(ret), K(str), K(text_result));
       } else {
         text_result.set_result();
-        LOG_TRACE("Succeed to build_prefix_str_datum_for_lob", K(obj), K(str));
+
       }
     }
   }

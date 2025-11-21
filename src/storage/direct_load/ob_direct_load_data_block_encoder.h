@@ -125,12 +125,12 @@ int ObDirectLoadDataBlockEncoder<Header, align>::realloc_bufs(const int64_t size
     char *tmp_buf = (char *)ob_malloc(buf_size, ObMemAttr(MTL_ID(), "TLD_DBEncoder"));
     if (tmp_buf == nullptr) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "fail to alloc buf", K(buf_size), KR(ret));
+
     }
     if (OB_SUCC(ret) && buf_ != nullptr && pos_ > 0) {
       if (pos_ > buf_size) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "pos is bigger than buf buf size", K(pos_), K(buf_size), KR(ret));
+
       } else {
         MEMCPY(tmp_buf, buf_, pos_);
       }
@@ -150,7 +150,7 @@ int ObDirectLoadDataBlockEncoder<Header, align>::realloc_bufs(const int64_t size
     int64_t max_overflow_size = 0;
     int64_t compress_buf_size = 0;
     if (OB_FAIL(compressor_->get_max_overflow_size(size, max_overflow_size))) {
-      STORAGE_LOG(WARN, "fail to get max_overflow_size", KR(ret), K(size), K(max_overflow_size));
+
     } else {
       const int64_t compress_size = size + max_overflow_size;
       compress_buf_size = align ? ALIGN_UP(compress_size, DIO_ALIGN_SIZE) : compress_size;
@@ -163,7 +163,7 @@ int ObDirectLoadDataBlockEncoder<Header, align>::realloc_bufs(const int64_t size
       compress_buf_ = (char *)ob_malloc(compress_buf_size, ObMemAttr(MTL_ID(), "TLD_DBEncoder"));
       if (compress_buf_ == nullptr) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "fail to alloc compress buf", K(compress_buf_size), KR(ret));
+
       } else {
         compress_buf_size_ = compress_buf_size;
       }
@@ -179,18 +179,18 @@ int ObDirectLoadDataBlockEncoder<Header, align>::init(int64_t data_block_size,
   int ret = common::OB_SUCCESS;
   if (IS_INIT) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObDirectLoadDataBlockEncoder init twice", KR(ret), KP(this));
+
   } else if (OB_UNLIKELY(data_block_size <= 0 || data_block_size % DIO_ALIGN_SIZE != 0 ||
                          compressor_type <= common::ObCompressorType::INVALID_COMPRESSOR)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", KR(ret), K(data_block_size), K(compressor_type));
+
   } else {
     if (common::ObCompressorType::NONE_COMPRESSOR != compressor_type &&
         OB_FAIL(
           common::ObCompressorPool::get_instance().get_compressor(compressor_type, compressor_))) {
-      STORAGE_LOG(WARN, "fail to get compressor", KR(ret), K(compressor_type));
+
     } else if (OB_FAIL(realloc_bufs(data_block_size))) {
-      STORAGE_LOG(WARN, "fail to alloc bufs", KR(ret), K(data_block_size));
+
     } else {
       header_size_ = header_.get_serialize_size();
       compressor_type_ = compressor_type;
@@ -211,14 +211,14 @@ int ObDirectLoadDataBlockEncoder<Header, align>::write_item(const T &item)
   // Memory is too large, revert to default block size
   if (item_size + pos_ < data_block_size_) {
     if (OB_FAIL(realloc_bufs(data_block_size_))) {
-      STORAGE_LOG(WARN, "fail to realloc bufs", KR(ret));
+
     }
   }
   // Single line data exceeds the default data block size, and buf has not been resized, reallocate buf
   if (OB_SUCC(ret)) {
     if (item_size > data_block_size_ - header_size_ && item_size > buf_size_ - header_size_) {
       if (OB_FAIL(realloc_bufs(item_size + header_size_))) {
-        STORAGE_LOG(WARN, "fail to realloc bufs", KR(ret));
+
       }
     }
   }
@@ -227,7 +227,7 @@ int ObDirectLoadDataBlockEncoder<Header, align>::write_item(const T &item)
     if (item_size + pos_ > buf_size_) {
       ret = common::OB_BUF_NOT_ENOUGH;
     } else if (OB_FAIL(item.serialize(buf_, buf_size_, pos_))) {
-      STORAGE_LOG(WARN, "fail to serialize item", KR(ret));
+
     }
   }
   return ret;
@@ -240,13 +240,13 @@ int ObDirectLoadDataBlockEncoder<Header, align>::read_item(int64_t pos, T &item)
   int ret = common::OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObDirectLoadDataBlockEncoder not init", KR(ret), KP(this));
+
   } else if (OB_UNLIKELY(pos < header_size_ || pos >= pos_)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", KR(ret), K(header_size_), K(pos_), K(pos));
+
   } else {
     if (OB_FAIL(item.deserialize(buf_, pos_, pos))) {
-      STORAGE_LOG(WARN, "fail to deserialize item", KR(ret), K(pos_), K(pos));
+
     }
   }
   return ret;
@@ -258,10 +258,10 @@ int ObDirectLoadDataBlockEncoder<Header, align>::build_data_block(char *&buf, in
   int ret = common::OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObDirectLoadDataBlockEncoder not init", KR(ret), KP(this));
+
   } else if (OB_UNLIKELY(!has_item())) {
     ret = common::OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected build empty data block", KR(ret));
+
   } else {
     buf = buf_;
     buf_size = pos_;
@@ -287,10 +287,10 @@ int ObDirectLoadDataBlockEncoder<Header, align>::build_data_block(char *&buf, in
       header_.checksum_ =
         ob_crc64_sse42(0, buf + header_size_, header_.occupy_size_ - header_size_);
       if (OB_FAIL(header_.serialize(buf, header_size_, pos))) {
-        STORAGE_LOG(WARN, "fail to serialize header", KR(ret));
+
       } else if (header_size_ != pos) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "header_size must be equal pos", KR(ret), K(header_size_), K(pos));
+
       }
     }
   }

@@ -342,16 +342,16 @@ int ObEventHistoryTableOperator::process_task(const ObString &sql, const bool is
           if (OB_FAIL(proxy_->write(sql.ptr(), affected_rows))) {
             LOG_WARN("execute sql failed", K(sql), K(ret));
           } else if (0 == affected_rows) {
-            LOG_INFO("finished to delete from event history table", K(sql), K(create_time));
+
             break;
           } else if (cnt > MAX_DELETE_TIMES) {
-            LOG_INFO("delete cnt reach limit, schedule next round", K(sql), K(create_time));
+
             if (OB_INVALID_TIMESTAMP == create_time) {
               ret = OB_ERR_UNEXPECTED;
               LOG_WARN("create time is invalid", KR(ret), K(create_time), K(sql));
             } else if (ObTimeUtility::current_time() - create_time > EVENT_TABLE_CLEAR_INTERVAL) {
               //has new clear task, no need add task again
-              LOG_INFO("maybe has new clear task, no need add task again", K(create_time));
+
             } else {
               ObSqlString new_sql;
               const bool is_delete = true;
@@ -360,12 +360,12 @@ int ObEventHistoryTableOperator::process_task(const ObString &sql, const bool is
               } else if (OB_TMP_FAIL(add_task(new_sql, is_delete, create_time))) {
                 LOG_WARN("failed to add task", KR(tmp_ret), K(new_sql), K(create_time));
               } else {
-                LOG_INFO("has event need delete, add task again", K(new_sql), K(create_time));
+
               }
             }
             break;
           } else {
-            LOG_INFO("delete rows from event history table", K(affected_rows), K(sql), K(cnt));
+
             cnt++;
           }
         }

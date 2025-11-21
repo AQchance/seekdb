@@ -98,7 +98,7 @@ int TestStorageFileRefCnt::init(const int64_t thread_cnt, const OptType type)
   int ret = OB_SUCCESS;
   if (thread_cnt < 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(thread_cnt));
+
   } else {
     thread_cnt_ = thread_cnt;
     type_ = type;
@@ -141,7 +141,7 @@ int TestStorageFileRefCnt::do_work(const MacroBlockId &macro_id)
     break;
   default:
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "type_ is an invalid argument");
+
   }
   return ret;
 }
@@ -315,11 +315,11 @@ TEST_F(TestRefCnt, test_1_0_1)
   void *buf;
   int i = 0;
   while (OB_NOT_NULL(buf = allocator.alloc(1 * 1024L))) {
-    STORAGE_LOG(WARN, "tenant allocator", K(i++));
+
   }
 
   while (OB_NOT_NULL(buf = ob_malloc(1 * 1024L, pg_file_->macro_block_info_.memattr_))) {
-    STORAGE_LOG(WARN, "ob_malloc", K(i++));
+
   }
 
   MacroBlockId macro_id(1);
@@ -342,7 +342,7 @@ TEST_F(TestRefCnt, test_1_0_1)
       macro_id.block_index_ = 1;
       macro_id.write_seq_++;
     }
-    STORAGE_LOG(WARN, "jinzhu debug", K(ret), K(i));
+
   }
   ASSERT_EQ(OB_ALLOCATE_MEMORY_FAILED, ret);
 

@@ -48,7 +48,7 @@ int ObTransformSimplifySet::transform_one_stmt(common::ObIArray<ObParentDMLStmt>
       stmt = sel_stmt;
       trans_happened |= is_happened;
       OPT_TRACE("remove pruning set query:", is_happened);
-      LOG_TRACE("succeed to pruning set query.", K(is_happened));
+
     }
     
     if (OB_SUCC(ret)) {
@@ -58,7 +58,7 @@ int ObTransformSimplifySet::transform_one_stmt(common::ObIArray<ObParentDMLStmt>
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("add limit order distinct for union:", is_happened);
-        LOG_TRACE("succeed to add limit order distinct for union.", K(is_happened));
+
       } 
     }
   }
@@ -319,7 +319,7 @@ int ObTransformSimplifySet::check_exprs_constant_false(common::ObIArray<ObRawExp
   if (OB_FAIL(ObTransformUtils::check_integer_result_type(exprs, is_valid_type))) {
     LOG_WARN("check valid type fail", K(ret));
   } else if (!is_valid_type) {
-    LOG_TRACE("expr list is not valid for removing dummy exprs", K(is_valid_type));
+
   } else {
     ObSEArray<int64_t, 2> true_exprs;
     ObSEArray<int64_t, 2> false_exprs;

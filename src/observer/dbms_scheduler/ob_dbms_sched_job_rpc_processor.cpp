@@ -40,7 +40,7 @@ int ObRpcAPDBMSSchedJobCB::process()
     ret = OB_INVALID_ERROR;
     LOG_WARN("dbms sched job result is invalid", K(ret), K(result));
   } else {
-    LOG_INFO("dbms sched job run done!");
+
   }
   return ret;
 }
@@ -55,7 +55,7 @@ int ObRpcRunDBMSSchedJobP::process()
   result.set_job_id(arg.job_id_);
   result.set_server_addr(arg.server_addr_);
 
-  LOG_INFO("dbms sched job run rpc process start", K(ret));
+
 
   if (!arg.is_valid()) {
     ret = OB_INVALID_ERROR;
@@ -69,7 +69,7 @@ int ObRpcRunDBMSSchedJobP::process()
   } else if (OB_FAIL(executor.run_dbms_sched_job(arg.tenant_id_, arg.is_oracle_tenant_, arg.job_id_, arg.job_name_))) {
     LOG_WARN("fail to executor dbms sched job", K(ret), K(arg));
   }
-  LOG_INFO("dbms sched job run rpc process end", K(ret), K(arg_));
+
   result.set_status_code(ret);
 
   return ret;
@@ -109,7 +109,7 @@ int ObRpcStopDBMSSchedJobP::process()
         } else if (OB_FAIL(GCTX.session_mgr_->kill_session(*session))) {
           LOG_WARN("failed to kill session", K(ret), K(arg), KPC(session));
         } else {
-          LOG_INFO("stop job finish", K(arg));
+
         }
       }
     }
@@ -120,7 +120,7 @@ int ObRpcStopDBMSSchedJobP::process()
 int ObRpcDBMSSchedPurgeCB::process()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("dbms sched purge done!");
+
   return ret;
 }
 
@@ -142,7 +142,7 @@ int ObRpcDBMSSchedPurgeP::process()
       if (OB_FAIL(ObAllTenantInfoProxy::is_standby_tenant(GCTX.sql_proxy_, tenant_id, is_tenant_standby))) {
         LOG_WARN("check is standby tenant failed", K(ret), K(tenant_id));
       } else if (is_tenant_standby) {
-        LOG_INFO("tenant is standby, not GC", K(tenant_id));
+
       } else {
         const int64_t save_timeout_ts = THIS_WORKER.get_timeout_ts();
         THIS_WORKER.set_timeout_ts(ObTimeUtility::current_time() + PURGE_RUN_DETAIL_TIMEOUT);
@@ -150,7 +150,7 @@ int ObRpcDBMSSchedPurgeP::process()
         THIS_WORKER.set_timeout_ts(save_timeout_ts);
       }
     }
-    LOG_INFO("[DBMS_SCHED_GC] finish once", K(ret), K(tenant_id_));
+
   }
   return ret;
 }

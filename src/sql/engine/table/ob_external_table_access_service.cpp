@@ -286,7 +286,7 @@ int ObExternalDataAccessDriver::get_file_list(const ObString &path,
       // OB_STORAGE_HDFS
       OZ(ObBackupIoAdapter::is_directory(path_cstring, access_info_, is_dir));
       if (!is_dir) {
-        LOG_INFO("external location is not a directory", K(path_cstring));
+
       } else {
         OZ(file_dirs.push_back(path_cstring));
       }
@@ -351,7 +351,7 @@ int ObExternalDataAccessDriver::init(const ObString &location, const ObString &a
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("failed to get access into", K(ret), K(device_type), K(access_info_cstr));
   }
-  LOG_TRACE("resolve storage into", K(ret), K(device_type), K(access_info_cstr));
+
   OZ (access_info_->set(device_type, access_info_cstr.ptr()));
 
   return ret;
@@ -407,7 +407,7 @@ int ObExternalStreamFileReader::open(const ObString &filename)
     }
   }
 
-  LOG_TRACE("open file done", K(filename), K(ret));
+
   return ret;
 }
 
@@ -419,7 +419,7 @@ void ObExternalStreamFileReader::close()
     is_file_end_ = true;
     file_offset_ = 0;
     file_size_   = 0;
-    LOG_DEBUG("close file");
+
   }
 }
 
@@ -454,7 +454,7 @@ int ObExternalStreamFileReader::read(char *buf, int64_t buf_len, int64_t &read_s
   } else if (OB_ISNULL(decompressor_)) {
     ret = read_from_driver(buf, buf_len, read_size);
     is_file_end_ = file_offset_ >= file_size_;
-    LOG_DEBUG("read file", K(is_file_end_), K(file_offset_), K(file_size_), K(read_size));
+
   } else {
     ret = read_decompress(buf, buf_len, read_size);
     is_file_end_ = (file_offset_ >= file_size_) && (consumed_data_size_ >= compress_data_size_);
@@ -642,7 +642,7 @@ int ObExternalTableAccessService::table_scan(
     }
   }
 
-  LOG_DEBUG("external table access service iter init", K(ret), "type", param.external_file_format_.format_type_);
+
 
   return ret;
 }
@@ -679,7 +679,7 @@ int ObExternalTableAccessService::table_rescan(ObVTableScanParam &param, ObNewRo
         LOG_WARN("unexpected format", K(ret), "format", param.external_file_format_.format_type_);
     }
   }
-  LOG_DEBUG("external table rescan", K(param.key_ranges_), K(param.range_array_pos_));
+
   return ret;
 }
 

@@ -77,7 +77,7 @@ public:
   ObOBJLockGarbageCollectorTestBase() : ObSimpleClusterTestBase(TEST_FILE_NAME) {}
   void get_ls(const uint64_t tenant_id, const ObLSID ls_id, ObLS *&ls)
   {
-    LOG_INFO("get_ls start");
+
     ls = nullptr;
     share::ObTenantSwitchGuard tenant_guard;
     ASSERT_EQ(OB_SUCCESS, tenant_guard.switch_to(tenant_id));
@@ -87,7 +87,7 @@ public:
     ObLSHandle handle;
     ASSERT_EQ(OB_SUCCESS, ls_svr->get_ls(ls_id, handle, ObLSGetMod::STORAGE_MOD));
     ASSERT_NE(nullptr, ls = handle.get_ls());
-    LOG_INFO("get_ls end");
+
   }
 
   void get_table_id(const char* tname, uint64_t &table_id)
@@ -221,13 +221,13 @@ class ObOBJLockGCAfterRestartTest : public ObOBJLockGarbageCollectorTestBase {
 
 TEST_F(ObOBJLockGCBeforeRestartTest, create_table)
 {
-  LOG_INFO("ObOBJLockGCBeforeRestartTest::create_table");
+
   // 1. CREATE ONE PART TABLE
   // 2. CREATE MULTI PART TABLE
   int ret = OB_SUCCESS;
   common::ObMySQLProxy &sql_proxy = get_curr_simple_server().get_sql_proxy();
   // 1. ONE PART TABLE
-  LOG_INFO("create_table one part table start");
+
   {
     ObSqlString sql;
     int64_t affected_rows = 0;
@@ -237,9 +237,9 @@ TEST_F(ObOBJLockGCBeforeRestartTest, create_table)
             "create table t_one_part (id int, data int, primary key(id))"));
     ASSERT_EQ(OB_SUCCESS, sql_proxy.write(sql.ptr(), affected_rows));
   }
-  LOG_INFO("create_table one part table succ");
 
-  LOG_INFO("insert data start");
+
+
   {
     ObSqlString sql;
     int64_t affected_rows = 0;
@@ -247,7 +247,7 @@ TEST_F(ObOBJLockGCBeforeRestartTest, create_table)
               sql.assign_fmt("insert into t_one_part values(%d, %d)", 1, 1));
     ASSERT_EQ(OB_SUCCESS, sql_proxy.write(sql.ptr(), affected_rows));
   }
-  LOG_INFO("check row count");
+
   {
     int64_t row_cnt = 0;
     ObSqlString sql;
@@ -264,7 +264,7 @@ TEST_F(ObOBJLockGCBeforeRestartTest, create_table)
   }
 
   // 2. MULTI PART TABLE
-  LOG_INFO("create_table multi part table start");
+
   {
     ObSqlString sql;
     int64_t affected_rows = 0;
@@ -277,9 +277,9 @@ TEST_F(ObOBJLockGCBeforeRestartTest, create_table)
             "than MAXVALUE)"));
     ASSERT_EQ(OB_SUCCESS, sql_proxy.write(sql.ptr(), affected_rows));
   }
-  LOG_INFO("create_table multi part table succ");
 
-  LOG_INFO("insert data start");
+
+
   {
     ObSqlString sql;
     int64_t affected_rows = 0;
@@ -296,7 +296,7 @@ TEST_F(ObOBJLockGCBeforeRestartTest, create_table)
     ASSERT_EQ(OB_SUCCESS, sql_proxy.write(sql.ptr(), affected_rows));
   }
 
-  LOG_INFO("check row count");
+
   {
     int64_t row_cnt = 0;
     ObSqlString sql;
@@ -315,7 +315,7 @@ TEST_F(ObOBJLockGCBeforeRestartTest, create_table)
 
 TEST_F(ObOBJLockGCBeforeRestartTest, obj_lock_gc_with_tablelock_service)
 {
-  LOG_INFO("ObOBJLockGCBeforeRestartTest::obj_lock_gc_with_tablelock_service");
+
   int ret = OB_SUCCESS;
   ObTableLockOwnerID OWNER_ONE;
   ObTableLockOwnerID OWNER_TWO;
@@ -480,7 +480,7 @@ TEST_F(ObOBJLockGCBeforeRestartTest, obj_lock_gc_with_tablelock_service)
 
 TEST_F(ObOBJLockGCBeforeRestartTest, op_list_gc_with_mock_lock_map)
 {
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map");
+
   ObLockMemtable *lock_memtable = nullptr;
   ObOBJLock *obj_lock = nullptr;
   bool has_obj_lock;
@@ -499,20 +499,20 @@ TEST_F(ObOBJLockGCBeforeRestartTest, op_list_gc_with_mock_lock_map)
   // 1. REPLAY UNLOCK OP AND LOCK OP,
   // THEN COMMIT UNLOCK OP BEFORE LOCK OP
   // 1.1 recover unlock op
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 1.1");
+
   ASSERT_EQ(OB_SUCCESS,
             obj_lock_map.recover_obj_lock(DEFAULT_OUT_TRANS_UNLOCK_OP));
   // 1.2 check obj lock exists
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 1.2");
+
   ASSERT_EQ(OB_SUCCESS, obj_lock_map.get_obj_lock_with_ref_(
                           DEFAULT_TABLE_LOCK_ID, obj_lock));
   ASSERT_NE(nullptr, obj_lock);
   // 1.3 recover lock op
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 1.3");
+
   ASSERT_EQ(OB_SUCCESS,
             obj_lock_map.recover_obj_lock(DEFAULT_OUT_TRANS_LOCK_OP));
   // 1.4 verify obj lock status by log
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 1.4");
+
   obj_lock->print();
   // 1.5 commit unlock op
   // We will try to compact lock ops if there's paired and committed
@@ -521,26 +521,26 @@ TEST_F(ObOBJLockGCBeforeRestartTest, op_list_gc_with_mock_lock_map)
   // is still running. You can find that it tried to compact but failed
   // (by is_compcat = false) from the log.
   // This situation will occur during replyaing in the followers.
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 1.5");
+
   ASSERT_EQ(OB_SUCCESS, obj_lock_map.update_lock_status(
                             DEFAULT_OUT_TRANS_UNLOCK_OP, commit_version,
                             commit_scn, COMMIT_LOCK_OP_STATUS));
   // 1.6 commit lock op
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 1.6");
+
   ASSERT_EQ(OB_SUCCESS, obj_lock_map.update_lock_status(
                             DEFAULT_OUT_TRANS_LOCK_OP, commit_version,
                             commit_scn, COMMIT_LOCK_OP_STATUS));
   // 1.7 verify obj lock status by log
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 1.7");
+
   obj_lock->print();
   // revert obj lock
   obj_lock_map.lock_map_.revert(obj_lock);
   // 1.8 check obj lock status
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 1.8");
+
   table_has_obj_lock(DEFAULT_TABLE, has_obj_lock);
   ASSERT_TRUE(has_obj_lock);
   // 1.9 wake up gc thread
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 1.9");
+
   wakeup_gc_thread();
   // wait gc thread to recycle obj lock
   sleep(2);
@@ -552,28 +552,28 @@ TEST_F(ObOBJLockGCBeforeRestartTest, op_list_gc_with_mock_lock_map)
   // The lock ops will be compacted when the unlock op is committed,
   // so there's no need to gc it in this situationl.
   // 2.1 recover unlock op
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 2.1");
+
   ASSERT_EQ(OB_SUCCESS,
             obj_lock_map.recover_obj_lock(DEFAULT_OUT_TRANS_UNLOCK_OP));
   // 2.2 check obj lock exists
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 2.2");
+
   ASSERT_EQ(OB_SUCCESS, obj_lock_map.get_obj_lock_with_ref_(
                           DEFAULT_TABLE_LOCK_ID, obj_lock));
   ASSERT_NE(nullptr, obj_lock);
   // 2.3 recover lock op
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 2.3");
+
   ASSERT_EQ(OB_SUCCESS,
             obj_lock_map.recover_obj_lock(DEFAULT_OUT_TRANS_LOCK_OP));
   // 2.4 verify obj lock status by log
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 2.4");
+
   obj_lock->print();
   // 2.5 commit lock op
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 2.5");
+
   ASSERT_EQ(OB_SUCCESS, obj_lock_map.update_lock_status(
                             DEFAULT_OUT_TRANS_LOCK_OP, commit_version,
                             commit_scn, COMMIT_LOCK_OP_STATUS));
   // 2.6 commit unlock op
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 2.6");
+
   ASSERT_EQ(OB_SUCCESS, obj_lock_map.update_lock_status(
                             DEFAULT_OUT_TRANS_UNLOCK_OP, commit_version,
                             commit_scn, COMMIT_LOCK_OP_STATUS));
@@ -583,16 +583,16 @@ TEST_F(ObOBJLockGCBeforeRestartTest, op_list_gc_with_mock_lock_map)
   // is empty, i.e. there's no lock ops in it. Because the compaction
   // process will execute directly if the lock op which will be committed
   // is an out trans unlock lock op.
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 2.7");
+
   obj_lock->print();
   // revert obj lock
   obj_lock_map.lock_map_.revert(obj_lock);
   // 2.8 check obj lock status
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 2.8");
+
   table_has_obj_lock(DEFAULT_TABLE, has_obj_lock);
   ASSERT_TRUE(has_obj_lock);
   // 2.9 wake up gc thread
-  LOG_INFO("ObOBJLockGCAfterRestartTest::op_list_gc_with_mock_lock_map 2.9");
+
   wakeup_gc_thread();
   // wait gc thread to recycle obj lock
   sleep(2);
@@ -610,16 +610,16 @@ TEST_F(ObOBJLockGCAfterRestartTest, obj_lock_gc_after_restart)
   // (The gc thread will compact table lock ops in 
   // force mode only when it's called during the 
   // period when a follower is switching to leader)
-  LOG_INFO("ObOBJLockGCAfterRestartTest::obj_lock_gc_after_restart");
+
   uint64_t table_id;
   bool has_obj_lock;
   // 1. check obj lock status of table t_one_part
-  LOG_INFO("ObOBJLockGCAfterRestartTest::obj_lock_gc_after_restart 1");
+
   get_table_id("t_one_part", table_id);
   table_has_obj_lock(table_id, has_obj_lock);
   ASSERT_TRUE(has_obj_lock);
   // 2. check obj lock status of table t_multi_part
-  LOG_INFO("ObOBJLockGCAfterRestartTest::obj_lock_gc_after_restart 2");
+
   get_table_id("t_multi_part", table_id);
   table_has_obj_lock(table_id, has_obj_lock);
   ASSERT_FALSE(has_obj_lock);

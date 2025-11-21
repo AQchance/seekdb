@@ -433,7 +433,7 @@ int ObTransformExprPullup::build_parent_reject_exprs_map(ObSelectStmt &parent,
     }
   }
 
-  LOG_DEBUG("check parent first scope to search", K(the_first_scope_to_search));
+
   
   return ret;
 }
@@ -602,7 +602,7 @@ int ObTransformExprPullup::rewrite_decision_by_hint(ObSelectStmt &parent,
       OPT_TRACE("stmt may reduce row count:", stmt_may_reduce_row_count);
     }
   }
-  LOG_DEBUG("check hint rewrite control", K(go_rewrite), K(stmt_may_reduce_row_count), K(reason));
+
   return ret;
 }
 
@@ -747,7 +747,7 @@ int ObTransformExprPullup::pullup_expr_from_view(TableItem *view,
           } else if (OB_FAIL(old_child_project_columns.push_back(view_project_column_expr))) {
             LOG_WARN("fail to push back arr", K(ret));
           }
-          LOG_DEBUG("expr need pullup", KPC(select_item.expr_), K(new_expr_params));
+
         }
       }
     }
@@ -833,7 +833,7 @@ int ObTransformExprPullup::is_stmt_may_reduce_row_count(const ObSelectStmt &stmt
     LOG_WARN("fail to get where scope expr", K(ret));
   } else if (stmt.get_group_expr_size() > 0 || where_cond_exprs.count() > 0 || stmt.has_limit()) {
     is_true = true;
-    LOG_DEBUG("check is stmt may reduce row count", K(stmt.get_group_expr_size()), K(where_cond_exprs.count()), K(stmt.has_limit()));
+
   }
   return ret;
 }

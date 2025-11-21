@@ -133,7 +133,7 @@ int ObLSLocationUpdateQueueSet::set_thread_count(const int64_t thread_cnt)
     if (OB_FAIL(user_tenant_queue_.set_thread_count(thread_cnt))) {
       LOG_WARN("fail to set thread count", KR(ret), K(thread_cnt));
     } else {
-      LOG_INFO("location queue may change thread cnt", K(thread_cnt));
+
     }
   }
   return ret;
@@ -505,13 +505,13 @@ int ObLSLocationService::add_update_task(const ObLSLocationUpdateTask &task)
     if (OB_FAIL(local_async_queue_set_.add_task(task))) {
       LOG_WARN("fail to add task", KR(ret), K(task));
     } else {
-      LOG_TRACE("add update task in local_async_queue_set_", KR(ret), K(task));
+
     }
   } else {
     if (OB_FAIL(remote_async_queue_set_.add_task(task))) {
       LOG_WARN("fail to add task", KR(ret), K(task));
     } else {
-      LOG_TRACE("add update task in remote_async_queue_set_", KR(ret), K(task));
+
     }
   }
   return ret;
@@ -841,7 +841,7 @@ int ObLSLocationService::detect_ls_leaders_(
         } else if (OB_FAIL(append(leaders, result->get_leader_replicas()))) {
           LOG_WARN("fail to append array", KR(ret), KPC(result));
         } else {
-          LOG_TRACE("result is null", K(i), K(timeout), K(addr));
+
         }
       } // end for
     }
@@ -937,12 +937,12 @@ int ObLSLocationService::get_from_cache_(
   } else if (OB_FAIL(inner_cache_.get(cache_key, location))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_CACHE_NOT_HIT;
-      LOG_TRACE("location is not hit in inner cache", KR(ret), K(cache_key));
+
     } else {
       LOG_WARN("get location from inner cache failed", K(cache_key), KR(ret));
     }
   } else {
-    LOG_TRACE("location hit in inner cache", KR(ret), K(cache_key), K(location));
+
   }
   return ret;
 }
@@ -1065,7 +1065,7 @@ int ObLSLocationService::erase_location_safely_(
     if (OB_FAIL(inner_cache_.del(cache_key, safe_delete_time))) {
       if (OB_ENTRY_NOT_EXIST == ret) {
         ret = OB_SUCCESS;
-        LOG_TRACE("not exist in inner_cache_", K(cache_key));
+
       } else if (OB_NEED_WAIT == ret) {
         ret = OB_SUCCESS;
         LOG_TRACE("can not delete cache because safe_delete_time has not been reached",
@@ -1074,7 +1074,7 @@ int ObLSLocationService::erase_location_safely_(
         LOG_WARN("fail to erase location from inner_cache_", KR(ret), K(cache_key));
       }
     } else {
-      LOG_INFO("[LS_LOCATION] erase ls location successfully", K(cache_key));
+
     }
   }
   return ret;

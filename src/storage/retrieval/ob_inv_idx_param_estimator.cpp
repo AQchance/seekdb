@@ -273,7 +273,7 @@ int ObBM25ParamEstimator::do_estimation(sql::ObEvalCtx &eval_ctx)
 
     if (OB_SUCC(ret)) {
       estimated_ = true;
-      LOG_TRACE("[Sparse Retrieval] estimated total doc cnt for bm25 param", K(ret), K_(total_doc_cnt), K_(avg_doc_token_cnt));
+
     }
   }
   return ret;

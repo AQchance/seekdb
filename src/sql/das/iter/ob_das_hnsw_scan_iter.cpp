@@ -275,7 +275,7 @@ int ObDASHNSWScanIter::inner_init(ObDASIterParam &param)
       if (OB_FAIL(ObVectorIndexParam::build_search_param(vec_aux_ctdef_->vector_index_param_, vec_aux_ctdef_->vec_query_param_, search_param_))) {
         LOG_WARN("build search param fail", K(vec_aux_ctdef_->vector_index_param_), K(vec_aux_ctdef_->vec_query_param_));
       } else {
-        LOG_TRACE("search param", K(vec_aux_ctdef_->vector_index_param_), K(vec_aux_ctdef_->vec_query_param_), K(search_param_));
+
 
         if (search_param_.similarity_threshold_ != 0) {
           if (OB_FAIL(ObDasVecScanUtils::get_distance_threshold_hnsw(
@@ -770,7 +770,7 @@ bool ObDASHNSWScanIter::is_parallel_with_block_granule()
       expected_worker_cnt = task_exec_ctx->get_expected_worker_cnt();
     }
   }
-  LOG_DEBUG("print worker cnt and granule type", K(expected_worker_cnt), K(is_block_granule_type));
+
   return expected_worker_cnt > 1 && is_block_granule_type;
 }
 
@@ -791,7 +791,7 @@ int ObDASHNSWScanIter::check_iter_filter_need_retry()
     }
   }
 
-  LOG_TRACE("switch path check iter filter need retry:", K(ret), K(adaptive_ctx_), K(iter_selectivity), K(output_row_cnt));
+
   return ret;
 }
 
@@ -810,7 +810,7 @@ int ObDASHNSWScanIter::check_pre_filter_need_retry()
   } else if (pre_selectivity > ObVecIdxExtraInfo::DEFAULT_PRE_RATE_FILTER_WITH_ROWKEY) {
     ret = OB_VECTOR_INDEX_ADAPTIVE_NEED_RETRY;
   }
-  LOG_TRACE("switch path check pre filter need retry:", K(ret), K(adaptive_ctx_), K(pre_selectivity));
+
   return ret;
 }
 
@@ -1224,7 +1224,7 @@ int64_t ObDASHNSWScanIter::get_reorder_count_for_brute_force(const int64_t ef_se
 {
   const float refine_k = param.refine_k_;
   int64_t refine_cnt = refine_k * topK < MIN_BQ_REORDER_SIZE_FOR_BRUTE_FORCE ? MIN_BQ_REORDER_SIZE_FOR_BRUTE_FORCE : refine_k * topK;
-  LOG_TRACE("reorder count info", K(ef_search), K(topK), K(refine_k), K(refine_cnt));
+
   return OB_MIN(OB_MAX(topK, OB_MAX(refine_cnt, ef_search)), MAX_VSAG_QUERY_RES_SIZE);
 }
 
@@ -1501,7 +1501,7 @@ int ObDASHNSWScanIter::process_adaptor_state_pre_filter(
   if (is_ipivf()) {
     go_brute_force_ = false;
   }
-  LOG_TRACE("vector index show pre-filter query info", K(is_primary_pre_with_rowkey_with_filter_), K(go_brute_force_));
+
   if (OB_FAIL(ret)) {
   } else if (go_brute_force_) {
     bool need_complete_data = false;
@@ -1804,7 +1804,7 @@ int ObDASHNSWScanIter::get_from_vid_rowkey(ObIAllocator &allocator, ObRowkey *&r
         LOG_WARN("get col datum null", K(ret));
       } else if (T_PSEUDO_GROUP_ID == expr->type_ || T_PSEUDO_ROW_TRANS_INFO_COLUMN == expr->type_) {
         // nothing to do.
-        LOG_TRACE("skip expr", K(i), KPC(expr));
+
       } else {
         ObDatum &datum = expr->locate_expr_datum(*vid_rowkey_rtdef_->eval_ctx_);
         if (i >= main_rowkey_cnt) {
@@ -2382,7 +2382,7 @@ bool ObDASHNSWScanIter::can_be_last_search(int64_t old_ef,
     int64_t expect_get = std::ceil(static_cast<float>(need_cnt_next) / select_ratio);
     ret_bool = expect_get * 2 <= old_ef;
   }
-  LOG_TRACE("iteractive filter log: can be last search", K(ret_bool), K(old_ef), K(select_ratio));
+
   return ret_bool;
 }
 
@@ -2481,7 +2481,7 @@ int ObDASHNSWScanIter::process_adaptor_state_post_filter(
       end_search = true;
     }
   }
-  LOG_TRACE("print hnsw search times", K(adaptive_ctx_));
+
   return ret;
 }
 
@@ -2892,7 +2892,7 @@ int ObDASHNSWScanIter::post_query_vid_with_filter(
       || (iter_scan_total_num > hnsw_max_iter_scan_nums && hnsw_max_iter_scan_nums > 0)) {
         // res is already less than limit, no need to find again
         query_cond_.query_limit_ = 0;
-        LOG_TRACE("iteractive filter log:", K(tmp_adaptor_vid_iter_->get_total()), K(query_cond_.query_limit_), K(total_before_add), K(adaptor_vid_iter_->get_total()));
+
       } else if (is_ipivf()) {
         // for sparse vector index, iter filter is not supported
         query_cond_.query_limit_ = 0;
@@ -3206,7 +3206,7 @@ int ObDASHNSWScanIter::get_ob_hnsw_ef_search(uint64_t &ob_hnsw_ef_search)
   ObSQLSessionInfo *session = nullptr;
   if (OB_NOT_NULL(vec_aux_ctdef_) && vec_aux_ctdef_->vec_query_param_.is_set_ef_search_) {
     ob_hnsw_ef_search =  vec_aux_ctdef_->vec_query_param_.ef_search_;
-    LOG_TRACE("use stmt ef_search", K(ob_hnsw_ef_search));
+
   } else if (OB_ISNULL(session = exec_ctx_->get_my_session())) {
     ob_hnsw_ef_search = OB_HNSW_EF_SEARCH_DEFAULT;
     LOG_WARN("session is null", K(ret), KP(exec_ctx_));
@@ -3223,7 +3223,7 @@ int64_t ObDASHNSWScanIter::get_reorder_count(const int64_t ef_search, const int6
   const float refine_k = param.refine_k_;
   int64_t refine_cnt = refine_k * topK;
   if (refine_cnt < topK) refine_cnt = topK;
-  LOG_TRACE("reorder count info", K(ef_search), K(topK), K(refine_k), K(refine_cnt));
+
   int64_t reorder_count = 0;
   if (is_hnsw_bq()) {
     reorder_count = OB_MIN(OB_MAX(topK, OB_MIN(refine_cnt, ef_search)), MAX_VSAG_QUERY_RES_SIZE);
@@ -3274,7 +3274,7 @@ int ObDASHNSWScanIter::set_vector_query_condition(ObVectorQueryConditions &query
     }
 
     ObDatum *vec_datum = NULL;
-    LOG_DEBUG("print_vector_query_condition", K(query_cond.query_limit_), K(query_cond.ef_search_));
+
     query_cond.extra_column_count_ = extra_column_count_;
     if (OB_FAIL(ret)) {
     } else if (!OB_ISNULL(search_vec_)) {
@@ -3475,7 +3475,7 @@ int ObDASHNSWScanIter::prepare_complete_vector_data(ObVectorQueryAdaptorResultCo
     }
   }
 
-  LOG_INFO("SYCN_DELTA_query_data", K(ada_ctx.get_vec_cnt()), K(ada_ctx.get_curr_idx()));
+
 
   if (OB_ITER_END == ret) {
     ret = OB_SUCCESS;

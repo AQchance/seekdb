@@ -291,7 +291,7 @@ int ObTableOpProcessor::execute_dml()
     if (OB_TMP_FAIL(ObTableGroupExecuteService::end_trans(batch_ctx, group_ctx_->create_cb_functor_, is_rollback))) {
       LOG_WARN("fail to end trans", K(ret), K(tmp_ret));
     }
-    LOG_DEBUG("[group commit debug] execute dml", K(ret), K(tmp_ret));
+
   }
   return ret;
 }
@@ -478,7 +478,7 @@ int ObTableOpProcessor::dispatch_batch_result(ObIArray<ObTableOperationResult> &
       }
     }
   }
-  LOG_DEBUG("[group commit debug] batch result:", K(batch_result));
+
   return ret;
 }
 
@@ -743,7 +743,7 @@ int ObTableGroupExecuteService::execute(ObTableGroup &group, bool add_fail_group
     op_processor->~ObITableOpProcessor();
     op_processor = nullptr;
   } 
-  LOG_DEBUG("[group commit debug] execute batch", K(ret), KPC(group_ctx.trans_param_), K(add_fail_group), K(group_ctx));
+
   return ret;
 }
 

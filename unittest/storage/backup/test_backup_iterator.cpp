@@ -246,7 +246,7 @@ void TestBackupIndexIterator::iterate_macro_range_index_iterator(
     ret = iter.get_cur_index(range_index);
     if (OB_ITER_END == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("iterator meet end", K(idx), K(start_id), K(end_id));
+
       ASSERT_EQ(idx, end_id + 1);
       break;
     }

@@ -1161,7 +1161,7 @@ int ObRbAggAllocator::init()
 void ObRbAggAllocator::destroy_all_rb()
 {
   if (alloced_rb_.size() > 0) {
-    LOG_INFO("will destory by rb allocator", KP(this), K(alloced_rb_.size()));
+
     hash::ObHashSet<uint64_t, hash::NoPthreadDefendMode>::const_iterator iter;
     for (iter = alloced_rb_.begin(); iter != alloced_rb_.end(); iter++) {
       ObRbAggCell *rb = reinterpret_cast<ObRbAggCell*>(iter->first);

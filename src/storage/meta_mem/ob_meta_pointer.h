@@ -106,7 +106,7 @@ ObMetaPointer<T>::ObMetaPointer(const ObMetaDiskAddr &addr, ObMetaObjGuard<T> &g
   guard.get_obj(obj_);
   if (nullptr != obj_.ptr_) {
     if (nullptr == obj_.pool_ && nullptr == obj_.allocator_) {
-      STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "object pool is nullptr", K_(obj));
+
       ob_abort();
     } else {
       obj_.ptr_->inc_ref();
@@ -134,12 +134,12 @@ int ObMetaPointer<T>::acquire_obj(T *&t)
   int ret = OB_SUCCESS;
   if (OB_ISNULL(obj_.pool_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "object pool is nullptr", K(ret), K(obj_));
+
   } else if (OB_FAIL(static_cast<ObTenantMetaObjPool<T> *>(obj_.pool_)->acquire(t))) {
-    STORAGE_LOG(WARN, "fail to acquire object", K(ret), K(phy_addr_));
+
   } else if (OB_ISNULL(t)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "acquired object is nullptr", K(ret), KP(t));
+
   }
   return ret;
 }
@@ -159,7 +159,7 @@ int ObMetaPointer<T>::read_from_disk(const bool is_full_load,
   }
   if (OB_FAIL(MTL(ObTenantStorageMetaService*)->read_from_disk(real_load_addr, allocator, r_buf, r_len))) {
     if (OB_SEARCH_NOT_FOUND != ret) {
-      STORAGE_LOG(WARN, "fail to read from addr", K(ret), K(phy_addr_));
+
     }
   } else {
     addr = phy_addr_;
@@ -175,13 +175,13 @@ int ObMetaPointer<T>::hook_obj(T *&t,  ObMetaObjGuard<T> &guard)
 
   if (OB_ISNULL(t)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(ERROR, "load null obj from disk", K(ret), K(phy_addr_));
+
   } else if (OB_NOT_NULL(obj_.ptr_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(ERROR, "obj already hooked", K(ret), K(phy_addr_), KP(t), KP(obj_.ptr_));
+
   } else if (OB_UNLIKELY(0 != t->get_ref())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(ERROR, "obj ref cnt not 0", K(ret), K(phy_addr_), K(t->get_ref()));
+
   } else {
     t->inc_ref();
     t->set_tablet_addr(phy_addr_);
@@ -207,7 +207,7 @@ int ObMetaPointer<T>::release_obj(T *&t)
     // do nothing
   } else if (OB_UNLIKELY(nullptr == obj_.pool_ && nullptr == obj_.allocator_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "object pool or allocator is nullptr", K(ret), K(obj_));
+
   } else if (nullptr != obj_.pool_) {
     obj_.pool_->free_obj(t);
     t = nullptr;
@@ -227,10 +227,10 @@ int ObMetaPointer<T>::get_in_memory_obj(ObMetaObjGuard<T> &guard)
 
   if (OB_UNLIKELY(phy_addr_.is_none())) {
     ret = OB_ITEM_NOT_SETTED;
-    STORAGE_LOG(DEBUG, "meta disk addr is none, no object to be got", K(ret), K(phy_addr_));
+
   } else if (OB_UNLIKELY(!is_in_memory())) {
     ret = OB_NOT_SUPPORTED;
-    STORAGE_LOG(ERROR, "object isn't in memory, not support", K(ret), K(phy_addr_));
+
   } else {
     guard.set_obj(obj_);
   }
@@ -250,7 +250,7 @@ int ObMetaPointer<T>::deep_copy(char *buf, const int64_t buf_len, ObMetaPointer 
   const int64_t deep_copy_size = get_deep_copy_size();
   if (OB_ISNULL(buf) || buf_len < deep_copy_size) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(buf), K(buf_len));
+
   } else {
     ObMetaPointer *pvalue = new (buf) ObMetaPointer(phy_addr_);
     pvalue->obj_.pool_ = obj_.pool_;
@@ -259,7 +259,7 @@ int ObMetaPointer<T>::deep_copy(char *buf, const int64_t buf_len, ObMetaPointer 
     if (nullptr != obj_.ptr_) {
       if (OB_UNLIKELY(nullptr == obj_.pool_ && nullptr == obj_.allocator_)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(ERROR, "object pool is nullptr", K(ret), K_(obj));
+
         ob_abort();
       } else {
         obj_.ptr_->inc_ref();
@@ -314,7 +314,7 @@ void ObMetaPointer<T>::set_obj(const ObMetaObjGuard<T> &guard)
   set_attr_for_obj(obj_.ptr_);
   if (nullptr != obj_.ptr_) {
     if (OB_UNLIKELY(nullptr == obj_.pool_ && nullptr == obj_.allocator_)) {
-      STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "object pool is nullptr", K_(obj));
+
       ob_abort();
     } else {
       obj_.ptr_->inc_ref();
@@ -336,9 +336,9 @@ int ObMetaPointer<T>::serialize(char* buf, const int64_t buf_len, int64_t& pos) 
   int ret = OB_SUCCESS;
   if (OB_ISNULL(buf) || OB_UNLIKELY(buf_len <= 0 || pos < 0 || pos >= buf_len)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(buf), K(buf_len), K(pos));
+
   } else if (OB_FAIL(phy_addr_.serialize(buf, buf_len, pos))) {
-    STORAGE_LOG(WARN, "fail to serialize physical address", K(ret), K(phy_addr_));
+
   }
   return ret;
 }
@@ -349,9 +349,9 @@ int ObMetaPointer<T>::deserialize(const char *buf, const int64_t buf_len, int64_
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(buf_len <= 0 || pos < 0 || pos >= buf_len) || OB_ISNULL(buf)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(buf), K(buf_len), K(pos));
+
   } else if (OB_FAIL(phy_addr_.deserialize(buf, buf_len, pos))) {
-    STORAGE_LOG(WARN, "fail to de-serialize physical address", K(ret), K(phy_addr_));
+
   }
   return ret;
 }
@@ -373,11 +373,11 @@ int ObMetaPointer<T>::deserialize(
   int64_t pos = 0;
   if (OB_UNLIKELY(buf_len <= 0) || OB_ISNULL(buf) || OB_ISNULL(t)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(buf), K(buf_len), KP(t));
+
   } else if (OB_FAIL(set_attr_for_obj(t))) {
-    STORAGE_LOG(WARN, "fail to set attr for obj", K(ret));
+
   } else if (OB_FAIL(t->load_deserialize(allocator, buf, buf_len, pos))) {
-    STORAGE_LOG(WARN, "fail to de-serialize T", K(ret), KP(buf), K(buf_len), KP(t));
+
   }
   return ret;
 }
@@ -392,11 +392,11 @@ int ObMetaPointer<T>::deserialize(
   int64_t pos = 0;
   if (OB_UNLIKELY(buf_len <= 0) || OB_ISNULL(buf) || OB_ISNULL(t)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(buf), K(buf_len), KP(t));
+
   } else if (OB_FAIL(set_attr_for_obj(t))) {
-    STORAGE_LOG(WARN, "fail to set attr for obj", K(ret));
+
   } else if (OB_FAIL(t->deserialize(buf, buf_len, pos))) {
-    STORAGE_LOG(WARN, "fail to de-serialize T", K(ret), KP(buf), K(buf_len), KP(t));
+
   }
   return ret;
 }
@@ -406,7 +406,7 @@ void ObMetaPointer<T>::reset_obj()
 {
   if (nullptr != obj_.ptr_) {
     if (OB_UNLIKELY(nullptr == obj_.pool_ && nullptr == obj_.allocator_)) {
-      STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "object pool is nullptr", K_(obj));
+
       ob_abort();
     } else {
       const int64_t ref_cnt = obj_.ptr_->dec_ref();
@@ -418,7 +418,7 @@ void ObMetaPointer<T>::reset_obj()
           obj_.allocator_->free(obj_.ptr_);
         }
       } else if (OB_UNLIKELY(ref_cnt < 0)) {
-        STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "obj ref cnt may be leaked", K(ref_cnt), KPC(this));
+
       }
       // The pool ptr on tablet pointer cann't be reset nullptr here. Otherwise, you will
       // encounter the following bug when the tablet is deleted from the map.
@@ -450,7 +450,7 @@ ObMetaPointer<T> &ObMetaPointer<T>::operator = (const ObMetaPointer<T> &other)
     obj_.pool_ = other.obj_.pool_;
     if (nullptr != other.obj_.ptr_) {
       if (nullptr == other.obj_.pool_) {
-        STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "object pool is nullptr", K(other));
+
         ob_abort();
       } else {
         obj_.ptr_ = other.obj_.ptr_;

@@ -184,7 +184,7 @@ int ObExprColumnConv::convert_skip_null_check(ObObj &result,
     ret = COVER_SUCC(OB_ERR_UNEXPECTED);
     LOG_WARN("failed to cast object", K(ret), K(obj), "type", type);
   } else {
-    LOG_DEBUG("succ to to_type", K(type), K(obj), K(result), K(collation_type));
+
   }
   if (OB_SUCC(ret)) {
     const int64_t max_accuracy_len = static_cast<int64_t>(res_type.
@@ -300,7 +300,7 @@ int ObExprColumnConv::calc_result_typeN(ObExprResType &type,
         types[4].set_calc_accuracy(type.get_accuracy());
       }
     }
-    LOG_DEBUG("finish calc_result_typeN", K(type), K(types[4]), K(types[0]), K(wrap_to_str));
+
   }
   return ret;
 }
@@ -542,7 +542,7 @@ int ObExprColumnConv::column_convert(const ObExpr &expr,
           LOG_WARN("fail do datum_accuracy_check for lob res", K(ret), K(expr), K(*val));
         }
         if (OB_SUCC(ret)) {
-          LOG_DEBUG("after column convert", K(expr), K(datum), K(cast_mode));
+
         }
       } else {
         ObObjType in_type = expr.args_[4]->obj_meta_.get_type();
@@ -612,7 +612,7 @@ int ObExprColumnConv::column_convert(const ObExpr &expr,
               }
             }
           }
-          LOG_DEBUG("after column convert", K(expr), K(datum), K(cast_mode));
+
         }
       }
     }

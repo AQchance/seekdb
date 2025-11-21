@@ -95,7 +95,7 @@ void ObTableLoadCoordinator::abort_ctx(ObTableLoadTableCtx *ctx, int error_code)
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected invalid coordinator ctx", KR(ret), KP(ctx->coordinator_ctx_));
   } else {
-    LOG_INFO("coordinator abort");
+
     int tmp_ret = OB_SUCCESS;
     // 1. mark status abort, speed up background task exit
     if (OB_SUCCESS != (tmp_ret = ctx->coordinator_ctx_->set_status_abort(error_code))) {
@@ -145,7 +145,7 @@ int ObTableLoadCoordinator::abort_peers_ctx(ObTableLoadTableCtx *ctx)
   int ret = OB_SUCCESS;
   {
     using StoreInfo = ObTableLoadCoordinatorCtx::StoreInfo;
-    LOG_INFO("route_abort_peer_request begin", K(ctx->coordinator_ctx_->store_infos_));
+
     static const int64_t max_retry_times = 100; // ensure store ctx detect heart beat timeout and abort
     ObArray<StoreInfo *> addr_array1, addr_array2;
     ObIArray<StoreInfo *> *curr_round = &addr_array1, *next_round = &addr_array2;
@@ -458,7 +458,7 @@ int ObTableLoadCoordinator::gen_apply_arg(ObDirectLoadResourceApplyArg &apply_ar
   ObTenant *tenant = nullptr;
   int64_t tenant_id = MTL_ID();
   if (OB_FAIL(GCTX.omt_->get_tenant(tenant_id, tenant))) {
-    LOG_INFO("fail to get tenant", KR(ret), K(tenant_id));
+
   } else {
     apply_arg.tenant_id_ = tenant_id;
     apply_arg.task_key_ = ObTableLoadUniqueKey(ctx_->param_.table_id_, ctx_->ddl_param_.task_id_);
@@ -604,7 +604,7 @@ int ObTableLoadCoordinator::pre_begin_peers(ObDirectLoadResourceApplyArg &apply_
               K(coordinator_ctx_->store_infos_),
               K(all_leader_info_array), K(target_all_leader_info_array));
   } else {
-    LOG_INFO("route_pre_begin_peer_request begin", K(all_leader_info_array.count()));
+
     ObDirectLoadControlPreBeginArg arg;
     arg.table_id_ = param_.table_id_;
     arg.config_.max_error_row_count_ = param_.max_error_row_count_;
@@ -657,7 +657,7 @@ int ObTableLoadCoordinator::pre_begin_peers(ObDirectLoadResourceApplyArg &apply_
       } else if (ObTableLoadUtils::is_local_addr(addr)) { // local address
         ctx_->param_.session_count_ = arg.config_.parallel_;
         ctx_->param_.avail_memory_ = arg.avail_memory_;
-        LOG_INFO("table load local pre begin", K(arg));
+
         if (OB_FAIL(ObTableLoadStore::init_ctx(ctx_, arg.partition_id_array_, arg.target_partition_id_array_))) {
           LOG_WARN("fail to store init ctx", KR(ret));
         } else {
@@ -795,7 +795,7 @@ int ObTableLoadCoordinator::confirm_begin_peers()
 {
   int ret = OB_SUCCESS;
   {
-    LOG_INFO("route_confirm_begin_peer_request begin", K(coordinator_ctx_->store_infos_));
+
     ObDirectLoadControlConfirmBeginArg arg;
     arg.table_id_ = param_.table_id_;
     arg.task_id_ = ctx_->ddl_param_.task_id_;
@@ -803,7 +803,7 @@ int ObTableLoadCoordinator::confirm_begin_peers()
       ObTableLoadCoordinatorCtx::StoreInfo &store_info = coordinator_ctx_->store_infos_.at(i);
       const ObAddr &addr = store_info.addr_;
       if (ObTableLoadUtils::is_local_addr(addr)) { // Local machine
-        LOG_INFO("table load local confirm begin", K(arg));
+
         ObTableLoadStore store(ctx_);
         if (OB_FAIL(store.init())) {
           LOG_WARN("fail to init store", KR(ret));
@@ -826,7 +826,7 @@ int ObTableLoadCoordinator::begin()
     LOG_WARN("ObTableLoadCoordinator not init", KR(ret), KP(this));
   } else {
     ObDirectLoadResourceApplyArg apply_arg;
-    LOG_INFO("coordinator begin");
+
     ObMutexGuard guard(coordinator_ctx_->get_op_lock());
     if (OB_FAIL(coordinator_ctx_->check_status(ObTableLoadStatusType::INITED))) {
       LOG_WARN("fail to check status", KR(ret));
@@ -861,7 +861,7 @@ int ObTableLoadCoordinator::check_peers_begin_result(bool &is_finish)
 {
   int ret = OB_SUCCESS;
   {
-    LOG_INFO("check_peers_begin_result begin", K(coordinator_ctx_->store_infos_));
+
     ObDirectLoadControlGetStatusArg arg;
     ObDirectLoadControlGetStatusRes res;
     arg.table_id_ = param_.table_id_;
@@ -1010,7 +1010,7 @@ int ObTableLoadCoordinator::pre_merge_peers()
 {
   int ret = OB_SUCCESS;
   {
-    LOG_INFO("route_pre_merge_peer_request begin", K(coordinator_ctx_->store_infos_));
+
     ObArenaAllocator allocator("TLD_Coord");
     ObDirectLoadControlPreMergeArg arg;
     allocator.set_tenant_id(MTL_ID());
@@ -1027,7 +1027,7 @@ int ObTableLoadCoordinator::pre_merge_peers()
     for (int64_t i = 0; OB_SUCC(ret) && i < coordinator_ctx_->store_infos_.count(); ++i) {
       const ObAddr &addr = coordinator_ctx_->store_infos_.at(i).addr_;
       if (ObTableLoadUtils::is_local_addr(addr)) { // Local machine
-        LOG_INFO("table load local pre merge", K(arg));
+
         ObTableLoadStore store(ctx_);
         if (OB_FAIL(store.init())) {
           LOG_WARN("fail to init store", KR(ret));
@@ -1046,14 +1046,14 @@ int ObTableLoadCoordinator::start_merge_peers()
 {
   int ret = OB_SUCCESS;
   {
-    LOG_INFO("route_start_merge_peer_request begin", K(coordinator_ctx_->store_infos_));
+
     ObDirectLoadControlStartMergeArg arg;
     arg.table_id_ = param_.table_id_;
     arg.task_id_ = ctx_->ddl_param_.task_id_;
     for (int64_t i = 0; OB_SUCC(ret) && i < coordinator_ctx_->store_infos_.count(); ++i) {
       const ObAddr &addr = coordinator_ctx_->store_infos_.at(i).addr_;
       if (ObTableLoadUtils::is_local_addr(addr)) { // Local machine
-        LOG_INFO("table load local start merge", K(arg));
+
         ObTableLoadStore store(ctx_);
         if (OB_FAIL(store.init())) {
           LOG_WARN("fail to init store", KR(ret));
@@ -1075,7 +1075,7 @@ int ObTableLoadCoordinator::finish()
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadCoordinator not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("coordinator finish");
+
     ObMutexGuard guard(coordinator_ctx_->get_op_lock());
     bool active_trans_exist = false;
     bool committed_trans_eixst = false;
@@ -1126,7 +1126,7 @@ int ObTableLoadCoordinator::check_peers_merge_result(bool &is_finish)
 {
   int ret = OB_SUCCESS;
   {
-    LOG_INFO("route_get_status_peer_request begin", K(coordinator_ctx_->store_infos_));
+
     ObDirectLoadControlGetStatusArg arg;
     ObDirectLoadControlGetStatusRes res;
     arg.table_id_ = param_.table_id_;
@@ -1280,7 +1280,7 @@ int ObTableLoadCoordinator::commit_peers(ObTableLoadSqlStatistics &sql_statistic
     ret = OB_ERR_SYS;
     LOG_WARN("trans service is null", KR(ret));
   } else {
-    LOG_INFO("route_commit_peer_request begin", K(coordinator_ctx_->store_infos_));
+
     ObDirectLoadControlCommitArg arg;
     ObDirectLoadControlCommitRes res;
     arg.table_id_ = param_.table_id_;
@@ -1289,7 +1289,7 @@ int ObTableLoadCoordinator::commit_peers(ObTableLoadSqlStatistics &sql_statistic
       ObTableLoadCoordinatorCtx::StoreInfo &store_info = coordinator_ctx_->store_infos_.at(i);
       const ObAddr &addr = store_info.addr_;
       if (ObTableLoadUtils::is_local_addr(addr)) { // Local machine
-        LOG_INFO("table load local commit begin", K(arg));
+
         ObTableLoadStore store(ctx_);
         if (OB_FAIL(store.init())) {
           LOG_WARN("fail to init store", KR(ret));
@@ -1448,7 +1448,7 @@ int ObTableLoadCoordinator::commit(ObTableLoadResultInfo &result_info)
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadCoordinator not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("coordinator commit");
+
     ObMutexGuard guard(coordinator_ctx_->get_op_lock());
     ObTableLoadSqlStatistics sql_statistics;
     ObTableLoadDmlStat dml_stats;
@@ -1479,7 +1479,7 @@ int ObTableLoadCoordinator::get_status(ObTableLoadStatusType &status, int &error
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadCoordinator not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("coordinator get status");
+
     coordinator_ctx_->get_status(status, error_code);
   }
   return ret;
@@ -1493,7 +1493,7 @@ int ObTableLoadCoordinator::heart_beat_peer()
 {
   int ret = OB_SUCCESS;
   {
-    LOG_DEBUG("route_heart_beat_peer_request begin", K(coordinator_ctx_->store_infos_));
+
     ObDirectLoadControlHeartBeatArg arg;
     arg.table_id_ = param_.table_id_;
     arg.task_id_ = ctx_->ddl_param_.task_id_;
@@ -1538,7 +1538,7 @@ int ObTableLoadCoordinator::pre_start_trans_peers(ObTableLoadCoordinatorTrans *t
 {
   int ret = OB_SUCCESS;
   {
-    LOG_INFO("route_pre_start_trans_peer_request begin", K(coordinator_ctx_->store_infos_));
+
     const ObTableLoadTransId &trans_id = trans->get_trans_id();
     ObDirectLoadControlPreStartTransArg arg;
     arg.table_id_ = param_.table_id_;
@@ -1565,7 +1565,7 @@ int ObTableLoadCoordinator::confirm_start_trans_peers(ObTableLoadCoordinatorTran
 {
   int ret = OB_SUCCESS;
   {
-    LOG_INFO("route_confirm_start_trans_peer_request begin", K(coordinator_ctx_->store_infos_));
+
     const ObTableLoadTransId &trans_id = trans->get_trans_id();
     ObDirectLoadControlConfirmStartTransArg arg;
     arg.table_id_ = param_.table_id_;
@@ -1596,7 +1596,7 @@ int ObTableLoadCoordinator::start_trans(const ObTableLoadSegmentID &segment_id,
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadCoordinator not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("coordinator start trans", K(segment_id));
+
     ObTableLoadTransCtx *trans_ctx = nullptr;
     while (OB_SUCC(ret) && nullptr == trans_ctx) {
       if (OB_FAIL(coordinator_ctx_->get_segment_trans_ctx(segment_id, trans_ctx))) {
@@ -1645,7 +1645,7 @@ int ObTableLoadCoordinator::pre_finish_trans_peers(ObTableLoadCoordinatorTrans *
 {
   int ret = OB_SUCCESS;
   {
-    LOG_INFO("route_pre_finish_trans_peer_request begin", K(coordinator_ctx_->store_infos_));
+
     const ObTableLoadTransId &trans_id = trans->get_trans_id();
     ObDirectLoadControlPreFinishTransArg arg;
     arg.table_id_ = param_.table_id_;
@@ -1672,7 +1672,7 @@ int ObTableLoadCoordinator::confirm_finish_trans_peers(ObTableLoadCoordinatorTra
 {
   int ret = OB_SUCCESS;
   {
-    LOG_INFO("route_pre_finish_trans_peer_request begin", K(coordinator_ctx_->store_infos_));
+
     const ObTableLoadTransId &trans_id = trans->get_trans_id();
     ObDirectLoadControlConfirmFinishTransArg arg;
     arg.table_id_ = param_.table_id_;
@@ -1702,7 +1702,7 @@ int ObTableLoadCoordinator::finish_trans(const ObTableLoadTransId &trans_id)
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadCoordinator not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("coordinator finish trans", K(trans_id));
+
     ObTableLoadCoordinatorTrans *trans = nullptr;
     if (OB_FAIL(coordinator_ctx_->get_trans(trans_id, trans))) {
       LOG_WARN("fail to get trans", KR(ret), K(trans_id));
@@ -1725,7 +1725,7 @@ int ObTableLoadCoordinator::check_peers_trans_commit(ObTableLoadCoordinatorTrans
 {
   int ret = OB_SUCCESS;
   {
-    LOG_INFO("route_check_peers_trans_commit begin", K(coordinator_ctx_->store_infos_));
+
     ObDirectLoadControlGetTransStatusArg arg;
     ObDirectLoadControlGetTransStatusRes res;
     arg.table_id_ = param_.table_id_;
@@ -1798,7 +1798,7 @@ int ObTableLoadCoordinator::finish_trans_peers(ObTableLoadCoordinatorTrans *tran
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadCoordinator not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("coordinator finish trans peers");
+
     if (OB_FAIL(pre_finish_trans_peers(trans))) {
       LOG_WARN("fail to pre finish trans peers", KR(ret));
     } else if (OB_FAIL(check_trans_commit(trans))) {
@@ -1815,7 +1815,7 @@ int ObTableLoadCoordinator::commit_trans(ObTableLoadCoordinatorTrans *trans)
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadCoordinator not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("coordinator commit trans");
+
     if (OB_FAIL(trans->set_trans_status_commit())) {
       LOG_WARN("fail to set trans status commit", KR(ret));
     } else if (OB_FAIL(coordinator_ctx_->commit_trans(trans))) {
@@ -1833,7 +1833,7 @@ int ObTableLoadCoordinator::abandon_trans_peers(ObTableLoadCoordinatorTrans *tra
 {
   int ret = OB_SUCCESS;
   {
-    LOG_INFO("route_abandon_trans_peer_request begin", K(coordinator_ctx_->store_infos_));
+
     const ObTableLoadTransId &trans_id = trans->get_trans_id();
     ObDirectLoadControlAbandonTransArg arg;
     arg.table_id_ = param_.table_id_;
@@ -1876,7 +1876,7 @@ int ObTableLoadCoordinator::get_trans_status(const ObTableLoadTransId &trans_id,
     } else {
       trans_ctx->get_trans_status(trans_status, error_code);
     }
-    LOG_INFO("coordinator get trans status", K(trans_status), K(error_code));
+
   }
   return ret;
 }
@@ -1993,7 +1993,7 @@ int ObTableLoadCoordinator::write(const ObTableLoadTransId &trans_id, int32_t se
   } else if (OB_FAIL(coordinator_ctx_->check_status(ObTableLoadStatusType::LOADING))) {
     LOG_WARN("fail to check coordinator status", KR(ret));
   } else {
-    LOG_DEBUG("coordinator write");
+
     ObTableLoadCoordinatorTrans *trans = nullptr;
     ObTableLoadTransBucketWriter *bucket_writer = nullptr;
     ObTableLoadMutexGuard guard;
@@ -2135,7 +2135,7 @@ int ObTableLoadCoordinator::flush(ObTableLoadCoordinatorTrans *trans)
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadCoordinator not init", KR(ret), KP(this));
   } else {
-    LOG_DEBUG("coordinator flush");
+
     ObTableLoadTransBucketWriter *bucket_writer = nullptr;
     // retrieve bucket_writer
     if (OB_FAIL(trans->get_bucket_writer_for_flush(bucket_writer))) {
@@ -2190,7 +2190,7 @@ int ObTableLoadCoordinator::write_peer_leader(const ObTableLoadTransId &trans_id
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid args", KR(ret));
   } else {
-    LOG_DEBUG("coordinator write peer leader", K(addr));
+
     if (ObTableLoadUtils::is_local_addr(addr)) { // local address
       ObTableLoadStore store(ctx_);
       if (OB_FAIL(store.init())) {

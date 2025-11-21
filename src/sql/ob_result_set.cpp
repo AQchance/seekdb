@@ -110,7 +110,7 @@ OB_INLINE int ObResultSet::open_plan()
                                                        *get_physical_plan()))) {
         // query is not admitted to run
         // Note: explain statement's phy plan is target query's plan, don't enable admission test
-        LOG_DEBUG("Query is not admitted to run, try again", K(ret));
+
       } else if (THIS_WORKER.is_timeout()) {
         // packet may have stayed in the queue for too long, by here it has already timed out,
         // If here is not checked, it will continue to run, likely entering other modules,
@@ -373,7 +373,7 @@ int ObResultSet::end_stmt(const bool is_rollback)
   if (need_revert_tx_) { // ignore ret
     int tmp_ret = sql::ObTMService::revert_tx_for_callback(get_exec_context());
     need_revert_tx_ = false;
-    LOG_DEBUG("revert tx for callback", K(tmp_ret));
+
   }
   NG_TRACE(end_stmt);
   return ret;
@@ -1462,7 +1462,7 @@ int ObResultSet::copy_field_columns(const ObPhysicalPlan &plan)
     } else if (OB_FAIL(field_columns_.push_back(field))) {
       LOG_WARN("push back field column failed", K(ret));
     } else {
-      LOG_DEBUG("success to copy field", K(field));
+
     }
   }
   return ret;
@@ -1514,7 +1514,7 @@ int ObResultSet::construct_display_field_name(common::ObField &field,
     ret = OB_ALLOCATE_MEMORY_FAILED;
     LOG_WARN("failed to allocate memory", K(ret), K(buf_len));
   } else {
-    LOG_DEBUG("construct display field name", K(field));
+
     #define PARAM_CTX field.paramed_ctx_
     for (int64_t i = 0; OB_SUCC(ret) && pos <= buf_len && i < PARAM_CTX->param_idxs_.count(); i++) {
       int64_t idx = PARAM_CTX->param_idxs_.at(i);
@@ -1565,7 +1565,7 @@ int ObResultSet::construct_display_field_name(common::ObField &field,
         } else if (PARAM_CTX->esc_str_flag_) {
           if (lib::is_mysql_mode()
               && 1 == raw_params.at(idx)->node_->num_child_) {
-            LOG_DEBUG("concat str node");
+
             if (OB_ISNULL(raw_params.at(idx)->node_->children_)
                 || OB_ISNULL(raw_params.at(idx)->node_->children_[0])
                 || T_CONCAT_STRING != raw_params.at(idx)->node_->children_[0]->type_) {
@@ -1789,7 +1789,7 @@ int ObRemoteResultSet::copy_field_columns(
     } else if (OB_FAIL(field_columns_.push_back(field))) {
       LOG_WARN("push back field column failed", K(ret));
     } else {
-      LOG_DEBUG("succs to copy field", K(field));
+
     }
   }
 
@@ -1855,7 +1855,7 @@ int ObRemoteResultSet::setup_next_scanner()
         }
       } else {
         ret = OB_ITER_END;
-        LOG_DEBUG("no more scanners in the handle", K(ret));
+
       }
     }
   }

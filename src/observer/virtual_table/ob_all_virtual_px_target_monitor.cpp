@@ -71,7 +71,7 @@ int ObAllVirtualPxTargetMonitor::inner_get_next_row(common::ObNewRow *&row)
     LOG_WARN("prepare_get_px_target fail", K(ret));
   } else if (OB_FAIL(get_next_target_info(target_info))) {
     if (ret == OB_ITER_END) {
-      LOG_INFO("get_px_target finish", K(ret));
+
     } else {
       LOG_WARN("get_px_target failed", K(ret));
     }

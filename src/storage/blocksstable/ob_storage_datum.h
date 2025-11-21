@@ -205,7 +205,7 @@ OB_INLINE int ObStorageDatum::deep_copy(const ObStorageDatum &src, char * buf, c
     ptr_ = buf_;
   } else if (OB_UNLIKELY(nullptr == buf || buf_len < pos + src.len_)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to deep copy datum", K(ret), K(src), KP(buf), K(buf_len), K(pos));
+
     pack_ = 0;
   } else {
     MEMCPY(buf + pos, src.ptr_, src.len_);
@@ -248,7 +248,7 @@ OB_INLINE int ObStorageDatum::from_buf_enhance(const char *buf, const int64_t bu
 
   if (OB_UNLIKELY(nullptr == buf || buf_len < 0 || buf_len > UINT32_MAX)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to transfer from buf", K(ret), KP(buf), K(buf_len));
+
   } else {
     reuse();
     len_ = static_cast<uint32_t>(buf_len);
@@ -269,9 +269,9 @@ OB_INLINE int ObStorageDatum::from_obj_enhance(const common::ObObj &obj)
   if (obj.is_ext()) {
     set_ext_value(obj.get_ext());
   } else if (OB_FAIL(from_obj(obj))) {
-    STORAGE_LOG(WARN, "Failed to transfer obj to datum", K(ret), K(obj));
+
   }
-  STORAGE_LOG(DEBUG, "chaser debug from obj", K(obj), K(*this));
+
 
   return ret;
 }
@@ -282,11 +282,11 @@ OB_INLINE int ObStorageDatum::to_obj_enhance(common::ObObj &obj, const common::O
   int ret = common::OB_SUCCESS;
   if (is_outrow()) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "lob should not set outrow in datum", K(ret), K(*this), K(obj), K(meta));
+
   } else if (is_ext()) {
     obj.set_ext(get_ext());
   } else if (OB_FAIL(to_obj(obj, meta))) {
-    STORAGE_LOG(WARN, "Failed to transfer datum to obj", K(ret), K(*this), K(obj), K(meta));
+
   }
 
   return ret;
@@ -321,7 +321,7 @@ OB_INLINE bool ObStorageDatum::operator==(const ObStorageDatum &other) const
     bret = ObDatum::binary_equal(*this, other);
   }
   if (!bret) {
-    STORAGE_LOG(DEBUG, "datum and datum no equal", K(other), K(*this));
+
   }
   return bret;
 
@@ -334,12 +334,12 @@ OB_INLINE bool ObStorageDatum::operator==(const common::ObObj &other) const
   bool bret = true;
   ObStorageDatum datum;
   if (OB_FAIL(datum.from_obj_enhance(other))) {
-    STORAGE_LOG(WARN, "Failed to transfer obj to datum", K(ret), K(other), K(datum));
+
   } else {
     bret = *this == datum;
   }
   if (!bret) {
-    STORAGE_LOG(DEBUG, "obj and datum no equal", K(other), K(datum), KPC(this));
+
   }
   return bret;
 }

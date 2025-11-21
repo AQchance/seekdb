@@ -552,7 +552,7 @@ int ObOptEstCostModel::cost_sort(const ObSortCostInfo &cost_info,
       cost += cost_params_.get_cpu_tuple_cost(sys_stat_) * cost_info.rows_;
     }
   }
-  LOG_TRACE("succeed to compute sort cost", K(cost_info), K(cost));
+
   return ret;
 }
 
@@ -799,11 +799,11 @@ int ObOptEstCostModel::cost_prefix_sort(const ObSortCostInfo &cost_info,
         } else if (topn_count >= 0 && num_rows_per_group > 0) {
           // topn prefix sort
           cost = cost_per_group * (topn_count / num_rows_per_group);
-          LOG_TRACE("OPT: [COST PREFIX TOPN SORT]", K(cost), K(cost_per_group), K(topn_count), K(num_rows_per_group));
+
         } else {
           // normal prefix sort
           cost = cost_per_group * num_distinct_rows;
-          LOG_TRACE("OPT: [COST PREFIX SORT]", K(cost), K(cost_per_group), K(num_distinct_rows));
+
         }
       }
     }
@@ -1130,7 +1130,7 @@ double ObOptEstCostModel::cost_hash_group(double rows,
   cost += cost_params_.get_probe_hash_per_row_cost(sys_stat_) * rows;
   cost += cost_hash(rows, group_columns);
   cost += cost_params_.get_per_aggr_func_cost(sys_stat_) * static_cast<double>(agg_col_count) * rows;
-  LOG_TRACE("OPT: [HASH GROUP BY]", K(cost), K(agg_col_count), K(rows), K(res_rows));
+
   return cost;
 }
 
@@ -1146,7 +1146,7 @@ double ObOptEstCostModel::cost_scalar_group(double rows, int64_t agg_col_count)
   double cost = 0.0;
   cost += cost_params_.get_cpu_tuple_cost(sys_stat_) * rows;
   cost += cost_params_.get_per_aggr_func_cost(sys_stat_) * static_cast<double>(agg_col_count) * rows;
-  LOG_TRACE("OPT: [SCALAR GROUP BY]", K(cost), K(agg_col_count), K(rows));
+
   return cost;
 }
 
@@ -1166,7 +1166,7 @@ double ObOptEstCostModel::cost_merge_distinct(double rows,
   double cost = 0.0;
   cost += cost_params_.get_cpu_tuple_cost(sys_stat_) * rows;
   cost += cost_comparisions(rows, distinct_columns);
-  LOG_TRACE("OPT: [COST MERGE DISTINCT]", K(cost), K(rows), K(res_rows));
+
   return cost;
 }
 
@@ -1197,7 +1197,7 @@ double ObOptEstCostModel::cost_hash_distinct(double rows,
   // Calculate hash value cost
   cost += cost_hash(rows, distinct_columns);
 
-  LOG_TRACE("OPT: [COST HASH DISTINCT]", K(cost), K(rows), K(res_rows));
+
   return cost;
 }
 
@@ -1237,7 +1237,7 @@ double ObOptEstCostModel::cost_read_materialized(double rows)
 double ObOptEstCostModel::cost_material(const double rows, const double average_row_size)
 {
   double cost = cost_params_.get_materialize_per_byte_write_cost(sys_stat_) * average_row_size * rows;
-  LOG_TRACE("OPT: [COST MATERIAL]", K(cost), K(rows), K(average_row_size));
+
   return cost;
 }
 
@@ -1402,7 +1402,7 @@ int ObOptEstCostModel::cost_basic_table(const ObCostTableScanInfo &est_cost_info
     // calc das rescan scan rpc cost
     cost += das_rpc_cost;
     OPT_TRACE_COST_MODEL(KV(cost), "+=", KV(das_rpc_cost));
-    LOG_TRACE("OPT:[ESTIMATE FINISH]", K(cost), K(part_cnt_per_dop), K(das_rpc_cost), K(est_cost_info));
+
   }
   return ret;
 }
@@ -1493,11 +1493,11 @@ int ObOptEstCostModel::cost_column_store_index_scan(const ObCostTableScanInfo &e
           prefix_filter_sel *= runtime_filter_sel;
           runtime_filter_sel = 1.0;
         }
-        LOG_TRACE("[COST ONE COLUMN GROUP]", K(row_count), K(prefix_filter_sel), K(column_group_cost), K(cg_info.skip_filter_sel_), K(column_group_cost));
+
       }
     }
   }
-  LOG_TRACE("OPT:[COST INDEX SCAN WITH COLUMN STORE]", K(row_count), K(index_scan_cost));
+
   return ret;
 }
 
@@ -1545,7 +1545,7 @@ int ObOptEstCostModel::cost_column_store_index_back(const ObCostTableScanInfo &e
       } else {
         index_back_cost += column_group_cost;
         OPT_TRACE_COST_MODEL(KV(index_back_cost), "+=", KV(column_group_cost));
-        LOG_TRACE("OPT:[COST ONE COLUMN GROUP]", K(row_count), K(index_back_row_count), K(apply_filter_sel), K(column_group_cost), K(cg_info.skip_filter_sel_), K(column_group_cost));
+
         apply_filter_sel *= cg_info.filter_sel_;
         index_back_row_count = row_count * apply_filter_sel;
         if (limit_before_indexback) {
@@ -1563,7 +1563,7 @@ int ObOptEstCostModel::cost_column_store_index_back(const ObCostTableScanInfo &e
       index_back_cost += network_cost;
       OPT_TRACE_COST_MODEL(KV(index_back_cost), "+=", KV(network_cost));
     }
-    LOG_TRACE("OPT:[COST INDEX BACK WITH COLUMN STORE]", K(row_count), K(index_back_row_count), K(network_cost), K(index_back_cost));
+
   }
   return ret;
 }
@@ -1603,7 +1603,7 @@ int ObOptEstCostModel::cost_row_store_index_scan(const ObCostTableScanInfo &est_
     double spatial_cost = row_count *  cost_params_.get_spatial_per_row_cost(sys_stat_);
     index_scan_cost += spatial_cost;
     OPT_TRACE_COST_MODEL(KV(index_scan_cost), "+=", KV(spatial_cost));
-    LOG_TRACE("OPT::[COST SPATIAL INDEX SCAN]", K(spatial_cost), K(ret));
+
   } else if (est_cost_info.index_meta_info_.is_fulltext_index_) {
     // Full-text index phase one: For every token, we need to:
     // 1. Scan inv_index twice with [token, token] as range to calculate an aggregate function;
@@ -1632,14 +1632,14 @@ int ObOptEstCostModel::cost_row_store_index_scan(const ObCostTableScanInfo &est_
     double fulltext_scan_cost = 2 * inv_index_range_scan_cost + doc_id_full_scan_cost + 
                                 aggregation_cost + doc_id_index_back_cost;
     index_scan_cost = fulltext_scan_cost;
-    LOG_TRACE("OPT::[COST FULLTEXT INDEX SCAN]", K(fulltext_scan_cost), K(ret));
+
   }
   //add index skip scan cost
   if (OB_FAIL(ret)) {
   } else if (!est_cost_info.ss_ranges_.empty()) {
     index_scan_cost *= est_cost_info.ss_prefix_ndv_;
     OPT_TRACE_COST_MODEL(KV(index_scan_cost), "*=", KV_(est_cost_info.ss_prefix_ndv));
-    LOG_TRACE("OPT::[COST INDEX SKIP SCAN]", K(est_cost_info.ss_prefix_ndv_), K(index_scan_cost));
+
   }
   return ret;
 }
@@ -2124,7 +2124,7 @@ int ObOptEstCostModel::cost_subplan_filter(const ObSubplanFilterCostInfo &info,
 
   if (OB_SUCC(ret)) {
     cost += onetime_cost;
-    LOG_TRACE("OPT: [COST SUBPLAN FILTER]", K(cost), K(onetime_cost), K(info));
+
   }
   return ret;
 }
@@ -2160,7 +2160,7 @@ int ObOptEstCostModel::cost_merge_set(const ObCostMergeSetInfo &info, double &co
   cost += sum_rows * cost_params_.get_cpu_tuple_cost(sys_stat_);
   cost += cost_material(sum_rows, width);
   //operator cost：cmp_cost + cpu_cost
-  LOG_TRACE("OPT: [COST MERGE SET]", K(cost), K(sum_rows), K(width));
+
   return ret;
 }
 
@@ -2199,7 +2199,7 @@ int ObOptEstCostModel::cost_hash_set(const ObCostHashSetInfo &info, double &cost
   // Calculate the cost of hash
   cost += cost_hash(info.left_rows_ + info.right_rows_, info.hash_columns_);
 
-  LOG_TRACE("OPT: [COST HASH SET]", K(cost));
+
   return ret;
 }
 
@@ -2332,7 +2332,7 @@ int ObOptEstCostModel::cost_project(double rows,
     }
   }
   cost = project_one_row_cost * rows;
-  LOG_TRACE("COST PROJECT:", K(cost), K(rows), K(columns));
+
   return ret;
 }
 

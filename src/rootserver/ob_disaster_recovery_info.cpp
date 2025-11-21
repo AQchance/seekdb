@@ -485,7 +485,7 @@ int DRLSInfo::build_disaster_ls_info(
       share::ObUnit unit;
       share::ObLSReplica &ls_replica = inner_ls_info_.get_replicas().at(i);
       if (!ls_replica.get_in_member_list() && !ls_replica.get_in_learner_list()) {
-        LOG_INFO("replica is neither in member list nor in learner list", K(ls_replica));
+
       } else if (OB_FAIL(server_stat_info_map_.locate(ls_replica.get_server(), server))) {
         LOG_WARN("fail to locate server", KR(ret), "server", ls_replica.get_server());
       } else if (OB_FAIL(unit_stat_info_map_.locate(ls_replica.get_unit_id(), unit_in_map))) {
@@ -657,7 +657,7 @@ int DRLSInfo::check_replica_exist_and_get_ls_replica(
     if (OB_ENTRY_NOT_EXIST != ret) {
       LOG_WARN("fail to find replica by server", KR(ret), K(server_addr), K(inner_ls_info_));
     } else {
-      LOG_INFO("dose not have replica", KR(ret), K(server_addr), K(inner_ls_info_));
+
       ret = OB_SUCCESS;
     }
   } else if (OB_ISNULL(ls_replica_ptr)) {

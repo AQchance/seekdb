@@ -239,7 +239,7 @@ int ObGranuleUtil::split_granule_for_external_table(ObIAllocator &allocator,
     }
   } else if (!external_table_files.empty() && 
              ObExternalFileFormat::ODPS_FORMAT == external_file_format.format_type_) {
-    LOG_TRACE("odps external table granule switch", K(ret), K(external_table_files.count()), K(external_table_files));
+
     if (!GCONF._use_odps_jni_connector) {
 #if defined(OB_BUILD_CPP_ODPS)
       if (OB_FAIL(split_granule_by_partition_line(allocator, tablets, external_table_files, granule_tablets, granule_ranges, granule_idx))) {
@@ -298,7 +298,7 @@ int ObGranuleUtil::split_granule_for_external_table(ObIAllocator &allocator,
       }
     }
   }
-  LOG_DEBUG("check external split ranges", K(ranges), K(granule_ranges), K(external_table_files));
+
   return ret;
 }
 
@@ -349,7 +349,7 @@ int ObGranuleUtil::split_block_ranges(ObExecContext &exec_ctx,
         pk_idx++;
       }
     }
-    LOG_TRACE("gi partition granule", K(range_independent));
+
   } else if (OB_FAIL(split_block_granule(exec_ctx,
                                          allocator,
                                          tsc,
@@ -459,7 +459,7 @@ int ObGranuleUtil::split_block_granule(ObExecContext &exec_ctx,
         }
       }
     }
-    LOG_TRACE("get multi ranges cost", K(empty_partition_cnt), K(size_each_partitions));
+
   }
 
   // 3. calc the total number of tasks for all partitions
@@ -550,7 +550,7 @@ int ObGranuleUtil::compute_total_task_count(const ObParallelBlockRangeTaskParams
     // default value of expected_task_load_ is 128 MB
     int64_t expected_task_load = max(params.expected_task_load_, min_task_access_size);
 
-    LOG_TRACE("compute task count: ", K(total_access_size), K(expected_task_load));
+
 
     // lower bound size: dop*128M*13
     int64_t lower_bound_size = params.parallelism_ * expected_task_load * params.min_task_count_per_thread_;
@@ -605,7 +605,7 @@ int ObGranuleUtil::compute_task_count_each_partition(int64_t total_size,
         LOG_WARN("failed to push back array", K(ret));
       }
     }
-    LOG_TRACE("compute task count for each partition, each partition has only one task", K(ret));
+
   } else {
     // allocate task count for each partition by the weight of partition data in the total data
     int64_t alloc_task_cnt = 0;

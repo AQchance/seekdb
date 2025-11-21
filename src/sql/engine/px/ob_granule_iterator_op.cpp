@@ -148,7 +148,7 @@ int ObGITaskReBalancer::trigger_rebalance(ObGranuleIteratorOp *gi_op, bool &need
     // means new task is prepared by another worker
     need_wait_new_task = true;
   } else if (cur_timestamp > wait_until_time) {
-    LOG_TRACE("[Adaptive Task Splitting] There is data skew", K(gi_op_id_), K(record_pump_version));
+
     need_wait_new_task = true;
     ObLockGuard<ObSpinLock> lock_guard(pullup_version_lock_);
     if (is_worker_paused(gi_op->get_worker_id())) {
@@ -211,7 +211,7 @@ int ObGITaskReBalancer::wait_new_task(ObGranuleIteratorOp *gi_op)
         gi_op->set_has_add_to_finished_worker(false);
         // clear pause to ensure continue scan
         clear_worker_paused(gi_op->get_worker_id());
-        LOG_TRACE("[Adaptive Task Splitting] new task got", K(gi_op_id_), K(finished_workers));
+
         break;
       }
     }
@@ -334,7 +334,7 @@ int ObGIOpInput::init_task_rebalancer(ObExecContext *ctx, int64_t parallelism,
                                       int64_t op_id)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("[Adaptive Task Splitting] record split task cost", K(split_gi_task_cost));
+
   void *buf = ctx->get_allocator().alloc(sizeof(ObGITaskReBalancer));
   if (OB_ISNULL(buf)) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
@@ -445,7 +445,7 @@ int ObGranuleIteratorOp::parameters_init()
     worker_id_ = input->worker_id_;
     pump_version_ = pump_arg_->pump_version_;
   }
-  LOG_DEBUG("GI ctx init", K(this), K(parallelism_), K(pump_), K(tsc_op_id_));
+
   return ret;
 }
 
@@ -627,7 +627,7 @@ int ObGranuleIteratorOp::rescan()
   } else if (pump_version_ != pump_arg_->pump_version_) {
     // We can not reused the processed tasks when task regenerated (pump version changed).
     // e.g.: px batch rescan.
-    LOG_TRACE("rescan after task changes");
+
     pump_version_ = pump_arg_->pump_version_;
     is_rescan_ = false;
     rescan_taskset_ = NULL;
@@ -731,7 +731,7 @@ int ObGranuleIteratorOp::inner_open()
         state_ = GI_PREPARED;
         skip_prepare_table_scan = true;
       }
-      LOG_TRACE("runtime filter extract query range in GI", K(ret), K(query_range_rf_keys_));
+
     }
   }
 
@@ -1009,7 +1009,7 @@ int ObGranuleIteratorOp::try_get_rows(const int64_t max_row_cnt)
         } else if (OB_FAIL(brs_.copy(brs))) {
           LOG_WARN("copy failed", K(ret));
         } else {
-          LOG_DEBUG("get batch rows", K(*brs));
+
           if (brs->size_ > 0) {
             got_next_row = true;
           }
@@ -1309,7 +1309,7 @@ int ObGranuleIteratorOp::do_join_filter_partition_pruning(
       } else {
         partition_pruning = !is_match;
         if (!is_match) {
-          LOG_DEBUG("GI task is filtered by partition bloom filter", K(tablet_id), K(MY_SPEC.bf_info_.skip_subpart_));
+
           filter_count_++;
         }
       }
@@ -1379,7 +1379,7 @@ int ObGranuleIteratorOp::prepare_table_scan()
     //before state_ == GI_TABLE_SCAN
     state_ = GI_PREPARED;
   }
-  LOG_DEBUG("do prepare table scan", K(ret), K(state_));
+
   return ret;
 }
 
@@ -1625,7 +1625,7 @@ int ObGranuleIteratorOp::fetch_normal_pw_task_infos(const common::ObIArray<int64
       } else if (OB_FAIL(gi_prepare_map->set_refactored(op_ids.at(idx), gi_task_infos.at(idx)))) {
         LOG_WARN("reset table scan's ranges failed", K(ret));
       } else {
-        LOG_DEBUG("produce a gi task(PWJ)", K(op_ids.at(idx)), K(gi_task_infos.at(idx)));
+
       }
     }
   }
@@ -1860,7 +1860,7 @@ int ObGranuleIteratorOp::do_single_runtime_filter_extract_query_range(
         }
       }
     }
-    LOG_TRACE("single runtime filter extract query range", K(ret), K(has_extrct), K(ranges));
+
   }
   return ret;
 }
@@ -1899,7 +1899,7 @@ int ObGranuleIteratorOp::do_parallel_runtime_filter_extract_query_range(
           OZ(pump_->regenerate_gi_task(*args));
         }
       }
-      LOG_TRACE("parallel runtime filter extract query range", K(ret), K(has_extrct), K(ranges));
+
       pump_->set_fetch_task_ret(ret);
       args->extract_finished_ = true;
     } else {

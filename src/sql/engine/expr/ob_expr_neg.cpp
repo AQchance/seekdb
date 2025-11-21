@@ -57,7 +57,7 @@ static int check_expr_and_eval_param(const ObExpr &expr,
   } else if (param_datum->is_null()) {
     found_null = true;
   } else {
-    LOG_DEBUG("succeed to check expr and eval param", K(ret));
+
   }
   return ret;
 }
@@ -260,7 +260,7 @@ int ObExprNeg::calc_result_type1(ObExprResType &type, ObExprResType &type1, ObEx
       } else if (OB_FAIL(calc_param_type(type1, res_param_type, result_type))) {
         LOG_WARN("failed to calc param type", K(ret));
       } else {
-        LOG_DEBUG("calc reuslt type", K(res_param_type), K(result_type));
+
         type.set_type(result_type);
         type1.set_calc_type(res_param_type);
         if (ObDecimalIntType == res_param_type) {

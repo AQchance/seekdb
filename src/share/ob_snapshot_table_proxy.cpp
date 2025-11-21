@@ -238,7 +238,7 @@ int ObSnapshotTableProxy::batch_add_snapshot(
           LOG_WARN("invalid affected rows", K(ret), K(affected_rows), K(cur_batch_cnt));
         } else {
           report_idx += cur_batch_cnt;
-          LOG_INFO("batch acquire snapshots", K(sql));
+
         }
       }
     }

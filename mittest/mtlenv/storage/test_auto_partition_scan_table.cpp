@@ -135,15 +135,15 @@ int FakeObScanTable::set_tablet_split_info(
   ObLSID test_ls_id(ls_id_);
 
   if (OB_FAIL(MTL(ObLSService *)->get_ls(test_ls_id, ls_handle, ObLSGetMod::STORAGE_MOD))) {
-    STORAGE_LOG(WARN, "fail to get log stream", K(ret), K(ls_handle));
+
   } else if (OB_UNLIKELY(nullptr == ls_handle.get_ls())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "ls is null", K(ret), K(ls_handle));
+
   } else if (OB_FAIL(ls_handle.get_ls()->get_tablet(src_tablet_id, tablet_handle))) {
-    STORAGE_LOG(WARN, "fail to get tablet", K(ret), K(src_tablet_id));
+
   } else if (OB_ISNULL(tablet_handle.get_obj())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "tablet handle obj is null", K(ret), K(tablet_handle));
+
   } else {
     split_info.split_cnt_= split_cnt;
     split_info.split_type_ = split_type;
@@ -162,7 +162,7 @@ int FakeObScanTable::gen_datum_rowkey(const int64_t key_val, const int64_t key_c
   ObRowkey rowkey;
   if (NULL == (key_val_obj = static_cast<ObObj*>(allocator_.alloc(sizeof(ObObj) * key_cnt)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "out of memory", K(ret));
+
   } else {
     for (int64_t i = 0; i < key_cnt; ++i) {
       key_val_obj[i].set_int(key_val);
@@ -170,7 +170,7 @@ int FakeObScanTable::gen_datum_rowkey(const int64_t key_val, const int64_t key_c
     }
     rowkey.assign(key_val_obj, key_cnt);
     if (OB_FAIL(datum_rowkey.from_rowkey(rowkey, allocator_))) {
-      STORAGE_LOG(WARN, "fail to from rowkey", K(ret));
+
     }
   }
   return ret;
@@ -301,7 +301,7 @@ void FakeObScanTable::table_scan(
     if (OB_SUCCESS == ret) {
       ++cnt;
     }
-    STORAGE_LOG(WARN, "table scan row", KPC(row));
+
   }
   ASSERT_EQ(24, cnt);
 

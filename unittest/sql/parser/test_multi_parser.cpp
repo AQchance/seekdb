@@ -75,7 +75,7 @@ TEST_F(TestMultiParser, basic_test)
   ObParser parser(allocator_, mode);
   ObMPParseStat parse_stat;
   ret = parser.split_multiple_stmt(query, queries, parse_stat);
-  LOG_INFO("YES. multi query", K(query), K(queries));
+
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(1, queries.count());
 

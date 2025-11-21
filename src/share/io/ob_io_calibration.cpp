@@ -218,7 +218,7 @@ int ObIOAbility::get_iops(const ObIOMode mode, const int64_t size, double &iops)
         LOG_WARN("unexpected io ability", K(ret), K(prev_item), K(found_item));
       } else {
         iops = prev_item.iops_ + step_iops * (((size - prev_item.size_) * 1.0) / step_size);
-        LOG_DEBUG("get iops", K(iops), K(prev_item), K(found_item));
+
       }
     }
   }
@@ -375,7 +375,7 @@ int ObIOBenchRunner::do_benchmark(const ObIOBenchLoad &load, const int64_t threa
         result.rt_us_ = rt_us_ / io_count_;
 
       }
-      LOG_INFO("IO BENCHMARK finished", K(ret), K_(load), K(result));
+
     }
   }
   return ret;
@@ -572,7 +572,7 @@ void ObIOBenchController::run1()
   // acquisition of more accurate read and write performance metrics.
   for (int64_t i = static_cast<int64_t>(ObIOMode::MAX_MODE) - 1; OB_SUCC(ret) && !has_set_stop() && i >= 0; --i) {
     for (int64_t size = bench_start_size; OB_SUCC(ret) && !has_set_stop() && size <= OB_DEFAULT_MACRO_BLOCK_SIZE; size *= 2) {
-      LOG_INFO("execute disk io benchmark", K(size), "mode", i);
+
       ObIOBenchLoad load;
       load.mode_ = static_cast<ObIOMode>(i);
       load.size_ = size;
@@ -706,7 +706,7 @@ int ObIOCalibration::update_io_ability(const ObIOAbility &io_ability)
       baseline_iops_ = tmp_baseline_iops;
     }
   }
-  LOG_INFO("update io ability", K(ret), K(io_ability), K(baseline_iops_));
+
   return ret;
 }
 
@@ -870,7 +870,7 @@ int ObIOCalibration::refresh(const bool only_refresh, const ObIArray<ObIOBenchRe
   if (OB_SUCCESS != (tmp_ret = ObIOCalibration::get_instance().get_io_ability(io_ability))) {
     LOG_WARN("get io ability failed", KR(tmp_ret));
   }
-  LOG_INFO("refresh io calibration", K(ret), K(only_refresh), K(items), K(io_ability));
+
   return ret;
 }
 

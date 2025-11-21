@@ -158,7 +158,7 @@ int ObTempTableTransformationVecOp::destory_remote_interm_results(ObIArray<ObAdd
                                                                ObIArray<ObEraseDtlIntermResultArg> &args)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("destory_interm_results use rpc", K(svrs));
+
   ObExecContext &ctx = get_exec_ctx();
   ObSQLSessionInfo *session = ctx.get_my_session();
   ObPhysicalPlanCtx *plan_ctx = ctx.get_physical_plan_ctx();
@@ -200,7 +200,7 @@ int ObTempTableTransformationVecOp::destory_local_interm_results(ObIArray<uint64
 {
   int ret = OB_SUCCESS;
   dtl::ObDTLIntermResultKey dtl_int_key;
-  LOG_TRACE("destory interm results", K(get_exec_ctx().get_addr()), K(result_ids));
+
   for (int64_t i = 0; OB_SUCC(ret) && i < result_ids.count(); ++i) {
     dtl_int_key.channel_id_ = result_ids.at(i);
     if (OB_FAIL(MTL(dtl::ObDTLIntermResultManager *)->erase_interm_result_info(dtl_int_key))) {

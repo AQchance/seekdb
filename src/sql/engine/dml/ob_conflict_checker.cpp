@@ -343,7 +343,7 @@ int ObConflictChecker::build_rowkey(ObRowkey *&rowkey,
 
   if (OB_SUCC(ret)) {
     rowkey->assign(objs, rowkey_cnt);
-    LOG_DEBUG("succeed to build rowkey", KPC(rowkey));
+
   }
 
   return ret;
@@ -397,7 +397,7 @@ int ObConflictChecker::build_tmp_rowkey(ObRowkey *rowkey, ObRowkeyCstCtdef *rowk
                                                     obj_ptr[i]))) {
         LOG_WARN("reshape storage value failed", K(ret));
       } else {
-        LOG_DEBUG("succ to build tmp rowkey obj", K(i), K(obj_ptr[i]));
+
       }
     }
   }
@@ -599,7 +599,7 @@ int ObConflictChecker::insert_new_row(const ObChunkDatumStore::StoredRow *new_ro
       } else if (OB_FAIL(map_ctx.conflict_map_.set_refactored(*insert_rowkey, new_constraint_value))) {
         LOG_WARN("insert to map failed", K(ret), K(i), KPC(insert_rowkey));
       } else {
-        LOG_DEBUG("real add one row to hash_map", K(i), KPC(insert_rowkey), K(new_constraint_value));
+
       }
     }
   }
@@ -746,7 +746,7 @@ int ObConflictChecker::add_lookup_range_no_dup(storage::ObTableScanParam &scan_p
     ret = conflict_range_dist_ctx_->exist_refactored(conflict_range);
     if (OB_HASH_EXIST == ret) {
       ret = OB_SUCCESS;
-      LOG_TRACE("print find unique", K(lookup_range), K(tablet_id));
+
     } else if (OB_HASH_NOT_EXIST == ret) {
       //step3: if not exist, deep copy data and add ObRowkey to hash set
       //step3.1: Init the buffer of ObObj Array
@@ -756,7 +756,7 @@ int ObConflictChecker::add_lookup_range_no_dup(storage::ObTableScanParam &scan_p
       } else if (OB_FAIL(scan_param.key_ranges_.push_back(lookup_range))) {
         LOG_WARN("push_back lookup_range failed", K(ret), K(lookup_range));
       } else {
-        LOG_TRACE("print add lookup_range succ", K(conflict_range));
+
       }
     } else {
       LOG_WARN("check if rowkey item exists failed", K(ret));
@@ -901,7 +901,7 @@ int ObConflictChecker::build_data_table_range(ObNewRange &lookup_range, ObRowkey
     if (OB_FAIL(lookup_range.build_range(ref_table_id, table_rowkey))) {
       LOG_WARN("build lookup range failed", K(ret), K(ref_table_id), K(table_rowkey));
     } else {
-      LOG_DEBUG("after build range", K(table_rowkey), K(lookup_range));
+
     }
   }
   return ret;
@@ -1013,7 +1013,7 @@ int ObConflictChecker::extract_rowkey_info(const ObRowkeyCstCtdef *constraint_in
 
   if (OB_SUCC(ret)) {
     ObString rowkey_info(buf);
-    LOG_DEBUG("after extract rowkey info", K(rowkey_info));
+
   }
   return ret;
 }
@@ -1204,7 +1204,7 @@ int ObConflictChecker::collect_all_snapshot(transaction::ObTxReadSnapshot &snaps
   } else if (OB_FAIL(snapshot_maping_.push_back(tablet_snapshot_maping))) {
     LOG_WARN("fail to push back snapshot", K(ret), K(tablet_snapshot_maping));
   } else {
-    LOG_TRACE("collect snaoshot after try_insert", K(tablet_snapshot_maping));
+
   }
   return ret;
 }

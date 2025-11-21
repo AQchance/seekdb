@@ -86,7 +86,7 @@ int ObMockSSTableSecMetaIterator::get_next(ObDataMacroBlockMeta &macro_meta)
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", KR(ret));
+
   } else if (macro_block_idx_ >= sstable_->endkeys_.count()) {
     ret = OB_ITER_END;
   } else {
@@ -117,14 +117,14 @@ int ObMockSSTableV2::add_macro_block_meta(const int64_t endkey)
     const ObStorageDatum &last = endkeys_.at(endkeys_.count() - 1);
     if (last.get_int() >= endkey) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "invalid argument endkey", KR(ret), K(last), K(endkey));
+
     }
   }
   if (OB_SUCC(ret)) {
     ObStorageDatum new_obj;
     new_obj.set_int(endkey);
     if (OB_FAIL(endkeys_.push_back(new_obj))) {
-      STORAGE_LOG(WARN, "failed to push endkey", KR(ret));
+
     }
   }
   return ret;
@@ -135,16 +135,16 @@ int ObMockSSTableV2::from(const ObString &str)
   int ret = OB_SUCCESS;
   if (str.empty()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument empty str", KR(ret));
+
   } else {
     endkeys_.reset();
     const char *pos1 = str.ptr(), *pos2 = nullptr;
     int64_t num = 0;
     while (OB_SUCC(ret) && *pos1 != '\0') {
       if (OB_FAIL(get_number(pos1, pos2, num))) {
-        STORAGE_LOG(WARN, "failed to get number", KR(ret), K(pos1));
+
       } else if (OB_FAIL(add_macro_block_meta(num))) {
-        STORAGE_LOG(WARN, "failed to add macro meta", KR(ret), K(num));
+
       } else {
         while (*pos2 != '\0' && (*pos2 == ' ' || *pos2 == ','))
           ++pos2;
@@ -163,10 +163,10 @@ int ObMockSSTableV2::scan_secondary_meta(ObIAllocator &allocator, ObSSTableSecMe
   ObMockSSTableSecMetaIterator *iter = nullptr;
   if (OB_ISNULL(buf = allocator.alloc(sizeof(ObMockSSTableSecMetaIterator)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "Fail to allocate memory", KR(ret));
+
   } else if (OB_ISNULL(iter = new (buf) ObMockSSTableSecMetaIterator())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected null pointer of secondary meta iterator", KR(ret));
+
   } else {
     iter->sstable_ = this;
     iter->is_inited_ = true;
@@ -200,9 +200,9 @@ int ObMockPartitionMajorSSTableRangeSpliter::scan_major_sstable_secondary_meta(
   ObMockSSTableV2 *sstable = dynamic_cast<ObMockSSTableV2 *>(major_sstable_);
   if (OB_ISNULL(sstable)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected null sstable", KR(ret));
+
   } else if (OB_FAIL(sstable->scan_secondary_meta(*allocator_, meta_iter))) {
-    STORAGE_LOG(WARN, "Failed to scan secondary meta", KR(ret), K(*major_sstable_));
+
   }
   return ret;
 }
@@ -299,7 +299,7 @@ int TestPartitionMajorSSTableRangeSliter::set_major_sstable_macro_blocks(const O
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(major_sstable_.from(str))) {
-    STORAGE_LOG(WARN, "failed to get macro blocks from str", KR(ret), K(str));
+
   }
   return ret;
 }
@@ -309,14 +309,14 @@ int TestPartitionMajorSSTableRangeSliter::check_ranges_result(const ObIArray<ObS
   int ret = OB_SUCCESS;
   if (ranges.empty()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K(ranges), K(result));
+
   } else if (OB_UNLIKELY(!ranges.at(0).get_start_key().is_min() || !ranges.at(0).is_left_open())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected ranges", KR(ret), K(ranges));
+
   } else if (OB_UNLIKELY(!ranges.at(ranges.count() - 1).get_end_key().is_max() ||
                          !ranges.at(ranges.count() - 1).is_right_open())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected ranges", KR(ret), K(ranges));
+
   } else if (ranges.count() == 1 || result.empty()) {
     equal = (ranges.count() == 1 && result.empty());
   } else {
@@ -327,12 +327,12 @@ int TestPartitionMajorSSTableRangeSliter::check_ranges_result(const ObIArray<ObS
       const ObStoreRange &cur_range = ranges.at(i);
       if (OB_UNLIKELY(!prev_range.is_right_closed() || !cur_range.is_left_open())) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected range", K(ret), K(i), K(prev_range), K(cur_range));
+
       } else if (OB_FAIL(cur_range.get_start_key().equal(prev_range.get_end_key(), is_equal))) {
-        STORAGE_LOG(WARN, "failed to compare rowkeys", K(ret), K(i), K(prev_range), K(cur_range));
+
       } else if (OB_UNLIKELY(!is_equal)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected ranges", K(ret), K(i), K(prev_range), K(cur_range));
+
       } else {
         int64_t val = cur_range.get_start_key().key_.obj_ptr_[0].get_int();
         length += ::snprintf(buf_ + length, MAX_BUF_LENGTH - length, "%ld,", val);
@@ -346,7 +346,7 @@ int TestPartitionMajorSSTableRangeSliter::check_ranges_result(const ObIArray<ObS
       buf_[length] = '\0';
       equal = (length == result.length() && ::memcmp(buf_, result.ptr(), length) == 0);
       if (!equal) {
-        STORAGE_LOG(DEBUG, "ranges result", KR(ret), K(buf_));
+
       }
     }
   }

@@ -42,7 +42,7 @@ namespace sql
        inline_ptr_ = hash_table;
        real_ptr_ = (void *)hash_table;
        type_ = Type::INLINE;
-       LOG_TRACE("print hash table type inline", K(item_size), K(inline_size));
+
      }
    } else {
      outline_ht *hash_table = nullptr;
@@ -55,7 +55,7 @@ namespace sql
        outline_ptr_ = hash_table;
        real_ptr_ = (void *)hash_table;
        type_ = Type::OUTLINE;
-       LOG_TRACE("print hash table type outline", K(item_size), K(inline_size));
+
      }
    }
    inited_ = true;

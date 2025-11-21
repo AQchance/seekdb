@@ -42,7 +42,7 @@ void ObServerCheckpointSlogHandler::ObWriteCheckpointTask::runTimerTask()
     }
   } else {
     // Must wait for all slog replays to complete before doing ckpt, otherwise some macro blocks may not be marked
-    LOG_INFO("slog replay not finish, do not write checkpoint");
+
   }
 }
 
@@ -495,7 +495,7 @@ int ObServerCheckpointSlogHandler::replay_create_tenant_abort(const char *buf, c
     LOG_WARN("failed to decode log entry", K(ret));
   } else if (OB_FAIL(tenant_meta_map_for_replay_->get_refactored(tenant_id, meta))) {
     if (OB_HASH_NOT_EXIST == ret) {
-      LOG_INFO("tenant not exist when replay create abort slog", K(ret), K(tenant_id));
+
       ret = OB_SUCCESS;
       // no nothing
     } else {
@@ -534,7 +534,7 @@ int ObServerCheckpointSlogHandler::replay_delete_tenant_prepare(const char *buf,
     LOG_WARN("failed to decode log entry", K(ret));
   } else if (OB_FAIL(tenant_meta_map_for_replay_->get_refactored(tenant_id, meta))) {
     if (OB_HASH_NOT_EXIST == ret) {
-      LOG_INFO("tenant not exist when replay delete prepare slog", K(ret), K(tenant_id));
+
       ret = OB_SUCCESS;
       // no nothing
     } else {
@@ -571,7 +571,7 @@ int ObServerCheckpointSlogHandler::replay_delete_tenant_commit(const char *buf, 
     LOG_WARN("failed to decode log entry", K(ret));
   } else if (OB_FAIL(tenant_meta_map_for_replay_->get_refactored(tenant_id, meta))) {
     if (OB_HASH_NOT_EXIST == ret) {
-      LOG_INFO("tenant not exist when replay delete commit slog", K(ret), K(tenant_id));
+
       ret = OB_SUCCESS;
       // no nothing
     } else {

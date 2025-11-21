@@ -34,9 +34,9 @@
     } \
     SpinWLockGuard guard(memtable_mgr_handle_lock_); \
     if (!memtable_mgr_handle_.is_valid()) { \
-      STORAGE_LOG(INFO, "memtable_mgr_handle_ is not exist, need create", K(tablet_meta.ls_id_), K(tablet_meta.tablet_id_)); \
+ \
       if (OB_FAIL(create_tablet_memtable_mgr_(tablet_meta.ls_id_, tablet_meta.tablet_id_, tablet_meta.compat_mode_))) { \
-        STORAGE_LOG(WARN, "failed to create_tablet_memtable_mgr", K(tablet_meta.ls_id_), K(tablet_meta.tablet_id_), K(tablet_meta.compat_mode_)); \
+ \
       } \
     } \
   } while (OB_SUCC(ret));
@@ -63,7 +63,7 @@ int function(Args &&...args) \
     ret = OB_SUCCESS; \
   } else { \
     ret = OB_ENTRY_NOT_EXIST; \
-    STORAGE_LOG(DEBUG, "ObMemtableMgr is not exist, there is no memtable", KR(ret)); \
+ \
   } \
   return ret; \
 }

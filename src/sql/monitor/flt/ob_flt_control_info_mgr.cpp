@@ -1022,7 +1022,7 @@ int ObFLTControlInfoManager::find_appropriate_con_info(sql::ObSQLSessionInfo &se
   FLTControlInfo con;
   FLTControlInfo con_info;
   con_info.reset();
-  LOG_TRACE("flt control info manager get control info", K(sess.get_module_name()), K(sess.get_action_name()), K(sess.get_client_identifier()));
+
   if (sess.is_coninfo_set_by_sess()) {
     // already has, do nothing because sess level control info is the highest level
   } else {
@@ -1059,7 +1059,7 @@ int ObFLTControlInfoManager::find_appropriate_con_info(sql::ObSQLSessionInfo &se
     sess.set_send_control_info(false);
     sess.set_flt_control_info(con_info);
   }
-  LOG_TRACE("control info manager get constrol info end", K(con_info), K(con));
+
   return ret;
 }
 

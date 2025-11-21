@@ -43,7 +43,7 @@ int ObRpcStreamCond::prepare(const ObAddr *src_addr, const ObRpcPacket *packet)
   if (0 == sessid_) {
     // generate session id first if there's no session id.
     sessid_ = handler_.generate_session_id();
-    LOG_INFO("generate session id", K_(sessid));
+
 
     if (OB_FAIL(handler_.prepare_for_next_request(sessid_))) {
       LOG_WARN("preapre stream rpc fail", K(ret));

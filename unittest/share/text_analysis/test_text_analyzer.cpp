@@ -77,7 +77,7 @@ void TestTextAnalyzer::analyze_test(
 {
   ObDatum doc_datum;
   doc_datum.set_string(raw_doc, raw_doc_len);
-  LOG_DEBUG("start test one tokenization", K(analyzer), K(doc_datum), K(doc_datum.get_string()));
+
 
   ObITokenStream *token_stream;
   ASSERT_EQ(OB_SUCCESS, analyzer.analyze(doc_datum, token_stream));
@@ -94,7 +94,7 @@ void TestTextAnalyzer::analyze_test(
       }
     } else {
       ASSERT_TRUE(token_cnt < target_token_cnt);
-      LOG_INFO("print token", K(token), K(token.get_string()), K(token_freq));
+
       int64_t idx = -1;
       find_token_in_target_array(token, target_tokens, target_token_len, target_token_cnt, idx);
       ASSERT_TRUE(idx >= 0 && idx < target_token_cnt) << "idx:" << idx;
@@ -125,7 +125,7 @@ void TestTextAnalyzer::find_token_in_target_array(
     }
   }
   if (idx == -1) {
-    LOG_INFO("query token not found", K(query_token), K(query_token.get_string()));
+
   }
 }
 

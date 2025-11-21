@@ -718,10 +718,10 @@ int ObOptEstCost::stat_estimate_single_range_rc(const ObCostTableScanInfo &est_c
       //think that this index has a very small scan cost. such plan will cause following
       //query with correct ranges to timeout.
       range_selectivity = 1.0;
-      LOG_TRACE("OPT:[STAT EST RANGE] range is empty and prefix_filter_sel is 1");
+
     }
     count = static_cast<double>(table_meta_info->table_row_count_) * range_selectivity;
-    LOG_TRACE("OPT:[STAT EST RANGE]", K(range), K(range_selectivity), K(count));
+
   }
   return ret;
 }

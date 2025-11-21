@@ -136,7 +136,7 @@ int ObDropLobTask::prepare(const ObDDLTaskStatus new_status)
 int ObDropLobTask::drop_lob_impl()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start drop lob", KPC(this));
+
   ObSchemaGetterGuard schema_guard;
   const ObTableSchema *data_table_schema = nullptr;
   ObSqlString drop_lob_sql;
@@ -168,7 +168,7 @@ int ObDropLobTask::drop_lob_impl()
     } else if (OB_FAIL(root_service_->get_common_rpc_proxy().timeout(ddl_rpc_timeout).drop_lob(arg))) {
       LOG_WARN("drop lob failed", KR(ret), K(ddl_rpc_timeout));
     }
-    LOG_INFO("finish drop lob", KR(ret), K(arg));
+
   }
   return ret;
 }
@@ -222,7 +222,7 @@ int ObDropLobTask::cleanup_impl()
     const ObDDLTaskID parent_task_id(tenant_id_, parent_task_id_);
     ObSysDDLSchedulerUtil::on_ddl_task_finish(parent_task_id, get_task_key(), ret_code_, trace_id_);
   }
-  LOG_INFO("clean task finished", KR(ret), K(*this));
+
   return ret;
 }
 
@@ -296,11 +296,11 @@ int ObDropLobTask::check_switch_succ_()
   } else if (OB_ISNULL(data_table_schema_ptr)) {
     // drop lob task may retry because rpc timeout, and data table dropped before retry, so we should ignore this situation
     task_status_ = ObDDLTaskStatus::SUCCESS;
-    LOG_INFO("data table may be dropped, we do not need to retry", KR(ret), K(object_id_));
+
   } else if (target_object_id_ != data_table_schema_ptr->get_aux_lob_meta_tid()) {
     // lob_meta_table and lob_piece_table will be deleted at same time.
     task_status_ = ObDDLTaskStatus::SUCCESS;
-    LOG_INFO("lob has been dropped", KR(ret), KPC(this), KPC(data_table_schema_ptr));
+
   } 
   return ret;
 }

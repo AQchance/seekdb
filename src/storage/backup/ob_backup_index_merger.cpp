@@ -322,7 +322,7 @@ int ObIBackupMultiLevelIndexBuilder::check_need_build_next_level_(ObBackupIndexB
     } else {
       need_build = true;
     }
-    LOG_INFO("check need build next level", K(need_build), KPC(node), K(write_count));
+
   }
   return ret;
 }
@@ -358,7 +358,7 @@ int ObIBackupMultiLevelIndexBuilder::build_next_level_index_impl_(
       if (OB_FAIL(next_node.put_backup_index(index_index))) {
         LOG_WARN("failed to add backup index", K(ret), K(index_index));
       } else {
-        LOG_INFO("put backup index", K(cur_node), K(next_node), K(index_index));
+
       }
       if (OB_SUCC(ret)) {
         if (cur_node.get_read_count() != cur_node.get_write_count()) {
@@ -378,7 +378,7 @@ int ObIBackupMultiLevelIndexBuilder::build_next_level_index_impl_(
       if (OB_FAIL(next_node.put_backup_index(index_index))) {
         LOG_WARN("failed to put backup index", K(ret), K(index_index), K(tmp_index_list), K(next_node), K(cur_node));
       } else {
-        LOG_INFO("put backup index", K(cur_node), K(next_node), K(index_index));
+
       }
     } 
   }
@@ -518,7 +518,7 @@ int ObIBackupMultiLevelIndexBuilder::flush_trailer_()
     if (OB_FAIL(write_ctx_->append_buffer(buffer_reader))) {
       LOG_WARN("failed to append buffer", K(ret), K(buffer_reader));
     } else {
-      LOG_INFO("multi level index builder flush trailer", KPC(trailer));
+
     }
   }
   return ret;
@@ -585,7 +585,7 @@ int ObIBackupIndexMerger::get_all_retries_(const int64_t task_id, const uint64_t
   } else if (OB_FAIL(ObLSBackupOperator::get_all_retries(task_id, tenant_id, backup_data_type, ls_id, retry_list, sql_client))) {
     LOG_WARN("failed to get all retries", K(ret), K(task_id), K(tenant_id), K(backup_data_type), K(ls_id));
   } else {
-    LOG_INFO("get all retries", K(tenant_id), K(backup_data_type), K(ls_id), K(retry_list));
+
   }
   return ret;
 }
@@ -609,7 +609,7 @@ int ObIBackupIndexMerger::open_file_writer_(const share::ObBackupPath &path,
                                                 mod))) {
     LOG_WARN("failed to open with access type", K(ret), K(path), KP(storage_info));
   } else {
-    LOG_INFO("backup index merger open file writer", K(path), KP(storage_info));
+
   }
   return ret;
 }
@@ -762,7 +762,7 @@ int ObIBackupIndexMerger::write_backup_file_header_(const ObBackupFileHeader &fi
     LOG_WARN("failed to append buffer", K(ret), K(buffer_reader));
   } else {
     offset_ += buf_len;
-    LOG_INFO("write backup file header", K(file_header));
+
   }
   return ret;
 }
@@ -842,17 +842,17 @@ int ObBackupMacroBlockIndexMerger::merge_index()
       if (OB_FAIL(get_unfinished_iters_(merge_iter_array_, unfinished_iters))) {
         LOG_WARN("failed to get unfinished iters", K(ret), K(unfinished_iters));
       } else if (unfinished_iters.empty()) {
-        LOG_INFO("merge index finish", K(count), K(merge_iter_array_));
+
         break;
       } else if (OB_FAIL(find_minimum_iters_(unfinished_iters, min_iters))) {
         LOG_WARN("failed to find minumum iters", K(ret), K(unfinished_iters));
       } else if (min_iters.empty()) {
-        LOG_INFO("merge index finish");
+
         break;
       } else if (OB_FAIL(fuse_iters_(min_iters, fuser))) {
         if (OB_ITER_END == ret) {
           ret = OB_SUCCESS;
-          LOG_INFO("iterator end", K(min_iters));
+
           break;
         } else {
           LOG_WARN("failed to fuse iters", K(ret), K(min_iters));
@@ -864,7 +864,7 @@ int ObBackupMacroBlockIndexMerger::merge_index()
       } else if (OB_FAIL(move_iters_next_(min_iters))) {
         LOG_WARN("failed to move iters next", K(ret), K(min_iters));
       } else {
-        LOG_INFO("macro index merge round", K(count), K(range_index));
+
         count++;
       }
     }
@@ -1000,7 +1000,7 @@ int ObBackupMacroBlockIndexMerger::prepare_prev_backup_set_index_iter_(
   } else {
     iter = tmp_iter;
     tmp_iter = NULL;
-    LOG_INFO("prepare prev backup set index iter", K(prev_backup_set_desc), K(merge_param));
+
   }
   if (OB_NOT_NULL(tmp_iter)) {
     ObLSBackupFactory::free(tmp_iter);
@@ -1184,7 +1184,7 @@ int ObBackupMacroBlockIndexMerger::process_result_(const ObBackupMacroRangeIndex
     if (OB_FAIL(write_macro_index_list_())) {
       LOG_WARN("failed to write macro block index list", K(ret));
     } else {
-      LOG_INFO("process result", K_(tmp_index_list));
+
       tmp_index_list_.reset();
     }
   }
@@ -1204,7 +1204,7 @@ int ObBackupMacroBlockIndexMerger::move_iters_next_(MERGE_ITER_ARRAY &merge_iter
     } else if (OB_FAIL(iter->next())) {
       if (OB_ITER_END == ret) {
         ret = OB_SUCCESS;
-        LOG_INFO("iter has reach end", K(ret), K(iter));
+
       } else {
         LOG_WARN("failed to do next", K(ret), K(iter));
       }
@@ -1242,7 +1242,7 @@ int ObBackupMacroBlockIndexMerger::write_macro_index_list_()
           (write_index_list_<ObBackupMacroRangeIndex, ObBackupMacroRangeIndexIndex>(block_type, tmp_index_list_)))) {
     LOG_WARN("failed to write index list", K(ret), K(block_type), K_(tmp_index_list));
   } else {
-    LOG_INFO("write macro index list", K_(tmp_index_list));
+
   }
   return ret;
 }
@@ -1261,7 +1261,7 @@ int ObBackupMacroBlockIndexMerger::get_output_file_path_(
             backup_path))) {
       LOG_WARN("failed to get log stream macro range index file path", K(ret), K(merge_param));
     } else {
-      LOG_INFO("get ls macro range index backup path", K(backup_path), K(merge_param));
+
     }
   } else if (merge_param.index_level_ == BACKUP_INDEX_LEVEL_TENANT) {
     if (OB_FAIL(share::ObBackupPathUtil::get_tenant_macro_range_index_backup_path(merge_param.backup_dest_,
@@ -1272,7 +1272,7 @@ int ObBackupMacroBlockIndexMerger::get_output_file_path_(
             backup_path))) {
       LOG_WARN("failed to get tenant macro range index file path", K(ret), K(merge_param));
     } else {
-      LOG_INFO("get tenant macro range index backup path", K(backup_path), K(merge_param));
+
     }
   } else {
     ret = OB_ERR_UNEXPECTED;
@@ -1292,7 +1292,7 @@ int ObBackupMacroBlockIndexMerger::flush_index_tree_()
   } else if (OB_FAIL(builder.build_index<ObBackupMacroRangeIndexIndex>())) {
     LOG_WARN("failed to build index tree", K(ret));
   } else {
-    LOG_INFO("flush macro block index tree", K_(offset), K_(buffer_node));
+
   }
   return ret;
 }
@@ -1368,17 +1368,17 @@ int ObBackupMetaIndexMerger::merge_index()
       if (OB_FAIL(get_unfinished_iters_(merge_iter_array_, unfinished_iters))) {
         LOG_WARN("failed to get unfinished iters", K(ret), K(merge_iter_array_));
       } else if (unfinished_iters.empty()) {
-        LOG_INFO("merge index finish", K(count), K(merge_iter_array_));
+
         break;
       } else if (OB_FAIL(find_minimum_iters_(unfinished_iters, min_iters))) {
         LOG_WARN("failed to find minumum iters", K(ret), K(unfinished_iters));
       } else if (min_iters.empty()) {
-        LOG_INFO("merge index finish");
+
         break;
       } else if (OB_FAIL(get_fuse_result_(min_iters, meta_index))) {
         if (OB_ITER_END == ret) {
           ret = OB_SUCCESS;
-          LOG_INFO("iterator end", K(min_iters));
+
           break;
         } else {
           LOG_WARN("failed to fuse iters", K(ret), K(min_iters));
@@ -1388,7 +1388,7 @@ int ObBackupMetaIndexMerger::merge_index()
       } else if (OB_FAIL(move_iters_next_(min_iters))) {
         LOG_WARN("failed to move iters next", K(ret), K(min_iters));
       } else {
-        LOG_DEBUG("meta index merge round", K(count), K(min_iters), K(meta_index));
+
         count++;
       }
     }
@@ -1464,7 +1464,7 @@ int ObBackupMetaIndexMerger::prepare_merge_iters_(const ObBackupIndexMergeParam 
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("prepare meta index iters", K(merge_param), K(retry_list), K(merge_iters));
+
   }
   return ret;
 }
@@ -1521,7 +1521,7 @@ int ObBackupMetaIndexMerger::get_unfinished_iters_(
       LOG_WARN("failed to push back", K(ret), K(iter));
     }
   }
-  LOG_DEBUG("find unfinished iters", K(ret), K(merge_param_), K(merge_iters), K(unfinished_iters));
+
   return ret;
 }
 
@@ -1554,7 +1554,7 @@ int ObBackupMetaIndexMerger::find_minimum_iters_(const MERGE_ITER_ARRAY &merge_i
       }
     }
   }
-  LOG_DEBUG("find minimum iters", K(ret), K(merge_param_), K(merge_iters), K(min_iters));
+
   return ret;
 }
 
@@ -1568,7 +1568,7 @@ int ObBackupMetaIndexMerger::get_fuse_result_(const MERGE_ITER_ARRAY &iters, ObB
   } else if (OB_FAIL(fuser.get_result(meta_index))) {
     LOG_WARN("failed to get fuse result", K(ret));
   } else {
-    LOG_DEBUG("get fuse result", K(iters), K(meta_index));
+
   }
   return ret;
 }
@@ -1608,7 +1608,7 @@ int ObBackupMetaIndexMerger::compare_index_iters_(
     LOG_WARN("failed to get cur index", K(ret));
   } else {
     cmp_ret = comparator_.operator()(lvalue, rvalue);
-    LOG_DEBUG("compare meta index", K(lvalue), K(rvalue), K(cmp_ret));
+
   }
   return ret;
 }
@@ -1626,7 +1626,7 @@ int ObBackupMetaIndexMerger::move_iters_next_(MERGE_ITER_ARRAY &merge_iters)
     } else if (OB_FAIL(iter->next())) {
       if (OB_ITER_END == ret) {
         ret = OB_SUCCESS;
-        LOG_INFO("meta index iter has reach end", K(*iter));
+
       } else {
         LOG_WARN("failed to do next", K(ret), K(iter));
       }
@@ -1642,7 +1642,7 @@ int ObBackupMetaIndexMerger::write_meta_index_list_()
   if (OB_SUCCESS != (ret = (write_index_list_<ObBackupMetaIndex, ObBackupMetaIndexIndex>(block_type, tmp_index_list_)))) {
     LOG_WARN("failed to write index list", K(ret), K(block_type), K_(tmp_index_list));
   } else {
-    LOG_INFO("write macro index list", K_(tmp_index_list));
+
   }
   return ret;
 }
@@ -1661,7 +1661,7 @@ int ObBackupMetaIndexMerger::get_output_file_path_(
             backup_path))) {
       LOG_WARN("failed to get tenant meta index backup path", K(ret), K(merge_param));
     } else {
-      LOG_INFO("get ls meta index backup path", K(backup_path), K(merge_param));
+
     }
   } else if (merge_param.index_level_ == BACKUP_INDEX_LEVEL_TENANT) {
     ObBackupDataType backup_data_type;
@@ -1675,7 +1675,7 @@ int ObBackupMetaIndexMerger::get_output_file_path_(
             backup_path))) {
       LOG_WARN("failed to get tenant meta index backup path", K(ret), K(merge_param));
     } else {
-      LOG_INFO("get tenant meta index backup path", K(backup_path), K(merge_param));
+
     }
   } else {
     ret = OB_ERR_UNEXPECTED;
@@ -1844,7 +1844,7 @@ int ObBackupUnorderdMacroBlockIndexMerger::prepare_merge_ctx_(
   } else if (OB_FAIL(prepare_file_write_ctx_(bandwidth_throttle, write_ctx_))) {
     LOG_WARN("failed to prepare file write ctx", K(ret));
   } else {
-    LOG_INFO("prepare merge ctx", K(merge_param), K(retry_list));
+
   }
   return ret;
 }
@@ -1993,7 +1993,7 @@ int ObBackupUnorderdMacroBlockIndexMerger::prepare_prev_backup_set_index_iter_(
   } else {
     iter = tmp_iter;
     tmp_iter = NULL;
-    LOG_INFO("prepare prev backup set index iter", K(prev_backup_set_desc), K(merge_param));
+
   }
   if(OB_NOT_NULL(tmp_iter)){
     ObLSBackupFactory::free(tmp_iter);
@@ -2011,7 +2011,7 @@ int ObBackupUnorderdMacroBlockIndexMerger::prepare_parallel_external_sort_(const
                                   &comparator_))) {
     LOG_WARN("failed to init external sort", K(ret));
   } else {
-    LOG_INFO("init external sort", K(ret));
+
   }
   return ret;
 }
@@ -2069,7 +2069,7 @@ int ObBackupUnorderdMacroBlockIndexMerger::do_external_sort_()
   if (OB_FAIL(external_sort_.do_sort(true /*final_merge*/))) {
     LOG_WARN("failed to do external sort", K(ret));
   } else {
-    LOG_INFO("do sort for unordered iterator");
+
   }
   return ret;
 }
@@ -2143,7 +2143,7 @@ int ObBackupUnorderdMacroBlockIndexMerger::write_macro_index_list_(const common:
           (write_index_list_<ObBackupMacroBlockIndex, ObBackupMacroBlockIndexIndex>(block_type, index_list)))) {
     LOG_WARN("failed to write index list", K(ret), K(block_type), K(index_list));
   } else {
-    LOG_INFO("write macro index list", K(index_list));
+
   }
   return ret;
 }
@@ -2187,7 +2187,7 @@ int ObBackupUnorderdMacroBlockIndexMerger::flush_index_tree_()
   } else if (OB_FAIL(builder.build_index<ObBackupMacroBlockIndexIndex>())) {
     LOG_WARN("failed to build index tree", K(ret));
   } else {
-    LOG_INFO("flush macro block index tree", K(compressor_type), K_(offset), K_(buffer_node));
+
   }
   return ret;
 }

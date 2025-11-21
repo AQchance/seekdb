@@ -146,7 +146,7 @@ int ObCGGetter::get_next_row(ObMacroBlockReader &block_reader, const blocksstabl
   } else if (OB_FAIL(micro_getter_->switch_context(*iter_param_, *access_ctx_, sstable_))) {
     LOG_WARN("Fail to switch context", K(ret));
   }
-  LOG_DEBUG("start to fetch row", KPC_(read_handle_.rowkey), K_(read_handle));
+
 
   if (OB_SUCC(ret)) {
     int64_t row_idx = read_handle_.rowkey_->datums_[0].get_int();
@@ -285,7 +285,7 @@ int ObCGSSTableRowGetter::prepare_reader(const ObRowStoreType store_type)
     ret = OB_NOT_SUPPORTED;
     LOG_WARN("not supported row store type", K(ret), K(store_type));
   }
-  LOG_DEBUG("row store type", K(ret), K(store_type));
+
   if (OB_SUCC(ret) && OB_ISNULL(reader_)) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     LOG_WARN("Fail to allocate reader", K(ret), K(store_type));
@@ -440,7 +440,7 @@ int ObCGSSTableRowGetter::fetch_row(ObSSTableReadHandle &read_handle, const ObNo
   if (OB_SUCC(ret)) {
     store_row = &row_;
     EVENT_INC(ObStatEventIds::SSSTORE_READ_ROW_COUNT);
-    LOG_DEBUG("inner get next row", KPC(store_row), KPC(read_handle.rowkey_));
+
   }
   return ret;
 }
@@ -458,7 +458,7 @@ int ObCGSSTableRowGetter::fetch_rowkey_row(ObSSTableReadHandle &read_handle, con
   } else if (OB_FAIL(micro_getter_->switch_context(*iter_param_, *access_ctx_, static_cast<ObSSTable *>(co_sstable_)))) {
     LOG_WARN("Fail to switch context", K(ret));
   }
-  LOG_DEBUG("start to fetch row", KPC_(read_handle.rowkey), K(read_handle));
+
 
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(micro_getter_->get_row(

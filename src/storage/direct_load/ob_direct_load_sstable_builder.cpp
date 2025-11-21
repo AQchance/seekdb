@@ -213,10 +213,10 @@ int ObDirectLoadSSTableBuilder::check_rowkey_order(const ObDatumRowkey &rowkey)
     }
   } else if (cmp_ret == 0) {
     ret = OB_ERR_PRIMARY_KEY_DUPLICATE;
-    LOG_INFO("rowkey == last rowkey", K(ret), K(cmp_ret), K(end_key_), K(rowkey));
+
   } else {
     ret = OB_ROWKEY_ORDER_ERROR;
-    LOG_INFO("rowkey < last rowkey", K(ret), K(cmp_ret), K(end_key_), K(rowkey));
+
   }
   return ret;
 }

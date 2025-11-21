@@ -62,19 +62,19 @@ TEST_F(TestOdpsCatalog, list_namespace_names)
 {
   ObArray<ObString> db_names;
   ASSERT_EQ(0, catalog_.list_namespace_names(db_names));
-  LOG_INFO("check list_database_names", K(db_names));
+
 }
 
 TEST_F(TestOdpsCatalog, list_table_names) {
   ObArray<ObString> tb_names;
   ASSERT_EQ(0, catalog_.list_table_names("DEFAULT", case_mode_, tb_names));
-  LOG_INFO("check list_table_names", K(tb_names));
+
 }
 
 TEST_F(TestOdpsCatalog, fetch_table_schema) {
   schema::ObTableSchema table_schema;
   ASSERT_EQ(0, catalog_.fetch_table_schema("DEFAULT", "t1", case_mode_, table_schema));
-  LOG_INFO("check list_table_names", K(table_schema));
+
 }
 
 int main(int argc, char **argv)

@@ -50,7 +50,7 @@ int ObTableRpcImpl::init(ObTableServiceClient &client, const ObString &table_nam
   } else {
     client_ = &client;
     rpc_proxy_ = &client.get_table_rpc_proxy();
-    LOG_DEBUG("init table succ", K_(table_name), K_(table_id));
+
     inited_ = true;
   }
   return ret;
@@ -246,7 +246,7 @@ int ObTableRpcImpl::reorder_servers_results(const ObIArray<ObTableBatchOperation
       } else if (OB_FAIL(result.push_back(server_result->at(server_result_idx.second)))) { // shallow copy
         LOG_WARN("failed to push back", K(ret));
       } else {
-        LOG_DEBUG("[yzfdebug] one result", K(i), "one_result", server_result->at(server_result_idx.second), "count", result.count());
+
       }
     }
   } // end for
@@ -329,7 +329,7 @@ int ObTableRpcImpl::batch_execute(const ObTableBatchOperation &batch_operation, 
         } else {
           result.reset();
         }
-        LOG_DEBUG("begin multi batch operation", "server_num", N);
+
         for (int64_t i = 0; OB_SUCCESS == ret && i < N; ++i)  // for each server
         {
           const ObAddr &server = servers.at(i);
@@ -372,7 +372,7 @@ int ObTableRpcImpl::batch_execute(const ObTableBatchOperation &batch_operation, 
                 } // end for each operation of this tablet
 
                 if (OB_SUCC(ret)) {
-                  LOG_DEBUG("multi batch operation", K(i), K(j), K(server), K(tablet_idx), K(rowkey_array));
+
                   // send batch for each tablet of each server
                   ret = rpc_proxy_->
                         timeout(request_options.server_timeout())
@@ -429,13 +429,13 @@ int ObTableRpcImpl::QueryMultiResult::get_next_entity(const ObITableEntity *&ent
           LOG_WARN("failed to abort stream", K(ret));
         } else {
           ret = tmp_ret;
-          LOG_INFO("abort the stream");
+
         }
         break;
       } else {
         ++result_packet_count_;
         ret = one_result_.get_next_entity(entity);
-        LOG_INFO("[yzfdebug] get one more result", K(ret), K_(result_packet_count));
+
       }
     } else {
       break;
@@ -494,7 +494,7 @@ int ObTableRpcImpl::execute_query(const ObTableQuery &query, const ObTableReques
             .execute_query(request, query_multi_result_.get_one_result(), query_multi_result_.get_handle());
       if (OB_SUCC(ret)) {
         result = &query_multi_result_;
-        LOG_INFO("[yzfdebug] query has more", "has_more", query_multi_result_.get_handle().has_more());
+
       }
     }
   }
@@ -602,7 +602,7 @@ int ObTableRpcImpl::query_next(const ObTableRequestOptions &request_options, ObT
     LOG_WARN("not init already", K(ret));
   } else if(!query_async_multi_result_.has_more_) {
     ret = OB_ITER_END;
-    LOG_DEBUG("no more result or query_start hasn't been executed yet", K(ret));
+
   } else {
     ObTableQueryAsyncRequest request;
     request.credential_ = client_->get_credential();

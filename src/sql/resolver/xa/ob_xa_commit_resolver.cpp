@@ -64,7 +64,7 @@ int ObXaCommitResolver::resolve(const ParseNode &parse_node)
           xa_commit_stmt->set_format_id(format_id);
         }
         xa_commit_stmt->set_flags(flag);
-      LOG_DEBUG("xa commit resolver", K(gtrid_string), K(bqual_string), K(format_id));
+
       }
     }
   }

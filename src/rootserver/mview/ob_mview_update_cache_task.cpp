@@ -57,7 +57,7 @@ int ObMviewUpdateCacheTask::start()
       LOG_WARN("fail to schedule update mview cache task", KR(ret));
     } else {
       in_sched_ = true;
-      LOG_INFO("ObMviewUpdateCacheTask started", KR(ret), KPC(this));
+
     }
   }
   return ret;

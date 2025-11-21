@@ -957,14 +957,14 @@ int ObMicroBlockReader::get_rows(
           } else if (row_buf.storage_datums_[col_idx].is_nop()) {
             if (OB_ISNULL(default_datums)) {
               ret = OB_ERR_UNEXPECTED;
-              STORAGE_LOG(WARN, "Unexpected null default row", K(ret), KP(default_datums));
+
             } else if (default_datums->at(i).is_nop()) {
               // virtual columns will be calculated in sql
             } else if (OB_FAIL(datum.from_storage_datum(default_datums->at(i), datum_infos.at(i).get_obj_datum_map()))) {
               // fill columns added
               LOG_WARN("Fail to transfer datum", K(ret), K(i), K(idx), K(row_idx), KPC(default_datums));
             }
-            LOG_TRACE("Transfer nop value", K(ret), K(idx), K(row_idx), K(col_idx), KPC(default_datums));
+
           } else {
             bool need_copy = false;
             if (row_buf.storage_datums_[col_idx].need_copy_for_encoding_column_with_flat_format(datum_infos.at(i).get_obj_datum_map())) {
@@ -1062,7 +1062,7 @@ int ObMicroBlockReader::get_rows(
           } else if (row_buf.storage_datums_[col_idx].is_nop()) {
             if (OB_ISNULL(default_datums)) {
               ret = OB_ERR_UNEXPECTED;
-              STORAGE_LOG(WARN, "Unexpected null default row", K(ret), KP(default_datums));
+
             } else if (default_datums->at(i).is_nop()) {
               // virtual columns will be calculated in sql
             } else {

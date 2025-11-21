@@ -181,7 +181,7 @@ int ObPhysicalPlanCtx::init_datum_param_store()
       LOG_WARN("failed to extend param frame", K(ret));
     }
   }
-  LOG_DEBUG("inited datum param store", K(datum_param_store_), K(param_store_));
+
 
   return ret;
 }
@@ -298,7 +298,7 @@ int ObPhysicalPlanCtx::merge_implicit_cursor_info(const ObImplicitCursorInfo &im
     LOG_WARN("merge implicit cursor info failed", K(ret),
              K(implicit_cursor), K(implicit_cursor_infos_));
   }
-  LOG_DEBUG("merge implicit cursor info", K(ret), K(implicit_cursor), K(lbt()));
+
   return ret;
 }
 
@@ -315,7 +315,7 @@ int ObPhysicalPlanCtx::replace_implicit_cursor_info(const ObImplicitCursorInfo &
     LOG_WARN("merge implicit cursor info failed", K(ret),
              K(implicit_cursor), K(implicit_cursor_infos_.count()), K(implicit_cursor));
   }
-  LOG_DEBUG("merge implicit cursor info", K(ret), K(implicit_cursor), K(lbt()));
+
   return ret;
 }
 
@@ -457,7 +457,7 @@ int ObPhysicalPlanCtx::extend_param_frame(const int64_t old_size)
       get_param_frame_info(i, datum, eval_info, vec_header);
       *datum = datum_param_store_.at(i).datum_;
       eval_info->evaluated_ = false;
-      LOG_TRACE("extend param frame", K(i), K(*datum), K(enable_rich_format_));
+
     }
   }
 
@@ -484,7 +484,7 @@ OB_INLINE void ObPhysicalPlanCtx::get_param_frame_info(int64_t param_idx,
   }
   datum = reinterpret_cast<ObDatum*>(param_frame_ptrs_.at(idx) + off);
   eval_info = reinterpret_cast<ObEvalInfo *>(param_frame_ptrs_.at(idx) + off + sizeof(ObDatum));
-  LOG_DEBUG("get_param_frame_info", K(param_idx), K(off), K(datum), K(item_size), K(enable_rich_format_), K(lbt()));
+
 }
 
 int ObPhysicalPlanCtx::replace_batch_param_datum(const int64_t cur_group_id,
@@ -512,7 +512,7 @@ int ObPhysicalPlanCtx::replace_batch_param_datum(const int64_t cur_group_id,
           //assign datum ptr to the real param datum
           *datum = datum_array->data_[cur_group_id];
           eval_info->evaluated_ = true;
-          LOG_DEBUG("replace batch param datum", K(cur_group_id), KPC(datum), K(datum));
+
         }
       }
     }
@@ -969,7 +969,7 @@ int ObPhysicalPlanCtx::get_sqludt_meta_by_subschema_id(uint16_t subschema_id, Ob
     LOG_WARN("invalid subschema id", K(ret), K(subschema_id));
   } else if (OB_NOT_NULL(phy_plan_)) { // physical plan exist, use subschema ctx on phy plan
     if (!phy_plan_->get_subschema_ctx().is_inited()) {
-      LOG_INFO("plan with empty subschema mapping", K(lbt()), K(phy_plan_->get_subschema_ctx()));
+
       is_subschema_inited_in_plan = false;
     } else if (OB_FAIL(phy_plan_->get_subschema_ctx().get_subschema(subschema_id, sub_meta))) {
       if (OB_HASH_NOT_EXIST != ret) {
@@ -1029,7 +1029,7 @@ int ObPhysicalPlanCtx::get_enumset_meta_by_subschema_id(uint16_t subschema_id,
       meta = reinterpret_cast<const ObEnumSetMeta *>(value.value_);
     }
   }
-  LOG_TRACE("ENUMSET: search subschema", K(ret), KP(this));
+
   return ret;
 }
 
@@ -1116,7 +1116,7 @@ int ObPhysicalPlanCtx::get_subschema_id_by_collection_elem_type(ObNestedType col
   bool is_subschema_inited_in_plan = true;
   if (OB_NOT_NULL(phy_plan_)) { // physical plan exist, use subschema ctx on phy plan
     if (!phy_plan_->get_subschema_ctx().is_inited()) {
-      LOG_INFO("plan with empty subschema mapping", K(phy_plan_->get_subschema_ctx()));
+
       is_subschema_inited_in_plan = false;
     } else if (OB_FAIL(phy_plan_->get_subschema_ctx().get_subschema_id_by_typedef(coll_type,
                                                                                              elem_type,
@@ -1141,7 +1141,7 @@ int ObPhysicalPlanCtx::get_subschema_id_by_type_string(const ObString &type_stri
   bool is_subschema_inited_in_plan = true;
   if (OB_NOT_NULL(phy_plan_)) { // physical plan exist, use subschema ctx on phy plan
     if (!phy_plan_->get_subschema_ctx().is_inited()) {
-      LOG_INFO("plan with empty subschema mapping", K(lbt()), K(phy_plan_->get_subschema_ctx()));
+
       is_subschema_inited_in_plan = false;
     } else if (OB_FAIL(phy_plan_->get_subschema_ctx().get_subschema_id_by_typedef(type_string, subschema_id))) {
       LOG_WARN("failed to get subschema id", K(ret));
@@ -1189,7 +1189,7 @@ int ObPhysicalPlanCtx::get_subschema_id_by_type_info(const ObObjMeta &obj_meta,
           subschema_id = new_subschema_id;
         }
       }
-      LOG_TRACE("ENUMSET: build subschema", K(ret), KP(this), K(subschema_id));
+
     }
   }
   return ret;

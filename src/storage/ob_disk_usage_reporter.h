@@ -87,7 +87,7 @@ private:
     {
       int ret = OB_SUCCESS;
       if (OB_FAIL(result_arr_.push_back(pair))) {
-        STORAGE_LOG(WARN, "failed to push back pair", K(ret));
+
       }
       return ret;
     }

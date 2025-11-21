@@ -36,7 +36,7 @@ int ObMicroBlockHashIndexBuilder::check_need_build_hash_index(const ObDataStoreD
   int64_t int_column_count = 0;
   if (OB_UNLIKELY(schema_rowkey_col_cnt > rowkey_col_descs.count())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected schema rowkey col cnt", K(ret), K(schema_rowkey_col_cnt), K(rowkey_col_descs));
+
   } else {
     for (int64_t i = 0; i < schema_rowkey_col_cnt; ++i) {
       if (rowkey_col_descs.at(i).col_type_.is_integer_type()) {
@@ -57,12 +57,12 @@ int ObMicroBlockHashIndexBuilder::init_if_needed(const ObDataStoreDesc *data_sto
   bool need_build = false;
   if (OB_UNLIKELY(is_inited_)) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "Micro_hash_index_builder is inited twice", K(ret)); 
+ 
   } else if (OB_UNLIKELY(nullptr == data_store_desc || !data_store_desc->is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to init micro hash index block builder", K(ret), KPC(data_store_desc));
+
   } else if (OB_FAIL(check_need_build_hash_index(*data_store_desc, need_build))) {
-    STORAGE_LOG(WARN, "Failed to check if need build has index", K(ret));
+
   } else if (need_build) {
     row_index_ = 0;
     count_ = 0;
@@ -87,12 +87,12 @@ int ObMicroBlockHashIndexBuilder::add(const ObDatumRow &row)
     uint64_t hash_value = 0;
     ObDatumRowkey tmp_rowkey;
     if (OB_FAIL(tmp_rowkey.assign(row.storage_datums_, schema_rowkey_col_cnt))) {
-      STORAGE_LOG(WARN, "Failed to assign rowkey", K(ret), K(row), K(schema_rowkey_col_cnt));
+
     } else if (OB_FAIL(tmp_rowkey.murmurhash(0, datum_utils, hash_value))) {
-      STORAGE_LOG(WARN, "Failed to calc rowkey hash", K(ret), K(tmp_rowkey), K(datum_utils));
+
     } else if (OB_FAIL(internal_add(hash_value, row_index_))) {
       if (ret != OB_NOT_SUPPORTED) {
-        STORAGE_LOG(WARN, "Failed to add row index to hash_index", K(ret), K(row_index_));
+
       }
     }
   }
@@ -113,7 +113,7 @@ int ObMicroBlockHashIndexBuilder::build_block(ObMicroBufferWriter &buffer)
     uint16_t num_buckets = caculate_bucket_number(count_);
     if (OB_UNLIKELY(num_buckets > ObMicroBlockHashIndex::MAX_BUCKET_NUMBER)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "Too much buckets ", K(ret), K(num_buckets));
+
     } else {
       const uint8_t no_entry = ObMicroBlockHashIndex::NO_ENTRY;
       MEMSET(buckets_, no_entry, num_buckets);
@@ -137,18 +137,18 @@ int ObMicroBlockHashIndexBuilder::build_block(ObMicroBufferWriter &buffer)
       if ((collision_count * ObMicroBlockHashIndex::MAX_COLLISION_RATIO) <= count_) {
         const uint8_t reserved_byte = ObMicroBlockHashIndex::RESERVED_BYTE;
         if (OB_FAIL(buffer.write(reserved_byte))) {
-          STORAGE_LOG(WARN, "Data buffer fail to write reserved byte", K(ret), K(num_buckets), K(count_), K(reserved_byte));
+
         } else if (OB_FAIL(buffer.write(num_buckets))) {
-          STORAGE_LOG(WARN, "Data buffer fail to write hash index buckets number", K(ret), K(num_buckets), K(count_));
+
         } else if (OB_FAIL(buffer.write(reinterpret_cast<const void *>(buckets_), num_buckets))) {
-          STORAGE_LOG(WARN, "Data buffer fail to write hash index buckets", K(ret), K(num_buckets), K(count_));
+
         }
       } else {
         ret = OB_NOT_SUPPORTED;
       }
     }
   }
-  STORAGE_LOG(DEBUG, "Build hash index block", K(count_), K(ret));
+
   return ret;
 }
 
@@ -168,7 +168,7 @@ int ObMicroBlockHashIndexBuilder::internal_add(const uint64_t hash_value, const 
   } else if (OB_UNLIKELY(!is_empty() && row_index <= row_indexes_[count_ - 1])) {
     ret = OB_ERR_UNEXPECTED;
     const uint32_t front_row_index = row_indexes_[count_ - 1];
-    STORAGE_LOG(WARN, "Unexpected row_index ", K(ret), K(row_index), K(front_row_index), K(count_));
+
   } else {
     hash_values_[count_] = static_cast<uint32_t>(hash_value);
     row_indexes_[count_] = static_cast<uint8_t>(row_index);
@@ -187,7 +187,7 @@ int ObMicroBlockHashIndex::init(const ObMicroBlockData &micro_block_data)
   const ObMicroBlockHeader *micro_block_header = micro_block_data.get_micro_header();
   if (OB_UNLIKELY(nullptr == micro_block_header)) {
     ret = OB_INVALID_DATA;
-    STORAGE_LOG(WARN, "Invalid micro block header", K(ret), K(micro_block_data));
+
   } else {
     const uint32_t hash_index_offset_from_end = micro_block_header->hash_index_offset_from_end_; 
     const char* start_data = micro_block_data.get_buf() + micro_block_data.get_buf_size() 
@@ -195,7 +195,7 @@ int ObMicroBlockHashIndex::init(const ObMicroBlockData &micro_block_data)
     const uint8_t reserved_byte = reinterpret_cast<const uint8_t *>(start_data)[0];
     bucket_table_ = reinterpret_cast<const uint8_t *>(start_data + get_fixed_header_size());
     num_buckets_ = reinterpret_cast<const uint16_t *>(start_data + 1)[0];                        
-    STORAGE_LOG(DEBUG, "ObMicroBlockHashIndex init", K(num_buckets_), K(reserved_byte));
+
     bool is_valid = num_buckets_ != 0 && num_buckets_ <= MAX_BUCKET_NUMBER
                         && reserved_byte == RESERVED_BYTE
                         && get_serialize_size(num_buckets_) == hash_index_offset_from_end;

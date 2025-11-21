@@ -51,7 +51,7 @@ int ObMPUtils::add_changed_session_info(OMPKOK &ok_pkt, sql::ObSQLSessionInfo &s
 
   if (session.is_sys_var_changed()) {
     const ObIArray<sql::ObBasicSessionInfo::ChangedVar> &sys_var = session.get_changed_sys_var();
-    LOG_DEBUG("sys var changed", K(session.get_tenant_name()), K(sys_var.count()));
+
     // if sys_var change, set SESSION_SYNC_SYS_VAR type's encoder->is_changed_ = true
     // for turn on serialize sys delta vars.
     if (session.is_session_var_sync()) {
@@ -131,7 +131,7 @@ int ObMPUtils::add_changed_session_info(OMPKOK &ok_pkt, sql::ObSQLSessionInfo &s
         } else if (OB_FAIL(ok_pkt.add_user_var(str_kv))) {
           LOG_WARN("fail to add user var", K(str_kv), K(ret));
         } else {
-          LOG_DEBUG("succ to add user var", K(str_kv), K(ret));
+
         }
       }
     }
@@ -166,7 +166,7 @@ int ObMPUtils::sync_session_info(sql::ObSQLSessionInfo &sess, const common::ObSt
       int32_t info_len = 0;
       int64_t pos0 = 0;
       char *sess_buf = NULL;
-      LOG_TRACE("sync field sess_inf", K(sess.get_server_sid()), KP(data), K(pos), K(len), KPHEX(data+pos, len-pos));
+
       if (OB_FAIL(ObProtoTransUtil::resolve_type_and_len(buf, len, pos, info_type, info_len))) {
         LOG_WARN("failed to resolve type and len", K(ret), K(len), K(pos));
       } else if (info_type < 0 || info_len <= 0) {
@@ -186,7 +186,7 @@ int ObMPUtils::sync_session_info(sql::ObSQLSessionInfo &sess, const common::ObSt
         pos += info_len;
         succ_info_types.add_member(info_type);
       }
-      LOG_DEBUG("sync-session-info", K(info_type), K(info_len));
+
     }
   }
 
@@ -202,7 +202,7 @@ int ObMPUtils::append_modfied_sess_info(common::ObIAllocator &allocator,
 {
   int ret = OB_SUCCESS;
   if (!sess.has_sess_info_modified()) {
-    LOG_DEBUG("not modified");
+
     // do nothing
   } else {
     // assemble ok packet's result
@@ -224,7 +224,7 @@ int ObMPUtils::append_modfied_sess_info(common::ObIAllocator &allocator,
             LOG_WARN("fail to get serialize size", K(info_type), K(ret));
           } else {
             size += ObProtoTransUtil::get_serialize_size(sess_size[i]);
-            LOG_DEBUG("get seri size", K(sess_size[i]));
+
           }
         } else {
           // encoder->is_changed_ = false;
@@ -256,7 +256,7 @@ int ObMPUtils::append_modfied_sess_info(common::ObIAllocator &allocator,
           int16_t info_type = (int16_t)i;
           int32_t info_len = sess_size[i];
           int64_t info_pos = 0;
-          LOG_DEBUG("session-info-encode", K(sess.get_server_sid()), K(info_type), K(info_len));
+
           if (info_len < 0) {
             ret = OB_INVALID_ARGUMENT;
             LOG_WARN("invalid session info length", K(info_len), K(info_type), K(ret));
@@ -297,7 +297,7 @@ int ObMPUtils::append_modfied_sess_info(common::ObIAllocator &allocator,
           if (OB_FAIL(extra_info_ecds->push_back(sess_inf_ecd))) {
             LOG_WARN("failed to add extra info kv", K(sess_inf_ecd), K(ret));
           } else {
-            LOG_DEBUG("add extra_info", KP(sess_inf_ecd), K(size), KPHEX(buf, size), KP(buf));
+
           }
         }
       } else {
@@ -312,14 +312,14 @@ int ObMPUtils::append_modfied_sess_info(common::ObIAllocator &allocator,
         if (OB_FAIL(extra_info->push_back(kv))) {
           LOG_WARN("failed to add extra info kv", K(kv), K(ret));
         } else {
-          LOG_TRACE("add extra_info", K(kv) , KPHEX(buf, size), KP(buf), KP(kv.value_.get_string().ptr()));
+
         }
       }
     }
     if (OB_FAIL(ret)) {
       // dump info size array
       for (int i = 0; i< SESSION_SYNC_MAX_TYPE; i++) {
-        LOG_INFO("dump sess info size", "type", i, "size", sess_size[i]);
+
       }
     }
   }
@@ -377,7 +377,7 @@ int ObMPUtils::add_client_reroute_info(OMPKOK &okp,
                                        sql::ObSQLSessionInfo &session,
                                        share::ObFeedbackRerouteInfo &reroute_info)
 {
-  LOG_DEBUG("adding client reroute info", K(reroute_info), K(okp));
+
   int ret = OB_SUCCESS;
   ObIAllocator &allocator = session.get_allocator();
   char *tmp_buff = NULL;
@@ -438,7 +438,7 @@ int ObMPUtils::add_nls_format(OMPKOK &okp, sql::ObSQLSessionInfo &session, const
   if (only_changed) {
     if (session.is_sys_var_changed()) {
       const ObIArray<sql::ObBasicSessionInfo::ChangedVar> &sys_var = session.get_changed_sys_var();
-      LOG_DEBUG("sys var changed", K(session.get_tenant_name()), K(sys_var.count()));
+
       int64_t max_add_count = ObNLSFormatEnum::NLS_MAX;
       for (int64_t i = 0; OB_SUCC(ret) && i < sys_var.count() && max_add_count > 0; ++i) {
         const sql::ObBasicSessionInfo::ChangedVar change_var = sys_var.at(i);
@@ -475,7 +475,7 @@ int ObMPUtils::add_nls_format(OMPKOK &okp, sql::ObSQLSessionInfo &session, const
             } else {
               //AS ob pkt encoding is different from mysql, we should not set_state_changed true
               okp.set_state_changed(false);
-              LOG_DEBUG("success add system var to ok pack", K(str_kv), K(change_var), K(new_val), K(okp));
+
             }
           }
         }
@@ -504,7 +504,7 @@ int ObMPUtils::add_nls_format(OMPKOK &okp, sql::ObSQLSessionInfo &session, const
     } else if (OB_FAIL(okp.add_system_var(nls_timestamp_tz_str_kv))) {
       LOG_WARN("fail to add system var", K(nls_timestamp_tz_str_kv), K(ret));
     } else {
-      LOG_DEBUG("succ to add system var", K(okp), K(ret));
+
     }
   }
   return ret;
@@ -560,7 +560,7 @@ int ObMPUtils::add_session_info_on_connect(OMPKOK &okp, sql::ObSQLSessionInfo &s
         } else if (OB_FAIL(okp.add_user_var(str_kv))) {
           LOG_WARN("fail to add user var", K(str_kv), K(ret));
         } else {
-          LOG_DEBUG("succ to add user var", K(str_kv), K(ret));
+
         }
       }
     }

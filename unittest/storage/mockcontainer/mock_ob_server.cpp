@@ -44,10 +44,10 @@ int MockObServer::init(const char *schema_file,
   char *clogdir = NULL;
 
   if (is_inited_) {
-    STORAGE_LOG(WARN, "ob server inited twice");
+
     ret = OB_INIT_TWICE;
   } else if (NULL == schema_file) {
-    STORAGE_LOG(ERROR, "invalid argument", "schema_file", OB_P(schema_file));
+
     ret = OB_INVALID_ARGUMENT;
   } else {
   }
@@ -77,10 +77,10 @@ int MockObServer::init(const char *schema_file,
     } else {
       const char *devname = get_default_if();
       if (devname && devname[0] != '\0') {
-        LOG_INFO("guess interface name", K(devname));
+
         config_.devname.set_value(devname);
       } else {
-        LOG_INFO("can't guess interface name, use default bond0");
+
       }
     }
 
@@ -100,18 +100,18 @@ int MockObServer::init(const char *schema_file,
   // init env
   if (OB_SUCC(ret)) {
     if (NULL == (logdir = new char[MAX_PATH_SIZE])) {
-      STORAGE_LOG(ERROR, "new log dir error");
+
       ret = OB_ERR_UNEXPECTED;
     } else if (NULL == (clogdir = new char[MAX_PATH_SIZE])) {
-      STORAGE_LOG(ERROR, "new clog dir error");
+
       ret = OB_ERR_UNEXPECTED;
     } else if (0 > (tmp_ret = snprintf(logdir, MAX_PATH_SIZE, "%s/slog",
           opts_.data_dir_.ptr()/*, opts_.appname_*/))) {
-      STORAGE_LOG(ERROR, "concate log path fail", "ret", tmp_ret);
+
       ret = OB_ERR_UNEXPECTED;
     } else if (0 > (tmp_ret = snprintf(clogdir, MAX_PATH_SIZE, "%s/clog",
           opts_.data_dir_.ptr()/*, opts_.appname_*/))) {
-      STORAGE_LOG(ERROR, "concate log path fail", "ret", tmp_ret);
+
       ret = OB_ERR_UNEXPECTED;
     } else {
       env.data_dir_ = opts_.data_dir_.ptr();
@@ -131,9 +131,9 @@ int MockObServer::init(const char *schema_file,
   if (OB_SUCC(ret)) {
     ObSchemaGetterGuard *schema_guard = NULL;
     if (OB_FAIL(restore_schema_.init())) {
-      STORAGE_LOG(ERROR, "restore_schema init fail", K(ret));
+
     } else if (OB_FAIL(restore_schema_.parse_from_file(schema_file, schema_guard))) {
-      STORAGE_LOG(ERROR, "parse_from_file fail", K(ret));
+
     } else {
       schema_service_ = restore_schema_.schema_service_;
     }
@@ -164,18 +164,18 @@ int MockObServer::init(const char *schema_file,
   // init net frame
   if (OB_SUCC(ret)) {
     if (OB_SUCCESS != (ret = net_frame_.init())) {
-      STORAGE_LOG(ERROR, "net frame init error", K(ret));
+
     } else if (OB_FAIL(batch_rpc_.init(net_frame_.get_batch_rpc_req_transport(),
                                        self_addr_))) {
       LOG_WARN("init batch rpc failed", K(ret));
     } else {
-      STORAGE_LOG(INFO, "net frame init success");
+
     }
   }
 
   if (OB_SUCC(ret)) {
     if (OB_SUCCESS != (ret = bandwidth_throttle_.init(1024 *1024 * 60))) {
-      STORAGE_LOG(ERROR, "failed to init bandwidth_throttle_", K(ret));
+
     }
   }
 
@@ -190,18 +190,18 @@ int MockObServer::init(const char *schema_file,
 
   if (OB_SUCC(ret)) {
     if (OB_SUCCESS != (ret = init_tenant_mgr())) {
-      STORAGE_LOG(WARN, "init tenant mgr failed", K(ret));
+
     } else {
-      STORAGE_LOG(INFO, "init tenant mgr success");
+
     }
   }
 
   // init io
   if (OB_SUCC(ret)) {
     if (OB_FAIL(ObDeviceManager::get_instance().init_devices_env())) {
-      STORAGE_LOG(WARN, "init device manager failed", K(ret));
+
     } else if (OB_FAIL(ObIOManager::get_instance().init())) {
-      STORAGE_LOG(WARN, "io manager init failead", K(ret));
+
     }
   }
 
@@ -210,7 +210,7 @@ int MockObServer::init(const char *schema_file,
     if (OB_FAIL(gts_response_rpc_.init(net_frame_.get_req_transport(), self_addr_))) {
       LOG_ERROR("gts response rpc init failed", K(ret));
     } else {
-      LOG_INFO("gts response rpc init success");
+
     }
   }
 
@@ -220,24 +220,24 @@ int MockObServer::init(const char *schema_file,
          *GCTX.schema_service_,
          *GCTX.location_service_,
          net_frame_.get_req_transport()))) {
-      STORAGE_LOG(WARN, "init gts local cache mgr failed", K(ret));
+
     } else {
-      STORAGE_LOG(INFO, "init gts local cache mgr success");
+
     }
   }
 
   //init multi tenant
   if (OB_SUCC(ret)) {
     if (OB_SUCCESS != (ret = init_multi_tenant())) {
-      STORAGE_LOG(WARN, "init multi tenant failed", K(ret));
+
     } else {
-      STORAGE_LOG(INFO, "init multi tenant success");
+
     }
   }
 
   if (OB_SUCC(ret)) {
     is_inited_ = true;
-    STORAGE_LOG(INFO, "ob server inited success");
+
   }
 
   return ret;
@@ -249,9 +249,9 @@ int MockObServer::init_multi_tenant()
   GCONF.cpu_count = 6;
 
   if (OB_SUCCESS != (ret = multi_tenant_.init(self_addr_))) {
-    STORAGE_LOG(WARN, "init multi_tenant failed", K(ret));
+
   } else if (OB_SUCCESS != (ret = multi_tenant_.create_hidden_sys_tenant())) {
-    STORAGE_LOG(WARN, "add sys tenant failed", K(ret));
+
   } else {
     multi_tenant_.start();
   }
@@ -296,9 +296,9 @@ int MockObServer::init_tenant_mgr()
 void MockObServer::destroy()
 {
   ObKVGlobalCache::get_instance().destroy();
-  STORAGE_LOG(INFO, "MockObServer::destroy().  destroy gloabal_cache\n");
+
   net_frame_.destroy();
-  STORAGE_LOG(INFO, "MockObServer::destroy().  destroy net_frame\n");
+
   ObVirtualTenantManager &omti = ObVirtualTenantManager::get_instance();
   omti.destroy();
   multi_tenant_.destroy();
@@ -310,18 +310,18 @@ int MockObServer::start()
   int ret = OB_SUCCESS;
 
   if (!is_inited_) {
-    STORAGE_LOG(WARN, "ob server not inited");
+
     ret = OB_NOT_INIT;
   } else if (OB_SUCCESS != (ret = net_frame_.start())) {
-    STORAGE_LOG(WARN, "net frame start error", K(ret));
+
   } else if (OB_FAIL(OB_TS_MGR.start())) {
-    STORAGE_LOG(WARN, "start gts cache mgr error", K(ret));
+
   } else {
-    STORAGE_LOG(INFO, "net frame start success");
+
   }
 
   if (OB_SUCC(ret)) {
-    STORAGE_LOG(INFO, "ob server start success");
+
   }
 
   return ret;
@@ -332,19 +332,19 @@ int MockObServer::stop()
   int ret = OB_SUCCESS;
 
   if (!is_inited_) {
-    STORAGE_LOG(WARN, "ob server not inited");
+
     ret = OB_NOT_INIT;
   } else if (FALSE_IT(net_frame_.sql_nio_stop())) {
   } else if (OB_SUCCESS != (ret = net_frame_.stop())) {
-    STORAGE_LOG(WARN, "net frame stop error", K(ret));
+
   } else {
     OB_TS_MGR.stop();
-    STORAGE_LOG(INFO, "net frame stop success");
+
   }
   multi_tenant_.stop();
 
   if (OB_SUCC(ret)) {
-    STORAGE_LOG(INFO, "ob server stop success");
+
   }
 
   return ret;
@@ -357,7 +357,7 @@ int MockObServer::wait()
   net_frame_.wait();
   (void)OB_TS_MGR.wait();
   if (OB_SUCC(ret)) {
-    STORAGE_LOG(INFO, "ob server wait success");
+
   }
   return ret;
 }
@@ -367,7 +367,7 @@ MockSchemaService *MockObServer::get_schema_service()
   MockSchemaService *ss = NULL;
 
   if (!is_inited_) {
-    STORAGE_LOG_RET(WARN, OB_NOT_INIT, "ob server not inited");
+
   } else {
     ss = schema_service_;
   }

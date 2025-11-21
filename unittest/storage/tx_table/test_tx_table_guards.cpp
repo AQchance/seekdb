@@ -239,7 +239,7 @@ int main(int argc, char **argv)
   system("rm -rf test_tx_table_guards.log*");
   OB_LOGGER.set_file_name("test_tx_table_guards.log");
   OB_LOGGER.set_log_level("DEBUG");
-  STORAGE_LOG(INFO, "begin unittest: test tx table guards");
+
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

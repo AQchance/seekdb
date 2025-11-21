@@ -57,7 +57,7 @@ int ObAsyncLoadExternalTableFileListP::process()
     OZ(res.file_urls_.push_back(tmp));
   }
   res.rcode_.rcode_ = ret;
-  LOG_DEBUG("get external table file", K(ret), K(req.location_), K(req.pattern_), K(file_urls), K(res.file_urls_));
+
   return ret;
 }
 
@@ -88,7 +88,7 @@ void ObRpcAsyncLoadExternalTableFileCallBack::on_invalid()
 int ObRpcAsyncLoadExternalTableFileCallBack::process()
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("async access callback process", K_(result));
+
   if (OB_FAIL(get_rcode())) {
     result_.rcode_.rcode_ = get_rcode();
     LOG_WARN("async rpc execution failed", K(get_rcode()), K_(result));
@@ -132,7 +132,7 @@ void ObRpcAsyncFlushExternalTableKVCacheCallBack::on_invalid()
 int ObRpcAsyncFlushExternalTableKVCacheCallBack::process()
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("async access callback process", K_(result));
+
   if (OB_FAIL(get_rcode())) {
     result_.rcode_.rcode_ = get_rcode();
     // we need to clear op results because they are not decoded from das async rpc due to rpc error.

@@ -169,7 +169,7 @@ int ObTabletLSPairCache::refresh()
         break;
 #ifdef ERRSIM
       } else if (OB_UNLIKELY(EN_COMPACTION_SKIP_CREATE_MAP)) {
-        LOG_INFO("ERRSIM EN_COMPACTION_SKIP_CREATE_MAP, skip set map"); // tablet_ls_pair_array is empty
+ // tablet_ls_pair_array is empty
         break;
 #endif
       } else {
@@ -188,7 +188,7 @@ int ObTabletLSPairCache::refresh()
   if (OB_SUCC(ret)) {
     last_refresh_ts_ = ObTimeUtility::fast_current_time();
     cost_ts = last_refresh_ts_ - cost_ts;
-    LOG_INFO("success to refresh tablet ls pair cache", KR(ret), K(cost_ts), "map_item_cnt", map_.size(), K(map_.bucket_count()));
+
   }
   return ret;
 }
@@ -205,7 +205,7 @@ int ObTabletLSPairCache::rebuild_map_by_tablet_cnt()
     if (OB_FAIL(ret)) {
     } else if (OB_UNLIKELY(EN_COMPACTION_SKIP_CREATE_MAP)) {
       tablet_cnt = 0;
-      LOG_INFO("ERRSIM EN_COMPACTION_SKIP_CREATE_MAP, set tablet_cnt to 0", K(tablet_cnt));
+
     }
 #endif
   } else {
@@ -224,7 +224,7 @@ int ObTabletLSPairCache::rebuild_map_by_tablet_cnt()
       if (OB_FAIL(map_.create(recommend_map_bucked_cnt, "RSCompPairCache", "RSCompPairCache", tenant_id_))) {
         LOG_WARN("fail to create tablet ls pair map", KR(ret), K_(tenant_id), K(recommend_map_bucked_cnt));
       } else {
-        LOG_INFO("success to rebuild or create map", KR(ret), K(tablet_cnt), K(map_.bucket_count()));
+
       }
     }
   }

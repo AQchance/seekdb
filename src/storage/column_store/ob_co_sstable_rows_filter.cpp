@@ -467,7 +467,7 @@ int ObCOSSTableRowsFilter::push_cg_iter(
     } else if (OB_FAIL(static_cast<ObCGTileScanner*>(cg_iter)->init(iter_params, false, true, *access_ctx_, co_sstable_))) {
       LOG_WARN("Fail to init cg tile scanner", K(ret), K(iter_params));
     }
-    LOG_DEBUG("[COLUMNSTORE] init one cg iter", K(ret), KPC(cg_iter), K(iter_params));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -506,7 +506,7 @@ int ObCOSSTableRowsFilter::construct_cg_iter_params(
     } else if (OB_FAIL(iter_params.push_back(cg_param))) {
       LOG_WARN("Fail to push back iter param", K(ret), K(cg_param));
     }
-    LOG_DEBUG("[COLUMNSTORE] cons one cg param", K(ret), K(cg_idx), K(cg_param));
+
   }
   return ret;
 }

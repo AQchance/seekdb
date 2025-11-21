@@ -449,7 +449,7 @@ void ObMicroBlockCSEncoder::update_estimate_size_limit_(const ObMicroBlockEncodi
       ctx.macro_block_size_ - RESERVE_SIZE_FOR_ESTIMATE_LIMIT : ctx.macro_block_size_;
   estimate_size_limit_ = std::min(data_size_limit * expand_pct_ / 100, max_estimate_size_limit);
 
-  LOG_TRACE("estimate size expand percent", K(expand_pct_), K_(estimate_size_limit), K(ctx));
+
 }
 
 int ObMicroBlockCSEncoder::try_to_append_row_(const int64_t &store_size)
@@ -501,11 +501,11 @@ int ObMicroBlockCSEncoder::append_row(const ObDatumRow &row)
     } else {
       if (need_cal_row_checksum()
           && OB_FAIL(checksum_helper_.cal_row_checksum(row.storage_datums_, row.get_column_count()))) {
-        STORAGE_LOG(WARN, "fail to cal row chksum", K(ret), K(row), K_(checksum_helper));
+
       }
       cal_row_stat(row);
       estimate_size_ += store_size;
-      LOG_DEBUG("cs encoder append row", K_(estimate_size), K(store_size), K_(appended_row_count));
+
     }
   }
 
@@ -561,7 +561,7 @@ int ObMicroBlockCSEncoder::append_batch(const ObBatchDatumRows &vec_batch,
       // and cs-encoding is only used for major sstable, so there is no need to call this func.
       // cal_row_stat(row);
       estimate_size_ += store_size;
-      LOG_DEBUG("cs encoder append batch", K_(estimate_size), K(store_size), K_(appended_row_count));
+
     }
   }
 
@@ -624,7 +624,7 @@ int ObMicroBlockCSEncoder::copy_and_append_batch_(const ObBatchDatumRows &vec_ba
     }
     if (OB_SUCC(ret)) {
       if (OB_FAIL(row_buf_holder_.write_nop(length_ - start_offset))) {
-        STORAGE_LOG(WARN, "fail to write nop", K(ret), K(length_), K(start_offset), K(row_buf_holder_));
+
       }
     }
   }
@@ -1222,7 +1222,7 @@ int ObMicroBlockCSEncoder::store_all_string_data_(uint32_t &data_size, bool &use
         }
       }
     }
-    LOG_DEBUG("store_all_string_data_", K(use_compress), K(all_string_data_len_), K(data_size), K(data_buffer_.length()));
+
   }
 
   return ret;
@@ -1278,7 +1278,7 @@ int ObMicroBlockCSEncoder::store_stream_offsets_(int64_t &stream_offsets_length)
       }
       default:
         ret = OB_INVALID_ARGUMENT;
-        STORAGE_LOG(WARN, "uint byte width size not invalid", K(ret), K(width_size));
+
         break;
       }
       if (OB_SUCC(ret)) {
@@ -1560,7 +1560,7 @@ int ObMicroBlockCSEncoder::copy_and_append_row_(const ObDatumRow &src, int64_t &
     }
     if (OB_SUCC(ret)) {
       if (OB_FAIL(row_buf_holder_.write_nop(length_ - datum_row_offset))) {
-        STORAGE_LOG(WARN, "fail to write nop", K(ret), K(length_), K(datum_row_offset), K(row_buf_holder_));
+
       }
     }
   }
@@ -1835,7 +1835,7 @@ int ObMicroBlockCSEncoder::prescan_(const int64_t column_index)
       } else if (ht != nullptr && OB_FAIL(hashtables_.push_back(ht))) {
         LOG_WARN("failed to push back", K(ret));
       }
-      LOG_DEBUG("hash table", K(column_index), KPC(ht), K(col_ctx));
+
     }
 
     if (OB_SUCC(ret) && is_semistruct_store_(store_class, ctx_.is_enable_semistruct_encoding())) {
@@ -1959,7 +1959,7 @@ int ObMicroBlockCSEncoder::fast_encoder_detect_(const int64_t column_idx)
   }
 
   if (OB_SUCC(ret) && nullptr != e) {
-    LOG_DEBUG("used encoder (fast)", K(column_idx), KPC(e), K(col_ctx));
+
     if (OB_FAIL(encoders_.push_back(e))) {
       LOG_WARN("push back encoder failed", K(ret));
       free_encoder_(e);
@@ -1976,7 +1976,7 @@ int ObMicroBlockCSEncoder::choose_specified_encoder_(const int64_t column_idx,
 {
   int ret = OB_SUCCESS;
 
-  LOG_INFO("specified encoding type", K(column_idx), K(type), K(is_all_column_force_raw_));
+
   ObColumnCSEncodingCtx &col_ctx = col_ctxs_.at(column_idx);
   if (is_all_column_force_raw_) {
     col_ctx.force_raw_encoding_ = true;
@@ -2247,7 +2247,7 @@ bool ObMicroBlockCSEncoder::is_semistruct_encoding_enable_(const ObObjTypeStoreC
   if (! is_semistruct_store_(sc, ctx_.is_enable_semistruct_encoding())) { // skip if disable
   } else if (OB_ISNULL(semistruct_ctx = col_ctxs_.at(column_idx).semistruct_ctx_)) {
     // just don't semistruct encode if semistruct_ctx is null
-    LOG_DEBUG("enable semistruct_encoding, but semistruct_ctx is null", K(sc), K(column_idx), K(col_ctxs_.at(column_idx)));
+
   } else {
     is_enable = semistruct_ctx->is_enable();
   }

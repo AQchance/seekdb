@@ -128,7 +128,7 @@ int ObJitMemory::release_mapped_memory(ObJitMemoryBlock &block)
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("jit block munmap failed", K(block), K(ret));
   } else {
-    LOG_DEBUG("release mapped memory done!", KP((void*)block.addr_), K(block.size_));
+
     block.reset();
   }
 

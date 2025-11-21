@@ -121,7 +121,7 @@ int ObTableRedefinitionTask::init(const ObTableSchema* src_table_schema,
     }
   }
 
-  LOG_INFO("init table redefinition task finished", K(ret), KPC(this));
+
   return ret;
 }
 
@@ -188,7 +188,7 @@ int ObTableRedefinitionTask::init(const ObDDLTaskRecord &task_record)
     }
   }
 
-  LOG_INFO("init table redefinition task finished", K(ret), KPC(this));
+
   return ret;
 }
 
@@ -216,7 +216,7 @@ int ObTableRedefinitionTask::update_complete_sstable_job_status(const common::Ob
       case ObDDLType::DDL_DIRECT_LOAD_INSERT: {
         complete_sstable_job_ret_code_ = ret_code;
         ret_code_ = ret_code;
-        LOG_INFO("table redefinition task callback", K(addr), K(complete_sstable_job_ret_code_));
+
         break;
       } 
       default : {
@@ -229,7 +229,7 @@ int ObTableRedefinitionTask::update_complete_sstable_job_status(const common::Ob
         } else {
           complete_sstable_job_ret_code_ = ret_code;
           execution_id_ = execution_id; // update ObTableRedefinitionTask::execution_id_ from ObDDLRedefinitionSSTableBuildTask::execution_id_
-          LOG_INFO("table redefinition task callback", K(addr), K(complete_sstable_job_ret_code_), K(execution_id_));
+
         }
         break;
       }
@@ -339,7 +339,7 @@ int ObTableRedefinitionTask::check_build_replica_end(bool &is_end)
       complete_sstable_job_ret_code_ = INT64_MAX;
       ret_code_ = OB_SUCCESS;
       is_end = false;
-      LOG_INFO("ddl need retry", K(*this));
+
     }
   } else {
     is_end = true;
@@ -363,10 +363,10 @@ int ObTableRedefinitionTask::check_ddl_can_retry(const bool ddl_need_retry_at_ex
     if (ObDDLUtil::use_idempotent_mode()) {
       if (use_heap_table_ddl_plan_) {
         is_ddl_retryable_ = false;
-        LOG_INFO("ddl schedule will not retry for heap table", K(use_heap_table_ddl_plan_), K_(task_id));
+
       } else if (ddl_need_retry_at_executor) {
         is_ddl_retryable_ = false;  // do not retry at ddl scheduler when ddl need retry at executor
-        LOG_INFO("ddl schedule will not retry for ddl which will retry at table executor level", K(use_heap_table_ddl_plan_), K_(task_id));
+
       }
     }
   }
@@ -523,7 +523,7 @@ int ObTableRedefinitionTask::copy_table_indexes()
               LOG_WARN("failed to push back mlog tid", KR(ret), K(table_schema->get_mlog_tid()));
             }
           }
-          LOG_INFO("indexes schema are already built", K(index_ids));
+
         } else {
           int64_t ddl_rpc_timeout = 0;
           int64_t all_tablet_count = 0;
@@ -579,7 +579,7 @@ int ObTableRedefinitionTask::copy_table_indexes()
             } else if (is_final_index_status(index_schema->get_index_status())) {
               // index status is final
               need_rebuild_index = false;
-              LOG_INFO("index status is final", K(ret), K(task_id_), K(index_id), K(need_rebuild_index));
+
             } else if (index_schema->is_built_in_index()) {
               // Only domain index need rebuild, while rebuilding vector/fulltext/multivalue index.
               need_rebuild_index = false;
@@ -644,7 +644,7 @@ int ObTableRedefinitionTask::copy_table_indexes()
                 }
               }
               add_event_info("create table_redefinition index task succ");
-              LOG_INFO("add build index task", K(ret), K(task_key), K(status), K(ddl_event_info));
+
             }
           }
         }
@@ -704,7 +704,7 @@ int ObTableRedefinitionTask::copy_table_constraints()
           LOG_WARN("rebuild hidden table constraint failed", K(ret), K(ddl_rpc_timeout));
         }
       } else {
-        LOG_INFO("constraint has already been built");
+
       }
       DEBUG_SYNC(TABLE_REDEFINITION_COPY_TABLE_CONSTRAINTS);
       if (OB_SUCC(ret) && constraint_ids.count() > 0) {
@@ -757,14 +757,14 @@ int ObTableRedefinitionTask::copy_table_foreign_keys()
       } else {
         const ObIArray<ObSimpleForeignKeyInfo> &fk_infos = table_schema->get_simple_foreign_key_info_array();
         ObSArray<uint64_t> fk_ids;
-        LOG_INFO("get current fk infos", K(fk_infos));
+
         if (fk_infos.count() > 0) {
           for (int64_t i = 0; OB_SUCC(ret) && i < fk_infos.count(); ++i) {
             if (OB_FAIL(fk_ids.push_back(fk_infos.at(i).foreign_key_id_))) {
               LOG_WARN("push back fk id failed", K(ret));
             }
           }
-          LOG_INFO("foreign key is already built", K(fk_infos));
+
         } else {
           alter_table_arg_.ddl_task_type_ = share::REBUILD_FOREIGN_KEY_TASK;
           alter_table_arg_.table_id_ = object_id_;
@@ -840,7 +840,7 @@ int ObTableRedefinitionTask::copy_table_dependent_objects(const ObDDLTaskStatus 
                   unused_addr, false /* is_ddl_retry_task */, *GCTX.sql_proxy_, error_message, unused_user_msg_len))) {
             if (OB_ENTRY_NOT_EXIST == ret) {
               ret = OB_SUCCESS;
-              LOG_INFO("ddl task not finish", K(dst_tenant_id_), K(task_key), K(child_task_id), K(target_object_id));
+
             } else {
               LOG_WARN("fail to get ddl error message", K(ret), K(task_key), K(child_task_id), K(target_object_id));
             }
@@ -916,7 +916,7 @@ int ObTableRedefinitionTask::take_effect(const ObDDLTaskStatus next_task_status)
     ret = OB_TABLE_NOT_EXIST;
     LOG_WARN("table schema not exist", K(ret), K(target_object_id_));
   } else if (!table_schema->is_user_hidden_table()) {
-    LOG_INFO("target schema took effect", K(target_object_id_));
+
   } else if (table_schema->is_table_with_hidden_pk_column()
       && !(DDL_ALTER_PARTITION_BY == task_type_ || DDL_DROP_PRIMARY_KEY == task_type_)
       && OB_FAIL(sync_tablet_autoinc_seq())) {
@@ -968,7 +968,7 @@ int ObTableRedefinitionTask::take_effect(const ObDDLTaskStatus next_task_status)
     "object_id", object_id_buffer,
     K_(schema_version),
     next_task_status);
-  LOG_INFO("table redefinition task take effect", K(ret), "ddl_event_info", ObDDLEventInfo(), K(*this));
+
   return ret;
 }
 
@@ -990,7 +990,7 @@ int ObTableRedefinitionTask::check_take_effect_succ(bool &has_took_effect_succ)
     LOG_WARN("table schema not exist", K(ret), K(target_object_id_));
   } else if (!table_schema->is_user_hidden_table()) {
     has_took_effect_succ = true;
-    LOG_INFO("target schema took effect", K(target_object_id_));
+
   }
   return ret;
 }

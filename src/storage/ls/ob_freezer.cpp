@@ -494,18 +494,18 @@ int ObFreezer::logstream_freeze(int64_t trace_id)
   ObLSFreezeGuard guard(*this);
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "[Freezer] not inited", K(ret), K(ls_id));
+
   } else if (OB_UNLIKELY(!enable_)) {
     ret = OB_NOT_RUNNING;
-    STORAGE_LOG(WARN, "freezer is offline, can not freeze now", K(ret), K(ls_id));
+
   } else if (OB_FAIL(decide_max_decided_scn(max_decided_scn))) {
-    STORAGE_LOG(WARN, "[Freezer] decide max decided log ts failure", K(ret), K(ls_id));
+
   } else if (OB_FAIL(get_ls_weak_read_scn(freeze_snapshot_version))) {
-    STORAGE_LOG(WARN, "[Freezer] get ls weak read ts failure", K(ret), K(ls_id));
+
   } else if (freeze_snapshot_version.is_max()
              || ObScnRange::MIN_SCN >= freeze_snapshot_version) {
     ret = OB_MINOR_FREEZE_NOT_ALLOW;
-    STORAGE_LOG(WARN, "[Freezer] invalid weak read scn", K(ret), K(ls_id), K(freeze_snapshot_version));
+
 #ifdef ERRSIM
   } else if (OB_FAIL(ret = ERRSIM_FREEZER_FREEZE_FAILURE)) {
     LOG_WARN("[Freezer] errsim failure during freezer freeze", K(ret));
@@ -654,7 +654,7 @@ struct AsyncFreezeFunctor {
     common::ObDIActionGuard ag1("OccamThreadPool", "AsyncFreezer", "detect task");
     ObLSHandle ls_handle;
     if (OB_FAIL(MTL(ObLSService *)->get_ls(ls_id_, ls_handle, ObLSGetMod::STORAGE_MOD))) {
-      STORAGE_LOG(WARN, "get ls handle failed. stop async freeze task", KR(ret), K(ls_id_));
+
     } else {
       // freezer_ cannot be nullptr because AsyncFreezeFunctor is constructed by ObFreezer::this pointer
       STORAGE_LOG(
@@ -703,17 +703,17 @@ void ObFreezer::submit_an_async_freeze_task(const int64_t trace_id, const bool i
 
     ObLSHandle ls_handle;
     if (OB_FAIL(MTL(ObLSService *)->get_ls(ls_id, ls_handle, ObLSGetMod::STORAGE_MOD))) {
-      STORAGE_LOG(WARN, "get ls handle failed. stop async freeze task", KR(ret), K(ls_id));
+
     } else if (acquired_exec_async_task_permission_(is_ls_freeze)) {
       AsyncFreezeFunctor async_freeze_functor(trace_id, is_ls_freeze, this, ls_handle);
       do {
         ret = tenant_freezer->freeze_thread_pool_.commit_task_ignore_ret(async_freeze_functor);
         if (OB_FAIL(ret) && REACH_TIME_INTERVAL(5LL * 1000LL * 1000LL)) {
-          STORAGE_LOG(WARN, "commit task to freeze thread pool failed", KR(ret), K(ls_id));
+
         }
       } while (OB_FAIL(ret));
       submit_succ = true;
-      STORAGE_LOG(INFO, "finish submit async freeze task", KR(ret), K(ls_id), K(is_ls_freeze), K(submit_succ));
+
     }
   }
 
@@ -753,7 +753,7 @@ void ObFreezer::async_ls_freeze_consumer(const int64_t trace_id)
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(ls_->logstream_freeze_task(trace_id, INT64_MAX))) {
-    STORAGE_LOG(WARN, "async ls freeze failed", KR(ret), K(trace_id), K(get_ls_id()));
+
   }
 
   // reset task existing flag
@@ -763,7 +763,7 @@ void ObFreezer::async_ls_freeze_consumer(const int64_t trace_id)
 void ObFreezer::async_tablet_freeze_consumer(const int64_t trace_id)
 {
   const int64_t start_time = ObClockGenerator::getClock();
-  STORAGE_LOG(INFO, "Async Tablet Freeze Task Start", K(get_ls_id()));
+
 
   ObSEArray<ObTabletID, 128> tablet_ids;
   tablet_ids.reuse();
@@ -787,7 +787,7 @@ void ObFreezer::async_tablet_freeze_consumer(const int64_t trace_id)
   // print some debug info
   const int64_t end_time = ObClockGenerator::getClock();
   const int64_t spend_time_ms = (end_time - start_time) / 1000;
-  STORAGE_LOG(INFO, "Async Tablet Freeze Task finish", K(get_ls_id()), K(spend_time_ms));
+
 
   // NOTE : reset task existing flag before submit another task
   ATOMIC_STORE(&is_async_tablet_freeze_task_existing_, false);
@@ -810,11 +810,11 @@ void ObFreezer::try_freeze_tx_data_()
         retry_times++;
         ob_throttle_usleep(100LL * 1000LL, ret, ls_->get_ls_id().id());
       } else {
-        STORAGE_LOG(WARN, "freeze tx data table failed", KR(ret), K(get_ls_id()));
+
       }
     }
   } while (OB_EAGAIN == ret && ObClockGenerator::getClock() - start_freeze_ts < MAX_RETRY_DURATION);
-  STORAGE_LOG(INFO, "freeze tx data after logstream freeze", KR(ret), K(retry_times), KTIME(start_freeze_ts));
+
 }
 
 // must be used under the protection of ls_lock
@@ -824,10 +824,10 @@ int ObFreezer::check_ls_state()
 
   if (OB_UNLIKELY(ls_->is_stopped())) {
     ret = OB_NOT_RUNNING;
-    STORAGE_LOG(WARN, "ls stopped", K(ret), K_(ls_->ls_meta));
+
   } else if (OB_UNLIKELY(!(ls_->get_log_handler()->is_replay_enabled()))) {
     ret = OB_NOT_RUNNING;
-    STORAGE_LOG(WARN, "log handler not enable replay, should not freeze", K(ret), K_(ls_->ls_meta));
+
   }
 
   return ret;
@@ -867,9 +867,9 @@ int ObFreezer::tablet_freeze(const int64_t trace_id,
   ObTabletFreezeGuard guard(*this, try_guard);
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "[Freezer] not inited", K(ret), K(ls_id), K(tablet_ids));
+
   } else if (OB_UNLIKELY(!enable_)) {
-    STORAGE_LOG(WARN, "[Freezer] freezer is offline, can not freeze now", K(ret), K(ls_id));
+
   } else if (OB_FAIL(frozen_memtable_handles.reserve(tablet_ids.count()))) {
     TRANS_LOG(WARN, "fail to reserve memtable handles", K(ret), K(tablet_ids));
   } else if (OB_FAIL(freeze_failed_tablets.reserve(tablet_ids.count()))) {
@@ -880,9 +880,9 @@ int ObFreezer::tablet_freeze(const int64_t trace_id,
     ret = OB_MINOR_FREEZE_NOT_ALLOW;
     LOG_WARN("[Freezer] invalid weak read scn", K(ret), K(ls_id));
   } else if (try_guard && OB_FAIL(guard.try_set_tablet_freeze_begin())) {
-    STORAGE_LOG(WARN, "[Freezer] ls freeze is running", KR(ret), K(ls_id), K(tablet_ids));
+
   } else if (OB_FAIL(loop_set_freeze_flag(max_loop_time))) {
-    STORAGE_LOG(WARN, "[Freezer] another freeze function is running", KR(ret), K(ls_id), K(tablet_ids));
+
   } else {
     // freeze flag has been set
     freeze_snapshot_version_ = freeze_snapshot_version;
@@ -901,7 +901,7 @@ int ObFreezer::tablet_freeze(const int64_t trace_id,
                                freeze_snapshot_version,
                                frozen_memtable_handles,
                                freeze_failed_tablets))) {
-      STORAGE_LOG(WARN, "[Freezer] batch_tablet_freeze failed", K(ls_id), K(tablet_ids));
+
     }
 
     if (frozen_memtable_handles.empty()) {
@@ -914,7 +914,7 @@ int ObFreezer::tablet_freeze(const int64_t trace_id,
   if (OB_FAIL(ret) && freeze_failed_tablets.empty()) {
     int tmp_ret = OB_SUCCESS;
     if (OB_TMP_FAIL(freeze_failed_tablets.assign(tablet_ids))) {
-      STORAGE_LOG(ERROR, "assign tablet ids failed", KR(ret));
+
     }
   }
   return ret;
@@ -981,7 +981,7 @@ int ObFreezer::tablet_freeze_(const int64_t trace_id,
   //
   // Additionally, we must correctly propagate the error code.
   if (frozen_memtable_handles.empty()) {
-    STORAGE_LOG(INFO, "[Freezer] empty freezed tablet array", K(ret), K(tablet_ids), K(freeze_failed_tablets));
+
     stat_.add_diagnose_info("no need to freeze tablet");
   } else {
     (void)submit_log_if_needed_(frozen_memtable_handles);
@@ -1215,15 +1215,15 @@ int ObFreezer::wait_tablet_freeze_finish(ObIArray<ObTableHandleV2> &memtable_han
     int tmp_ret = OB_SUCCESS;
     ObTableHandleV2 &memtable_handle = memtable_handles.at(i);
     if (OB_TMP_FAIL(inner_wait_memtable_freeze_finish_(memtable_handle))) {
-      STORAGE_LOG(WARN, "wait tablet freeze failed", KR(ret));
+
       if (OB_SUCC(ret)) {
         ret = tmp_ret;
       }
       ObITabletMemtable *tablet_memtable = nullptr;
       if (OB_TMP_FAIL(memtable_handle.get_tablet_memtable(tablet_memtable))) {
-        STORAGE_LOG(WARN, "get tablet memtable failed", KR(ret), K(memtable_handle));
+
       } else if (OB_TMP_FAIL(freeze_failed_tablets.push_back(tablet_memtable->get_tablet_id()))) {
-        STORAGE_LOG(WARN, "push back tablet id failed", KR(ret));
+
       }
     }
   }
@@ -1249,12 +1249,12 @@ int ObFreezer::inner_wait_memtable_freeze_finish_(ObTableHandleV2 &memtable_hand
 
   if (!memtable_handle.is_valid()) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "memtable cannot be null", K(ret), K(get_ls_id()));
+
   } else if (OB_FAIL(memtable_handle.get_tablet_memtable(tablet_memtable))) {
-    STORAGE_LOG(WARN, "fail to get memtable", K(ret), K(memtable_handle));
+
   } else if (OB_ISNULL(tablet_memtable)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "fail to get memtable", K(ret), K(memtable_handle));
+
   } else {
     if (tablet_memtable->is_data_memtable()) {
       ret = wait_data_memtable_freeze_finish_(tablet_memtable);
@@ -1262,11 +1262,11 @@ int ObFreezer::inner_wait_memtable_freeze_finish_(ObTableHandleV2 &memtable_hand
       ret = wait_direct_load_memtable_freeze_finish_(tablet_memtable);
     } else {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(ERROR, "unexpected memtable type", KR(ret), KPC(tablet_memtable));
+
     }
   }
 
-  STORAGE_LOG(DEBUG, "inner wait memtable freeze finish", KR(ret), K(memtable_handle));
+
 
   return ret;
 }
@@ -1301,7 +1301,7 @@ int ObFreezer::wait_direct_load_memtable_freeze_finish_(ObITabletMemtable *table
   share::ObLSID ls_id = get_ls_id();
   ObDDLKV *direct_load_memtable = static_cast<ObDDLKV*>(tablet_memtable);
   if (OB_FAIL(direct_load_memtable->decide_right_boundary())) {
-    STORAGE_LOG(WARN, "freeze direct load memtable failed", KR(ret), K(ls_id), KPC(tablet_memtable));
+
   } else {
     int64_t read_lock = LSLOCKALL;
     int64_t write_lock = 0;
@@ -1790,10 +1790,10 @@ public:
     bool is_erased = false;
     AsyncFreezeTabletInfo &tablet_info = kv.first;
     if (ls_epoch_ != tablet_info.epoch_) {
-      STORAGE_LOG(INFO, "this tablet no need merge because ls epoch has changed", K(ls_epoch_), K(tablet_info));
+
       need_erase = true;
     } else if (OB_FAIL(tablet_ids_.push_back(tablet_info.tablet_id_))) {
-      STORAGE_LOG(WARN, "push back tablet id to async freeze array failed", KR(ret), K(tablet_info));
+
     } else {
       need_erase = true;
     }
@@ -1820,7 +1820,7 @@ int ObFreezer::get_all_async_freeze_tablets(const int64_t ls_epoch, ObIArray<ObT
   GetAsyncFreezeTabletIDFunctor get_tablet_ids_func(*this, ls_epoch, tablet_ids);
 
   if (OB_FAIL(async_freeze_tablets_.foreach_refactored(get_tablet_ids_func))) {
-    STORAGE_LOG(WARN, "iterate async freeze tablets set failed", KR(ret), K(ls_epoch), K(tablet_ids));
+
   }
 
   ObIArray<AsyncFreezeTabletInfo> &tablets_to_erase = get_tablet_ids_func.get_tablets_to_erase();
@@ -1842,7 +1842,7 @@ void ObFreezer::record_async_freeze_tablet(const AsyncFreezeTabletInfo &async_fr
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(async_freeze_tablets_.set_refactored(async_freeze_tablet_info))) {
-    STORAGE_LOG(WARN, "record freeze failed tablet failed", KR(ret), K(async_freeze_tablet_info));
+
   }
 }
 
@@ -1851,7 +1851,7 @@ void ObFreezer::erase_async_freeze_tablet(const AsyncFreezeTabletInfo &async_fre
   int ret = OB_SUCCESS;
   if (OB_FAIL(async_freeze_tablets_.erase_refactored(async_freeze_tablet_info))) {
     if (OB_HASH_NOT_EXIST != ret) {
-      STORAGE_LOG(WARN, "erase tablet id from tablets set failed", K(ret), K(async_freeze_tablet_info));
+
     }
   }
 }
@@ -1901,7 +1901,7 @@ void ObFreezer::PendTenantReplayHelper::set_skip_throttle_flag()
   int ret = OB_SUCCESS;
   if (OB_ISNULL(current_freeze_ls_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(ERROR, "invalid ls pointer", KP(current_freeze_ls_));
+
   } else if (current_ls_is_leader_()){
     // leader do not need skip throttle
   } else {
@@ -1956,7 +1956,7 @@ bool ObFreezer::PendTenantReplayHelper::remain_memory_is_exhausting_() {
   const bool has_triggered_throttle = throttle_tool.has_triggered_throttle<ObMemstoreAllocator>();
   const bool remain_memory_is_exhausting =
       has_triggered_throttle || MTL(ObTenantFreezer *)->memstore_remain_memory_is_exhausting();
-  STORAGE_LOG(INFO, "finish check remain memory", K(has_triggered_throttle), K(remain_memory_is_exhausting));
+
 
   return remain_memory_is_exhausting;
 }
@@ -1967,7 +1967,7 @@ void ObFreezer::PendTenantReplayHelper::pend_tenant_replay_()
   ObLSService *ls_srv = MTL(ObLSService *);
   common::ObSharedGuard<ObLSIterator> iter;
   if (OB_FAIL(ls_srv->get_ls_iter(iter, ObLSGetMod::STORAGE_MOD))) {
-    STORAGE_LOG(WARN, "[ObFreezer] fail to get ls iterator", KR(ret));
+
   } else {
     ObLS *ls = nullptr;
     ls_handle_array_.reuse();
@@ -1980,11 +1980,11 @@ void ObFreezer::PendTenantReplayHelper::pend_tenant_replay_()
       ObLSHandle ls_handle;
       iterate_ls_count++;
       if (OB_FAIL(ls_srv->get_ls(ls->get_ls_id(), ls_handle, ObLSGetMod::STORAGE_MOD))) {
-        STORAGE_LOG(WARN, "[ObFreezer] get ls handle failed", KR(ret), KP(ls));
+
       } else if (OB_FAIL(ls_handle_array_.push_back(ls_handle))) {
-        STORAGE_LOG(WARN, "[ObFreezer] push back ls handle failed", KR(ret), KP(ls));
+
       } else if (OB_FAIL(ls->get_freezer()->pend_ls_replay())) {
-        STORAGE_LOG(WARN, "[ObFreezer] pend replay failed", KR(ret), KPC(ls));
+
         (void)ls_handle_array_.pop_back();
       } else {
         pend_ls_replay_count++;
@@ -2012,9 +2012,9 @@ void ObFreezer::PendTenantReplayHelper::restore_tenant_replay_()
     ObLS *ls = nullptr;
     if (OB_ISNULL(ls = ls_handle_array_.at(i).get_ls())) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(ERROR, "[ObFreezer] invalid ls handle", KR(ret), KPC(ls));
+
     } else if (OB_FAIL(ls->get_freezer()->restore_ls_replay())) {
-      STORAGE_LOG(WARN, "[ObFreezer] restore replay failed", KR(ret), KPC(ls));
+
     }
   }
   host_.unset_tenant_replay_is_pending();

@@ -91,7 +91,7 @@ int ObReadRow::iterate_row_value_(const ObITableReadInfo &read_info,
       ret = OB_ERR_UNEXPECTED;
       TRANS_LOG(WARN, "trans node is null", K(ret), KP(tnode));
     } else if (OB_FAIL(fill_in_row_with_tx_node_(read_info, value_iter, tx_node, row, bitmap, row_scn, read_finished))) {
-      STORAGE_LOG(WARN, "fill in row with tx node failed", KR(ret));
+
     }
   }
 
@@ -147,7 +147,7 @@ int ObReadRow::fill_in_row_with_tx_node_(const storage::ObITableReadInfo &read_i
     }
     if (OB_SUCC(ret) && ObDmlFlag::DF_INSERT == mtd->dml_flag_) {
       read_finished = true;
-      STORAGE_LOG(DEBUG, "chaser debug iter memtable row", KPC(mtd), K(read_finished));
+
     }
   }
   return ret;
@@ -175,15 +175,15 @@ int ObReadRow::iterate_delete_insert_row(const ObITableReadInfo &read_info,
   const ObMvccTransNode *earliest_tx_node = nullptr;
 
   if (OB_FAIL(acquire_delete_insert_tx_node_(value_iter, latest_tx_node, earliest_tx_node))) {
-    STORAGE_LOG(WARN, "acquire delete insert tx node failed", KR(ret));
+
   } else if (OB_ISNULL(latest_tx_node)) {
     ret = OB_SUCCESS;
-    STORAGE_LOG(DEBUG, "all tx node has been folded by major snapshot", KR(ret), K(key));
+
   } else if (latest_tx_node == earliest_tx_node) {
     // they point to the same tx node, which means the same modification
     if (OB_FAIL(fill_in_row_with_tx_node_(
                 read_info, value_iter, latest_tx_node, latest_row, bitmap, latest_row_scn, read_finished))) {
-      STORAGE_LOG(WARN, "fill in row failed", KR(ret));
+
     } else if (OB_UNLIKELY(!read_finished)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("unexpected unfinished reading row", K(ret), K(latest_row), K(bitmap.get_nop_cnt()));
@@ -226,10 +226,10 @@ int ObReadRow::iterate_delete_insert_row(const ObITableReadInfo &read_info,
 
       if (fill_latest) {
         if (OB_FAIL(iterate_row_key(key, latest_row))) {
-          STORAGE_LOG(WARN, "Failed to iterate_row_key", K(ret), K(key));
+
         } else if (OB_FAIL(fill_in_row_with_tx_node_(
                     read_info, value_iter, latest_tx_node, latest_row, bitmap, latest_row_scn, read_finished))) {
-          STORAGE_LOG(WARN, "fill in latest row failed", KR(ret));
+
         } else if (OB_UNLIKELY(!read_finished)) {
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("unexpected unfinished reading row", K(ret), K(latest_row), K(bitmap.get_nop_cnt()));
@@ -243,10 +243,10 @@ int ObReadRow::iterate_delete_insert_row(const ObITableReadInfo &read_info,
         bitmap.reuse();
         read_finished = false;
         if (OB_FAIL(iterate_row_key(key, earliest_row))) {
-          STORAGE_LOG(WARN, "Failed to iterate_row_key", K(ret), K(key));
+
         } else if (OB_FAIL(fill_in_row_with_tx_node_(
                     read_info, value_iter, earliest_tx_node, earliest_row, bitmap, earliest_row_scn, read_finished))) {
-          STORAGE_LOG(WARN, "fill in earliest row failed", KR(ret));
+
         } else if (OB_UNLIKELY(!read_finished)) {
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("unexpected unfinished reading row", K(ret), K(earliest_row), K(bitmap.get_nop_cnt()));
@@ -260,7 +260,7 @@ int ObReadRow::iterate_delete_insert_row(const ObITableReadInfo &read_info,
           latest_row.row_flag_.set_flag(ObDmlFlag::DF_NOT_EXIST);
         }
       }
-      STORAGE_LOG(DEBUG, "Delete-Insert", K(latest_row), K(earliest_row), K(latest_row_scn));
+
     }
   }
   return ret;

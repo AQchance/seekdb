@@ -169,7 +169,7 @@ int ObCGTileScanner::locate(
       }
     }
   }
-  LOG_TRACE("[COLUMNSTORE] CGTileScanner locate range", K(ret), "type", get_type(), K(range), KP(bitmap));
+
   return ret;
 }
 
@@ -282,7 +282,7 @@ int ObCGTileScanner::get_next_rows(uint64_t &count, const uint64_t capacity)
       ret = OB_ITER_END;
     }
   }
-  LOG_TRACE("[COLUMNSTORE] get next rows in cg tile", K(ret), K(count), K(capacity));
+
   return ret;
 }
 
@@ -341,7 +341,7 @@ int ObCGTileScanner::get_next_aligned_rows(ObCGRowScanner *cg_scanner, const uin
     LOG_WARN("Unexpected target row count, should be 0", K(ret),
              K(read_row_count), K(remain_row_count), K(target_row_count), KP(cg_scanner));
   }
-  LOG_DEBUG("[COLUMNSTORE] ObCGTileScanner::get_next_aligned_rows", K(ret), K(target_row_count));
+
   return ret;
 }
 
@@ -371,7 +371,7 @@ int ObCGTileScanner::get_current_row_id(ObCSRowId& current_row_id) const
   }
   if (OB_SUCC(ret) && !found) {
     ret = OB_ERR_UNSUPPORTED_TYPE;
-    LOG_INFO("Unsupported to get current row id now", K(ret), K(access_ctx_->ls_id_), K(access_ctx_->tablet_id_));
+
   }
   return ret;
 }

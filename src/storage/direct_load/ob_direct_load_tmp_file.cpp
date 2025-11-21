@@ -213,7 +213,7 @@ int ObDirectLoadTmpFileIOHandle::pread(char *buf, int64_t size, int64_t offset)
         if (OB_LIKELY(is_retry_err(ret))) {
           if (++retry_cnt <= MAX_RETRY_CNT) {
             ret = OB_SUCCESS;
-            LOG_INFO("retry pread tmp file", K(retry_cnt), K_(io_info), K(size), K(offset));
+
           }
         } else if (OB_ITER_END == ret) {
           ret = OB_ERR_UNEXPECTED;
@@ -262,7 +262,7 @@ int ObDirectLoadTmpFileIOHandle::write(char *buf, int64_t size)
               io_info_.buf_ += write_size;
               io_info_.size_ -= write_size;
               if (io_info_.size_ > 0) {
-                LOG_INFO("retry aio write tmp file", K(retry_cnt), K_(io_info));
+
               } else {
                 break;
               }

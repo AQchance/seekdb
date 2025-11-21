@@ -180,7 +180,7 @@ TEST_F(TestSSMicroCacheCheckpoint, test_compress_micro_ckpt)
     const int64_t start_us = ObTimeUtility::current_time();
     ASSERT_EQ(OB_SUCCESS, compressor->compress(all_ckpt_item, all_ckpt_item_len, out_io_buf, out_io_buf_size, compressed_len));
     const int64_t cost_us = ObTimeUtility::current_time() - start_us;
-    LOG_INFO("finish current round micro_meta ckpt compress", K(all_compressor_name[i]), K(all_ckpt_item_len), K(compressed_len), K(cost_us));
+
   }
 
   // 5. execute reading micro_meta ckpt

@@ -54,7 +54,7 @@ int TestHeartbeatService::clear_deleted_servers_in_all_servers_hb_info(
     server = iter->first;
     iter++;
     if (!has_server_exist_in_array(all_servers_info_in_table, server, idx)) {
-      LOG_INFO("the server is deleted, it can be removed from all_servers_hb_info", K(server));
+
       if (OB_FAIL(all_servers_hb_info.erase_refactored(server))) {
         LOG_WARN("fail to remove the server from all_servers_hb_info", KR(ret), K(server));
       }

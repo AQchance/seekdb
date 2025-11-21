@@ -112,7 +112,7 @@ int ObPushDownTopNFilter::init(bool is_fetch_with_ties,
     }
   }
 
-  LOG_TRACE("[TopN Filter] init topn filter msg");
+
   return ret;
 }
 

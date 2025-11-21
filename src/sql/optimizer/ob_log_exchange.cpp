@@ -699,7 +699,7 @@ int ObLogExchange::px_pipe_blocking_pre(ObPxPipeBlockingCtx &ctx)
       op_ctx->dfo_depth_ += 1;
       child_op_ctx->dfo_depth_ = op_ctx->dfo_depth_;
       child_op_ctx->out_.set_exch(true);
-      LOG_TRACE("pipe blocking ctx", K(get_name()), K(*op_ctx));
+
     }
   }
   return ret;
@@ -736,7 +736,7 @@ int ObLogExchange::px_pipe_blocking_post(ObPxPipeBlockingCtx &ctx)
             && static_cast<ObLogDistinct*>(child)->get_algo() ==  HASH_AGGREGATE
             && !static_cast<ObLogDistinct *>(child)->is_push_down()) {
           static_cast<ObLogDistinct*>(child)->set_block_mode(true);
-          LOG_DEBUG("distinct block mode", K(lbt()));
+
         } else if (OB_FAIL(allocate_material(first_child))) {
           LOG_WARN("allocate material failed", K(ret));
         }
@@ -755,7 +755,7 @@ int ObLogExchange::px_pipe_blocking_post(ObPxPipeBlockingCtx &ctx)
       if (OB_SUCC(ret)) {
         // only for compatibility low level version
         exchange_in->set_old_unblock_mode(false);
-        LOG_TRACE("pipe blocking ctx", K(get_name()), K(*op_ctx));
+
       }
     }
   }
@@ -766,7 +766,7 @@ int ObLogExchange::allocate_granule_pre(AllocGIContext &ctx)
 {
   int ret = OB_SUCCESS;
   gi_info_.set_info(ctx);
-  LOG_TRACE("GI pre store state", K(gi_info_));
+
   IGNORE_RETURN ctx.reset_info();
   // remote exchange operator don't need GI
   if (!is_remote_) {
@@ -779,7 +779,7 @@ int ObLogExchange::allocate_granule_post(AllocGIContext &ctx)
 {
   int ret = OB_SUCCESS;
   gi_info_.get_info(ctx);
-  LOG_TRACE("GI post reset store state", K(gi_info_));
+
   if (!is_remote_) {
     ctx.delete_exchange_op_count();
   }
@@ -1068,7 +1068,7 @@ bool ObLogExchange::support_rich_format_vectorize() const {
   }
   // ordered: 16
   // ms: 17
-  LOG_TRACE("[VEC2.0 PX] support_rich_format_vectorize", K(res), K(dist_method_), K(tmp_ret));
+
   return res;
 }
 

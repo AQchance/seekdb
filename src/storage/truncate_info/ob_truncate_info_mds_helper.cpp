@@ -79,7 +79,7 @@ int ObTruncateInfoMdsHelper::on_register(
       user_ctx,
       0/*lock_timeout_us*/))) {
   } else {
-    LOG_INFO("[TRUNCATE INFO] on_register for ObTruncateTabletArg", K(ret), K(arg), K(user_ctx.get_writer()));
+
   }
   return ret;
 }
@@ -111,7 +111,7 @@ int ObTruncateInfoMdsHelper::on_replay(
     } else if (OB_FAIL(executor.execute(scn, arg.ls_id_, arg.index_tablet_id_))) {
       LOG_WARN("failed to executor", K(ret), K(arg), K(ctx), K(scn));
     } else {
-      LOG_INFO("[TRUNCATE INFO] on_replay for ObTruncateTabletArg", K(ret), K(arg));
+
     }
   }
   return ret;

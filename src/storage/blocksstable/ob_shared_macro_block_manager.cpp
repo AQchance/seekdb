@@ -282,7 +282,7 @@ int ObSharedMacroBlockMgr::write_block(
 
   if (OB_ISNULL(read_info.buf_ = reinterpret_cast<char*>(io_allocator.alloc(read_info.size_)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "failed to alloc macro read info buffer", K(ret), K(read_info.size_));
+
   } else {
     if (OB_FAIL(ObBlockManager::async_read_block(read_info, read_handle))) {
       LOG_WARN("fail to async read macro block", K(ret), K(read_info));
@@ -447,7 +447,7 @@ int ObSharedMacroBlockMgr::defragment()
     ret = OB_NOT_INIT;
     LOG_WARN("ObSharedMacroBlockMgr hasn't been initiated", K(ret));
   } else if (!(ATOMIC_LOAD(&need_defragment_))) { // skip
-    LOG_INFO("skip defragment task", K(ret), K_(need_defragment));
+
   } else if (OB_FAIL(macro_ids.init(MAX_RECYCLABLE_BLOCK_CNT))) {
     LOG_WARN("fail to init macro ids", K(ret));
   } else if (OB_FAIL(get_recyclable_blocks(task_allocator, macro_ids))) {
@@ -507,7 +507,7 @@ int ObSharedMacroBlockMgr::defragment()
 
   if (OB_ITER_END == ret || OB_SUCC(ret)) {
     ret = OB_SUCCESS;
-    LOG_INFO("successfully defragment data blocks", K(rewrite_cnt));
+
   } else if (OB_ALLOCATE_MEMORY_FAILED != ret
       && OB_SERVER_OUTOF_DISK_SPACE != ret
       && OB_TIMEOUT != ret
@@ -904,7 +904,7 @@ int ObSharedMacroBlockMgr::read_sstable_block(
 
     if (OB_ISNULL(read_info.buf_ = reinterpret_cast<char*>(allocator.alloc(read_info.size_)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed to alloc macro read info buffer", K(ret), K(read_info.size_));
+
     } else {
       if (OB_FAIL(ObBlockManager::read_block(read_info, block_handle))) {
         LOG_WARN("fail to read block", K(ret), K(read_info));

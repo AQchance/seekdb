@@ -412,7 +412,7 @@ int ObDBMSSchedJobUtils::stop_dbms_sched_job(
                     ret = OB_ERR_UNEXPECTED;
                     LOG_WARN("set addr failed", K(svr_ip), K(svr_port));
                   } else {
-                    LOG_INFO("send rpc", K(tenant_id), K(job_info.job_name_), K(svr), K(session_id));
+
                     ObString stop_job_name = ObString(job_info.job_name_);
                     OZ (rpc_proxy->stop_dbms_sched_job(tenant_id,
                       stop_job_name,

@@ -28,7 +28,7 @@ int ObMicroBlockChecksumHelper::init(
   reset();
   if (OB_ISNULL(col_descs)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(col_descs));
+
   } else {
     if (need_opt_row_chksum) {
       for (int64_t i = 0; i < col_descs->count(); ++i) {
@@ -44,11 +44,11 @@ int ObMicroBlockChecksumHelper::init(
       } else if (OB_ISNULL(integer_col_buf_ = 
           static_cast<int64_t*>(allocator_.alloc(sizeof(int64_t) * integer_col_cnt_)))) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "failed to alloc integer_col_buf", K(ret), K_(integer_col_cnt));
+
       } else if (OB_ISNULL(integer_col_idx_ = 
           static_cast<int16_t*>(allocator_.alloc(sizeof(int16_t) * integer_col_cnt_)))) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "failed to alloc integer_col_idx", K(ret), K_(integer_col_cnt));
+
       }
     }
       }
@@ -104,7 +104,7 @@ int ObMicroBlockChecksumHelper::cal_rows_checksum(
     }
   } else if (OB_ISNULL(col_descs_) || col_cnt != col_descs_->count()) { // defense
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpect error", K(ret), KPC(col_descs_), K_(integer_col_cnt), K(col_cnt));
+
   } else {
     for (int64_t row_idx = 0; row_idx < row_count; row_idx++) {
       for (int64_t i = 0, idx = 0; i < col_cnt; ++i) {
@@ -137,15 +137,15 @@ int ObMicroBlockChecksumHelper::cal_column_checksum(
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY((nullptr == curr_micro_column_checksum) || nullptr == col_descs_ || vectors.count() != col_descs_->count())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), KP(curr_micro_column_checksum), KPC(col_descs_), K(vectors.count()));
+
   } else {
     if (is_arch_supported(common::ObTargetArch::SSE42)) {
       if (OB_FAIL(cal_column_checksum_sse42(vectors, start, row_count, curr_micro_column_checksum))) {
-        STORAGE_LOG(WARN, "failed to cal column checksum using sse42 func", K(ret)); 
+ 
       }
     } else {
       if (OB_FAIL(cal_column_checksum_normal(vectors, start, row_count, curr_micro_column_checksum))) {
-        STORAGE_LOG(WARN, "failed to cal column checksum using normal func", K(ret)); 
+ 
       }
     }
   }
@@ -321,7 +321,7 @@ int ObMicroBlockChecksumHelper::cal_column_checksum_sse42(
       }
       default: {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected vector format", K(ret), K(vec_format));
+
       }
     }
   }

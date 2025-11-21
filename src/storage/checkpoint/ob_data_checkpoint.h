@@ -284,7 +284,7 @@ public:
         ret = lock.rdlock();
       }
       if (OB_SUCCESS != ret) {
-        STORAGE_LOG(ERROR, "failed to lock checkpoint lock", KR(ret), K(flag));
+
         usleep(100);
       }
     } while (OB_SUCCESS != ret);

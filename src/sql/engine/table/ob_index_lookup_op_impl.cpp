@@ -39,7 +39,7 @@ int ObIndexLookupOpImpl::get_next_row()
   bool got_next_row = false;
   int64_t simulate_batch_row_cnt = - EVENT_CALL(EventTable::EN_TABLE_LOOKUP_BATCH_ROW_COUNT);
   int64_t default_row_batch_cnt  = simulate_batch_row_cnt > 0 ? simulate_batch_row_cnt : default_batch_row_count_;
-  LOG_DEBUG("simulate lookup row batch count", K(simulate_batch_row_cnt), K(default_row_batch_cnt));
+
   do {
     switch (state_) {
       case INDEX_SCAN: {
@@ -118,7 +118,7 @@ int ObIndexLookupOpImpl::get_next_rows(int64_t &count, int64_t capacity)
   bool got_next_rows = false;
   int64_t simulate_batch_row_cnt = - EVENT_CALL(EventTable::EN_TABLE_LOOKUP_BATCH_ROW_COUNT);
   int64_t default_row_batch_cnt  = simulate_batch_row_cnt > 0 ? simulate_batch_row_cnt : default_batch_row_count_;
-  LOG_DEBUG("simulate lookup row batch count", K(simulate_batch_row_cnt), K(default_row_batch_cnt));
+
   do {
     switch (state_) {
       case INDEX_SCAN: {

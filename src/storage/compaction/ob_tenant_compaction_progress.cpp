@@ -99,7 +99,7 @@ int ObTenantCompactionProgressMgr::init()
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(ObInfoRingArray::init(SERVER_PROGRESS_MAX_CNT))) {
-    STORAGE_LOG(WARN, "failed to init ObInfoRingArray", K(ret));
+
   }
   return ret;
 }
@@ -202,7 +202,7 @@ int ObTenantCompactionProgressMgr::init_progress(const int64_t major_snapshot_ve
         LOG_WARN("failed to add progress", K(ret));
       } else {
         pos = get_last_pos();
-        LOG_INFO("success to add progress", K(ret), K(major_snapshot_version), K(progress), K(size()));
+
       }
     }
   }
@@ -225,7 +225,7 @@ int ObTenantCompactionProgressMgr::init_progress(const int64_t major_snapshot_ve
       array_[pos].status_ = share::ObIDag::DAG_STATUS_NODE_RUNNING;
     }
     if (OB_SUCC(ret)) {
-      LOG_INFO("success to init progress", K(ret), K(major_snapshot_version), K(array_[pos]));
+
     }
   }
   return ret;
@@ -254,7 +254,7 @@ int ObTenantCompactionProgressMgr::finish_progress(const int64_t major_snapshot_
     } else if (OB_FAIL(finish_progress_(array_[pos]))) {
       LOG_WARN("failed to finish progress", K(ret), K(pos), K(major_snapshot_version));
     } else {
-      LOG_DEBUG("success to update status", K(ret), K(pos), K(major_snapshot_version), K(array_[pos]));
+
     }
   }
   return ret;
@@ -276,7 +276,7 @@ int ObTenantCompactionProgressMgr::get_pos_(const int64_t major_snapshot_version
     } else {
       pos = -1;
       ret = OB_ENTRY_NOT_EXIST;
-      LOG_DEBUG("entry not exits", K(ret), K(pos), K(major_snapshot_version));
+
       break;
     }
     --loop_cnt;
@@ -428,7 +428,7 @@ int ObTenantCompactionProgressIterator::open(const int64_t tenant_id)
     LOG_WARN("The ObTabletCompactionProgressIterator has been opened", K(ret));
   } else if (!::is_valid_tenant_id(tenant_id)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(tenant_id));
+
   } else if (OB_SYS_TENANT_ID == tenant_id) { // sys tenant can get all tenants' info
     GCTX.omt_->get_tenant_ids(all_tenants);
   } else if (OB_FAIL(all_tenants.push_back(tenant_id))) {
@@ -442,7 +442,7 @@ int ObTenantCompactionProgressIterator::open(const int64_t tenant_id)
         }
       } else {
         if (OB_TENANT_NOT_IN_SERVER != ret) {
-          STORAGE_LOG(WARN, "switch tenant failed", K(ret), K(all_tenants[i]));
+
         } else {
           ret = OB_SUCCESS;
           continue;
@@ -493,7 +493,7 @@ int ObTabletCompactionProgressIterator::open(const int64_t tenant_id)
     LOG_WARN("The ObTabletCompactionProgressIterator has been opened", K(ret));
   } else if (!::is_valid_tenant_id(tenant_id)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(tenant_id));
+
   } else if (OB_SYS_TENANT_ID == tenant_id) { // sys tenant can get all tenants' info
     GCTX.omt_->get_tenant_ids(all_tenants);
   } else if (OB_FAIL(all_tenants.push_back(tenant_id))) {
@@ -508,7 +508,7 @@ int ObTabletCompactionProgressIterator::open(const int64_t tenant_id)
         }
       } else {
         if (OB_TENANT_NOT_IN_SERVER != ret) {
-          STORAGE_LOG(WARN, "switch tenant failed", K(ret), K(tenant_id));
+
         } else {
           ret = OB_SUCCESS;
           continue;

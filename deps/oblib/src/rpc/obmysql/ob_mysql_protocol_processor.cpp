@@ -220,7 +220,7 @@ int ObMysqlProtocolProcessor::decode_body(ObICSMemPool& pool, const char*& buf, 
     // Attention!! do not get cmd type, process() will handle;
     raw_pkt->set_content(pkt_body, pktlen);
     pkt = raw_pkt;
-    LOG_DEBUG("decode body succ", KPC(raw_pkt));
+
   }
   return ret;
 }

@@ -37,9 +37,9 @@ public:
     int64_t column_cnt = 0;
     if (OB_UNLIKELY(is_inited_)) {
       ret = OB_INIT_TWICE;
-      STORAGE_LOG(WARN, "ObIPartitionMergeFuser init twice", K(ret));
+
     } else if (OB_FAIL(merge_param.get_schema()->get_store_column_count(column_cnt, true/*full_col*/))) {
-      STORAGE_LOG(WARN, "failed to get store column count", K(ret), K(merge_param.get_schema()));
+
     } else {
       column_cnt_ = column_cnt + storage::ObMultiVersionRowkeyHelpper::get_extra_rowkey_col_cnt();
     }

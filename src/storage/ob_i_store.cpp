@@ -45,7 +45,7 @@ int ObMultiVersionRowkeyHelpper::add_extra_rowkey_cols(ObColDescIArray &store_ou
     // so in effect we store the latest version first
     desc.col_order_ = ObOrderType::ASC;
     if (OB_FAIL(store_out_cols.push_back(desc))) {
-      STORAGE_LOG(WARN, "add store utput columns failed", K(ret));
+
     }
   }
   return ret;
@@ -77,7 +77,7 @@ int ObStoreCtx::init_for_read(const ObLSID &ls_id,
   ObLSService *ls_svr = MTL(ObLSService*);
   ObLSHandle ls_handle;
   if (OB_FAIL(ls_svr->get_ls(ls_id, ls_handle, ObLSGetMod::STORAGE_MOD))) {
-    STORAGE_LOG(WARN, "get_ls from ls service fail.", K(ret), K(*ls_svr));
+
   } else {
     tablet_id_ = tablet_id;
     ret = init_for_read(ls_handle, timeout, tx_lock_timeout, snapshot_version);
@@ -95,15 +95,15 @@ int ObStoreCtx::init_for_read(const ObLSHandle &ls_handle,
   ObTxTable *tx_table = nullptr;
   if (!ls_handle.is_valid() || timeout < 0 || !snapshot_version.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "get invalid arguments", K(ret), K(ls_handle), K(timeout), K(tx_lock_timeout), K(snapshot_version));
+
   } else if (OB_ISNULL(ls = ls_handle.get_ls())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "ls is null", K(ret), K(ls_id_));
+
   } else if (OB_ISNULL(tx_table = ls->get_tx_table())) {
     ret = OB_ERR_NULL_VALUE;
-    STORAGE_LOG(WARN, "get_tx_table from log stream fail.", K(ret), K(*ls));
+
   } else if (OB_FAIL(mvcc_acc_ctx_.init_read(tx_table, snapshot_version, timeout, tx_lock_timeout))) {
-    STORAGE_LOG(WARN, "mvcc_acc_ctx init read fail", KR(ret), K(mvcc_acc_ctx_));
+
   } else {
     ls_id_ = ls->get_ls_id();
     timeout_ = timeout;
@@ -179,7 +179,7 @@ OB_DEF_SERIALIZE(ObStoreRow)
   if (OB_SUCC(ret) && is_sparse_row_) {
     if (OB_ISNULL(column_ids_)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "sparse row's column id is null", K(ret));
+
     } else {
       OB_UNIS_ENCODE_ARRAY(column_ids_, row_val_.count_);
     }
@@ -297,7 +297,7 @@ int ObLockRowChecker::check_lock_row_valid(
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(row.get_column_count() < rowkey_cnt)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "row count is less than rowkey count", K(row), K(rowkey_cnt));
+
   } else if (row.is_uncommitted_row() || is_memtable_iter_row_check) {
     bool pure_empty_row = true;
     for (int i = rowkey_cnt; pure_empty_row && i < row.get_column_count(); ++i) {
@@ -308,12 +308,12 @@ int ObLockRowChecker::check_lock_row_valid(
     if (row.is_uncommitted_row()) {
       if (!pure_empty_row) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "uncommitted lock row have normal cells", K(ret), K(row), K(rowkey_cnt));
+
       }
     } else if (is_memtable_iter_row_check && pure_empty_row) { // a pure lock committed row from memtable
       // a pure empty lock row from upgrade sstable need to be compatible
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "a committed lock row only have rowkey", K(ret), K(row), K(rowkey_cnt));
+
     }
   }
   return ret;

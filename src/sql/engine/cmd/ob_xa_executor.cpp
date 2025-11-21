@@ -30,7 +30,7 @@ namespace sql
 int ObXaStartExecutor::execute(ObExecContext &ctx, ObXaStartStmt &stmt)
 {
   int ret = OB_NOT_SUPPORTED;
-  LOG_INFO("mysql xa start", K(ret));
+
   return ret;
 }
 
@@ -38,7 +38,7 @@ int ObXaStartExecutor::execute(ObExecContext &ctx, ObXaStartStmt &stmt)
 int ObXaEndExecutor::execute(ObExecContext &ctx, ObXaEndStmt &stmt)
 {
   int ret = OB_NOT_SUPPORTED;
-  LOG_INFO("mysql xa end", K(ret));
+
   return ret;
 }
 
@@ -46,7 +46,7 @@ int ObXaEndExecutor::execute(ObExecContext &ctx, ObXaEndStmt &stmt)
 int ObXaPrepareExecutor::execute(ObExecContext &ctx, ObXaPrepareStmt &stmt)
 {
   int ret = OB_NOT_SUPPORTED;
-  LOG_INFO("mysql xa prepare", K(ret));
+
   return ret;
 }
 
@@ -54,7 +54,7 @@ int ObXaPrepareExecutor::execute(ObExecContext &ctx, ObXaPrepareStmt &stmt)
 int ObXaCommitExecutor::execute(ObExecContext &ctx, ObXaCommitStmt &stmt)
 {
   int ret = OB_NOT_SUPPORTED;
-  LOG_INFO("mysql xa commit", K(ret));
+
   return ret;
 }
 
@@ -62,7 +62,7 @@ int ObXaCommitExecutor::execute(ObExecContext &ctx, ObXaCommitStmt &stmt)
 int ObXaRollbackExecutor::execute(ObExecContext &ctx, ObXaRollBackStmt &stmt)
 {
   int ret = OB_NOT_SUPPORTED;
-  LOG_INFO("mysql xa rollback", K(ret));
+
   return ret;
 }
 

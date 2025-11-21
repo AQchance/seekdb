@@ -180,7 +180,7 @@ int ObDASIterUtils::create_das_scan_iter_tree(ObDASIterTreeType tree_type,
     LOG_WARN("failed to create das scan iter tree", K(ret));
   }
 
-  LOG_TRACE("create das scan iter tree", K(tree_type), K(ret));
+
   return ret;
 }
 
@@ -282,7 +282,7 @@ int ObDASIterUtils::create_tsc_iter_tree(ObDASIterTreeType tree_type,
     LOG_WARN("failed to create table scan iter tree", K(ret));
   }
 
-  LOG_DEBUG("create table scan iter tree", K(tree_type), K(ret));
+
   return ret;
 }
 

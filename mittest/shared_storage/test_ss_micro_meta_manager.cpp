@@ -215,7 +215,7 @@ int TestSSMicroMetaManager::TestSSMicroMetaMgrThread::parallel_add_same_micro_me
 TEST_F(TestSSMicroMetaManager, test_micro_meta_mgr)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_micro_meta_mgr");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSMicroMetaManager &micro_meta_mgr = micro_cache->micro_meta_mgr_;
   ObSSMicroCacheStat &cache_stat = micro_cache->cache_stat_;
@@ -270,7 +270,7 @@ TEST_F(TestSSMicroMetaManager, test_micro_meta_mgr)
 TEST_F(TestSSMicroMetaManager, test_destroy_micro_map)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_destroy_micro_map");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSMicroMetaManager &micro_meta_mgr = micro_cache->micro_meta_mgr_;
   ObSSMicroCacheStat &cache_stat = micro_cache->cache_stat_;
@@ -319,7 +319,7 @@ TEST_F(TestSSMicroMetaManager, test_destroy_micro_map)
 
 TEST_F(TestSSMicroMetaManager, test_micro_map_iter)
 {
-  LOG_INFO("TEST_CASE: start test_micro_map_iter");
+
   const uint32_t ori_micro_ref_cnt = ORI_MICRO_REF_CNT;
   const uint64_t tenant_id = MTL_ID();
   ObSSMicroMetaManager &micro_meta_mgr = MTL(ObSSMicroCache *)->micro_meta_mgr_;
@@ -365,7 +365,7 @@ TEST_F(TestSSMicroMetaManager, test_micro_map_iter)
 
 TEST_F(TestSSMicroMetaManager, test_random_acquire_cold_micro_blocks)
 {
-  LOG_INFO("TEST_CASE: start test_random_acquire_cold_micro_blocks");
+
   const uint64_t tenant_id = MTL_ID();
   ObSSMicroMetaManager &micro_meta_mgr = MTL(ObSSMicroCache *)->micro_meta_mgr_;
   ObSSReleaseCacheTask &arc_task = MTL(ObSSMicroCache *)->task_runner_.release_cache_task_;
@@ -436,7 +436,7 @@ TEST_F(TestSSMicroMetaManager, test_random_acquire_cold_micro_blocks)
 TEST_F(TestSSMicroMetaManager, test_evict_and_delete_micro_meta)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_evict_and_delete_micro_meta");
+
   const uint64_t tenant_id = MTL_ID();
   ObSSMicroMetaManager &micro_meta_mgr = MTL(ObSSMicroCache *)->micro_meta_mgr_;
   ObSSReleaseCacheTask &arc_task = MTL(ObSSMicroCache *)->task_runner_.release_cache_task_;
@@ -546,7 +546,7 @@ TEST_F(TestSSMicroMetaManager, test_evict_and_delete_micro_meta)
 
 TEST_F(TestSSMicroMetaManager, test_same_micro_update)
 {
-  LOG_INFO("TEST_CASE: start test_same_micro_update");
+
   ObSSMicroMetaManager &micro_meta_mgr = MTL(ObSSMicroCache *)->micro_meta_mgr_;
   ObSSMemDataManager &mem_data_mgr = MTL(ObSSMicroCache *)->mem_data_mgr_;
   ObSSMicroCacheStat &cache_stat = MTL(ObSSMicroCache *)->cache_stat_;
@@ -605,7 +605,7 @@ TEST_F(TestSSMicroMetaManager, test_same_micro_update)
 
 TEST_F(TestSSMicroMetaManager, test_reach_mem_limit_when_add_micro)
 {
-  LOG_INFO("TEST_CASE: start test_reach_mem_limit_when_add_micro");
+
   ObSSMicroMetaManager &micro_meta_mgr = MTL(ObSSMicroCache *)->micro_meta_mgr_;
   ObSSMemDataManager &mem_data_mgr = MTL(ObSSMicroCache *)->mem_data_mgr_;
   ObSSMicroCacheStat &cache_stat = MTL(ObSSMicroCache *)->cache_stat_;
@@ -676,7 +676,7 @@ TEST_F(TestSSMicroMetaManager, test_reach_mem_limit_when_add_micro)
 
 TEST_F(TestSSMicroMetaManager, micro_meta_manager)
 {
-  LOG_INFO("TEST_CASE: start micro_meta_manager");
+
   const int64_t block_size = 2 * 1024 * 1024; // 2MB
   const uint64_t tenant_id = OB_SERVER_TENANT_ID;
   const int64_t max_macro_block_cnt = 100;
@@ -760,7 +760,7 @@ TEST_F(TestSSMicroMetaManager, micro_meta_manager)
 /* Test multiple threads add micro meta into cacheMap in parallel and perform read verification. */
 TEST_F(TestSSMicroMetaManager, test_parallel_add_and_get_micro_meta)
 {
-  LOG_INFO("TEST_CASE: start test_parallel_add_and_get_micro_meta");
+
   ObSSMemDataManager &mem_data_mgr = MTL(ObSSMicroCache *)->mem_data_mgr_;
   ObSSMemBlockPool &mem_blk_pool = mem_data_mgr.mem_block_pool_;
   ObSSMemBlock *mem_blk_ptr = nullptr;
@@ -815,7 +815,7 @@ TEST_F(TestSSMicroMetaManager, test_parallel_add_same_micro_meta)
 
 TEST_F(TestSSMicroMetaManager, test_clear_micro_meta_by_tablet_id)
 {
-  LOG_INFO("TEST_CASE: start test_clear_micro_meta_by_tablet_id");
+
   ObSSMicroMetaManager &micro_meta_mgr = MTL(ObSSMicroCache *)->micro_meta_mgr_;
   ObSSMemDataManager &mem_data_mgr = MTL(ObSSMicroCache *)->mem_data_mgr_;
   ObSSMicroCacheStat &cache_stat = MTL(ObSSMicroCache *)->cache_stat_;
@@ -904,7 +904,7 @@ TEST_F(TestSSMicroMetaManager, test_clear_micro_meta_by_tablet_id)
 /* Test after call clear_tablet_micro_meta(), phy_blk's valid_len will decrease. */
 TEST_F(TestSSMicroMetaManager, test_clear_tablet_micro_meta_and_update_valid_len)
 {
-  LOG_INFO("TEST_CASE: start test_clear_tablet_micro_meta_and_update_valid_len");
+
   ObSSMicroMetaManager &micro_meta_mgr = MTL(ObSSMicroCache *)->micro_meta_mgr_;
   ObSSMemDataManager &mem_data_mgr = MTL(ObSSMicroCache *)->mem_data_mgr_;
   ObSSPhysicalBlockManager &phy_blk_mgr = MTL(ObSSMicroCache *)->phy_blk_mgr_;
@@ -952,7 +952,7 @@ TEST_F(TestSSMicroMetaManager, test_clear_tablet_micro_meta_and_update_valid_len
 /* Test unpersisted micro_block is deleted for TTL expired */
 TEST_F(TestSSMicroMetaManager, test_delete_unpersisted_and_expired_micro_block)
 {
-  LOG_INFO("TEST_CASE: start test_delete_unpersisted_and_expired_micro_block");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSMicroMetaManager &micro_meta_mgr = micro_cache->micro_meta_mgr_;
   ObSSMemDataManager &mem_data_mgr = micro_cache->mem_data_mgr_;
@@ -1008,7 +1008,7 @@ TEST_F(TestSSMicroMetaManager, test_delete_unpersisted_and_expired_micro_block)
 TEST_F(TestSSMicroMetaManager, test_arc_limit_p)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_arc_limit_p");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   micro_cache->stop();
   micro_cache->wait();

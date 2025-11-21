@@ -283,7 +283,7 @@ int ObTabletToLSTableOperator::batch_update(
       }
     }
     if (OB_SUCC(ret)) {
-      LOG_TRACE("batch update tablet_to_ls success", K(tenant_id), K(infos));
+
     }
   }
   return ret;
@@ -312,7 +312,7 @@ int ObTabletToLSTableOperator::update_table_to_tablet_id_mapping(common::ObISQLC
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("expect one row", K(ret), K(sql), K(affected_rows));
     } else {
-      LOG_TRACE("update tablet_to_ls success", K(tenant_id), K(affected_rows));
+
     }
   }
   return ret;

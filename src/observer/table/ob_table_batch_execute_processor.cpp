@@ -260,7 +260,7 @@ int ObTableBatchExecuteP::try_process()
 
 #ifndef NDEBUG
   // debug mode
-  LOG_INFO("[TABLE] execute batch operation", K(ret), K_(result), K_(retry_count));
+
 #else
   // release mode
   LOG_TRACE("[TABLE] execute batch operation", K(ret), K_(result), K_(retry_count),
@@ -282,7 +282,7 @@ int ObTableBatchExecuteP::init_single_op_tb_ctx(table::ObTableCtx &ctx,
   ctx.set_sess_guard(&sess_guard_);
 
   if (ctx.is_init()) {
-    LOG_INFO("tb ctx has been inited", K(ctx));
+
   } else if (OB_FAIL(ctx.init_common(credential_, arg_.tablet_id_, get_timeout_ts()))) {
     LOG_WARN("fail to init table ctx common part", K(ret), K(arg_.table_name_));
   } else {

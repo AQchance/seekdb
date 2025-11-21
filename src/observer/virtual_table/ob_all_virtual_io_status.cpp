@@ -419,7 +419,7 @@ int ObAllVirtualIOQuota::record_user_group(const uint64_t tenant_id, ObIOUsage &
                                                group_weight))) {
           LOG_WARN("get group config failed", K(ret), K(group_config_index));
         } else {
-          LOG_INFO("get group config", K(ret), K(tenant_id), K(group_config_index), K(io_config), K(item), K(group_min), K(group_max), K(group_weight));
+
         }
         if (OB_FAIL(ret)) {
           // do nothing
@@ -433,7 +433,7 @@ int ObAllVirtualIOQuota::record_user_group(const uint64_t tenant_id, ObIOUsage &
                                                          is_io_ability_valid);
           if (!is_io_ability_valid) {
             group_min = group_max = INT64_MAX;
-            LOG_INFO("invalid io ability", K(ret), K(item), K(access_mode), K(info), K(iops_scale));
+
           }
         } else {
           iops_scale = 1.0 / info.at(i).avg_byte_;
@@ -444,7 +444,7 @@ int ObAllVirtualIOQuota::record_user_group(const uint64_t tenant_id, ObIOUsage &
           if (OB_FAIL(quota_infos_.push_back(item))) {
             LOG_WARN("push back io group item failed", K(i), K(ret), K(item));
           } else {
-            LOG_INFO("push back item", K(ret), K(item));
+
           }
         }
       }

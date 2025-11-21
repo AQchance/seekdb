@@ -134,7 +134,7 @@ int ObCGGroupByScanner::decide_group_size(int64_t &group_size)
           MAX(query_index_range_.start_row_id_, micro_data_range.start_row_id_) + 1;
     }
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(group_size), K_(query_index_range), K_(index_prefetcher));
+
   return ret;
 }
 

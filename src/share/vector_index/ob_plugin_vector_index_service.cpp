@@ -44,7 +44,7 @@ ObPluginVectorIndexMgr::~ObPluginVectorIndexMgr()
 void ObPluginVectorIndexMgr::destroy()
 {
   if (IS_INIT) {
-    LOG_INFO("LS Vector Index Mgr destroy", K(ls_id_));
+
     is_inited_ = false;
     need_check_ = false;
     ls_id_.reset();
@@ -444,7 +444,7 @@ int ObPluginVectorIndexMgr::get_or_create_partial_adapter_(ObTabletID tablet_id,
       } else if (OB_FAIL(get_adapter_inst_guard(tablet_id, adapter_guard))) {
         LOG_WARN("failed to get tmp vector index instance with ls", K(tablet_id), K(type), KR(ret));
       } else {
-        LOG_INFO("create partial index adapter success", K(ret), KPC(adapter_guard.get_adatper()));
+
       }
     }
   }
@@ -577,7 +577,7 @@ int ObPluginVectorIndexMgr::check_need_mem_data_sync_task(bool &need_sync)
 {
   need_sync = false;
   mem_sync_info_.check_and_switch_if_needed(need_sync, ls_tablet_task_ctx_.all_finished_);
-  LOG_INFO("memdata sync check", K(ls_id_), K(need_sync), K(ls_tablet_task_ctx_));
+
   // both map empty, do nothing
   return OB_SUCCESS;
 }
@@ -628,7 +628,7 @@ int ObPluginVectorIndexService::acquire_ivf_build_helper_guard(
       } else if (OB_FAIL(get_build_helper_inst_guard(ls_id, key, helper_guard))) {
         LOG_WARN("failed to get tmp ivf build helper instance", K(ret), K(ls_id), K(key), K(type));
       } else {
-        LOG_INFO("create ivf build helper success", K(ret), K(ls_id), KPC(helper_guard.get_helper()));
+
       }
     }
   } else if (OB_ISNULL(ls_index_mgr)) {
@@ -645,7 +645,7 @@ int ObPluginVectorIndexService::acquire_ivf_build_helper_guard(
       } else if (OB_FAIL(ls_index_mgr->get_build_helper_inst_guard(key, helper_guard))) {
         LOG_WARN("failed to get tmp vector index instance with ls", KR(ret), K(ls_id), K(key), K(type));
       } else {
-        LOG_INFO("create partial index adapter success", K(ret), K(ls_id), K(key), KPC(helper_guard.get_helper()));
+
       }
     }
   } else {
@@ -676,7 +676,7 @@ int ObPluginVectorIndexService::acquire_adapter_guard(ObLSID ls_id,
       } else if (OB_FAIL(get_adapter_inst_guard(ls_id, tablet_id, adapter_guard))) {
         LOG_WARN("failed to get tmp vector index instance", K(ls_id), K(tablet_id), K(type), KR(ret));
       } else {
-        LOG_INFO("create partial index adapter success", K(ret), K(ls_id), KPC(adapter_guard.get_adatper()));
+
       }
     }
   } else if (OB_ISNULL(ls_index_mgr)) {
@@ -693,7 +693,7 @@ int ObPluginVectorIndexService::acquire_adapter_guard(ObLSID ls_id,
       } else if (OB_FAIL(ls_index_mgr->get_adapter_inst_guard(tablet_id, adapter_guard))) {
         LOG_WARN("failed to get tmp vector index instance with ls", K(ls_id), K(tablet_id), K(type), KR(ret));
       } else {
-        LOG_INFO("create partial index adapter success", K(ret), K(ls_id), KP(adapter_guard.get_adatper()), KPC(adapter_guard.get_adatper()));
+
       }
     }
   } else {
@@ -708,7 +708,7 @@ int ObPluginVectorIndexService::acquire_adapter_guard(ObLSID ls_id,
         && OB_FAIL(adapter_guard.get_adatper()->set_param(*vec_index_param, dim))) {
       LOG_WARN("failed to set param", K(ret), K(ls_id), K(tablet_id), K(type), KPC(vec_index_param), K(dim));
     }
-    LOG_INFO("may get get partial adapter during maintenance", KPC(adapter_guard.get_adatper()));
+
   }
 
   return ret;
@@ -1085,7 +1085,7 @@ int ObPluginVectorIndexService::init(const uint64_t tenant_id,
     ls_service_ = ls_service;
     sql_proxy_ = GCTX.sql_proxy_;
     is_inited_ = true;
-    LOG_INFO("plugin vector index service: init", KR(ret), K_(tenant_id));  
+  
   }
   return ret;
 }
@@ -1175,7 +1175,7 @@ int ObPluginVectorIndexService::alloc_tenant_vec_async_task_sched()
       tenant_vec_async_task_sched_ = nullptr;
     }
   }
-  LOG_DEBUG("finish alloc_tenant_vec_async_task_sched", K(ret), K(tenant_id_));
+
   return ret;
 }
 
@@ -1204,7 +1204,7 @@ int ObPluginVectorIndexService::start()
 void ObPluginVectorIndexService::stop()
 {
   if (IS_INIT) {
-    LOG_INFO("stop vector index service", K_(tenant_id), K_(is_inited));
+
     if (OB_NOT_NULL(tenant_vec_async_task_sched_)) {
       tenant_vec_async_task_sched_->stop();
     }
@@ -1217,7 +1217,7 @@ void ObPluginVectorIndexService::stop()
 void ObPluginVectorIndexService::wait()
 {
   if (IS_INIT) {
-    LOG_INFO("wait vector index service", K_(tenant_id));
+
     if (OB_NOT_NULL(tenant_vec_async_task_sched_)) {
       tenant_vec_async_task_sched_->wait();
     }
@@ -1235,13 +1235,13 @@ void ObPluginVectorIndexMgr::dump_all_inst()
     const ObTabletID &tablet_id = iter->first;
     ObPluginVectorIndexAdaptor *adapter = iter->second;
     ObVectorIndexParam *hnsw_param = (adapter == nullptr)? nullptr : (ObVectorIndexParam *)(adapter->get_algo_data());
-    LOG_INFO("dump partial index adapter", K(ls_id_), K(tablet_id), KP(adapter), KPC(adapter), KPC(hnsw_param));
+
   }
   FOREACH(iter, complete_index_adpt_map_) {
     const ObTabletID &tablet_id = iter->first;
     ObPluginVectorIndexAdaptor *adapter = iter->second;
     ObVectorIndexParam *hnsw_param = (adapter == nullptr)? nullptr : (ObVectorIndexParam *)(adapter->get_algo_data());
-    LOG_INFO("dump complete index adapter", K(ls_id_), K(tablet_id), KP(adapter), KPC(adapter), KPC(hnsw_param));
+
   }
 }
 
@@ -1603,7 +1603,7 @@ int ObPluginVectorIndexMgr::get_ivf_cache_mgr(const ObIvfCacheMgrKey& cachr_mgr_
     if (ret != OB_HASH_NOT_EXIST) {
       LOG_WARN("fail to get cache mgr", K(ret), K(cachr_mgr_key));
     } else {
-      LOG_INFO("cache mgr not exist", K(ret), K(cachr_mgr_key));
+
     }
   } else if (OB_ISNULL(cache_mgr)) {
     ret = OB_ERR_NULL_VALUE;
@@ -1669,7 +1669,7 @@ int ObPluginVectorIndexMgr::create_ivf_cache_mgr(ObIAllocator &allocator,
     } else {
       if (OB_FAIL(set_ivf_cache_mgr(key, tmp_ivf_cache_mgr))) {
         if (ret == OB_HASH_EXIST) {
-          LOG_INFO("vector index ivf cache mgr may created by other threads");
+
           ret = OB_SUCCESS;
         } else {
           LOG_WARN("set vector index ivf cache mgr faild", KR(ret), K(key));
@@ -1838,7 +1838,7 @@ int ObPluginVectorIndexService::generate_get_aux_info_sql(
             tablet_id.id(), max_center_id))) {
           LOG_WARN("failed to assign sql string", K(ret));
         } else {
-          LOG_DEBUG("success to generate sql string", K(ret), K(sql_string), K(table_id), K(tablet_id));
+
         }
       }
     }

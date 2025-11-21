@@ -137,7 +137,7 @@ int ObMonitorInfoManager::add_monitor_info(ObPhyPlanMonitorInfo *info)
         }
       } else {
         operator_info_size_ += cur_operator_info_size;
-        LOG_DEBUG("add monitor info", K(*info));
+
         break;
       }
     }

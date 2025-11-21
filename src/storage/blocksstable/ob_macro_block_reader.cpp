@@ -59,12 +59,12 @@ int ObMacroBlockReader::decompress_data(
   int64_t pos = 0;
   if (OB_ISNULL(buf)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid arguments to decompress data", K(ret), KP(buf), K(size));
+
   } else if (OB_FAIL(header.deserialize(buf, size, pos))) {
-    STORAGE_LOG(WARN, "fail to deserialize record header", K(ret));
+
   } else if (OB_UNLIKELY(size < header.header_size_)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), K(size), "header_size", header.header_size_);
+
   } else {
     is_compressed = header.is_compressed_data();
 
@@ -98,11 +98,11 @@ int ObMacroBlockReader::decompress_data_buf(
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("Invalid input", K(ret), KP(data_buf), KP(header_buf));
   } else if (OB_FAIL(header.deserialize(header_buf, header_size, pos))) {
-    STORAGE_LOG(WARN, "fail to deserialize record header", K(ret));
+
   } else {
     if (nullptr == compressor_ || compressor_->get_compressor_type() != compressor_type) {
       if (OB_FAIL(ObCompressorPool::get_instance().get_compressor(compressor_type, compressor_))) {
-        STORAGE_LOG(WARN, "Fail to get compressor, ", K(ret), K(compressor_type));
+
       }
     }
 
@@ -171,7 +171,7 @@ int ObMacroBlockReader::decrypt_and_decompress_data(
         block_header.fixed_header_.encrypt_key_);
     if (OB_FAIL(decrypt_and_decompress_data(deserialize_meta, buf, size, uncomp_buf, uncomp_size,
         is_compressed, need_deep_copy, nullptr/*ext_allocator*/))) {
-      STORAGE_LOG(WARN, "fail to decrypt and decompress data", K(ret));
+
     }
   }
   return ret;
@@ -202,7 +202,7 @@ int ObMacroBlockReader::decrypt_and_decompress_data(
         block_header.encrypt_key_);
     if (OB_FAIL(decrypt_and_decompress_data(deserialize_meta, buf, size, uncomp_buf, uncomp_size,
         is_compressed, need_deep_copy, nullptr/*ext_allocator*/))) {
-      STORAGE_LOG(WARN, "fail to decrypt and decompress data", K(ret));
+
     }
   }
   return ret;
@@ -259,7 +259,7 @@ int ObMacroBlockReader::alloc_buf(const int64_t req_size, char *&buf, int64_t &b
     }
     if (NULL == (buf = static_cast<char*>(allocator_.alloc(req_size)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "Fail to allocate memory for buf, ", K(req_size), K(ret));
+
     } else {
       buf_size = req_size;
     }
@@ -711,7 +711,7 @@ int ObSSTableDataBlockReader::dump_sstable_micro_header(
       }
     } else {
       ret = OB_NOT_SUPPORTED;
-      STORAGE_LOG(WARN, "not supported store type", K(ret), K(row_store_type));
+
     }
   }
 
@@ -830,7 +830,7 @@ int ObSSTableDataBlockReader::dump_bloom_filter_data_block()
   int ret = OB_SUCCESS;
   if (OB_ISNULL(bloomfilter_header_) || OB_UNLIKELY(!bloomfilter_header_->is_valid())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Invalid bloomfilter macro block header", KPC(bloomfilter_header_), K(ret));
+
   } else {
     bool is_compressed = false;
     const char *block_buf = data_ + bloomfilter_header_->micro_block_data_offset_;
@@ -842,10 +842,10 @@ int ObSSTableDataBlockReader::dump_bloom_filter_data_block()
         micro_data.get_buf(),
         micro_data.get_buf_size(),
         is_compressed))) {
-      STORAGE_LOG(WARN, "Failed to decompress bloom filter micro block data", K(ret));
+
     } else if (OB_UNLIKELY(!micro_data.is_valid())) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "Unexcepted micro data", K(micro_data), K(ret));
+
     } else {
       const ObBloomFilterMicroBlockHeader *header = reinterpret_cast<const ObBloomFilterMicroBlockHeader *>(micro_data.get_buf());
       printer_.print_bloom_filter_micro_header(header);

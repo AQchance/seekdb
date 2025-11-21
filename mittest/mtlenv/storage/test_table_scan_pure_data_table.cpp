@@ -229,7 +229,7 @@ void TestTableScanPureDataTable::table_scan(
     if (OB_SUCCESS == ret) {
       ++cnt;
     }
-    LOG_INFO("table scan row", KPC(row), K(ret));
+
   }
   ASSERT_EQ(12, cnt);
 

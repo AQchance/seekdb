@@ -82,7 +82,7 @@ int ObMajorMergeInfoManager::reload(const bool reload_zone_merge_info)
   } else if (OB_FAIL(freeze_info_mgr_.reload(global_broadcast_scn))) {
     LOG_WARN("fail to update freeze info", KR(ret), K_(tenant_id), K(global_broadcast_scn));
   } else {
-    LOG_INFO("succ to reload merge info manager", K_(tenant_id));
+
   }
   return ret;
 }
@@ -160,7 +160,7 @@ int ObMajorMergeInfoManager::set_freeze_info(const ObMajorFreezeReason freeze_re
     freeze_info_mgr_.reset_freeze_info(); // reload freeze info on the next fetch
   }
 
-  LOG_INFO("finish set freeze info", KR(ret), K(freeze_info), K_(tenant_id));
+
   ROOTSERVICE_EVENT_ADD("major_merge", "root_major_freeze", K_(tenant_id),
                         K(ret), "new_frozen_scn", new_frozen_scn.get_val_for_inner_table_field(),
                         "freeze_reason", major_freeze_reason_to_str(freeze_reason));
@@ -324,7 +324,7 @@ int ObMajorMergeInfoManager::renew_snapshot_gc_scn()
   if (OB_FAIL(ret)) {
     freeze_info_mgr_.reset_freeze_info();
   }
-  LOG_INFO("renew snapshot_gc_scn", K(ret), K(new_snapshot_gc_scn), K_(tenant_id));
+
 
   return ret;
 }
@@ -369,7 +369,7 @@ int ObMajorMergeInfoManager::try_gc_freeze_info()
       } else {
         // reload will later
         freeze_info_mgr_.reset_freeze_info();
-        LOG_INFO("succ to batch delete freeze info", K_(tenant_id), K(min_frozen_scn));
+
       }
     }
   }

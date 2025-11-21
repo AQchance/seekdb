@@ -415,7 +415,7 @@ int ObPreBootstrap::create_ls()
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("succeed to create ls");
+
   } else {
     LOG_WARN("create ls failed.", K(ret));
   }
@@ -440,7 +440,7 @@ int ObPreBootstrap::wait_elect_ls(
   }
   if (OB_SUCC(ret)) {
     ObTaskController::get().allow_next_syslog();
-    LOG_INFO("succeed to wait elect log stream");
+
   }
   BOOTSTRAP_CHECK_SUCCESS();
   return ret;
@@ -604,7 +604,7 @@ int ObBootstrap::execute_bootstrap(rootserver::ObServerZoneOpService &server_zon
   } else if (OB_FAIL(partition_creator.submit_create_partitions_task())) {
     LOG_WARN("failed to submit partition creator task", K(ret));
   } else {
-    LOG_INFO("succeed to submit partition creator task", K(ret));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -621,7 +621,7 @@ int ObBootstrap::execute_bootstrap(rootserver::ObServerZoneOpService &server_zon
     if (OB_FAIL(partition_creator.wait_task_completion(task_ret))) {
       LOG_WARN("failed to wait partition creator task completion", KR(ret));
     } else {
-      LOG_INFO("succeed to wait partition creator task completion", KR(task_ret));
+
       ret = task_ret;
     }
   }
@@ -669,7 +669,7 @@ int ObBootstrap::load_all_schema(
 {
   int ret = OB_SUCCESS;
   const int64_t begin_time = ObTimeUtility::current_time();
-  LOG_INFO("start load all schemas", "table count", table_schemas.count());
+
   LOG_DBA_INFO_V2(OB_BOOTSTRAP_CREATE_ALL_SCHEMA_BEGIN,
                   DBA_STEP_INC_INFO(bootstrap),
                   "bootstrap create all schema begin.");
@@ -683,7 +683,7 @@ int ObBootstrap::load_all_schema(
           ObSchemaUtils::get_inner_table_core_schema_version(table_schemas)))) {
       LOG_WARN("failed to load core schema version", KR(ret));
   }
-  LOG_INFO("finish load all schemas", KR(ret), "cost", ObTimeUtility::current_time() - begin_time);
+
   if (OB_FAIL(ret)) {
     LOG_DBA_ERROR_V2(OB_BOOTSTRAP_CREATE_ALL_SCHEMA_FAIL, ret,
                      DBA_STEP_INC_INFO(bootstrap),
@@ -905,7 +905,7 @@ int ObBootstrap::create_core_related_partitions()
     }
   }
 
-  LOG_INFO("finish creating core related table partitions", K(ret));
+
   BOOTSTRAP_CHECK_SUCCESS();
   return ret;
 }
@@ -1013,7 +1013,7 @@ int ObBootstrap::create_sys_table_partitions(const common::ObIArray<share::schem
     }
   }
 
-  LOG_INFO("finish creating sys table partitions", K(ret));
+
   BOOTSTRAP_CHECK_SUCCESS();
   return ret;
 }
@@ -1064,7 +1064,7 @@ int ObBootstrap::broadcast_sys_schema(const ObSArray<ObTableSchema> &table_schem
   } else if (OB_FAIL(schema_service.broadcast_tenant_schema(OB_SYS_TENANT_ID, table_schemas))) {
     LOG_WARN("failed to broadcast tenant schema", KR(ret));
   } else {
-    LOG_INFO("successfully broadcast sys schema", K(OB_SYS_TENANT_ID));
+
   }
   BOOTSTRAP_CHECK_SUCCESS();
   return ret;
@@ -1349,7 +1349,7 @@ int ObBootstrap::create_sys_tenant()
     } else {} // no more to do
   }
 
-  LOG_INFO("create tenant", K(ret), K(tenant));
+
   BOOTSTRAP_CHECK_SUCCESS();
   return ret;
 }
@@ -1453,7 +1453,7 @@ int ObBootstrap::init_sys_unit_config(share::ObUnitConfig &unit_config)
   } else if (OB_FAIL(unit_config.gen_sys_tenant_unit_config(is_hidden_sys, GCTX.log_block_mgr_->get_log_disk_size()))) {
     LOG_WARN("gen sys tenant unit config fail", KR(ret), K(is_hidden_sys));
   } else {
-    LOG_INFO("init sys tenant unit config succ", K(unit_config));
+
   }
   BOOTSTRAP_CHECK_SUCCESS();
   return ret;
@@ -1619,7 +1619,7 @@ int ObBootstrap::init_all_zone_table()
     }
   }
 
-  LOG_INFO("init all zone table", KR(ret));
+
   BOOTSTRAP_CHECK_SUCCESS();
   return ret;
 }

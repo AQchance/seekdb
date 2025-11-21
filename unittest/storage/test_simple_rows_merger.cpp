@@ -396,10 +396,10 @@ TEST_F(ObSimpleRowsMergerTest, reset_range)
   int64_t remain_item = 0;
   while(OB_SUCC(ret) && !merger.empty()) {
     if (OB_FAIL(merger.top(top_item))) {
-      STORAGE_LOG(WARN, "get loser tree top item fail", K(ret), K(merger));
+
     } else if (nullptr == top_item) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "item or row is null", K(ret), KP(top_item));
+
     } else {
       int64_t tree_ret = 0;
       ASSERT_EQ(tc.cmp(gap_item, *top_item, tree_ret), OB_SUCCESS);
@@ -409,7 +409,7 @@ TEST_F(ObSimpleRowsMergerTest, reset_range)
         items[remain_item - 1].equal_with_next_ = false;
       }
       if (OB_FAIL(merger.pop())) {
-        STORAGE_LOG(WARN, "pop loser tree fail", K(ret), K(merger));
+
       }
     }
   }

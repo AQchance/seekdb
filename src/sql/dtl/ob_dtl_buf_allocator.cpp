@@ -44,7 +44,7 @@ ObDtlLinkedBuffer *ObDtlBufAllocator::alloc_buf(ObDtlBasicChannel &ch, const int
       buf->set_size(alloc_size);
     }
   }
-  LOG_DEBUG("allocate memory", K(ret), KP(ch.get_id()), K(buf), K(alloc_size));
+
   return buf;
 }
 
@@ -65,7 +65,7 @@ void ObDtlBufAllocator::free_buf(ObDtlBasicChannel &ch, ObDtlLinkedBuffer *&buf)
   if (nullptr != buf) {
     LOG_ERROR("fail to free dtl linked buffer", K(ret));
   }
-  LOG_DEBUG("free memory", K(ret), K(buf), KP(buf), K(free_buffer_cnt_), K(alloc_buffer_cnt_));
+
 }
 
 }

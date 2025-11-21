@@ -138,7 +138,7 @@ int ObSpaceFTParser::get_next_token(const char *&word,
       next_ = next;
       end_ = end;
     }
-    LOG_DEBUG("next word", K(ObString(word_len, word)), KP(start_), KP(next_), KP(end_));
+
   }
   return ret;
 }

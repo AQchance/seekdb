@@ -36,7 +36,7 @@ SendMsgResponse::~SendMsgResponse()
   int ret = OB_SUCCESS;
   if (in_process_) {
     if (OB_FAIL(wait())) {
-      LOG_DEBUG("send dtl message failed", K(ret));
+
     }
   }
 }
@@ -80,7 +80,7 @@ int SendMsgResponse::on_start_fail()
     in_process_ = false;
     finish_ = true;
     is_block_ = false;
-    LOG_TRACE("dtl response fail", K(is_block_), K(ret), KP(ch_id_));
+
   }
   return ret;
 }
@@ -96,7 +96,7 @@ int SendMsgResponse::on_finish(const bool is_block, const int return_code)
     ret_ = return_code;
     finish_ = true;
     is_block_ = is_block;
-    LOG_TRACE("dtl response finish", KP(this), K(is_block_), K(ret), KP(ch_id_));
+
     cond_.broadcast();
   }
   return ret;
@@ -215,7 +215,7 @@ ObDtlBasicChannel::ObDtlBasicChannel(
 ObDtlBasicChannel::~ObDtlBasicChannel()
 {
   destroy();
-  LOG_TRACE("dtl use time", KP(id_), K(times_), K(write_buf_use_time_), K(send_use_time_), K(msg_count_));
+
 }
 
 int ObDtlBasicChannel::init()
@@ -388,7 +388,7 @@ int ObDtlBasicChannel::attach(ObDtlLinkedBuffer *&linked_buffer, bool inc_recv_b
   int ret = OB_SUCCESS;
   ObDtlMsgHeader header;
   const bool keep_pos = true;
-  LOG_DEBUG("local attach attach buffer", KP(id_), K(linked_buffer), KP(linked_buffer));
+
   bool is_data_msg = linked_buffer->is_data_msg();
   bool is_eof = linked_buffer->is_eof();
   if (!is_data_msg
@@ -471,12 +471,12 @@ int ObDtlBasicChannel::unblock_on_decrease_size(int64_t size)
 int ObDtlBasicChannel::clean_recv_list()
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("clean recv list", K(belong_to_receive_data()), KP(id_), K_(peer), K(ret), K(get_processed_buffer_cnt()), K(get_recv_buffer_cnt()));
+
   if (belong_to_receive_data()) {
-    LOG_TRACE("clean process buffer", KP(id_), K_(peer), K(ret), K(get_processed_buffer_cnt()), K(get_recv_buffer_cnt()));
+
     if (nullptr != process_buffer_) {
       auto &buffer = process_buffer_;
-      LOG_TRACE("free process buffer for dfc", K(buffer->size()), KP(id_), K_(peer), K(ret), K(get_processed_buffer_cnt()), K(get_recv_buffer_cnt()));
+
       if (OB_FAIL(unblock_on_decrease_size(buffer->size()))) {
         LOG_WARN("failed to decrease buffer size for dfc", KP(id_), K_(peer), K(ret), K(get_processed_buffer_cnt()), K(get_recv_buffer_cnt()));
       }
@@ -508,7 +508,7 @@ int ObDtlBasicChannel::get_processed_buffer(int64_t timeout)
     recv_sem_.wait(key, timeout);
     ObLink *link = nullptr;
     if (OB_SUCC(recv_list_.pop(link))) {
-      LOG_TRACE("pop recv list", KP(id_), K_(peer), K(ret), K(get_processed_buffer_cnt()), K(get_recv_buffer_cnt()), K(link));
+
       process_buffer_ = static_cast<ObDtlLinkedBuffer *>(link);
       if (belong_to_receive_data()) {
         if (1 == process_buffer_->seq_no()) {
@@ -538,7 +538,7 @@ int ObDtlBasicChannel::get_processed_buffer(int64_t timeout)
       if (nullptr != msg_watcher_) {
         msg_watcher_->remove_data_list(this);
       }
-      LOG_TRACE("failed to pop recv list", KP(id_), K_(peer), K(ret), K(get_processed_buffer_cnt()), K(get_recv_buffer_cnt()));
+
     }
   }
   return ret;
@@ -566,7 +566,7 @@ int ObDtlBasicChannel::process1(
           auto &buffer = process_buffer_;
           bool transferred = false;
           ret = proc->process(*buffer, transferred);
-          LOG_DEBUG("process buffer", K(ret), KP(buffer), K(transferred));
+
           if (buffer->is_data_msg()) {
             metric_.set_last_out_ts(::oceanbase::common::ObTimeUtility::current_time());
           }
@@ -630,7 +630,7 @@ int ObDtlBasicChannel::process1(
           } else {
             LOG_WARN("fail to get row store", K(ret));
           }
-          LOG_TRACE("fail to get row store", K(ret), K(key.batch_id_), K(key.channel_id_));
+
         } else if (FALSE_IT(result_info = result_info_guard_.result_info_)) {
         } else if (OB_SUCCESS != result_info->ret_) {
           ret = result_info->ret_;
@@ -760,7 +760,7 @@ int ObDtlBasicChannel::wait_unblocking_if_blocked()
         LOG_WARN("failed to set block", K(ret));
       } else {
         // only block this channel, for other channels, it will also set block, or other channel can't be blocked
-        LOG_TRACE("set block dfc", K(ret), KP(id_), K(peer_));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -781,7 +781,7 @@ int ObDtlBasicChannel::wait_unblocking()
   int ret = OB_SUCCESS;
   if (belong_to_transmit_data()) {
     int64_t idx = OB_INVALID_ID;
-    LOG_TRACE("blocking:", K(ret), K(dfc_->is_block()), K(dfc_));
+
     int64_t timeout_ts = 0;
     if (OB_ISNULL(channel_loop_) || OB_ISNULL(dfc_)) {
       ret = OB_ERR_UNEXPECTED;
@@ -798,7 +798,7 @@ int ObDtlBasicChannel::wait_unblocking()
       int64_t last_t = 0;
       int64_t print_log_t = 10 * 60 * 1000000;
       block_proc_.set_ch_idx_var(&idx);
-      LOG_TRACE("wait unblocking", K(ret), K(dfc_->is_block()), KP(id_), K(peer_));
+
       oceanbase::lib::Thread::WaitGuard guard(oceanbase::lib::Thread::WAIT_FOR_PX_MSG);
       do {
         int64_t got_channel_idx = idx;
@@ -861,9 +861,9 @@ int ObDtlBasicChannel::wait_unblocking()
           }
         }
       } while (dfc_->is_block(this) && OB_SUCC(ret));
-      LOG_TRACE("unblocking successfully", K(ret), K(dfc_->is_block()), KP(id_), K(peer_));
+
     }
-    LOG_TRACE("unblocking:", K(ret), K(dfc_->is_block()), K(dfc_->is_block(this)), KP(id_), K(peer_));
+
   }
   return ret;
 }
@@ -940,7 +940,7 @@ void ObDtlBasicChannel::clean_broadcast_buffer()
       }
     }
   }
-  LOG_TRACE("trace clean broadcast dtl buffer", K(done), K(*this));
+
 }
 
 int ObDtlBasicChannel::push_back_send_list()
@@ -998,7 +998,7 @@ int ObDtlBasicChannel::switch_writer(const ObDtlMsg &msg)
         LOG_WARN("unkown msg writer", K(msg.get_type()),
           K(px_row.get_data_type()), K(msg_writer_->type()), K(ret));
       }
-      LOG_TRACE("msg writer", K(px_row.get_data_type()), K(msg_writer_->type()), K(ret));
+
     } else {
       if (DtlWriterType::CONTROL_WRITER == msg_writer_map[msg.get_type()]) {
         msg_writer_ = &ctl_msg_writer_;
@@ -1006,7 +1006,7 @@ int ObDtlBasicChannel::switch_writer(const ObDtlMsg &msg)
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("unkown msg writer", K(msg.get_type()), K(msg_writer_->type()));
       }
-      LOG_TRACE("msg writer", K(msg.get_type()), K(msg_writer_->type()), K(ret));
+
     }
   } else {
 #ifndef NDEBUG
@@ -1138,7 +1138,7 @@ int ObDtlBasicChannel::switch_buffer(const int64_t min_size, const bool is_eof,
       msg_writer_->write_msg_type(write_buffer_);
       write_buffer_->set_data_msg(is_data_msg_);
       write_buffer_->is_eof() = is_eof;
-      LOG_TRACE("trace new buffer", K(is_data_msg_), K(is_eof), KP(id_), KP(peer_id_));
+
     }
   }
   return ret;

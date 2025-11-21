@@ -89,7 +89,7 @@ void TestSSMicroCacheRestart::wait_for_replay_ckpt()
   do {
     is_cache_enabled = micro_cache->is_enabled_;
     if (!is_cache_enabled) {
-      LOG_INFO("ss_micro_cache is still disabled");
+
       ob_usleep(1000 * 1000);
     }
   } while (!is_cache_enabled && ObTimeUtility::current_time_s() - start_time_s < REPLAY_CKPT_TIMEOUT_S);
@@ -99,7 +99,7 @@ void TestSSMicroCacheRestart::wait_for_replay_ckpt()
 TEST_F(TestSSMicroCacheRestart, test_disable_all_task)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_disable_all_task");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ASSERT_NE(nullptr, micro_cache);
   ObSSMicroCacheStat &cache_stat = micro_cache->cache_stat_;
@@ -119,7 +119,7 @@ TEST_F(TestSSMicroCacheRestart, test_disable_all_task)
     is_closed = task_runner.is_task_closed();
     if (!is_closed) {
       ob_usleep(1000 * 1000);
-      LOG_INFO("ss_micro_cache task runner still not closed");
+
     }
   } while (!is_closed && ObTimeUtility::current_time_s() - start_time_s < MAX_RETRY_TIME_S);
   ASSERT_EQ(true, is_closed);
@@ -137,7 +137,7 @@ TEST_F(TestSSMicroCacheRestart, test_disable_all_task)
   ob_usleep(3 * 1000 * 1000L);
   ASSERT_EQ(2, cache_stat.task_stat().phy_ckpt_cnt_);
 
-  LOG_INFO("TEST_CASE: finish test_disable_all_task");
+
 }
 
 TEST_F(TestSSMicroCacheRestart, test_restart_micro_cache)
@@ -164,7 +164,7 @@ TEST_F(TestSSMicroCacheRestart, test_restart_micro_cache)
   ObCompressorType compress_type = TestSSCommonUtil::get_random_compress_type();
   micro_cache->config_.set_micro_ckpt_compressor_type(compress_type);
   micro_cache->config_.set_blk_ckpt_compressor_type(compress_type);
-  LOG_INFO("TEST: start test_restart_micro_cache", K(compress_type));
+
 
   // 1. FIRST START
   // 1.1 trigger micro_meta and phy_info checkpoint(but there not exist any micro_meta), wait for it finish
@@ -193,7 +193,7 @@ TEST_F(TestSSMicroCacheRestart, test_restart_micro_cache)
   ASSERT_EQ(OB_SUCCESS, micro_cache->init(MTL_ID(), cache_file_size));
   ASSERT_EQ(OB_SUCCESS, micro_cache->start());
   wait_for_replay_ckpt();
-  LOG_INFO("TEST: finish first restart", K(cache_stat));
+
 
   ASSERT_EQ(cache_file_size, phy_blk_mgr.super_block_.cache_file_size_);
   ASSERT_EQ(0, phy_blk_mgr.super_block_.micro_ckpt_entry_list_.count());
@@ -267,7 +267,7 @@ TEST_F(TestSSMicroCacheRestart, test_restart_micro_cache)
   ASSERT_EQ(OB_SUCCESS, micro_cache->init(MTL_ID(), cache_file_size));
   ASSERT_EQ(OB_SUCCESS, micro_cache->start());
   wait_for_replay_ckpt();
-  LOG_INFO("TEST: finish second restart", K(cache_stat));
+
 
   ASSERT_EQ(total_ckpt_micro_cnt, cache_stat.micro_stat().total_micro_cnt_);
   ASSERT_EQ(total_ckpt_micro_cnt * micro_size, cache_stat.micro_stat().total_micro_size_);
@@ -417,7 +417,7 @@ TEST_F(TestSSMicroCacheRestart, test_restart_micro_cache)
   ASSERT_EQ(OB_SUCCESS, micro_cache->init(MTL_ID(), cache_file_size));
   ASSERT_EQ(OB_SUCCESS, micro_cache->start());
   wait_for_replay_ckpt();
-  LOG_INFO("TEST: finish third restart", K(cache_stat));
+
 
   ASSERT_EQ(total_ckpt_micro_cnt, cache_stat.micro_stat().total_micro_cnt_);
   ASSERT_EQ(total_ckpt_micro_cnt * micro_size, cache_stat.micro_stat().total_micro_size_);

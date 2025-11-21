@@ -119,7 +119,7 @@ TEST_F(TestDirectLoad, test_cg_aggregate)
   for (int64_t i = 0; i < tablet_dl_mgr.get_sqc_build_ctx().sorted_slices_idx_.count(); ++i) {
     const int64_t start_idx = tablet_dl_mgr.get_sqc_build_ctx().sorted_slices_idx_.at(i).start_idx_;
     const int64_t last_idx = tablet_dl_mgr.get_sqc_build_ctx().sorted_slices_idx_.at(i).last_idx_;
-    STORAGE_LOG(INFO, "case1", K(start_idx), K(last_idx));
+
     ASSERT_EQ(start_idx, 0);
     ASSERT_EQ(last_idx, sorted_slices.count());
   }
@@ -133,7 +133,7 @@ TEST_F(TestDirectLoad, test_cg_aggregate)
   for (int64_t i = 0; i < tablet_dl_mgr.get_sqc_build_ctx().sorted_slices_idx_.count(); ++i) {
     const int64_t start_idx = tablet_dl_mgr.get_sqc_build_ctx().sorted_slices_idx_.at(i).start_idx_;
     const int64_t last_idx = tablet_dl_mgr.get_sqc_build_ctx().sorted_slices_idx_.at(i).last_idx_;
-    STORAGE_LOG(INFO, "case2", K(start_idx), K(last_idx));
+
   }
 
   // case 3:all threads cannot handle the number of slices divided according to EACH_MACRO_MIN_ROW_CNT
@@ -145,7 +145,7 @@ TEST_F(TestDirectLoad, test_cg_aggregate)
   for (int64_t i = 0; i < tablet_dl_mgr.get_sqc_build_ctx().sorted_slices_idx_.count(); ++i) {
     const int64_t start_idx = tablet_dl_mgr.get_sqc_build_ctx().sorted_slices_idx_.at(i).start_idx_;
     const int64_t last_idx = tablet_dl_mgr.get_sqc_build_ctx().sorted_slices_idx_.at(i).last_idx_;
-    STORAGE_LOG(INFO, "case3", K(start_idx), K(last_idx));
+
   }
 
   for (int64_t i = 0; i < 2; ++i) {
@@ -162,7 +162,7 @@ TEST_F(TestDirectLoad, test_cg_aggregate)
   for (int64_t i = 0; i < tablet_dl_mgr.get_sqc_build_ctx().sorted_slices_idx_.count(); ++i) {
     const int64_t start_idx = tablet_dl_mgr.get_sqc_build_ctx().sorted_slices_idx_.at(i).start_idx_;
     const int64_t last_idx = tablet_dl_mgr.get_sqc_build_ctx().sorted_slices_idx_.at(i).last_idx_;
-    STORAGE_LOG(INFO, "case4", K(start_idx), K(last_idx));
+
     ASSERT_EQ(start_idx, 0);
     ASSERT_EQ(last_idx, sorted_slices.count());
   }
@@ -176,7 +176,7 @@ TEST_F(TestDirectLoad, test_cg_aggregate)
   for (int64_t i = 0; i < tablet_dl_mgr.get_sqc_build_ctx().sorted_slices_idx_.count(); ++i) {
     const int64_t start_idx = tablet_dl_mgr.get_sqc_build_ctx().sorted_slices_idx_.at(i).start_idx_;
     const int64_t last_idx = tablet_dl_mgr.get_sqc_build_ctx().sorted_slices_idx_.at(i).last_idx_;
-    STORAGE_LOG(INFO, "case5", K(start_idx), K(last_idx));
+
     ASSERT_EQ(start_idx, 0);
     ASSERT_EQ(last_idx, sorted_slices.count());
   }

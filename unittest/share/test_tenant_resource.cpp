@@ -75,7 +75,7 @@ public:
   {
     run_count_++;
     uint64_t tenant_id = MTL_ID();
-    LOG_INFO("run", K(run_count_), K(tenant_id));
+
     while (!has_set_stop() && !(OB_NOT_NULL(&Thread::current()) ? Thread::current().has_set_stop() : false)) {
       ::usleep(50000);
     }
@@ -111,29 +111,29 @@ public:
   }
   int init()
   {
-    LOG_INFO("init", KP(this));
+
     return TG_CREATE_TENANT(TGDefIDs::COMMON_THREAD_POOL, tg_id_);
   }
   int start()
   {
-    LOG_INFO("start", KP(this));
+
     // set runnable
     int ret = TG_SET_RUNNABLE_AND_START(tg_id_, runnable_);
     return ret;
   }
   void stop()
   {
-    LOG_INFO("stop", KP(this));
+
     TG_STOP(tg_id_);
   }
   void wait()
   {
-    LOG_INFO("wait", KP(this));
+
     TG_WAIT(tg_id_);
   }
   void destroy()
   {
-    LOG_INFO("destroy", KP(this));
+
     TG_DESTROY(tg_id_);
   }
 private:

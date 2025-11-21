@@ -67,12 +67,12 @@ int QSchedCallback::handle(TCRequest* tc_req)
 
   if (time_guard.get_diff() > 100000) {// 100ms
     //print req
-    LOG_INFO("submit_request cost too much time", K(ret), K(time_guard), K(req));
+
   }
   if (OB_FAIL(ret)) {
     if (ret == OB_EAGAIN) {
       if (REACH_TIME_INTERVAL(1 * 1000L * 1000L)) {
-        LOG_INFO("device channel eagain", K(ret));
+
       }
       if (OB_FAIL(req.retry_io())) {
         LOG_WARN("retry io failed", K(ret), K(req));
@@ -212,7 +212,7 @@ static int config_qdisc(int qid, int64_t weight, int64_t max_bw, int64_t min_bw)
   } else if (0 != qdisc_set_reserve(qid, min_bw)) {
     ret = OB_ERR_UNEXPECTED;
   } else {
-    LOG_INFO("config qdisc success", K(ret), K(qid), K(weight), K(max_bw), K(min_bw));
+
   }
   return ret;
 }
@@ -230,7 +230,7 @@ static int config_group_qdisc(int qid, const int64_t tenant_id, const ObTenantIO
   if (OB_FAIL(config_qdisc(qid, gcfg.weight_percent_, calc_bw(unit_max_bw, gcfg.max_percent_), calc_bw(unit_min_bw, gcfg.min_percent_)))) {
     LOG_ERROR("config group_queue fail", K(ret), K(tenant_id), K(qid), K(ucfg), K(gcfg));
   } else {
-    LOG_INFO("config group queue success", K(ret), K(tenant_id), K(qid), K(ucfg), K(gcfg), K(unit_min_bw), K(unit_max_bw));
+
   }
   return ret;
 }
@@ -249,7 +249,7 @@ int ObTenantIOSchedulerV2::update_config(const ObTenantIOConfig &io_config)
   const ObTenantIOConfig::UnitConfig &ucfg = io_config.unit_config_;
   int64_t ucfg_max_bw = ucfg.max_iops_ * STANDARD_IOPS_SIZE <= 0 ? INT64_MAX : ucfg.max_iops_ * STANDARD_IOPS_SIZE;
   int64_t ucfg_min_bw = ucfg.min_iops_ * STANDARD_IOPS_SIZE < 0 ? INT64_MAX : ucfg.min_iops_ * STANDARD_IOPS_SIZE;
-  LOG_INFO("update config", K_(tenant_id), K(io_config), K(ucfg_min_bw), K(ucfg_min_bw));
+
   if (OB_FAIL(config_qdisc(top_qid_[(int)ObIOMode::MAX_MODE], ucfg.weight_, ucfg_max_bw, ucfg_min_bw))) {
     LOG_WARN("config local tenant_queue fail", K(ret), K(tenant_id_), K(ObIOMode::MAX_MODE));
   } else if (OB_FAIL(config_qdisc(top_qid_[(int)ObIOMode::READ], ucfg.net_bandwidth_weight_, ucfg.max_net_bandwidth_, 0))) {
@@ -304,7 +304,7 @@ int64_t ObTenantIOSchedulerV2::get_qindex(ObIORequest& req)
     if (ret == OB_HASH_NOT_EXIST) {
       ret = OB_SUCCESS;
       if (REACH_TIME_INTERVAL(1 * 1000L * 1000L)) {
-        LOG_INFO("get group index failed, but maybe it is ok", K(ret), K(grp_key), K(index)); // group is not build
+ // group is not build
       }
     } else {
       LOG_WARN("get group index failed", K(ret), K(grp_key), K(index));

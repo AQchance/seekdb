@@ -118,7 +118,7 @@ public:
 
   int deliver(rpc::ObRequest &req)
   {
-    LOG_INFO("request", K(req));
+
     /*
       ObDataBuffer buf(new char[2048], 2048);
       ObRpcResultCode rcode;

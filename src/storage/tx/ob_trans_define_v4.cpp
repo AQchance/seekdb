@@ -1692,7 +1692,7 @@ int ObTxDescMgr::acquire_tx_ref(const ObTransID &trans_id)
   ObTxDesc *tx_desc = nullptr;
   CK(trans_id.is_valid());
   OZ(get(trans_id, tx_desc), trans_id);
-  LOG_TRACE("txDescMgr.acquire tx ref", K(ret), K(trans_id), KP(tx_desc));
+
   return ret;
 }
 
@@ -1701,7 +1701,7 @@ int ObTxDescMgr::release_tx_ref(ObTxDesc *tx_desc)
   int ret = OB_SUCCESS;
   CK(OB_NOT_NULL(tx_desc));
   OX(revert(*tx_desc));
-  LOG_TRACE("txDescMgr.release tx ref", K(ret), KP(tx_desc));
+
   return ret;
 }
 
@@ -1852,7 +1852,7 @@ int ObTxDesc::add_modified_tables(const ObIArray<uint64_t> &dml_table_ids)
       }
     }
   }
-  LOG_TRACE("record trans dml table_ids", K(modified_tables_), K(tx_id_));
+
   return ret;
 }
 

@@ -312,7 +312,7 @@ OB_INLINE int ObDatumRowkey::assign(ObStorageDatum *datums, const int datum_cnt)
 
   if (OB_UNLIKELY(nullptr == datums || datum_cnt <= 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to assign datum rowkey", K(ret), KP(datums), K(datum_cnt));
+
   } else {
     reset();
     datums_ = datums;
@@ -329,7 +329,7 @@ OB_INLINE int64_t ObDatumRowkey::get_deep_copy_size() const
   int ret = common::OB_SUCCESS;
   if (OB_UNLIKELY(!is_valid())) {
     int ret = common::OB_INVALID_DATA;
-    STORAGE_LOG(ERROR, "illegal datum rowkey to get deep copy size", K(ret), K(*this));
+
   } else {
     size = datum_cnt_ * sizeof(ObStorageDatum);
     for (int64_t i = 0; i < datum_cnt_; ++i) {
@@ -346,13 +346,13 @@ OB_INLINE int ObDatumRowkey::deep_copy(ObDatumRowkey &dest, char *buf, const int
 
   if (OB_UNLIKELY(nullptr == buf || buf_len <= 0)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to deep copy datum rowkey", K(ret), KP(buf), K(buf_len));
+
   } else {
     ObStorageDatum *datums = new (buf) ObStorageDatum[datum_cnt_];
     int64_t pos = sizeof(ObStorageDatum) * datum_cnt_;
     for (int64_t i = 0; OB_SUCC(ret) && i < datum_cnt_; i++) {
       if (OB_FAIL(datums[i].deep_copy(datums_[i], buf, buf_len, pos))) {
-        STORAGE_LOG(WARN, "Failed to deep copy storage datum", K(ret), K(i), K(*this));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -375,16 +375,16 @@ OB_INLINE int ObDatumRowkey::deep_copy(ObDatumRowkey &dest, common::ObIAllocator
 
   if (OB_UNLIKELY(!is_valid() || 0 == deep_copy_size)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected error for deep copy invalid datum rowkey", K(ret), K(*this));
+
   } else if (is_max_rowkey()) {
     dest.set_max_rowkey();
   } else if (is_min_rowkey()) {
     dest.set_min_rowkey();
   } else if (OB_ISNULL(buf = reinterpret_cast<char *>(allocator.alloc(deep_copy_size)))) {
     ret = common::OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "Failed to alloc memory for datum rowkey", K(ret), K(deep_copy_size));
+
   } else if (OB_FAIL(deep_copy(dest, buf, deep_copy_size))) {
-    STORAGE_LOG(WARN, "Failed to deep copy datum rowkey", K(ret));
+
   }
 
   if (OB_FAIL(ret) && nullptr != buf) {
@@ -401,7 +401,7 @@ OB_INLINE int ObDatumRowkey::shallow_copy(ObDatumRowkey &dest) const
 
   if (OB_UNLIKELY(!dest.is_valid() || dest.get_datum_cnt() < datum_cnt_)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to shallow copy datum rowkey", K(ret), K(dest), K(*this));
+
   } else {
     ObStorageDatum *datums = const_cast<ObStorageDatum*>(dest.datums_);
     for (int64_t i = 0; OB_SUCC(ret) && i < datum_cnt_; i++) {
@@ -424,12 +424,12 @@ OB_INLINE int ObDatumRowkey::semi_copy(ObDatumRowkey &dest, common::ObIAllocator
 
   if (OB_UNLIKELY(!is_valid() || !dest.is_valid() || dest.get_datum_cnt() < datum_cnt_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected error for deep copy invalid datum rowkey", K(ret), K(*this), K(dest));
+
   } else {
     ObStorageDatum *datums = const_cast<ObStorageDatum *> (dest.datums_);
     for (int64_t i = 0; OB_SUCC(ret) && i < datum_cnt_; i++) {
       if (OB_FAIL(datums[i].deep_copy(datums_[i], allocator))) {
-        STORAGE_LOG(WARN, "Failed to deep copy datum", K(ret), K(i), K(datums_[i]));
+
       }
     }
   }
@@ -445,12 +445,12 @@ OB_INLINE bool ObDatumRowkey::operator==(const ObDatumRowkey &other) const
 
   } else if (datum_cnt_ != other.datum_cnt_) {
     is_equal = false;
-    STORAGE_LOG(DEBUG, "datum rowkey count no equal", K(other), K(*this));
+
   } else {
     for (int64_t i = 0; is_equal && i < datum_cnt_; i++) {
       is_equal = datums_[i] == other.datums_[i];
       if (!is_equal) {
-        STORAGE_LOG(DEBUG, "datum not equal", K(i), K(other), K(*this));
+
       }
     }
   }

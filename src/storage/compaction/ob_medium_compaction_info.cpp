@@ -197,7 +197,7 @@ int ObParallelMergeInfo::generate_from_range_array(
       }
     }
   }
-  LOG_DEBUG("parallel range info", K(ret), KPC(this), K(paral_range), K(paral_range.count()), K(paral_range.at(0)));
+
   if (OB_FAIL(ret)) {
     destroy(allocator);
   }
@@ -296,13 +296,13 @@ int ObParallelMergeInfo::deep_copy_datum_rowkey(
     ObDatumRowkeyHelper rowkey_helper;
     ObDatumRowkey tmp_datum_rowkey;
     if (OB_FAIL(rowkey_helper.convert_datum_rowkey(parallel_store_rowkey_list_[idx].get_rowkey()/*src*/, tmp_datum_rowkey/*dst*/))) {
-      STORAGE_LOG(WARN, "failed to convert to datum rowkey", K(ret), K(idx), K(parallel_store_rowkey_list_[idx]));
+
     } else if (OB_FAIL(tmp_datum_rowkey.deep_copy(rowkey/*dst*/, input_allocator))) {
-      STORAGE_LOG(WARN, "failed to deep copy datum rowkey", KR(ret), K(tmp_datum_rowkey));
+
     }
   } else if (PARALLEL_INFO_VERSION_V1 == compat_) {
     if (OB_FAIL(parallel_datum_rowkey_list_[idx].deep_copy(rowkey/*dst*/, input_allocator))) {
-      STORAGE_LOG(WARN, "failed to deep copy end key", K(ret), K(idx), K(parallel_datum_rowkey_list_[idx]));
+
     }
   } else {
     ret = OB_ERR_UNEXPECTED;
@@ -496,7 +496,7 @@ int ObMediumCompactionInfo::gene_parallel_info(
     }
   } else if (parallel_merge_info_.get_size() > 0) {
     contain_parallel_range_ = true;
-    LOG_INFO("success to gene parallel info", K(ret), K(contain_parallel_range_), K(parallel_merge_info_));
+
   }
   return ret;
 }
@@ -551,7 +551,7 @@ int ObMediumCompactionInfo::serialize(char *buf, const int64_t buf_len, int64_t 
           mds_filter_info_);
       }
     }
-    LOG_DEBUG("ObMediumCompactionInfo::serialize", K(ret), KCSTRING(buf), K(buf_len), K(pos));
+
   }
   return ret;
 }
@@ -582,7 +582,7 @@ int ObMediumCompactionInfo::deserialize(
       }
     } else {
       clear_parallel_range();
-      LOG_DEBUG("ObMediumCompactionInfo::deserialize", K(ret), KCSTRING(buf), K(data_len), K(pos));
+
     }
     if (OB_SUCC(ret) && MEDIUM_COMPAT_VERSION_V2 <= medium_compat_version_) {
       LST_DO_CODE(

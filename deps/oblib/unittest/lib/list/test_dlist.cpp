@@ -64,7 +64,7 @@ TEST_F(TestObDList, encode_decode)
   int64_t pos = 0;
   ASSERT_EQ(OB_SUCCESS, serialize_dlist(list, buf, buf_len, pos));
   ASSERT_EQ(buf_size, pos);
-  LOG_INFO("print", K(buf_size));
+
 
 
   common::ObArenaAllocator allocator;

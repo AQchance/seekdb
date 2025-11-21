@@ -190,7 +190,7 @@ int ObMdsRowIterator::convert(
   } else if (OB_FAIL(kv.convert_from_adapter(allocator, adapter))) {
     LOG_WARN("fail to convert from adapter", K(ret), K(adapter));
   } else {
-    LOG_DEBUG("succeed to convert row to mds dump kv", K(ret), K(kv));
+
   }
 
   return ret;

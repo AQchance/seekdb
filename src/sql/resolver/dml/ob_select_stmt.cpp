@@ -99,7 +99,7 @@ int ObSelectStmt::check_table_be_modified(uint64_t ref_table_id, bool& is_exists
       LOG_ERROR("table item is NULL", K(ret), K(i), K(table_items_.count()));
     } else if (table_item->for_update_ && ref_table_id == table_item->ref_id_) {
       is_exists = true;
-      LOG_DEBUG("duplicate table is used in select for update", K(is_exists), K(ref_table_id), K(table_items_.count()));
+
     }
   }
   if (OB_SUCC(ret) && !is_exists) {
@@ -748,7 +748,7 @@ int ObSelectStmt::remove_useless_sharable_expr(ObRawExprFactory *expr_factory,
       } else if (OB_FAIL(agg_items_.remove(i))) {
         LOG_WARN("failed to remove agg item", K(ret));
       } else {
-        LOG_TRACE("succeed to remove agg items", K(*expr));
+
       }
     }
     for (int64_t i = win_func_exprs_.count() - 1; OB_SUCC(ret) && i >= 0; i--) {
@@ -760,7 +760,7 @@ int ObSelectStmt::remove_useless_sharable_expr(ObRawExprFactory *expr_factory,
       } else if (OB_FAIL(win_func_exprs_.remove(i))) {
         LOG_WARN("failed to remove win func expr", K(ret));
       } else {
-        LOG_TRACE("succeed to remove win func exprs", K(*expr));
+
       }
     }
     if (OB_SUCC(ret) && is_scala && agg_items_.empty()) {
@@ -832,7 +832,7 @@ int ObSelectStmt::get_select_exprs(ObIArray<ObRawExpr*> &select_exprs) const
 {
   int ret = OB_SUCCESS;
   ObRawExpr *expr = NULL;
-  LOG_DEBUG("before get_select_exprs", K(select_items_), K(table_items_), K(lbt()));
+
   for (int64_t i = 0; OB_SUCC(ret) && i < select_items_.count(); ++i) {
     if (OB_ISNULL(expr = select_items_.at(i).expr_)) {
       ret = OB_ERR_UNEXPECTED;

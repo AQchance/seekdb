@@ -258,7 +258,7 @@ int ObCGScanner::open_cur_data_block()
           current_ = MAX(cs_range.start_row_id_, query_index_range_.start_row_id_);
         }
         access_ctx_->inc_micro_access_cnt();
-        LOG_TRACE("[COLUMNSTORE] open data block", "row_range", cs_range);
+
         LOG_DEBUG("Success to open micro block", K(ret), K(prefetcher_.cur_micro_data_fetch_idx_),
                   K(micro_info), K(micro_handle), KPC(this), K(common::lbt()));
       }
@@ -432,7 +432,7 @@ int ObCGScanner::inner_filter(
                 (!is_reverse_scan_ && prefetch_constant_id >= current_))) {
       current_ = is_reverse_scan_ ? prefetch_constant_id - 1 : prefetch_constant_id + 1;
       result_bitmap.set_constant_filter_info(prefetch_constant_type, prefetch_constant_id);
-      LOG_DEBUG("Set constant filter info", K(ret), K(prefetch_constant_type), K(prefetch_constant_id));
+
     } else {
       if (is_new_range_ || OB_ITER_END == micro_scanner_->end_of_block()) {
         if (OB_FAIL(get_next_valid_block(parent, filter_info, parent_bitmap, result_bitmap))) {

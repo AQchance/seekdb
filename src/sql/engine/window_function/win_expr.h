@@ -381,7 +381,7 @@ int RankLikeExpr<rank_op>::process_window(WinExprEvalCtx &ctx, const Frame &fram
     } else if (rank_op == T_WIN_FUN_DENSE_RANK) {
       rank = rank_of_prev_row_ + 1;
     }
-    LOG_DEBUG("calculate rank result", K(rank_op), K(rank), K(frame));
+
     if (rank_op == T_WIN_FUN_PERCENT_RANK) {
       // if (ob_is_number_tc(ctx.win_col_.wf_info_.expr_->datum_meta_.type_)) {
       if (ob_is_number_tc(RankLikeExpr_process_window_helper(ctx))) {

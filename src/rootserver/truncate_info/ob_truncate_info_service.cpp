@@ -147,7 +147,7 @@ int ObTruncatePartKeyInfo::inner_check_column_schema(
              K(ref_col_id), KPC(ref_expr), KPC(column_schema));
   } else if (!column_schema->is_column_stored_in_sstable()) {
     only_ref_columns = false;
-    LOG_INFO("[TRUNCATE INFO] expr is not stored in data schema", KR(ret), KPC(column_schema));
+
   } else if (OB_FAIL(ref_column_ids_.push_back(ref_col_id))) {
     LOG_WARN("failed to push back ref_column_id", KR(ret), K(ref_col_id));
   }
@@ -197,7 +197,7 @@ int ObTruncatePartKeyInfo::inner_check_only_have_ref_columns(
     } // for
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("[TRUNCATE INFO]check_only_have_ref_columns", KR(ret), K(part_type), K(check_part_level), K(only_ref_columns), KPC(check_part_expr), K(check_part_expr->get_param_count()));
+
   }
   return ret;
 }
@@ -214,13 +214,13 @@ int ObTruncatePartKeyInfo::check_stored_ref_columns_for_index(
     const uint64_t ref_column_id = ref_column_ids_.at(idx);
     if (OB_ISNULL(column_schema = index_table_schema.get_column_schema(ref_column_id))) {
       stored_ref_columns = false;
-      LOG_INFO("[TRUNCATE INFO] ref column is not found in index schema", KR(ret), K(idx), K(ref_column_id), K(index_table_id));
+
     } else if (!column_schema->is_column_stored_in_sstable()) {
       stored_ref_columns = false;
-      LOG_INFO("[TRUNCATE INFO] ref column is not stored in index schema", KR(ret), K(idx), K(index_table_id), KPC(column_schema));
+
     }
   } // for
-  LOG_TRACE("[TRUNCATE INFO] check_stored_ref_columns_for_index", KR(ret), K(index_table_id), K(stored_ref_columns), K(index_table_schema), K_(ref_column_ids));
+
   return ret;
 }
 
@@ -939,7 +939,7 @@ int ObTruncateInfoService::retry_register_mds_(
                     transaction::ObTxDataSourceType::SYNC_TRUNCATE_INFO,
                     buf, buf_len))) {
         if (need_retry_errno(ret)) {
-          LOG_INFO("fail to register_tx_data, try again", KR(ret), K(get_tenant_id()), K(arg));
+
           ob_usleep(SLEEP_INTERVAL);
         } else {
           LOG_WARN("fail to register_tx_data", KR(ret), K(arg), K(buf), K(buf_len));

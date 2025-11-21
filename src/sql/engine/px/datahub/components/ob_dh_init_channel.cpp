@@ -36,7 +36,7 @@ int ObInitChannelPieceMsgListener::on_message(
   }
   if (OB_SUCC(ret)) {
     ctx.received_ += pkt.piece_count_;
-    LOG_TRACE("got a init channel picece msg", K(ctx.received_), K(ctx.task_cnt_), K(pkt), K(pkt.piece_count_));
+
   }
   // have received all piece from px receive
   // send whole msg to px transmit

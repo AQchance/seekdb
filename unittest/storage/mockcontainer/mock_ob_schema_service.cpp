@@ -32,13 +32,13 @@ int MockObSchemaService::init(const char *schema_file)
   int ret = OB_SUCCESS;
 
   if (NULL == schema_file) {
-    STORAGE_LOG(ERROR, "invalid argument", "schema_file", OB_P(schema_file));
+
     ret = OB_INVALID_ARGUMENT;
   } else if (OB_SUCCESS != (ret = restore_schema_.init())
       || OB_SUCCESS != (ret = restore_schema_.parse_from_file(schema_file, schema_guard_))) {
-    STORAGE_LOG(ERROR, "fail to get schema manger", K(schema_file));
+
   } else {
-    STORAGE_LOG(INFO, "MockObSchemaService init success", K(schema_file));
+
   }
 
   return ret;

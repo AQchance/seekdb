@@ -132,7 +132,7 @@ private:
 void TestCGMicroMacroWriteOp::SetUpTestCase()
 {
   int ret = OB_SUCCESS;
-  STORAGE_LOG(INFO, "SetUpTestCase");
+
   EXPECT_EQ(OB_SUCCESS, MockTenantModuleEnv::get_instance().init());
 
   CHUNK_MGR.set_limit(TENANT_MEMORY);
@@ -371,19 +371,19 @@ int TestCGMicroMacroWriteOp::create_ls(
   obrpc::ObCreateLSArg create_ls_arg;
 
   if (OB_FAIL(gen_create_ls_arg(tenant_id, ls_id, create_ls_arg))) {
-    STORAGE_LOG(WARN, "failed to build create ls arg", K(ret), K(tenant_id), K(ls_id));
+
   } else if (OB_FAIL(ls_svr->create_ls(create_ls_arg))) {
-    STORAGE_LOG(WARN, "failed to create ls", K(create_ls_arg));
+
   } else if (OB_FAIL(ls_svr->check_ls_exist(ls_id, b_exist))) {
-    STORAGE_LOG(WARN, "failed to check ls exist", K(ls_id));
+
   } else if (!b_exist) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected error, ls does not exist", K(ret), K(ls_id));
+
   } else if (OB_FAIL(ls_svr->get_ls(ls_id, ls_handle, ObLSGetMod::STORAGE_MOD))) {
-    STORAGE_LOG(WARN, "failed to get ls", K(ls_id));
+
   } else if (OB_ISNULL(ls = ls_handle.get_ls())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "ls is null", K(ret), K(ls_handle));
+
   }
 
   // set member list
@@ -399,12 +399,12 @@ int TestCGMicroMacroWriteOp::create_ls(
   }
 
   // check leader
-  STORAGE_LOG(INFO, "check leader");
+
   ObRole role;
   for (int i = 0; OB_SUCC(ret) && i < 15; i++) {
     int64_t proposal_id = 0;
     if (OB_FAIL(ls->get_log_handler()->get_role(role, proposal_id))) {
-      STORAGE_LOG(WARN, "failed to get role", K(ret));
+
     } else if (role == ObRole::LEADER) {
       break;
     }
@@ -414,7 +414,7 @@ int TestCGMicroMacroWriteOp::create_ls(
   if (OB_FAIL(ret)) {
   } else if (OB_UNLIKELY(ObRole::LEADER != role)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected error, role is not leader", K(ret), K(role));
+
   }
 
   return ret;
@@ -717,7 +717,7 @@ TEST_F(TestCGMicroMacroWriteOp, test_cg_row_files_generater)
     ObChunk end_chunk;
     end_chunk.set_end_chunk();
     EXPECT_EQ(OB_SUCCESS, pipeline_.push(end_chunk));
-    LOG_INFO("slice end in the test_cg_row_files_generater");
+
   }
 }
 

@@ -195,7 +195,7 @@ int ObVirtualSqlPlanMonitor::inner_get_next_row(common::ObNewRow *&row)
       if (OB_ITER_END == ret) {
         reset_rt_node_info();
         ret = OB_SUCCESS;
-        LOG_TRACE("finish report current tenant real time monitor node", K(ret));
+
       } else {
         LOG_WARN("fail to report real time monitor node", K(ret));
       }
@@ -282,7 +282,7 @@ int ObVirtualSqlPlanMonitor::report_rt_monitor_node(common::ObNewRow *&row)
       rt_node_idx_--;
     }
   }
-  LOG_TRACE("check rt_nodes_.count()", K(rt_nodes_.count()), K(rt_node_idx_), K(ret));
+
   return ret;
 }
 

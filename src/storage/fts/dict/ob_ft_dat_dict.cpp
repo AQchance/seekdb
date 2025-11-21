@@ -190,7 +190,7 @@ int ObFTDATBuilder<DATA_TYPE>::build_from_trie(ObFTTrie<DATA_TYPE> &trie)
     } else if (OB_FAIL(trie.get_end_word(dat_->end_word_))) {
       LOG_WARN("fail to get end word", K(ret));
     }
-    LOG_INFO("build dat finished", K(dat_->start_word_.get_word()), K(dat_->end_word_.get_word()));
+
 
     dfs_queue.reset();
     alloc.reset();

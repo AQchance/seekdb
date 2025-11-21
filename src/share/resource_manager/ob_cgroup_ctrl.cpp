@@ -137,7 +137,7 @@ bool ObCgroupCtrl::check_cgroup_status()
     } else {
       need_regist_cgroup = true;
       valid_ = true;
-      LOG_INFO("init cgroup success");
+
     }
   }
   return need_regist_cgroup;
@@ -237,7 +237,7 @@ int ObCgroupCtrl::remove_dir_(const char *curr_dir)
   } else if (OB_FAIL(FileDirectoryUtils::delete_directory(curr_dir))) {
     LOG_WARN("remove group directory failed", K(ret), K(curr_dir));
   } else {
-    LOG_INFO("remove group directory success", K(curr_dir));
+
   }
   return ret;
 }
@@ -317,7 +317,7 @@ int ObCgroupCtrl::remove_cgroup_(const uint64_t tenant_id, uint64_t group_id, co
     ret = OB_SUCCESS;
     // ignore failure
   } else {
-    LOG_INFO("remove cgroup directory success", K(group_path), K(tenant_id));
+
   }
   return ret;
 }
@@ -368,7 +368,7 @@ int ObCgroupCtrl::add_thread_to_cgroup_(
     } else if (OB_FAIL(set_cgroup_config_(group_path, TASKS_FILE, tid_value))) {
       LOG_WARN("add tid to cgroup failed", K(ret), K(group_path), K(tid_value));
     } else {
-      LOG_INFO("add tid to cgroup success", K(group_path), K(tid_value));
+
     }
   }
   return ret;

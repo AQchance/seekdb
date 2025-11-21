@@ -1055,7 +1055,7 @@ int ObExprInOrNotIn::eval_batch_in_without_row_fallback(const ObExpr &expr,
                                                         const int64_t batch_size)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("eval_batch_in start: batch mode", K(batch_size));
+
   ObDatum *results = expr.locate_batch_datums(ctx);
   if (OB_ISNULL(results)) {
     ret = OB_ERR_UNEXPECTED;
@@ -1223,7 +1223,7 @@ int ObExprInOrNotIn::inner_eval_vector_in_without_row_fallback(const ObExpr &exp
                                                           const EvalBound &bound)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("eval_vector_in start: vector mode", K(bound));
+
   ResVec *res_vec = static_cast<ResVec *>(expr.get_vector(ctx));
   LeftVec *input_left_vec = static_cast<LeftVec *>(expr.args_[0]->get_vector(ctx));
   ObDatum *right = nullptr;
@@ -1433,7 +1433,7 @@ int ObExprInOrNotIn::eval_in_with_row(const ObExpr &expr,
               ret = OB_INVALID_ARGUMENT;
               LOG_WARN("invalid null arg", K(ret), K(RIGHT_ROW_ELE(i, j)),K(i), K(j));
             } else if (OB_FAIL(RIGHT_ROW_ELE(i, j)->eval(ctx, right))) {
-              LOG_DEBUG("param evaluate fail, hash set lookup disabled for in expr", K(ret), K(i));
+
               in_ctx->disable_hash_calc();
             } else if (!in_ctx->is_hash_calc_disabled()) {//traverse to determine null_idx
             // Detect the position of null elements and record
@@ -1722,7 +1722,7 @@ int ObExprInOrNotIn::eval_batch_in_without_row(const ObExpr &expr,
                                                const int64_t batch_size)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("eval_batch_in_hash start: batch mode");
+
   ObDatum *results = expr.locate_batch_datums(ctx);
   if (OB_ISNULL(results)) {
     ret = OB_ERR_UNEXPECTED;
@@ -1832,7 +1832,7 @@ int ObExprInOrNotIn::inner_eval_vector_in_without_row(const ObExpr &expr,
                                                       const EvalBound &bound)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("eval_vector_in_hash start: vector mode");
+
   ResVec *res_vec = static_cast<ResVec *>(expr.get_vector(ctx));
   LeftVec *input_left_vec = static_cast<LeftVec *>(expr.args_[0]->get_vector(ctx));
   ObBitVector &eval_flags = expr.get_evaluated_flags(ctx);
@@ -2359,7 +2359,7 @@ int ObExprInOrNotIn::build_hash_set(
     } else if (OB_FAIL(expr.args_[1]->args_[i]->eval(ctx, right))) {
       ret = OB_SUCCESS;
       in_ctx->disable_hash_calc();
-      LOG_DEBUG("param eval failed, try nest_loop", K(ret), K(i));
+
     } else if (right->is_null()) {
       cnt_null = true;
       in_ctx->ctx_hash_null_ = true;

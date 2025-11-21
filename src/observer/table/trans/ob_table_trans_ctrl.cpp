@@ -120,7 +120,7 @@ int ObTableTransCtrl::sync_end_trans(ObTableTransParam &trans_param)
   }
   ret = tmp_ret == OB_SUCCESS ? ret : tmp_ret;
   trans_param.trans_desc_ = NULL;
-  LOG_DEBUG("ObTableApiProcessorBase::sync_end_trans", K(ret), K(trans_param.is_rollback_), K(stmt_timeout_ts));
+
 
   return ret;
 }

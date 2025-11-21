@@ -71,7 +71,7 @@ int ObVectorRefreshIndexExecutor::execute_refresh_inner(
   if (OB_FAIL(ret)) {
   } else if (OB_UNLIKELY(in_recycle_bin)) {
     // do nothing
-    LOG_DEBUG("delta buffer table is in recyclebin, do nothing");
+
   } else if (OB_FAIL(do_refresh_with_retry())) {
     LOG_WARN("fail to do refresh", KR(ret));
   }
@@ -120,7 +120,7 @@ int ObVectorRefreshIndexExecutor::execute_rebuild_inner(
   if (OB_FAIL(ret)) {
   } else if (OB_UNLIKELY(in_recycle_bin)) {
     // do nothing
-    LOG_DEBUG("delta buffer table is in recyclebin, do nothing");
+
   } else if (OB_FAIL(do_rebuild_with_retry())) {
     LOG_WARN("fail to do refresh", KR(ret));
   }
@@ -445,7 +445,7 @@ int ObVectorRefreshIndexExecutor::resolve_table_id_and_check_table_valid(
     LOG_WARN("table_schema is null", K(ret), KP(domain_table_schema));
   } else if (OB_UNLIKELY(domain_table_schema->is_in_recyclebin())) {
     in_recycle_bin = true;
-    LOG_DEBUG("domain table is in recyclebin, do nothing");
+
   } else if (OB_UNLIKELY(!domain_table_schema->is_vec_domain_index())) {
     ret = OB_NOT_SUPPORTED;
     LOG_WARN("invalid index table type", KR(ret), K(domain_table_schema->is_vec_domain_index()));
@@ -643,7 +643,7 @@ int ObVectorRefreshIndexExecutor::resolve_refresh_inner_arg(const ObVectorRefres
   if (OB_FAIL(resolve_table_id_and_check_table_valid(arg.idx_table_id_, base_table_schema, domain_table_schema, index_id_table_schema, in_recycle_bin))) {
     LOG_WARN("fail to resolve table id and check table valid", KR(ret), K(arg));
   } else if (OB_UNLIKELY(in_recycle_bin)) {
-    LOG_DEBUG("delta buffer table is in recyclebin, do nothing");
+
   } else if (OB_ISNULL(base_table_schema) ||
              OB_ISNULL(domain_table_schema)) {
     ret = OB_ERR_UNEXPECTED;
@@ -738,7 +738,7 @@ int ObVectorRefreshIndexExecutor::resolve_rebuild_inner_arg(const ObVectorRebuil
   if (OB_FAIL(resolve_table_id_and_check_table_valid(arg.idx_table_id_, base_table_schema, domain_table_schema, index_id_table_schema, in_recycle_bin))) {
     LOG_WARN("fail to resolve table id and check table valid", KR(ret), K(arg));
   } else if (OB_UNLIKELY(in_recycle_bin)) {
-    LOG_DEBUG("domain table is in recyclebin, do nothing");
+
   } else if (OB_ISNULL(base_table_schema) ||
              OB_ISNULL(domain_table_schema)) {
     ret = OB_ERR_UNEXPECTED;

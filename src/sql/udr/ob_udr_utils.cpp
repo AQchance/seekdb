@@ -55,7 +55,7 @@ int ObUDRUtils::match_udr_item(const ObString &pattern,
         LOG_WARN("failed to match rewrite rule item", K(ret));
       }
     } else if (guard.is_valid()) {
-      LOG_TRACE("succ to match rewrite rule item", KPC(guard.get_ref_obj()));
+
     }
   }
   if (OB_FAIL(ret) && !ObSQLUtils::check_need_disconnect_parser_err(ret)) {
@@ -271,7 +271,7 @@ int ObUDRUtils::match_udr_and_refill_ctx(const ObString &pattern,
       LOG_WARN("failed to cons tpl sql const cons list", K(ret));
     } else if (!item_guard.is_valid()) {
       is_match_udr = false;
-      LOG_TRACE("no matching user-defined rules", K(ret));
+
     } else if (OB_FAIL(refill_udr_exec_ctx(item_guard,
                                           sql_ctx,
                                           result,
@@ -279,7 +279,7 @@ int ObUDRUtils::match_udr_and_refill_ctx(const ObString &pattern,
       LOG_WARN("failed to refill rewrite sql exec ctx", K(ret));
     } else {
       is_match_udr = true;
-      LOG_TRACE("succ to match user-defined rule", K(ret));
+
     }
   }
   return ret;

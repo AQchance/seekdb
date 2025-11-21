@@ -103,7 +103,7 @@ int ObHexUtilsBase::hex(ObString &text, ObIAllocator &alloc, const char *binary_
       text_buf[pos++] = HEXCHARS[binary_buf[i] & 0xF];
     }
     text.assign_ptr(text_buf, pos);
-    LOG_DEBUG("succ to hex", K(text.length()), K(text));
+
   }
   return ret;
 }

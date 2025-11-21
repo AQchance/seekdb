@@ -70,7 +70,7 @@ int LogIOWorkerWrapper::init(const LogIOWorkerConfig &config,
     throttle_.reset();
     round_robin_idx_ = 0;
     is_inited_ = true;
-    LOG_INFO("success to init LogIOWorkerWrapper", K(config), K(tenant_id), KPC(this));
+
   }
   if (OB_FAIL(ret) && OB_INIT_TWICE != ret) {
     destroy();
@@ -92,7 +92,7 @@ int LogIOWorkerWrapper::start()
   if (OB_FAIL(start_())) {
     LOG_WARN("failed to start log_io_workers_");
   } else {
-    LOG_INFO("success to start LogIOWorkerWrapper", KPC(this));
+
   }
   return ret;
 }
@@ -119,7 +119,7 @@ int LogIOWorkerWrapper::notify_need_writing_throttling(const bool &need_throttli
   } else {
     throttle_.notify_need_writing_throttling(need_throttling);
     if (need_throttling) {
-      LOG_INFO("success to notify_need_writing_throttling True");
+
     }
   }
   return ret;

@@ -100,7 +100,7 @@ int ObFTIndexRowCache::segment(const common::ObObjMeta &ft_obj_meta,
   } else {
     row_idx_ = 0;
   }
-  LOG_TRACE("word segment", K(ret), K(row_idx_), K(rows_.count()), K(doc_id_datum), K(fulltext));
+
   return ret;
 }
 
@@ -116,7 +116,7 @@ int ObFTIndexRowCache::get_next_row(blocksstable::ObDatumRow *&row)
     row = (rows_[row_idx_]);
     ++row_idx_;
   }
-  LOG_TRACE("get next row", K(ret), KPC(row), K(row_idx_), K(rows_.count()));
+
   return ret;
 }
 
@@ -185,7 +185,7 @@ int ObDASDomainUtils::generate_spatial_index_rows(
       LOG_WARN("Get mbr from s2object failed", K(ret));
     } else if (spa_mbr.is_empty()) {
       if (cellids.size() == 0) {
-        LOG_DEBUG("it's might be empty geometry collection", K(wkb_str));
+
       } else {
         ret = OB_ERR_GIS_INVALID_DATA;
         LOG_WARN("invalid geometry", K(ret), K(wkb_str));
@@ -366,7 +366,7 @@ int ObDASDomainUtils::build_ft_doc_word_infos(
         if (OB_FAIL(word_rows.push_back(&rows[i]))) {
           LOG_WARN("fail to push back row", K(ret), K(rows[i]));
         } else {
-          LOG_DEBUG("succeed to add word row", K(ret), K(is_fts_index_aux), K(ft_word), K(word_cnt), K(i), K(rows[i]));
+
           ++i;
         }
       }
@@ -783,7 +783,7 @@ int ObDomainDMLIterator::get_next_domain_row(blocksstable::ObDatumRow *&row)
       got_row = true;
     }
   }
-  LOG_TRACE("get next domain row", K(ret), K(got_row), K(row_idx_), K(rows_), KPC(row), KPC(sr));
+
   return ret;
 }
 
@@ -829,7 +829,7 @@ int ObDomainDMLIterator::get_next_domain_rows(blocksstable::ObDatumRow *&row, in
         got_row = true;
       }
     }
-    LOG_TRACE("get next domain rows", K(ret), K(got_row), K(row_idx_), K(row_count), K(rows_), KPC(row), KPC(sr));
+
   }
   return ret;
 }
@@ -864,7 +864,7 @@ int ObSpatialDMLIterator::generate_domain_rows(const ObChunkDatumStore::StoredRo
           KPC(store_row), K(geo_meta));
     }
   }
-  LOG_DEBUG("generate domain rows", K(ret), K(rows_), KPC(store_row));
+
   return ret;
 }
 
@@ -1070,7 +1070,7 @@ int ObFTDMLIterator::change_domain_dml_mode(const ObDomainDMLMode &mode)
       mode_ = mode;
     }
   }
-  LOG_TRACE("change_domain_dml_mode", K(ret), K(old_mode), K(mode_), K(mode));
+
   return ret;
 }
 
@@ -1176,7 +1176,7 @@ int ObFTDMLIterator::scan_ft_word_rows(const ObChunkDatumStore::StoredRow *store
         } else if (OB_FAIL(tmp_rows.push_back(ft_word_row))) {
           LOG_WARN("fail push back ft word row", K(ret), KPC(ft_word_row));
         } else {
-          LOG_TRACE("succeed to get one ft word from fts doc word", KPC(ft_word_row));
+
         }
       } while (OB_SUCC(ret));
 
@@ -1202,7 +1202,7 @@ int ObFTDMLIterator::scan_ft_word_rows(const ObChunkDatumStore::StoredRow *store
           }
 
           if (OB_SUCC(ret)) {
-            LOG_TRACE("succeed to scan ft word rows", K(rows_.count()));
+
           }
         }
       }
@@ -1411,7 +1411,7 @@ int ObMultivalueDMLIterator::generate_domain_rows(const ObChunkDatumStore::Store
       }
     }
   }
-  LOG_DEBUG("generate domain rows", K(ret), K(rows_), KPC(store_row));
+
   return ret;
 }
 

@@ -142,7 +142,7 @@ int ObDelUpdLogPlan::inner_compute_dml_dop_by_auto_dop(const ObDelUpdStmt &stmt,
     int64_t calc_dop = op_cost / cost_threshold_us;
     dop = std::min(calc_dop, calc_dop_limit);
     OPT_TRACE("finish compute dml parallel degree:", dop);
-    LOG_TRACE("finish compute dml parallel degree", K(cost_threshold_us), K(op_cost), K(calc_dop_limit), K(calc_dop), K(dop));
+
   }
   return ret;
 }
@@ -362,7 +362,7 @@ int ObDelUpdLogPlan::check_table_rowkey_distinct(
       } else {
         index_dml_info->distinct_algo_ = T_DISTINCT_NONE;
       }
-      LOG_TRACE("check_table_rowkey_distinct", K(index_dml_infos.count()), K(i), K(is_unique), KPC(index_dml_info));
+
     }
   }
   return ret;
@@ -515,7 +515,7 @@ int ObDelUpdLogPlan::calculate_table_location(const ObDelUpdStmt &stmt,
     // For insert, the calculated partition order should match the value row correspondence, and should not be reordered
     LOG_WARN("failed to calculate table location", K(ret));
   } else {
-    LOG_TRACE("succeed to compute table location", K(table_partition_info), K(filters));
+
   }
   return ret;
 }
@@ -563,19 +563,19 @@ int ObDelUpdLogPlan::compute_exchange_info_for_pdml_del_upd(const ObShardingInfo
       exch_info.dist_method_ = can_use_random
                                 ? ObPQDistributeMethod::PARTITION_RANDOM
                                 : ObPQDistributeMethod::PARTITION_HASH;
-      LOG_TRACE("partition level is one, use pkey reshuffle method");
+
     } else if (share::schema::PARTITION_LEVEL_TWO == part_level) {
       exch_info.repartition_type_ = OB_REPARTITION_ONE_SIDE_TWO_LEVEL;
       exch_info.dist_method_ = can_use_random
                                 ? ObPQDistributeMethod::PARTITION_RANDOM
                                 : ObPQDistributeMethod::PARTITION_HASH;
-      LOG_TRACE("partition level is two, use pkey reshuffle method");
+
     } else if (share::schema::PARTITION_LEVEL_ZERO == part_level) {
       exch_info.repartition_type_ = OB_REPARTITION_NO_REPARTITION;
       exch_info.dist_method_ = can_use_random
                                 ? ObPQDistributeMethod::RANDOM
                                 : ObPQDistributeMethod::HASH;
-      LOG_TRACE("partition level is zero, use reduce reshuffle method");
+
     } else {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("get unexpected partition level", K(part_level) ,K(ret));
@@ -1306,7 +1306,7 @@ int ObDelUpdLogPlan::get_ddl_sort_keys_with_part_expr(ObExchangeInfo &exch_info,
       LOG_WARN("push back sample sort keys failed", K(ret));
     }
   }
-  LOG_INFO("get ddl sort keys and sample sort keys", K(ret), K(sort_keys.count()), K(sample_sort_keys.count()), K(sample_sort_column_count));
+
   return ret;
 }
 
@@ -2087,7 +2087,7 @@ int ObDelUpdLogPlan::fill_index_column_convert_exprs(ObRawExprCopier &copier,
       LOG_WARN("failed to push back new value expr", K(ret));
     }
   }
-  LOG_TRACE("check column convert expr", K(column_exprs), K(column_convert_exprs));
+
   return ret;
 }
 

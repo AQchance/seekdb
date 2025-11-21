@@ -163,7 +163,7 @@ int ObDtlTenantMemManager::free(ObDtlLinkedBuffer *buf)
         K(mem_mgr->get_alloc_cnt()), K(mem_mgr->get_free_cnt()));
       // buffer_status();
       if (OB_SIZE_OVERFLOW == ret) {
-        LOG_TRACE("overflow queue capacity", K(ret), K(hash_val));
+
         ret = OB_SUCCESS;
       }
     }
@@ -227,10 +227,10 @@ int ObDtlTenantMemManager::auto_free_on_time()
     }
     if (OB_SUCCESS != (tmp_ret = mem_mgr->auto_free_on_time(max_reserve_count))) {
       ret = tmp_ret;
-      LOG_TRACE("failed to auto free memory buffer manager", K(ret));
+
     }
   }
-  LOG_INFO("auto free to reserve buffer count", K(reserve_buffer_min_size), K(max_reserve_count), K(buffer_size), K(ret));
+
   return ret;
 }
 

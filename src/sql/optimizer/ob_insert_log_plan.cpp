@@ -36,7 +36,7 @@ int ObInsertLogPlan::generate_normal_raw_plan()
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get unexpected error", K(insert_stmt), K(ret));
   } else {
-    LOG_TRACE("start to allocate operators for ", "sql", get_optimizer_context().get_query_ctx()->get_sql_stmt());
+
     OPT_TRACE("generate plan for ", get_stmt());
     if (!insert_stmt->value_from_select()) {
       // insert into values xxxx
@@ -128,7 +128,7 @@ int ObInsertLogPlan::generate_normal_raw_plan()
         if (OB_FAIL(candi_allocate_select_into_for_insert())) {
           LOG_WARN("failed to allocate select into op", K(ret));
         } else {
-          LOG_TRACE("succeed to allocate select into clause", K(candidates_.candidate_plans_.count()));
+
         }
       } else if (use_pdml()) {
         if (OB_FAIL(candi_allocate_pdml_insert(osg_info))) {
@@ -140,7 +140,7 @@ int ObInsertLogPlan::generate_normal_raw_plan()
       } else if (OB_FAIL(candi_allocate_insert(osg_info))) {
         LOG_WARN("failed to allocate insert operator", K(ret));
       } else {
-        LOG_TRACE("succeed to allocate insert operator", K(candidates_.candidate_plans_.count()));
+
       }
     }
     if (OB_SUCC(ret) && insert_stmt->get_returning_aggr_item_size() > 0) {
@@ -291,7 +291,7 @@ int ObInsertLogPlan::generate_osg_share_info(OSGShareInfo *&info)
           // using the select column/values expr to calc partid.
           LOG_WARN("fail to replace column item with select item", K(ret));
         } else {
-          LOG_TRACE("success to generate calc_part expr", K(ret), K(info->calc_part_id_expr_));
+
         }
       }
       // column conv;
@@ -427,7 +427,7 @@ int ObInsertLogPlan::check_need_online_stats_gather(bool &need_osg)
     } else {
       need_osg = false;
     }
-    LOG_TRACE("online insert stat", K(online_sys_var), K(need_osg), K(need_gathering));
+
   }
   return ret;
 }
@@ -506,7 +506,7 @@ int ObInsertLogPlan::candi_allocate_insert(OSGShareInfo *osg_info)
                                          osg_info))) {
     LOG_WARN("failed to create insert plans", K(ret));
   } else if (!insert_plans.empty()) {
-    LOG_TRACE("succeed to create insert plan using hint", K(insert_plans.count()));
+
   } else if (OB_FAIL(create_insert_plans(candi_plans, insert_table_part,
                                          insert_table_sharding,
                                          lock_row_flag_expr,
@@ -515,7 +515,7 @@ int ObInsertLogPlan::candi_allocate_insert(OSGShareInfo *osg_info)
                                          osg_info))) {
     LOG_WARN("failed to create insert plans", K(ret));
   } else {
-    LOG_TRACE("succeed to create insert plan ignore hint", K(insert_plans.count()));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -700,7 +700,7 @@ int ObInsertLogPlan::allocate_insert_as_top(ObLogicalOperator *&top,
     insert_op->set_has_instead_of_trigger(insert_stmt->has_instead_of_trigger());
     if (get_can_use_parallel_das_dml()) {
       insert_op->set_das_dop(max_dml_parallel_);
-      LOG_TRACE("insert das dop", K(max_dml_parallel_));
+
     }
     insert_op->set_is_partition_wise(is_partition_wise);
     if (OB_NOT_NULL(insert_stmt->get_table_item(0))) {
@@ -740,7 +740,7 @@ int ObInsertLogPlan::candi_allocate_pdml_insert(OSGShareInfo *osg_info)
                                                i == 0 ? osg_info : NULL))) {
       LOG_WARN("failed to allocate one pdml insert", K(ret), K(i), K(index_dml_infos_));
     } else {
-      LOG_TRACE("succeed to allocate one pdml insert");
+
     }
   }
   return ret;
@@ -821,7 +821,7 @@ int ObInsertLogPlan::get_best_insert_dist_method(ObLogicalOperator &top,
     OPT_TRACE("insert plan will use pull to local method");
   }
   if (OB_SUCC(ret)) {
-    LOG_TRACE("succeed to get best insert plan", K(is_multi_part_dml), K(distributed_methods));
+
   }
   return ret;
 }
@@ -912,7 +912,7 @@ int ObInsertLogPlan::check_insert_plan_need_multi_partition_dml(ObTablePartition
     OPT_TRACE("part key with rand/subquery/auto_inc expr, force use multi part dml");
   } else { /*do nothing*/ }
   if (OB_SUCC(ret)) {
-    LOG_TRACE("succeed to check insert_stmt need multi-partition-dml", K(is_multi_part_dml));
+
   }
   return ret;
 }
@@ -948,7 +948,7 @@ int ObInsertLogPlan::check_if_match_partition_wise_insert(ObShardingInfo &target
   } else {
     is_partition_wise = is_match && !top.is_exchange_allocated();
   }
-  LOG_TRACE("check partition wise", K(is_match), K(top.is_exchange_allocated()));
+
   return ret;
 }
 
@@ -1384,7 +1384,7 @@ int ObInsertLogPlan::prepare_table_dml_info_for_ddl(const ObInsertTableInfo& tab
           index_dml_info->rowkey_cnt_ = index_schema->get_rowkey_column_num();
           index_dml_info->spk_cnt_ = index_schema->get_shadow_rowkey_column_num();
           index_dml_info->index_name_ = data_table_schema->get_table_name_str();
-          LOG_INFO("index dml info contains part ids: ", K(ret), K(index_dml_info->part_ids_)); // In the scenario of supplementing data in a local index table, a relationship mapping was made between the part ids of the main table and the index table
+ // In the scenario of supplementing data in a local index table, a relationship mapping was made between the part ids of the main table and the index table
       }
     } else {
       // global index or primary table

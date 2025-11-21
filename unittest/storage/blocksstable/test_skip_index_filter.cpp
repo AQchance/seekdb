@@ -161,7 +161,7 @@ void TestSkipIndexFilter::setup_obj(ObObj& obj, int64_t column_id, int64_t seed)
 {
   obj.copy_meta_type(row_generate_.column_list_.at(column_id).col_type_);
   ObObjType column_type = row_generate_.column_list_.at(column_id).col_type_.get_type();
-  STORAGE_LOG(INFO, "Type of current column is: ", K(column_type));
+
   row_generate_.set_obj(column_type, row_generate_.column_list_.at(column_id).col_id_, seed, obj, 0);
   if ( ObVarcharType == column_type || ObCharType == column_type || ObHexStringType == column_type
       || ObTextType == column_type){

@@ -52,7 +52,7 @@ static int64_t STANDBY_STAT[STANDBY_STAT_ARRAY_SIZE][8];
 static void statistics_for_standby()
 {
   for (int64_t i = 0; i < STANDBY_STAT_ARRAY_SIZE; i++) {
-    LOG_INFO("standby checking statistics", K(STANDBY_STAT[i][0]));
+
     STANDBY_STAT[i][0] = 0;
   }
 }

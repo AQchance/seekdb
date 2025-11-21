@@ -145,7 +145,7 @@ namespace storage
 int ObTransferWorkerMgr::do_transfer_backfill_tx_(const ObTransferBackfillTXParam &param)
 {
   int ret = OB_SUCCESS;
-  STORAGE_LOG(INFO, "qianchen debuf3", K(param));
+
   return ret;
 }
 }
@@ -162,20 +162,20 @@ int ObTabletMergeFinishTask::process()
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited yet", K(ret));
+
   } else if (OB_UNLIKELY(nullptr == merge_dag_
       || (nullptr == (ctx_ptr = static_cast<ObTabletMergeCtx *>(merge_dag_->get_ctx()))))) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "get unexpected null ctx", K(ret));
+
   } else if (FALSE_IT(SET_MEM_CTX(ctx_ptr->mem_ctx_))) {
   } else if (ctx_ptr->get_tablet_id() == MULTI_TRANSFER_TX_CHOOSEN_TABLET_ID) {
-    STORAGE_LOG(WARN, "qianchen debuf find tablet", KR(ret), KPC(ctx_ptr));
+
     ret = OB_EAGAIN;
   } else if (OB_FAIL(ctx_ptr->update_tablet_after_merge())) {
-    STORAGE_LOG(WARN, "failed to update tablet after merge", KR(ret), KPC(ctx_ptr));
+
   }
   if (OB_FAIL(ret)) {
-    STORAGE_LOG(WARN, "sstable merge failed", K(ret), KPC(ctx_ptr), "task", *(static_cast<ObITask *>(this)));
+
   } else {
     ObITable *sstable = ctx_ptr->merged_table_handle_.get_table();
     // ATTENTION! Critical diagnostic log, DO NOT CHANGE!!!

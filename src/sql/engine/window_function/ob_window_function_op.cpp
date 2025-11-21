@@ -96,7 +96,7 @@ int ObWindowFunctionOpInput::sync_wait(
         if (0 == ATOMIC_AAF(&sync_cnt, 1) % exit_cnt) {
           // last thread, it will signal and exit by self
           shared_info->cond_.signal();
-          LOG_DEBUG("debug sync_cnt", K(ret), K(sync_cnt), K(lbt()));
+
           break;
         }
       }
@@ -109,7 +109,7 @@ int ObWindowFunctionOpInput::sync_wait(
       } else if (0 == loop % 16 && OB_FAIL(ctx.fast_check_status())) {
         LOG_WARN("failed to check status", K(ret));
       } else if (0 == ATOMIC_LOAD(&sync_cnt) % exit_cnt) { // timeout, and signal has done
-        LOG_DEBUG("debug sync_cnt", K(ret), K(sync_cnt), K(loop), K(exit_cnt), K(lbt()));
+
         break;
       } else {
         auto key = shared_info->cond_.get_key();
@@ -155,7 +155,7 @@ int ObWindowFunctionSpec::rd_generate_patch(ObRDWFPieceMsgCtx &ctx) const
               ? (std::tie(l->sqc_id_, l->thread_id_) < std::tie(r->sqc_id_, r->thread_id_))
               : (cmp < 0);
             });
-  LOG_TRACE("before generate patch", K(ctx.infos_));
+
   auto frame_offset = [](ObStoredDatumRow *f)->ObRDWFPartialInfo::RowExtType & {
     return f->extra_payload<ObRDWFPartialInfo::RowExtType>();
   };
@@ -302,7 +302,7 @@ int ObWindowFunctionSpec::rd_generate_patch(ObRDWFPieceMsgCtx &ctx) const
       }
     }
   }
-  LOG_TRACE("after generate patch", K(ctx.infos_));
+
   return ret;
 }
 
@@ -818,7 +818,7 @@ int ObWindowFunctionOp::NonAggrCellNtile::eval(RowsReader &row_reader,
     const int64_t y = total % bucket_num;
     const int64_t f_row_idx = row_idx - frame.head_;
     int64_t result = 0;
-    LOG_DEBUG("print ntile param", K(total), K(x), K(y), K(f_row_idx));
+
     if (0 == x) {
       result = f_row_idx + 1;
     } else {
@@ -842,7 +842,7 @@ int ObWindowFunctionOp::NonAggrCellNtile::eval(RowsReader &row_reader,
     }
     wf_info_.expr_->set_evaluated_flag(op_.eval_ctx_);
     val = expr_datum;
-    LOG_DEBUG("ntile print result", K(result), K(bucket_num));
+
   }
   return ret;
 }
@@ -878,7 +878,7 @@ int ObWindowFunctionOp::NonAggrCellRankLike::eval(RowsReader &row_reader,
         if (OB_FAIL(cmp_func(l_datum, r_datum, match))) {
           LOG_WARN("cmp failed", K(ret), K(idx), K(l_datum), K(r_datum), K(match));
         } else {
-          LOG_DEBUG("cmp ", K(idx), K(l_datum), K(r_datum), K(match));
+
           if (0 != match) {
             equal_with_prev_row = false;
             break;
@@ -992,7 +992,7 @@ int ObWindowFunctionOp::NonAggrCellCumeDist::eval(RowsReader &row_reader,
         if (OB_FAIL(cmp_func(l_datum, r_datum, match))) {
           LOG_WARN("cmp failed", K(ret), K(idx), K(l_datum), K(r_datum), K(match));
         } else {
-          LOG_DEBUG("cmp ", K(idx), K(l_datum), K(r_datum), K(match));
+
           if (0 != match) {
             should_continue = false;
           }
@@ -1218,7 +1218,7 @@ int ObWindowFunctionOp::init()
         } else if (OB_FAIL(all_expr_datums_.push_back(expr_datum))) {
           LOG_WARN("push back failed", K(ret));
         } else {
-          LOG_DEBUG("finish init all expr datum", K(datums_size), K(all_expr_datums_copy_.count()));
+
         }
       }
     }
@@ -1359,7 +1359,7 @@ int ObWindowFunctionOp::init()
             ret = OB_ERR_UNEXPECTED;
             LOG_WARN("add func failed", K(ret));
           } else {
-            LOG_DEBUG("add func succ", KPC(wf_cell));
+
             wf_cell = NULL;
           }
         }
@@ -1501,7 +1501,7 @@ int ObWindowFunctionOp::inner_open()
   } else if (OB_FAIL(reset_for_scan(ctx_.get_my_session()->get_effective_tenant_id()))) {
     LOG_WARN("reset_for_scan failed", K(ret));
   }
-  LOG_DEBUG("window function inner open", K(MY_SPEC.single_part_parallel_));
+
   return ret;
 }
 
@@ -1734,7 +1734,7 @@ int ObWindowFunctionOp::reset_for_part_scan(const int64_t tenant_id)
   int ret = OB_SUCCESS;
   last_output_row_idx_ = OB_INVALID_INDEX;
   foreach_stores([&](Stores &s) { return s.cur_->reset(tenant_id); });
-  LOG_DEBUG("finish reset_for_part_scan", K(ret));
+
   return ret;
 }
 
@@ -1873,7 +1873,7 @@ int ObWindowFunctionOp::compute(RowsReader &row_reader, WinFuncCell &wf_cell,
               // reset max_min index as head of new frame
               aggr_func->aggr_processor_.get_removal_info().max_min_index_ = new_frame.head_;
             }
-            LOG_DEBUG("restart agg", K(last_valid_frame), K(new_frame), KPC(aggr_func));
+
             for (int64_t i = new_frame.head_, skip_cnt = 0;
                 OB_SUCC(ret) && i <= new_frame.tail_;
                 ++i) {
@@ -1893,7 +1893,7 @@ int ObWindowFunctionOp::compute(RowsReader &row_reader, WinFuncCell &wf_cell,
             }
           }
         } else {
-          LOG_DEBUG("use last value");
+
           // reuse last result, invoke final directly...
         }
         if (OB_SUCC(ret)) {
@@ -1908,7 +1908,7 @@ int ObWindowFunctionOp::compute(RowsReader &row_reader, WinFuncCell &wf_cell,
               val.set_null();
             }
             last_valid_frame = new_frame;
-            LOG_DEBUG("finish compute", K(row_idx), K(last_valid_frame), K(val));
+
           }
         }
       } else {
@@ -2192,7 +2192,7 @@ int ObWindowFunctionOp::partial_next_row()
   //int64_t aggr_status_value = 0;
   while (OB_SUCC(ret)) {
     if (child_iter_end_ && all_outputed()) {
-      LOG_DEBUG("iter end", K(last_output_row_idx_));
+
       ret = OB_ITER_END;
     } else if (all_outputed()) {
       LOG_DEBUG("ObWindowFunctionOp::partial_next_row() begin compute",
@@ -2350,7 +2350,7 @@ int ObWindowFunctionOp::output_row(int64_t idx,
         tmp_wf_cell->wf_info_.expr_->locate_expr_datum(eval_ctx_) = result_row->cells()[i];
         tmp_wf_cell->wf_info_.expr_->set_evaluated_projected(eval_ctx_);
       }
-      LOG_DEBUG("finish output one row", "idx", idx, KPC(child_row), KPC(result_row));
+
     }
   }
 
@@ -2488,7 +2488,7 @@ int ObWindowFunctionOp::coordinate()
     if (OB_FAIL(rd_fetch_patch())) {
       LOG_WARN("fetch patch info from PX COORD failed", K(ret));
     } else {
-      LOG_DEBUG("fetch patch", K(*rd_patch_));
+
       // prepare for final output
       last_output_row_idx_ = OB_INVALID_INDEX;
       foreach_stores([](Stores &s){ std::swap(s.first_, s.cur_); return OB_SUCCESS; });
@@ -2557,7 +2557,7 @@ int ObWindowFunctionOp::rd_fetch_patch()
     }
 
     if (OB_SUCC(ret)) {
-      LOG_TRACE("build piece message info", K(piece_msg.info_));
+
     }
 
     const ObRDWFWholeMsg *whole_msg = NULL;
@@ -2716,7 +2716,7 @@ int ObWindowFunctionOp::parallel_winbuf_process()
   } else if (whole.is_empty_) {
     /*do nothing*/
   } else {
-    LOG_DEBUG("parallel winbuf process start", K(res_row), KPC(res_row));
+
     ObChunkDatumStore::Iterator row_store_it;
     ObRADatumStore::StoredRow *new_row = const_cast<
         ObRADatumStore::StoredRow *>(res_row);
@@ -2755,7 +2755,7 @@ int ObWindowFunctionOp::parallel_winbuf_process()
         for (int i = 0; i < new_row->cnt_ && OB_SUCC(ret); ++i) {
           OZ(new_row->cells()[i].deep_copy(new_row->cells()[i], ctx_.get_allocator()));
         }
-        LOG_DEBUG("parallel winbuf process end", K(new_row), KPC(new_row));
+
       }
     }
   }
@@ -3783,7 +3783,7 @@ int ObWindowFunctionOp::output_rows_store_rows(const int64_t output_row_cnt,
                MY_SPEC.single_part_parallel_ ? 0 : idx, result_row))) {
       LOG_WARN("get row failed", K(ret), K(MY_SPEC.single_part_parallel_), K(idx));
     } else {
-      LOG_DEBUG("get result row", K(result_row), KPC(result_row));
+
       WinFuncCell *tmp_wf_cell = wf_list_.get_first();
       for (int64_t j = 0;
             j < result_row->cnt_ && tmp_wf_cell != NULL;
@@ -3823,7 +3823,7 @@ int ObWindowFunctionOp::output_batch_rows(const int64_t output_row_cnt)
     int64_t rows_cnt_current = MIN(current.to_output_rows(), output_row_cnt - rows_cnt_processed);
     ObEvalCtx::BatchInfoScopeGuard guard(eval_ctx_);
     guard.set_batch_idx(0);
-    LOG_DEBUG("start to output2", K(rows_cnt_processed), K(rows_cnt_current), K(output_row_cnt));
+
     // the first row has been stored before calc, store second row to last row
     OZ(store_all_expr_datums(1, rows_cnt_processed + rows_cnt_current - 1));
     output_rows_it_age_.inc();

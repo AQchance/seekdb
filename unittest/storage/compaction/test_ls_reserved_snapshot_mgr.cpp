@@ -28,7 +28,7 @@ namespace storage
 {
 int ObLSReservedSnapshotMgr::sync_clog(const int64_t new_reserved_snapshot)
 {
-  LOG_INFO("mock sync clog", K(new_reserved_snapshot));
+
   return OB_SUCCESS;
 }
 }

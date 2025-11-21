@@ -60,7 +60,7 @@ int ObXaPrepareResolver::resolve(const ParseNode &parse_node)
           xa_prepare_stmt->set_format_id(format_id);
         }
       }
-      LOG_DEBUG("xa prepare resolver", K(gtrid_string), K(bqual_string), K(format_id));
+
     }
   }
   return ret;

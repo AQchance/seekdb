@@ -772,7 +772,7 @@ int ObAddPartInfoHelper::add_high_bound_val_column(const P &part_option,
     } else if (OB_FAIL(dml.add_column("b_high_bound_val", ObString(pos, high_bound_val_)))) {
       LOG_WARN("Failed to add column b_high_bound_val", K(ret));
     } else {
-      LOG_DEBUG("high bound info", "high_bound_val", ObString(pos, high_bound_val_).ptr(), K(pos));
+
     } //do nothing
   }
   return ret;

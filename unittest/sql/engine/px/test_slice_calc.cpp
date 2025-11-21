@@ -99,7 +99,7 @@ void TestPkeyRangeSliceCalc::SetUp()
   }
   ret = ctx_.set_partition_ranges(part_ranges);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("init ctx partition ranges", K(ret), K(ctx_.get_partition_ranges()));
+
 }
 
 void TestPkeyRangeSliceCalc::TearDown()

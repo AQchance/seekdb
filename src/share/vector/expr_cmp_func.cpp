@@ -85,7 +85,7 @@ namespace common
 sql::ObExpr::EvalVectorFunc VectorCmpExprFuncsHelper::get_eval_vector_expr_cmp_func(
   const sql::ObDatumMeta &l_meta, const sql::ObDatumMeta &r_meta, const common::ObCmpOp cmp_op)
 {
-  LOG_DEBUG("eval vector expr_cmp_func", K(l_meta), K(r_meta), K(cmp_op));
+
   VecValueTypeClass l_tc = get_vec_value_tc(l_meta.type_, l_meta.scale_, l_meta.precision_);
   VecValueTypeClass r_tc = get_vec_value_tc(r_meta.type_, r_meta.scale_, r_meta.precision_);
   return EVAL_VECTOR_EXPR_CMP_FUNCS[l_tc][r_tc][cmp_op];

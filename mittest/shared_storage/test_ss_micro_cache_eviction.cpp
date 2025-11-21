@@ -106,7 +106,7 @@ int64_t TestSSMicroCacheEviction::cal_unpersisted_micro_cnt()
 TEST_F(TestSSMicroCacheEviction, test_delete_ghost_micro)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_delete_ghost_micro");
+
   ObArenaAllocator allocator;
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSARCInfo &arc_info = micro_cache->micro_meta_mgr_.arc_info_;
@@ -186,7 +186,7 @@ TEST_F(TestSSMicroCacheEviction, test_delete_ghost_micro)
     if (ObTimeUtility::current_time() - start_us > timeout_us) {
       break;
     }
-    LOG_INFO("test_delete_ghost", K(micro_cache->cache_stat_.micro_stat()), K(arc_info));
+
   }
   ASSERT_EQ(0, arc_info.seg_info_arr_[ARC_B1].cnt_);
 }
@@ -201,7 +201,7 @@ TEST_F(TestSSMicroCacheEviction, test_delete_ghost_micro)
 TEST_F(TestSSMicroCacheEviction, test_delete_all_persisted_micro)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_delete_all_persisted_micro");
+
   ObArenaAllocator allocator;
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSARCInfo &arc_info = micro_cache->micro_meta_mgr_.arc_info_;
@@ -270,12 +270,12 @@ TEST_F(TestSSMicroCacheEviction, test_delete_all_persisted_micro)
     if (ObTimeUtility::current_time() - start_us > timeout_us) {
       break;
     }
-    LOG_INFO("test_delete_all_persisted_micro", K(micro_cache->cache_stat_), K(total_unpersisted_micro_cnt), K(arc_info));
+
   }
   ASSERT_EQ(OB_SUCCESS,TestSSCommonUtil::wait_for_persist_task());
 
   // print micro map
-  LOG_INFO("start print micro map");
+
   ObSSMicroMetaManager::SSMicroMap &micro_map = micro_cache->micro_meta_mgr_.micro_meta_map_;
   ObSSMicroMetaManager::SSMicroMap::BlurredIterator micro_iter_(micro_map); 
   micro_iter_.rewind();
@@ -289,10 +289,10 @@ TEST_F(TestSSMicroCacheEviction, test_delete_all_persisted_micro)
         LOG_ERROR("fail to next micro_block meta", KR(ret), K(micro_key));
       }
     } else {
-      LOG_INFO("succeed to print micro_meta", K(i), K_(micro_iter_.bkt_idx), K_(micro_iter_.key_idx), K(micro_map.get_bkt_cnt()), KPC(micro_handle()));
+
     }
   }
-  LOG_INFO("end print micro map");
+
 
   // Step 4
   arc_task.is_inited_ = false;

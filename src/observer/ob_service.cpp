@@ -305,7 +305,7 @@ int ObService::start(bool embed_mode)
 
 void ObService::set_stop()
 {
-  LOG_INFO("[OBSERVICE_NOTICE] observice need stop now");
+
   lease_state_mgr_.set_stop();
 }
 
@@ -458,7 +458,7 @@ int ObService::update_baseline_schema_version(const int64_t schema_version)
              OB_SYS_TENANT_ID, schema_version))) {
     LOG_WARN("fail to update baseline schema version", KR(ret), K(schema_version));
   } else {
-    LOG_INFO("update baseline schema version success", K(schema_version));
+
   }
   return ret;
 }
@@ -506,7 +506,7 @@ int ObService::submit_async_refresh_schema_task(
 // should return success if all partition have merge to specific frozen_version
 int ObService::check_frozen_scn(const obrpc::ObCheckFrozenScnArg &arg)
 {
-  LOG_INFO("receive check frozen SCN request", K(arg));
+
   int ret = OB_SUCCESS;
   SCN last_merged_scn = SCN::min_scn();
   if (OB_UNLIKELY(!inited_)) {
@@ -563,7 +563,7 @@ int ObService::get_min_sstable_schema_version(
           }
         } else {
           if (OB_TENANT_NOT_IN_SERVER != ret) {
-            STORAGE_LOG(WARN, "switch tenant failed", K(ret), K(tenant_id));
+
           } else {
             ret = OB_SUCCESS;
           }
@@ -608,7 +608,7 @@ int ObService::calc_column_checksum_request(const obrpc::ObCalcColumnChecksumReq
           if (OB_TMP_FAIL(DDL_SIM(tenant_id, arg.task_id_, CALC_COLUMN_CHECKSUM_RPC_SLOW))) {
             LOG_WARN("ddl sim failure: calcualte column checksum rpc slow", K(tmp_ret), K(tenant_id), K(arg.task_id_));
           } else if (OB_TMP_FAIL(dag_scheduler->alloc_dag(dag))) {
-            STORAGE_LOG(WARN, "fail to alloc dag", KR(tmp_ret));
+
           } else if (OB_TMP_FAIL(dag->init(arg.tenant_id_,
                                            calc_item.ls_id_,
                                            calc_item.tablet_id_,
@@ -619,16 +619,16 @@ int ObService::calc_column_checksum_request(const obrpc::ObCalcColumnChecksumReq
                                            arg.execution_id_,
                                            arg.snapshot_version_,
                                            arg.user_parallelism_))) {
-            STORAGE_LOG(WARN, "fail to init ObUniqueCheckingDag", KR(tmp_ret));
+
           } else if (OB_TMP_FAIL(dag->alloc_global_index_task_callback(calc_item.tablet_id_,
                                                                        arg.target_table_id_,
                                                                        arg.source_table_id_,
                                                                        arg.schema_version_,
                                                                        arg.task_id_,
                                                                        callback))) {
-            STORAGE_LOG(WARN, "fail to alloc global index task callback", KR(tmp_ret));
+
           } else if (OB_TMP_FAIL(dag->alloc_unique_checking_prepare_task(dag->get_param(), dag->get_context()))) {
-            STORAGE_LOG(WARN, "fail to alloc unique checking prepare task", KR(tmp_ret));
+
           } else if (OB_TMP_FAIL(dag_scheduler->add_dag(dag))) {
             saved_ret = tmp_ret;
             if (OB_EAGAIN == tmp_ret) {
@@ -636,7 +636,7 @@ int ObService::calc_column_checksum_request(const obrpc::ObCalcColumnChecksumReq
             } else if (OB_SIZE_OVERFLOW == tmp_ret) {
               tmp_ret = OB_EAGAIN;
             } else {
-              STORAGE_LOG(WARN, "fail to add dag to queue", KR(tmp_ret));
+
             }
           }
           saved_ret = OB_SUCCESS != saved_ret ? saved_ret : tmp_ret;
@@ -652,7 +652,7 @@ int ObService::calc_column_checksum_request(const obrpc::ObCalcColumnChecksumReq
         }
       }
     }
-    LOG_INFO("receive column checksum request", K(arg));
+
   }
   return ret;
 }
@@ -666,7 +666,7 @@ int ObService::fetch_sys_ls(share::ObLSReplica &replica)
   } else if (OB_FAIL(fill_ls_replica(OB_SYS_TENANT_ID, SYS_LS, replica))) {
     LOG_WARN("fetch_sys_ls failed", KR(ret), K(replica));
   } else {
-    LOG_INFO("fetch sys_ls succeed", K(replica));
+
   }
   return ret;
 }
@@ -713,7 +713,7 @@ int ObService::backup_ls_data(const obrpc::ObBackupDataArg &arg)
       "turn_id", arg.turn_id_,
       "retry_id", arg.retry_id_,
       "trace_id", arg.trace_id_);
-    LOG_INFO("success recevied backup ls data rpc", K(arg));
+
   }
   return ret;
 }
@@ -752,7 +752,7 @@ int ObService::backup_completing_log(const obrpc::ObBackupComplLogArg &arg)
       "start_scn", arg.start_scn_,
       "end_scn", arg.end_scn_,
       "trace_id", arg.trace_id_);
-    LOG_INFO("success recevied backup compl log rpc", K(arg));
+
   }
   return ret;
 }
@@ -791,7 +791,7 @@ int ObService::backup_build_index(const obrpc::ObBackupBuildIdxArg &arg)
       "job_id", arg.job_id_,
       "trace_id", arg.trace_id_);
   }
-  LOG_INFO("success recevied backup build index rpc", K(ret), K(arg));
+
   return ret;
 }
 
@@ -829,7 +829,7 @@ int ObService::backup_meta(const obrpc::ObBackupMetaArg &arg)
       "turn_id", arg.turn_id_,
       "retry_id", arg.retry_id_,
       "trace_id", arg.trace_id_);
-    LOG_INFO("success recevied backup ls meta rpc", K(arg));
+
   }
   return ret;
 }
@@ -870,7 +870,7 @@ int ObService::backup_fuse_tablet_meta(const obrpc::ObBackupFuseTabletMetaArg &a
       "turn_id", arg.turn_id_,
       "retry_id", arg.retry_id_,
       "trace_id", arg.trace_id_);
-    LOG_INFO("success received backup merge tablet meta rpc", K(arg));
+
   }
   return ret;
 }
@@ -907,7 +907,7 @@ int ObService::check_backup_task_exist(const ObBackupCheckTaskArg &arg, bool &re
 int ObService::delete_backup_ls_task(const obrpc::ObLSBackupCleanArg &arg)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("receive delete backup ls task request", K(arg));
+
   if (!inited_) {
     ret = OB_NOT_INIT;
     LOG_WARN("ObService not init", K(ret));
@@ -917,7 +917,7 @@ int ObService::delete_backup_ls_task(const obrpc::ObLSBackupCleanArg &arg)
   } else if (OB_FAIL(ObLSBackupCleanScheduler::schedule_backup_clean_dag(arg))) {
     LOG_WARN("failed to schedule backup clean dag", K(ret), K(arg));
   } else {
-    LOG_INFO("success receive delete backup ls task rpc", K(arg));
+
   }
 
   return ret;
@@ -935,7 +935,7 @@ int ObService::minor_freeze(const obrpc::ObMinorFreezeArg &arg,
 {
   int ret = OB_SUCCESS;
   const int64_t start_ts = ObTimeUtility::current_time();
-  LOG_INFO("receive minor freeze request", K(arg));
+
 
   if (!inited_) {
     ret = OB_NOT_INIT;
@@ -953,7 +953,7 @@ int ObService::minor_freeze(const obrpc::ObMinorFreezeArg &arg,
 
   result = ret;
   const int64_t cost_ts = ObTimeUtility::current_time() - start_ts;
-  LOG_INFO("finish minor freeze request", K(ret), K(arg), K(cost_ts));
+
   return ret;
 }
 
@@ -968,7 +968,7 @@ int ObService::handle_server_freeze_req_(const obrpc::ObMinorFreezeArg &arg)
     uint64_t tenant_id = OB_SYS_TENANT_ID;
     if (OB_UNLIKELY(OB_SUCCESS != (tmp_ret = tenant_freeze_(tenant_id)))) {
       if (OB_TENANT_NOT_IN_SERVER == tmp_ret) {
-        LOG_INFO("skip freeze stopped tenant", K(tmp_ret), K(tenant_id));
+
         tmp_ret = OB_SUCCESS;
       } else {
         LOG_WARN("fail to freeze tenant", K(tmp_ret), K(tenant_id));
@@ -1014,7 +1014,7 @@ int ObService::handle_ls_freeze_req_(const uint64_t tenant_id,
   int ret = OB_SUCCESS;
 
   if (is_virtual_tenant_id(tenant_id)) {
-    LOG_INFO("no need to freeze virtual tenant", K(ret), K(tenant_id), K(tablet_id));
+
   } else {
     MTL_SWITCH(tenant_id) {
       storage::ObTenantFreezer* freezer = nullptr;
@@ -1036,7 +1036,7 @@ int ObService::handle_ls_freeze_req_(const uint64_t tenant_id,
             LOG_WARN("fail to freeze tablet", K(ret), K(tenant_id), K(ls_id), K(tablet_id));
           }
         } else {
-          LOG_INFO("succeed to freeze tablet", K(ret), K(tenant_id), K(ls_id), K(tablet_id));
+
         }
       } else {
         // logstream freeze
@@ -1047,7 +1047,7 @@ int ObService::handle_ls_freeze_req_(const uint64_t tenant_id,
             LOG_WARN("fail to freeze ls", K(ret), K(tenant_id), K(ls_id), K(tablet_id));
           }
         } else {
-          LOG_INFO("succeed to freeze ls", K(ret), K(tenant_id), K(ls_id), K(tablet_id));
+
         }
       }
     }
@@ -1061,7 +1061,7 @@ int ObService::tenant_freeze_(const uint64_t tenant_id)
   int ret = OB_SUCCESS;
 
   if (is_virtual_tenant_id(tenant_id)) {
-    LOG_INFO("no need to freeze virtual tenant", K(ret), K(tenant_id));
+
   } else {
     MTL_SWITCH(tenant_id) {
       storage::ObTenantFreezer* freezer = nullptr;
@@ -1069,7 +1069,7 @@ int ObService::tenant_freeze_(const uint64_t tenant_id)
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("ObTenantFreezer shouldn't be null", K(ret), K(tenant_id));
       } else if (freezer->exist_ls_freezing()) {
-        LOG_INFO("exist running ls_freeze", K(ret), K(tenant_id));
+
       } else if (OB_FAIL(freezer->tenant_freeze(ObFreezeSourceFlag::USER_MINOR_FREEZE))) {
         if (OB_ENTRY_EXIST == ret) {
           ret = OB_SUCCESS;
@@ -1077,7 +1077,7 @@ int ObService::tenant_freeze_(const uint64_t tenant_id)
           LOG_WARN("fail to freeze tenant", K(tenant_id), K(ret));
         }
       } else {
-        LOG_INFO("succeed to freeze tenant", K(tenant_id), K(ret));
+
       }
     } else {
       LOG_WARN("fail to switch tenant", K(ret), K(tenant_id));
@@ -1092,7 +1092,7 @@ int ObService::tablet_major_freeze(const obrpc::ObTabletMajorFreezeArg &arg,
 {
   int ret = OB_SUCCESS;
   const int64_t start_ts = ObTimeUtility::fast_current_time();
-  LOG_INFO("receive tablet major freeze request", K(arg));
+
 
   if (OB_UNLIKELY(!inited_)) {
     ret = OB_NOT_INIT;
@@ -1111,7 +1111,7 @@ int ObService::tablet_major_freeze(const obrpc::ObTabletMajorFreezeArg &arg,
 
   result = ret;
   const int64_t cost_ts = ObTimeUtility::fast_current_time() - start_ts;
-  LOG_INFO("finish tablet major freeze request", K(ret), K(arg), K(cost_ts));
+
   return ret;
 }
 
@@ -1120,7 +1120,7 @@ int ObService::check_modify_time_elapsed(
     obrpc::ObCheckModifyTimeElapsedResult &result)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("receive get checksum cal snapshot", K(arg));
+
   if (OB_UNLIKELY(!inited_)) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", K(ret));
@@ -1177,7 +1177,7 @@ int ObService::check_schema_version_elapsed(
     obrpc::ObCheckSchemaVersionElapsedResult &result)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("receive check schema version elapsed", K(arg));
+
   if (OB_UNLIKELY(!inited_)) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", K(ret));
@@ -1240,7 +1240,7 @@ int ObService::check_memtable_cnt(
     obrpc::ObCheckMemtableCntResult &result)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("receive check memtable cnt request", K(arg));
+
   if (OB_UNLIKELY(!inited_)) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", K(ret));
@@ -1303,7 +1303,7 @@ int ObService::check_memtable_cnt(
       } // MTL_SWITCH
     }
   }
-  LOG_INFO("finish check memtable cnt request", K(ret), K(arg));
+
   return ret;
 }
 
@@ -1600,7 +1600,7 @@ int ObService::check_deployment_mode_match(
       match = true;
     } else {
       match = false;
-      LOG_INFO("deployment mode not match", K(GCTX.startup_mode_), K(arg));
+
     }
   }
   return ret;
@@ -1985,7 +1985,7 @@ int ObService::do_remove_ls_paxos_replica(const obrpc::ObLSDropPaxosReplicaArg &
   if (OB_SUCC(ret)) {
     SERVER_EVENT_ADD("storage_ha", "remove_ls_paxos_member start", "tenant_id", arg.tenant_id_, "ls_id", arg.ls_id_.id(),
                      "dest", arg.remove_member_.get_server());
-    LOG_INFO("start do remove ls paxos member", K(arg));
+
     ls_service = MTL(ObLSService*);
     if (OB_ISNULL(ls_service)) {
       ret = OB_ERR_UNEXPECTED;
@@ -2019,7 +2019,7 @@ int ObService::do_remove_ls_nonpaxos_replica(const obrpc::ObLSDropNonPaxosReplic
   if (OB_SUCC(ret)) {
     SERVER_EVENT_ADD("storage_ha", "remove_ls_learner_member start", "tenant_id", arg.tenant_id_, "ls_id", arg.ls_id_.id(),
                      "dest", arg.remove_member_.get_server());
-    LOG_INFO("start do remove ls learner member", K(arg));
+
     ls_service = MTL(ObLSService*);
     if (OB_ISNULL(ls_service)) {
       ret = OB_ERR_UNEXPECTED;
@@ -2301,7 +2301,7 @@ int ObService::set_tracepoint(const obrpc::ObAdminSetTPArg &arg)
     } else if (OB_FAIL(EventTable::instance().set_event(arg.event_no_, item))) {
       LOG_WARN("Failed to set tracepoint event, tp_no does not exist.", K(ret), K(arg.event_no_));
     }
-    LOG_INFO("set event", K(arg));
+
   }
   return ret;
 }
@@ -2380,7 +2380,7 @@ int ObService::detect_master_rs_ls(
   if (cost_ts >= DETECT_THRESHOLD) {
     FLOG_WARN("detect rs too much time", KR(ret), K(cost_ts), K(result));
   }
-  LOG_TRACE("detect rs cost", KR(ret), K(cost_ts), K(result));
+
   return ret;
 }
 
@@ -2494,7 +2494,7 @@ int ObService::refresh_sys_tenant_ls()
              KR(ret), K(cluster_id), K(tenant_id), K(SYS_LS));
   } else {
 #if !defined(NDEBUG)
-    LOG_INFO("refresh sys tenant log stream success", K(location));
+
 #endif
   }
   return ret;
@@ -2558,7 +2558,7 @@ int ObService::estimate_partition_rows(const obrpc::ObEstPartArg &arg,
                                        obrpc::ObEstPartRes &res) const
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("receive estimate rows request", K(arg));
+
   if (!inited_) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("service is not inited", K(ret));
@@ -2612,7 +2612,7 @@ int ObService::broadcast_rs_list(const ObRsListArg &arg)
   } else if (OB_FAIL(GCTX.rs_mgr_->force_set_master_rs(arg.master_rs_))) {
     LOG_WARN("fail to set master rs", KR(ret), K(arg));
   } else {
-    LOG_INFO("observer set master rs success", K(arg));
+
   }
   return ret;
 }
@@ -2644,7 +2644,7 @@ int ObService::build_split_tablet_data_start_request(const obrpc::ObTabletSplitS
       ret = OB_SUCC(ret) ? tmp_ret : ret;
     }
   }
-  LOG_INFO("process write split start log finished", K(ret), K(arg));
+
   return ret;
 }
 
@@ -2672,7 +2672,7 @@ int ObService::build_split_tablet_data_finish_request(const obrpc::ObTabletSplit
       ret = OB_SUCC(ret) ? tmp_ret : ret;
     }
   }
-  LOG_INFO("process split finish request succ", K(ret), K(arg));
+
   return ret;
 }
 
@@ -2783,7 +2783,7 @@ int ObService::build_ddl_single_replica_request(const ObDDLBuildSingleReplicaReq
         ret = OB_EAGAIN == saved_ret ? OB_SUCCESS : ret;
         ret = OB_SIZE_OVERFLOW == saved_ret ? OB_EAGAIN : ret;
       }
-      LOG_INFO("obs get rpc to build drop column dag", K(ret));
+
     } else if (ObDDLType(arg.ddl_type_) == ObDDLType::DDL_DROP_VEC_INDEX) { 
       ObTenantDagScheduler *dag_scheduler = nullptr;
       ObDeleteLobMetaRowDag *dag = nullptr;
@@ -2822,7 +2822,7 @@ int ObService::build_ddl_single_replica_request(const ObDDLBuildSingleReplicaReq
       LOG_WARN("invalid ddl type request", K(ret), K(arg));
     }
   }
-  LOG_INFO("receive build single replica request", K(ret), K(arg));
+
   return ret;
 }
 
@@ -2862,7 +2862,7 @@ int ObService::check_and_cancel_ddl_complement_data_dag(const ObDDLBuildSingleRe
     }
   }
   if (REACH_COUNT_INTERVAL(1000L)) {
-    LOG_INFO("receive cancel ddl complement dag request", K(ret), K(is_dag_exist), K(arg));
+
   }
   return ret;
 }
@@ -2902,7 +2902,7 @@ int ObService::check_and_cancel_delete_lob_meta_row_dag(const obrpc::ObDDLBuildS
     }
   }
   if (REACH_COUNT_INTERVAL(1000L)) {
-    LOG_INFO("receive cancel ddl complement dag request", K(ret), K(is_dag_exist), K(arg));
+
   }
   return ret;
 }
@@ -2987,7 +2987,7 @@ int ObService::fill_tablet_report_info(
         if (OB_LS_NOT_EXIST != ret) {
           LOG_WARN("fail to get log_stream's ls_handle", KR(ret), K(tenant_id), K(ls_id));
         } else {
-          LOG_TRACE("log stream not exist in this tenant", KR(ret), K(tenant_id), K(ls_id));
+
         }
       } else if (FALSE_IT(ls = ls_handle.get_ls())) {
       } else if (OB_FAIL(inner_fill_tablet_info_(tenant_id,
@@ -3031,7 +3031,7 @@ int ObService::fill_ls_replica(
       } else if (OB_FAIL(ls_svr->get_ls_replica(ls_id, ObLSGetMod::OBSERVER_MOD, replica))) {
         LOG_WARN("fail to get_ls_replica", KR(ret), K(ls_id));
       } else {
-        LOG_TRACE("finish fill ls replica", KR(ret), K(tenant_id), K(ls_id), K(replica));
+
       }
     }
   }
@@ -3143,7 +3143,7 @@ int ObService::get_leader_locations(
   if (cost_ts >= FETCH_THRESHOLD) {
     FLOG_WARN("get leader locations cost too much time", KR(ret), K(cost_ts), K(result));
   }
-  LOG_TRACE("get leader locations cost", KR(ret), K(cost_ts), K(result));
+
   return ret;
 }
 
@@ -3170,7 +3170,7 @@ int ObService::estimate_tablet_block_count(const obrpc::ObEstBlockArg &arg,
                                            obrpc::ObEstBlockRes &res) const
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("receive estimate tablet block count request", K(arg));
+
   if (!inited_) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("service is not inited", K(ret));
@@ -3184,7 +3184,7 @@ int ObService::estimate_skip_rate(const obrpc::ObEstSkipRateArg &arg,
                                   obrpc::ObEstSkipRateRes &res) const
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("receive estimate tablet skip rate request", K(arg));
+
   if (!inited_) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("service is not inited", K(ret));
@@ -3206,7 +3206,7 @@ int ObService::get_ls_sync_scn(
   SCN cur_sync_scn = SCN::min_scn();
   SCN cur_restore_source_max_scn = SCN::min_scn();
   bool restore_to_newest = false;
-  LOG_INFO("start get_ls_sync_scn", K(arg));
+
 
   if (OB_UNLIKELY(!inited_)) {
     ret = OB_NOT_INIT;
@@ -3271,7 +3271,7 @@ int ObService::get_ls_sync_scn(
       LOG_WARN("sys ls errsim enabled", KR(ret), K(arg.get_tenant_id()), K(ls_id), K(cur_sync_scn), K(cur_restore_source_max_scn));
     }
   }
-  LOG_INFO("finish get_ls_sync_scn", KR(ret), K(cur_sync_scn), K(cur_restore_source_max_scn), K(arg), K(result));
+
   return ret;
 }
 
@@ -3281,7 +3281,7 @@ int ObService::force_set_ls_as_single_replica(
   int ret = OB_SUCCESS;
   MAKE_TENANT_SWITCH_SCOPE_GUARD(guard);
   ObLSService *ls_svr = nullptr;
-  LOG_INFO("force_set_ls_as_single_replica", K(arg));
+
 
   if (OB_UNLIKELY(!inited_)) {
     ret = OB_NOT_INIT;
@@ -3315,14 +3315,14 @@ int ObService::force_set_ls_as_single_replica(
       LOG_WARN("failed to force_set_as_single_replica", KR(ret), K(ls_id), KPC(ls));
     }
   }
-  LOG_INFO("finish force_set_ls_as_single_replica", KR(ret), K(arg));
+
   return ret;
 }
 
 int ObService::force_set_server_list(const obrpc::ObForceSetServerListArg &arg, obrpc::ObForceSetServerListResult &result)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("force_set_server_list", K(arg));
+
 
   if (OB_UNLIKELY(!inited_)) {
     ret = OB_NOT_INIT;
@@ -3462,7 +3462,7 @@ int ObService::refresh_tenant_info(
       LOG_WARN("failed to init res", KR(ret), K(arg.get_tenant_id()));
     } else {
       MTL(transaction::ObTransService *)->register_standby_cleanup_task();
-      LOG_INFO("finish refresh_tenant_info", KR(ret), K(arg), K(result));
+
     }
   }
   return ret;
@@ -3499,7 +3499,7 @@ int ObService::get_ls_replayed_scn(
     const ObGetLSReplayedScnArg &arg,
     ObGetLSReplayedScnRes &result)
 {
-  LOG_INFO("start get_ls_replayed_scn", K(arg));
+
   int ret = OB_SUCCESS;
   MAKE_TENANT_SWITCH_SCOPE_GUARD(guard);
   share::SCN cur_readable_scn = SCN::min_scn();
@@ -3534,7 +3534,7 @@ int ObService::get_ls_replayed_scn(
       LOG_WARN("failed to get migration status", K(ret), KPC(ls));
     } else if (!ObMigrationStatusHelper::check_can_report_readable_scn(migration_status)) {
       cur_readable_scn = SCN::base_scn();
-      LOG_INFO("ls migration status cannot report reablase scn, report base scn as readable scn", K(migration_status), "ls_id", ls->get_ls_id());
+
       if (arg.is_all_replica()) {
         ret = OB_EAGAIN;
         LOG_WARN("leader get all replica min readable scn, but leader migration status is not none, need retry",
@@ -3593,7 +3593,7 @@ int ObService::handle_heartbeat(
     share::ObHBResponse &hb_response)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("receive a heartbeat request from heartbeat service", K(hb_request));
+
   const int64_t now = ::oceanbase::common::ObTimeUtility::current_time();
   if (OB_UNLIKELY(!inited_)) {
     ret = OB_NOT_INIT;
@@ -3636,7 +3636,7 @@ int ObService::update_tenant_info_cache(
     } else if (OB_FAIL(result.init(arg.get_tenant_id()))) {
       LOG_WARN("failed to init res", KR(ret), K(arg.get_tenant_id()));
     } else {
-      LOG_TRACE("finish update_tenant_info_cache", KR(ret), K(arg), K(result));
+
     }
   }
   return ret;
@@ -3665,7 +3665,7 @@ int ObService::check_storage_operation_status(
   result.set_ret(ret); // use result to pass ret
   result.set_is_done(is_done);
   result.set_is_connective(is_connective);
-  LOG_INFO("finish to check storage operation status", KR(ret), K(is_done), K(is_connective), K(arg), K(result));
+
   return OB_SUCCESS; // use result to pass ret
 }
 
@@ -3732,7 +3732,7 @@ int ObService::change_external_storage_dest(obrpc::ObAdminSetConfigArg &arg)
             trans, tenant_id, change_mgr.backup_dest_, attribute_option.max_iops_, attribute_option.max_bandwidth_))) {
           LOG_WARN("failed to update backup dest attribute", K(ret), K(tenant_id));
         } else {
-          LOG_INFO("admin change external storage dest", K(arg));
+
         }
       }
       if (trans.is_started()) {

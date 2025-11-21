@@ -40,37 +40,37 @@ TEST(ObTableSchemaParam, test_serialize)
   char *buf = (char*)allocator.alloc(buf_size);
   int64_t pos = 0;
 
-  LOG_INFO("dump param", K(old_param1));
+
   ASSERT_EQ(OB_SUCCESS, old_param1.serialize(buf, buf_size, pos));
-  LOG_INFO("dump param", K(old_param1), K(pos), K(buf_size));
+
   ASSERT_EQ(OB_SUCCESS, old_param1.serialize(buf, buf_size, pos));
-  LOG_INFO("dump param", K(old_param1), K(pos), K(buf_size));
+
   pos = 0;
   ASSERT_EQ(OB_SUCCESS, new_param1.deserialize(buf, buf_size, pos));
-  LOG_INFO("dump param", K(new_param1), K(pos), K(buf_size));
+
   ASSERT_EQ(OB_SUCCESS, new_param2.deserialize(buf, buf_size, pos));
-  LOG_INFO("dump param", K(new_param2), K(pos), K(buf_size));
+
   ASSERT_EQ(old_param1.table_id_, new_param1.table_id_);
   ASSERT_EQ(old_param1.table_id_, new_param2.table_id_);
 
   new_param1.table_id_ = 2;
   pos = 0;
   ASSERT_EQ(OB_SUCCESS, new_param1.serialize(buf, buf_size, pos));
-  LOG_INFO("dump param", K(old_param1), K(pos), K(buf_size));
+
   ASSERT_EQ(OB_SUCCESS, new_param2.serialize(buf, buf_size, pos));
-  LOG_INFO("dump param", K(old_param1), K(pos), K(buf_size));
+
   pos = 0;
   ASSERT_EQ(OB_SUCCESS, old_param1.deserialize(buf, buf_size, pos));
-  LOG_INFO("dump param", K(old_param1), K(pos), K(buf_size));
+
   ASSERT_EQ(new_param1.table_id_, old_param1.table_id_);
   ASSERT_EQ(OB_SUCCESS, old_param1.deserialize(buf, buf_size, pos));
-  LOG_INFO("dump param", K(old_param1), K(pos), K(buf_size));
+
   ASSERT_EQ(new_param2.table_id_, old_param1.table_id_);
   pos = 0;
   ASSERT_EQ(OB_SUCCESS, new_param2.deserialize(buf, buf_size, pos));
-  LOG_INFO("dump param", K(new_param2), K(pos), K(buf_size));
+
   ASSERT_EQ(OB_SUCCESS, new_param2.deserialize(buf, buf_size, pos));
-  LOG_INFO("dump param", K(new_param2), K(pos), K(buf_size));
+
 
 }
 

@@ -208,7 +208,7 @@ inline int ObIndexTreePrefetcher::lookup_in_cache(ObSSTableReadHandle &read_hand
   if (OB_SUCC(ret) && !found) {
     read_handle.row_state_ = ObSSTableRowState::IN_BLOCK;
   }
-  LOG_DEBUG("lookup in cache", K(ret), K(read_handle.get_rowkey()), K(read_handle), K(access_ctx_->enable_get_row_cache()), KPC(this), K(lbt()));
+
   return ret;
 }
 
@@ -271,7 +271,7 @@ inline int ObIndexTreePrefetcher::lookup_in_index_tree(ObSSTableReadHandle &read
       }
     }
   }
-  LOG_DEBUG("[INDEX BLOCK] prefetch in block info", K(ret), K(found), K(read_handle), KPC(this));
+
   if (OB_ITER_END == ret) {
     read_handle.row_state_ = ObSSTableRowState::NOT_EXIST;
     ret = OB_SUCCESS;
@@ -393,7 +393,7 @@ inline int ObIndexTreePrefetcher::check_bloom_filter(
       read_handle.row_state_ = ObSSTableRowState::NOT_EXIST;
       ++access_ctx_->table_store_stat_.bf_filter_cnt_;
     }
-    LOG_DEBUG("check bloomfilter", K(ret), K(read_handle), K(is_contain));
+
     if (is_multi_check) {
       access_ctx_->table_store_stat_.rowkey_prefix_ = read_handle.rows_info_->get_datum_cnt();
     } else {
@@ -781,12 +781,12 @@ inline int ObIndexTreeMultiPrefetcher::drill_down(
       mark_cur_rowkey_prefetched(read_handle);
     } else if (force_prefetch || ObSSTableMicroBlockState::IN_BLOCK_CACHE == next_handle.block_state_) {
       if (ObSSTableMicroBlockState::IN_BLOCK_CACHE == next_handle.block_state_) {
-        LOG_DEBUG("cur handle is in cache", K(read_handle), K(index_block_info), K(next_handle));
+
         if (OB_FAIL(next_handle.get_cached_index_block_data(index_block_))) {
           LOG_WARN("Fail to get index block data", K(ret), K(next_handle));
         }
       } else {
-        LOG_DEBUG("cur handle is not in cache, force prefetch", K(read_handle), K(index_block_info), K(next_handle));
+
         if (OB_FAIL(next_handle.get_micro_block_data(nullptr, index_block_, false))) {
           LOG_WARN("Fail to get index block data", K(ret), K(next_handle));
         }
@@ -797,7 +797,7 @@ inline int ObIndexTreeMultiPrefetcher::drill_down(
         }
       }
     } else {
-      LOG_DEBUG("cur handle is not in cache, has submit io", K(read_handle), K(index_block_info), K(next_handle));
+
     }
   }
   return ret;
@@ -1335,7 +1335,7 @@ inline int ObIndexTreeMultiPassPrefetcher<DATA_PREFETCH_DEPTH, INDEX_PREFETCH_DE
             if (OB_FAIL(agg_store_->fill_index_info(block_info, false))) {
               LOG_WARN("Fail to agg index info", K(ret), K(block_info), KPC_(agg_store), KPC(this));
             } else {
-              LOG_DEBUG("Success to agg index info", K(ret), K(block_info), KPC_(agg_store));
+
               continue;
             }
           } else if (OB_FAIL(check_row_lock(block_info, is_row_lock_checked_))) {
@@ -1373,7 +1373,7 @@ inline int ObIndexTreeMultiPassPrefetcher<DATA_PREFETCH_DEPTH, INDEX_PREFETCH_DE
       }
     }
   }
-  LOG_DEBUG("[INDEX BLOCK] prefetched info", K(ret),  KPC(this));
+
   return ret;
 }
 
@@ -1701,7 +1701,7 @@ inline int ObIndexTreeMultiPassPrefetcher<DATA_PREFETCH_DEPTH, INDEX_PREFETCH_DE
       }
     }
   }
-  LOG_TRACE("[BLOCKSCAN] refresh_blockscan_checker", K(ret), K(start_micro_idx), K(border_rowkey), KPC(this));
+
   return ret;
 }
 
@@ -1856,7 +1856,7 @@ inline int ObIndexTreeMultiPassPrefetcher<DATA_PREFETCH_DEPTH, INDEX_PREFETCH_DE
         if (OB_FAIL(prefetcher.agg_store_->fill_index_info(index_info, false))) {
           LOG_WARN("Fail to agg index info", K(ret), K(index_info), KPC_(prefetcher.agg_store), KPC(this));
         } else {
-          LOG_DEBUG("Success to agg index info", K(ret), K(index_info), KPC_(prefetcher.agg_store), KPC(this));
+
         }
       } else if (OB_FAIL(prefetcher.check_row_lock(index_info, is_row_lock_checked_))) {
         if (OB_UNLIKELY(OB_ITER_END != ret)) {

@@ -829,14 +829,14 @@ int ObEqualSelEstimator::get_equal_sel(const OptTableMetas &table_metas,
                                               &calc_expr, null_safe, selectivity))) {
         LOG_WARN("failed to get simple equal selectivity", K(ret));
       }
-      LOG_TRACE("succeed to get equal predicate sel", K(can_use_hist), K(selectivity));
+
     }
   } else if (left_expr.has_flag(CNT_COLUMN) && right_expr.has_flag(CNT_COLUMN)) {
     if (OB_FAIL(get_cntcol_op_cntcol_sel(table_metas, ctx, left_expr, right_expr,
                                          null_safe ? T_OP_NSEQ : T_OP_EQ, selectivity))) {
       LOG_WARN("failed to get contain column equal contain column selectivity", K(ret));
     } else {
-      LOG_TRACE("succeed to get contain column equal contain column sel", K(selectivity), K(ret));
+
     }
   } else {
     // CONST_PARAM = CONST_PARAM
@@ -1187,7 +1187,7 @@ int ObAggSelEstimator::get_agg_sel(const OptTableMetas &table_metas,
         }
       } else { /* use default selectivity */ }
     } else if (T_FUN_SUM == aggr_expr->get_expr_type() || T_FUN_AVG == aggr_expr->get_expr_type()) {
-      LOG_TRACE("show group by origen rows and grouped rows", K(origin_rows), K(grouped_rows));
+
       double rows_per_group = grouped_rows == 0.0 ? origin_rows : origin_rows / grouped_rows;
       if (OB_FAIL(get_agg_sel_with_minmax(table_metas, ctx, *aggr_expr, const_expr1,
                                           const_expr2, type, selectivity, rows_per_group))) {
@@ -1339,7 +1339,7 @@ double ObAggSelEstimator::get_agg_eq_sel(const ObObj &maxobj,
         OB_FAIL(ObOptEstObjToScalar::convert_obj_to_double(&maxobj, max_val))) {
       LOG_WARN("failed to convert obj to double", K(ret));
     } else {
-      LOG_TRACE("get values for agg eq sel", K(max_val), K(min_val), K(const_val));
+
       if (is_sum) {
         min_val *= rows_per_group;
         max_val *= rows_per_group;
@@ -1388,7 +1388,7 @@ double ObAggSelEstimator::get_agg_range_sel(const ObObj &maxobj,
     } else if (OB_FAIL(ObOptEstObjToScalar::convert_obj_to_double(&constobj, const_val))) {
       LOG_WARN("failed to convert obj to double", K(ret));
     } else {
-      LOG_TRACE("get values for agg range sel", K(max_val), K(min_val), K(const_val));
+
       if (is_sum) {
         min_val *= rows_per_group;
         max_val *= rows_per_group;
@@ -1454,7 +1454,7 @@ double ObAggSelEstimator::get_agg_btw_sel(const ObObj &maxobj,
     } else if (OB_FAIL(ObOptEstObjToScalar::convert_obj_to_double(&constobj2, const_val2))) {
       LOG_WARN("failed to convert obj to double", K(ret));
     } else {
-      LOG_TRACE("get values for agg between sel", K(max_val), K(min_val), K(const_val1), K(const_val2));
+
       if (is_sum) {
         min_val *= rows_per_group;
         max_val *= rows_per_group;
@@ -2140,7 +2140,7 @@ int ObSimpleJoinSelEstimator::get_sel(const OptTableMetas &table_metas,
       LOG_WARN("failed to get equal sel");
     } else {
       selectivity = ObOptSelectivity::revise_between_0_1(selectivity);
-      LOG_TRACE("get multi equal expr selectivity", KPC(this), K(selectivity));
+
     }
   }
   return ret;
@@ -2392,7 +2392,7 @@ int ObSimpleJoinSelEstimator::get_cntcols_eq_cntcols_sel(const OptTableMetas &ta
       }
     }
   }
-  LOG_TRACE("selectivity of `col_ref1 =|<=> col_ref1 and col_ref2 =|<=> col_ref2`", K(selectivity));
+
   return ret;
 }
 
@@ -2885,7 +2885,7 @@ int ObSelEstimatorFactory::create_estimator(const OptSelectivityCtx &ctx,
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("failed to create estimator", KPC(new_estimator), KPC(expr));
   }
-  LOG_DEBUG("succeed to create estimator", KPC(new_estimator));
+
   return ret;
 }
 

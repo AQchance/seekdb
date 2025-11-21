@@ -41,7 +41,7 @@ public:
   {
     int ret = OB_SUCCESS;
 
-    LOG_DEBUG("[DG]Start generate data for: ", K(op_id), K(round), K(expr_i), K(expr_count));
+
 
     // if it's a exist generated round data and corresponding expr_i have data
     if (op_2_round_2_temp_store_.count(op_id) != 0 && op_2_round_2_temp_store_[op_id].count(round) != 0
@@ -82,12 +82,12 @@ public:
         temp_store[expr_i].temp_string_vector_.push_back(random_data);
         generate_data += random_data + "  ";
       } else {
-        LOG_INFO("Can not generate random value so far for: ");
+
         assert(false);
       }
     }
 
-    LOG_DEBUG("Generate data: ", K(generate_data.data()));
+
 
     set_random_null(op_id, expr_i, expr_count, round, batch_size);
 
@@ -104,7 +104,7 @@ public:
       generate_data_nulls += std::to_string(!is_null) + "  ";
       op_2_round_2_temp_store_[op_id][round][expr_i].null_.push_back(is_null);
     }
-    LOG_INFO("nulls : ", K(generate_data_nulls.data()));
+
   }
 
   void reset_temp_store(const uint64_t op_id, const int round)
@@ -129,7 +129,7 @@ public:
 
   void register_op(const ObOperator *op)
   {
-    LOG_INFO("id is ", K(op->get_spec().get_id()));
+
     intereseting_op_count_++;
   }
 

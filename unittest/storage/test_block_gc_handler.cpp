@@ -208,7 +208,7 @@ public:
 
 TEST_F(TestPublicBlockGCHandler, test_detect_and_gc)
 {
-  LOG_INFO("test detect_and_gc start", KPC(this));
+
   blocksstable::MacroBlockId block_id;
   block_id.third_id_ = 0;
   ASSERT_EQ(OB_SUCCESS, detect_and_gc_block_(block_id));
@@ -218,7 +218,7 @@ TEST_F(TestPublicBlockGCHandler, test_detect_and_gc)
   for (int i = 3000; i < 4000; i++) {
     ASSERT_EQ(0, macro_block_ids_[i].first_id_);
   }
-  LOG_INFO("test detect_and_gc finish", KPC(this));
+
 }
 
 class TestPrivateBlockGCHandler : public ::testing::Test,
@@ -281,7 +281,7 @@ public:
 
 TEST_F(TestPrivateBlockGCHandler, test_macro_check)
 {
-  LOG_INFO("test detect_and_gc start", KPC(this));
+
   ASSERT_EQ(OB_SUCCESS, macro_block_check());
   for (int i = 11; i < 20; i++) {
     if (0 == i % 2) {
@@ -295,7 +295,7 @@ TEST_F(TestPrivateBlockGCHandler, test_macro_check)
       ASSERT_EQ(1, macro_block_ids_[i].third_id_);
     }
   }
-  LOG_INFO("test test_macro_check finish", KPC(this));
+
 }
 
 }  // end namespace unittest

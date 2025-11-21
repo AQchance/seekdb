@@ -130,7 +130,7 @@ int QueryAndMutateHelper::init_scan_tb_ctx(ObTableApiCacheGuard &cache_guard)
   tb_ctx_.set_schema_guard(schema_guard_);
   tb_ctx_.set_sess_guard(sess_guard_);
   if (tb_ctx_.is_init()) {
-    LOG_INFO("tb ctx has been inited", K_(tb_ctx));
+
   } else if (OB_FAIL(tb_ctx_.init_common(const_cast<ObTableApiCredential&>(credential_),
                                          tablet_id_,
                                          timeout_ts_))) {
@@ -1021,10 +1021,10 @@ int QueryAndMutateHelper::check_and_execute(ObTableQueryResultIterator *result_i
 
 #ifndef NDEBUG
   // debug mode
-  LOG_INFO("[TABLE] execute check and execute", K(ret), K(check_passed), K(affected_rows), K(mutations));
+
 #else
   // release mode
-  LOG_TRACE("[TABLE] execute check and execute", K(ret), K(check_passed), K(affected_rows), K(mutations));
+
 #endif
 
   return ret;

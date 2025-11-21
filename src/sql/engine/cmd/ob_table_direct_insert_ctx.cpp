@@ -133,7 +133,7 @@ int ObTableDirectInsertCtx::init(
         } else {
           phy_plan.set_ddl_task_id(table_load_instance_->get_table_ctx()->ddl_param_.task_id_);
           is_inited_ = true;
-          LOG_DEBUG("succeeded to init direct loader", K(param));
+
         }
       }
     }
@@ -164,7 +164,7 @@ int ObTableDirectInsertCtx::finish()
   } else if (OB_FAIL(table_load_instance_->px_commit_ddl())) {
     LOG_WARN("failed to do px_commit_ddl", KR(ret));
   } else {
-    LOG_DEBUG("succeeded to finish direct loader");
+
   }
   return ret;
 }

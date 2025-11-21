@@ -54,7 +54,7 @@ int set_cluster_name_hash(const ObString &cluster_name)
     LOG_WARN("failed to calc_cluster_name_hash", KR(ret), K(cluster_name));
   } else {
     obrpc::ObRpcNetHandler::CLUSTER_NAME_HASH = cluster_name_hash;
-    LOG_INFO("set cluster_name_hash", KR(ret), K(cluster_name), K(cluster_name_hash));
+
   }
   return ret;
 }
@@ -66,10 +66,10 @@ int calc_cluster_name_hash(const ObString &cluster_name, uint64_t &cluster_name_
 
   if (0 == cluster_name.length()) {
     cluster_name_hash = obrpc::ObRpcPacket::INVALID_CLUSTER_NAME_HASH;
-    LOG_INFO("set cluster_name_hash to invalid", K(cluster_name));
+
   } else {
     cluster_name_hash = common::murmurhash(cluster_name.ptr(), cluster_name.length(), 0);
-    LOG_INFO("calc cluster_name_hash for rpc", K(cluster_name), K(cluster_name_hash));
+
   }
 
   return ret;
@@ -148,7 +148,7 @@ int ObServerReloadConfig::operator()()
       LOG_WARN("ObReloadConfig operator() failed", K(tmp_ret));
     }
     const int64_t reserved_memory = GCONF.cache_wash_threshold;
-    LOG_INFO("set reserved memory", K(reserved_memory));
+
     ob_set_reserved_memory(reserved_memory);
 #ifdef OB_USE_ASAN
     __MemoryContext__::set_enable_asan_allocator(GCONF.enable_asan_for_memory_context);
@@ -272,7 +272,7 @@ int ObServerReloadConfig::operator()()
     auto new_upgrade_stage = obrpc::get_upgrade_stage(GCONF._upgrade_stage.str());
     auto orig_upgrade_stage = GCTX.get_upgrade_stage();
     if (new_upgrade_stage != orig_upgrade_stage) {
-      LOG_INFO("_upgrade_stage changed", K(new_upgrade_stage), K(orig_upgrade_stage));
+
     }
     (void)GCTX.set_upgrade_stage(new_upgrade_stage);
   }

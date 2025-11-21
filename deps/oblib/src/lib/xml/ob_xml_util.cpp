@@ -317,7 +317,7 @@ int ObMulModeFactory::get_xml_base(ObMulModeMemCtx* ctx, const char *ptr, uint64
         LOG_WARN("fail to print xml", K(ret), K(in_type), K(expect_type));
       } else if (OB_FALSE_IT(unparsed_text.assign_ptr(buffer->ptr(), buffer->length()))) {
       } else if (OB_FAIL(ObXmlParserUtils::parse_content_text(ctx, unparsed_text, x_doc))) {
-        LOG_DEBUG("fail to parse unparse", K(ret), K(in_type), K(expect_type));
+
         if (should_check && ret == OB_ERR_PARSER_SYNTAX) {
           ret = OB_ERR_XML_PARSE;
           LOG_WARN("unparsed xml parse content failed.", K(ret), K(unparsed_text));
@@ -616,7 +616,7 @@ int ObXmlUtil::to_number(const char *in, const uint64_t length, double &out)
         endptr += ObCharset::scan_str(endptr, in + length, OB_SEQ_SPACES);
         if (endptr < in + length) {
           ret = OB_ERR_DATA_TRUNCATED; //1265
-          LOG_DEBUG("check_convert_str_err", K(length), K(in - endptr));
+
         }
       }
     }

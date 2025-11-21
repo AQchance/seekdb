@@ -58,7 +58,7 @@ int ObDagTempMacroBlockWriter::open(
   share::ObPreWarmerParam pre_warm_param(PRE_WARM_TYPE_NONE);
   if (OB_UNLIKELY(OB_ISNULL(cg_block_writer))) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid cg_block_writer", K(ret), KP(cg_block_writer));
+
   } else if (OB_FAIL(ObMacroBlockWriter::inner_init(
       data_store_desc,
       parallel_idx,
@@ -110,10 +110,10 @@ int ObDagMacroBlockWriter::open(
   share::ObPreWarmerParam pre_warm_param(PRE_WARM_TYPE_NONE);
   if (OB_ISNULL(callback)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid callback", K(ret), KP(callback));
+
   } else if (OB_FAIL(ObMacroBlockWriter::open(
       data_store_desc, parallel_idx, macro_seq_param, pre_warm_param, object_cleaner, callback))) {
-    STORAGE_LOG(WARN, "Fail to open macro block writer", K(ret));
+
   } else {
     set_dag_stage(ObDagMacroWriterStage::WAITTING_APPEND_CG_BLOCK);
   }
@@ -179,30 +179,30 @@ int ObDagMacroBlockWriter::append_cg_block(ObCGBlock &cg_block, const int64_t ma
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!cg_block.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid cg_block", K(ret), K(cg_block));
+
   } else if (macro_block_fill_threshold < 0 || macro_block_fill_threshold > 100) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid macro_block_fill_threshold", K(ret), K(macro_block_fill_threshold));
+
   } else if (get_dag_stage() != ObDagMacroWriterStage::WAITTING_APPEND_CG_BLOCK) {
     //If current stage is WAITTING_CLOSE, you should close the writer;
     //If current stage is NOT_INITED, it means not initialized and should do open().
     ret = OB_STATE_NOT_MATCH;
-    STORAGE_LOG(WARN, "Append_cg_block is only supported during DAG_WRITE_MACRO_BLOCK stage. ", K(ret), K(get_dag_stage()));
+
   } else if (is_reuse_macro_block(cg_block, macro_block_fill_threshold)) {
     if (OB_FAIL(append_macro_block(cg_block))) {
-      STORAGE_LOG(WARN, "fail to reuse macro block", K(ret), K(cg_block));
+
     }
   } else {
     // have to iterate and reuse the micro block
     ObDagMicroBlockIterator micro_block_iter;
     compaction::ObLocalArena iter_allocator_temp("DagMaBlkWriter");
     if (OB_FAIL(micro_block_iter.open_cg_block(&cg_block))) {
-      STORAGE_LOG(WARN, "fail to open cg block", K(ret), K(cg_block), K(micro_block_iter));
+
     } else if (OB_FAIL(reuse_micro_blocks(micro_block_iter, iter_allocator_temp))) {
       if (ret == OB_BUF_NOT_ENOUGH) {
-        STORAGE_LOG(INFO, "The macro block is full and cannot accommodate more micro blocks.", K(ret));
+
       } else {
-        STORAGE_LOG(WARN, "fail to reuse micro block", K(ret));
+
       }
     }
   }
@@ -222,20 +222,20 @@ int ObDagMacroBlockWriter::reuse_micro_blocks(ObDagMicroBlockIterator &micro_blo
         ret = OB_SUCCESS;
         break;
       } else {
-        STORAGE_LOG(WARN, "fail to get next micro block", K(ret), K(micro_block_iter));
+
       }
     } else if (!micro_block_desc.is_valid() || !micro_index_data.is_valid()) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "invalid micro_block_desc or micro_index_data", K(ret), K(micro_block_desc), K(micro_index_data));
+
     } else if (FALSE_IT(micro_block_desc.logic_micro_id_.reset())) {
       // The logic micro id generated in the first stage of dag writer cannot guarantee uniqueness.
       // So the logic id obtained directly from the middle layer cannot be directly used for
       // append_micro_block in the second stage. Therefore, it needs to be reset and regenerated
       // as a unique micro block logic id in the second stage.
     } else if (OB_FAIL(ObMacroBlockWriter::append_micro_block(micro_block_desc, micro_index_data))) {
-      STORAGE_LOG(WARN, "fail to append micro", K(ret), K(micro_block_desc), K(micro_index_data));
+
     } else if (OB_FAIL(micro_block_iter.update_cg_block_offset_and_micro_idx())) {
-      STORAGE_LOG(WARN, "fail to update offset and micro block idx", K(ret));
+
     }
   }
 

@@ -47,7 +47,7 @@ int ObPxMultiPartUpdateOp::inner_open()
                                                   fk_checkers_))) {
     LOG_WARN("init update rtdef failed", K(ret));
   }
-  LOG_TRACE("pdml static update op", K(ret), K_(MY_SPEC.row_desc));
+
   return ret;
 }
 
@@ -62,7 +62,7 @@ int ObPxMultiPartUpdateOp::inner_get_next_row()
       if (OB_ITER_END != ret) {
         LOG_WARN("failed get next row from data driver", K(ret));
       } else {
-        LOG_TRACE("data driver has been iterated to end");
+
       }
     } else {
       clear_evaluated_flag();
@@ -75,7 +75,7 @@ int ObPxMultiPartUpdateOp::inner_get_next_row()
         if (OB_ITER_END != ret) {
           LOG_WARN("failed get next row from data driver", K(ret));
         } else {
-          LOG_TRACE("data driver has been iterated to end");
+
         }
       } else {
         clear_evaluated_flag();
@@ -161,7 +161,7 @@ int ObPxMultiPartUpdateOp::read_row(ObExecContext &ctx,
         ObExpr *expr = child_->get_spec().output_.at(part_id_idx);
         ObDatum &expr_datum = expr->locate_expr_datum(get_eval_ctx());
         tablet_id = expr_datum.get_int();
-        LOG_DEBUG("get the part id", K(ret), K(expr_datum));
+
       }
     } else {
       op_monitor_info_.otherstat_4_value_++;

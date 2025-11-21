@@ -127,7 +127,7 @@ int init_datum_utils(ObTablet &tablet,
         LOG_WARN("init row id datum utils failed", K(ret), K(col_descs));
       } else {
         datum_utils = &row_id_datum_utils;
-        LOG_INFO("block meta tree sort with row id", K(table_key));
+
       }
     } else {
       datum_utils = const_cast<blocksstable::ObStorageDatumUtils *>(&data_desc.get_desc().get_datum_utils());
@@ -252,7 +252,7 @@ int ObDDLMergeTaskUtils::freeze_ddl_kv(const ObLSID &ls_id,
   } else if (OB_FAIL(tablet_handle.get_obj()->get_ddl_kv_mgr(ddl_kv_mgr_handle))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_TASK_EXPIRED;
-      LOG_INFO("ddl kv mgr not exist", K(ret), K(ls_id), K(tablet_id));
+
     } else {
       LOG_WARN("get ddl kv mgr failed", K(ret), K(ls_id), K(tablet_id));
     }

@@ -326,9 +326,9 @@ int ObServerTableOperator::remove(const common::ObAddr &server, common::ObMySQLT
   }
   if (OB_SUCC(ret)) {
     if (is_single_row(affected_rows)) {
-      LOG_INFO("delete server from all_server table succeed", K(server));
+
     } else if (is_zero_row(affected_rows)) {
-      LOG_INFO("server not in all_server table, no need to delete", K(server));
+
     }
   }
   return ret;
@@ -362,7 +362,7 @@ int ObServerTableOperator::update(const ObServerStatus &server_status)
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("update server status in all_server table succeed", K(server_status));
+
   }
   return ret;
 }
@@ -398,7 +398,7 @@ int ObServerTableOperator::reset_rootserver(const ObAddr &except)
   }
 
   if (OB_SUCC(ret)) {
-    LOG_INFO("reset existing rootserver to observer succeed");
+
   }
   return ret;
 }
@@ -451,7 +451,7 @@ int ObServerTableOperator::update_status(
   }
 
   if (OB_SUCC(ret)) {
-    LOG_INFO("update server status succeed", K(server), K(status), K(last_hb_time));
+
   }
   return ret;
 }
@@ -820,7 +820,7 @@ int ObServerTableOperator::get(
       }
     }
   }
-  LOG_INFO("get server from table", KR(ret), K(server), K(server_info_in_table));
+
   return ret;
 }
 int ObServerTableOperator::insert(
@@ -1033,7 +1033,7 @@ int ObServerTableOperator::exec_write(
     LOG_WARN("unexpected error appears, more than one affected row",
         KR(ret), K(affected_rows), K(sql));
   } else {}
-  LOG_INFO("update __all_server table", KR(ret), K(affected_rows), K(sql));
+
   return ret;
 }
 }//end namespace rootserver

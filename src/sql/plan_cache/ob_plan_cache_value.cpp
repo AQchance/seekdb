@@ -387,7 +387,7 @@ int ObPlanCacheValue::match_all_params_info(ObPlanSet *batch_plan_set,
       LOG_WARN("null ptr unexpected", K(ret), K(phy_ctx), K(ab_params));
     } else if (query_cnt <= 1) {
       ret = OB_BATCHED_MULTI_STMT_ROLLBACK;
-      LOG_TRACE("unexpected query count", K(ret), K(query_cnt));
+
     } else if (batch_plan_set->get_can_skip_params_match()) {
       // can_skip_params_match_ is true, we not need match all params,
       // only call match_params_info once
@@ -421,7 +421,7 @@ int ObPlanCacheValue::match_all_params_info(ObPlanSet *batch_plan_set,
           LOG_WARN("fail to match_params_info", K(ret), K(outline_param_idx), KPC(params));
         } else if (i != 0 && !is_same) {
           ret = OB_BATCHED_MULTI_STMT_ROLLBACK;
-          LOG_TRACE("params is not same type", K(param_store), K(i));
+
         }
       }
     }
@@ -565,7 +565,7 @@ int ObPlanCacheValue::choose_plan(ObPlanCacheCtx &pc_ctx,
         if (OB_FAIL(match_all_params_info(plan_set, pc_ctx, outline_param_idx, is_same))) {
           SQL_PC_LOG(WARN, "fail to match params info", K(ret));
         } else if (!is_same) {        //do nothing
-          LOG_TRACE("params info does not match", KPC(params));
+
         } else {
           if (OB_FAIL(plan_set->select_plan(pc_ctx, plan))) {
             if (OB_SQL_PC_NOT_EXIST == ret) {
@@ -755,7 +755,7 @@ int ObPlanCacheValue::resolve_multi_stmt_params(ObPlanCacheCtx &pc_ctx)
       LOG_WARN("failed to check multi insert param value", K(ret));
     } else if (!is_valid) {
       ret = OB_BATCHED_MULTI_STMT_ROLLBACK;
-      LOG_TRACE("batched multi_stmt needs rollback", K(ret));
+
     } else if (OB_FAIL(before_resolve_array_params(pc_ctx, query_num, param_num, ab_params))) {
       LOG_WARN("fail to prepare resolve params", K(ret));
     } else if (OB_ISNULL(ab_params)) {
@@ -786,7 +786,7 @@ int ObPlanCacheValue::resolve_multi_stmt_params(ObPlanCacheCtx &pc_ctx)
       LOG_WARN("failed to check multi stmt not param value", K(ret));
     } else if (!is_valid) {
       ret = OB_BATCHED_MULTI_STMT_ROLLBACK;
-      LOG_TRACE("batched multi_stmt needs rollback", K(ret));
+
     } else if (OB_FAIL(before_resolve_array_params(pc_ctx, query_num, param_num, ab_params))) {
       LOG_WARN("fail to prepare resolve params", K(ret));
     } else if (OB_ISNULL(ab_params)) {
@@ -1062,10 +1062,10 @@ int ObPlanCacheValue::cmp_not_param_info(const NotParamInfoList &l_param_info_li
       const NotParamInfo &r_param_info = r_param_info_list.at(i);
       if (l_param_info.idx_ != r_param_info.idx_) {
         is_equal = false;
-        LOG_TRACE("compare not param info", K(l_param_info), K(r_param_info));
+
       } else if (0 != l_param_info.raw_text_.compare(r_param_info.raw_text_)) {
         is_equal = false;
-        LOG_TRACE("compare not param info", K(l_param_info), K(r_param_info));
+
       }
     }
   }
@@ -1139,7 +1139,7 @@ int ObPlanCacheValue::get_one_group_params(int64_t pos, const ParamStore &src_pa
       if (OB_FAIL(dst_params.push_back(objparam))) {
         LOG_WARN("fail to push param_obj to param_store", K(i), K(pos), K(array_obj->data_[pos]), K(ret));
       }
-      LOG_DEBUG("get one obj", K(ret), K(pos), K(i), K(objparam));
+
     } else if (OB_ISNULL(array_obj = reinterpret_cast<const ObSqlArrayObj*>(objparam.get_ext()))) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("unexpected null", K(ret), K(i), K(objparam));
@@ -1149,7 +1149,7 @@ int ObPlanCacheValue::get_one_group_params(int64_t pos, const ParamStore &src_pa
     } else if (OB_FAIL(dst_params.push_back(array_obj->data_[pos]))) {
       LOG_WARN("fail to push param_obj to param_store", K(i), K(pos), K(array_obj->data_[pos]), K(ret));
     } else {
-      LOG_TRACE("get one batch obj", K(pos), K(i), K(array_obj->data_[pos]));
+
     }
   }
   return ret;
@@ -1193,7 +1193,7 @@ int ObPlanCacheValue::match_and_generate_ext_params(ObPlanSet *batch_plan_set,
         LOG_WARN("fail to match params info", K(ret), K(i), K(param_store), K(outline_param_idx));
       } else if (!is_same) {
         ret = OB_BATCHED_MULTI_STMT_ROLLBACK;
-        LOG_TRACE("params is not same type", K(param_store), K(i));
+
       } else {
         // do nothing
       }
@@ -1207,7 +1207,7 @@ int ObPlanCacheValue::match_and_generate_ext_params(ObPlanSet *batch_plan_set,
       } else if (OB_FAIL(plan_ctx->init_datum_param_store())) {
         LOG_WARN("failed to init datum store", K(ret));
       } else {
-        LOG_DEBUG("succ to init datum", K(ret));
+
       }
     }
   }
@@ -1277,7 +1277,7 @@ int ObPlanCacheValue::add_plan(ObPlanCacheObject &plan,
         need_new_planset = false;
         if (is_multi_stmt_batch &&
             OB_FAIL(match_and_generate_ext_params(cur_plan_set, pc_ctx, outline_param_idx))) {
-          LOG_TRACE("fail to match and generate ext_params", K(ret));
+
         } else if (OB_FAIL(cur_plan_set->add_cache_obj(plan, pc_ctx, outline_param_idx, add_plan_ret))) {
           SQL_PC_LOG(TRACE, "failed to add plan", K(ret));
         }
@@ -1304,7 +1304,7 @@ int ObPlanCacheValue::add_plan(ObPlanCacheObject &plan,
           LOG_WARN("init new plan set failed", K(ret));
         } else if (is_multi_stmt_batch &&
             OB_FAIL(match_and_generate_ext_params(plan_set, pc_ctx, outline_param_idx))) {
-          LOG_TRACE("fail to match and generate ext_params", K(ret));
+
         } else if (OB_FAIL(plan_set->add_cache_obj(plan, pc_ctx, outline_param_idx, add_plan_ret))) {
           SQL_PC_LOG(TRACE, "failed to add plan to plan set", K(ret));
         } else if (!plan_sets_.add_last(plan_set)) {
@@ -1532,10 +1532,10 @@ int ObPlanCacheValue::check_dep_schema_version(const ObIArray<PCVSchemaObj> &sch
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("got an unexpected null table schema", K(ret), K(schema_obj1));
       } else if (*schema_obj1 == schema_obj2) { // schema do match
-        LOG_DEBUG("matched schema objs", K(*schema_obj1), K(schema_obj2), K(i));
+
         // do nothing
       } else {
-        LOG_TRACE("mismatched schema objs", K(*schema_obj1), K(schema_obj2), K(i));
+
         is_old_version = true;
       }
     }
@@ -1659,7 +1659,7 @@ int ObPlanCacheValue::match(ObPlanCacheCtx &pc_ctx,
         is_same = false;
         LOG_WARN("match not param var", K(not_param_var_[i]), K(ps_param), K(i));
       }
-      LOG_DEBUG("match", K(not_param_var_[i].idx_), K(not_param_var_[i].ps_param_), KPC(ps_param));
+
     }
   } else {
      if (OB_FAIL(check_tpl_sql_const_cons(pc_ctx.fp_result_,
@@ -1862,7 +1862,7 @@ int ObPlanCacheValue::set_stored_schema_objs(const DependenyTableStore &dep_tabl
         } else {
           // do nothing
         }
-        LOG_TRACE("check sys table", K(table_schema->get_table_name()), K(contain_sys_name_table_));
+
       } else {
         // do nothing
       }
@@ -1971,7 +1971,7 @@ int ObPlanCacheValue::get_all_dep_schema(ObPlanCacheCtx &pc_ctx,
         tmp_schema_obj.reset();
       } else if (nullptr == table_schema) {
         ret = OB_OLD_SCHEMA_VERSION;
-        LOG_TRACE("table not exist", K(ret), K(*pcv_schema), K(table_schema));
+
       } else if (OB_FAIL(tmp_schema_obj.init_without_copy_name(table_schema))) {
         LOG_WARN("failed to init pcv schema obj", K(ret));
       } else if (OB_FAIL(schema_array.push_back(tmp_schema_obj))) {
@@ -2109,7 +2109,7 @@ int ObPlanCacheValue::get_all_dep_schema(ObSchemaGetterGuard &schema_guard,
   if (OB_FAIL(ret)) {
     schema_array.reset();
   } else {
-    LOG_DEBUG("get all dep schema", K(schema_array));
+
   }
   return ret;
 }

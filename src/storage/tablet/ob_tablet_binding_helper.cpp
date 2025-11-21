@@ -406,7 +406,7 @@ int ObTabletUnbindMdsHelper::register_process(
   if (OB_FAIL(modify_tablet_binding_for_unbind(arg, SCN::invalid_scn(), ctx))) {
     LOG_WARN("failed to modify tablet binding", K(ret));
   } else {
-    LOG_INFO("modify_tablet_binding_for_unbind register", KR(ret), K(arg));
+
   }
 
   return ret;
@@ -447,7 +447,7 @@ int ObTabletUnbindMdsHelper::replay_process(
   if (OB_FAIL(modify_tablet_binding_for_unbind(arg, scn, ctx))) {
     LOG_WARN("failed to modify tablet binding", K(ret));
   } else {
-    LOG_INFO("modify_tablet_binding_for_unbind redo", KR(ret), K(scn), K(arg));
+
   }
 
   return ret;
@@ -461,7 +461,7 @@ int ObTabletUnbindMdsHelper::on_replay(const char* buf, const int64_t len, const
   if (OB_FAIL(arg.deserialize(buf, len, pos))) {
     LOG_WARN("failed to deserialize arg", K(ret));
   } else if (arg.is_old_mds_) {
-    LOG_INFO("skip unbind mds tablet for old mds", K(arg), K(scn));
+
   } else if (OB_FAIL(replay_process(arg, scn, ctx))) {
     LOG_WARN("failed to replay_process", K(ret));
   }
@@ -1014,7 +1014,7 @@ int ObTabletBindingMdsHelper::modify_(
       LOG_WARN("failed to set tablet binding mds", K(ret), K(ls_id), K(tablet_id), K(scn));
     }
   }
-  LOG_INFO("modify tablet binding data", K(ret), K(scn), K(ctx.get_writer()), K(arg));
+
   return ret;
 }
 
@@ -1079,7 +1079,7 @@ int ObTabletUnbindLobMdsHelper::on_register(const char* buf, const int64_t len, 
   } else if (OB_FAIL(modify_tablet_binding_for_unbind_lob_(arg, SCN::invalid_scn(), ctx))) {
     LOG_WARN("failed to modify_tablet_binding_for_unbind_lob", K(ret));
   } else {
-    LOG_INFO("register unbind lob success", K(arg), K(ctx));
+
   }
   return ret;
 }
@@ -1094,7 +1094,7 @@ int ObTabletUnbindLobMdsHelper::on_replay(const char* buf, const int64_t len, co
   } else if (OB_FAIL(modify_tablet_binding_for_unbind_lob_(arg, scn, ctx))) {
     LOG_WARN("failed to modify_tablet_binding_for_unbind_lob", K(ret));
   } else {
-    LOG_INFO("replay unbind lob success", K(arg), K(ctx));
+
   }
   return ret;
 }

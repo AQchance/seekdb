@@ -134,7 +134,7 @@ bool ObPsStmtItem::check_erase_inc_ref_count()
                                                K(next_ref_cnt), K(cas_ret));
   } while (!cas_ret);
 
-  LOG_TRACE("ps item inc ref count", K(*this), K(need_erase));
+
 
   return need_erase;
 }
@@ -142,12 +142,12 @@ bool ObPsStmtItem::check_erase_inc_ref_count()
 void ObPsStmtItem::dec_ref_count()
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("ps item dec ref count", K(*this));
+
   int64_t ref_count = ATOMIC_SAF(&ref_count_, 1);
   if (ref_count > 0) {
-    LOG_TRACE("ps item dec ref count", K(ref_count));
+
   } else if (0 == ref_count) {
-    LOG_INFO("free ps item", K(ref_count), K(*this));
+
     ObPsStmtItem *ps_item = this;
     ObIAllocator *allocator = NULL;
     if (OB_ISNULL(allocator = get_external_allocator())) {
@@ -172,7 +172,7 @@ int ObPsSqlMeta::add_param_field(const ObField &field)
   } else if (OB_FAIL(param_fields_.push_back(tmp_field))) {
     LOG_WARN("push back field param failed", K(ret));
   } else {
-    LOG_DEBUG("succ to push back param field", K(field));
+
   }
 
   return ret;
@@ -188,7 +188,7 @@ int ObPsSqlMeta::add_column_field(const ObField &field)
   } else if (OB_FAIL(column_fields_.push_back(tmp_field))) {
     LOG_WARN("push back field param failed", K(ret));
   } else {
-    LOG_DEBUG("succ to push back column field", K(field));
+
   }
 
   return ret;
@@ -585,20 +585,20 @@ bool ObPsStmtInfo::check_erase_inc_ref_count()
                                                K(next_ref_cnt), K(cas_ret));
   } while (!cas_ret);
 
-  LOG_TRACE("ps info inc ref count", K(*this), K(need_erase));
+
 
   return need_erase;
 }
 
 void ObPsStmtInfo::dec_ref_count()
 {
-  LOG_TRACE("ps info dec ref count", K(*this));
+
   int64_t cur_ref_count = ATOMIC_LOAD(&ref_count_);
   if (cur_ref_count > 1) {
     if (cur_ref_count == 2) {
       last_closed_timestamp_ = common::ObTimeUtility::current_time();
     }
-    LOG_TRACE("ps info dec ref count", K(cur_ref_count), K(*this));
+
     ATOMIC_DEC(&ref_count_);
   } else {
     BACKTRACE_RET(ERROR, OB_ERR_UNEXPECTED, true, "ObPsStmtInfo %p, cur_ref_count = %ld", this, cur_ref_count);
@@ -647,7 +647,7 @@ ObPsStmtInfoGuard::~ObPsStmtInfoGuard()
       if (OB_FAIL(ps_cache_->deref_stmt_info(stmt_id_))) {
         LOG_WARN("deref stmt item faield", K(ret), K(*stmt_info_), K_(stmt_id));
       }
-      LOG_TRACE("destroy PsStmtInfo Guard", K_(stmt_id));
+
     } else {
       LOG_WARN("stmt info is null", K(stmt_id_));
     }

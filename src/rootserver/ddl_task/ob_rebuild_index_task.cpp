@@ -176,7 +176,7 @@ int ObRebuildIndexTask::drop_index_impl()
     LOG_WARN("invalid argument", KR(ret), KP(GCTX.rs_rpc_proxy_));
   } else if (new_index_id_ == OB_INVALID_ID) {
     index_drop_task_id_ = -1; // new index table maybe not build yet, drop nothing
-    LOG_INFO("new index table not exist, maybe not build yet", K(ret), K(target_object_name_), K(new_index_id_));
+
   } else if (OB_FAIL(ObMultiVersionSchemaService::get_instance().
                                                   get_tenant_schema_guard(tenant_id_, schema_guard))) {
     LOG_WARN("get tenant schema failed", KR(ret), K(tenant_id_));
@@ -279,7 +279,7 @@ int ObRebuildIndexTask::rebuild_index()
     LOG_WARN("invalid rebuild index type", KR(ret), K(rebuild_index_arg_.rebuild_index_type_));
   }
 
-  LOG_INFO("rebuild index finished", KR(ret), K(rebuild_index_arg_.rebuild_index_type_));
+
   return ret;
 }
 
@@ -378,7 +378,7 @@ int ObRebuildIndexTask::rebuild_vec_index_impl()
       } else {
         index_build_task_id_ = res.task_id_;  // create vector index task ID
         new_index_id_ = res.index_table_id_;  // new table 3 index ID
-        LOG_INFO("success to create rebuild index task", K(ret), K(index_build_task_id_), K(new_index_id_), K(create_index_arg));
+
       }
     }
   }
@@ -440,14 +440,14 @@ int ObRebuildIndexTask::create_and_wait_rebuild_task_finish(const ObDDLTaskStatu
     if (OB_CANCELED == ret) {
       index_build_task_id_ = -1;
       new_index_id_ = -1;
-      LOG_INFO("create index task is canceled, reset new_index_id_", KR(ret));
+
     }
     LOG_WARN("check ddl task finish failed", K(ret), K(index_build_task_id_));
   } 
   if (state_finished || OB_FAIL(ret)) {
     DEBUG_SYNC(REBUILD_INDEX_WAIT_CREATE_TASK_FINISH);
     (void)switch_status(new_status, true, ret);
-    LOG_INFO("rebuild_index_task wait_child_task_finish finished", KR(ret), K(*this));
+
   }
 
   return ret;
@@ -654,7 +654,7 @@ int ObRebuildIndexTask::purge_old_mlog(const ObDDLTaskStatus new_status)
   if (state_finished || OB_FAIL(ret)) {
     DEBUG_SYNC(REBUILD_INDEX_WAIT_PURGE_OLD_MLOG);
     (void)switch_status(new_status, true, ret);
-    LOG_INFO("purge_old_mlog finished", KR(ret), K(*this));
+
   }
 
   return ret;
@@ -733,7 +733,7 @@ int ObRebuildIndexTask::switch_index_name(const ObDDLTaskStatus next_task_status
                              .execute_ddl_task(alter_table_arg, unused_ids))) {
         LOG_WARN("fail to swap original and hidden table state", K(ret));
       } else {
-        LOG_INFO("success to switch index name", K(ret), K(origin_table_name), K(alter_table_arg));
+
       }
       DEBUG_SYNC(REBUILD_VEC_INDEX_SWITCH_INDEX_NAME);
       if (new_status == next_task_status || OB_FAIL(ret)) {
@@ -742,7 +742,7 @@ int ObRebuildIndexTask::switch_index_name(const ObDDLTaskStatus next_task_status
         }
       }
     }
-    LOG_DEBUG("switch_index_name finish", K(ret), K(task_id_), K(target_object_id_), K(new_index_id_), K(alter_table_arg));
+
   }
   return ret;
 }
@@ -781,14 +781,14 @@ int ObRebuildIndexTask::create_and_wait_drop_task_finish(const ObDDLTaskStatus n
     LOG_WARN("fail to build drop index task", K(ret));
   } else if (-1 == index_drop_task_id_) {
     state_finished = true;
-    LOG_INFO("submit drop index task return task_id is -1", K(ret), K(index_drop_task_id_));
+
   } else if (OB_FAIL(check_ddl_task_finish(tenant_id_, index_drop_task_id_, state_finished))) {
     LOG_WARN("check drop task finish task failed", K(ret), K(state_finished));
   }
   if (state_finished || OB_FAIL(ret)) {
     DEBUG_SYNC(REBUILD_INDEX_WAIT_DROP_TASK_FINISH);
     (void)switch_status(new_status, true, ret);
-    LOG_INFO("rebuild_index_task wait_drop_task_finish finished", KR(ret), K(*this));
+
   }
   return ret;
 }
@@ -805,7 +805,7 @@ int ObRebuildIndexTask::check_ddl_task_finish(const int64_t tenant_id, int64_t &
     LOG_WARN("not init", KR(ret));
   } else if (OB_UNLIKELY(child_task_id == OB_INVALID_ID || tenant_id == OB_INVALID_ID)) {
     ret = OB_INVALID_ARGUMENT;
-    LOG_INFO("invalid argument", K(ret), K(child_task_id), K(tenant_id));
+
   } else {
     int64_t unused_user_msg_len = 0;
     const int64_t target_object_id = -1;
@@ -821,14 +821,14 @@ int ObRebuildIndexTask::check_ddl_task_finish(const int64_t tenant_id, int64_t &
                                                                       unused_user_msg_len))) {
       if (OB_ENTRY_NOT_EXIST == ret) {
         ret = OB_SUCCESS;
-        LOG_DEBUG("ddl task not finish", K(ret), K(tenant_id), K(child_task_id), K(task_id_));
+
       } else {
         LOG_WARN("fail to get ddl error message", K(ret), K(tenant_id), K(child_task_id), K(task_id_));
       }
     } else {
       ret = error_message.ret_code_;
       is_finished = true;
-      LOG_INFO("succ to wait task finish", K(ret));
+
     }
   }
   return ret;
@@ -854,7 +854,7 @@ int ObRebuildIndexTask::fail()
     LOG_WARN("drop index impl failed", KR(ret));
   } else if (-1 == index_drop_task_id_ ) {
     is_finished = true;
-    LOG_INFO("submit drop index task return task_id is -1", K(ret), K(index_drop_task_id_));
+
   } else if (OB_FAIL(check_ddl_task_finish(tenant_id_, index_drop_task_id_, is_finished))) {
     LOG_WARN("fail to check drop index task finished", K(ret));
   }
@@ -926,7 +926,7 @@ int ObRebuildIndexTask::cleanup_impl()
     const ObDDLTaskID parent_task_id(tenant_id_, parent_task_id_);
     ObSysDDLSchedulerUtil::on_ddl_task_finish(parent_task_id, get_task_key(), ret_code_, trace_id_);
   }
-  LOG_INFO("clean task finished", KR(ret), K(*this));
+
   return ret;
 }
 
@@ -984,7 +984,7 @@ int ObRebuildIndexTask::process()
     ddl_tracing_.release_span_hierarchy();
     if (OB_FAIL(ret)) {
       add_event_info("rebuild index task process fail");
-      LOG_INFO("rebuild index task process fail", "ddl_event_info", ObDDLEventInfo());
+
     }
   }
   return ret;

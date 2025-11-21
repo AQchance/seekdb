@@ -82,7 +82,7 @@ void ObTabletBindingMdsUserData::on_commit(const share::SCN &commit_version, con
     // unbind has set the mds with snapshot_version_ of -1, indicating that we need to fill in the commit version here
     snapshot_version_ = commit_version.get_val_for_tx();
   }
-  LOG_INFO("binding mds commit", K(redefined_), K(snapshot_version_), K(commit_version));
+
   return;
 }
 

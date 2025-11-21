@@ -66,7 +66,7 @@ int ObDatumRowStore::BlockInfo::append_row(const ObDatumRow &row, const int64_t 
     STORAGE_LOG(WARN, "out of memory range",
         K(ret), K_(block_size), K_(curr_data_pos), K(length));
   } else if (OB_FAIL(row.serialize(get_buffer(), get_remain_size(), pos))) {
-    STORAGE_LOG(WARN, "fail to serialize datum row", K(ret), K(row));
+
   } else {
     advance(pos);
   }
@@ -95,7 +95,7 @@ int ObDatumRowStore::BlockList::add_last(BlockInfo *block)
   int ret = OB_SUCCESS;
   if (OB_ISNULL(block)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(block));
+
   } else {
     block->next_ = NULL;
     if (OB_ISNULL(last_)) {
@@ -104,7 +104,7 @@ int ObDatumRowStore::BlockList::add_last(BlockInfo *block)
         last_ = block;
       } else {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "invalid block list", K(ret), K_(last), K_(first));
+
       }
     } else {
       last_->next_ = block;
@@ -132,7 +132,7 @@ int ObDatumRowStore::Iterator::get_next_row(ObDatumRow &row)
   int64_t pos = 0;
   if (OB_UNLIKELY(row.count_ < row_store_.get_col_count())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "column buffer count is not enough", K(ret), K_(row.count), K(row_store_.get_col_count()));
+
   } else if (OB_ISNULL(cur_iter_block_)) {
     // the last block
     ret = OB_ITER_END;
@@ -191,11 +191,11 @@ int ObDatumRowStore::new_block(int64_t block_size, ObDatumRowStore::BlockInfo *&
   block = static_cast<BlockInfo *>(inner_alloc_.alloc(block_size + sizeof(BlockInfo)));
   if (OB_ISNULL(block)) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "failed to alloc block memory", K(ret), K(block_size), K(sizeof(BlockInfo)));
+
   } else {
     block = new(block) BlockInfo(block_size);
     if (OB_FAIL(blocks_.add_last(block))) {
-      STORAGE_LOG(WARN, "failed to add a new block to block list", K(ret));
+
     }
   }
   return ret;
@@ -206,18 +206,18 @@ int ObDatumRowStore::add_row(const ObDatumRow &row)
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(0 < col_count_) && OB_UNLIKELY(row.count_ != col_count_)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "all rows should have the same columns", K(col_count_), K(row.count_));
+
   } else {
     int64_t length = row.get_serialize_size();
     BlockInfo *block = blocks_.get_last();
     if (OB_ISNULL(block) || block->get_remain_size() < length) {
       if (OB_FAIL(new_block(length, block))) {
-        STORAGE_LOG(WARN, "failed to new block", K(ret), K(length));
+
       }
     }
     if (OB_SUCC(ret)) {
       if (OB_FAIL(block->append_row(row, length))) {
-        STORAGE_LOG(WARN, "failed to append row", K(ret), K(row));
+
       } else {
         ++row_count_;
       }

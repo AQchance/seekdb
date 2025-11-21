@@ -410,7 +410,7 @@ int ObLSServiceHelper::get_ls_replica_sync_scn(const uint64_t tenant_id,
           //(readable_scn is provided by get_max_decided_scn of ObLogHandler, and this value is checkpoint at this time. SCN recorded in the information)
           //set sync_scn = max(end_scn, checkpoint_scn);
           sync_scn = SCN::max(end_scn, checkpoint_scn);
-          LOG_DEBUG("get sync scn", K(tenant_id), K(ls_id), K(sync_scn), K(end_scn), K(checkpoint_scn));
+
         }
       }
     }
@@ -563,7 +563,7 @@ int ObLSServiceHelper::check_if_need_wait_user_ls_sync_scn_(
       LOG_WARN("wait some time, user_ls_sync_scn cannot be smaller than sys_ls_target_scn",
           KR(ret), K(tenant_id), K(user_ls_sync_scn), K(sys_ls_target_scn));
     } else {
-      LOG_INFO("user_ls_sync_scn >= sys_ls_target_scn now", K(tenant_id), K(user_ls_sync_scn), K(sys_ls_target_scn));
+
     }
   }
   return ret;
@@ -974,7 +974,7 @@ int ObLSServiceHelper::balance_ls_group(
   } else if (OB_FAIL(try_shrink_standby_unit_group_(tenant_ls_info, task_cnt))) {
     LOG_WARN("failed to shrink standby unit group", KR(ret), K(tenant_ls_info));
   } else if (0 != task_cnt) {
-    LOG_INFO("has unit group need deleting, can not balance", K(task_cnt));
+
   } else {
     int64_t min_count = INT64_MAX, min_index = OB_INVALID_INDEX_INT64;
     int64_t max_count = 0, max_index = OB_INVALID_INDEX_INT64;
@@ -985,7 +985,7 @@ int ObLSServiceHelper::balance_ls_group(
         const ObUnitGroupInfo &unit_group_info = tenant_ls_info.get_unit_group_array().at(i);
         if (share::ObUnit::UNIT_STATUS_ACTIVE != unit_group_info.unit_status_) {
           ret = OB_NEED_WAIT;
-          LOG_INFO("has unit group need deleting, can not balance", KR(ret), K(unit_group_info));
+
         } else {
           int64_t curr_ls_group_count = unit_group_info.ls_group_ids_.count();
           if (max_count < curr_ls_group_count) {
@@ -1074,7 +1074,7 @@ int ObLSServiceHelper::try_update_ls_unit_group_(
               K(src_info), K(dest_info));
         }
       }
-      LOG_INFO("[LS_MGR]balance ls group to unit group", KR(ret), K(ls_group_id), K(src_info), K(dest_info));
+
     }
     if (FAILEDx(src_info.ls_group_ids_.remove(index))) {
       LOG_WARN("failed to remove", KR(ret), K(index), K(src_info));
@@ -1177,7 +1177,7 @@ int ObTenantLSInfo::gather_stat()
       is_load_ = true;
     }
   }
-  LOG_INFO("[LS_MGR] gather stat", KR(ret), K(primary_zone_), K(unit_group_array_));
+
   return ret;
 }
 
@@ -1404,7 +1404,7 @@ int ObTenantLSInfo::get_next_unit_group(int64_t &group_index)
       }
     }
   }
-  LOG_INFO("get next primary zone", KR(ret), K(group_index));
+
   return ret;
 }
 
@@ -1454,7 +1454,7 @@ int ObTenantLSInfo::get_next_primary_zone(
                  K(group_info), K(ls_count));
       }
     }
-    LOG_INFO("get next primary zone", KR(ret), K(group_info), K(primary_zone));
+
   }
   return ret;
 }
@@ -1510,7 +1510,7 @@ int ObLSServiceHelper::check_ls_transfer_replay_(const uint64_t tenant_id,
           ls_status, *GCTX.sql_proxy_))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("src ls not exist, no need check", K(tenant_id), K(ls_id));
+
     } else {
       LOG_WARN("failed to get ls status info", KR(ret), K(tenant_id), K(ls_id));
     }
@@ -1564,7 +1564,7 @@ int ObLSServiceHelper::get_ls_all_replica_readable_scn_(const uint64_t tenant_id
       LOG_WARN("result is null", KR(ret), K(tenant_id), K(leader), K(ls_id));
     } else {
       readable_scn = proxy.get_results().at(0)->get_cur_readable_scn();
-      LOG_INFO("get all replica readable scn", K(ls_id), K(readable_scn));
+
     }
   }
   return ret;

@@ -172,7 +172,7 @@ public:
       int64_t len = probe_keys->at(key_idx)->res_buf_len_;
       OB_ASSERT(8 == len);
       VectorFormat format = key_vec->get_format();
-      LOG_DEBUG("set key data", K(format), K(len));
+
       if (VEC_FIXED == format) {
         if (1 == probe_keys->count()) {
           ObFixedLengthBase *vec = static_cast<ObFixedLengthBase *>(key_vec);
@@ -184,7 +184,7 @@ public:
           for (int64_t i = 0; i < output_info.selector_cnt_; i++) {
             int64_t idx = output_info.selector_[i];
             dst[2 * idx + key_idx] = src[idx];
-            LOG_DEBUG("key data", K(i), K(idx), K(key_idx), K(src[idx]));
+
           }
         }
       } else if (VEC_UNIFORM == format) {
@@ -195,7 +195,7 @@ public:
           OB_ASSERT(!datum.is_null());
           //MEMCPY(key_data_ + idx * len, datum.ptr_, len);
           dst[key_cnt * idx + key_idx] = datum.get_int();
-          LOG_DEBUG("key data", K(i), K(idx), K(key_idx), K(datum), K(datum.get_int()));
+
         }
       } else if (VEC_UNIFORM_CONST == format) {
         ObUniformBase *vec = static_cast<ObUniformBase *>(key_vec);

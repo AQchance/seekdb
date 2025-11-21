@@ -88,7 +88,7 @@ int ObLobQueryIter::fill_buffer(ObString& buffer, const ObString &data, ObString
       }
     }
   } else {
-    LOG_DEBUG("no data to fill", K(data.length()), K(buffer.remain()), K(buffer.length()), K(buffer.size()));
+
   }
   return ret;
 }
@@ -116,11 +116,11 @@ int ObLobInRowQueryIter::get_next_row(ObString& buffer)
     LOG_WARN("iter is invalid.", K(ret));
   } else if (remain_data_.length() == 0) {
     ret = OB_ITER_END;
-    LOG_DEBUG("not data to write", KPC(this));
+
   } else if (OB_FAIL(fill_buffer(buffer, remain_data_, new_remain_data))) {
     LOG_WARN("fill buffer fail", K(ret), KPC(this));
   } else {
-    LOG_DEBUG("fill full", K(buffer.length()), K(buffer.size()), K(new_remain_data.length()), K(remain_data_.length()), KPC(this));
+
     remain_data_ = new_remain_data;
   }
   is_end_ = is_end_ || (ret == OB_ITER_END);
@@ -170,7 +170,7 @@ int ObLobOutRowQueryIter::get_next_row(ObString& buffer)
       if (OB_FAIL(fill_buffer(buffer, last_data_, remain_data))) {
         LOG_WARN("fill buffer fail", K(ret) ,K(buffer.length()), K(buffer.size()), K(remain_data.length()), K(last_data_.length()));
       } else if (buffer.remain() == 0 || remain_data.length() > 0) {
-        LOG_DEBUG("fill full", K(buffer.length()), K(buffer.size()), K(remain_data.length()), K(last_data_.length()));
+
         has_fill_full = true;
         last_data_ = remain_data;
       } else if (OB_FALSE_IT(last_data_.reset())) {

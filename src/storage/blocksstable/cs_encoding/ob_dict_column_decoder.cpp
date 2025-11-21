@@ -385,14 +385,14 @@ int ObDictColumnDecoder::pushdown_operator(
             }
             filter_applied = true;
           }
-          LOG_TRACE("dict black filter pushdown", K(ret), K(ctx), K(filter_applied), K(pd_filter_info));
+
         } else {
           sql::ObBoolMask bool_mask;
           if (OB_FAIL(check_skip_block(ctx, filter, pd_filter_info, result_bitmap, bool_mask))) {
             LOG_WARN("Failed to check whether hit shortcut", KR(ret), K(ctx), K(filter), K(pd_filter_info));
           } else if (!bool_mask.is_uncertain()) {
             filter_applied = true;
-            LOG_DEBUG("skip block in dict black filter pushdown", K(result_bitmap.popcnt()));
+
           } else {
             for (int64_t index = 0; OB_SUCC(ret) && (index < distinct_ref_cnt); ) {
               int64_t upper_bound = MIN(index + pd_filter_info.batch_size_, distinct_ref_cnt);
@@ -1176,7 +1176,7 @@ int ObDictColumnDecoder::datum_dict_val_in_op(
       matched_ref_exist = true;
       ref_bitset->bit_not(dict_val_cnt + 1); // all 1
     }
-    LOG_DEBUG("Hit shortcut to judge IN filter");
+
   } else {
     const ObFilterInCmpType cmp_type = get_filter_in_cmp_type(dict_val_cnt, filter.get_datums().count(), is_sorted_dict);
     int64_t matched_ref_cnt = 0;

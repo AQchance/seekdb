@@ -33,7 +33,7 @@ int ObGroupByVecOp::inner_open()
   } else if (OB_FAIL(aggr_processor_.init())) {
     LOG_WARN("failed to init", K(ret));
   } else {
-    LOG_DEBUG("finish inner_open");
+
   }
   return ret;
 }
@@ -139,7 +139,7 @@ int ObGroupByVecOp::inner_rescan()
   } else if (OB_FAIL(aggr_processor_.init())) {
     LOG_WARN("failed to init", K(ret));
   } else {
-    LOG_DEBUG("finish rescan");
+
   }
   return ret;
 }
@@ -153,7 +153,7 @@ int ObGroupByVecOp::inner_switch_iterator()
   } else if (OB_FAIL(aggr_processor_.init())) {
     LOG_WARN("failed to init", K(ret));
   } else {
-    LOG_DEBUG("finish switch_iterator");
+
   }
   return ret;
 }
@@ -165,7 +165,7 @@ int ObGroupByVecOp::inner_close()
   if (OB_FAIL(ObOperator::inner_close())) {
     LOG_WARN("failed to inner_close", K(ret));
   } else {
-    LOG_DEBUG("finish inner_close");
+
   }
   return ret;
 }

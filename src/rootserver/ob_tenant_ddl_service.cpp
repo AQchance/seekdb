@@ -487,7 +487,7 @@ int ObTenantDDLService::replace_sys_stat(const uint64_t tenant_id,
       }
     }
     if (OB_SUCC(ret)) {
-      LOG_INFO("create system stat sql", K(sql));
+
       int64_t affected_rows = 0;
       if (OB_FAIL(trans.write(exec_tenant_id, sql.ptr(), affected_rows))) {
         LOG_WARN("execute sql failed", K(ret), K(sql));
@@ -604,7 +604,7 @@ int ObTenantDDLService::create_sys_tenant(
       }
       if (trans.is_started()) {
         int temp_ret = OB_SUCCESS;
-        LOG_INFO("end create tenant", "is_commit", OB_SUCCESS == ret, K(ret));
+
         if (OB_SUCCESS != (temp_ret = trans.end(OB_SUCC(ret)))) {
           ret = (OB_SUCC(ret)) ? temp_ret : ret;
           LOG_WARN("trans end failed", "is_commit", OB_SUCCESS == ret, K(temp_ret));
@@ -824,7 +824,7 @@ int ObTenantDDLService::init_schema_status(
 int ObTenantDDLService::create_tenant(const ObCreateTenantArg &arg,
     ObCreateTenantSchemaResult &result)
 {
-  LOG_INFO("begin to create tenant schema", K(arg));
+
   int ret = OB_SUCCESS;
   bool need_create = false;
   share::schema::ObSchemaGetterGuard schema_guard;
@@ -833,7 +833,7 @@ int ObTenantDDLService::create_tenant(const ObCreateTenantArg &arg,
   } else if (OB_FAIL(create_tenant_check_(arg, need_create, schema_guard))) {
     LOG_WARN("failed to check create tenant", KR(ret), K(arg));
   } else if (!need_create) {
-    LOG_INFO("no need to create tenant", KR(ret), K(need_create), K(arg));
+
     if (OB_FAIL(result.init_with_tenant_exist())) {
       LOG_WARN("failed to init result when tenant exist", KR(ret));
     }
@@ -1634,7 +1634,7 @@ int ObTenantDDLService::create_tenant_sys_tablets(
       LOG_WARN("ERRSIM_CREATE_SYS_TABLETS_ERROR", KR(ret));
     } else {
       ALLOW_NEXT_LOG();
-      LOG_INFO("create tenant sys tables tablet", KR(ret), K(tenant_id));
+
     }
     if (trans.is_started()) {
       int temp_ret = OB_SUCCESS;
@@ -1905,7 +1905,7 @@ int ObTenantDDLService::add_extra_tenant_init_config_(
  */
 int ObTenantDDLService::modify_tenant(const ObModifyTenantArg &arg)
 {
-  LOG_INFO("receive modify tenant request", K(arg));
+
   int ret = OB_SUCCESS;
   ObSchemaGetterGuard schema_guard;
   const ObTenantSchema *orig_tenant_schema = NULL;
@@ -2092,7 +2092,7 @@ int ObTenantDDLService::set_new_tenant_options(
       } else {} // no more to do
     }
   } else {} // locality do not changed, do nothing
-  LOG_DEBUG("set new tenant options", K(arg), K(new_tenant_schema), K(orig_tenant_schema));
+
   return ret;
 }
 
@@ -2771,7 +2771,7 @@ int ObTenantDDLService::update_sys_variables(const common::ObIArray<obrpc::ObSys
             } else if (OB_FAIL(new_sys_variable.add_sysvar_schema(new_sysvar))) {
               LOG_WARN("failed to add sysvar schema", K(ret));
             } else {
-              LOG_DEBUG("succ to update sys value", K(sysvar_value));
+
               sysvar = NULL;
             }
           }
@@ -3050,7 +3050,7 @@ int ObTenantDDLService::try_alter_meta_tenant_schema(
      */
   } else if (!meta_tenant_has_option_changed) {
     // do nothing
-    LOG_INFO("nothing changed to this tenant", KR(ret), K(arg), K(tenant_id));
+
   } else {
     const share::schema::ObTenantSchema *meta_tenant_schema = nullptr;
     const uint64_t meta_tenant_id = gen_meta_tenant_id(tenant_id);
@@ -4236,7 +4236,7 @@ int ObTenantDDLService::check_and_set_primary_zone(
   int ret = OB_SUCCESS;
   common::ObArray<ObZoneRegion> zone_region_list;
   if (schema.get_primary_zone().empty()) {
-    LOG_INFO("primary zone is null, noting todo");
+
     //nothing todo
   } else if (OB_FAIL(construct_zone_region_list(zone_region_list, zone_list))) {
     LOG_WARN("fail to construct zone region list", K(ret));
@@ -4653,7 +4653,7 @@ int ObTenantDDLService::try_drop_sys_ls_(const uint64_t meta_tenant_id,
     if (OB_FAIL(ls_status.get_ls_status_info(meta_tenant_id, SYS_LS, sys_ls_info, trans))) {
       if (OB_ENTRY_NOT_EXIST == ret) {
         ret = OB_SUCCESS;
-        LOG_INFO("sys ls not exist, no need to drop", KR(ret), K(meta_tenant_id));
+
       } else {
         LOG_WARN("failed to get ls status info", KR(ret), K(meta_tenant_id));
       }
@@ -4756,7 +4756,7 @@ int ObTenantDDLService::drop_tenant(const ObDropTenantArg &arg)
   } else if (OB_ISNULL(tenant_schema)) {
     if (if_exist) {
       LOG_USER_NOTE(OB_TENANT_NOT_EXIST, arg.tenant_name_.length(), arg.tenant_name_.ptr());
-      LOG_INFO("tenant not exist, no need to delete it", K(arg));
+
     } else {
       ret = OB_TENANT_NOT_EXIST;
       LOG_USER_ERROR(OB_TENANT_NOT_EXIST, arg.tenant_name_.length(), arg.tenant_name_.ptr());
@@ -4934,7 +4934,7 @@ int ObTenantDDLService::drop_tenant(const ObDropTenantArg &arg)
     }
   }
 
-  LOG_INFO("drop tenant", K(arg), KR(ret));
+
   return ret;
 }
 
@@ -4988,7 +4988,7 @@ int ObTenantDDLService::flashback_tenant(const obrpc::ObFlashBackTenantArg &arg)
       LOG_WARN("publish_schema failed", K(ret));
     }
   }
-  LOG_INFO("finish flashback tenant", K(arg), K(ret));
+
   return ret;
 }
 
@@ -5158,7 +5158,7 @@ int ObTenantDDLService::purge_tenant(
       }
     }
   }
-  LOG_INFO("finish purge tenant", K(arg), K(ret));
+
   return ret;
 }
 
@@ -5440,7 +5440,7 @@ int ObTenantDDLService::create_tenant_end(const uint64_t tenant_id)
     }
     int temp_ret = OB_SUCCESS;
     if (trans.is_started()) {
-      LOG_INFO("end create tenant", "is_commit", OB_SUCCESS == ret, K(ret));
+
       if (OB_SUCCESS != (temp_ret = trans.end(OB_SUCC(ret)))) {
         ret = (OB_SUCC(ret)) ? temp_ret : ret;
         LOG_WARN("trans end failed", "is_commit", OB_SUCCESS == ret, K(temp_ret));
@@ -5670,7 +5670,7 @@ int ObTenantDDLService::create_tenant_check_(const obrpc::ObCreateTenantArg &arg
       if (arg.if_not_exist_) {
         ret = OB_SUCCESS;
         LOG_USER_NOTE(OB_TENANT_EXIST, to_cstring(tenant_name));
-        LOG_INFO("tenant already exists, not need to create", KR(ret), K(tenant_name));
+
       } else {
         ret = OB_TENANT_EXIST;
         LOG_USER_ERROR(OB_TENANT_EXIST, to_cstring(tenant_name));

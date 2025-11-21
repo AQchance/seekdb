@@ -209,7 +209,7 @@ int ObBuildMViewTask::process()
         }
         break;
       default:
-        LOG_INFO("not expected status", KR(ret), K(task_status_));
+
         break;
     }
     ddl_tracing_.release_span_hierarchy();
@@ -341,7 +341,7 @@ int ObBuildMViewTask::start_refresh_mview_task()
     if (OB_FAIL(mview_complete_refresh(res))) {
       LOG_WARN("failed to do mview complete refresh", KR(ret));
     } else {
-      LOG_INFO("start mview complete refresh", K(mview_complete_refresh_task_id_));
+
       if (OB_FAIL(set_mview_complete_refresh_task_id(res.task_id_))) {
         LOG_WARN("fail to set mview_complete_refresh_task_id", KR(ret));
       }
@@ -355,7 +355,7 @@ int ObBuildMViewTask::start_refresh_mview_task()
   }
 
   (void)switch_status(ObDDLTaskStatus::WAIT_CHILD_TASK_FINISH, true, ret);
-  LOG_INFO("start refresh mview task finished", KR(ret), K(*this));
+
   return ret;
 }
 
@@ -411,7 +411,7 @@ int ObBuildMViewTask::on_child_task_prepare(const int64_t task_id)
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("task_id should not be 0", KR(ret), K(task_id));
   } else if (ATOMIC_LOAD(&mview_complete_refresh_task_id_) == 0) {
-    LOG_INFO("mview refresh task prepare", K(task_id));
+
     if (OB_FAIL(set_mview_complete_refresh_task_id(task_id))) {
       LOG_WARN("fail to set mview refresh task id", KR(ret));
     } 
@@ -423,7 +423,7 @@ int ObBuildMViewTask::on_child_task_prepare(const int64_t task_id)
   if (OB_SUCC(ret)) {
     if (ATOMIC_LOAD(&task_status_) == ObDDLTaskStatus::START_REFRESH_MVIEW_TASK) {
       ret = OB_EAGAIN;
-      LOG_INFO("wait build mview status to promote", K(mview_complete_refresh_task_id_));
+
     }
   }
   return ret;
@@ -464,7 +464,7 @@ int ObBuildMViewTask::wait_child_task_finish()
 
   if (state_finished || OB_FAIL(ret)) {
     (void)switch_status(ObDDLTaskStatus::TAKE_EFFECT, true, ret);
-    LOG_INFO("build_mview_task wait_child_task_finish finished", KR(ret), K(*this));
+
   }
 
   return ret;
@@ -537,7 +537,7 @@ int ObBuildMViewTask::enable_mview()
   }
   if (state_finished) {
     (void)switch_status(next_status, true, ret);
-    LOG_INFO("build_mview_task enable_mview finished", KR(ret), K(*this));
+
   }
   return ret;
 }

@@ -65,7 +65,7 @@ int ObMVChecker::check_mv_fast_refresh_type(const ObSelectStmt *view_stmt,
       LOG_WARN("failed to check mv refresh type", K(ret));
     } else {
       refresh_type = checker.get_refersh_type();
-      LOG_INFO("check mv fast refresh type", KR(ret), K(refresh_type));
+
     }
   }
   return ret;
@@ -107,7 +107,7 @@ int ObMVChecker::check_mv_stmt_refresh_type(const ObSelectStmt &stmt,
   } else if (OB_FAIL(check_mjv_refresh_type(stmt, refresh_type))) {
     LOG_WARN("failed to check mjv refresh type", K(ret));
   }
-  LOG_TRACE("finish check mv refresh type", K(refresh_type));
+
   return ret;
 }
 
@@ -371,7 +371,7 @@ bool ObMVChecker::check_mlog_table_valid(const share::schema::ObTableSchema *tab
     if (!is_valid) {
       fast_refreshable_error_.assign_fmt("all primary keys and partition keys of table %s are required in the corresponding mlog table", table_schema->get_table_name());
     }
-    LOG_DEBUG("check mlog_table column is valid", K(is_valid), K(i), K(mlog_cid), K(columns));
+
   }
   for (int i = 0; is_valid && OB_SUCC(ret) && i < columns.count(); ++i) {
     if (columns.at(i).base_tid_ == table_schema->get_table_id()) {
@@ -380,7 +380,7 @@ bool ObMVChecker::check_mlog_table_valid(const share::schema::ObTableSchema *tab
       if (!is_valid) {
         fast_refreshable_error_.assign_fmt("column %s of table %s used in mv is required in the corresponding mlog table", columns.at(i).column_name_.ptr(), table_schema->get_table_name());
       }
-      LOG_DEBUG("check mlog_table column is valid", K(is_valid), K(i), K(mlog_cid), K(columns));
+
     }
   }
   return ret;
@@ -466,7 +466,7 @@ int ObMVChecker::check_is_standard_group_by(const ObSelectStmt &stmt, bool &is_s
       if (OB_FAIL(is_standard_select_in_group_by(expr_set, select_items.at(i).expr_, is_standard))) {
         LOG_WARN("failed to push back null safe equal expr", K(ret));
       } else if (!is_standard) {
-        LOG_TRACE("expr can not use in select for group by", K(is_standard), K(i), KPC(select_items.at(i).expr_));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -582,7 +582,7 @@ int ObMVChecker::check_and_expand_mav_aggr(const ObSelectStmt &stmt,
         } else if (all_aggrs.count() != orig_aggr_count) {
           /* expand aggr generate new aggr, can not fast refresh */
           is_valid = false;
-          LOG_TRACE("aggr can not fast refresh", KPC(aggr), KPC(replace_expr), K(orig_aggr_count), K(all_aggrs));
+
           fast_refreshable_error_.assign_fmt("when using sum/avg/stddev/variance functions, a standalone count function of the corresponding column is required in the select item list");
           ObOptimizerUtil::revert_items(all_aggrs, orig_aggr_count);
         } else if (OB_FAIL(expand_aggrs.push_back(std::make_pair(aggr, replace_expr)))) {
@@ -1130,7 +1130,7 @@ int ObMVChecker::check_match_major_refresh_mv(const ObSelectStmt &stmt, bool &is
   } else if (is_match && FALSE_IT(is_match = !GCTX.is_shared_storage_mode())) {
   }
 
-  LOG_INFO("[MAJ_REF_MV] check match major refresh mv", K(is_match));
+
 
   return ret;
 }
@@ -1254,10 +1254,10 @@ int ObMVChecker::check_left_table_partition_rule_valid(const ObSelectStmt &stmt,
     // be other type, partition func expr should consider about column name alias, etc.
     if (!left_partop.is_hash_part() || !mv_partop.is_hash_part()) {
       is_valid = false;
-      LOG_INFO("[MAJ_REF_MV] is not hash partition", K(left_partop), K(mv_partop));
+
     } else if (left_partop.get_part_num() != mv_partop.get_part_num()) {
       is_valid = false;
-      LOG_INFO("[MAJ_REF_MV] part num doesn't match", K(left_partop), K(mv_partop));
+
     } else {
       ObString left_part_str = left_partop.get_part_func_expr_str();
       ObString mv_part_str = mv_partop.get_part_func_expr_str();
@@ -1281,13 +1281,13 @@ int ObMVChecker::check_left_table_partition_rule_valid(const ObSelectStmt &stmt,
             found_item = true;
             break;
           }
-          LOG_INFO("iter select item", K(*col_expr));
+
         }
       }
       if (OB_FAIL(ret)) {
       } else if (!found_item) {
         is_valid = false;
-        LOG_INFO("[MAJ_REF_MV] hash expr doesn't match", K(left_partop), K(mv_partop));
+
       }
     }
   }
@@ -1338,7 +1338,7 @@ int ObMVChecker::check_broadcast_table_valid(const ObSelectStmt &stmt,
     LOG_WARN("right table schema is null", KR(ret));
   } else if (!right_table_schema->is_broadcast_table()) {
     is_valid = false;
-    LOG_INFO("[MAJ_REF_MV] right table is not broadcast table", K(*right_table_schema));
+
   }
 
   return ret;

@@ -56,7 +56,7 @@ int ObPhysicalRestoreOptionParser::ExtraArgsCb::match(const char *key, const cha
     }
   }
   if (!found) {
-    LOG_TRACE("KV pair ignored by common restore uri parser.", K(key), K(value), K(ret));
+
   }
   return ret;
 }
@@ -263,7 +263,7 @@ int ObPhysicalRestoreUriParser::parse(
         LOG_WARN("failed to find repeat", KR(ret), K(uri_list));
       } else if (is_repeat) {
         // skip repeat path
-        LOG_INFO("skip repeat path");
+
       } else if (OB_FAIL(uri_list.push_back(actual_path))) {
         LOG_WARN("failed to push back", KR(ret));
       }

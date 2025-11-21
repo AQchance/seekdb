@@ -378,7 +378,7 @@ int ObDASScanOp::init_scan_param()
       scan_param_.external_file_format_.csv_format_.ignore_extra_fields_ = true;
     }
   }
-  LOG_DEBUG("init scan param", K(ret), K(scan_param_));
+
   return ret;
 }
 
@@ -410,7 +410,7 @@ ObDASIterTreeType ObDASScanOp::get_iter_tree_type() const
     tree_type = OB_ISNULL(get_lookup_ctdef()) ? ObDASIterTreeType::ITER_TREE_PARTITION_SCAN
                                               : ObDASIterTreeType::ITER_TREE_LOCAL_LOOKUP;
   }
-  LOG_TRACE("get iter tree type", K(tree_type), K(scan_param_.tablet_id_), KPC(attach_ctdef_));
+
   return tree_type;
 }
 
@@ -616,7 +616,7 @@ int ObDASScanOp::decode_task_result(ObIDASTaskResult *task_result)
     LOG_WARN("init scan result iterator failed", K(ret));
   } else {
     result_ = scan_result;
-    LOG_DEBUG("decode task result", K(*scan_result));
+
     // Aggregate the remote TSC statistical information into the local monitor node.
     if (OB_NOT_NULL(scan_rtdef_->tsc_monitor_info_)) {
       ObTSCMonitorInfo &tsc_monitor_info = *scan_rtdef_->tsc_monitor_info_;
@@ -689,7 +689,7 @@ int ObDASScanOp::fill_task_result(ObIDASTaskResult &task_result, bool &has_more,
           }
         }
         if (enable_rich_format()) {
-          LOG_DEBUG("rich format fill task result", K(remain_row_cnt_), K(memory_limit), K(ret), K(scan_result));
+
           if (OB_FAIL(ret) || 0 == remain_row_cnt_) {
           } else if (OB_UNLIKELY(simulate_row_cnt > 0
                     && vec_row_store.get_row_cnt() >= simulate_row_cnt)) {
@@ -1084,7 +1084,7 @@ int ObDASScanOp::get_rowkey_domain_tablet_id(ObDASRelatedTabletID &related_table
       }
     }
   }
-  LOG_DEBUG("get rowkey doc tablet id", K(ret), K(related_tablet_ids.domain_tablet_ids_), K(related_ctdefs_), KPC(attach_ctdef_));
+
   return ret;
 }
 
@@ -1541,7 +1541,7 @@ int ObDASScanResult::get_next_rows(int64_t &count, int64_t capacity)
     const ObBitVector *skip = NULL;
     PRINT_VECTORIZED_ROWS(SQL, DEBUG, *eval_ctx_, *output_exprs_, count, skip);
   }
-  LOG_DEBUG("das result next rows", K(enable_rich_format_), K(count), K(capacity), K(ret));
+
   return ret;
 }
 
@@ -1561,7 +1561,7 @@ int ObDASScanResult::init_result_iter(const ExprFixedArray *output_exprs, ObEval
   int ret = OB_SUCCESS;
   output_exprs_ = output_exprs;
   eval_ctx_ = eval_ctx;
-  LOG_DEBUG("init result iter", K(enable_rich_format_), K(vec_row_store_), K(datum_store_));
+
   if (enable_rich_format_) {
     if (OB_FAIL(vec_row_store_.begin(vec_result_iter_))) {
       LOG_WARN("begin vec row result iterator failed", K(ret));
@@ -1583,7 +1583,7 @@ int ObDASScanResult::init(const ObIDASTaskOp &op, common::ObIAllocator &alloc)
   uint64_t tenant_id = MTL_ID();
   need_check_output_datum_ = scan_op.need_check_output_datum();
   enable_rich_format_ = scan_op.enable_rich_format();
-  LOG_DEBUG("das scan result init", K(enable_rich_format_));
+
   //if (!enable_rich_format_) {
   if (OB_FAIL(datum_store_.init(UINT64_MAX,
                                tenant_id,
@@ -1679,7 +1679,7 @@ int ObLocalIndexLookupOp::get_next_row()
         (void)print_trans_info_and_key_range_();
       }
     } else {
-      LOG_DEBUG("get next row from index table lookup", K(ret));
+
     }
   }
   return ret;
@@ -1695,7 +1695,7 @@ int ObLocalIndexLookupOp::get_next_rows(int64_t &count, int64_t capacity)
         (void)print_trans_info_and_key_range_();
       }
     } else {
-      LOG_DEBUG("get next rows from index table lookup ", K(ret));
+
     }
   }
   return ret;
@@ -1786,7 +1786,7 @@ int ObLocalIndexLookupOp::process_data_table_rowkey()
     } else if (OB_FAIL(scan_param_.key_ranges_.push_back(lookup_range))) {
       LOG_WARN("store lookup key range failed", K(ret), K(scan_param_));
     }
-    LOG_DEBUG("build data table range", K(ret), K(table_rowkey), K(lookup_range), K(scan_param_.key_ranges_.count()));
+
   }
   return ret;
 }
@@ -1850,7 +1850,7 @@ int ObLocalIndexLookupOp::get_next_row_from_data_table()
     if (OB_ITER_END != ret) {
       LOG_WARN("get next row from data table failed", K(ret));
     } else {
-      LOG_DEBUG("get next row from data table ", K(ret));
+
     }
   }
   return ret;
@@ -1896,7 +1896,7 @@ int ObLocalIndexLookupOp::check_lookup_row_cnt()
   int simulate_error = EVENT_CALL(EventTable::EN_DAS_SIMULATE_DUMP_WRITE_BUFFER);
   if (0 != simulate_error) {
     for (int64_t i = 0; i < trans_info_array_.count(); i++) {
-      LOG_INFO("dump TableLookup DAS Task trans info", K(i), KPC(trans_info_array_.at(i)));
+
     }
   }
 
@@ -1976,7 +1976,7 @@ OB_INLINE int ObLocalIndexLookupOp::init_scan_param()
   if (FAILEDx(scan_param_.column_ids_.assign(lookup_ctdef_->access_column_ids_))) {
     LOG_WARN("init column ids failed", K(ret));
   }
-  LOG_DEBUG("init local index lookup scan_param", K(scan_param_));
+
   return ret;
 }
 int ObLocalIndexLookupOp::reuse_iter()

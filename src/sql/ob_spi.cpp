@@ -166,7 +166,7 @@ int ObSPIResultSet::close_result_set()
       }
     }
   } else {
-    LOG_DEBUG("result set is not init", K(ret));
+
   }
   return ret;
 }
@@ -339,7 +339,7 @@ int ObSPIResultSet::check_nested_stmt_legal(ObExecContext &exec_ctx, const ObStr
     LOG_WARN("invalid sql_ctx or pl_ctx", K(ret), K(sql_ctx), K(pl_ctx));
   } else {
     parent_stmt_type = sql_ctx->stmt_type_;
-    LOG_DEBUG("check nested stmt legal", K(parent_stmt_type), K(pl_ctx->in_autonomous()), K(stmt_type));
+
   }
   if (stmt::T_VARIABLE_SET == stmt_type && OB_NOT_NULL(exec_ctx.get_my_session())) {
     bool has_sys_var = false;
@@ -437,7 +437,7 @@ void ObSPIResultSet::end_cursor_stmt(ObPLExecCtx *pl_ctx, int &result)
       result = OB_SUCCESS == result ? ret : result;
       LOG_WARN("failed to end cursor stmt", K(ret), K(session), K(need_end_nested_stmt_));
     }
-    LOG_TRACE("call spi end cursor stmt", K(ret));
+
   }
   return;
 }
@@ -494,7 +494,7 @@ void ObSPIResultSet::end_nested_stmt_if_need(ObPLExecCtx *pl_ctx, int &result)
       result = OB_SUCCESS == result ? ret : result;
       LOG_WARN("failed to end nested stmt", K(ret));
     }
-    LOG_TRACE("call end nested stmt if need", K(ret));
+
   }
   return;
 }
@@ -529,7 +529,7 @@ int ObSPIService::calc_obj_access_expr(ObPLExecCtx *ctx,
           static_cast<const ObExprObjAccess *>(get_first_expr_item(expr).get_expr_operator())));
       OZ(obj_access->calc_result(result, *expr_alloc, &first_result, 1, *(ctx->params_), &eval_ctx));
     } else {  // Other cases
-      LOG_DEBUG("calc_obj_access_expr without row", K(expr));
+
       OZ (ObSQLUtils::calc_sql_expression_without_row(*ctx->exec_ctx_, expr, result, expr_alloc));
     }
     ObExprResType type;
@@ -920,7 +920,7 @@ int ObSPIService::spi_calc_expr(ObPLExecCtx *ctx,
     } else if (T_OBJ_ACCESS_REF == expr_type) {
       OZ (calc_obj_access_expr(ctx, *expr, *result));
     } else {
-      LOG_DEBUG("spi_calc_expr without row", K(*expr));
+
       ObExprResType result_type;
       bool has_implicit_savepoint = false;
       bool explicit_trans = ctx->exec_ctx_->get_my_session()->has_explicit_start_trans();
@@ -1558,7 +1558,7 @@ int ObSPIService::spi_end_trans(ObPLExecCtx *ctx, const char *sql, bool is_rollb
     ctx->exec_ctx_->get_my_session()->get_pl_implicit_cursor()->set_rowcount(0);
   }
   recreate_implicit_savapoint_if_need(ctx, ret);
-  LOG_DEBUG("spi end trans", K(ret), K(sql), K(is_rollback));
+
 
   return ret;
 }
@@ -1658,7 +1658,7 @@ int ObSPIService::spi_inner_execute(ObPLExecCtx *ctx,
       if (is_forall && !session->is_enable_batched_multi_statement()) {
         /* forall need rollback to for loop */
         ret = OB_BATCHED_MULTI_STMT_ROLLBACK;
-        LOG_TRACE("cannot batch execute", K(ret), K(sql), K(type));
+
       }
       OZ (check_system_trigger_legal(ctx, sql, stmt_type));
       OZ (spi_result.init(*session));
@@ -2092,7 +2092,7 @@ int ObSPIService::spi_parse_prepare(common::ObIAllocator &allocator,
         OZ (GCTX.sql_engine_->handle_pl_prepare(
           prepare_result.route_sql_, pl_prepare_ctx, pl_prepare_result), K(sql));
 
-        LOG_TRACE("execute sql", K(sql), K(ret));
+
 
         if (OB_SUCC(ret)) {
           OZ (ob_write_string(allocator, pl_prepare_result.result_set_->get_stmt_ps_sql(), prepare_result.ps_sql_));
@@ -2259,7 +2259,7 @@ int ObSPIService::calc_dynamic_sqlstr(
                                    ObCharset::get_default_collation(client_cs_type),
                                    user_sql));
     OZ (sql_str.append(user_sql));
-    LOG_DEBUG("Dynamic sql", K(ret), K(result), K(sql_str));
+
   }
   return ret;
 }
@@ -2784,7 +2784,7 @@ int ObSPIService::spi_cursor_alloc(ObIAllocator &allocator, ObObj &obj)
     LOG_WARN("failed to alloc mysqlresult", K(ret));
   } else {
     new(cursor) ObPLCursorInfo(&allocator);
-    LOG_DEBUG("cursor alloc, local cursor", K(cursor));
+
     cursor->reset();
     cursor->set_ref_count(1);
     obj.set_extend(reinterpret_cast<int64_t>(cursor), PL_CURSOR_TYPE);
@@ -2801,7 +2801,7 @@ int ObSPIService::spi_cursor_init(ObPLExecCtx *ctx, int64_t cursor_index)
   CK (cursor_index >= 0 && cursor_index < ctx->params_->count());
   if (OB_SUCC(ret)) {
     ObObjParam &obj = ctx->params_->at(cursor_index);
-    LOG_DEBUG("spi cursor init", K(cursor_index), K(obj), K(obj.is_ref_cursor_type()), K(obj.is_null()));
+
     // ref cursor is pointer to cursor, we don't have to alloc here
     // we should alloc it in open stmt
     ObPLCursorInfo *cursor_info = NULL;
@@ -4027,7 +4027,7 @@ int ObSPIService::cursor_close_impl(ObSQLSessionInfo *session,
                                         bool ignore)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("cursor close", K(cursor), KPC(cursor));
+
   if (OB_ISNULL(cursor)) {
     if (is_refcursor) {
       // do nothing
@@ -4889,7 +4889,7 @@ int ObSPIService::adjust_out_params(
       }
     }
     out_params.set_has_out_param(has_out_param);
-    LOG_DEBUG("debug for adjust_out_params", K(ret), K(out_params), K(ref_objects));
+
   }*/
   // In Oracle: function with out parameter can not use in sql.
   UNUSED(result_set);
@@ -5050,7 +5050,7 @@ int ObSPIService::construct_exec_params(ObPLExecCtx *ctx,
       }
     }
   }
-  LOG_DEBUG("debug for construct_exec_params", K(ret), K(out_params));
+
   return ret;
 }
 
@@ -5283,9 +5283,9 @@ int ObSPIService::inner_open(ObPLExecCtx *ctx,
     LOG_WARN("Argument passed in is NULL", K(ctx), K(sql), K(ret));
   } else {
 #ifndef NDEBUG
-    LOG_INFO("spi_execute using", K(sql), K(ps_sql), K(exec_params));
+
 #else
-    LOG_TRACE("spi_execute using", K(sql), K(ps_sql), K(exec_params));
+
 #endif
     ObSQLSessionInfo *session = ctx->exec_ctx_->get_my_session();
     if (OB_ISNULL(session) || OB_ISNULL(GCTX.sql_engine_)) {
@@ -5625,7 +5625,7 @@ int ObSPIService::get_package_var_info_by_expr(const ObSqlExpression *expr,
     OX (package_id = expr->get_expr_items().at(param_pos).get_obj().get_uint64());
     OX (var_idx = expr->get_expr_items().at(param_pos+1).get_obj().get_int());
   }
-  LOG_DEBUG("get_package_var_info_by_expr ", K(package_id), K(var_idx));
+
   return ret;
 }
 
@@ -6172,7 +6172,7 @@ int ObSPIService::collect_cells(pl::ObPLExecCtx &ctx,
         if (OB_FAIL(deep_copy_obj(*cast_ctxs.at(i).allocator_v2_, obj, tmp_obj))) {
           LOG_WARN("deep copy error", K(obj), K(ret));
         } else {
-          LOG_DEBUG("same type deep copy directly", K(obj), K(tmp_obj), K(result_types[i]), K(i));
+
         }
       } else {
         LOG_DEBUG("column convert", K(i), K(obj.get_meta()), K(result_types[i].get_meta_type()),
@@ -6198,7 +6198,7 @@ int ObSPIService::collect_cells(pl::ObPLExecCtx &ctx,
       }
     }
   }
-  LOG_DEBUG("spi get result", K(result), K(ret));
+
   return ret;
 }
 
@@ -6259,7 +6259,7 @@ int ObSPIService::convert_obj(ObPLExecCtx *ctx,
       }
       OZ (calc_array.push_back(tmp_obj));
       if (OB_SUCC(ret)) {
-        LOG_DEBUG("same type directyly copy", K(obj), K(tmp_obj), K(result_types[i]), K(i));
+
       }
     } else if (!obj.is_pl_extend() 
                && !obj.is_geometry()
@@ -7099,7 +7099,7 @@ int ObSPIService::fetch_row(void *result_set,
       ++row_count;
     }
   }
-  LOG_DEBUG("spi fetch row", K(row_count), K(ret));
+
   return ret;
 }
 
@@ -7613,7 +7613,7 @@ int ObSPIService::setup_cursor_snapshot_verify_(ObPLCursorInfo *cursor, ObSPIRes
   } else if (cursor->is_streaming() && tx && tx->is_in_tx() && !tx->is_all_parts_clean()) {
     if (exec_ctx.get_my_session()->enable_enhanced_cursor_validation()) {
       need_register_snapshot = false;
-      LOG_TRACE("enable cursor open check read uncommitted");
+
       const DependenyTableStore &tables = spi_result->get_result_set()->get_physical_plan()->get_dependency_table();
       ARRAY_FOREACH(tables, i) {
         if (tables.at(i).is_base_table()) {
@@ -7633,7 +7633,7 @@ int ObSPIService::setup_cursor_snapshot_verify_(ObPLCursorInfo *cursor, ObSPIRes
   } else if (need_register_snapshot) {
     OZ (cursor->set_and_register_snapshot(snapshot));
   } else {
-    LOG_TRACE("convert to out of transaction snapshot", K(snapshot));
+
     snapshot.convert_to_out_tx();
     cursor->set_snapshot(snapshot);
   }

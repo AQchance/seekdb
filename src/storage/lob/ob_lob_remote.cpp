@@ -61,7 +61,7 @@ int ObLobQueryRemoteReader::get_next_block(common::ObDataBuffer &rpc_buffer,
       rpc_buffer.get_position(),
       rpc_buffer_pos_,
       block))) {
-    STORAGE_LOG(WARN, "failed to decode macro block size", K(ret), K(rpc_buffer), K(rpc_buffer_pos_));
+
   } else if (data_buffer_.set_length(0) != 0) {
     LOG_WARN("failed to set data buffer pos", K(ret), K(data_buffer_));
   } else {
@@ -71,7 +71,7 @@ int ObLobQueryRemoteReader::get_next_block(common::ObDataBuffer &rpc_buffer,
         LOG_WARN("data buffer must not larger than occupy size", K(ret), K(data_buffer_), K(block));
       } else if (data_buffer_.length() == block.size_) {
         data.assign_ptr(data_buffer_.ptr(), data_buffer_.length());
-        LOG_DEBUG("get_next_macro_block", K(rpc_buffer), K(rpc_buffer_pos_), K(block));
+
         break;
       } else if (OB_FAIL(do_fetch_rpc_buffer(rpc_buffer, handle))) {
         LOG_WARN("failed to fetch next buffer if need", K(ret), K(block));
@@ -109,7 +109,7 @@ int ObLobQueryRemoteReader::do_fetch_rpc_buffer(
     LOG_WARN("invalid args", K(ret), K(rpc_buffer_pos_));
   } else if (rpc_buffer.get_position() - rpc_buffer_pos_ > 0) {
     // do nothing
-    LOG_DEBUG("has left data, no need to get more", K(rpc_buffer), K(rpc_buffer_pos_));
+
   } else {
     rpc_buffer.get_position() = 0;
     rpc_buffer_pos_ = 0;
@@ -122,17 +122,17 @@ int ObLobQueryRemoteReader::do_fetch_rpc_buffer(
       } else if (0 == rpc_buffer.get_position()) {
         if (!handle.has_more()) {
           ret = OB_ITER_END;
-          LOG_DEBUG("empty rpc buffer, no more data", K(rpc_buffer), K(rpc_buffer_pos_));
+
         } else {
           ret = OB_ERR_SYS;
           LOG_ERROR("rpc buffer has no data", K(ret), K(rpc_buffer));
         }
       } else {
-        LOG_DEBUG("get more data", K(rpc_buffer), K(rpc_buffer_pos_));
+
       }
     } else {
       ret = OB_ITER_END;
-      LOG_DEBUG("no more data", K(rpc_buffer), K(rpc_buffer_pos_));
+
     }
   }
   return ret;
@@ -161,7 +161,7 @@ int ObLobRemoteUtil::query(ObLobAccessParam& param, const ObLobQueryArg::QueryTy
                     .lob_query(remote_ctx->query_arg_, remote_ctx->rpc_buffer_, remote_ctx->handle_))) {
       LOG_WARN("call rpc fail", K(ret), K(dst_addr), K(param));
     } else {
-      LOG_TRACE("remote query start", KPC(param.lob_data_), K(remote_ctx->rpc_buffer_), K(dst_addr), K(qtype), K(timeout), K(lbt()));
+
     }
   }
   return ret;

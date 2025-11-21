@@ -126,21 +126,21 @@ int64_t FakeObGetReadTables::get_read_tables_count(ObTabletID &src_tablet_id)
   ObLSID test_ls_id(TEST_LS_ID);
 
   if (OB_FAIL(MTL(ObLSService *)->get_ls(test_ls_id, ls_handle, ObLSGetMod::STORAGE_MOD))) {
-    STORAGE_LOG(WARN, "fail to get log stream", K(ret), K(ls_handle));
+
   } else if (OB_UNLIKELY(nullptr == ls_handle.get_ls())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "ls is null", K(ret), K(ls_handle));
+
   } else if (OB_FAIL(ls_handle.get_ls()->get_tablet_svr()->get_read_tables(
       src_tablet_id, 
       snapshot_version_, 
       iterator_, 
       allow_not_ready_,
       true /* get split src table if need */))) {
-    STORAGE_LOG(WARN, "fail to get tablet tables", K(ret), K(src_tablet_id));
+
   } else {
     if (!iterator_.is_valid()) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "invalid iterator.", K(ret), K(src_tablet_id));
+
     } else {
       tables_count = iterator_.table_iter()->count();
     }
@@ -156,7 +156,7 @@ int FakeObGetReadTables::gen_datum_rowkey(const int64_t key_val, const int64_t k
   ObRowkey rowkey;
   if (NULL == (key_val_obj = static_cast<ObObj*>(allocator_.alloc(sizeof(ObObj) * key_cnt)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "out of memory", K(ret));
+
   } else {
     for (int64_t i = 0; i < key_cnt; ++i) {
       key_val_obj[i].set_int(key_val);
@@ -164,7 +164,7 @@ int FakeObGetReadTables::gen_datum_rowkey(const int64_t key_val, const int64_t k
     }
     rowkey.assign(key_val_obj, key_cnt);
     if (OB_FAIL(datum_rowkey.from_rowkey(rowkey, allocator_))) {
-      STORAGE_LOG(WARN, "fail to from rowkey", K(ret));
+
     }
   }
   return ret;
@@ -178,19 +178,19 @@ int FakeObGetReadTables::set_tablet_split_info(ObTabletID &src_tablet_id)
   ObLSHandle ls_handle;
   ObLSID test_ls_id(TEST_LS_ID);
   if (OB_FAIL(MTL(ObLSService *)->get_ls(test_ls_id, ls_handle, ObLSGetMod::STORAGE_MOD))) {
-    STORAGE_LOG(WARN, "fail to get log stream", K(ret), K(ls_handle));
+
   } else if (OB_UNLIKELY(nullptr == ls_handle.get_ls())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "ls is null", K(ret), K(ls_handle));
+
   } else if (OB_FAIL(ls_handle.get_ls()->get_tablet(src_tablet_id, tablet_handle))) {
-    STORAGE_LOG(WARN, "fail to get tablet", K(ret), K(src_tablet_id));
+
   } else if (OB_ISNULL(tablet_handle.get_obj())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "tablet handle obj is null", K(ret), K(tablet_handle));
+
   } else if (OB_FAIL(gen_datum_rowkey(1, 1, split_info.start_key_))) {
-    STORAGE_LOG(WARN, "gen start key fail.", K(ret));
+
   } else if (OB_FAIL(gen_datum_rowkey(2, 1, split_info.end_key_))) {
-    STORAGE_LOG(WARN, "gen end key fail.", K(ret));
+
   } else {
     split_info.split_cnt_= 1;
     split_info.src_tablet_handle_ = tablet_handle;

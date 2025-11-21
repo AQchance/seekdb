@@ -182,7 +182,7 @@ int ObP2PDatahubManager::send_local_msg(ObP2PDatahubMsgBase *msg)
         msg->get_task_id(),
         ObTimeUtility::current_time(), msg->get_timeout_ts());
     if (OB_FAIL(map_.set_refactored(dh_key, msg))) {
-      LOG_TRACE("fail to insert p2p dh msg", K(ret), K(dh_key));
+
     } else {
       msg->set_is_ready(true);
     }
@@ -195,10 +195,10 @@ int ObP2PDatahubManager::atomic_get_msg(ObP2PDhKey &dh_key, ObP2PDatahubMsgBase 
   int ret = OB_SUCCESS;
   P2PMsgGetCall call(msg);
   if (OB_FAIL(map_.read_atomic(dh_key, call))) {
-    LOG_TRACE("fail to get p2p msg in PX_P2P_DH", K(ret));
+
   } else if (OB_SUCCESS != call.ret_) {
     ret = call.ret_;
-    LOG_TRACE("fail to get p2p msg in PX_P2P_DH", K(ret));
+
   }
   return ret;
 }
@@ -209,7 +209,7 @@ int ObP2PDatahubManager::erase_msg(ObP2PDhKey &dh_key,
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(map_.erase_refactored(dh_key, &msg))) {
-    LOG_TRACE("fail to erase from map", K(ret));
+
   }
   return ret;
 }
@@ -220,7 +220,7 @@ int ObP2PDatahubManager::erase_msg_if(ObP2PDhKey &dh_key,
   int ret = OB_SUCCESS;
   P2PMsgEraseIfCall erase_if_call;
   if (OB_FAIL(map_.erase_if(dh_key, erase_if_call, is_erased, &msg))) {
-    LOG_TRACE("fail to erase if from map", K(ret));
+
   } else if (is_erased && OB_NOT_NULL(msg)) {
     PX_P2P_DH.free_msg(msg);
   } else {

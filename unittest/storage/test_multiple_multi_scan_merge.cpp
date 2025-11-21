@@ -113,7 +113,7 @@ int ObMockStoreRowIteratorV2::get_next_row(const ObStoreRow *&row)
      is_first_scan_ = false;
    }
    if (OB_FAIL(row_generate_.get_next_row(cur_row_index_, cur_row_))) {
-     STORAGE_LOG(WARN, "fail to get_next_row", K(ret));
+
    } else {
      cur_row_.scan_index_ = cur_range_index_;
      cur_row_.is_get_ = range_start_.at(cur_range_index_) == range_end_.at(cur_range_index_);
@@ -392,7 +392,7 @@ TEST_F(ObMultipleMultiScanMergeTest, test_single_scan)
   for (int64_t i = 1; i <= 6; ++i) {
     ASSERT_EQ(OB_SUCCESS, merge_iter.get_next_row(prow));
     ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(i, check_row));
-    STORAGE_LOG(INFO, "row", K(i), K(prow->row_val_));
+
     ASSERT_TRUE(check_row.row_val_ == prow->row_val_);
   }
   ASSERT_EQ(OB_ITER_END, merge_iter.get_next_row(prow));
@@ -428,7 +428,7 @@ TEST_F(ObMultipleMultiScanMergeTest, test_multi_get)
   for (int64_t i = 0; i < 1000; i += 5) {
     ASSERT_EQ(OB_SUCCESS, merge_iter.get_next_row(prow));
     ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(i, check_row));
-    STORAGE_LOG(INFO, "row", K(i), K(prow->row_val_));
+
     ASSERT_TRUE(check_row.row_val_ == prow->row_val_);
   }
   ASSERT_EQ(OB_ITER_END, merge_iter.get_next_row(prow));
@@ -511,13 +511,13 @@ TEST_F(ObMultipleMultiScanMergeTest, test_multi_scan_with_get)
       for (j = i; j <= i + 10; ++j) {
         ASSERT_EQ(OB_SUCCESS, merge_iter.get_next_row(prow));
         ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(j, check_row));
-        STORAGE_LOG(INFO, "row", K(j), K(prow->row_val_), K(check_row.row_val_));
+
         ASSERT_TRUE(check_row.row_val_ == prow->row_val_);
       }
     } else {
       ASSERT_EQ(OB_SUCCESS, merge_iter.get_next_row(prow));
       ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(i, check_row));
-      STORAGE_LOG(INFO, "row", K(i), K(prow->row_val_));
+
       ASSERT_TRUE(check_row.row_val_ == prow->row_val_);
     }
   }
@@ -563,13 +563,13 @@ TEST_F(ObMultipleMultiScanMergeTest, test_multi_scan_with_get2)
       for (int64_t j = i; j <= i + 10; ++j) {
         ASSERT_EQ(OB_SUCCESS, merge_iter.get_next_row(prow));
         ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(j, check_row));
-        STORAGE_LOG(INFO, "row", K(j), K(prow->row_val_));
+
         ASSERT_TRUE(check_row.row_val_ == prow->row_val_);
       }
     } else {
       ASSERT_EQ(OB_SUCCESS, merge_iter.get_next_row(prow));
       ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(i, check_row));
-      STORAGE_LOG(INFO, "row", K(i), K(prow->row_val_));
+
       ASSERT_TRUE(check_row.row_val_ == prow->row_val_);
     }
   }
@@ -615,13 +615,13 @@ TEST_F(ObMultipleMultiScanMergeTest, test_multi_scan_with_get3)
       for (int64_t j = i; j <= i + 10; ++j) {
         ASSERT_EQ(OB_SUCCESS, merge_iter.get_next_row(prow));
         ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(j, check_row));
-        STORAGE_LOG(INFO, "row", K(j), K(prow->row_val_));
+
         ASSERT_TRUE(check_row.row_val_ == prow->row_val_);
       }
     } else {
       ASSERT_EQ(OB_SUCCESS, merge_iter.get_next_row(prow));
       ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(i, check_row));
-      STORAGE_LOG(INFO, "row", K(i), K(prow->row_val_));
+
       ASSERT_TRUE(check_row.row_val_ == prow->row_val_);
     }
   }
@@ -667,13 +667,13 @@ TEST_F(ObMultipleMultiScanMergeTest, test_multi_scan_with_get4)
       for (int64_t j = i; j <= i + 10; ++j) {
         ASSERT_EQ(OB_SUCCESS, merge_iter.get_next_row(prow));
         ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(j, check_row));
-        STORAGE_LOG(INFO, "row", K(j), K(prow->row_val_));
+
         ASSERT_TRUE(check_row.row_val_ == prow->row_val_);
       }
     } else {
       ASSERT_EQ(OB_SUCCESS, merge_iter.get_next_row(prow));
       ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(i, check_row));
-      STORAGE_LOG(INFO, "row", K(i), K(prow->row_val_));
+
       ASSERT_TRUE(check_row.row_val_ == prow->row_val_);
     }
   }
@@ -719,13 +719,13 @@ TEST_F(ObMultipleMultiScanMergeTest, test_multi_scan_with_get5)
       for (int64_t j = i; j <= i + 10; ++j) {
         ASSERT_EQ(OB_SUCCESS, merge_iter.get_next_row(prow));
         ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(j, check_row));
-        STORAGE_LOG(INFO, "row", K(j), K(prow->row_val_));
+
         ASSERT_TRUE(check_row.row_val_ == prow->row_val_);
       }
     } else {
       ASSERT_EQ(OB_SUCCESS, merge_iter.get_next_row(prow));
       ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(i, check_row));
-      STORAGE_LOG(INFO, "row", K(i), K(prow->row_val_));
+
       ASSERT_TRUE(check_row.row_val_ == prow->row_val_);
     }
   }
@@ -771,13 +771,13 @@ TEST_F(ObMultipleMultiScanMergeTest, test_multi_scan_with_get6)
       for (int64_t j = i; j <= i + 10; ++j) {
         ASSERT_EQ(OB_SUCCESS, merge_iter.get_next_row(prow));
         ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(j, check_row));
-        STORAGE_LOG(INFO, "row", K(j), K(prow->row_val_));
+
         ASSERT_TRUE(check_row.row_val_ == prow->row_val_);
       }
     } else {
       ASSERT_EQ(OB_SUCCESS, merge_iter.get_next_row(prow));
       ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(i, check_row));
-      STORAGE_LOG(INFO, "row", K(i), K(prow->row_val_));
+
       ASSERT_TRUE(check_row.row_val_ == prow->row_val_);
     }
   }
@@ -821,13 +821,13 @@ TEST_F(ObMultipleMultiScanMergeTest, test_multi_scan_with_empty_iterator)
       for (int64_t j = i; j <= i + 10; ++j) {
         ASSERT_EQ(OB_SUCCESS, merge_iter.get_next_row(prow));
         ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(j, check_row));
-        STORAGE_LOG(INFO, "row", K(j), K(prow->row_val_));
+
         ASSERT_TRUE(check_row.row_val_ == prow->row_val_);
       }
     } else {
       ASSERT_EQ(OB_SUCCESS, merge_iter.get_next_row(prow));
       ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(i, check_row));
-      STORAGE_LOG(INFO, "row", K(i), K(prow->row_val_));
+
       ASSERT_TRUE(check_row.row_val_ == prow->row_val_);
     }
   }

@@ -39817,7 +39817,7 @@ int ObTZInfoMap::get_tz_info_by_id(const int64_t tz_id, ObTimeZoneInfoPos &tz_in
   } else if (OB_FAIL(tz_info_by_id.assign(*tmp_tz_info))) {
     LOG_WARN("assign time zone info pos failed", K(ret));
   } else {
-    LOG_DEBUG("succ to get tz_info_by_id", K(tz_id), KPC(tmp_tz_info), K(ret));
+
   }
   if (NULL != tmp_tz_info) {
     id_map_->revert(tmp_tz_info);
@@ -39834,7 +39834,7 @@ int ObTZInfoMap::get_tz_info_by_name(const ObString &tz_name, ObTimeZoneInfoPos 
   } else if (OB_FAIL(get_tz_info_by_id(name_id_info->tz_id_, tz_info_by_name))) {
     LOG_WARN("fail to get get_tz_info_by_name", KPC(name_id_info), K(ret));
   } else {
-    LOG_DEBUG("succ to get get_tz_info_by_name", K(tz_name), KPC(name_id_info), K(tz_info_by_name), K(ret));
+
   }
 
   if (OB_ENTRY_NOT_EXIST == ret) {
@@ -39893,13 +39893,13 @@ int ObTZInfoMap::get_offset_by_couple_tz_name(int64_t timestamp_data, const comm
   ObTZOffsetValue offset_info;
   if (0 == offset_map_->size()) {
     ret = OB_HASH_NOT_EXIST;
-    LOG_DEBUG("offset map is empty", K(ret),K(offset_map_->size()), K(offset_map_), K(&offset_map_buf_), K(tz_str_s), K(tz_str_d), K(offset_info));
+
   } else if (OB_FAIL(name_map_->get(ObTZNameKey(tz_str_s), name_id_info_s))) {
     LOG_WARN("fail to get get_tz_info_by_name", K(tz_str_s), K(ret));
   } else if (OB_FAIL(name_map_->get(ObTZNameKey(tz_str_d), name_id_info_d))) {
     LOG_WARN("fail to get get_tz_info_by_name", K(tz_str_s), K(ret));
   } else if (OB_FAIL(offset_map_->get_refactored(ObTZOffsetKey(name_id_info_s->tz_id_, name_id_info_d->tz_id_), offset_info))) {
-    LOG_DEBUG("fail to get offset", KPC(name_id_info_s), KPC(name_id_info_d), K(ret));
+
   } else {
     offset = offset_info.offset_;
   }
@@ -40008,7 +40008,7 @@ OB_DEF_SERIALIZE(ObTimeZoneInfoWrap)
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("invalid time zone info class", K(class_), KPC(this), KCSTRING(lbt()), K(ret));
   }
-  LOG_DEBUG("OB_DEF_SERIALIZE", KPC(this), KCSTRING(lbt()), K(ret));
+
   return ret;
 }
 

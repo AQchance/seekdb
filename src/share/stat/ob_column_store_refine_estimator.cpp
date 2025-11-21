@@ -83,7 +83,7 @@ int ObColumnStoreRefineEstimator::estimate(const ObOptStatGatherParam &param,
     } else if (OB_FAIL(do_estimate(param, raw_sql.string(), false, opt_stat, tmp_opt_stats))) {
       LOG_WARN("failed to evaluate basic stats", K(ret));
     } else {
-      LOG_TRACE("column store refined min/max/count");
+
     }
   }
   return ret;

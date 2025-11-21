@@ -146,7 +146,7 @@ int ObTextRetrievalMerge::init(
       LOG_WARN("failed to init iter params", K(ret));
     } else if (0 == query_tokens_.count()) {
       // empty token set
-      LOG_DEBUG("empty query token set after tokenization", K(ret), KPC(ir_ctdef));
+
       is_inited_ = true;
     } else if (OB_UNLIKELY(query_tokens_.count() > OB_MAX_TEXT_RETRIEVAL_TOKEN_CNT)) {
       ret = OB_NOT_SUPPORTED;
@@ -161,7 +161,7 @@ int ObTextRetrievalMerge::init(
     } else {
       is_inited_ = true;
     }
-    LOG_DEBUG("init text retrieval op", K(ret), K_(retrieval_param));
+
   }
 
   return ret;
@@ -365,7 +365,7 @@ int ObTextRetrievalMerge::init_query_tokens(const ObDASIRScanCtDef *ir_ctdef, Ob
     }
 */
 
-    LOG_DEBUG("tokenized text query:", K(ret), KPC(search_text_datum), K_(query_tokens));
+
   }
   return ret;
 }
@@ -538,7 +538,7 @@ int ObTextRetrievalMerge::project_result(const ObIRIterLoserTreeItem &item, cons
         relevance_proj_datum.set_double(relevance);
       }
     }
-    LOG_DEBUG("project one fulltext search result", K(ret), K(item));
+
   }
   return ret;
 }
@@ -754,7 +754,7 @@ int ObTextRetrievalOp::init(
     } else {
       is_inited_ = true;
     }
-    LOG_DEBUG("init text retrieval op", K(ret));
+
   }
 
   return ret;

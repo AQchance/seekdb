@@ -114,13 +114,13 @@ int ObConfigManager::load_config(const char *path)
   } else if (OB_ISNULL(fp = fopen(path, "rb"))) {
     if (ENOENT == errno) {
       ret = OB_FILE_NOT_EXIST;
-      LOG_INFO("Config file doesn't exist, read from command line", K(path), K(ret));
+
     } else {
       ret = OB_IO_ERROR;
       LOG_ERROR("Can't open file", K(path), K(errno), K(ret));
     }
   } else {
-    LOG_INFO("Using config file", K(path));
+
     MEMSET(buf, 0, OB_MAX_PACKET_LENGTH);
     int64_t len = fread(buf, 1, OB_MAX_PACKET_LENGTH, fp);
     int64_t pos = 0;
@@ -255,7 +255,7 @@ int ObConfigManager::dump2file_unsafe(const char* path) const
             need_retry = true;
           }
         } else if (OB_FAIL(check_header_change(path, buf)) && OB_EAGAIN == ret) {
-          LOG_INFO("Header not change, no need to write server config!");
+
         } else if ((fd = ::open(tmp_path, O_WRONLY | O_CREAT | O_TRUNC,
                                 S_IRUSR  | S_IWUSR | S_IRGRP)) < 0) {
           ret = OB_IO_ERROR;
@@ -276,7 +276,7 @@ int ObConfigManager::dump2file_unsafe(const char* path) const
           ret = OB_IO_ERROR;
           LOG_WARN("fail to close file fd", K(fd), KERRMSG, K(ret));
         } else {
-          LOG_INFO("Write server config successfully!", K(pos), K(buf_size));
+
         }
       }
       if (OB_SUCC(ret)) {
@@ -339,7 +339,7 @@ int ObConfigManager::update_local(int64_t expected_version)
                  "expected_version", expected_version);
       } else {
         current_version_ = system_config_.get_version();
-        LOG_INFO("read config from __all_sys_parameter succed", K(start), K(current_version_), K(expected_version));
+
       }
     }
   }
@@ -358,7 +358,7 @@ int ObConfigManager::update_local(int64_t expected_version)
         LOG_WARN("Dump to file failed", K_(dump_path), K(ret));
       } else {
         GCONF.cluster.set_dumped_version(GCONF.cluster.version());
-        LOG_INFO("Reload server config successfully!");
+
       }
     }
     server_config_.print();
@@ -380,14 +380,14 @@ int ObConfigManager::got_version(int64_t version, const bool remove_repeat/* = f
     schedule_task = true;
   } else if (0 == version) {
     // do nothing
-    LOG_DEBUG("root server restarting");
+
   } else if (current_version_ == version) {
     // no new version
   } else if (version < current_version_) {
     LOG_WARN("Local config is newer than rs, weird", K_(current_version), K(version));
   } else if (version > current_version_) {
     // local:current_version_, got:version
-    LOG_INFO("Got new config version", K_(current_version), K(version));
+
     update_task_.update_local_ = true;
     schedule_task = true;
   }
@@ -405,7 +405,7 @@ int ObConfigManager::got_version(int64_t version, const bool remove_repeat/* = f
       if (OB_SUCC(ret)) {
         schedule = !task_exist;
       }
-      LOG_INFO("no need repeat schedule the same task");
+
     } else {
       // do nothing
     }
@@ -429,7 +429,7 @@ int ObConfigManager::got_version(int64_t version, const bool remove_repeat/* = f
       if (OB_FAIL(TG_SCHEDULE(lib::TGDefIDs::CONFIG_MGR, update_task_, 0, false))) {
         LOG_WARN("Update local config failed, may try later", K(ret));
       } else {
-        LOG_INFO("Schedule update config task successfully!");
+
       }
     } else {
       // do nothing
@@ -496,7 +496,7 @@ int ObConfigManager::add_extra_config(const obrpc::ObTenantConfigArg &arg)
   } else {
     ret = server_config_.add_extra_config(arg.config_str_.ptr());
   }
-  LOG_INFO("add tenant extra config", K(arg));
+
   return ret;
 }
 

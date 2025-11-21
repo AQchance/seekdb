@@ -748,7 +748,7 @@ int ObBalanceTaskTableOperator::remove_parent_task(const uint64_t tenant_id,
           task, start_time, finish_time))) {
     LOG_WARN("failed to get task", KR(ret), K(tenant_id), K(balance_task_id));
   } else if (!has_exist_in_array(task.get_parent_task_list(), parent_task_id, &index)) {
-    LOG_INFO("has not in parent list", KR(ret), K(parent_task_id), K(task));
+
   } else {
     ObBalanceTaskIDList parent_list;
     common::ObArenaAllocator allocator;
@@ -804,7 +804,7 @@ int ObBalanceTaskTableOperator::load_can_execute_task(const uint64_t tenant_id,
   } else if (OB_FAIL(read_tasks_(tenant_id, client, sql, task_array))) {
     LOG_WARN("failed to read task", KR(ret), K(tenant_id), K(sql));
   }
-  LOG_INFO("load can-execute balance task", KR(ret), K(task_array), K(sql));
+
   return ret;
 }
 
@@ -824,7 +824,7 @@ int ObBalanceTaskTableOperator::load_task(const uint64_t tenant_id,
   } else if (OB_FAIL(read_tasks_(tenant_id, client, sql, task_array))) {
     LOG_WARN("failed to read task", KR(ret), K(tenant_id), K(sql));
   }
-  LOG_INFO("load all balance task", KR(ret), K(task_array), K(sql));
+
   return ret;
 }
 
@@ -846,7 +846,7 @@ int ObBalanceTaskTableOperator::get_job_cannot_execute_task(
   } else if (OB_FAIL(read_tasks_(tenant_id, client, sql, task_array))) {
     LOG_WARN("failed to read task", KR(ret), K(tenant_id), K(sql));
   }
-  LOG_INFO("load job's can not execute balance tasks", KR(ret), K(balance_job_id), K(task_array), K(sql));
+
   return ret;
 }
 
@@ -1080,7 +1080,7 @@ int ObBalanceTaskTableOperator::load_need_transfer_task(const uint64_t tenant_id
   } else if (OB_FAIL(read_tasks_(tenant_id, client, sql, task_array))) {
     LOG_WARN("failed to read task", KR(ret), K(tenant_id), K(sql));
   }
-  LOG_INFO("load need transfer balance task", KR(ret), K(task_array), K(sql));
+
   return ret;
 }
 

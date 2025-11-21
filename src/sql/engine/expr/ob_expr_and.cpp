@@ -72,7 +72,7 @@ static int calc_and_expr2(const ObDatum &left, const ObDatum &right,
 
 int calc_and_exprN(const ObExpr &expr, ObEvalCtx &ctx, ObDatum &res_datum)
 {
-  LOG_DEBUG("calc and common mode");
+
   int ret = OB_SUCCESS;
   ObDatum *tmp_res = NULL;
   ObDatum *child_res = NULL;
@@ -121,7 +121,7 @@ int ObExprAnd::cg_expr(ObExprCGCtx &expr_cg_ctx, const ObRawExpr &raw_expr,
 int ObExprAnd::eval_and_batch_exprN(const ObExpr &expr, ObEvalCtx &ctx,
                                     const ObBitVector &skip, const int64_t batch_size)
 {
-  LOG_DEBUG("eval and batch mode", K(batch_size));
+
   int ret = OB_SUCCESS;
   ObDatum* results = expr.locate_batch_datums(ctx);
   if (OB_ISNULL(results)) {

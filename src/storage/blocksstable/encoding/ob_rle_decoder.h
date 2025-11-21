@@ -181,7 +181,7 @@ OB_INLINE int ObRLEDecoder::init(
   int ret = common::OB_SUCCESS;
   if (OB_UNLIKELY(is_inited())) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init twice", K(ret));
+
   } else {
     meta_header_ = reinterpret_cast<const ObRLEMetaHeader *>
         (block_data + column_header.offset_);
@@ -189,7 +189,7 @@ OB_INLINE int ObRLEDecoder::init(
         + meta_header_->offset_;
 
     if (OB_FAIL(dict_decoder_.init(column_header.get_store_obj_type(), dict_meta_header))) {
-      STORAGE_LOG(WARN, "failed to init dict decoder", K(ret), KP(dict_meta_header));
+
       meta_header_ = NULL;
     } else {
       ref_offset_ = static_cast<int16_t>(meta_header_->count_ * meta_header_->row_id_byte_);

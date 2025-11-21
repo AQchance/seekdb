@@ -178,7 +178,7 @@ int ObTenantStorageCheckpointWriter::record_ls_meta(MacroBlockId &ls_entry_block
     }
   }
 
-  LOG_INFO("write ls checkpoint finish", K(ret), K(ls_entry_block));
+
   return ret;
 }
 
@@ -391,7 +391,7 @@ int ObTenantStorageCheckpointWriter::persist_and_copy_tablet(
     if (OB_FAIL(ret)) {
     } else if (OB_FAIL(ObTabletPersister::persist_and_transform_tablet(param, *src_tablet, new_tablet_handle))) {
       if (OB_ENTRY_NOT_EXIST == ret) {
-        LOG_INFO("skip writing checkpoint for this tablet", K(ret), K(tablet_key));
+
         ret = OB_SUCCESS;
       } else {
         LOG_WARN("fail to persist and transform tablet", K(ret), K(tablet_key), K(need_compat), KPC(src_tablet));
@@ -442,7 +442,7 @@ int ObTenantStorageCheckpointWriter::copy_tablet(
   
   if (OB_FAIL(MTL(ObTenantMetaMemMgr*)->get_tablet_with_allocator(WashTabletPriority::WTP_LOW, tablet_key, allocator, tablet_handle))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
-      LOG_INFO("skip writing snapshot for this tablet", K(tablet_key));
+
     } else {
       LOG_WARN("fail to get tablet with allocator", K(ret), K(tablet_key));
     }
@@ -453,7 +453,7 @@ int ObTenantStorageCheckpointWriter::copy_tablet(
       LOG_WARN("addr format normal tablet's shouldn't be file", K(ret), KPC(tablet));
     } else if (OB_FAIL(ObTabletPersister::persist_and_transform_tablet(param, *tablet, new_empty_shell_handle))) {
       if (OB_ENTRY_NOT_EXIST == ret) {
-        LOG_INFO("skip writing snapshot for this tablet", K(tablet_key));
+
       } else {
         LOG_WARN("fail to persist and transform tablet", K(ret), K(tablet_key), KPC(tablet));
       }
@@ -509,7 +509,7 @@ int ObTenantStorageCheckpointWriter::handle_old_version_tablet_for_compat(
       ret = OB_SUCCESS;
     } else if (OB_EMPTY_RESULT == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("empty mds data in old tablet, no need to generate mds mini sstable", K(ret));
+
     } else {
       LOG_WARN("fail to generate mds mini sstable", K(ret), K(tablet_key));
     }
@@ -522,7 +522,7 @@ int ObTenantStorageCheckpointWriter::handle_old_version_tablet_for_compat(
   } else if (OB_FAIL(new_tablet->init_for_compat(allocator, has_tablet_status, old_tablet, mds_mini_sstable))) {
     LOG_WARN("fail to init tablet", K(ret), K(tablet_key));
   } else {
-    LOG_INFO("succeed to handle mds data for tablet", K(ret), K(tablet_key), K(has_tablet_status), K(mds_mini_sstable));
+
   }
 
   return ret;
@@ -576,7 +576,7 @@ int ObTenantStorageCheckpointWriter::batch_compare_and_swap_tablet()
         LOG_WARN("fail to get tablet addr", K(ret), K(addr_info));
       } else {
         ret = OB_SUCCESS;
-        LOG_INFO("this tablet has been deleted, skip the swap", K(addr_info));
+
       }
     } else if (OB_ISNULL(ls_svr = MTL(ObLSService*))) {
       ret = OB_ERR_UNEXPECTED;
@@ -589,12 +589,12 @@ int ObTenantStorageCheckpointWriter::batch_compare_and_swap_tablet()
           LOG_WARN("fail to load tablet", K(ret), K(addr_info));
         } else {
           ret = OB_SUCCESS;
-          LOG_INFO("this tablet has been deleted, skip the swap", K(addr_info));
+
         }
       } else if (FALSE_IT(addr_info.need_rollback_ = false)) {
       } else if (!tablet_addr.is_equal_for_persistence(addr_info.old_addr_)) { // ignore the change of memtable seq
         // we must check the addr after loading tablet, otherwise the macro ref cnt won't be decreased
-        LOG_INFO("the tablet has changed, skip the swap", K(tablet_addr), K(addr_info));
+
       } else {
         do {
           if (OB_FAIL(ls_handle.get_ls()->update_tablet_checkpoint(
@@ -604,10 +604,10 @@ int ObTenantStorageCheckpointWriter::batch_compare_and_swap_tablet()
               new_tablet_handle))) {
             if (OB_NOT_THE_OBJECT == ret) {
               ret = OB_SUCCESS;
-              LOG_INFO("tablet has changed, no need to swap", K(ret), K(addr_info));
+
             } else if (OB_TABLET_NOT_EXIST == ret) {
               ret = OB_SUCCESS;
-              LOG_INFO("tablet has been deleted, no need to swap", K(ret), K(addr_info));
+
             } else {
               LOG_WARN("fail to compare and swap tablet with seq check", K(ret), K(addr_info));
             }

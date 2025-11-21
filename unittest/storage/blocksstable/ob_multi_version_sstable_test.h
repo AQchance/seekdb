@@ -81,15 +81,15 @@ int init_io_device(const char *test_name,
 
   if (NULL == getcwd(cur_dir,  OB_MAX_FILE_NAME_LENGTH)) {
     ret = OB_BUF_NOT_ENOUGH;
-    STORAGE_LOG(WARN, "cannot get cur dir", K(ret));
+
   } else if (OB_FAIL(databuff_printf(data_dir, OB_MAX_FILE_NAME_LENGTH, "%s/data_%s", cur_dir, test_name))) {
-    STORAGE_LOG(WARN, "failed to gen data dir", K(ret));
+
   } else if (OB_FAIL(databuff_printf(file_dir, OB_MAX_FILE_NAME_LENGTH, "%s/sstable/", data_dir))) {
-    STORAGE_LOG(WARN, "failed to databuff printf", K(ret));
+
   } else if (OB_FAIL(databuff_printf(slog_dir, OB_MAX_FILE_NAME_LENGTH, "%s/slog/", data_dir))) {
-    STORAGE_LOG(WARN, "failed to gen slog dir", K(ret));
+
   } else if (OB_FAIL(databuff_printf(clog_dir, OB_MAX_FILE_NAME_LENGTH, "%s/clog/", data_dir))) {
-    STORAGE_LOG(WARN, "failed to gen clog dir", K(ret));
+
   } else {
     storage_env.data_dir_ = data_dir;
     storage_env.sstable_dir_ = file_dir;
@@ -131,7 +131,7 @@ int init_io_device(const char *test_name,
         storage_env.default_block_size_,
         storage_env.data_disk_percentage_,
         storage_env.data_disk_size_))) {
-      STORAGE_LOG(WARN, "init io device fail", K(ret), K(storage_env));
+
     } else if (OB_FAIL(OB_STORE_CACHE.init(
         storage_env.index_block_cache_priority_,
         storage_env.user_block_cache_priority_,
@@ -140,7 +140,7 @@ int init_io_device(const char *test_name,
         storage_env.bf_cache_priority_,
         storage_env.bf_cache_miss_count_threshold_,
         storage_env.storage_meta_cache_priority_))) {
-      STORAGE_LOG(WARN, "Fail to init OB_STORE_CACHE, ", K(ret), K(storage_env.data_dir_));
+
     }
   }
   return ret;

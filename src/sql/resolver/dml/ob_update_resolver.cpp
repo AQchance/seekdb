@@ -173,7 +173,7 @@ int ObUpdateResolver::resolve(const ParseNode &parse_tree)
 
   if (OB_SUCC(ret)) {
     if (OB_FAIL(check_view_updatable())) {
-      LOG_TRACE("view not updatable", K(ret));
+
     } else if (OB_FAIL(update_stmt->check_dml_need_filter_null())) {
       LOG_WARN("failed to check dml need filter null", K(ret));
     } else if (OB_FAIL(update_stmt->check_dml_source_from_join())) {
@@ -414,7 +414,7 @@ int ObUpdateResolver::resolve_table_list(const ParseNode &parse_tree)
         In order to share the same logic with 'select' to generate access path costly, we
         add the table in the udpate stmt in the from_item list as well.
        */
-        LOG_DEBUG("succ to add from item", KPC(table_item));
+
       }
     }
     if (OB_ISNULL(table_item) || session_info_->is_inner()) {
@@ -572,7 +572,7 @@ int ObUpdateResolver::check_view_updatable()
           if (OB_FAIL(ObResolverUtils::uv_check_where_subquery(*table_item, ref_update_table))) {
             LOG_WARN("update view check where condition failed", K(ret));
           } else {
-            LOG_DEBUG("update view check", K(ref_update_table));
+
             ret = ref_update_table ? OB_ERR_NON_UPDATABLE_TABLE : OB_SUCCESS;
           }
         }
@@ -582,7 +582,7 @@ int ObUpdateResolver::check_view_updatable()
           if (OB_FAIL(ObResolverUtils::uv_check_has_non_inner_join(*table_item, has_non_inner_join))) {
             LOG_WARN("check has non inner join failed", K(ret));
           } else {
-            LOG_DEBUG("update view check", K(has_non_inner_join));
+
             ret = has_non_inner_join ? OB_ERR_NON_UPDATABLE_TABLE : OB_SUCCESS;
           }
         }
@@ -655,7 +655,7 @@ int ObUpdateResolver::generate_batched_stmt_info()
             LOG_WARN("fail to check contain case when", K(ret), K(assignment));
           } else if (contain_case_when) {
             ret = OB_BATCHED_MULTI_STMT_ROLLBACK;
-            LOG_TRACE("batched multi stmt contain case when expr", K(ret));
+
           }
         }
 

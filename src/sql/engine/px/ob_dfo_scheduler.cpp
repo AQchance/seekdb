@@ -101,7 +101,7 @@ int ObDfoSchedulerBasic::on_sqc_threads_inited(ObExecContext &ctx, ObDfo &dfo) c
   if (OB_FAIL(dfo.prepare_channel_info())) {
     LOG_WARN("failed to prepare channel info", K(ret));
   }
-  LOG_TRACE("on_sqc_threads_inited: dfo data xchg ch allocated", K(ret));
+
   return ret;
 }
 // Build m * n network shuffle
@@ -294,12 +294,12 @@ int ObSerialDfoScheduler::init_all_dfo_channel(ObExecContext &ctx) const
                 coord_info_.pruning_table_location_, ctx, *parent))) {
           LOG_WARN("fail alloc addr by data distribution", K(parent), K(ret));
         }
-        LOG_TRACE("alloc_by_data_distribution", K(*parent));
+
       } else if (has_reference_child) {
         if (OB_FAIL(ObPXServerAddrUtil::alloc_by_reference_child_distribution(*parent))) {
           LOG_WARN("fail alloc addr by data distribution", K(parent), K(child), K(ret));
         }
-        LOG_TRACE("alloc_by_reference_child_distribution", K(*parent));
+
       } else if (OB_FAIL(ObPXServerAddrUtil::alloc_by_data_distribution(
                      coord_info_.pruning_table_location_, ctx, *parent))) {
         LOG_WARN("fail to alloc data distribution", K(ret));
@@ -389,7 +389,7 @@ int ObSerialDfoScheduler::try_schedule_next_dfo(ObExecContext &ctx)
     if (OB_ITER_END != ret) {
       LOG_WARN("fail get ready dfos", K(ret));
     } else {
-      LOG_TRACE("No more dfos to schedule", K(ret));
+
     }
   } else if (OB_ISNULL(dfo)) {
     ret = OB_ERR_UNEXPECTED;
@@ -508,7 +508,7 @@ int ObSerialDfoScheduler::do_schedule_dfo(ObExecContext &ctx, ObDfo &dfo) const
 {
   int ret = OB_SUCCESS;
   ObIArray<ObPxSqcMeta> &sqcs = dfo.get_sqcs();
-  LOG_TRACE("Dfo's sqcs count", K(dfo), "sqc_count", sqcs.count());
+
 
   ObSQLSessionInfo *session = NULL;
   if (OB_SUCC(ret)) {
@@ -568,7 +568,7 @@ int ObSerialDfoScheduler::do_schedule_dfo(ObExecContext &ctx, ObDfo &dfo) const
         LOG_WARN("alloc branch id fail", KR(ret), K(max_task_count));
       } else {
         sqcs.at(idx).set_branch_id_base(branch_id);
-        LOG_TRACE("alloc branch id", K(max_task_count), K(branch_id), K(sqcs.at(idx)));
+
       }
     }
   }
@@ -590,7 +590,7 @@ bool ObSerialDfoScheduler::CleanDtlIntermRes::operator()(const ObAddr &attr,
   if (OB_FAIL(coord_info_.rpc_proxy_.to(attr).by(tenant_id_).clean_dtl_interm_result(*arg, NULL))) {
     LOG_WARN("send clean dtl interm result rpc failed", K(ret), K(attr), KPC(arg));
   }
-  LOG_TRACE("clean dtl res map", K(attr), K(*arg));
+
   arg->~ObPxCleanDtlIntermResArgs();
   arg = NULL;
 
@@ -611,7 +611,7 @@ void ObSerialDfoScheduler::clean_dtl_interm_result(ObExecContext &exec_ctx)
   } else if (OB_NOT_NULL(last_dfo) && last_dfo->is_scheduled() && OB_NOT_NULL(last_dfo->parent())
       && last_dfo->parent()->is_root_dfo()) {
     // all dfo scheduled, do nothing.
-    LOG_TRACE("all dfo scheduled.");
+
   } else {
     const ObDfo *root = coord_info_.dfo_mgr_.get_root_dfo();
     int64_t batch_size = coord_info_.get_rescan_param_count();
@@ -667,7 +667,7 @@ void ObSerialDfoScheduler::clean_dtl_interm_result(ObExecContext &exec_ctx)
     // ignore allocate, set_refactored and push_back failure.
     //  send rpc to addrs inserted into the map successfully.
     if (OB_UNLIKELY(map.count() != 0)) {
-      LOG_TRACE("clean dtl res map", K(map.count()));
+
       ObSQLSessionInfo *session = exec_ctx.get_my_session();
       uint64_t tenant_id = OB_NOT_NULL(session) ? session->get_effective_tenant_id() : OB_SYS_TENANT_ID;
       CleanDtlIntermRes clean_dtl_interm_res(coord_info_, tenant_id);
@@ -683,7 +683,7 @@ int ObParallelDfoScheduler::do_schedule_dfo(ObExecContext &exec_ctx, ObDfo &dfo)
 {
   int ret = OB_SUCCESS;
   ObIArray<ObPxSqcMeta> &sqcs = dfo.get_sqcs();
-  LOG_TRACE("Dfo's sqcs count", K(dfo), "sqc_count", sqcs.count());
+
 
   ObSQLSessionInfo *session = NULL;
   if (OB_SUCC(ret)) {
@@ -744,7 +744,7 @@ int ObParallelDfoScheduler::do_schedule_dfo(ObExecContext &exec_ctx, ObDfo &dfo)
         LOG_WARN("alloc branch id fail", KR(ret), K(max_task_count));
       } else {
         sqcs.at(idx).set_branch_id_base(branch_id);
-        LOG_TRACE("alloc branch id", K(max_task_count), K(branch_id), K(sqcs.at(idx)));
+
       }
     }
   }
@@ -1008,7 +1008,7 @@ int ObParallelDfoScheduler::do_fast_schedule(ObExecContext &exec_ctx,
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_TRACE("fast schedule ok", K(parent), K(child));
+
   }
   return ret;
 }
@@ -1069,7 +1069,7 @@ int ObParallelDfoScheduler::schedule_dfo(ObExecContext &exec_ctx,
   // Regardless of success or failure, mark as scheduled.
   // When schedule fails, the entire query fails.
   dfo.set_scheduled();
-  LOG_TRACE("schedule dfo ok", K(dfo), K(retry_times), K(ret));
+
   return ret;
 }
 
@@ -1079,7 +1079,7 @@ int ObParallelDfoScheduler::on_root_dfo_scheduled(ObExecContext &ctx, ObDfo &roo
   int ret = OB_SUCCESS;
   ObPxSqcMeta *sqc = NULL;
 
-  LOG_TRACE("on_root_dfo_scheduled", K(root_dfo));
+
 
   if (OB_FAIL(root_dfo.get_sqc(0, sqc))) {
     LOG_WARN("fail find sqc", K(root_dfo), K(ret));
@@ -1254,10 +1254,10 @@ int ObParallelDfoScheduler::try_schedule_next_dfo(ObExecContext &ctx)
       if (OB_ITER_END != ret) {
         LOG_WARN("fail get ready dfos", K(ret));
       } else {
-        LOG_TRACE("No more dfos to schedule", K(ret));
+
       }
     } else if (0 == dfos.count()) {
-      LOG_TRACE("No dfos to schedule for now. wait");
+
       break;
     } else if (2 != dfos.count()) {
       ret = OB_ERR_UNEXPECTED;
@@ -1276,7 +1276,7 @@ int ObParallelDfoScheduler::try_schedule_next_dfo(ObExecContext &ctx)
        */
       ObDfo &child = *dfos.at(0);
       ObDfo &parent = *dfos.at(1);
-      LOG_TRACE("to schedule", K(parent), K(child));
+
       if (OB_FAIL(schedule_pair(ctx, child, parent))) {
         LOG_WARN("fail schedule parent and child", K(ret));
       }
@@ -1320,7 +1320,7 @@ int ObParallelDfoScheduler::schedule_pair(ObExecContext &exec_ctx,
           LOG_WARN("failed to set temp table ctx", K(ret));
         }
       }
-      LOG_TRACE("alloc_by_data_distribution", K(child));
+
     } else {
       // already in schedule, pass
     }
@@ -1362,7 +1362,7 @@ int ObParallelDfoScheduler::schedule_pair(ObExecContext &exec_ctx,
             coord_info_.pruning_table_location_, exec_ctx, parent))) {
             LOG_WARN("fail alloc addr by data distribution", K(parent), K(ret));
           }
-          LOG_TRACE("alloc_by_data_distribution", K(parent));
+
         } else if (parent.is_single()) {
           // Common in PDML scenarios, if parent does not have tsc, the intermediate parent DFO needs to pull data from child DFO to QC locally first, then shuffle it to the upper DFO
           // For example, parent might be a scalar group by, which is marked as is_local, at this time
@@ -1372,7 +1372,7 @@ int ObParallelDfoScheduler::schedule_pair(ObExecContext &exec_ctx,
             coord_info_.pruning_table_location_, exec_ctx, parent))) {
             LOG_WARN("fail alloc addr by data distribution", K(parent), K(ret));
           }
-          LOG_TRACE("alloc_by_local_distribution", K(parent));
+
         } else if (has_reference_child) {
           if (OB_FAIL(ObPXServerAddrUtil::alloc_by_reference_child_distribution(parent))) {
             LOG_WARN("fail alloc addr by data distribution", K(parent), K(child), K(ret));
@@ -1380,7 +1380,7 @@ int ObParallelDfoScheduler::schedule_pair(ObExecContext &exec_ctx,
         } else if (OB_FAIL(ObPXServerAddrUtil::alloc_by_random_distribution(exec_ctx, child, parent, px_node_pool_))) {
           LOG_WARN("fail alloc addr by random distribution", K(parent), K(child), K(ret));
         }
-        LOG_TRACE("alloc_by_child_distribution", K(child), K(parent));
+
       }
       if (OB_SUCC(ret)) {
         if (OB_FAIL(set_temp_table_ctx_for_sqc(exec_ctx, parent))) {

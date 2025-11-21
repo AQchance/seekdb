@@ -100,7 +100,7 @@ int ObTransformJoinLimitPushDown::transform_one_stmt(common::ObIArray<ObParentDM
   } else if (OB_FAIL(sort_pushdown_helpers(helpers))) {
     LOG_WARN("failed to sort pushdown helpers", K(ret));
   } else if (is_valid) {
-    LOG_TRACE("start to pushdown limit into join", K(helpers));
+
   }
   for (int64_t i = 0; OB_SUCC(ret) && is_valid && i < helpers.count(); ++i) {
     if (OB_ISNULL(helpers.at(i))) {
@@ -800,7 +800,7 @@ int ObTransformJoinLimitPushDown::remove_lazy_left_join(ObDMLStmt *stmt,
       LOG_WARN("failed to adjust single table ids", K(ret));
     } else {
       helper.pushdown_tables_.at(i) = table;
-      LOG_TRACE("succeed to remove lazy left join", KPC(table));
+
     }
   }
   return ret;
@@ -876,7 +876,7 @@ int ObTransformJoinLimitPushDown::build_lazy_left_join(ObDMLStmt *stmt,
     } else if (OB_FAIL(stmt->add_from_item(tmp_joined_table->table_id_, true))) {
       LOG_WARN("failed to add from item", K(ret));
     } else {
-      LOG_TRACE("succeed to build lazy left join table", KPC(tmp_joined_table));
+
     }
   }
   return ret;

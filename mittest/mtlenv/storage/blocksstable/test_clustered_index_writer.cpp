@@ -126,7 +126,7 @@ bool TestClusteredIndexWriter::is_equal(ObMicroBlockDesc &l, ObMicroBlockDesc &r
 
 TEST_F(TestClusteredIndexWriter, test_reuse_macro_block)
 {
-  LOG_INFO("BEGIN TestClusteredIndexWriter.test_reuse_macro_block");
+
 
   // prepare data store desc and macro block writer
   ObWholeDataStoreDesc data_desc;
@@ -160,7 +160,7 @@ TEST_F(TestClusteredIndexWriter, test_reuse_macro_block)
       ASSERT_EQ(OB_SUCCESS, ret);
       ret = iter.get_current_clustered_index_info(clustered_micro_block_data);
       ASSERT_EQ(OB_SUCCESS, ret);
-      LOG_INFO("get next", K(ret), K(i), KPC(clustered_micro_block_data));
+
       ASSERT_EQ(OB_SUCCESS, data_writer.append_macro_block(macro_desc, clustered_micro_block_data));
       macro_desc.reuse();
     } else {
@@ -170,11 +170,11 @@ TEST_F(TestClusteredIndexWriter, test_reuse_macro_block)
   } while (OB_SUCC(ret));
 
   if (ret != OB_SUCCESS) {
-    LOG_INFO("iter end", K(ret));
+
   }
   ASSERT_EQ(OB_ITER_END, ret);
 
-  LOG_INFO("FINISH TestClusteredIndexWriter.test_reuse_macro_block");
+
 }
 
 } // namespace blocksstable

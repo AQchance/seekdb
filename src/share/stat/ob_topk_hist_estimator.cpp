@@ -97,10 +97,10 @@ int ObTopKFrequencyHistograms::create_topk_fre_items(const ObObjMeta *obj_meta/*
       while (topk_fre_items_.count() > item_size_) {
         topk_fre_items_.pop_back();
       }
-      LOG_TRACE("Succeed to adjust topk fre items", K(topk_fre_items_), K(N_), K(by_pass_), K(disuse_cnt_));
+
     }
   } else {
-    LOG_TRACE("Succeed to adjust topk fre items", K(topk_fre_items_), K(N_), K(by_pass_), K(disuse_cnt_));
+
   }
   return ret;
 }
@@ -191,7 +191,7 @@ int ObTopKFrequencyHistograms::merge_distribute_top_k_fre_items(const ObObj &obj
         }
       }
     }
-    LOG_TRACE("succeed merge_distribute_top_k_fre_items", K(used_list_));
+
   }
   return ret;
 }
@@ -501,7 +501,7 @@ bool ObTopKFrequencyHistograms::is_satisfied_by_pass() const
   } else if (N_ % (window_size_ * 100) == 0) {
     if (1.0 * disuse_cnt_ / N_ > get_current_min_topk_ratio()) {
       is_satisfied = true;
-      LOG_INFO("topk hist is statisfied by pass", K(disuse_cnt_), K(N_), K(get_current_min_topk_ratio()));
+
     }
   }
   return is_satisfied;
@@ -535,7 +535,7 @@ double ObTopKFrequencyHistograms::get_current_min_topk_ratio() const
     }
     min_topk_ratio = new_min_topk_ratio;
   }
-  LOG_TRACE("get_current_min_topk_ratio", K(min_topk_ratio), K(item_size_), K(N_));
+
   return min_topk_ratio;
 }
 
@@ -551,7 +551,7 @@ void ObTopKFrequencyHistograms::set_the_obj_memory_use_limit()
   }
   obj_memory_limit_ = std::max(obj_memory_limit_, MIN_OBJ_MEMORY_LIMIT);
   obj_memory_limit_ = std::min(obj_memory_limit_, MAX_OBJ_MEMORY_LIMIT);
-  LOG_TRACE("set the memory use limit", K(obj_memory_limit_));
+
 }
 
 /**
@@ -566,7 +566,7 @@ int ObTopKFrequencyHistograms::shrink_memory_usage()
   ObIAllocator &next_allocator = get_next_allocator();
   ObIAllocator &curr_allocator = get_allocator();
   topk_map_.reuse();
-  LOG_TRACE("begine to shrink memory usage", K(obj_memory_limit_), K(curr_allocator.used()));
+
   for (int64_t i = 0; OB_SUCC(ret) && i < used_list_.count(); ++i) {
     if (OB_ISNULL(used_list_.at(i))) {
       ret = OB_ERR_UNEXPECTED;
@@ -735,7 +735,7 @@ int ObTopkHistEstimator::estimate(const ObOptStatGatherParam &param,
                                  opt_stat, tmp_opt_stats))) {
     LOG_WARN("failed to evaluate basic stats", K(ret));
   } else {
-    LOG_TRACE("succeed to gather topk histogram", K(opt_stat.column_stats_));
+
   }
   return ret;
 }

@@ -60,7 +60,7 @@ int ObGrantResolver::resolve_grantee_clause(
         } else {
           ObString user_name;
           ObString host_name(OB_DEFAULT_HOST_NAME);
-          LOG_DEBUG("grant_user", K(i), K(grant_user->str_value_), K(grant_user->type_));
+
           if (OB_FAIL(resolve_grant_user(grant_user, session_info, user_name, host_name))) {
             LOG_WARN("failed to resolve grant_user", K(ret), K(grant_user));
           } else {

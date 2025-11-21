@@ -74,7 +74,7 @@ int ObDDLServerClient::create_hidden_table(
 #ifdef ERRSIM
     if (OB_SUCC(ret)) {
       ret = OB_E(common::EventTable::EN_DDL_DIRECT_LOAD_WAIT_TABLE_LOCK_FAIL) OB_SUCCESS;
-      LOG_INFO("wait table lock failed errsim", K(ret));
+
     }
 #endif
     if (OB_FAIL(ret)) {
@@ -98,7 +98,7 @@ int ObDDLServerClient::create_hidden_table(
     "task_id", res.task_id_,
     "table_id", res.table_id_,
     "schema_version", res.schema_version_);
-  LOG_INFO("finish create hidden table.", K(ret), "ddl_event_info", ObDDLEventInfo(), K(arg), K(res));
+
   return ret;
 }
 
@@ -139,12 +139,12 @@ int ObDDLServerClient::copy_table_dependents(
           LOG_WARN("not supported copy table dependents", K(ret), K(arg));
           break;
         } else {
-          LOG_INFO("ddl task exist, try again", K(arg));
+
           ret = OB_SUCCESS;
           ob_usleep(retry_interval);
         }
       } else {
-        LOG_INFO("copy table dependents success", K(arg));
+
         break;
       }
     }
@@ -156,7 +156,7 @@ int ObDDLServerClient::copy_table_dependents(
     "trace_id", *ObCurTraceId::get_trace_id(),
     "task_id", arg.task_id_,
     "rpc_dst", rs_leader_addr);
-  LOG_INFO("finish copy table dependents.", K(ret), "ddl_event_info", ObDDLEventInfo(), K(arg), K(rs_leader_addr));
+
   return ret;
 }
 
@@ -194,12 +194,12 @@ int ObDDLServerClient::abort_redef_table(const obrpc::ObAbortRedefTableArg &arg,
           LOG_WARN("no enough queue size to abort", K(ret), K(arg), K(rs_leader_addr));
           break;
         } else {
-          LOG_INFO("ddl task exist, try again", K(arg));
+
           ret = OB_SUCCESS;
           ob_usleep(retry_interval);
         }
       } else {
-        LOG_INFO("abort task success");
+
         break;
       }
     }
@@ -213,7 +213,7 @@ int ObDDLServerClient::abort_redef_table(const obrpc::ObAbortRedefTableArg &arg,
       if (OB_FAIL(sql::ObDDLExecutorUtil::wait_ddl_finish(arg.tenant_id_, arg.task_id_, DDL_DIRECT_LOAD, session, common_rpc_proxy))) {
         if (OB_CANCELED == ret) {
           ret = OB_SUCCESS;
-          LOG_INFO("ddl abort success", K_(arg.task_id));
+
         } else {
           LOG_WARN("wait ddl finish failed", K(ret), K(arg.tenant_id_), K(arg.task_id_));
         }
@@ -232,7 +232,7 @@ int ObDDLServerClient::abort_redef_table(const obrpc::ObAbortRedefTableArg &arg,
     "trace_id", *ObCurTraceId::get_trace_id(),
     "task_id", arg.task_id_,
     "rpc_dst", rs_leader_addr);
-  LOG_INFO("abort redef table.", K(ret), "ddl_event_info", ObDDLEventInfo(), K(arg), K(rs_leader_addr));
+
   return ret;
 }
 
@@ -273,12 +273,12 @@ int ObDDLServerClient::finish_redef_table(const obrpc::ObFinishRedefTableArg &fi
           LOG_WARN("not supported finish redef table", K(ret), K(finish_redef_arg));
           break;
         } else {
-          LOG_INFO("ddl task exist, try again", K(finish_redef_arg));
+
           ret = OB_SUCCESS;
           ob_usleep(retry_interval);
         }
       } else {
-        LOG_INFO("finish redef table success", K(finish_redef_arg));
+
         break;
       }
     }
@@ -301,7 +301,7 @@ int ObDDLServerClient::finish_redef_table(const obrpc::ObFinishRedefTableArg &fi
     "snapshot_version", build_single_arg.snapshot_version_,
     "rpc_dst", rs_leader_addr,
     build_single_arg.ls_id_);
-  LOG_INFO("finish redef table.", K(ret), "ddl_event_info", ObDDLEventInfo(), K(finish_redef_arg), K(build_single_arg), K(rs_leader_addr));
+
   return ret;
 }
 

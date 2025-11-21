@@ -132,7 +132,7 @@ TEST_F(TestCoreTableProxy, load)
   int ret = kv.load();
   ASSERT_EQ(OB_SUCCESS, ret);
 
-  LOG_INFO("all rows", K(kv.get_all_row()));
+
 
   ASSERT_EQ(5, kv.row_count());
   for (int64_t i = 0; i < 5; ++i) {

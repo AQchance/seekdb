@@ -163,7 +163,7 @@ int ObTableIterParam::get_cg_column_param(const share::schema::ObColumnParam *&c
   column_param = nullptr;
   if (OB_UNLIKELY(nullptr == cg_col_param_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected read info", K(ret), KPC(read_info_));
+
   } else {
     column_param = cg_col_param_;
   }
@@ -181,7 +181,7 @@ int ObTableIterParam::build_index_filter_for_row_store(common::ObIAllocator *all
                   *pushdown_filter_,
                   allocator,
                   sstable_index_filter_))) {
-      STORAGE_LOG(WARN, "Failed to build sstable index filter", K(ret), KPC(this));
+
     }
   }
   return ret;
@@ -363,10 +363,10 @@ int ObTableAccessParam::init(
     }
 
     if (OB_FAIL(iter_param_.refresh_lob_column_out_status())) {
-      STORAGE_LOG(WARN, "Failed to refresh lob column out status", K(ret), K(iter_param_));
+
     } else if (scan_param.use_index_skip_scan() &&
                OB_FAIL(get_prefix_cnt_for_skip_scan(scan_param, iter_param_))) {
-      STORAGE_LOG(WARN, "Failed to get prefix for skip scan", K(ret));
+
     } else {
       iter_param_.need_update_tablet_param_ = &scan_param.need_update_tablet_param_;
       if (iter_param_.vectorized_enabled_ &&
@@ -393,10 +393,10 @@ int ObTableAccessParam::check_valid_before_query_init(
   ObTablet *tablet = nullptr;
   if (OB_UNLIKELY(!tablet_handle.is_valid() || OB_ISNULL(tablet = tablet_handle.get_obj()))) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid table handle", K(ret), K(tablet_handle), KPC(tablet));
+
   } else if (OB_UNLIKELY(tablet->is_cs_replica_compat() && !table_param.is_column_replica_table() && !table_param.is_normal_cgs_at_the_end())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid table param for cs replica tablet", K(ret), K(table_param), KPC(tablet));
+
   }
   return ret;
 }
@@ -408,12 +408,12 @@ int ObTableAccessParam::get_prefix_cnt_for_skip_scan(const ObTableScanParam &sca
   const int64_t skip_range_count = scan_param.ss_key_ranges_.count();
   if (OB_UNLIKELY(key_range_count != skip_range_count)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(key_range_count), K(skip_range_count));
+
   } else {
     const int64_t prefix = iter_param.get_schema_rowkey_count() - scan_param.ss_key_ranges_.at(0).start_key_.length();
     if (OB_UNLIKELY(prefix <= 0)) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "invalid argument", K(ret), K(prefix), K(scan_param.key_ranges_), K(scan_param.ss_key_ranges_));
+
     } else {
       iter_param.ss_rowkey_prefix_cnt_ = prefix;
     }
@@ -456,7 +456,7 @@ int ObTableAccessParam::init_dml_access_param(
   const ObTablet *tablet = nullptr;
   if(IS_INIT) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObTableAccessParam init twice", K(ret), K(*this));
+
   } else {
     iter_param_.table_id_ = table.get_table_id();
     iter_param_.tablet_id_ = table.get_tablet_id();
@@ -478,7 +478,7 @@ int ObTableAccessParam::init_dml_access_param(
       }
     }
     if (OB_FAIL(iter_param_.refresh_lob_column_out_status())) {
-      STORAGE_LOG(WARN, "Failed to refresh lob column out status", K(ret), K(iter_param_));
+
     } else {
       is_inited_ = true;
     }
@@ -523,7 +523,7 @@ int set_row_scn(
       int64_t version = -store_row->storage_datums_[trans_idx].get_int();
       if (version == share::SCN::max_scn().get_val_for_tx()) {
         // TODO(handora.qc): remove it as if we confirmed no problem according to row_scn
-        LOG_INFO("use max row scn", KPC(store_row));
+
       }
 
       if (version > 0) {

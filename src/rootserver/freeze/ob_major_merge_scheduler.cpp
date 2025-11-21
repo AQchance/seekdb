@@ -149,14 +149,14 @@ int ObMajorMergeScheduler::start()
   } else if (OB_FAIL(ObRsReentrantThread::start())) {
     LOG_WARN("fail to start thread", KR(ret), K_(tenant_id));
   } else {
-    LOG_INFO("succ to start ObMajorMergeScheduler", K_(tenant_id));
+
   }
   return ret;
 }
 
 void ObMajorMergeScheduler::run3()
 {
-  LOG_INFO("major merge scheduler will run", K_(tenant_id));
+
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
@@ -188,7 +188,7 @@ void ObMajorMergeScheduler::run3()
     }
   }
 
-  LOG_INFO("major merge scheduler will exit", K_(tenant_id));
+
 }
 
 int ObMajorMergeScheduler::try_idle(
@@ -233,7 +233,7 @@ int ObMajorMergeScheduler::try_idle(
       } else if (ObTimeUtility::fast_current_time() > start_ts + PAUSED_WAITING_CLEAR_MEMORY_THRESHOLD) {
         (void) progress_checker_->clear_cached_info();
         clear_cached_info = true;
-        LOG_INFO("clear cached info when idling", KR(ret), K(start_ts));
+
       }
     }
     LOG_INFO("major_merge_scheduler is not idling", KR(ret), K_(tenant_id), K(idle_time_us),
@@ -315,7 +315,7 @@ int ObMajorMergeScheduler::do_work()
       }
     }
 
-    LOG_TRACE("finish do merge scheduler work", KR(ret), K(curr_round_epoch), K(global_info));
+
     // is_merging = false, except for switchover
     check_merge_interval_time(false, curr_round_epoch);
   }
@@ -354,7 +354,7 @@ int ObMajorMergeScheduler::do_one_round_major_merge(const int64_t expected_epoch
   int tmp_ret = OB_SUCCESS;
 
   HEAP_VAR(ObGlobalMergeInfo, global_info) {
-    LOG_INFO("start to do one round major_merge", K(expected_epoch));
+
     // loop until 'this round major merge finished' or 'epoch changed'
     while (!stop_ && !is_paused()) {
       update_last_run_timestamp();
@@ -373,7 +373,7 @@ int ObMajorMergeScheduler::do_one_round_major_merge(const int64_t expected_epoch
         LOG_WARN("fail to get next merge zones", KR(ret));
       } else if (to_merge_zone.empty()) {
         // no new zone to merge
-        LOG_INFO("no more zone need to merge", K_(tenant_id), K(global_info));
+
       } else if (OB_FAIL(schedule_zones_to_merge(to_merge_zone, expected_epoch))) {
         LOG_WARN("fail to schedule zones to merge", KR(ret), K(to_merge_zone), K(expected_epoch));
       }
@@ -403,10 +403,10 @@ int ObMajorMergeScheduler::do_one_round_major_merge(const int64_t expected_epoch
       ret = OB_SUCCESS;
       // treat as is_merging = true, even though last merge complete
       check_merge_interval_time(true, expected_epoch);
-      LOG_INFO("finish one round of loop in do_one_round_major_merge", K(expected_epoch), K(global_info));
+
     }
   }
-  LOG_INFO("finish do_one_round_major_merge", K(expected_epoch));
+
 
   return ret;
 }
@@ -420,7 +420,7 @@ int ObMajorMergeScheduler::generate_next_global_broadcast_scn(const int64_t expe
   if (OB_FAIL(merge_info_mgr_->get_zone_merge_mgr().generate_next_global_broadcast_scn(expected_epoch, new_global_broadcast_scn))) {
     LOG_WARN("fail to generate next broadcast scn", KR(ret), K(expected_epoch));
   } else {
-    LOG_INFO("start to schedule new round merge", K(new_global_broadcast_scn), K_(tenant_id));
+
     ROOTSERVICE_EVENT_ADD("daily_merge", "merging", K_(tenant_id), "global_broadcast_scn",
                           new_global_broadcast_scn.get_val_for_inner_table_field(),
                           "zone", "global_zone", K(expected_epoch));
@@ -479,7 +479,7 @@ int ObMajorMergeScheduler::schedule_zones_to_merge(
       if (OB_FAIL(start_zones_merge(to_merge, expected_epoch))) {
         LOG_WARN("fail to start zone merge", KR(ret), K(to_merge), K(expected_epoch));
       } else {
-        LOG_INFO("start to schedule zone merge", K(to_merge), K(expected_epoch));
+
       }
     }
   }
@@ -540,7 +540,7 @@ int ObMajorMergeScheduler::update_merge_status(
     }
   } else {
     const compaction::ObBasicMergeProgress &progress = progress_checker_->get_merge_progress();
-    LOG_INFO("succcess to update merge status", K(ret), K(global_broadcast_scn), K(progress), K(expected_epoch));
+
     if (OB_FAIL(handle_merge_progress(progress, global_broadcast_scn, expected_epoch))) {
       LOG_WARN("fail to handle all zone merge", KR(ret), K(global_broadcast_scn), K(expected_epoch));
     }
@@ -559,7 +559,7 @@ int ObMajorMergeScheduler::handle_merge_progress(
     if (progress.is_merge_abnomal()) {
       LOG_WARN("merge progress is abnomal, finish progress anyway", K(global_broadcast_scn), K(progress));
     } else {
-      LOG_INFO("merge completed", K(global_broadcast_scn), K(progress));
+
     }
     if (OB_FAIL(try_update_global_merged_scn(expected_epoch))) { // MERGE_STATUS: change to IDLE
       LOG_WARN("fail to update global_merged_scn", KR(ret), K_(tenant_id), K(expected_epoch));
@@ -613,7 +613,7 @@ int ObMajorMergeScheduler::set_zone_merging(const ObZone &zone, const int64_t ex
     LOG_WARN("fail to set zone merging flag", KR(ret), K_(tenant_id), K(zone), K(expected_epoch));
   } else {
     ROOTSERVICE_EVENT_ADD("daily_merge", "set_zone_merging", K_(tenant_id), K(zone));
-    LOG_INFO("set zone merging success", K_(tenant_id), K(zone));
+
   }
 
   return ret;
@@ -658,7 +658,7 @@ int ObMajorMergeScheduler::try_update_epoch_and_reload()
       if (OB_FAIL(ret)) {
         LOG_WARN("fail to try_update_epoch_and_reload", KR(ret), K(ori_epoch), K(latest_epoch));
       } else {
-        LOG_INFO("succ to try_update_epoch_and_reload", K(ori_epoch), K(latest_epoch));
+
       }
     } else if (latest_epoch < get_epoch()) {
       ret = OB_ERR_UNEXPECTED;
@@ -666,7 +666,7 @@ int ObMajorMergeScheduler::try_update_epoch_and_reload()
     }
   } else { // ObRole::LEADER != role
     ret = OB_NOT_MASTER;
-    LOG_INFO("not master ls", KR(ret), K(role), "cur_epoch", get_epoch(), K(latest_epoch));
+
   }
   return ret;
 }
@@ -684,7 +684,7 @@ int ObMajorMergeScheduler::do_update_freeze_service_epoch(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("not indeed update freeze_service_epoch", KR(ret), K(latest_epoch), K_(tenant_id), K(affected_rows));
   }
-  LOG_INFO("finish to update freeze_service_epoch", KR(ret), K(latest_epoch), K_(tenant_id));
+
   return ret;
 }
 
@@ -730,7 +730,7 @@ int ObMajorMergeScheduler::update_epoch_in_memory_and_reload()
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("succ to update epoch in memory and reload", K(freeze_service_epoch));
+
   }
   return ret;
 }

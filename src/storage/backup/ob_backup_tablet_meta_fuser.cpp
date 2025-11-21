@@ -208,7 +208,7 @@ int ObBackupTabletMetaFuser::do_fuse()
   } else if (OB_FAIL(inner_do_fuse_())) {
     LOG_WARN("failed to inner do fuse", K(ret));
   } else {
-    LOG_INFO("do fuse tablet meta", K(ret));
+
   }
   return ret;
 }
@@ -227,7 +227,7 @@ int ObBackupTabletMetaFuser::get_next_tablet_item(
   } else if (OB_FAIL(fuse_item.assign(*fuse_item_ptr))) {
     LOG_WARN("failed to do assign", K(ret), KPC(fuse_item_ptr));
   } else {
-    LOG_INFO("get next tablet item", K(fuse_item));
+
   }
   return ret;
 }
@@ -246,7 +246,7 @@ int ObBackupTabletMetaFuser::prepare_external_sort_()
                                   &comparator_))) {
     LOG_WARN("failed to init external sort", K(ret));
   } else {
-    LOG_INFO("init external sort", K(ret));
+
   }
   return ret;
 }
@@ -277,7 +277,7 @@ int ObBackupTabletMetaFuser::prepare_extern_tablet_meta_iterator_()
     LOG_WARN("failed to push back", K(ret), KP(tmp_iter));
   } else {
     tmp_iter = NULL;
-    LOG_INFO("succeed to prepare extern tablet meta iterator", K(ret));
+
   }
   if (OB_NOT_NULL(tmp_iter)) {
     ObLSBackupFactory::free(tmp_iter);
@@ -303,7 +303,7 @@ int ObBackupTabletMetaFuser::prepare_tenant_meta_index_iterator_()
     LOG_WARN("failed to push back", K(ret), KP(tmp_iter));
   } else {
     tmp_iter = NULL;
-    LOG_INFO("succeed to prepare tenant meta index iterator", K(ret));
+
   }
   if (OB_NOT_NULL(tmp_iter)) {
     ObLSBackupFactory::free(tmp_iter);
@@ -326,7 +326,7 @@ int ObBackupTabletMetaFuser::get_tenant_meta_index_retry_id_(int64_t &retry_id)
   } else if (OB_FAIL(retry_id_getter.get_max_retry_id(retry_id))) {
     LOG_WARN("failed to get max retry id", K(ret));
   } else {
-    LOG_INFO("get max retry id", K_(backup_dest), K_(backup_set_desc), K_(turn_id), K(retry_id));
+
   }
   return ret;
 }
@@ -355,13 +355,13 @@ int ObBackupTabletMetaFuser::inner_do_fuse_()
     if (OB_FAIL(get_unfinished_iters_(fuse_iter_array_, unfinished_iters))) {
       LOG_WARN("failed to get unfinished iters", K(ret), K_(ls_id), K(round), K_(fuse_iter_array));
     } else if (unfinished_iters.empty()) {
-      LOG_INFO("fuse index finish", K_(ls_id), K(round), K_(fuse_iter_array));
+
       break;
     } else if (OB_FAIL(find_minimum_iters_(unfinished_iters, min_iters))) {
       LOG_WARN("failed to find minumum iters", K(ret), K_(ls_id), K(round), K(unfinished_iters));
     } else if (min_iters.empty()) {
       ret = OB_ERR_UNEXPECTED;
-      LOG_INFO("should exist iters", K_(ls_id), K(round));
+
     } else if (OB_FAIL(sort_iters_(min_iters))) {
       LOG_WARN("failed to sort iters", K(ret), K_(ls_id), K(round), K(min_iters));
     } else if (OB_FAIL(get_fuse_result_(min_iters, fuse_item, need_add))) {
@@ -372,14 +372,14 @@ int ObBackupTabletMetaFuser::inner_do_fuse_()
       LOG_WARN("failed to move iters next", K(ret), K_(ls_id), K(round), K(min_iters));
     } else {
       round++;
-      LOG_INFO("meta index fuse round", K(round), K_(ls_id), K(min_iters), K(meta_index));
+
     }
   }
   if (OB_SUCC(ret)) {
     if (OB_FAIL(external_sort_.do_sort(true/*final_merge*/))) {
       LOG_WARN("failed to do external sort", K(ret));
     } else {
-      LOG_INFO("do sort", K_(ls_id), K(round));
+
     }
   }
   return ret;
@@ -417,7 +417,7 @@ int ObBackupTabletMetaFuser::move_iters_next_(MERGE_ITER_ARRAY &fuse_iters)
     } else if (OB_FAIL(iter->next())) {
       if (OB_ITER_END == ret) {
         ret = OB_SUCCESS;
-        LOG_INFO("meta index iter has reach end");
+
       } else {
         LOG_WARN("failed to do next", K(ret), K(iter));
       }
@@ -492,7 +492,7 @@ int ObBackupTabletMetaFuser::compare_index_iters_(
     LOG_WARN("failed to get cur index", K(ret), KPC(rhs));
   } else {
     cmp_ret = comparator.operator()(lvalue, rvalue);
-    LOG_DEBUG("compare tablet id", K(lvalue), K(rvalue), K(cmp_ret));
+
   }
   return ret;
 }
@@ -597,7 +597,7 @@ int ObBackupTabletMetaFuser::feed_to_external_sort_(
   } else if (OB_FAIL(external_sort_.add_item(item))) {
     LOG_WARN("failed to add item to external sort", K(ret));
   } else {
-    LOG_DEBUG("feed to external sort", K(item));
+
   }
   return ret;
 }

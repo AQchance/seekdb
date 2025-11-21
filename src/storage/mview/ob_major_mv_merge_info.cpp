@@ -108,7 +108,7 @@ OB_SERIALIZE_MEMBER(ObUpdateMergeScnArg, ls_id_, merge_scn_);
   } else if (OB_FAIL(ls->set_func(arg.merge_scn_))) { \
     LOG_WARN("failed to "#set_func, KR(ret), K(arg), KPC(ls)); \
   } \
-  LOG_INFO(#set_func" finish", KR(ret), K(arg));
+
 
 
 int ObMVPublishSCNHelper::on_register(
@@ -135,7 +135,7 @@ int ObMVPublishSCNHelper::on_replay(
     LOG_WARN("tenant role cache is invalid", KR(ret));
   } else if (is_standby_tenant(tenant_role)) {
     // ret = OB_NOT_SUPPORTED;
-    LOG_INFO("new mview skip in standy tenant", KR(ret));
+
   } else {
     SET_MERGE_SCN(set_major_mv_merge_scn_publish);
   }
@@ -164,7 +164,7 @@ int ObMVNoticeSafeHelper::on_replay(
     ret = OB_EAGAIN;
     LOG_WARN("tenant role cache is invalid", KR(ret));
   } else if (is_standby_tenant(tenant_role)) {
-    LOG_INFO("new mview skip in standy tenant", KR(ret));
+
   } else {
     SET_MERGE_SCN(set_major_mv_merge_scn_safe_calc);
   }
@@ -194,7 +194,7 @@ int ObMVMergeSCNHelper::on_replay(
     ret = OB_EAGAIN;
     LOG_WARN("tenant role cache is invalid", KR(ret));
   } else if (is_standby_tenant(tenant_role)) {
-    LOG_INFO("new mview skip in standy tenant", KR(ret));
+
   } else {
     SET_MERGE_SCN(set_major_mv_merge_scn);
   }
@@ -223,9 +223,9 @@ int ObMVCheckReplicaHelper::get_and_update_merge_info(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("info is invalid", KR(ret), K(info));
   } else if (!info.need_update_major_mv_merge_scn()) {
-    STORAGE_LOG(INFO, "no need update", KR(ret), K(info), KPC(ls));
+
   } else if (OB_FAIL(ls->get_tablet_svr()->build_tablet_iter(tablet_iter))) {
-    STORAGE_LOG(WARN, "failed to build ls tablet iter", KR(ret), KPC(ls));
+
   } else {
     share::SCN min_major_mv_merge_scn;
     min_major_mv_merge_scn.set_max();
@@ -239,14 +239,14 @@ int ObMVCheckReplicaHelper::get_and_update_merge_info(
           ret = OB_SUCCESS;
           break;
         } else {
-          STORAGE_LOG(WARN, "failed to get tablet", KR(ret), K(tablet_handle));
+
         }
       } else if (OB_UNLIKELY(!tablet_handle.is_valid())) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "invalid tablet handle", KR(ret), K(tablet_handle));
+
       } else if (OB_ISNULL(tablet = tablet_handle.get_obj())) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "tablet is NULL", KR(ret));
+
       } else if (tablet->is_ls_inner_tablet() ||
                  tablet->is_empty_shell()) {
         // skip ls inner tablet or empty shell
@@ -259,7 +259,7 @@ int ObMVCheckReplicaHelper::get_and_update_merge_info(
         const int64_t snapshot = tablet->get_last_major_snapshot_version();
         if (0 == snapshot || 1 == snapshot) {
           skip_update = true;
-          LOG_INFO("snapshot is invalid, skip update", K(ret), K(info), K(snapshot), K(ls_id), KPC(tablet));
+
         } else if (min_major_mv_merge_scn.get_val_for_gts() > snapshot
             && OB_FAIL(min_major_mv_merge_scn.convert_for_gts(snapshot))) {
           LOG_WARN("failed to convert_for_gts", K(ret), K(info), K(snapshot), KPC(ls));

@@ -453,7 +453,7 @@ int ObMaxIdFetcher::update_server_max_id(const uint64_t max_server_id, const uin
       ret = (OB_SUCCESS == ret) ? temp_ret : ret;
     }
   }
-  LOG_INFO("update server max id", KR(ret), K(fetched_max_server_id), K(max_server_id), K(next_max_server_id));
+
   return ret;
 }
 

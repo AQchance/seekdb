@@ -163,7 +163,7 @@ int ObDropIndexTask::update_index_status(const ObIndexStatus new_status)
     } else if (OB_FAIL(GCTX.rs_rpc_proxy_->to(GCTX.self_addr()).timeout(ddl_rpc_timeout).update_index_status(arg))) {
       LOG_WARN("update index status failed", K(ret), K(arg));
     } else {
-      LOG_INFO("notify index status changed finish", K(new_status), K(target_object_id_));
+
     }
   }
   return ret;
@@ -274,7 +274,7 @@ int ObDropIndexTask::drop_index_impl()
     } else if (OB_FAIL(GCTX.rs_rpc_proxy_->timeout(ddl_rpc_timeout).drop_index(drop_index_arg, drop_index_res))) {
       LOG_WARN("drop index failed", K(ret), K(ddl_rpc_timeout));
     }
-    LOG_INFO("drop index", K(ret), K(drop_index_sql.ptr()), K(drop_index_arg));
+
   }
   return ret;
 }
@@ -328,7 +328,7 @@ int ObDropIndexTask::cleanup_impl()
     const ObDDLTaskID parent_task_id(tenant_id_, parent_task_id_);
     ObSysDDLSchedulerUtil::on_ddl_task_finish(parent_task_id, get_task_key(), ret_code_, trace_id_);
   }
-  LOG_INFO("clean task finished", K(ret), K(*this));
+
   return ret;
 }
 
@@ -397,7 +397,7 @@ int ObDropIndexTask::process()
     ddl_tracing_.release_span_hierarchy();
     if (OB_FAIL(ret)) {
       add_event_info("drop index task process fail");
-      LOG_INFO("drop index task process fail", "ddl_event_info", ObDDLEventInfo());
+
     }
   }
   return ret;
@@ -421,7 +421,7 @@ int ObDropIndexTask::check_switch_succ()
   } else if (OB_FAIL(ObDDLUtil::check_tenant_status_normal(GCTX.sql_proxy_, tenant_id_))) {
     if (OB_TENANT_HAS_BEEN_DROPPED == ret || OB_STANDBY_READ_ONLY == ret) {
       need_retry_ = false;
-      LOG_INFO("tenant status is abnormal, exit anyway", K(ret), K(tenant_id_));
+
     } else {
       LOG_WARN("check tenant status failed", K(ret), K(tenant_id_));
     }

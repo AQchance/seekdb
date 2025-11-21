@@ -530,7 +530,7 @@ int ObLobTabletDmlHelper::register_ext_info_commit_cb(
   } else if (OB_FAIL(data_lob_disk_locator.check_for_dml(index_lob_disk_locator))) {
     LOG_WARN("check_for_dml fail", K(ret), K(data_lob_disk_locator), K(index_lob_disk_locator));
   } else if (! index_lob_disk_locator.is_ext_info_log()) {
-    LOG_DEBUG("not ext info log", K(index_lob_disk_locator));
+
   } else if (OB_FALSE_IT(seq_no_st = index_lob_disk_locator.get_seq_no_st())) {
   } else if (OB_FALSE_IT(seq_no_cnt = index_lob_disk_locator.get_seq_no_cnt())) {
   } else if (OB_FAIL(guard.write_auth(run_ctx.store_ctx_))) {

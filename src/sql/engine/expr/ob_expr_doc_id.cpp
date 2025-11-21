@@ -84,7 +84,7 @@ int ObExprDocID::cg_expr(
   ObTabletID tablet_id;
   if (raw_ctx.arg_cnt_ == 0) {
     //expr_datum.set_null();
-    LOG_TRACE("succeed to genearte empty document id", KP(&raw_ctx), K(raw_ctx), K(expr_datum), K(eval_ctx), K(lbt()));
+
   } else if (OB_UNLIKELY(1 != raw_ctx.arg_cnt_) || OB_ISNULL(raw_ctx.args_)) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid arguments", K(ret), K(raw_ctx), KP(raw_ctx.args_));
@@ -112,7 +112,7 @@ int ObExprDocID::cg_expr(
       if (OB_SUCC(ret)) {
         ObDocId *doc_id = new (buf) ObDocId(tablet_id.id(), seq_id);
         expr_datum.set_string(doc_id->get_string());
-        LOG_TRACE("succeed to genearte document id", K(tablet_id), K(seq_id), K(eval_ctx.exec_ctx_.is_ddl_idempotent_autoinc()), K(lbt()));
+
       }
     }
   }

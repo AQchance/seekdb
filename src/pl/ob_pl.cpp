@@ -558,7 +558,7 @@ int ObPLContext::init(ObSQLSessionInfo &session_info,
         session_info.get_tx_desc()->in_tx_or_has_extra_state() && !in_nested_sql_ctrl()) {
       OZ (ObSqlTransControl::create_savepoint(ctx, PL_IMPLICIT_SAVEPOINT));
       OX (has_implicit_savepoint_ = true);
-      LOG_DEBUG("create pl implicit savepoint for mysql", K(ret), K(PL_IMPLICIT_SAVEPOINT));
+
     }
     if (is_function_or_trigger && session_info.get_local_autocommit()) {
       OX (reset_autocommit_ = true);
@@ -592,7 +592,7 @@ int ObPLContext::init(ObSQLSessionInfo &session_info,
         session_info.get_tx_desc()->in_tx_or_has_extra_state() && !in_nested_sql_ctrl()) {
       OZ (ObSqlTransControl::create_savepoint(ctx, PL_IMPLICIT_SAVEPOINT));
       OX (has_implicit_savepoint_ = true);
-      LOG_DEBUG("create pl implicit savepoint for mysql", K(ret), K(PL_IMPLICIT_SAVEPOINT));
+
     }
     if (is_function_or_trigger && session_info.get_local_autocommit()) {
       OX (reset_autocommit_ = true);
@@ -699,7 +699,7 @@ int ObPLContext::implicit_end_trans(
     ObSqlTransControl::reset_session_tx_state(&session_info, true);
     ctx.set_need_disconnect(false);
   }
-  LOG_TRACE("pl.implicit_end_trans", K(is_async), K(session_info), K(can_async), K(is_rollback));
+
   return ret;
 }
 
@@ -783,7 +783,7 @@ void ObPLContext::destory(
                   (tmp_ret = ObSqlTransControl::rollback_savepoint(ctx, PL_IMPLICIT_SAVEPOINT))) {
               LOG_WARN("failed to rollback current pl to implicit savepoint", K(ret), K(tmp_ret));
             }
-            LOG_DEBUG("rollback pl to implicit savepoint", K(ret), K(tmp_ret));
+
           } else if (lib::is_mysql_mode()) {
             session_info.set_pl_can_retry(false);
           }
@@ -821,7 +821,7 @@ void ObPLContext::destory(
               // Do not overwrite the original error code
               LOG_WARN("failed to explicit end trans", K(ret), K(tmp_ret));
             } else {
-              LOG_DEBUG("explicit end trans success!", K(ret));
+
             }
           } else { // Uncertain if the upper layer will requeue for retry, so failure must take the synchronous submission path
             // always call commit/rollback txn in order to reset txn because of autocommit
@@ -2509,7 +2509,7 @@ int ObPL::get_pl_function(ObExecContext &ctx,
     } else if (FALSE_IT(routine = static_cast<ObPLFunction*>(cacheobj_guard.get_cache_obj()))) {
       // do nothing
     } else if (OB_NOT_NULL(routine)) {
-      LOG_DEBUG("get pl function from plan cache success", KPC(routine));
+
     }
     if (OB_SUCC(ret) && OB_ISNULL(routine)) {  // not in cache, compile it...
       bool need_update_schema = false;
@@ -2599,7 +2599,7 @@ int ObPL::add_pl_lib_cache(ObPLFunction *pl_func, ObPLCacheCtx &pc_ctx)
       }
     }
   } else {
-    LOG_INFO("add pl function to plan cache success", K(pc_ctx.key_));
+
   }
   return ret;
 }
@@ -2767,7 +2767,7 @@ int ObPL::check_trigger_arg(ParamStore &params, const ObPLFunction &func, ObPLCo
         }
       }
     }
-    LOG_DEBUG("check trigger routine arg end", K(ret), K(func), K(params));
+
   }
   return ret;
 }
@@ -3060,7 +3060,7 @@ int ObPLExecState::final(int ret)
           ObSQLSessionInfo *session = ctx_.exec_ctx_->get_my_session();
           tmp_ret = session->close_cursor(cursor->get_id());
           ret = OB_SUCCESS == ret ? tmp_ret : ret;
-          LOG_INFO("close session cursor after pl exec.", K(ret), K(tmp_ret), K(cursor->get_id()));
+
         } else if (OB_FAIL(ret)) {
           // The function ends here, we still need to close the cursor, because if there is an exception, the close cursor in the block end will not be reached, so we need to close it here as well
           // Why might this be null here
@@ -3241,7 +3241,7 @@ int ObPLExecState::defend_stored_routine_change(const ObObjParam &actual_param, 
               || PL_REF_CURSOR_TYPE == actual_param.get_meta().get_extend_type() /* also refcursor */
               || PL_CURSOR_TYPE == actual_param.get_meta().get_extend_type()     /* cursor */)
              && formal_param_type.is_cursor_type()) {
-    LOG_TRACE("skip check for ref cursor type", K(actual_param), K(formal_param_type));
+
   } else {  // user defined type
     uint64_t actual_udt_id = OB_INVALID_ID;
     uint64_t formal_udt_id = OB_INVALID_ID;
@@ -4338,7 +4338,7 @@ int ObPLExecState::execute()
     if (top_call_
         && ctx_.exec_ctx_->get_my_session()->is_track_session_info()
         && ctx_.exec_ctx_->get_my_session()->is_package_state_changed()) {
-      LOG_DEBUG("++++++++ add changed package info to session! +++++++++++");
+
       int tmp_ret = ctx_.exec_ctx_->get_my_session()->add_changed_package_info(*ctx_.exec_ctx_);
       if (tmp_ret != OB_SUCCESS) {
         ret = OB_SUCCESS == ret ? tmp_ret : ret;
@@ -4591,7 +4591,7 @@ bool ObPLFunction::should_init_as_session_cursor()
       }
     }
   }
-  LOG_DEBUG("check external session cursor", K(b_ret));
+
 
   return b_ret;
 }
@@ -4826,7 +4826,7 @@ int ObPLConcurrentGuard::set_concurrent_num(ObPLFunction &routine, ObExecContext
         pl_object = static_cast<ObPLCacheObject*>(package->get_cache_obj());
       } else {
         // do not set pl_object and ignore error
-        LOG_TRACE("Can not get cached package obj!", K(tmp_ret), K(package));
+
       }
     }
     OX (inner_obj_ = pl_object);

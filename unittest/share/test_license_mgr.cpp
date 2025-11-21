@@ -148,7 +148,7 @@ public:
   
   virtual void SetUp() override
   {
-    LOG_INFO("set up");
+
     license_mgr_ = OB_NEW(ObLicenseMgr, "TestLicense");
     ASSERT_TRUE(OB_NOT_NULL(license_mgr_));
     license_mgr_->initialized_ = true;
@@ -160,7 +160,7 @@ public:
 
   virtual void TearDown() override
   {
-    LOG_INFO("tear down");
+
     if (OB_NOT_NULL(license_mgr_)) {
       OB_DELETE(ObLicenseMgr, "TestLicense", license_mgr_);
     }
@@ -175,7 +175,7 @@ TEST_F(TestLicense, DecryptLicense)
   ObString license_str;
   ASSERT_EQ(license_mgr_->decrypt_license(allocator, TEST_ENCRYPTED_LICENSE, license_str),
             OB_SUCCESS);
-  LOG_INFO("decrpted license_str is ", K(license_str));
+
   ASSERT_TRUE(license_str == TEST_DECRYPTED_LICENSE);
   ASSERT_EQ(license_mgr_->decrypt_license(allocator, INCORRECT_ENCRYPTED_LICENSE, license_str),
             OB_INVALID_LICENSE);

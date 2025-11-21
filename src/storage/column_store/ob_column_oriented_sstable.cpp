@@ -136,7 +136,7 @@ int ObSSTableWrapper::get_merge_row_cnt(const ObTableIterParam &iter_param, int6
         row_cnt = data_row_count;
       }
     }
-    LOG_INFO("get ddl merge row cnt", K(ret), K(row_cnt));
+
   }
   return ret;
 }
@@ -413,7 +413,7 @@ int ObCOSSTableV2::serialize(char *buf, const int64_t buf_len, int64_t &pos) con
   } else if (OB_FAIL(cs_meta_.serialize(buf, buf_len, pos))) {
     LOG_WARN("failed to serialize cs meta", K(ret), KP(buf), K(buf_len), K(pos));
   } else {
-    LOG_INFO("succeed to serialize co sstable", K(ret), KPC(this), K(buf_len), K(old_pos), K(pos));
+
   }
   return ret;
 }
@@ -443,7 +443,7 @@ int ObCOSSTableV2::deserialize(
     LOG_WARN("failed to deserialize cs meta", K(ret), KP(buf), K(data_len), K(pos));
   } else {
     valid_for_cs_reading_ = true;
-    LOG_DEBUG("success to deserialize co sstable", K(ret), KPC(this), K(data_len), K(pos), K(old_pos));
+
   }
   return ret;
 }
@@ -468,7 +468,7 @@ int ObCOSSTableV2::serialize_full_table(char *buf, const int64_t buf_len, int64_
   } else if (OB_FAIL(cs_meta_.serialize(buf, buf_len, pos))) {
     LOG_WARN("failed to deserialize cs meta", K(ret), KP(buf), K(buf_len), K(pos));
   } else {
-    LOG_INFO("succeed to serialize co sstable", K(ret), KPC(this), K(buf_len), K(old_pos), K(pos));
+
   }
   return ret;
 }
@@ -774,7 +774,7 @@ int ObCOSSTableV2::cg_scan(
       void* buf = nullptr;                                       \
       if (NULL == (buf = iter_alloc->alloc(sizeof(class)))) {    \
         ret = OB_ALLOCATE_MEMORY_FAILED;                         \
-        STORAGE_LOG(WARN, "Fail to allocate memory", K(ret));    \
+    \
       } else {                                                   \
         ptr = new (buf) class();                                 \
       }                                                          \
@@ -994,7 +994,7 @@ int ObCOSSTableV2::fill_column_ckm_array(
           for (int64_t j = column_cnt - 1; j - 1 >= 0; j--) {
             column_checksums.at(j) = column_checksums.at(j-1);
           }
-          LOG_INFO("ERRSIM EN_CO_SSTABLE_COLUMN_CHECKSUM_ERROR, after errsim", K(tmp_ret), K(column_checksums));
+
         }
       }
 #endif

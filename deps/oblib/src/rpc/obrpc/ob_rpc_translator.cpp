@@ -30,7 +30,7 @@ int ObRpcTranslator::th_init()
   if (OB_FAIL(ObReqTranslator::th_init())) {
     LOG_WARN("init req translator for thread fail", K(ret));
   } else {
-    LOG_INFO("Init thread local success");
+
   }
 
   return ret;

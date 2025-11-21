@@ -62,7 +62,7 @@ int ObLSReservedSnapshotMgr::init(const int64_t tenant_id, ObLS *ls, ObLogHandle
   } else {
     ls_ = ls;
     is_inited_ = true;
-    LOG_INFO("success to init snapshot mgr", K(ret), KP(ls), "ls_id", ls_->get_ls_id(), KP(this));
+
   }
   return ret;
 }
@@ -153,7 +153,7 @@ int ObLSReservedSnapshotMgr::submit_log(
   } else if (OB_FAIL(write_clog(clog_buf, clog_len))) {
     LOG_WARN("fail to submit log", K(ret), "ls_id", ls_->get_ls_id());
   } else {
-    LOG_DEBUG("submit reserved snapshot log success", "ls_id", ls_->get_ls_id(), K(reserved_snapshot));
+
   }
 
   return ret;

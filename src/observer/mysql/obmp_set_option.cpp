@@ -46,7 +46,7 @@ int ObMPSetOption::deserialize()
 
 int ObMPSetOption::process()
 {
-  LOG_TRACE("set option", K_(set_opt));
+
   int ret = common::OB_SUCCESS;
   bool need_disconnect = true;
   ObSQLSessionInfo *session = NULL;

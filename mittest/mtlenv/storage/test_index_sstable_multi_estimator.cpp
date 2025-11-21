@@ -137,7 +137,7 @@ void TestMultiVersionIndexSSTableEstimator::get_part_est(ObSSTable &sstable, con
   ObIndexSSTableEstimateContext esti_ctx(tablet_handle_, context_.query_flag_);
   ObIndexBlockScanEstimator estimator(esti_ctx);
   ASSERT_EQ(OB_SUCCESS, estimator.estimate_row_count(sstable, range, part_est));
-  STORAGE_LOG(INFO, "part_est", K(part_est));
+
 }
 
 TEST_F(TestMultiVersionIndexSSTableEstimator, estimate_minor_sstable_whole_range)

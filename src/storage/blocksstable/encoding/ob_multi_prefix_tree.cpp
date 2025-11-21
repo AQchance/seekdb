@@ -276,7 +276,7 @@ int ObMultiPrefixTree::build_tree(
           suitable = false;
         }
       }
-      LOG_DEBUG("debug, multi-prefix tree", K(level), K(stop), K(suitable));
+
     }
 
     if (OB_FAIL(ret) || !suitable) {
@@ -320,7 +320,7 @@ int ObMultiPrefixTree::traverse_by_level(const int64_t level, bool &stop,
 
         if (OB_SUCC(ret)) {
           if (0 == ht_.size()) {
-            LOG_DEBUG("size of hashtable is 0", K(ret), K(level));
+
           } else if (1 == ht_.size() && 0 == tnode.cells_.get_size()) {
             // contains the same step_str, update current tree node
             tnode.length_ += move_step;
@@ -362,7 +362,7 @@ int ObMultiPrefixTree::add_node(TreeNode &par_tnode, CellList &cells, const int6
     LOG_WARN("not init", K(ret));
   } else if (OB_UNLIKELY(MAX_TNODE_CNT == tnode_cnt_)) {
     ret = OB_DATA_OUT_OF_RANGE;
-    LOG_DEBUG("tnode out of range", K(ret), K_(tnode_cnt));
+
   } else {
     // add a new tnode
     TreeNode &new_tnode = tree_nodes_[tnode_cnt_];
@@ -409,13 +409,13 @@ int ObMultiPrefixTree::complete_build(int64_t &prefix_count,
           if (tnode.length_ < last_prefix_length) {
             last_prefix_length = tnode.length_;
           }
-          LOG_DEBUG("leaf tnode", K(tnode));
+
         }
       } else if (NULL != tnode.children_->prefix_) {
         // parent node choose the prefix of its first child as the prefix
         tnode.prefix_ = tnode.children_->prefix_;
         tnode.ref_ = tnode.children_->ref_;
-        LOG_DEBUG("inner tnode", K(tnode));
+
       } else {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("child's prefix is NULL, unexpected", K(ret), K(tnode),
@@ -438,7 +438,7 @@ int ObMultiPrefixTree::complete_build(int64_t &prefix_count,
               find_prefix(prefix->ptr_ + tnode.length_, cnode->datum_->ptr_ + tnode.length_,
               MIN(prefix->len_, cnode->len_) - tnode.length_);
           cnode->len_ = tnode.length_ + addition_len;
-          LOG_DEBUG("cnode", K(*cnode));
+
           cnode = cnode->get_next();
         }
       }

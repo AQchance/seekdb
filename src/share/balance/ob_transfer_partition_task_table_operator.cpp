@@ -196,7 +196,7 @@ int ObTransferPartitionTaskTableOperator::insert_new_task(
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("expected single row", KR(ret), K(affected_rows));
     }
-    LOG_INFO("insert new task", KR(ret), K(new_task));
+
   }
   return ret;
 }

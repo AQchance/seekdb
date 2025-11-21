@@ -136,7 +136,7 @@ int test_knn_search(obvsag::VectorIndexPtr& index,
     std::time_t time_cost = end_timestamp - start_timestamp;
     double recall = ((double)hit_cnt)/num_vectors;
     std::cout << "time_cost="<< time_cost << ", hit_cnt=" << hit_cnt << ", num_vectors=" << num_vectors << ", recall=" << recall <<std::endl;
-    LOG_INFO("result: ", K(time_cost), K(hit_cnt), K(num_vectors), K(recall));
+
   }
   return ret;
 }
@@ -627,7 +627,7 @@ public:
     } else {
       ret = OB_ITER_END;
     }
-    LOG_INFO("[Vsag] get des data", K(ret), K(data), K(read_size), K(param.size_), K(param.cur_pos_), K(param.part_size_));
+
     return ret;
   }
 private:

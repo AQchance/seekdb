@@ -159,12 +159,12 @@ int ObDtlChannelLoop::ObDtlChannelLoopProc::process(
       if (OB_ITER_END != ret) {
         LOG_WARN("process message in channel fail", K(ret), K(last_msg_type_));
       } else {
-        LOG_TRACE("channel loop receive ob iter end");
+
       }
     }
   } else if (OB_FAIL(ObDtlLinkedBuffer::deserialize_msg_header(buffer, header))) {
     // Here it might be OB_ITER_END, cannot log WARN.
-    LOG_TRACE("failed to deserialize msg", K(ret), K(&buffer), K(lbt()));
+
   } else {
     last_msg_type_ = header.type_;
     if (proc_map_[header.type_] == nullptr) {
@@ -226,7 +226,7 @@ int ObDtlChannelLoop::process_base(ObIDltChannelLoopPred *pred, int64_t &hinted_
         if (tenant_config.is_valid()) {
           timeout_ = tenant_config->_parallel_server_sleep_time * 1000;
           cond_.wait(wait_key, timeout_);
-          LOG_DEBUG("channel loop polling time", K(timeout_), K(timeout), K(ret));
+
         } else {
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("failed to init tenant config", K(tenant_id_), K(ret));

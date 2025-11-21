@@ -421,7 +421,7 @@ int ObTableApiModifyExecutor::insert_row_to_das(const ObTableInsCtDef &ins_ctdef
                                               stored_row))) {
     LOG_WARN("fail to insert row by dml service", K(ret));
   }
-  LOG_DEBUG("[table api debug] insert:", K(ROWEXPR2STR(eval_ctx_ , ins_ctdef.new_row_)), K(*tablet_loc));
+
   return ret;
 }
 
@@ -773,7 +773,7 @@ int ObTableApiModifyExecutor::delete_upd_old_row_to_das(const ObTableUpdCtDef &u
       LOG_WARN("fail to delete row with das", K(ret));
     }
   }
-  LOG_DEBUG("[table api] delete op debug: ", K(ROWEXPR2STR(eval_ctx_ , upd_ctdef.old_row_)), K(*tablet_loc));
+
   return ret;
 }
 
@@ -822,7 +822,7 @@ int ObTableApiModifyExecutor::insert_upd_new_row_to_das(const ObTableUpdCtDef &u
       LOG_WARN("fail to insert row with das", K(ret));
     }
   }
-  LOG_DEBUG("[table api] debug insert: ", K(ROWEXPR2STR(eval_ctx_ , upd_ctdef.new_row_)), K(*tablet_loc));
+
 
   return ret;
 }

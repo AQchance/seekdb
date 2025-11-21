@@ -52,7 +52,7 @@ __attribute__((constructor)) void init_global_di_container()
     LOG_WARN("failed to init global di container", K(ret));
   } else {
     ObDiagnosticInfoContainer::get_global_di_container()->set_global_container();
-    LOG_INFO("init global di container success");
+
   }
 }
 
@@ -213,7 +213,7 @@ int ObRunningDiagnosticInfoContainer::init(int cpu_cnt)
       }
       if (OB_SUCC(ret)) {
         is_inited_ = true;
-        LOG_INFO("Successfully init running diagnostic info container", K(slot_num));
+
       } else {
         ob_free(buffer_);
         buffer_ = nullptr;
@@ -336,7 +336,7 @@ int ObRunningDiagnosticInfoContainer::get_session_diag_info(
       if (OB_ENTRY_NOT_EXIST != ret) {
         LOG_WARN("failed to get diagnostic info", K(ret));
       } else {
-        LOG_DEBUG("session not exist in current tenant", K(session_id), KPC(this));
+
       }
     }
   }
@@ -496,7 +496,7 @@ int ObDiagnosticInfoContainer::mtl_init(ObDiagnosticInfoContainer *&container)
     } else {
       container->di_allocator_.set_nway(tenant_cpu_count);
       container->di_collector_allocator_.set_nway(tenant_cpu_count);
-      LOG_INFO("mtl init di container success", K(tenant_id), KPC(container));
+
     }
   }
   return ret;
@@ -516,7 +516,7 @@ void ObDiagnosticInfoContainer::mtl_wait(ObDiagnosticInfoContainer *&container)
       }
     }
   }
-  LOG_INFO("success to wait tenant diagnostic info container", KPC(container));
+
 }
 
 void ObDiagnosticInfoContainer::mtl_destroy(ObDiagnosticInfoContainer *&container)
@@ -526,7 +526,7 @@ void ObDiagnosticInfoContainer::mtl_destroy(ObDiagnosticInfoContainer *&containe
     container->~ObDiagnosticInfoContainer();
     ob_free(container);
     container = nullptr;
-    LOG_INFO("mtl destroy di container success", K(LIB_MTL_ID()));
+
   }
 }
 
@@ -565,7 +565,7 @@ void ObDiagnosticInfoContainer::purge_tenant_summary(int64_t tenant_id)
         [tenant_id](const ObDiagnosticKey &key, ObDiagnosticInfoCollector *collector) -> bool {
       bool bret = false;
       if (key.get_tenant_id() == tenant_id) {
-        LOG_INFO("target di collector need to be purged", K(tenant_id), K(key), KPC(collector));
+
         bret = true;
       }
       return bret;
@@ -573,7 +573,7 @@ void ObDiagnosticInfoContainer::purge_tenant_summary(int64_t tenant_id)
     if (OB_FAIL(summarys_.remove_if(fn))) {
       LOG_WARN("failed to remove summary collects", K(ret), K(tenant_id));
     } else {
-      LOG_INFO("success to remove summary collects", K(tenant_id), KPC(this));
+
     }
   }
 }
@@ -601,7 +601,7 @@ int ObDiagnosticInfoContainer::for_each_and_delay_release_ref(
             ret = tmp_ret;
           }
         } else if (OB_FAIL(fn(id, di))) {
-          LOG_DEBUG("faield to exec fn", K(ret));
+
         }
         return ret;
       };

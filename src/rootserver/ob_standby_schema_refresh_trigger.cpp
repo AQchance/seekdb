@@ -149,7 +149,7 @@ int ObStandbySchemaRefreshTrigger::submit_tenant_refresh_schema_task_()
         LOG_WARN("failed to submit_async_refresh_schema_task", KR(ret), K_(tenant_id));
       }
     } else if (REACH_THREAD_TIME_INTERVAL(1 * 1000 * 1000)) {
-      LOG_INFO("standby tenant can not refresh schema", K(schema_status));
+
     }
   }
   return ret;

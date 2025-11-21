@@ -103,7 +103,7 @@ int TestParallelSortThread::init(const int64_t task_id, const int64_t task_cnt, 
   int ret = OB_SUCCESS;
   if (task_id < 0 || task_cnt < 0 || NULL == total_items) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(task_id), K(task_cnt), KP(total_items));
+
   } else {
     task_id_ = task_id;
     task_cnt_ = task_cnt;
@@ -168,7 +168,7 @@ void TestParallelSortThread::run(obsys::CThread *thread, void *arg)
   ASSERT_EQ(OB_SUCCESS, ret);
   ret = merge_task_->add_local_sort(opt_sorter_);
   ASSERT_EQ(OB_SUCCESS, ret);
-  STORAGE_LOG(INFO, "add fragment iter", K(task_id_));
+
   SLOGGER.abort();
 }
 
@@ -188,7 +188,7 @@ int TestParallelSortMergeThread::init(const int64_t task_cnt, ObIArray<int64_t> 
   sort_column_indexes_ = sort_column_indexes;
   row_generate_ = row_generate;
   if (OB_FAIL(cond_.init(ObWaitEventIds::DEFAULT_COND_WAIT))) {
-    STORAGE_LOG(WARN, "fail to init condition", K(ret));
+
   }
   return ret;
 }
@@ -198,9 +198,9 @@ int TestParallelSortMergeThread::add_local_sort(
 {
   int ret = OB_SUCCESS;
   cond_.lock();
-  STORAGE_LOG(INFO, "push a task", K(sorters_.count()));
+
   if (OB_FAIL(sorters_.push_back(opt_sorter_))) {
-    STORAGE_LOG(WARN, "fail to push back iterator", K(ret));
+
   } else if (sorters_.count() == task_cnt_) {
     cond_.signal();
   }
@@ -213,11 +213,11 @@ void TestParallelSortMergeThread::run(obsys::CThread *thread, void *arg)
 
   UNUSED(arg);
   int ret = OB_SUCCESS;
-  STORAGE_LOG(INFO, "merge thread start");
+
   cond_.lock();
   cond_.wait();
   cond_.unlock();
-  STORAGE_LOG(INFO, "merge thread working");
+
   ObExternalSort<ObStoreRow, ObStoreRowComparer> merge_sorter;
   ObSortTempMacroBlockWriter writer;
   ObSortTempMacroBlockReader reader;
@@ -243,7 +243,7 @@ void TestParallelSortMergeThread::run(obsys::CThread *thread, void *arg)
   }
   ret = merge_sorter.do_sort(true);
   ASSERT_EQ(OB_SUCCESS, ret);
-  STORAGE_LOG(INFO, "sort complete");
+
   while(OB_SUCC(ret)) {
     ret = merge_sorter.get_next_item(item);
     if (OB_SUCC(ret)) {
@@ -254,7 +254,7 @@ void TestParallelSortMergeThread::run(obsys::CThread *thread, void *arg)
   ASSERT_EQ(OB_ITER_END, ret);
   SLOGGER.abort();
   if (OB_FAIL(ObTenantManager::get_instance().print_tenant_usage())) {
-    STORAGE_LOG(WARN, "fail to print tenant useage");
+
   }
 }
 
@@ -471,7 +471,7 @@ TEST_F(TestExternalSort, perf_external_sort)
     }
   }
   ASSERT_EQ(OB_ITER_END, ret);
-  STORAGE_LOG(INFO, "data size", K(data_size));
+
   SLOGGER.abort();
   ObMacroFileManager::get_instance().destroy();
 }

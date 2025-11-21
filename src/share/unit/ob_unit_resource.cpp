@@ -519,7 +519,7 @@ int ObUnitResource::init_and_check_valid_for_unit(const ObUnitResource &user_spe
     ret = init_and_check_net_bandwidth_(user_spec);
   }
 
-  LOG_INFO("init unit resource by user spec and check valid", KR(ret), K(user_spec), KPC(this));
+
 
   if (OB_FAIL(ret)) {
     // reset self after fail
@@ -777,7 +777,7 @@ int ObUnitResource::update_and_check_valid_for_unit(const ObUnitResource &user_s
     ret = update_and_check_net_bandwidth_(user_spec);
   }
 
-  LOG_INFO("update unit resource by user spec and check valid for unit", KR(ret), K(user_spec), KPC(this));
+
 
   if (OB_FAIL(ret)) {
     // reset self after fail
@@ -1062,7 +1062,7 @@ int ObUnitResource::gen_sys_tenant_default_unit_resource(const bool is_hidden_sy
     LOG_ERROR("sys tenant default unit resource is not valid for unit", KR(ret), K(is_hidden_sys), KPC(this));
   }
 
-  LOG_INFO("gen_sys_tenant_default_unit_resource", KR(ret), K(is_hidden_sys), KPC(this), K(lbt()));
+
 
   if (OB_FAIL(ret)) {
     reset();

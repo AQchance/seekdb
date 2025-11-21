@@ -52,7 +52,7 @@ int ObExprPLGetCursorAttr::ExtraInfo::init_pl_cursor_info(ObIAllocator *allocato
     extra_info->pl_cursor_info_ = cursor_info;
     if (OB_SUCC(ret)) {
       rt_expr.extra_info_ = extra_info;
-      LOG_DEBUG("succ init_cursor_info", K(cursor_info));
+
     }
   }
   return ret;

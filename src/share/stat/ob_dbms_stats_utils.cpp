@@ -188,7 +188,7 @@ int ObDbmsStatsUtils::cast_number_to_double(const number::ObNumber &src_val, dou
   } else if (OB_FAIL(dest_obj.get_double(dst_val))) {
     LOG_WARN("failed to get double", K(ret));
   } else {
-    LOG_TRACE("succeed to cast number to double", K(src_val), K(dst_val));
+
   }
   return ret;
 }
@@ -467,7 +467,7 @@ int ObDbmsStatsUtils::split_batch_write(sqlclient::ObISQLConnection *conn,
   int64_t idx_col_stat = 0;
   //avoid the write stat sql is too long, we split write table stats and column stats:
   //  write 2000 tables and 2000 columns every time.
-  LOG_DEBUG("dbms stats write stats", K(table_stats), K(column_stats));
+
   int64_t current_time = ObTimeUtility::current_time();
   if (OB_ISNULL(session_info)) {
     ret = OB_ERR_UNEXPECTED;
@@ -631,7 +631,7 @@ int ObDbmsStatsUtils::get_dst_partition_by_tablet_id(sql::ObExecContext &ctx,
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get unexpected null", K(ret), K(tablet_id), K(partition_infos));
   } else {
-    LOG_TRACE("succeed to get dst partition by tablet id", K(tablet_id), K(partition_infos), K(partition_id));
+
   }
   return ret;
 }
@@ -700,7 +700,7 @@ int ObDbmsStatsUtils::merge_tab_stats(const ObTableStatParam &param,
       }
     }
   }
-  LOG_TRACE("merge mtab stats", K(old_tab_stats), K(dst_tab_stats));
+
 
   return ret;
 }
@@ -750,7 +750,7 @@ int ObDbmsStatsUtils::merge_col_stats(const ObTableStatParam &param,
       }
     }
   }
-  LOG_TRACE("merge col stats", K(old_col_stats), K(dst_col_stats));
+
   return ret;
 }
 
@@ -823,7 +823,7 @@ int ObDbmsStatsUtils::get_part_infos(const ObTableSchema &table_schema,
           LOG_WARN("failed to get subpart info", K(ret));
         } else {
           part_infos.at(part_infos.count() - 1).subpart_cnt_ = subpart_infos.count() - origin_cnt;
-          LOG_TRACE("succeed to get table part infos", K(part_info));
+
         }
       }
     }
@@ -940,7 +940,7 @@ int ObDbmsStatsUtils::truncate_string_for_opt_stats(const ObObj *old_obj,
   if (OB_SUCC(ret) && !is_truncated) {
     new_obj = const_cast<ObObj *>(old_obj);
   }
-  LOG_TRACE("Succeed to truncate string obj for opt stats", KPC(old_obj), KPC(new_obj), K(is_truncated));
+
   return ret;
 }
 
@@ -963,7 +963,7 @@ int ObDbmsStatsUtils::truncate_string_for_opt_stats(ObObj &obj, ObIAllocator &al
         LOG_WARN("failed to convert str to lob", K(ret));
       } else {
         obj.set_meta_type(ori_meta);
-        LOG_TRACE("Succeed to truncate text obj for opt stats", K(ret), K(obj), K(str));
+
       }
     } else {
       ObString str = obj.get_string();
@@ -977,7 +977,7 @@ int ObDbmsStatsUtils::truncate_string_for_opt_stats(ObObj &obj, ObIAllocator &al
         str.assign_ptr(str.ptr(), static_cast<int32_t>(truncated_str_len));
         obj.set_common_value(str);
       }
-      LOG_TRACE("Succeed to truncate string obj for opt stats", K(ret), K(obj), K(str), K(truncated_str_len));
+
     }
   }
   return ret;
@@ -993,7 +993,7 @@ int64_t ObDbmsStatsUtils::get_truncated_str_len(const ObString &str, const ObCol
   } else {//get max truncate str len
     truncated_str_len = ObCharset::charpos(cs_type, str.ptr(), str.length(), OPT_STATS_MAX_VALUE_CHAR_LEN);
   }
-  LOG_TRACE("Succeed to get truncated str len", K(str), K(cs_type), K(truncated_str_len));
+
   return truncated_str_len;
 }
 
@@ -1372,7 +1372,7 @@ int ObDbmsStatsUtils::check_all_cols_range_skew(const ObIArray<ObColumnStatParam
                                                                is_even_dist))) {
                   LOG_WARN("failed to check range skew", K(ret));
                 } else if (is_even_dist) {//Evenly distributed, no need to build a histogram.
-                  LOG_TRACE("check hist range skew is evenly distributed", K(hist.get_type()));
+
                   hist.reset();
                 }
               }
@@ -1820,7 +1820,7 @@ int ObDbmsStatsUtils::fetch_need_cancel_async_gather_stats_task(ObIAllocator &al
         }
       }
     }
-    LOG_TRACE("failed to fetch need cancel async gather stats task", K(task_ids));
+
   }
   return ret;
 }

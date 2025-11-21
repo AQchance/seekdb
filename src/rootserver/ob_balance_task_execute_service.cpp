@@ -336,7 +336,7 @@ int ObBalanceTaskExecuteService::execute_task_()
       ObTimeoutCtx timeout_ctx;
       int64_t balance_task_execute_timeout = GCONF.internal_sql_execute_timeout + 100 * 1000 * 1000L; // +100s
       if (EN_SET_TASK_EXECUTE_TIMEOUT) {
-        LOG_INFO("set task execute timout", K(balance_task_execute_timeout));
+
         balance_task_execute_timeout = 10 * 1000 * 1000;
       } 
       DEBUG_SYNC(BEFORE_EXECUTE_BALANCE_TASK);
@@ -806,7 +806,7 @@ int ObBalanceTaskExecuteService::wait_can_create_new_ls_(share::SCN &create_scn)
     const int64_t TIMEOUT = GCONF.rpc_timeout;
     //for test
     if (EN_SET_MAX_OFFLINE_SCN) {
-      LOG_INFO("set offline scn to max", K(offline_scn));
+
       offline_scn.set_max();
     }
     do {
@@ -884,7 +884,7 @@ int ObBalanceTaskExecuteService::get_max_offline_scn_(share::SCN &offline_scn, i
             }
           } else if (result->get_offline_scn() > offline_scn) {
             offline_scn = result->get_offline_scn();
-            LOG_INFO("get offline scn", K(offline_scn), KPC(result));
+
           }
         }
       }//end for

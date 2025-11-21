@@ -80,7 +80,7 @@ int batch_create_schema_local(uint64_t tenant_id,
   }
 
   const int64_t now = ObTimeUtility::current_time();
-  LOG_INFO("batch create schema finish", K(ret), "table_count", end - begin, "total_time_used", now - begin_time);
+
   //BOOTSTRAP_CHECK_SUCCESS();
   return ret;
 }
@@ -107,7 +107,7 @@ int parallel_create_table_schema(uint64_t tenant_id, ObDDLService &ddl_service, 
             if (retry_times <= MAX_RETRY_TIMES) {
               retry_times++;
               ret = OB_SUCCESS;
-              LOG_INFO("schema error while create table, need retry", KR(ret), K(retry_times));
+
               usleep(1 * 1000 * 1000L); // 1s
             }
           } else {
@@ -115,7 +115,7 @@ int parallel_create_table_schema(uint64_t tenant_id, ObDDLService &ddl_service, 
             break;
           }
         }
-        LOG_INFO("worker job", K(begin), K(i), K(i-begin), K(ret));
+
       });
       ths.push_back(std::move(th));
       if (OB_SUCC(ret)) {
@@ -138,7 +138,7 @@ int ObBootstrap::create_all_schema(ObDDLService &ddl_service,
 {
   int ret = OB_SUCCESS;
   const int64_t begin_time = ObTimeUtility::current_time();
-  LOG_INFO("start create all schemas", "table count", table_schemas.count());
+
   if (table_schemas.count() <= 0) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("table_schemas is empty", K(table_schemas), K(ret));
@@ -207,7 +207,7 @@ int ObSchemaServiceSQLImpl::gen_new_schema_version(
     LOG_WARN("fail to gen schema version", KR(ret), K(tenant_id), K(refreshed_schema_version));
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("new schema version", K(tenant_id), K(schema_version));
+
   }
   return ret;
 }

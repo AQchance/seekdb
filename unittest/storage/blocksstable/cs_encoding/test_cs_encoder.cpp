@@ -74,7 +74,7 @@ TEST_F(TestCSEncoder, test_integer_encoder)
 
   ASSERT_EQ(sizeof(uint64_t) * row_cnt, encoder.ctx_.estimate_block_size_);
   ASSERT_EQ(buf_size, encoder.ctx_.real_block_size_ + encoder.all_headers_size_);
-  LOG_INFO("print ObMicroBlockEncodingCtx", K_(ctx));
+
 
   ObIntegerColumnEncoder *int_col_encoder = reinterpret_cast<ObIntegerColumnEncoder *>(e);
   ASSERT_EQ(true, int_col_encoder->enc_ctx_.meta_.is_raw_encoding());
@@ -316,7 +316,7 @@ TEST_F(TestCSEncoder, test_string_encoder)
 
   ASSERT_EQ((8 + 64 + 8) * row_cnt + 16, encoder.ctx_.estimate_block_size_);
   ASSERT_EQ(buf_size, encoder.ctx_.real_block_size_ + encoder.all_headers_size_);
-  LOG_INFO("print ObMicroBlockEncodingCtx", K_(ctx));
+
 
   ObStringColumnEncoder *str_col_encoder = reinterpret_cast<ObStringColumnEncoder *>(e);
   ASSERT_EQ(true, str_col_encoder->enc_ctx_.meta_.is_fixed_len_string());
@@ -348,7 +348,7 @@ TEST_F(TestCSEncoder, test_string_encoder)
   ASSERT_EQ(sum_len, e->ctx_->var_data_size_);
   ASSERT_EQ(sum_len, e->ctx_->dict_var_data_size_);
   ASSERT_EQ(false, e->get_column_header().has_null_bitmap());
-  LOG_INFO("print ObMicroBlockEncodingCtx", K_(ctx));
+
 
   str_col_encoder = reinterpret_cast<ObStringColumnEncoder *>(e);
   ASSERT_EQ(false, str_col_encoder->enc_ctx_.meta_.get_fixed_string_len());
@@ -373,7 +373,7 @@ TEST_F(TestCSEncoder, test_string_encoder)
   ASSERT_EQ(e->get_type(), ObCSColumnHeader::Type::STRING);
   ASSERT_EQ(-1, e->ctx_->fix_data_size_);
   ASSERT_EQ(true, e->get_column_header().has_null_bitmap());
-  LOG_INFO("print ObMicroBlockEncodingCtx", K_(ctx));
+
 
   str_col_encoder = reinterpret_cast<ObStringColumnEncoder *>(e);
   ASSERT_EQ(false, str_col_encoder->enc_ctx_.meta_.is_fixed_len_string());
@@ -393,7 +393,7 @@ TEST_F(TestCSEncoder, test_string_encoder)
   ASSERT_EQ(e->get_type(), ObCSColumnHeader::Type::STRING);
   ASSERT_EQ(-1, e->ctx_->fix_data_size_);
   ASSERT_EQ(false, e->get_column_header().has_null_bitmap());
-  LOG_INFO("print ObMicroBlockEncodingCtx", K_(ctx));
+
 
   str_col_encoder = reinterpret_cast<ObStringColumnEncoder *>(e);
   ASSERT_EQ(false, str_col_encoder->enc_ctx_.meta_.is_fixed_len_string());
@@ -413,7 +413,7 @@ TEST_F(TestCSEncoder, test_string_encoder)
   ASSERT_EQ(e->get_type(), ObCSColumnHeader::Type::STRING);
   ASSERT_EQ(0, e->ctx_->fix_data_size_);
   ASSERT_EQ(false, e->get_column_header().has_null_bitmap());
-  LOG_INFO("print ObMicroBlockEncodingCtx", K_(ctx));
+
 
   str_col_encoder = reinterpret_cast<ObStringColumnEncoder *>(e);
   ASSERT_EQ(true, str_col_encoder->enc_ctx_.meta_.is_fixed_len_string());
@@ -438,7 +438,7 @@ TEST_F(TestCSEncoder, test_string_encoder)
   ASSERT_EQ(e->get_type(), ObCSColumnHeader::Type::STRING);
   ASSERT_EQ(0, e->ctx_->fix_data_size_);
   ASSERT_EQ(true, e->get_column_header().has_null_bitmap());
-  LOG_INFO("print ObMicroBlockEncodingCtx", K_(ctx));
+
 
   str_col_encoder = reinterpret_cast<ObStringColumnEncoder *>(e);
   ASSERT_EQ(true, str_col_encoder->enc_ctx_.meta_.is_fixed_len_string());
@@ -508,7 +508,7 @@ TEST_F(TestCSEncoder, test_dict_encoder)
   ASSERT_EQ(e->get_type(), ObCSColumnHeader::Type::STR_DICT);
   ASSERT_EQ(-1, e->ctx_->fix_data_size_);
   ASSERT_EQ(false, e->get_column_header().has_null_bitmap());
-  LOG_INFO("print ObMicroBlockEncodingCtx", K_(ctx));
+
   ObStrDictColumnEncoder *str_dict_encoder = reinterpret_cast<ObStrDictColumnEncoder *>(e);
   ASSERT_EQ(false, str_dict_encoder->string_dict_enc_ctx_.meta_.is_fixed_len_string());
   ASSERT_EQ(false, str_dict_encoder->string_dict_enc_ctx_.meta_.is_use_zero_len_as_null());

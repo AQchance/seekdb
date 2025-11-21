@@ -272,7 +272,7 @@ int Parser::parse_value(const char *&begin, const char *end, Value *&value)
       default:
         ret = OB_ERR_PARSER_SYNTAX;
         // no need to print warn log, the caller will descide wether it is valid
-        LOG_INFO("invalid token type, maybe it is valid empty json type", K_(cur_token_.type), K(ret));
+
         break;
     }
   }
@@ -809,7 +809,7 @@ void RegexFilter::register_regex(const char *pattern)
       LOG_ERROR("push back to regex list fail", K(ret));
       regfree(&regex);
     } else {
-      LOG_INFO("register regex pattern succ", KCSTRING(pattern));
+
     }
   } else {}
 }

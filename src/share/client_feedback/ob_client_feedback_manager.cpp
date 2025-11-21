@@ -46,7 +46,7 @@ int ObFeedbackManager::deserialize(char *buf, const int64_t len, int64_t &pos)
       if (!is_valid_fb_element_type(type)) {
         int64_t struct_len = 0;
         OB_FB_DECODE_INT(struct_len, int64_t);
-        LOG_INFO("unrecoginse type", K(type), K(struct_len));
+
         if (OB_SUCC(ret)) {
           pos += struct_len;
         }

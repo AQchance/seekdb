@@ -327,7 +327,7 @@ int ObTabletCreator::add_create_tablet_arg(const ObTabletCreatorArg &arg)
     } else if (OB_FAIL(args_map_.set_refactored(arg.ls_key_, batch_arg, 0/*not overwrite*/))) {
       LOG_WARN("fail to set refactored", KR(ret), K(arg));
     } else {
-      LOG_INFO("new log stream", "ls_key", arg.ls_key_);
+
     }
   } else {
     LOG_WARN("failed to get batch arg", KR(ret), K(arg));
@@ -335,7 +335,7 @@ int ObTabletCreator::add_create_tablet_arg(const ObTabletCreatorArg &arg)
 
   if (OB_FAIL(ret)) {
   } else if (batch_arg->batch_arg_.get_serialize_size() > BATCH_ARG_SIZE) {
-    LOG_INFO("batch arg is more than 1M", KR(ret), K(batch_arg->batch_arg_.tablets_.count()), K(batch_arg->batch_arg_));
+
     void *arg_buf = allocator_.alloc(sizeof(ObBatchCreateTabletHelper));
     ObBatchCreateTabletHelper *new_arg = NULL;
     if (OB_ISNULL(arg_buf)) {
@@ -435,7 +435,7 @@ int ObTabletCreator::execute()
               } else if (OB_FAIL(conn->register_multi_data_source(tenant_id_, iter->first,
                                  transaction::ObTxDataSourceType::CREATE_TABLET_NEW_MDS, buf, buf_len))) {
                 if (need_retry(ret)) {
-                  LOG_INFO("fail to register_tx_data, try again", KR(ret), K_(tenant_id), K(batch_arg->batch_arg_));
+
                   ob_usleep(SLEEP_INTERVAL);
                 } else {
                   LOG_WARN("fail to register_tx_data", KR(ret), K(batch_arg->batch_arg_), K(buf), K(buf_len));

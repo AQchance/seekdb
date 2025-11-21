@@ -131,7 +131,7 @@ int ObSequenceDDLProxy::inner_create_sequence(
                 seq_schema, &trans, ddl_stmt_str, need_sync_seq_val ? &old_sequence_id : nullptr))) {
       LOG_WARN("insert sequence info failed", K(seq_schema.get_sequence_name()), K(ret));
     } else {
-      LOG_INFO("create sequence", K(lbt()), K(seq_schema));
+
     }
   }
   return ret;
@@ -212,7 +212,7 @@ int ObSequenceDDLProxy::alter_sequence(
             false, &trans, alter_start_with, need_clean_cache, need_write_back, ddl_stmt_str))) {
         LOG_WARN("alter sequence info failed", K(seq_schema.get_sequence_name()), K(ret));
       } else {
-        LOG_INFO("alter sequence", K(lbt()), K(seq_schema));
+
       }
     }
   }
@@ -270,7 +270,7 @@ int ObSequenceDDLProxy::drop_sequence(
               seq_schema, new_schema_version, &trans, ddl_stmt_str))) {
     LOG_WARN("drop sequence info failed", K(seq_schema.get_sequence_name()), K(ret));
   } else {
-    LOG_INFO("drop sequence", K(lbt()), K(seq_schema));
+
   }
   return ret;
 }
@@ -295,7 +295,7 @@ int ObSequenceDDLProxy::rename_sequence(share::schema::ObSequenceSchema &seq_sch
                 seq_schema, true, &trans, false, false, false, ddl_stmt_str))) {
       LOG_WARN("rename sequence info failed", K(ret), K(seq_schema.get_sequence_name()));
     } else {
-      LOG_INFO("rename sequence", K(lbt()), K(seq_schema));
+
     }
   }
 

@@ -163,7 +163,7 @@ int ObDDLTabletScheduler::init(const uint64_t tenant_id,
         }
         if (OB_SUCC(ret)) {
           if (!is_running_status && is_finished_status) {
-            LOG_INFO("tablet has complemented data", K(ret), K(tenant_id), K(table_id), K(ref_data_table_id), K(tablets.at(i)));
+
           } else {
             common::ObAddr leader_addr;
             share::ObLocationService *location_service = nullptr;
@@ -206,9 +206,9 @@ int ObDDLTabletScheduler::init(const uint64_t tenant_id,
     snapshot_version_ = snapshot_version;
     trace_id_ = trace_id;
     is_inited_ = true;
-    LOG_INFO("success to init", K(ret), K(tenant_id), K(table_id), K(ref_data_table_id), K(task_id), K(parallelism), K(snapshot_version), K(trace_id), K(tablets), K(all_ls_to_tablets_map_.size()), K(running_ls_to_tablets_map_.size()), K(running_task_ls_ids_before_.count()));
+
   } else {
-    LOG_INFO("fail to init", K(ret), K(tenant_id), K(table_id), K(ref_data_table_id), K(task_id), K(parallelism), K(snapshot_version), K(trace_id), K(tablets), K(all_ls_to_tablets_map_.size()), K(running_ls_to_tablets_map_.size()), K(running_task_ls_ids_before_.count()));
+
     destroy();
   }
   return ret;
@@ -305,7 +305,7 @@ int ObDDLTabletScheduler::confirm_batch_tablets_status(const int64_t execution_i
       }
     }
   }
-  LOG_INFO("confirm batch tablets status", K(ret), K(execution_id), K(finish_status), K(ls_id), K(tablets));
+
   return ret;
 }
 
@@ -750,7 +750,7 @@ int ObTabletIdUpdater::operator() (common::hash::HashMapPair<share::ObLSID, ObAr
       }
     }
   }
-  LOG_INFO("remove tablet ids from hash map", K(entry), KP(tablets_));
+
   return ret;
 }
 

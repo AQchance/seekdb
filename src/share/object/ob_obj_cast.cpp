@@ -315,7 +315,7 @@ int check_convert_str_err(const char *str,
     // 3. so here we are sure that both str and endptr are not NULL.
     if (endptr < str + len) {
       ret = OB_ERR_DATA_TRUNCATED; //1265
-      LOG_DEBUG("check_convert_str_err", K(len), K(str - endptr));
+
     }
   }
   return ret;
@@ -490,7 +490,7 @@ int ObNumberConstValue::init(ObIAllocator &allocator)
           LOG_ERROR("fail to call from", K(precision), K(scale), K(tmp_string), K(pos), K(ret));
         } else {
           total_alloc_size += sizeof(uint32_t) * (min_check_num.get_length() + max_check_num.get_length());
-          LOG_DEBUG("succ to build mysql min max check number", K(precision), K(scale), K(tmp_string), K(total_alloc_size), K(min_check_num), K(max_check_num));
+
         }
 
         if (OB_SUCC(ret)) {
@@ -504,7 +504,7 @@ int ObNumberConstValue::init(ObIAllocator &allocator)
             LOG_ERROR("fail to call from", K(precision), K(scale), K(tmp_string), K(pos), K(ret));
           } else {
             total_alloc_size += sizeof(uint32_t) * (min_num.get_length() + max_num.get_length());
-            LOG_DEBUG("succ to build mysql min max number", K(precision), K(scale), K(tmp_string), K(total_alloc_size), K(min_num), K(max_num));
+
           }
         }
       }
@@ -553,7 +553,7 @@ int ObNumberConstValue::init(ObIAllocator &allocator)
           LOG_ERROR("fail to call from", K(precision), K(scale), K(tmp_string), K(ret));
         } else {
           total_alloc_size += sizeof(uint32_t) * (min_check_num.get_length() + max_check_num.get_length());
-          LOG_DEBUG("succ to build min max number", K(precision), K(scale), K(tmp_string), K(total_alloc_size), K(min_check_num), K(max_check_num));
+
         }
       }
     }
@@ -712,7 +712,7 @@ int ObHexUtils::hex(const ObString &text, ObCastCtx &cast_ctx, ObObj &result)
     }
     str_result.assign_ptr(buf, pos);
     result.set_varchar(str_result);
-    LOG_DEBUG("succ to hex", K(text), "length", text.length(), K(str_result));
+
   }
   return ret;
 }
@@ -787,7 +787,7 @@ int ObHexUtils::rawtohex(const ObObj &text, ObCastCtx &cast_ctx, ObObj &result)
             MEMCPY(splice_num_str + sizeof(num_obj.get_number_desc()), num_obj.get_data_ptr(), num_obj.get_number_byte_length());
             str.assign_ptr(static_cast<const char *>(splice_num_str), alloc_len);
           }
-          LOG_DEBUG("succ to int_number", K(ret), K(int_value), "type", num_obj.get_type(), K(nmb), K(str));
+
         }
         break;
       }
@@ -898,7 +898,7 @@ int ObHexUtils::rawtohex(const ObObj &text, ObCastCtx &cast_ctx, ObObj &result)
       }
     }
   }
-  LOG_DEBUG("succ to rawtohex", "type", text.get_type(), K(text), K(result), K(lbt()));
+
   return ret;
 }
 
@@ -936,7 +936,7 @@ int ObHexUtils::hextoraw(const ObObj &text, ObCastCtx &cast_ctx, ObObj &result)
     ret = OB_ERR_INVALID_HEX_NUMBER;
     LOG_WARN("invalid hex number", K(ret), K(text));
   }
-  LOG_DEBUG("succ to hextoraw", "type", text.get_type(), K(text), K(result), K(lbt()));
+
   return ret;
 }
 
@@ -1270,7 +1270,7 @@ static int int_datetime_interval(const ObObjType expect_type, ObObjCastParams &p
     //oracle treate int as day
     int64_t value = in.get_int() * USECS_PER_DAY;
     SET_RES_DATETIME(out);
-    LOG_DEBUG("succ to int_datetime_interval", K(ret), K(in), K(value), K(expect_type));
+
   }
   SET_RES_ACCURACY(DEFAULT_PRECISION_FOR_TEMPORAL, MIN_SCALE_FOR_TEMPORAL, DEFAULT_LENGTH_FOR_TEMPORAL);
   return ret;
@@ -1906,7 +1906,7 @@ static int uint_enum(const ObExpectType &expect_type, ObObjCastParams &params, c
       params.warning_ = OB_ERR_DATA_TRUNCATED;
       ret = OB_SUCCESS;
     }
-    LOG_DEBUG("finish uint_enum", K(ret), K(expect_type), K(in), K(out), KPC(type_infos), K(lbt()));
+
     SET_RES_ENUM(out);
   }
   return ret;
@@ -1940,7 +1940,7 @@ static int uint_set(const ObExpectType &expect_type, ObObjCastParams &params, co
       params.warning_ = OB_ERR_DATA_TRUNCATED;
       ret = OB_SUCCESS;
     }
-    LOG_DEBUG("finish uint_set", K(ret), K(expect_type), K(in), K(out), KPC(type_infos), K(lbt()));
+
     SET_RES_SET(out);
   }
   return ret;
@@ -2204,7 +2204,7 @@ static int float_number(const ObObjType expect_type, ObObjCastParams &params,
     } else {
       out.set_number(expect_type, nmb);
     }
-    LOG_DEBUG("finish float to number", K(ret), K(str), K(length), K(in), K(expect_type), K(nmb), K(out), K(lbt()));
+
   }
   SET_RES_ACCURACY(res_precision, res_scale, DEFAULT_LENGTH_FOR_NUMERIC);
   return ret;
@@ -2356,7 +2356,7 @@ static int float_string(const ObObjType expect_type, ObObjCastParams &params,
       }
     }
     ObString str(sizeof(buf), static_cast<int32_t>(length), buf);
-    LOG_DEBUG("finish float_string", K(ret), K(in), K(expect_type), K(str));
+
     ObObj tmp_out;
     ObString tmp_str;
     if (OB_FAIL(convert_string_collation(str, ObCharset::get_system_collation(),
@@ -2622,7 +2622,7 @@ static int double_float(const ObObjType expect_type, ObObjCastParams &params,
               && CAST_FAIL(real_range_check(expect_type, in.get_double(), value))) {
   } else {
     out.set_float(expect_type, value);
-    LOG_DEBUG("succ to double_float", K(ret), K(in), K(value), K(out));
+
   }
   SET_RES_ACCURACY(PRECISION_UNKNOWN_YET, SCALE_UNKNOWN_YET, LENGTH_UNKNOWN_YET);
   return ret;
@@ -2670,7 +2670,7 @@ static int double_number(const ObObjType expect_type, ObObjCastParams &params,
     } else {
       out.set_number(expect_type, nmb);
     }
-    LOG_DEBUG("finish double to number", K(ret), K(str), K(length), K(in), K(expect_type), K(nmb), K(out), K(lbt()));
+
   }
   SET_RES_ACCURACY(res_precision, res_scale, DEFAULT_LENGTH_FOR_NUMERIC);
   return ret;
@@ -2755,7 +2755,7 @@ static int double_datetime_interval(const ObObjType expect_type, ObObjCastParams
     LOG_ERROR("invalid input type", K(ret), K(in), K(expect_type));
   } else {
     const int64_t value = static_cast<int64_t>(in.get_double() * static_cast<double>(USECS_PER_DAY));
-    LOG_DEBUG("succ to double_datetime_interval", K(ret), K(in), K(value), K(expect_type));
+
     SET_RES_DATETIME(out);
   }
   SET_RES_ACCURACY(DEFAULT_PRECISION_FOR_TEMPORAL, res_scale, DEFAULT_LENGTH_FOR_TEMPORAL);
@@ -2890,7 +2890,7 @@ static int double_string(const ObObjType expect_type, ObObjCastParams &params,
       }
     }
     ObString str(sizeof(buf), static_cast<int32_t>(length), buf);
-    LOG_DEBUG("finish double_string", K(ret), K(in), K(expect_type), K(str));
+
     ObObj tmp_out;
     ObString tmp_str;
     if (OB_FAIL(convert_string_collation(str, ObCharset::get_system_collation(),
@@ -3241,7 +3241,7 @@ static int number_datetime(const ObObjType expect_type, ObObjCastParams &params,
               ObTimeConverter::int_to_mdatetime(int_part, dec_part, cvrt_ctx, mdt_value,
                                                 date_sql_mode) :
               ObTimeConverter::int_to_datetime(int_part, dec_part, cvrt_ctx, value, date_sql_mode);
-      LOG_DEBUG("succ to number_datetime", K(ret), K(in), K(value), K(expect_type), K(int_part), K(dec_part));
+
     }
     if (CAST_FAIL(ret)) {
     } else if (ObMySQLDateTimeType == expect_type) {
@@ -3281,7 +3281,7 @@ static int number_datetime_interval(const ObObjType expect_type, ObObjCastParams
     } else {
       const int64_t value = static_cast<int64_t>(int_part * USECS_PER_DAY)
                             + (in.is_negative_number() ? -1  : 1 ) * static_cast<int64_t>(static_cast<double>(dec_part) / NSECS_PER_SEC * static_cast<double>(USECS_PER_DAY));
-      LOG_DEBUG("succ to number_datetime_interval", K(ret), K(in), K(value), K(expect_type), K(int_part), K(dec_part));
+
       SET_RES_DATETIME(out);
     }
   }
@@ -6524,7 +6524,7 @@ static int string_string(const ObObjType expect_type, ObObjCastParams &params,
                 }
       }
 
-      LOG_DEBUG("convert result", K(str), "result", ObHexEscapeSqlStr(ObString(result_len, buf)));
+
 
       if (OB_SUCC(ret)) {
         if (ObTextTC == ob_obj_type_class(expect_type)) {
@@ -6679,7 +6679,7 @@ static int string_enum(const ObExpectType &expect_type, ObObjCastParams &params,
     } else {
       value = pos + 1;//enum start from 1
     }
-    LOG_DEBUG("finish string_enum", K(ret), K(expect_type), K(in), K(out), KPC(type_infos), K(lbt()));
+
     SET_RES_ENUM(out);
   }
   return ret;
@@ -6781,7 +6781,7 @@ static int string_set(const ObExpectType &expect_type, ObObjCastParams &params, 
       }
     }
   }
-  LOG_DEBUG("finish string_set", K(ret), K(expect_type), K(in), K(out), KPC(type_infos), K(lbt()));
+
   SET_RES_SET(out);
   return ret;
 }
@@ -14775,7 +14775,7 @@ int obj_accuracy_check(ObCastCtx &cast_ctx, const ObAccuracy &accuracy, const Ob
                        const ObObj &obj, ObObj &buf_obj, const ObObj *&res_obj)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("obj_accuracy_check before", K(obj), K(accuracy), K(cs_type));
+
   switch (obj.get_type_class()) {
     case ObFloatTC: {
       ret = float_range_check(cast_ctx, accuracy, obj, buf_obj, res_obj, cast_ctx.cast_mode_);
@@ -15003,7 +15003,7 @@ int ob_obj_to_ob_time_with_date(const ObObj& obj,
     case ObLobTC: {
       ObString payload;
       if (OB_FAIL(obj.get_string(payload))) {
-        STORAGE_LOG(WARN, "Failed to get payload from lob locator", K(ret), K(obj));
+
       } else {
         ret = ObTimeConverter::str_to_ob_time_with_date(
             payload, ob_time, NULL, date_sql_mode);
@@ -15112,7 +15112,7 @@ int ob_obj_to_ob_time_without_date(const ObObj &obj, const ObTimeZoneInfo *tz_in
     case ObLobTC: {
       ObString payload;
       if (OB_FAIL(obj.get_string(payload))) {
-        STORAGE_LOG(WARN, "Failed to get payload from lob locator", K(ret), K(obj));
+
       } else {
         ret = ObTimeConverter::str_to_ob_time_without_date(payload, ob_time);
       }
@@ -15421,7 +15421,7 @@ int ObObjCaster::to_type(const ObExpectType &expect_type,
   } else if (OB_FAIL(OB_CAST_ENUM_OR_SET[in_tc][ObSetType == out_type](expect_type, cast_ctx, in_obj, out_obj))) {
     LOG_WARN("fail to cast to enum or set", K(ret), K(in_obj), K(expect_type));
   } else {
-    LOG_DEBUG("succ to to_type", K(expect_type), K(in_obj), K(out_obj));
+
   }
   return ret;
 }

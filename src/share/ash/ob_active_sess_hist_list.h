@@ -227,7 +227,7 @@ public:
         curr_ = range.second;
         end_ = range.first;
       }
-      LOG_DEBUG("ash range for forward index scan", K(start), K(end), KPC(this));
+
     }
   };
 
@@ -283,7 +283,7 @@ public:
         curr_ = range.first;
         end_ = range.second;
       }
-      LOG_DEBUG("ash range for reverse index scan", K(start), K(end), KPC(this));
+
     }
     TO_STRING_KV(K_(ash_buffer), K(ash_buffer_->write_pos()), K_(curr), K_(end));
   };

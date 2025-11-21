@@ -225,15 +225,15 @@ int ObTabletSplitCache::get_split_cache(const ObTabletSplitCacheKey &key, ObTabl
 
   if (OB_UNLIKELY(!key.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid tablet split cache key.", K(ret), K(key));
+
   } else if (OB_FAIL(get(key, value, handle.handle_))) {
     if (OB_UNLIKELY(OB_ENTRY_NOT_EXIST != ret)) {
-      STORAGE_LOG(WARN, "Fail to get key from tablet split cache, ", K(ret));
+
     }
   } else {
     if (OB_ISNULL(value)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "Unexpected error, the value is NULL, ", K(ret));
+
     } else {
       handle.row_value_ = const_cast<ObTabletSplitCacheValue*>(value);
     }
@@ -247,9 +247,9 @@ int ObTabletSplitCache::put_split_cache(const ObTabletSplitCacheKey &key, const 
   bool overwrite = true;
   if (OB_UNLIKELY(!key.is_valid() || !value.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid row cache input param.", K(key), K(value), K(ret));
+
   } else if (OB_FAIL(put(key, value, overwrite))) {
-    STORAGE_LOG(WARN, "Fail to put row to row cache, ", K(ret));
+
   }
   return ret;
 }

@@ -33,12 +33,12 @@ int ObMergeLogPlan::generate_normal_raw_plan()
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get unexpected error", K(ret));
   } else {
-    LOG_TRACE("start to allocate operators for ", "sql", get_optimizer_context().get_query_ctx()->get_sql_stmt());
+
     OPT_TRACE("generate plan for ", get_stmt());
     if (OB_FAIL(generate_plan_tree())) {
       LOG_WARN("failed to generate plan tree for plain select", K(ret));
     } else {
-      LOG_TRACE("succeed to generate plan tree", K(candidates_.candidate_plans_.count()));
+
     }
 
     // allocate subqueries in merge stmt
@@ -170,14 +170,14 @@ int ObMergeLogPlan::candi_allocate_merge()
                                         merge_plans))) {
     LOG_WARN("failed to create merge plans", K(ret));
   } else if (!merge_plans.empty()) {
-    LOG_TRACE("succeed to create merge plan using hint", K(merge_plans.count()));
+
   } else if (OB_FAIL(get_log_plan_hint().check_status())) {
     LOG_WARN("failed to generate plans with hint", K(ret));
   } else if (OB_FAIL(create_merge_plans(candi_plans, insert_table_part, insert_sharding,
                                         false, false, merge_plans))) {
     LOG_WARN("failed to create merge plans", K(ret));
   } else {
-    LOG_TRACE("succeed to create merge plan ignore hint", K(merge_plans.count()));
+
   }
   if (OB_SUCC(ret)) {
     if (OB_FAIL(prune_and_keep_best_plans(merge_plans))) {
@@ -1094,7 +1094,7 @@ int ObMergeLogPlan::check_merge_stmt_need_multi_partition_dml(bool &is_multi_par
     is_multi_part_dml = true;
   } else { /*do nothing*/ }
   if (OB_SUCC(ret)) {
-    LOG_TRACE("succeed to check insert_stmt need multi-partition-dml", K(is_multi_part_dml));
+
   }
   return ret;
 }

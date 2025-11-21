@@ -77,7 +77,7 @@ int ObMdsTableMergeTask::process()
 #ifdef ERRSIM
   if (OB_SUCCESS != EN_SKIP_MDS_MINI_MERGE) {
     ret = OB_NO_NEED_MERGE; 
-    LOG_INFO("[ERRSIM] mds mini merge, skip", KR(ret), KPC_(mds_merge_dag));
+
     return ret;
   }
 #endif
@@ -102,7 +102,7 @@ int ObMdsTableMergeTask::process()
     const common::ObTabletID &tablet_id = ctx.get_tablet_id();
 #ifdef ERRSIM
     if (GCONF.errsim_test_tablet_id.get_value() > 0 && tablet_id.id() == GCONF.errsim_test_tablet_id.get_value()) {
-      LOG_INFO("test tablet mds dump start", K(ret), K(tablet_id));
+
       DEBUG_SYNC(BEFORE_DDL_LOB_META_TABLET_MDS_DUMP);
     }
 #endif
@@ -122,7 +122,7 @@ int ObMdsTableMergeTask::process()
       LOG_WARN("ls is null", K(ret), K(ls_id), "ls_handle", ctx.static_param_.ls_handle_, KPC(mds_merge_dag_));
     } else if (ls->is_offline()) {
       ret = OB_CANCELED;
-      LOG_INFO("ls offline, skip merge", K(ret), K(ctx), KPC(mds_merge_dag_));
+
     } else if (OB_FAIL(ctx.init_tablet_merge_info())) {
       LOG_WARN("failed to init tablet merge info", K(ret), K(ls_id), K(tablet_id), KPC(mds_merge_dag_));
     } else if (OB_ISNULL(tablet = ctx.get_tablet())) {
@@ -222,7 +222,7 @@ void ObMdsTableMergeTask::try_schedule_compaction_after_mds_mini(compaction::ObT
             K(ret), K(ls_id), K(tablet_id), KPC(mds_merge_dag_));
       }
     } else {
-      LOG_TRACE("succeed to try schedule mds minor after mds", K(ls_id), K(tablet_id), KPC(mds_merge_dag_));
+
     }
   }
 }

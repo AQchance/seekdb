@@ -152,7 +152,7 @@ void ObReentrantThread::run1()
 {
   int ret = OB_SUCCESS;
   const uint64_t idx = get_thread_idx();
-  LOG_INFO("new reentrant thread created", K(idx));
+
   if (OB_NOT_NULL(thread_name_)) {
     if (1 == ThreadPool::get_thread_count()) {
       lib::set_thread_name(thread_name_);
@@ -167,7 +167,7 @@ void ObReentrantThread::run1()
   } else if (OB_FAIL(after_blocking_run())) {
     LOG_WARN("Failed to do after run", K(ret));
   } else { }//do nothing
-  LOG_INFO("reentrant thread exited", K(idx));
+
 }
 
 int ObReentrantThread::blocking_run()

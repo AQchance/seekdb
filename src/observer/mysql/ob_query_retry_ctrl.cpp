@@ -425,14 +425,14 @@ public:
     int ret = OB_SUCCESS;
     if (OB_ISNULL(GCTX.schema_service_)) {
       ret = OB_INVALID_ARGUMENT;
-      LOG_TRACE("invalid schema_service", KR(ret), K(v));
+
     } else {
       ObSchemaGetterGuard schema_guard;
       const ObTenantSchema *tenant_schema = NULL;
       if (OB_FAIL(GCTX.schema_service_->get_tenant_schema_guard(
           OB_SYS_TENANT_ID,
           schema_guard))) {
-        LOG_TRACE("get sys tenant schema guard failed", KR(ret), K(v));
+
       } else if (OB_FAIL(schema_guard.get_tenant_info(
           v.session_.get_effective_tenant_id(),
           tenant_schema))) {

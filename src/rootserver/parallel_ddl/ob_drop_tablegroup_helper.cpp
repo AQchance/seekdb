@@ -89,7 +89,7 @@ int ObDropTablegroupHelper::lock_tablegroup_by_obj_id_()
     LOG_WARN("fail to get database schema", KR(ret), K_(tenant_id), K(tablegroup_name));
   } else if (tablegroup_id_ == OB_INVALID_ID) {
     ret = OB_TABLEGROUP_NOT_EXIST;
-    LOG_INFO("tablegroup not exists", K(ret), K(tablegroup_name));
+
   } else if (OB_FAIL(add_lock_object_by_id_(tablegroup_id_, share::schema::TABLEGROUP_SCHEMA,
                      transaction::tablelock::EXCLUSIVE))) {
     LOG_WARN("failed to add lock object by tablegroup id", K(ret), K_(tablegroup_id));                      
@@ -151,7 +151,7 @@ int ObDropTablegroupHelper::generate_schemas_()
     LOG_WARN("failed to get tablegroup schema by tenant id", K(ret), K_(tablegroup_id));
     } else if (tablegroup_schema_ == NULL) {
       ret = OB_TABLEGROUP_NOT_EXIST;
-      LOG_INFO("tablegroup not exists", K(ret), K_(tablegroup_id));
+
     }
   }
 

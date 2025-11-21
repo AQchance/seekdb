@@ -52,7 +52,7 @@ int ObHashJoinVecInput::sync_wait(ObExecContext &ctx, int64_t &sync_event, Event
         ObSpinLockGuard guard(shared_hj_info->lock_);
         // got lock to process and only one thread can process pred()
         // it may enter by multiple threads
-        LOG_DEBUG("before pred", K(sync_event), K(exit_cnt), K(shared_hj_info->sqc_thread_count_));
+
         pred(ATOMIC_LOAD(&sync_event) % shared_hj_info->sqc_thread_count_);
         // it must be here to guarantee next wait loop to get lock for one thread
         has_process = true;
@@ -60,11 +60,11 @@ int ObHashJoinVecInput::sync_wait(ObExecContext &ctx, int64_t &sync_event, Event
           // last thread, it will singal and exit by self
           ATOMIC_INC(&sync_event);
           shared_hj_info->cond_.signal(INT32_MAX);
-          LOG_DEBUG("debug signal event", K(ret), K(lbt()), K(sync_event));
+
           break;
         }
         ATOMIC_INC(&sync_event);
-        LOG_DEBUG("debug sync event", K(ret), K(sync_event), K(exit_cnt), K(lbt()));
+
       }
       if (!ignore_interrupt && OB_SUCCESS != shared_hj_info->ret_) {
         // the thread already return error
@@ -88,7 +88,7 @@ int ObHashJoinVecInput::sync_wait(ObExecContext &ctx, int64_t &sync_event, Event
       } else {
         auto key = shared_hj_info->cond_.get_key();
         // wait one time per 1000 us
-        LOG_DEBUG("cond wait", K(key), K(sync_event), K(lbt()));
+
         shared_hj_info->cond_.wait(key, 1000);
       }
     } // end while
@@ -392,7 +392,7 @@ int ObHashJoinVecOp::set_shared_info()
         LOG_WARN("task_id is more than thread count", K(ret),
           K(hj_input->task_id_), K(hj_input->get_sqc_thread_count()));
       } else {
-        LOG_TRACE("debug enable shared hash join", K(ret), K(spec_.id_));
+
       }
     }
   }
@@ -472,7 +472,7 @@ int ObHashJoinVecOp::inner_rescan()
     non_preserved_side_is_not_empty_ = false;
     join_filter_partition_splitter_ = nullptr;
   }
-  LOG_TRACE("hash join rescan", K(ret), K(spec_.id_));
+
   return ret;
 }
 // Here are a few logic points to figure out:
@@ -575,7 +575,7 @@ int ObHashJoinVecOp::inner_get_next_batch(const int64_t max_row_cnt)
           brs_.size_ = 0;
           brs_.end_ = true;
           ret = OB_SUCCESS;
-          LOG_TRACE("hash join iter end", K(spec_.id_));
+
         } else if (OB_SUCCESS == ret) {
           ++part_round_;
           left_part_ = part_pair.left_;
@@ -812,7 +812,7 @@ int ObHashJoinVecOp::get_next_left_row_batch(bool is_from_row_store, const ObBat
             ret = tmp_ret;
           }
         }
-        LOG_TRACE("right naaj null break", K(ret), K(spec_.id_));
+
       }
     }
   } else {
@@ -836,7 +836,7 @@ int ObHashJoinVecOp::get_next_left_row_batch(bool is_from_row_store, const ObBat
       const_cast<ObBatchRows *>(child_brs)->end_ = false;
       const_cast<ObBatchRows *>(child_brs)->skip_->reset(read_size);
     }
-    LOG_DEBUG("part join ctx get left row", KP(left_part_), K(read_size));
+
   }
   return ret;
 }
@@ -1055,7 +1055,7 @@ int ObHashJoinVecOp::calc_basic_info(bool global_info)
           &ctx_, MY_SPEC.px_est_size_factor_, left_->get_spec().rows_, row_count))) {
         LOG_WARN("failed to get px size", K(ret));
       } else {
-        LOG_TRACE("trace left row count", K(row_count), K(spec_.id_));
+
         if (row_count < MIN_ROW_COUNT) {
           row_count = MIN_ROW_COUNT;
         }
@@ -1118,7 +1118,7 @@ int ObHashJoinVecOp::calc_basic_info(bool global_info)
                  K(left_part_->get_row_store().get_row_cnt()),
                  K(left_part_->get_row_store().get_file_size()));
     }
-    LOG_DEBUG("debug row_count and input_size", K(row_count), K(global_info), K(is_shared_));
+
   } else if (nullptr != left_part_) {
     // NESTLOOP processor, our memory is not enough to hold entire left partition,
     // try to estimate max row count we can hold
@@ -1144,7 +1144,7 @@ int ObHashJoinVecOp::calc_basic_info(bool global_info)
     buckets_number = calc_bucket_number(row_count);
     // save basic info
     profile_.set_basic_info(out_row_count, input_size, buckets_number);
-    LOG_DEBUG("profile set basic info", K(out_row_count), K(input_size), K(buckets_number));
+
   }
   return ret;
 }
@@ -1393,7 +1393,7 @@ int ObHashJoinVecOp::init_join_partition()
     LOG_TRACE("trace init partition", K(part_count_), K(part_level_),
       K(left_part_->get_part_level()), K(left_part_->get_partno()), K(spec_.id_));
   } else {
-    LOG_TRACE("trace init partition", K(part_count_), K(part_level_), K(spec_.id_));
+
   }
   return ret;
 }
@@ -1698,7 +1698,7 @@ int ObHashJoinVecOp::do_sync_wait_all()
     if (OB_ITER_END == ret) {
       ret = OB_SUCCESS;
     }
-    LOG_TRACE("debug shared hash join wait all to drain", K(ret));
+
   }
 
   return ret;
@@ -1797,7 +1797,7 @@ int ObHashJoinVecOp::sync_wait_basic_info(uint64_t &build_ht_thread_ptr)
     build_ht_thread_ptr = hj_input->get_sync_val();
     read_null_in_naaj_ = hj_input->get_null_in_naaj();
     non_preserved_side_is_not_empty_ = hj_input->get_non_preserved_side_naaj();
-    LOG_TRACE("debug sync basic info", K(spec_.id_));
+
   }
   return ret;
 }
@@ -1819,7 +1819,7 @@ int ObHashJoinVecOp::sync_wait_init_build_hash(const uint64_t build_ht_thread_pt
     ObHashJoinVecOp *build_hj_op = reinterpret_cast<ObHashJoinVecOp*>(build_ht_thread_ptr);
     // use the same hash table
     cur_join_table_ = part_round_ <= 1 ? &(build_hj_op->get_hash_table()) : cur_join_table_;
-    LOG_TRACE("debug sync wait init build hash", K(cur_join_table_), K(spec_.id_));
+
   }
   return ret;
 }
@@ -1838,7 +1838,7 @@ int ObHashJoinVecOp::sync_wait_finish_build_hash()
       }))) {
     LOG_WARN("failed to sync wait finish build hash table", K(ret));
   } else {
-    LOG_TRACE("debug sync finish build hash", K(cur_join_table_), K(spec_.id_));
+
   }
   return ret;
 }
@@ -1858,7 +1858,7 @@ int ObHashJoinVecOp::sync_wait_fetch_next_batch()
       }))) {
     LOG_WARN("failed to sync fetch next batch", K(ret), K(spec_.id_));
   } else {
-    LOG_TRACE("debug sync fetch next batch", K(ret), K(spec_.id_));
+
   }
   return ret;
 }
@@ -1879,7 +1879,7 @@ int ObHashJoinVecOp::sync_wait_close()
       }, true))) {
     LOG_WARN("failed to sync fetch next batch", K(ret), K(spec_.id_));
   } else {
-    LOG_TRACE("debug sync fetch next batch", K(ret), K(spec_.id_));
+
   }
   return ret;
 }
@@ -1898,7 +1898,7 @@ int ObHashJoinVecOp::sync_wait_open()
       }, false /*ignore_interrupt*/, true /*is_open*/))) {
     LOG_WARN("failed to sync open", K(ret), K(spec_.id_));
   } else {
-    LOG_TRACE("debug sync sync open", K(ret), K(spec_.id_));
+
   }
   return ret;
 }
@@ -2303,7 +2303,7 @@ int ObHashJoinVecOp::get_next_right_batch()
 {
   int ret = OB_SUCCESS;
   clear_evaluated_flag();
-  LOG_TRACE("hash join last traverse cnt", K(ret), K(right_batch_traverse_cnt_), K(spec_.id_));
+
   right_batch_traverse_cnt_ = 0;
   output_info_.reuse();
   bool is_left = false;
@@ -2340,12 +2340,12 @@ int ObHashJoinVecOp::get_next_right_batch()
           brs_.end_ = true;
           read_null_in_naaj_ = true;
           ret = OB_SUCCESS;
-          LOG_TRACE("null break for left naaj", K(ret), K(spec_.id_));
+
         }
       }
       if (OB_SUCC(ret)) {
         probe_batch_rows_.brs_.copy(probe_brs);
-        LOG_DEBUG("get next right batch", K(*probe_brs));
+
       }
     }
     probe_batch_rows_.from_stored_ = false;
@@ -2516,7 +2516,7 @@ int ObHashJoinVecOp::skip_rows_in_dumped_part()
       }
       int64_t part_idx = get_part_idx(probe_batch_rows_.hash_vals_[i]);
       if (check_right_need_dump(part_idx)) {
-        LOG_DEBUG("right need dump row", K(i), K(part_idx), K(cur_dumped_partition_));
+
         probe_batch_rows_.brs_.skip_->set(i);
         probe_batch_rows_.brs_.all_rows_active_ = false;
         ObCompactRow *stored_row = nullptr;
@@ -2674,7 +2674,7 @@ int ObHashJoinVecOp::probe()
   if (OB_SUCC(ret)) {
     if (output_info_.selector_cnt_ == 0 && !IS_RIGHT_STYLE_JOIN(MY_SPEC.join_type_)) {
       ret = OB_ITER_END;
-      LOG_DEBUG("probe batch end");
+
     } else {
       ret = probe_batch_output();
     }

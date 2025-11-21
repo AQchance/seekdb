@@ -51,7 +51,7 @@ int ObRpcEraseIntermResultP::preprocess_arg()
 int ObRpcEraseIntermResultP::process()
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("receive erase interm result request", K(arg_));
+
   dtl::ObDTLIntermResultKey dtl_int_key;
   ObIArray<uint64_t> &interm_result_ids = arg_.interm_result_ids_;
   for (int64_t i = 0; OB_SUCC(ret) && i < interm_result_ids.count(); ++i) {

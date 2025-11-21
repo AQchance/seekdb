@@ -687,7 +687,7 @@ int ObDASTextRetrievalIter::do_token_cnt_agg(const ObDocIdExt &doc_id, int64_t &
           sql::ObEvalCtx *eval_ctx = ir_rtdef_->get_fwd_idx_agg_rtdef()->eval_ctx_;
           const ObDatum &word_cnt_datum = agg_expr->locate_expr_datum(*eval_ctx);
           token_count = word_cnt_datum.get_int();
-          LOG_DEBUG("retrieval iterator get token cnt for doc", K(ret), K(doc_id), K(token_count));
+
         }
       }
     }

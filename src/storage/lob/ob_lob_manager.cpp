@@ -47,16 +47,16 @@ static int is_store_char_len(ObLobAccessParam& param, int64_t store_chunk_size, 
 {
   int ret = OB_SUCCESS;
   if (! lib::is_mysql_mode()) {
-    LOG_DEBUG("not mysql mode", K(add_len), K(store_chunk_size), K(param));
+
   } else if (! param.is_char()) {
-    LOG_DEBUG("not text", K(add_len), K(store_chunk_size), K(param));
+
   } else if (store_chunk_size <= (param.byte_size_ + add_len)) {
-    LOG_DEBUG("not single", K(add_len), K(store_chunk_size), K(param));
+
   } else if (param.tablet_id_.is_inner_tablet()) {
-    LOG_DEBUG("inner table skip", K(add_len), K(store_chunk_size), K(param));
+
   } else {
     param.is_store_char_len_ = false;
-    LOG_DEBUG("not store char_len for single piece", K(add_len), K(store_chunk_size), K(param));
+
   }
   return ret;
 }
@@ -111,7 +111,7 @@ int ObLobManager::start()
 
 int ObLobManager::stop()
 {
-  STORAGE_LOG(INFO, "[LOB]stop");
+
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
@@ -126,14 +126,14 @@ int ObLobManager::stop()
 
 void ObLobManager::wait()
 {
-  STORAGE_LOG(INFO, "[LOB]wait");
+
   // TODO
   // 1. Wait for the asynchronous flush of memory data in LobOperator to complete
 }
 
 void ObLobManager::destroy()
 {
-  STORAGE_LOG(INFO, "[LOB]destroy");
+
   // TODO
   // 1. LobOperator.destroy()
   allocator_.reset();
@@ -454,7 +454,7 @@ int ObLobManager::query(
     }
   }
   if (is_remote_lob) {
-    LOG_INFO("remote_lob", KPC(param->lob_common_), KPC(param->lob_data_), K(dst_addr));
+
   }
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(cursor->init(allocator, param, partial_data, lob_ctx_.lob_meta_mngr_))) {
@@ -699,7 +699,7 @@ int ObLobManager::check_need_out_row(
       }
     }
   }
-  LOG_DEBUG("check lob outrow", K(need_out_row), K(add_len), K(param));
+
   // in_row : 0 | need_out_row : 0  --> invalid
   // in_row : 0 | need_out_row : 1  --> do nothing, keep out_row
   // in_row : 1 | need_out_row : 0  --> do nothing, keep in_row
@@ -715,11 +715,11 @@ int ObLobManager::check_need_out_row(
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("invalid lob data", K(ret), KPC(param.lob_common_), K(data));
     } else if (param.byte_size_ > 0) {
-      LOG_DEBUG("update keey outrow ", K(param.byte_size_), K(add_len), KPC(param.lob_common_),KPC(param.lob_data_));
+
       need_out_row = true;
     } else {
       // currently only insert support outrow -> inrow
-      LOG_DEBUG("insert outrow to inrow", K(param.byte_size_), K(add_len), KPC(param.lob_common_),KPC(param.lob_data_));
+
       ObLobCommon *lob_common = nullptr;
       if (OB_ISNULL(lob_common = OB_NEWx(ObLobCommon, param.allocator_))) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
@@ -836,11 +836,11 @@ int ObLobManager::check_need_out_row(
         LOG_WARN("char_len should be zero", K(ret), K(param), K(has_char_len), K(*char_len));
       } else {
         *char_len = UINT64_MAX;
-        LOG_DEBUG("has_char_len to no_char_len", K(param));
+
       }
     } else if (! has_char_len && param.is_store_char_len_) {
       if (param.handle_size_ < ObLobConstants::LOB_OUTROW_FULL_SIZE) {
-        LOG_INFO("old old data", K(param));
+
         param.is_store_char_len_ = true;
       } else if (param.is_full_insert()) {
         // reset char_len to 0 from UINT64_MAX
@@ -853,7 +853,7 @@ int ObLobManager::check_need_out_row(
           LOG_WARN("char_len should be zero", K(ret), K(param), K(has_char_len), K(*char_len));
         } else {
           *char_len = 0;
-          LOG_DEBUG("no_char_len to has_char_len", K(param));
+
         }
       } else {
         // partial update aloways store char_len beacaure is only support in oracle mode
@@ -2132,7 +2132,7 @@ int ObLobManager::prepare_outrow_locator(ObLobAccessParam& param, ObLobDataInser
   } else if (OB_FAIL(locator_builder.to_locator(task.cur_data_locator_))) {
     LOG_WARN("to locator fail", K(ret), K(locator_builder), K(param));
   } else {
-    LOG_DEBUG("prepare disk lob locator success", K(locator_builder));
+
   }
   return ret;
 }

@@ -87,7 +87,7 @@ int ObHbaseSeriesCellIter::init()
       ret = OB_SUCCESS;
       // out of key range
       iter_is_end_ = true;
-      LOG_DEBUG("iterator is end", K(ret));
+
     } else {
       LOG_WARN("fail to get next cell", K(ret));
     }
@@ -331,7 +331,7 @@ int ObHbaseSeriesCellIter::get_next_cell(ObNewRow *&row) {
       LOG_WARN("fail to get next cell", K(ret));
     }
   }
-  LOG_DEBUG("ObHbaseSeriesCellIter::get_next_cell", K(ret), KPC(row));
+
   return ret;
 }
 
@@ -369,7 +369,7 @@ int ObHbaseSeriesCellIter::get_next_cell(ObNewRow *&row, uint8_t depth)
           if (ret == OB_ITER_END) {
             // out of key range
             iter_is_end_ = true;
-            LOG_DEBUG("iterator is end", K(ret));
+
           } else {
             LOG_WARN("fail to get next cell", K(ret));
           }

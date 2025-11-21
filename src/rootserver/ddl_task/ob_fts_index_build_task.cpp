@@ -133,7 +133,7 @@ int ObFtsIndexBuildTask::init(
     // TODO (youchuan.yc): after change aux build task sequentially, remove decide_parallelism and use original value instead
     LOG_WARN("fail to decide parallelism", K(ret), K(create_index_arg.index_type_), K(parallelism));
   } else {
-    LOG_INFO("create_index_arg.index_type_x", K(create_index_arg.index_type_), K(create_index_arg.index_key_));
+
 
     if (INDEX_TYPE_NORMAL_MULTIVALUE_LOCAL == create_index_arg.index_type_ ||
         INDEX_TYPE_UNIQUE_MULTIVALUE_LOCAL == create_index_arg.index_type_) {
@@ -726,7 +726,7 @@ int ObFtsIndexBuildTask::prepare_aux_index_tables()
   }
   if (state_finished || OB_FAIL(ret)) {
     (void)switch_status(next_status, true, ret);
-    LOG_INFO("generate schema finished", K(ret), K(parent_task_id_), K(task_id_), K(*this));
+
   }
   return ret;
 }
@@ -896,7 +896,7 @@ int ObFtsIndexBuildTask::load_dictionary()
       ret = OB_SUCC(ret) ? tmp_ret : ret;
     }
   }
-  LOG_INFO("load dictionary finished", K(ret), K(parent_task_id_), K(task_id_), K(*this));
+
   return ret;
 }
 
@@ -1061,7 +1061,7 @@ int ObFtsIndexBuildTask::on_child_task_finish(
                                                                  true/*overwrite*/))) {
       LOG_WARN("set dependent_task_result_map failed", K(ret), K(child_task_key));
     } else {
-      LOG_INFO("child task finish successfully", K(child_task_key));
+
     }
   }
   return ret;
@@ -1464,7 +1464,7 @@ int ObFtsIndexBuildTask::get_task_status(int64_t task_id, uint64_t aux_table_id,
                                                   unused_user_msg_len))) {
         if (OB_ENTRY_NOT_EXIST == ret) {
           ret = OB_SUCCESS;
-          LOG_INFO("ddl task not finish", K(ret), K(aux_table_id), K(task_id), K(task_id_));
+
         } else {
           LOG_WARN("fail to get ddl error message", K(ret), K(aux_table_id), K(task_id), K(task_id_));
         }
@@ -1669,7 +1669,7 @@ int ObFtsIndexBuildTask::clean_on_failed()
     // 2. drop already built index
     if (OB_FAIL(ret)) {
     } else if (not_finished_cnt > 0) {
-      LOG_INFO("child task not finished, not submit drop fts index task.", K(not_finished_cnt));
+
     } else if (!drop_index_task_submitted_) {
       if (OB_FAIL(submit_drop_fts_index_task())) {
         LOG_WARN("failed to drop fts index", K(ret));
@@ -1727,13 +1727,13 @@ int ObFtsIndexBuildTask::submit_drop_fts_index_task()
              OB_FAIL(drop_index_arg.index_ids_.push_back(fts_doc_word_aux_table_id_))) {
     LOG_WARN("fail to push back fts_doc_word_aux_table_id_", K(ret), K(fts_doc_word_aux_table_id_));
   } else if (drop_index_arg.index_ids_.count() <= 0) {
-    LOG_INFO("no table need to be drop, skip", K(ret)); // no table exist, skip drop
+ // no table exist, skip drop
   } else if (schema_guard.get_table_schema(tenant_id_, object_id_, data_table_schema)) {
     drop_index_task_submitted_ = true;
     LOG_WARN("fail to get table schema", K(ret), K(object_id_));
   } else if (create_index_arg_.is_offline_rebuild_ && OB_ISNULL(data_table_schema)) {
     drop_index_task_submitted_ = true;
-    LOG_INFO("the data table schema is null, skip drop for the offline ddl rebuild fulltext index", K(ret), K(object_id_));
+
   } else if (OB_ISNULL(data_table_schema)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("data table schema is null", K(ret), KP(data_table_schema));
@@ -1771,7 +1771,7 @@ int ObFtsIndexBuildTask::submit_drop_fts_index_task()
     } else {
       drop_index_task_submitted_ = true;
       drop_index_task_id_ = drop_index_res.task_id_;
-      LOG_INFO("success submit drop fts index task", K(ret), K(drop_index_task_id_));
+
     }
   }
   return ret;
@@ -1804,7 +1804,7 @@ int ObFtsIndexBuildTask::wait_drop_index_finish(bool &is_finish)
                                                   unused_user_msg_len))) {
         if (OB_ENTRY_NOT_EXIST == ret) {
           ret = OB_SUCCESS;
-          LOG_INFO("ddl task not finish", K(dst_tenant_id_), K(drop_index_task_id_));
+
         } else {
           LOG_WARN("fail to get ddl error message", K(ret), K(drop_index_task_id_));
         }
@@ -1813,7 +1813,7 @@ int ObFtsIndexBuildTask::wait_drop_index_finish(bool &is_finish)
           ret = error_message.ret_code_;
           drop_index_task_submitted_ = false; // retry
         } else {
-          LOG_INFO("wait drop index task finish", K(*this), K(error_message));
+
           is_finish = true;
         }
       }
@@ -1965,7 +1965,7 @@ int ObFtsIndexBuildTask::cleanup_impl()
       LOG_WARN("fail to get table schema", K(ret), K(data_table_id));
     } else if (create_index_arg_.is_offline_rebuild_ && OB_ISNULL(data_schema)) {
       is_skip_unlock = true;
-      LOG_INFO("the data table schema is null, skip unlock for the offline ddl rebuild fulltext index", K(ret), K(object_id_));
+
     } else if (OB_ISNULL(data_schema)) {
       ret = OB_TABLE_NOT_EXIST;
       LOG_WARN("fail to get table schema", K(ret), KPC(data_schema));
@@ -2036,7 +2036,7 @@ int ObFtsIndexBuildTask::cleanup_impl()
                                               get_task_key(),
                                               ret_code_, trace_id_);
   }
-  LOG_INFO("clean task finished", K(ret), K(*this));
+
   return ret;
 }
 

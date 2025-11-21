@@ -111,7 +111,7 @@ int ObAsyncTaskQueue::push(const ObAsyncTask &task)
 void ObAsyncTaskQueue::run2()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("async task queue start");
+
   if (!is_inited_) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", K(ret));
@@ -122,7 +122,7 @@ void ObAsyncTaskQueue::run2()
       IGNORE_RETURN lib::Thread::update_loop_ts(ObTimeUtility::fast_current_time());
       if (REACH_TIME_INTERVAL(600 * 1000 * 1000)) {
         // Print the size of the queue at regular intervals
-        LOG_INFO("[ASYNC TASK QUEUE]", "queue_size", queue_.size());
+
       }
       ObAsyncTask *task = NULL;
       ret = pop(task);
@@ -173,7 +173,7 @@ void ObAsyncTaskQueue::run2()
       }
     }
   }
-  LOG_INFO("async task queue stop");
+
 }
 int ObAsyncTaskQueue::start()
 {

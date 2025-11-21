@@ -652,7 +652,7 @@ int ObDataMacroBlockMeta::parse_row(ObDatumRow &row)
     if (OB_FAIL(val_.deserialize(data_buf.ptr(), data_buf.length(), pos))) {
       LOG_WARN("fail to deserialize", K(ret), K(row), K(data_buf));
     } else if (OB_FAIL(end_key_.assign(row.storage_datums_, val_.rowkey_count_))) {
-      STORAGE_LOG(WARN, "Failed to assign endkey", K(ret), K(row));
+
     } else if (OB_UNLIKELY(!is_valid())) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("Parsed data macro block is not valid", K(ret), K_(val));

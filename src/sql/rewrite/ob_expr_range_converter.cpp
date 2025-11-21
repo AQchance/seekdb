@@ -112,7 +112,7 @@ int ObExprRangeConverter::convert_expr_to_range_node(const ObRawExpr *expr,
   
   if (OB_SUCC(ret)) {
     is_precise = ctx_.cur_is_precise_;
-    LOG_TRACE("succeed to convert one expr to range node", KPC(expr), KPC(range_node));
+
   }
   return ret;
 }
@@ -125,7 +125,7 @@ int ObExprRangeConverter::alloc_range_node(ObRangeNode *&range_node)
   void *key_ptr = NULL;
   if (OB_UNLIKELY(allocator_.used() - mem_used_ > ctx_.max_mem_size_)) {
     ret = OB_ERR_QUERY_RANGE_MEMORY_EXHAUSTED;
-    LOG_INFO("use too much memory when extract query range", K(ctx_.max_mem_size_));
+
   } else if (OB_ISNULL(ptr = allocator_.alloc(sizeof(ObRangeNode))) ||
              OB_ISNULL(key_ptr = allocator_.alloc(sizeof(int64_t) * ctx_.column_cnt_ * 2))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
@@ -1886,7 +1886,7 @@ int ObExprRangeConverter::get_final_in_array_idx(InParam *&in_param, int64_t &id
   void *ptr = nullptr;
   if (OB_UNLIKELY(allocator_.used() - mem_used_ > ctx_.max_mem_size_)) {
     ret = OB_ERR_QUERY_RANGE_MEMORY_EXHAUSTED;
-    LOG_INFO("use too much memory when extract query range", K(ctx_.max_mem_size_));
+
   } else if (OB_ISNULL(ptr = allocator_.alloc(sizeof(InParam)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     LOG_WARN("allocate memory for InParam failed");

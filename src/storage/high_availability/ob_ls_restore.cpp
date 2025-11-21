@@ -66,7 +66,7 @@ int ObLSRestoreCtx::fill_comment(char *buf, const int64_t buf_len) const
     LOG_WARN("ls restore ctx do not init", K(ret));
   } else if (NULL == buf || buf_len <= 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", K(ret), KP(buf), K(buf_len));
+
   } else {
     ret = databuff_printf(buf, buf_len, pos, "ls restore : task_id = ");
     OB_SUCCESS != ret ? : ret = databuff_printf(buf, buf_len, pos, task_id_);
@@ -210,7 +210,7 @@ int ObLSRestoreDagNet::init_by_param(const ObIDagInitParam *param)
         LOG_WARN("failed to get max sys retry id", K(ret), K(backup_path), KPC(init_param));
       } else {
         index_store_param.retry_id_ = retry_id;
-        LOG_INFO("get max sys ls retry id", "arg", init_param->arg_, K(retry_id));
+
       }
     }
 
@@ -393,7 +393,7 @@ int ObLSRestoreDagNet::clear_dag_net_ctx()
 {
   int ret = OB_SUCCESS;
   int tmp_ret = OB_SUCCESS;
-  LOG_INFO("start clear dag net ctx", KPC(ctx_));
+
 
   if (!is_inited_) {
     ret = OB_NOT_INIT;
@@ -598,7 +598,7 @@ int ObInitialLSRestoreDag::create_first_task()
   } else if (OB_FAIL(add_task(*task))) {
     LOG_WARN("Fail to add task", K(ret));
   } else {
-    LOG_DEBUG("success to create first task", K(ret), KPC(this));
+
   }
   return ret;
 }
@@ -718,7 +718,7 @@ int ObInitialLSRestoreTask::generate_ls_restore_dags_()
         finish_ls_restore_dag = nullptr;
       }
     } else {
-      LOG_INFO("succeed to schedule ls restore start dag", K(*start_ls_restore_dag));
+
       start_ls_restore_dag = nullptr;
       finish_ls_restore_dag = nullptr;
     }
@@ -815,7 +815,7 @@ int ObStartLSRestoreDag::create_first_task()
   } else if (OB_FAIL(add_task(*task))) {
     LOG_WARN("Fail to add task", K(ret));
   } else {
-    LOG_DEBUG("success to create first task", K(ret), KPC(this));
+
   }
   return ret;
 }
@@ -986,7 +986,7 @@ int ObStartLSRestoreTask::create_tablet_(
   } else if (OB_FAIL(ls->rebuild_create_tablet(tablet_meta, false /*keep old*/))) {
     LOG_WARN("failed to create tablet", K(ret), K(tablet_meta));
   } else {
-    LOG_INFO("succeed to create tablet and table store", KPC(ls), K(tablet_meta), K(remote_table));
+
   }
 
   return ret;
@@ -1040,7 +1040,7 @@ int ObStartLSRestoreTask::update_ls_meta_and_create_all_tablets_()
                                             ls_meta_package.ls_meta_))) {
         LOG_WARN("fail to update ls meta", K(ret), KPC(ls), K(ls_meta_package));
       } else {
-        LOG_INFO("update ls meta succeed", KPC(ls), K(ls_meta_package));
+
         ctx_->src_ls_meta_package_ = ls_meta_package;
         ctx_->need_check_seq_ = ctx_->arg_.is_leader_ ? false : true;
         ctx_->ls_rebuild_seq_ = ctx_->arg_.is_leader_ ? -1 : ls_meta_package.ls_meta_.get_rebuild_seq();
@@ -1053,7 +1053,7 @@ int ObStartLSRestoreTask::update_ls_meta_and_create_all_tablets_()
           logic_tablet_id.reset();
           if (OB_FAIL(reader->get_next_tablet_info(tablet_info))) {
             if (OB_ITER_END == ret) {
-              LOG_INFO("update ls meta and create all tablets succeed", KPC_(ctx), K(tablet_cnt));
+
               ret = OB_SUCCESS;
               break;
             } else {
@@ -1122,7 +1122,7 @@ int ObStartLSRestoreTask::generate_tablets_restore_dag_()
         ret = OB_EAGAIN;
       }
     } else {
-      LOG_INFO("succeed to schedule sys tablets restore dag", K(*sys_tablets_restore_dag));
+
       sys_tablets_restore_dag = nullptr;
     }
 
@@ -1224,7 +1224,7 @@ int ObSysTabletsRestoreDag::create_first_task()
   } else if (OB_FAIL(add_task(*task))) {
     LOG_WARN("Fail to add task", K(ret));
   } else {
-    LOG_DEBUG("success to create first task", K(ret), KPC(this));
+
   }
   return ret;
 }
@@ -1421,7 +1421,7 @@ int ObSysTabletsRestoreTask::generate_sys_tablet_restore_dag_()
           ret = OB_EAGAIN;
         }
       } else {
-        LOG_INFO("succeed to schedule tablet restore dag", KPC(tablet_restore_dag));
+
         parent = tablet_restore_dag;
         tablet_restore_dag = nullptr;
       }
@@ -1501,7 +1501,7 @@ int ObDataTabletsMetaRestoreDag::create_first_task()
   } else if (OB_FAIL(add_task(*task))) {
     LOG_WARN("Fail to add task", K(ret));
   } else {
-    LOG_DEBUG("success to create first task", K(ret), KPC(this));
+
   }
   return ret;
 }
@@ -1568,7 +1568,7 @@ int ObDataTabletsMetaRestoreTask::init()
 int ObDataTabletsMetaRestoreTask::process()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start do data tablets meta restore task", K(ret), KPC(ctx_));
+
 
   if (!is_inited_) {
     ret = OB_NOT_INIT;
@@ -1617,7 +1617,7 @@ int ObDataTabletsMetaRestoreTask::build_tablet_group_info_()
           LOG_WARN("failed to build tablet group ctx", K(ret), K(tablet_group_id_array));
         } else {
           tablet_group_id_array.reset();
-          LOG_INFO("succeed generate tablet group id array", K(tablet_group_id_array));
+
         }
       }
     }
@@ -1806,7 +1806,7 @@ int ObTabletGroupMetaRestoreDag::create_first_task()
   } else if (OB_FAIL(add_task(*task))) {
     LOG_WARN("Fail to add task", K(ret));
   } else {
-    LOG_DEBUG("success to create first task", K(ret), KPC(this));
+
   }
   return ret;
 }
@@ -1859,7 +1859,7 @@ int ObTabletGroupMetaRestoreDag::generate_next_dag(share::ObIDag *&dag)
   } else if (OB_FAIL(tablet_group_meta_restore_dag->set_dag_id(dag_id))) {
     LOG_WARN("failed to set dag id", K(ret), KPC(ctx));
   } else {
-    LOG_INFO("succeed generate next dag", KPC(tablet_group_meta_restore_dag));
+
     dag = tablet_group_meta_restore_dag;
     tablet_group_meta_restore_dag = nullptr;
   }
@@ -1953,7 +1953,7 @@ int ObTabletGroupMetaRestoreTask::init(
 int ObTabletGroupMetaRestoreTask::process()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start do tablet group meta restore task", K(ret), K(tablet_id_array_));
+
 
   if (!is_inited_) {
     ret = OB_NOT_INIT;
@@ -1985,7 +1985,7 @@ int ObTabletGroupMetaRestoreTask::create_or_update_tablets_()
     LOG_WARN("data tablets meta restore task do not init", K(ret));
   } else if (tablet_id_array_.empty()) {
     ret = OB_ERR_UNEXPECTED;
-    LOG_INFO("tablet id array should not be Empty", KPC(ctx_), K(tablet_id_array_));
+
   } else if (OB_FAIL(ObStorageHADagUtils::get_ls(ctx_->arg_.ls_id_, ls_handle))) {
     LOG_WARN("failed to get ls", K(ret), KPC(ctx_));
   } else if (OB_ISNULL(ls = ls_handle.get_ls())) {
@@ -2153,7 +2153,7 @@ int ObFinishLSRestoreDag::create_first_task()
   } else if (OB_FAIL(add_task(*task))) {
     LOG_WARN("Fail to add task", K(ret));
   } else {
-    LOG_DEBUG("success to create first task", K(ret), KPC(this));
+
   }
   return ret;
 }
@@ -2253,7 +2253,7 @@ int ObFinishLSRestoreTask::generate_initial_ls_restore_dag_()
         ret = OB_EAGAIN;
       }
     } else {
-      LOG_INFO("start create initial ls restore dag", K(ret), K(*ctx_));
+
       initial_ls_restore_dag = nullptr;
     }
 

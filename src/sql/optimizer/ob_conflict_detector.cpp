@@ -84,7 +84,7 @@ int ObConflictDetector::satisfy_associativity_rule(const ObConflictDetector &lef
   } else {
     is_satisfy = true;
   }
-  LOG_TRACE("succeed to check assoc", K(left), K(right), K(is_satisfy));
+
   return ret;
 }
 
@@ -138,7 +138,7 @@ int ObConflictDetector::satisfy_left_asscom_rule(const ObConflictDetector &left,
   } else {
     is_satisfy = true;
   }
-  LOG_TRACE("succeed to check l-asscom", K(left), K(right), K(is_satisfy));
+
   return ret;
 }
 
@@ -174,7 +174,7 @@ int ObConflictDetector::satisfy_right_asscom_rule(const ObConflictDetector &left
   } else {
     is_satisfy = true;
   }
-  LOG_TRACE("succeed to check r-asscom", K(left), K(right), K(is_satisfy));
+
   return ret;
 }
 
@@ -443,7 +443,7 @@ int ObConflictDetectorGenerator::generate_conflict_detectors(const ObDMLStmt *st
   ObSEArray<ObConflictDetector*, 8> semi_join_detectors;
   ObSEArray<ObConflictDetector*, 8> inner_join_detectors;
   ObSEArray<ObRawExpr*, 8> new_quals;
-  LOG_TRACE("start to generate conflict detector", K(table_items), K(semi_infos), K(quals));
+
   if (OB_ISNULL(stmt)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpect null stmt", K(ret));
@@ -541,12 +541,12 @@ int ObConflictDetectorGenerator::generate_conflict_rule(ObConflictDetector *pare
   } else if (child->is_redundancy_) {
     //do nothing
   } else if (is_left_child) {
-    LOG_TRACE("generate left child conflict rule for ", K(*parent), K(*child));
+
     //check assoc(o^a, o^b)
     if (OB_FAIL(ObConflictDetector::satisfy_associativity_rule(*child, *parent, is_satisfy))) {
       LOG_WARN("failed to check satisfy assoc", K(ret));
     } else if (is_satisfy) {
-      LOG_TRACE("satisfy assoc");
+
     } else if (OB_FAIL(ids.intersect(child->L_DS_, child->join_info_.table_set_))) {
       LOG_WARN("failed to cal intersect table ids", K(ret));
     } else if (ids.is_empty()) {
@@ -556,7 +556,7 @@ int ObConflictDetectorGenerator::generate_conflict_rule(ObConflictDetector *pare
       } else if (OB_FAIL(add_conflict_rule(child->R_DS_, child->R_DS_, rules))) {
         LOG_WARN("failed to add conflict rule", K(ret));
       } else {
-        LOG_TRACE("succeed to add condlict1", K(rules));
+
       }
     } else {
       //CR += T(right(o^a)) -> T(left(o^a)) n T(quals)
@@ -565,7 +565,7 @@ int ObConflictDetectorGenerator::generate_conflict_rule(ObConflictDetector *pare
       } else if (OB_FAIL(add_conflict_rule(child->R_DS_, child->R_DS_, rules))) {
         LOG_WARN("failed to add conflict rule", K(ret));
       } else {
-        LOG_TRACE("succeed to add condlict2", K(rules));
+
       }
     }
     //check l-asscom(o^a, o^b)
@@ -573,7 +573,7 @@ int ObConflictDetectorGenerator::generate_conflict_rule(ObConflictDetector *pare
     } else if (OB_FAIL(ObConflictDetector::satisfy_left_asscom_rule(*child, *parent, is_satisfy))) {
       LOG_WARN("failed to check satisfy assoc", K(ret));
     } else if (is_satisfy) {
-      LOG_TRACE("satisfy l-asscom");
+
     } else if (OB_FAIL(ids.intersect(child->R_DS_, child->join_info_.table_set_))) {
       LOG_WARN("failed to cal intersect table ids", K(ret));
     } else if (ids.is_empty()) {
@@ -581,23 +581,23 @@ int ObConflictDetectorGenerator::generate_conflict_rule(ObConflictDetector *pare
       if (OB_FAIL(add_conflict_rule(child->L_DS_, child->R_DS_, rules))) {
         LOG_WARN("failed to add conflict rule", K(ret));
       } else {
-        LOG_TRACE("succeed to add condlict3", K(rules));
+
       }
     } else {
       //CR += T(left(o^a)) -> T(right(o^a)) n T(quals)
       if (OB_FAIL(add_conflict_rule(child->L_DS_, ids, rules))) {
         LOG_WARN("failed to add conflict rule", K(ret));
       } else {
-        LOG_TRACE("succeed to add condlict4", K(rules));
+
       }
     }
   } else {
-    LOG_TRACE("generate right child conflict rule for ", K(*parent), K(*child));
+
     //check assoc(o^b, o^a)
     if (OB_FAIL(ObConflictDetector::satisfy_associativity_rule(*parent, *child, is_satisfy))) {
       LOG_WARN("failed to check satisfy assoc", K(ret));
     } else if (is_satisfy) {
-      LOG_TRACE("satisfy assoc");
+
     } else if (OB_FAIL(ids.intersect(child->R_DS_, child->join_info_.table_set_))) {
       LOG_WARN("failed to cal intersect table ids", K(ret));
     } else if (ids.is_empty()) {
@@ -605,14 +605,14 @@ int ObConflictDetectorGenerator::generate_conflict_rule(ObConflictDetector *pare
       if (OB_FAIL(add_conflict_rule(child->L_DS_, child->R_DS_, rules))) {
         LOG_WARN("failed to add conflict rule", K(ret));
       } else {
-        LOG_TRACE("succeed to add condlict5", K(rules));
+
       }
     } else {
       //CR += T(left(o^a)) -> T(right(o^a)) n T(quals)
       if (OB_FAIL(add_conflict_rule(child->L_DS_, ids, rules))) {
         LOG_WARN("failed to add conflict rule", K(ret));
       } else {
-        LOG_TRACE("succeed to add condlict6", K(rules));
+
       }
     }
     //check r-asscom(o^b, o^a)
@@ -620,7 +620,7 @@ int ObConflictDetectorGenerator::generate_conflict_rule(ObConflictDetector *pare
     } else if (OB_FAIL(ObConflictDetector::satisfy_right_asscom_rule(*parent, *child, is_satisfy))) {
       LOG_WARN("failed to check satisfy assoc", K(ret));
     } else if (is_satisfy) {
-      LOG_TRACE("satisfy r-asscom");
+
     } else if (OB_FAIL(ids.intersect(child->L_DS_, child->join_info_.table_set_))) {
       LOG_WARN("failed to cal intersect table ids", K(ret));
     } else if (ids.is_empty()) {
@@ -628,14 +628,14 @@ int ObConflictDetectorGenerator::generate_conflict_rule(ObConflictDetector *pare
       if (OB_FAIL(add_conflict_rule(child->R_DS_, child->L_DS_, rules))) {
         LOG_WARN("failed to add conflict rule", K(ret));
       } else {
-        LOG_TRACE("succeed to add condlict7", K(rules));
+
       }
     } else {
       //CR += T(right(o^a)) -> T(left(o^a)) n T(quals)
       if (OB_FAIL(add_conflict_rule(child->R_DS_, ids, rules))) {
         LOG_WARN("failed to add conflict rule", K(ret));
       } else {
-        LOG_TRACE("succeed to add condlict8", K(rules));
+
       }
     }
   }
@@ -1406,7 +1406,7 @@ int ObConflictDetectorGenerator::generate_cross_product_conflict_rule(const ObDM
     ObSEArray<ObRelIds, 8> connect_infos;
     // Initialize base table, joined table treated as a whole
     // Cartesian product should be enumerated after all joined tables are enumerated
-    LOG_TRACE("start generate cross product conflict rule", K(table_items), K(join_conditions));
+
     for (int64_t i = 0; OB_SUCC(ret) && i < table_items.count(); ++i) {
       table_ids.reuse();
       if (OB_ISNULL(table_items.at(i))) {
@@ -1485,7 +1485,7 @@ int ObConflictDetectorGenerator::generate_cross_product_conflict_rule(const ObDM
                 LOG_WARN("failed to add members", K(ret));
               }
             }
-            LOG_TRACE("succeed to add new connect info", K(*expr), K(connect_infos));
+
           }
         }
       }
@@ -1547,7 +1547,7 @@ int ObConflictDetectorGenerator::generate_cross_product_conflict_rule(const ObDM
         cross_product_detector->is_redundancy_ = true;
       }
     }
-    LOG_TRACE("update bushy tree info", K(bushy_tree_infos_));
+
   }
   return ret;
 }

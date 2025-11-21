@@ -134,7 +134,7 @@ int ObTableScanWithIndexBackOp::extract_range_from_index()
               LOG_WARN("datum to obj failed", K(ret));
             } else {
               range_end[j] = range_start[j];
-              LOG_DEBUG("static engine tsc with index back get row", K(j), K(range_start[j]));
+
             }
           }
         }
@@ -241,7 +241,7 @@ int ObTableScanWithIndexBackOp::inner_get_next_row()
       } else {
         output_row_cnt_++;
         need_continue = false;
-        LOG_DEBUG("get next row from domain index look up");
+
       }
       break;
     }

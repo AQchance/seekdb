@@ -636,7 +636,7 @@ int ObTransformLeftJoinToAnti::check_hint_valid(const ObDMLStmt &stmt,
     LOG_WARN("get unexpected null", K(ret), K(query_hint));
   } else {
     is_valid = hint->enable_left_to_anti(query_hint->cs_type_, table);
-    LOG_TRACE("succeed to check left_to_anti hint valid", K(is_valid), K(table), K(*hint));
+
   }
   return ret;
 }

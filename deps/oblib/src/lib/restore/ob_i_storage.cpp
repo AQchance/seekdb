@@ -162,7 +162,7 @@ int get_storage_prefix_from_path(const common::ObString &uri, const char *&prefi
     prefix = OB_AZBLOB_PREFIX;
   } else {
     ret = OB_INVALID_BACKUP_DEST;
-    STORAGE_LOG(ERROR, "invalid backup uri", K(ret), K(uri));
+
   }
   return ret;
 }

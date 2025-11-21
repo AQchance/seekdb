@@ -93,12 +93,12 @@ protected:
 
   static void SetUpTestCase()
   {
-    LOG_INFO("SetUpTestCase");
+
     EXPECT_EQ(OB_SUCCESS, MockTenantModuleEnv::get_instance().init());
   }
   static void TearDownTestCase()
   {
-    LOG_INFO("TearDownTestCase");
+
     MockTenantModuleEnv::get_instance().destroy();
   }
   virtual void SetUp()

@@ -81,7 +81,7 @@ void ObTenantTabletSchedulerTaskMgr::MergeLoopTask::runTimerTask()
       LOG_WARN("Fail to merge all partition", K(ret));
     }
     cost_ts = ObTimeUtility::fast_current_time() - cost_ts;
-    LOG_INFO("MergeLoopTask", K(cost_ts));
+
   }
 }
 
@@ -95,7 +95,7 @@ void ObTenantTabletSchedulerTaskMgr::MediumLoopTask::runTimerTask()
       LOG_WARN("Fail to merge all partition", K(ret));
     }
     cost_ts = ObTimeUtility::fast_current_time() - cost_ts;
-    LOG_INFO("MediumLoopTask", K(cost_ts));
+
   }
 }
 
@@ -116,7 +116,7 @@ void ObTenantTabletSchedulerTaskMgr::SSTableGCTask::runTimerTask()
       LOG_WARN("Fail to update upper_trans_version and gc sstable", K(ret));
     }
     cost_ts = ObTimeUtility::fast_current_time() - cost_ts;
-    LOG_INFO("SSTableGCTask", K(cost_ts));
+
   }
 }
 
@@ -143,7 +143,7 @@ void ObTenantTabletSchedulerTaskMgr::InfoPoolResizeTask::runTimerTask()
     LOG_WARN("Fail to refresh tenant status", K(ret));
   }
   cost_ts = ObTimeUtility::fast_current_time() - cost_ts;
-  LOG_INFO("InfoPoolResizeTask", K(cost_ts));
+
 }
 
 void ObTenantTabletSchedulerTaskMgr::TabletUpdaterRefreshTask::runTimerTask()
@@ -155,7 +155,7 @@ void ObTenantTabletSchedulerTaskMgr::TabletUpdaterRefreshTask::runTimerTask()
     LOG_WARN("Fail to reset thread count", K(ret));
   }
   cost_ts = ObTimeUtility::fast_current_time() - cost_ts;
-  LOG_INFO("TabletUpdaterRefreshTask", K(cost_ts));
+
 }
 
 void ObTenantTabletSchedulerTaskMgr::MediumCheckTask::runTimerTask()
@@ -167,7 +167,7 @@ void ObTenantTabletSchedulerTaskMgr::MediumCheckTask::runTimerTask()
     LOG_WARN("Fail to check_medium_finish and schedule", K(ret));
   }
   cost_ts = ObTimeUtility::fast_current_time() - cost_ts;
-  LOG_INFO("MediumCheckTask", K(cost_ts));
+
 }
 
 int ObTenantTabletSchedulerTaskMgr::start()
@@ -195,7 +195,7 @@ int ObTenantTabletSchedulerTaskMgr::start()
   } else if (OB_FAIL(TG_SCHEDULE(compaction_refresh_tg_id_, tablet_updater_refresh_task_, TABLET_UPDATER_REFRESH_INTERVAL, repeat))) {
     LOG_WARN("Fail to schedule tablet updater refresh task", K(ret));
   } else if (GCTX.is_shared_storage_mode()) {
-    LOG_INFO("shared storage mode do not use medium_loop_task to do major merge", K(ret));
+
   } else if (OB_FAIL(TG_CREATE_TENANT(lib::TGDefIDs::MediumLoop, medium_loop_tg_id_))) {
     LOG_WARN("failed to create medium loop thread", K(ret));
   } else if (OB_FAIL(TG_START(medium_loop_tg_id_))) {
@@ -215,12 +215,12 @@ int ObTenantTabletSchedulerTaskMgr::restart_scheduler_timer_task(
     LOG_WARN("failed to reload new merge schedule interval", K(merge_schedule_interval));
   } else if (GCTX.is_shared_storage_mode()) {
     schedule_interval_ = merge_schedule_interval;
-    LOG_INFO("succeeded to reload new merge schedule interval for merge loop task", K(merge_schedule_interval));
+
   } else if (OB_FAIL(restart_schedule_timer_task(merge_schedule_interval, medium_loop_tg_id_, medium_loop_task_))) {
     LOG_WARN("failed to reload new merge schedule interval", K(merge_schedule_interval));
   } else {
     schedule_interval_ = merge_schedule_interval;
-    LOG_INFO("succeeded to reload new merge schedule interval", K(merge_schedule_interval));
+
   }
   return ret;
 }

@@ -83,7 +83,7 @@ int ObMySQLTransaction::start(
       LOG_WARN("failed to start transaction", K(ret), K(tenant_id), K(with_snapshot));
     } else {
       in_trans_ = true;
-      LOG_DEBUG("start transaction success", K(tenant_id), K(with_snapshot));
+
     }
   }
   return ret;
@@ -136,7 +136,7 @@ int ObMySQLTransaction::do_stash_query(int min_batch_cnt)
     } else {
       const uint64_t end_time = ObTimeUtility::current_time();
       it->second->reset();
-      LOG_INFO("query_write succ", "table", it->first, "rows", affected_rows, "cost", end_time - start_time);
+
     }
   }
   return ret;
@@ -207,7 +207,7 @@ int ObMySQLTransaction::end(const bool want_commit)
     if (OB_FAIL(ret)) {
       LOG_WARN("fail to end transation", K(ret));
     } else {
-      LOG_DEBUG("end transaction success", K(commit));
+
     }
     in_trans_ = false;
   }

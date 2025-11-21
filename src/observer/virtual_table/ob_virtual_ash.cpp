@@ -553,7 +553,7 @@ int ObVirtualASHI1::init_next_query_range()
         iterator_ = &forward_iterator_;
       }
       iterator_->init_with_sample_time_index(left, right);
-      LOG_DEBUG("current ash query range", K(key_ranges_), K(left), K(right), K_(iterator));
+
     }
   }
   return ret;

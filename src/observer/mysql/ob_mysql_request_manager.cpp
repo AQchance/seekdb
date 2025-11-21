@@ -359,7 +359,7 @@ int ObMySQLRequestManager::mtl_init(ObMySQLRequestManager* &req_mgr)
     } else {
       // do nothing
     }
-    LOG_INFO("mtl init finish", K(tenant_id), K(mem_limit), K(queue_size), K(ret));
+
   }
   if (OB_FAIL(ret) && req_mgr != nullptr) {
     // cleanup

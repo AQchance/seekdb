@@ -97,7 +97,7 @@ int ObExprVecIVFPQCenterVector::generate_pq_center_vector(
   ObDatum *datum = nullptr;
   if (1 == expr.arg_cnt_) {
     expr_datum.set_null();
-    LOG_DEBUG("[vec debug] generate empty pq center vector since only one arg", K(ret), K(1 == expr.arg_cnt_));
+
   } else if (4 == expr.arg_cnt_) {
     // for pq centroid table, return residual vector
     common::ObArenaAllocator tmp_allocator("IVFPQExprPQCVec", OB_MALLOC_NORMAL_BLOCK_SIZE, MTL_ID());

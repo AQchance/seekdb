@@ -97,7 +97,7 @@ int ObTableLoadResourceManager::start()
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    LOG_INFO("ObTableLoadResourceManager init twice", KR(ret), KP(this));
+
   } else if (OB_FAIL(TG_SCHEDULE(MTL(omt::ObSharedTimer *)->get_tg_id(), init_resource_task_,
                                  REFRESH_AND_CHECK_TASK_FIRST_TIME_INTERVAL, true))) {
     LOG_WARN("fail to schedule first refresh_and_check task", KR(ret));
@@ -105,7 +105,7 @@ int ObTableLoadResourceManager::start()
                                  REFRESH_AND_CHECK_TASK_INTERVAL, true))) {
     LOG_WARN("fail to schedule refresh_and_check task", KR(ret));
   }
-  LOG_INFO("ObTableLoadResourceManager::start", KR(ret));
+
 
   return ret;
 }
@@ -218,18 +218,18 @@ int ObTableLoadResourceManager::apply_resource(ObDirectLoadResourceApplyArg &arg
                 if (OB_FAIL(resource_pool_.set_refactored(arg.apply_array_[i].addr_, ctx, 1))) {
                   LOG_WARN("fail to set refactored", K(arg.apply_array_[i].addr_));
                 } else {
-                  LOG_INFO("resource remain", K(arg.apply_array_[i]), K(ctx.memory_remain_));
+
                 }
               }
             }
-            LOG_INFO("ObTableLoadResourceManager::apply_resource", K(arg));
+
           }
         }
       } else {
         LOG_WARN("fail to get refactored", KR(ret), K(arg.task_key_));
       }
     } else {
-      LOG_INFO("resource has been assigned", K(arg.task_key_));
+
     }
   }
   res.error_code_ = ret;
@@ -254,7 +254,7 @@ int ObTableLoadResourceManager::release_resource(ObDirectLoadResourceReleaseArg 
       LOG_WARN("ObTableLoadResourceManager is stop", KR(ret));
     } else if (OB_FAIL(assigned_tasks_.get_refactored(arg.task_key_, assigned_arg))) {
       if (ret == OB_HASH_NOT_EXIST) {
-        LOG_INFO("resource has been released", K(arg.task_key_));
+
       } else {
         LOG_WARN("fail to get refactored", K(arg.task_key_));
       }
@@ -275,7 +275,7 @@ int ObTableLoadResourceManager::release_resource(ObDirectLoadResourceReleaseArg 
         if (OB_FAIL(assigned_tasks_.erase_refactored(arg.task_key_))) {
           LOG_WARN("fail to erase refactored", K(arg.task_key_));
         } else {
-          LOG_INFO("ObTableLoadResourceManager::release_resource", K(arg));
+
         }
       }
     }
@@ -297,7 +297,7 @@ int ObTableLoadResourceManager::update_resource(ObDirectLoadResourceUpdateArg &a
     AddrMap addrs_map;
     new_addrs.set_tenant_id(MTL_ID());
     if (OB_FAIL(addrs_map.create(bucket_num, "TLD_ResourceMgr", "TLD_ResourceMgr", arg.tenant_id_))) {
-      LOG_INFO("fail to create hashmap", KR(ret), K(bucket_num));
+
     } else {
       ObResourceCtx ctx;
       lib::ObMutexGuard guard(mutex_);
@@ -335,7 +335,7 @@ int ObTableLoadResourceManager::update_resource(ObDirectLoadResourceUpdateArg &a
           } else if (OB_FAIL(resource_pool_.erase_refactored(iter->first))) {
             LOG_WARN("fail to erase refactored", K(iter->first));
           } else {
-            LOG_INFO("update resource delete observer", K(arg.tenant_id_), K(iter->first));
+
           }
         }
       }
@@ -344,7 +344,7 @@ int ObTableLoadResourceManager::update_resource(ObDirectLoadResourceUpdateArg &a
         if (OB_FAIL(resource_pool_.set_refactored(new_addrs[i], ctx))) {
           LOG_WARN("fail to set refactored", K(new_addrs[i]));
         } else {
-          LOG_INFO("update resource add observer", K(arg.tenant_id_), K(new_addrs[i]), K(ctx));
+
         }
       }
       for (ResourceCtxMap::iterator iter = resource_pool_.begin(); OB_SUCC(ret) && iter != resource_pool_.end(); iter++) {
@@ -352,7 +352,7 @@ int ObTableLoadResourceManager::update_resource(ObDirectLoadResourceUpdateArg &a
           LOG_WARN("fail to get refactored", K(iter->first));
         } else {
           if (ctx.memory_total_ != arg.memory_size_) {
-            LOG_INFO("update resource memory", K(arg.tenant_id_), K(iter->first), K(ctx.memory_total_), K(arg.memory_size_));
+
           }
           ctx.memory_remain_ += arg.memory_size_ - ctx.memory_total_;
           ctx.memory_total_ = arg.memory_size_;
@@ -519,7 +519,7 @@ void ObTableLoadResourceManager::check_assigned_task(common::ObArray<ObDirectLoa
   ObDirectLoadResourceReleaseArg release_arg;
   release_arg.tenant_id_ = MTL_ID();
   if (need_release_array.count()) {
-    LOG_INFO("need release assigned tasks", K(need_release_array));
+
     for (int64_t i = 0; i < need_release_array.count(); i++) {
       release_arg.task_key_ = need_release_array[i];
       release_resource(release_arg);
@@ -528,7 +528,7 @@ void ObTableLoadResourceManager::check_assigned_task(common::ObArray<ObDirectLoa
 
   ObDirectLoadResourceOpRes res;
   if (need_track_array.count()) {
-    LOG_INFO("need track assigned tasks", K(need_track_array));
+
     for (int64_t i = 0; i < need_track_array.count(); i += 2) {
       if(OB_UNLIKELY(i + 1 >= need_track_array.count())) {
         ret = OB_ERR_UNEXPECTED;
@@ -620,7 +620,7 @@ int ObTableLoadResourceManager::refresh_and_check(bool first_check)
           }
           ret = OB_SUCCESS;
         }
-        LOG_INFO("refresh_and_check first check", K(update_arg.tenant_id_), K(assigned_tasks_.size()));
+
       }
     }
   } else {
@@ -643,13 +643,13 @@ int ObTableLoadResourceManager::init_resource()
   while (retry_time < MAX_INIT_RETRY_TIMES && resource_inited_ == false) {
     if (OB_FAIL(refresh_and_check(!resource_inited_))) {
       retry_time++;
-      LOG_INFO("init_resource retry", KR(ret), K(MTL_ID()), K(retry_time));
+
     } else {
       resource_inited_ = true;
       if (OB_FAIL(refresh_and_check(!resource_inited_))) {
         LOG_WARN("fail to refresh_and_check", KR(ret));
       }
-      LOG_INFO("ObTableLoadResourceManager::init_resource", KR(ret), K(MTL_ID()));
+
       break;
     }
   }

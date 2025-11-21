@@ -168,7 +168,7 @@ int ObLogTableScan::check_is_delete_insert_scan(bool &is_delete_insert_scan) con
     LOG_WARN("failed to get table schema", K(ret));
   } else if (OB_UNLIKELY(NULL == table_schema)) {
     // may be fake table, skip
-    LOG_DEBUG("get nullptr table schema", K(ret), K_(table_id), K_(ref_table_id), K(get_stmt()));
+
   } else if (table_schema->is_delete_insert_merge_engine()) {
     omt::ObTenantConfigGuard tenant_config(TENANT_CONF(MTL_ID()));
     if (OB_LIKELY(tenant_config.is_valid())) {
@@ -455,7 +455,7 @@ int ObLogTableScan::check_output_dependance(common::ObIArray<ObRawExpr *> &child
 {
   int ret = OB_SUCCESS;
   ObSEArray<ObRawExpr*, 8> exprs;
-  LOG_TRACE("start to check output exprs", K(type_), K(child_output), K(deps));
+
   ObRawExprCheckDep dep_checker(child_output, deps, true);
   if (OB_FAIL(append(exprs, filter_exprs_))) {
     LOG_WARN("failed to append exprs", K(ret));
@@ -487,7 +487,7 @@ int ObLogTableScan::check_output_dependance(common::ObIArray<ObRawExpr *> &child
         }
       }
     }
-    LOG_TRACE("succeed to check output exprs", K(exprs), K(type_), K(deps));
+
   }
   return ret;
 }
@@ -765,7 +765,7 @@ int ObLogTableScan::generate_access_exprs()
       if (OB_FAIL(add_mapping_columns_for_vt(access_exprs_))) {
         LOG_WARN("failed to add mapping columns for vt", K(ret));
       } else {
-        LOG_TRACE("succeed to generate access exprs", K(access_exprs_), K(ext_file_column_exprs_));
+
       }
     }
   }
@@ -977,7 +977,7 @@ int ObLogTableScan::extract_pushdown_filters(ObIArray<ObRawExpr*> &nonpushdown_f
         if (OB_FAIL(nonpushdown_filters.push_back(filters.at(i)))) {
           LOG_WARN("push variable assign filter store non-pushdown filter failed", K(ret), K(i));
         } else {
-          LOG_TRACE("check for not pushdown partid columnref filter here");
+
         }
       } else if (!get_index_back()) {
         add_to_scan_filter = true;
@@ -1330,7 +1330,7 @@ int ObLogTableScan::generate_necessary_rowkey_and_partkey_exprs()
 int ObLogTableScan::add_mapping_columns_for_vt(ObIArray<ObRawExpr*> &access_exprs)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("debug mapping columns for virtual table", K(ref_table_id_));
+
   return ret;
 }
 
@@ -1450,7 +1450,7 @@ int ObLogTableScan::set_index_merge_scan_filters(const AccessPath *path)
       LOG_WARN("failed to set index table scan filters", K(ret));
     }
   }
-  LOG_TRACE("index merge set range conds and filters", K(index_range_conds_), K(index_filters_));
+
   return ret;
 }
 
@@ -1701,7 +1701,7 @@ int ObLogTableScan::init_calc_part_id_expr()
       // select /*+ index(t1 idx) */ * from t1\G
       // TLU
       //  TSC // output([c1],[calc_part_id_expr(c1 + 1)]), access([c1])
-      LOG_TRACE("log table scan init calc part id expr", KPC(calc_part_id_expr_));
+
     }
   }
 
@@ -1760,7 +1760,7 @@ uint64_t ObLogTableScan::hash(uint64_t seed) const
   }
   hash_value = do_hash(sample_info_.method_, hash_value);
   hash_value = do_hash(use_das_, hash_value);
-  LOG_TRACE("TABLE SCAN hash value", K(hash_value), K(table_name_), K(index_name_), K(get_name()));
+
   hash_value = ObLogicalOperator::hash(hash_value);
   return hash_value;
 }
@@ -2762,7 +2762,7 @@ int ObLogTableScan::set_limit_offset(ObRawExpr *limit, ObRawExpr *offset)
     set_op_cost(op_cost);
     set_cost(cost);
     set_card(card);
-    LOG_TRACE("push limit into table scan", K(param), K(op_cost), K(cost), K(card));
+
   }
   DISABLE_OPT_TRACE_COST_MODEL;
   return ret;
@@ -2774,7 +2774,7 @@ int ObLogTableScan::allocate_granule_pre(AllocGIContext &ctx)
   int ret = OB_SUCCESS;
   if (ctx.managed_by_gi()) {
     gi_alloc_post_state_forbidden_ = true;
-    LOG_TRACE("tsc in the partition wise state, forbidden table scan allocate gi", K(ref_table_id_));
+
   }
   return ret;
 }
@@ -2918,7 +2918,7 @@ int ObLogTableScan::extract_bnlj_param_idxs(ObIArray<int64_t> &bnlj_params)
       }
     }
   }
-  LOG_TRACE("extract bnlj params", K(use_batch_), K(bnlj_params), K(ret));
+
   return ret;
 }
 
@@ -5530,7 +5530,7 @@ int ObLogTableScan::check_das_need_scan_with_domain_id()
     LOG_WARN("unexpected error, table schema is nullptr", K(ret), K(get_real_ref_table_id()), K(table_id_), K(ref_table_id_));
   } else if (ObDomainIdUtils::is_domain_id_index_table(table_schema)) {
     // just skip, nothing to do.
-    LOG_TRACE("skip full-text index or multi-value index or vector index", K(ret), KPC(table_schema));
+
   } else if (plan->get_optimizer_context().is_insert_stmt_in_online_ddl()) {
     const TableItem *insert_table_item = plan->get_optimizer_context().get_root_stmt()->get_table_item(0);
     if (OB_ISNULL(insert_table_item)) {
@@ -5662,7 +5662,7 @@ int ObLogTableScan::check_das_need_scan_with_domain_id()
       }
     }
   }
-  LOG_TRACE("check_table_scan_with_domain_id", K(ret), K(with_domain_types_), K(domain_table_ids_), KPC(table_schema));
+
   return ret;
 }
 

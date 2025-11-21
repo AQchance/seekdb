@@ -72,7 +72,7 @@ int ObXMLExprHelper::add_binary_to_element(ObMulModeMemCtx* mem_ctx, ObString bi
       LOG_WARN("fail to print xml", K(ret));
     } else if (FALSE_IT(xml_text.assign_ptr(buffer->ptr(), buffer->length()))) {
     } else if (OB_FAIL(ObXmlParserUtils::parse_content_text(mem_ctx, xml_text, x_doc))) {
-      LOG_DEBUG("fail to parse unparse", K(ret));
+
       ret = OB_SUCCESS;
       if (OB_FAIL(bin.to_tree(node))) {
         LOG_WARN("fail to tree", K(ret));
@@ -1353,7 +1353,7 @@ int ObXMLExprHelper::construct_attribute(
         LOG_WARN("attribute name or value is null", K(ret), K(i), K(jb_name), K(jb_value));
       } else if (jb_name->json_type() == ObJsonNodeType::J_NULL ||
                     jb_value->json_type() == ObJsonNodeType::J_NULL) {
-        LOG_DEBUG("name or content is null", K(jb_name->json_type()), K(jb_value->json_type()));
+
       } else if (OB_FAIL(ob_write_string(
                             *mem_ctx->allocator_,
                             ObString(jb_value->get_data_length(),

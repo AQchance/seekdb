@@ -1001,17 +1001,17 @@ TEST_F(ObTestTx, replay_then_commit)
 
 void do_async_read(ObTxNode* n, ObTxReadSnapshot& snapshot, int64_t key, int64_t& val)
 {
-  LOG_INFO("do sync commit begin");
+
   ASSERT_EQ(OB_SUCCESS, n->read(snapshot, key, val));
-  LOG_INFO("do sync commit end");
+
 }
 
 
 void do_async_commit(ObTxNode* n, ObTxDesc& tx, int& commit_ret)
 {
-  LOG_INFO("do async commit begin", K(tx));
+
   commit_ret = n->commit_tx(tx, n->ts_after_ms(50 * 1000));
-  LOG_INFO("do async commit end", K(tx), K(commit_ret));
+
 }
 
 TEST_F(ObTestTx, wait_commit_version_elapse_block)
@@ -1354,10 +1354,10 @@ TEST_F(ObTestTx, switch_to_follower_gracefully_in_stmt_rollback_to_last_savepoin
 
   oceanbase::common::ObClusterVersion::get_instance().init(CLUSTER_VERSION_1_0_0_0);
   auto n1 = new ObTxNode(1, ObAddr(ObAddr::VER::IPV4, "127.0.0.1", 8888), bus_);
-  LOG_INFO("n1 tx_ctx_mgr", K(&n1->txs_.tx_ctx_mgr_));
+
 
   auto n2 = new ObTxNode(1, ObAddr(ObAddr::VER::IPV4, "127.0.0.2", 8888), bus_);
-  LOG_INFO("n2 tx_ctx_mgr", K(&n2->txs_.tx_ctx_mgr_));
+
 
   DEFER(delete(n1));
   DEFER(delete(n2));
@@ -1451,10 +1451,10 @@ TEST_F(ObTestTx, switch_to_follower_gracefully_in_stmt_then_commit)
 
   oceanbase::common::ObClusterVersion::get_instance().init(CLUSTER_VERSION_1_0_0_0);
   auto n1 = new ObTxNode(1, ObAddr(ObAddr::VER::IPV4, "127.0.0.1", 8888), bus_);
-  LOG_INFO("n1 tx_ctx_mgr", K(&n1->txs_.tx_ctx_mgr_));
+
 
   auto n2 = new ObTxNode(1, ObAddr(ObAddr::VER::IPV4, "127.0.0.2", 8888), bus_);
-  LOG_INFO("n2 tx_ctx_mgr", K(&n2->txs_.tx_ctx_mgr_));
+
 
   DEFER(delete(n1));
   DEFER(delete(n2));

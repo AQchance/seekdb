@@ -90,11 +90,11 @@ OB_INLINE int ObInterColSubStrDecoder::init(
   // performance critical, don't check params, already checked upper layer
   if (OB_UNLIKELY(is_inited())) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init twice", K(ret));
+
   } else {
     meta += column_header.offset_;
     meta_header_ = reinterpret_cast<const ObInterColSubStrMetaHeader *>(meta);
-    STORAGE_LOG(DEBUG, "decoder meta", K(*meta_header_));
+
   }
   return ret;
 }

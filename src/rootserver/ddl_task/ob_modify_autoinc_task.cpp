@@ -124,7 +124,7 @@ int ObUpdateAutoincSequenceTask::process()
     if (OB_TMP_FAIL(ObSysDDLSchedulerUtil::notify_update_autoinc_end(task_key, max_value + 1, ret))) {
       LOG_WARN("fail to finish update autoinc task", KR(tmp_ret), K(max_value));
     }
-    LOG_INFO("execute finish update autoinc task finish", K(ret), "ddl_event_info", ObDDLEventInfo(), K(task_key), K(data_table_id_), K(column_id_), K(max_value));
+
   }
   char table_id_buffer[256];
   snprintf(table_id_buffer, sizeof(table_id_buffer), "data_table_id:%ld, dest_table_id:%ld", 
@@ -291,7 +291,7 @@ int ObModifyAutoincTask::process()
     ddl_tracing_.release_span_hierarchy();
     if (OB_FAIL(ret)) {
       add_event_info("modify autoinc task process fail");
-      LOG_INFO("modify autoinc task process fail", "ddl_event_info", ObDDLEventInfo());
+
     }
   }
   return ret;
@@ -389,7 +389,7 @@ int ObModifyAutoincTask::modify_autoinc()
             LOG_WARN("fail to submit ObUpdateAutoincSequenceTask", K(ret));
           } else {
             update_autoinc_job_time_ = ObTimeUtility::current_time();
-            LOG_INFO("submit ObUpdateAutoincSequenceTask success", K(object_id_), K(alter_column_id));
+
           }
         }
       }

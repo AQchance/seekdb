@@ -230,7 +230,7 @@ ObDASParallelTask *ObDASParallelTaskFactory::alloc(DASRefCountContext &ref_count
     (void)ATOMIC_FAA(&alloc_count_, 1);
     alloc_count_++;
     if (REACH_TIME_INTERVAL(3 * 1000 * 1000)) {
-      LOG_INFO("ts response task statistics", K_(alloc_count), K_(free_count));
+
     }
   }
   return task;

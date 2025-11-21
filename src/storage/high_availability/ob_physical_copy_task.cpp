@@ -77,7 +77,7 @@ int ObPhysicalCopyTask::build_macro_block_copy_info_(ObSSTableCopyFinishTask *fi
       LOG_WARN("failed to get macro block copy info", K(ret));
     }
   } else {
-    LOG_INFO("succeed get macro block copy info", K(copy_table_key_), K(copy_macro_range_info_));
+
   }
   return ret;
 }
@@ -118,7 +118,7 @@ int ObPhysicalCopyTask::process()
     }
     copy_ctx_->total_macro_count_ += copied_ctx.get_macro_block_count(); 
     copy_ctx_->reuse_macro_count_ += copied_ctx.use_old_macro_block_count_;
-    LOG_INFO("physical copy task finish", K(ret), KPC(copy_macro_range_info_), KPC(copy_ctx_));
+
   }
 
   if (OB_SUCCESS != (tmp_ret = record_server_event_())) {
@@ -156,10 +156,10 @@ int ObPhysicalCopyTask::fetch_macro_block_with_retry_(
   } else {
     while (retry_times < MAX_RETRY_TIMES) {
       if (retry_times > 0) {
-        LOG_INFO("retry get major block", K(retry_times));
+
       }
       if (OB_FAIL(fetch_macro_block_(retry_times, copied_ctx))) {
-        STORAGE_LOG(WARN, "failed to fetch major block", K(ret), K(retry_times));
+
       }
 
       if (OB_SUCC(ret)) {
@@ -194,7 +194,7 @@ int ObPhysicalCopyTask::fetch_macro_block_(
     ret = OB_NOT_INIT;
     LOG_WARN("physical copy physical task do not init", K(ret));
   } else {
-    LOG_INFO("init reader", K(copy_table_key_));
+
     if (OB_UNLIKELY(task_idx_ < 0)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("unexpected task_idx_", K(ret), K(task_idx_));
@@ -221,7 +221,7 @@ int ObPhysicalCopyTask::fetch_macro_block_(
         } else {
           ret = OB_SUCCESS;
         }
-        STORAGE_LOG(ERROR, "fake EN_MIGRATE_FETCH_MACRO_BLOCK", K(ret));
+
       }
     }
 #endif
@@ -314,7 +314,7 @@ int ObPhysicalCopyTask::get_macro_block_restore_reader_(
       LOG_WARN("failed to alloc memory", K(ret), KP(buf));
     } else if (FALSE_IT(tmp_reader = new(buf) ObCopyMacroBlockRestoreReader())) {
     } else if (OB_FAIL(tmp_reader->init(init_param))) {
-      STORAGE_LOG(WARN, "failed to init restore reader", K(ret), K(init_param), KPC(copy_ctx_));
+
     } else {
       reader = tmp_reader;
       tmp_reader = NULL;
@@ -430,7 +430,7 @@ int ObPhysicalCopyTask::get_macro_block_writer_(
       LOG_WARN("failed to alloc memory", K(ret));
     } else if (OB_FAIL(tmp_writer->init(copy_ctx_->tenant_id_, copy_ctx_->ls_id_, copy_ctx_->tablet_id_, 
         this->get_dag()->get_dag_id(), sstable_param, reader, index_block_rebuilder, copy_ctx_->extra_info_))) {
-      STORAGE_LOG(WARN, "failed to init macro block writer", K(ret), KPC(copy_ctx_));
+
     } else {
       writer = tmp_writer;
       tmp_writer = nullptr;
@@ -518,7 +518,7 @@ int ObPhysicalCopyTask::build_copy_macro_block_reader_init_param_(
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("copy macro block reader init param is invalid", K(ret), K(init_param));
     } else {
-      LOG_INFO("succeed init param", KPC(copy_macro_range_info_), K(init_param));
+
     }
   }
   return ret;
@@ -537,18 +537,18 @@ int ObPhysicalCopyTask::build_data_version_for_macro_block_reuse_(ObCopyMacroBlo
     // skip reuse
     init_param.data_version_ = 0;
   } else if (OB_FAIL(GET_MIN_DATA_VERSION(copy_ctx_->tenant_id_, compat_version))) {
-    LOG_INFO("failed to get min data version", K(ret), KPC(copy_ctx_));
+
   } else if (finish_task_->get_sstable_param()->is_small_sstable_) {
     // skip reuse for small sstable
     init_param.data_version_ = 0;
-    LOG_INFO("skip reuse for small sstable", KPC(copy_ctx_));
+
   } else if (OB_FAIL(copy_ctx_->macro_block_reuse_mgr_->get_major_snapshot_version(copy_ctx_->table_key_, snapshot_version, co_base_snapshot_version))) {
     if (OB_ENTRY_NOT_EXIST != ret) {
       LOG_WARN("failed to get reuse major snapshot version", K(ret), KPC(copy_ctx_));
     } else {
       ret = OB_SUCCESS;
       init_param.data_version_ = 0;
-      LOG_INFO("major snapshot version not exist, maybe copying first major in this tablet or copying F major to C replica, skip reuse, set data_version_ to 0", K(ret), KPC(copy_ctx_), K(init_param));
+
     }
   } else if (FALSE_IT(src_co_base_snapshot_version = finish_task_->get_sstable_param()->basic_meta_.get_co_base_snapshot_version())) {
   } else if (co_base_snapshot_version != src_co_base_snapshot_version) {
@@ -558,7 +558,7 @@ int ObPhysicalCopyTask::build_data_version_for_macro_block_reuse_(ObCopyMacroBlo
         K(src_co_base_snapshot_version), KPC(copy_ctx_), K(init_param));
   } else {
     init_param.data_version_ = snapshot_version;
-    LOG_INFO("succeed get and set reuse major max snapshot version", K(snapshot_version), K(co_base_snapshot_version), K(src_co_base_snapshot_version), KPC(copy_ctx_), K(init_param));
+
   }
 
   return ret;

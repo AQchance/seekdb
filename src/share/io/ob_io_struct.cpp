@@ -332,7 +332,7 @@ int ObIOFuncUsages::accumulate(ObIORequest &req) {
   } else if (OB_FAIL(req.io_result_->cal_delay_us(
                  prepare_delay, schedule_delay, submit_delay, device_delay, total_delay))) {
     ret = OB_ERR_UNEXPECTED;
-    LOG_INFO("failed to cal delay", K(ret));
+
   } else {
     io_size = req.get_align_size();
     idx = static_cast<uint8_t>(req.get_flag().get_func_type());
@@ -414,10 +414,10 @@ void ObIOUsage::accumulate(ObIORequest &req)
   } else if (FALSE_IT(idx = req.io_result_->get_io_usage_index())) {
   } else if (idx >= info_.count() || idx < 0) {
     ret = OB_INVALID_ARGUMENT;
-    LOG_INFO("invalid io usage index", K(idx), K(info_.count()), K(ret));
+
   } else if (OB_FAIL(req.io_result_->cal_delay_us(
                  prepare_delay, schedule_delay, submit_delay, device_delay, total_delay))) {
-    LOG_INFO("failed to cal delay", K(ret));
+
   } else if (req.io_result_->time_log_.return_ts_ > 0 && req.io_result_->ret_code_.io_ret_ == 0) {
     info_.at(idx).io_stat_.accumulate(1, io_size, prepare_delay, schedule_delay, submit_delay, device_delay, total_delay);
   } else {
@@ -593,11 +593,11 @@ int ObIOMemStat::inc(const ObIORequest &req)
   int ret = OB_SUCCESS;
   if (OB_ISNULL(req.io_result_)) {
     ret = OB_INVALID_ARGUMENT;
-    LOG_INFO("invalid io result", K(group_mem_infos_.count()), K(req));
+
   } else {
     uint64_t idx = req.io_result_->get_io_usage_index();  // the group index  of mem is same as the group index in usage.
     if (idx >= group_mem_infos_.count() || idx < 0) {
-      LOG_INFO("invalid io usage index", K(idx), K(group_mem_infos_.count()), K(req.io_result_->get_group_key()));
+
     } else if (OB_FAIL(group_mem_infos_.at(idx).inc(req.get_buf_size()))) {
       LOG_WARN("failed to inc", K(ret));
     }
@@ -610,12 +610,12 @@ int ObIOMemStat::dec(const ObIORequest &req)
   int ret = OB_SUCCESS;
   if (OB_ISNULL(req.io_result_)) {
     ret = OB_INVALID_ARGUMENT;
-    LOG_INFO("invalid io result", K(group_mem_infos_.count()), K(req));
+
   } else {
     // the group index  of mem is same as the group index in usage.
     uint64_t idx = req.io_result_->get_io_usage_index();
     if (idx >= group_mem_infos_.count() || idx < 0) {
-      LOG_INFO("invalid io usage index", K(idx), K(group_mem_infos_.count()), K(req.io_result_->get_group_key()));
+
     } else if (OB_FAIL(group_mem_infos_.at(idx).dec(req.get_buf_size()))) {
       LOG_WARN("failed to dec", K(ret));
     } else if (group_mem_infos_.at(idx).total_cnt_ < 0 || group_mem_infos_.at(idx).total_size_ < 0) {
@@ -744,7 +744,7 @@ void ObIOTuner::run1()
   int ret = OB_SUCCESS;
   const int64_t thread_id = get_thread_idx();
   set_thread_name("IO_TUNING", thread_id);
-  LOG_INFO("io tuner thread started");
+
   while (!has_set_stop()) {
     //try to update callback_thread_count.
     (void) try_release_thread();
@@ -757,7 +757,7 @@ void ObIOTuner::run1()
     }
     ob_usleep(100 * 1000, true/*is_idle_sleep*/); // 100ms
   }
-  LOG_INFO("io tuner thread stopped");
+
 }
 
 int ObIOTuner::try_release_thread()
@@ -979,11 +979,11 @@ void ObAsyncIOChannel::run1()
     ObDIActionGuard program("IOManager", nullptr, nullptr);
     ObDIActionGuard module(ObDIActionGuard::NS_MODULE, "AsyncIO_Device:%s", device_name);
     set_thread_name("IO_GETEVENT", thread_id);
-    LOG_INFO("io get_events thread started", K(thread_id), K(tg_id_));
+
     while (!has_set_stop()) {
       get_events();
     }
-    LOG_INFO("io get_events thread stopped", K(thread_id), K(tg_id_));
+
   }
 }
 
@@ -1030,7 +1030,7 @@ int ObAsyncIOChannel::submit(ObIORequest &req)
       req.dec_ref("os_dec"); // ref for file system
       LOG_WARN("io_submit failed", K(ret), K(submit_count_), K(req));
     } else {
-      LOG_DEBUG("Success to submit io request, ", K(ret), K(submit_count_), KP(&req), KP(io_context_));
+
     }
   }
   return ret;
@@ -1050,13 +1050,13 @@ void ObAsyncIOChannel::cancel(ObIORequest &req)
     // neither we or the get_events thread would call control.callback_->process(),
     // as we previously set need_callback to false.
     if (OB_FAIL(device_handle_->io_cancel(io_context_, req.control_block_))) {
-      LOG_DEBUG("cancel io request failed", K(ret), K(req), KP(io_context_));
+
     } else {
       RequestHolder holder(&req);
       ATOMIC_DEC(&submit_count_);
       ATOMIC_FAS(&device_channel_->used_io_depth_, get_io_depth(req.get_align_size()));
       req.dec_ref("os_dec"); // ref for file system
-      LOG_DEBUG("The IO Request has been canceled!");
+
       LOG_WARN("Shouldn't go here, io cancel not supported", K(ret), K(req));
     }
   }
@@ -1098,7 +1098,7 @@ void ObAsyncIOChannel::get_events()
         if (OB_LIKELY(0 == system_errno)) { // io succ
           ObDIActionGuard("IO success");
           if (complete_size == io_size) { // full complete
-            LOG_DEBUG("Success to get io event", K(*req), K(complete_size));
+
             if (OB_FAIL(on_full_return(*req, io_size))) {
               LOG_WARN("process full return io request failed", K(ret), K(*req));
             }
@@ -1854,7 +1854,7 @@ void ObIORunner::run1()
   int ret = OB_SUCCESS;
   tid_ = GETTID();
   lib::set_thread_name("DiskCB", idx_);
-  LOG_INFO("io callback thread started");
+
   while (!has_set_stop()) {
     ObIORequest *req = nullptr;
     if (OB_FAIL(pop(req))) {
@@ -1874,7 +1874,7 @@ void ObIORunner::run1()
       }
     }
   }
-  LOG_INFO("io callback thread stopped");
+
 }
 
 int ObIORunner::push(ObIORequest &req)
@@ -1955,7 +1955,7 @@ int ObIORunner::handle(ObIORequest *req)
       }
     }
     if (TC_REACH_TIME_INTERVAL(1000LL * 1000LL)) {  // 1000ms
-      LOG_INFO("callback runner call handle", K(get_queue_count()), KPC(req));
+
     }
     ObTraceIDGuard trace_guard(req->trace_id_);
     { // callback must execute in guard, in case of cancel halfway
@@ -1990,7 +1990,7 @@ int ObIORunner::handle(ObIORequest *req)
         }
         if (OB_UNLIKELY(time_guard.get_diff() > 100000)) {// 100ms
           //print req
-          LOG_INFO("callback process cost too much time", K(ret), K(time_guard), K(req));
+
         }
       }
       //recycle buffer after process
@@ -2152,7 +2152,7 @@ void ObIOCallbackManager::try_release_thread()
       for (int64 i = runners_.count() - 1; i >= config_thread_count_; --i) {
         ObIORunner *cur_runner = runners_.at(i);
         if (cur_runner->is_stop_accept() && cur_runner->get_queue_count() == 0) {
-          LOG_INFO("release io callback thread success", KP(cur_runner));
+
           runners_.pop_back();
           cur_runner->~ObIORunner();
           io_allocator_->free(cur_runner);
@@ -2207,7 +2207,7 @@ int ObIOCallbackManager::update_thread_count(const int64_t thread_count)
         runners_.at(i)->stop_accept_req();
       }
     }
-    LOG_INFO("update io callback thread count", K(ret), "old_thread_cnt", cur_thread_count, "new_thread_cnt", thread_count);
+
   }
   return ret;
 }
@@ -2534,7 +2534,7 @@ void ObIOFaultDetector::record_io_timeout(const ObIOResult &result, const ObIORe
   } else if (result.flag_.is_detect()) {
     //ignore, do not retry
   } else if (req.get_flag().is_sync()) {
-    LOG_INFO("ignore fault detect for sync io", K(req));
+
   } else if (result.flag_.is_read() && !result.is_object_device_req_) {
     RetryTask *retry_task = nullptr;
     if (OB_ISNULL(retry_task = op_alloc(RetryTask))) {
@@ -2570,7 +2570,7 @@ void ObIOFaultDetector::record_io_error(const ObIOResult &result, const ObIORequ
   } else if (result.flag_.is_detect()) {
     //ignore, do not retry
   } else if (req.get_flag().is_sync()) {
-    LOG_INFO("ignore fault detect for sync io", K(req));
+
   } else if (result.flag_.is_read() && !result.is_object_device_req_) {
     if (OB_FAIL(record_read_failure_(result, req))) {
       LOG_WARN("record read failure failed", K(ret), K(result), K(req));
@@ -2598,7 +2598,7 @@ int ObIOFaultDetector::record_read_failure_(const ObIOResult &result, const ObIO
     if (OB_FAIL(TG_PUSH_TASK(TGDefIDs::IO_HEALTH, retry_task))) {
       LOG_WARN("io fault detector push task failed", K(ret), KPC(retry_task));
     } else {
-      LOG_INFO("io fault detector push task", KPC(retry_task));
+
     }
     if (OB_FAIL(ret)) {
       op_free(retry_task);
@@ -2838,5 +2838,5 @@ int64_t ObIOTracer::to_string(char *buf, const int64_t len) const
 }
 void ObIOTracer::print_status()
 {
-  LOG_INFO("[IO STATUS TRACER]", K_(tenant_id), K(*this));
+
 }

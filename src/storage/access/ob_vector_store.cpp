@@ -93,7 +93,7 @@ int ObVectorStore::init(const ObTableAccessParam &param, common::hash::ObHashSet
     if (OB_FAIL(exprs_.init(expr_count))) {
       LOG_WARN("Failed to init exprs", K(ret));
     } else if (OB_FAIL(default_datums_.init(out_cols_param->count()))) {
-      STORAGE_LOG(WARN, "Failed to init datum row", K(ret), K(out_cols_param->count()));
+
     } else if (OB_FAIL(cols_projector_.init(expr_count))) {
       LOG_WARN("Failed to init cols", K(ret));
     } else if (OB_FAIL(datum_infos_.init(expr_count))) {
@@ -117,7 +117,7 @@ int ObVectorStore::init(const ObTableAccessParam &param, common::hash::ObHashSet
           LOG_WARN("fail to push back col", K(ret));
         } else if (OB_ISNULL(expr = param.output_exprs_->at(i))) {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(WARN, "Unexpected null expr", K(ret), K(i), K(param.output_exprs_));
+
         } else if (OB_ISNULL(datums = expr->locate_batch_datums(eval_ctx_))) {
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("Unexpected null datums", K(ret), K(i), KPC(expr));
@@ -569,7 +569,7 @@ int ObVectorStore::do_group_by(
           LOG_WARN("Failed to get aggregate result", K(ret));
         }
       }
-      LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(row_capacity), KPC(group_by_cell_));
+
     }
     if (OB_UNLIKELY(OB_ITER_END != ret)) {
       LOG_WARN("Unexpected ret, should be OB_ITER_END", K(ret));

@@ -86,7 +86,7 @@ int ObUpdateRsListTask::process_without_lock()
   int ret = OB_SUCCESS;
   bool rs_list_diff_member_list = false;
   bool inner_need_update = false;
-  LOG_INFO("start to process rs list update task");
+
 
   DEBUG_SYNC(HANG_UPDATE_RS_LIST);
   ObSEArray<ObRootAddr, ObLSReplica::DEFAULT_REPLICA_COUNT> new_rs_list;

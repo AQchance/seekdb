@@ -159,15 +159,15 @@ int FakeObTabletEstimate::set_tablet_split_info(
   ObLSID test_ls_id(ls_id_);
 
   if (OB_FAIL(MTL(ObLSService *)->get_ls(test_ls_id, ls_handle, ObLSGetMod::STORAGE_MOD))) {
-    STORAGE_LOG(WARN, "fail to get log stream", K(ret), K(ls_handle));
+
   } else if (OB_UNLIKELY(nullptr == ls_handle.get_ls())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "ls is null", K(ret), K(ls_handle));
+
   } else if (OB_FAIL(ls_handle.get_ls()->get_tablet(src_tablet_id, tablet_handle))) {
-    STORAGE_LOG(WARN, "fail to get tablet", K(ret), K(src_tablet_id));
+
   } else if (OB_ISNULL(tablet_handle.get_obj())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "tablet handle obj is null", K(ret), K(tablet_handle));
+
   } else {
     split_info.split_cnt_= split_count;
     split_info.split_type_ = split_type;
@@ -184,7 +184,7 @@ int FakeObTabletEstimate::prepare_scan_range()
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(scan_range_.init(scan_param_))) {
-    STORAGE_LOG(WARN, "fail to init scan range.", K(ret), K(scan_range_));
+
   }
   return ret;
 }
@@ -204,10 +204,10 @@ int FakeObTabletEstimate::estimate_row_count(int64_t &logical_row_count, int64_t
   ls_service_->enable_to_read();
   if (OB_ISNULL(ls_service_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "error unexpected.", K(ret), K(ls_service_));
+
   } else if (OB_FAIL(ls_service_->estimate_row_count(
       scan_param_, scan_range_, est_records, logical_row_count, physical_row_count))) {
-    STORAGE_LOG(WARN, "fail to do estimate row count", K(ret), K(scan_param_), K(scan_range_));
+
   }
   return ret;
 }
@@ -217,7 +217,7 @@ int FakeObTabletEstimate::insert_data()
   int ret = OB_SUCCESS;
   if (nullptr == access_service_ || OB_ISNULL(tablet_handle_.get_obj()) || OB_ISNULL(tx_desc_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "null pointer, unexpected.", K(ret), K(access_service_), K(tablet_handle_), K(tx_desc_));
+
   } else {
     // insert rows
     ObMockNewRowIterator mock_iter;
@@ -229,20 +229,20 @@ int FakeObTabletEstimate::insert_data()
     column_ids.push_back(OB_APP_MIN_COLUMN_ID + 4); // c4
 
     if (OB_FAIL(mock_iter.from(TestDmlCommon::data_row_str))) {
-      STORAGE_LOG(WARN, "mock iter from fail.", K(ret), K(mock_iter));
+
     } else {
       ObTxParam tx_param;
       int64_t savepoint = 0;
       transaction::ObTransService *tx_service = MTL(transaction::ObTransService*);
       if (FALSE_IT(TestDmlCommon::build_tx_param(tx_param))) {
       } else if (OB_FAIL(tx_service->create_implicit_savepoint(*tx_desc_, tx_param, savepoint, true))) {
-        STORAGE_LOG(WARN, "fail to create implicit savepoint.", K(ret), K(tx_desc_), K(tx_param));
+
       } else {
         ObTxReadSnapshot read_snapshot;
         ObTxIsolationLevel isolation = ObTxIsolationLevel::RC;
         int64_t expire_ts = ObTimeUtility::current_time() + TestDmlCommon::TX_EXPIRE_TIME_US;
         if (OB_FAIL(tx_service->get_read_snapshot(*tx_desc_, isolation, expire_ts, read_snapshot))) {
-          STORAGE_LOG(WARN, "fail to get read snapshot.", K(ret), K(expire_ts));
+
         } else {
           ObDMLBaseParam dml_param;
           dml_param.timeout_ = ObTimeUtility::current_time() + TestDmlCommon::TX_EXPIRE_TIME_US;
@@ -256,20 +256,20 @@ int FakeObTabletEstimate::insert_data()
 
           share::schema::ObTableDMLParam table_dml_param(allocator_);
           if (OB_FAIL(table_dml_param.convert(&table_schema_, 1, column_ids))) {
-            STORAGE_LOG(WARN, "fail to covert dml param.", K(ret), K(table_schema_));
+
           } else {
             dml_param.table_param_ = &table_dml_param;
             int64_t affected_rows = 0;
             if (OB_FAIL(access_service_->insert_rows(
               ls_id_, tablet_id_, *tx_desc_, dml_param, column_ids, &mock_iter, affected_rows))) {
-              STORAGE_LOG(WARN, "fail to insert rows.", K(ret));
+
             } else if (affected_rows != 12) {
               ret = OB_ERR_UNEXPECTED;
-              STORAGE_LOG(WARN, "affected rows not equal to insert rows(12).", K(affected_rows));
+
             } else {
               expire_ts = ObTimeUtility::current_time() + TestDmlCommon::TX_EXPIRE_TIME_US;
               if (OB_FAIL(tx_service->commit_tx(*tx_desc_, expire_ts))) {
-                STORAGE_LOG(WARN, "fail to commit tx.", K(ret), K(expire_ts));
+
               } else {
                 tx_service->release_tx(*tx_desc_);
               }
@@ -295,12 +295,12 @@ int FakeObTabletEstimate::estimate_block_count_and_row_count(
 
   if (!tablet_id.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid tablet id.", K(ret), K(tablet_id));
+
   } else if (OB_ISNULL(ls_service_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "error unexpected.", K(ret), K(ls_service_));
+
   } else if (OB_FAIL(ls_service_->estimate_block_count_and_row_count(tablet_id, macro_block_count, micro_block_count, sstable_row_count, memtable_row_count))) {
-    STORAGE_LOG(WARN, "fail to do estimate block count.", K(ret), K(tablet_id));
+
   }
 
   return ret;
@@ -312,14 +312,14 @@ int FakeObTabletEstimate::prepare_scan_param()
   // prepare table schema
   if (OB_FALSE_IT(TestDmlCommon::build_data_table_schema(tenant_id_, table_schema_))) {
   } else if (OB_FAIL(TestDmlCommon::build_tx_desc(tenant_id_, tx_desc_))) {  // 1. get tx desc
-    STORAGE_LOG(WARN, "fail to build tx desc.", K(ret), K(tenant_id_));
+
   } else {
     ObTxIsolationLevel isolation = ObTxIsolationLevel::RC;
     int64_t expire_ts = ObTimeUtility::current_time() + TestDmlCommon::TX_EXPIRE_TIME_US;
     ObTxReadSnapshot read_snapshot;
     transaction::ObTransService *tx_service = MTL(transaction::ObTransService*);
     if (OB_FAIL(tx_service->get_read_snapshot(*tx_desc_, isolation, expire_ts, read_snapshot))) {  // 2. get read snapshot
-      STORAGE_LOG(WARN, "fail to get_read_snapshot.", K(ret));
+
     } else {
       ObSArray<uint64_t> colunm_ids;
       colunm_ids.push_back(OB_APP_MIN_COLUMN_ID + 0);
@@ -328,9 +328,9 @@ int FakeObTabletEstimate::prepare_scan_param()
       colunm_ids.push_back(OB_APP_MIN_COLUMN_ID + 3);
       colunm_ids.push_back(OB_APP_MIN_COLUMN_ID + 4);
       if (OB_FAIL(TestDmlCommon::build_table_param(table_schema_, colunm_ids, table_param_))) {  // build table param
-        STORAGE_LOG(WARN, "fail to build table param.", K(ret), K(colunm_ids), K(table_schema_));
+
       } else if (OB_FAIL(TestDmlCommon::build_table_scan_param(tenant_id_, read_snapshot, table_param_, scan_param_))) { // 4. build scan param
-        STORAGE_LOG(WARN, "fail to build table scan param.", K(ret), K(tenant_id_), K(read_snapshot));
+
       }
     }
   }
@@ -344,7 +344,7 @@ int FakeObTabletEstimate::gen_datum_rowkey(const int64_t key_val, const int64_t 
   ObRowkey rowkey;
   if (NULL == (key_val_obj = static_cast<ObObj*>(allocator_.alloc(sizeof(ObObj) * key_cnt)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "out of memory", K(ret));
+
   } else {
     for (int64_t i = 0; i < key_cnt; ++i) {
       key_val_obj[i].set_int(key_val);
@@ -352,7 +352,7 @@ int FakeObTabletEstimate::gen_datum_rowkey(const int64_t key_val, const int64_t 
     }
     rowkey.assign(key_val_obj, key_cnt);
     if (OB_FAIL(datum_rowkey.from_rowkey(rowkey, allocator_))) {
-      STORAGE_LOG(WARN, "fail to from rowkey", K(ret));
+
     }
   }
   return ret;

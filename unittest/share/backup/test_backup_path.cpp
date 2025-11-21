@@ -29,14 +29,14 @@ TEST(ObBackupPathUtil, trim_right_backslash)
   const char *backup_root_path = "oss://root_backup_dir//";
   const char *expect_path = "oss://root_backup_dir";
   ASSERT_EQ(OB_SUCCESS, path.init(backup_root_path));
-  LOG_INFO("dump path", K(path), K(expect_path));
+
   ASSERT_EQ(0, path.get_obstr().compare(expect_path));
 
   path.reset();
   backup_root_path = "oss://root_backup_dir//affea1/";
   expect_path = "oss://root_backup_dir//affea1";
   ASSERT_EQ(OB_SUCCESS, path.init(backup_root_path));
-  LOG_INFO("dump path", K(path), K(expect_path));
+
   ASSERT_EQ(0, path.get_obstr().compare(expect_path));
 }
 

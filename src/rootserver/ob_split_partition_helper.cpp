@@ -319,7 +319,7 @@ int ObSplitPartitionHelper::check_enable_global_index_auto_split(
       if (OB_SUCC(ret) && enable_auto_split) {
         const int64_t data_auto_part_size = data_table_schema.get_part_option().get_auto_part_size();
         auto_part_size = data_table_schema.get_part_option().is_valid_auto_part_size() ? data_auto_part_size : tenant_config->auto_split_tablet_size;
-        LOG_INFO("enable global index auto split by tenant config", K(auto_part_size), K(data_auto_part_size), K(policy_str));
+
       }
     }
   }
@@ -497,7 +497,7 @@ int ObSplitPartitionHelper::prepare_dst_tablet_creator_(
         LOG_WARN("failed to calculate tablet limit penalty", K(ret), K(cur_ratio));
       } else if (data_tablet_size < real_auto_split_size) {
         ret = OB_NOT_SUPPORTED;
-        LOG_DEBUG("tablet size is smaller than increased split size threshold", K(ret), K(auto_split_size), K(real_auto_split_size), K(data_tablet_size));
+
       }
     }
   }
@@ -752,7 +752,7 @@ int ObSplitPartitionHelper::create_ddl_task_(
     if (OB_FAIL(ObSysDDLSchedulerUtil::create_ddl_task(param, trans, task_record))) {
       LOG_WARN("submit ddl task failed", KR(ret));
     }
-    LOG_TRACE("create ddl task for spliting partition", K(ret), K(param));
+
   }
   return ret;
 }
@@ -788,7 +788,7 @@ int ObSplitPartitionHelper::start_src_(
       LOG_WARN("failed to register mds", KR(ret));
     }
     finish_time = ObTimeUtility::current_time();
-    LOG_INFO("finish set src tablet mds", KR(ret), "cost_ts", finish_time - start_time);
+
     start_time = finish_time;
   }
 
@@ -808,7 +808,7 @@ int ObSplitPartitionHelper::start_src_(
       // data_end_scn = res.data_end_scn_;
     }
     finish_time = ObTimeUtility::current_time();
-    LOG_INFO("finish freeze_split_src_tablet", KR(ret), "cost_ts", finish_time - start_time, K(data_end_scn));
+
     start_time = finish_time;
   }
 
@@ -822,7 +822,7 @@ int ObSplitPartitionHelper::start_src_(
       LOG_WARN("failed to register mds", KR(ret));
     }
     finish_time = ObTimeUtility::current_time();
-    LOG_INFO("finish set src freeze flag", KR(ret), "cost_ts", finish_time - start_time);
+
     start_time = finish_time;
   }
 
@@ -865,7 +865,7 @@ int ObSplitPartitionHelper::start_src_(
       }
     }
     finish_time = ObTimeUtility::current_time();
-    LOG_INFO("finish batch_get_tablet_autoinc_seq", KR(ret), "cost_ts", finish_time - start_time);
+
     start_time = finish_time;
   }
 
@@ -884,7 +884,7 @@ int ObSplitPartitionHelper::start_src_(
       data_end_scn = res.data_end_scn_;
     }
     finish_time = ObTimeUtility::current_time();
-    LOG_INFO("finish get data end scn", KR(ret), "cost_ts", finish_time - start_time, K(data_end_scn));
+
     start_time = finish_time;
   }
   return ret;
@@ -922,7 +922,7 @@ int ObSplitPartitionHelper::start_dst_(
   }
 
   finish_time = ObTimeUtility::current_time();
-  LOG_INFO("finish create split dst tablets", KR(ret), "cost_ts", finish_time - start_time);
+
   start_time = finish_time;
 
   // lock dst partition
@@ -936,7 +936,7 @@ int ObSplitPartitionHelper::start_dst_(
   }
 
   finish_time = ObTimeUtility::current_time();
-  LOG_INFO("finish lock dst partition", KR(ret), "cost_ts", finish_time - start_time);
+
   start_time = finish_time;
 
   // sync dst tablet autoinc seq
@@ -978,7 +978,7 @@ int ObSplitPartitionHelper::start_dst_(
     }
 
     finish_time = ObTimeUtility::current_time();
-    LOG_INFO("finish sync dst tablet autoinc", KR(ret), "cost_ts", finish_time - start_time);
+
     start_time = finish_time;
   }
 
@@ -988,7 +988,7 @@ int ObSplitPartitionHelper::start_dst_(
       LOG_WARN("failed to register mds", KR(ret));
     }
     finish_time = ObTimeUtility::current_time();
-    LOG_INFO("finish set dst tablet mds", KR(ret), "cost_ts", finish_time - start_time);
+
     start_time = finish_time;
   }
   return ret;

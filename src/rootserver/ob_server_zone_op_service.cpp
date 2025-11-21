@@ -857,7 +857,7 @@ int ObServerZoneOpService::fetch_new_server_id_(uint64_t &server_id)
       uint64_t new_candidate_server_id = candidate_server_id;
       while (!check_server_index_(new_candidate_server_id, server_id_in_cluster)) {
         if (new_candidate_server_id % 10 == 0) {
-          LOG_INFO("[FETCH NEW SERVER ID] periodical log", K(new_candidate_server_id), K(server_id_in_cluster));
+
         }
         ++new_candidate_server_id;
       }
@@ -868,7 +868,7 @@ int ObServerZoneOpService::fetch_new_server_id_(uint64_t &server_id)
       }
       if (OB_SUCC(ret)) {
         server_id = new_candidate_server_id;
-        LOG_INFO("[FETCH NEW SERVER ID] new candidate server id", K(server_id), K(server_id_in_cluster));
+
       }
     }
   }

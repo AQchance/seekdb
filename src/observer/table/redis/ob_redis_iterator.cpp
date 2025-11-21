@@ -323,7 +323,7 @@ int ObRedisRowIterator::get_next_row_ttl(ObNewRow *&row)
               is_finished_ = true;
               last_row_ = row;
             } else {
-              LOG_DEBUG("finish table ttl because ITER_END");
+
               last_row_ = nullptr; // finish scan
             }
           }

@@ -218,7 +218,7 @@ int ObMPBase::load_system_variables(const ObSysVariableSchema &sys_variable_sche
     const ObSysVarSchema *sysvar = NULL;
     sysvar = sys_variable_schema.get_sysvar_schema(i);
     if (sysvar != NULL) {
-      LOG_DEBUG("load system variable", K(*sysvar));
+
       if (OB_FAIL(session.load_sys_variable(calc_buf, sysvar->get_name(), sysvar->get_data_type(),
                                             sysvar->get_value(), sysvar->get_min_val(),
                                             sysvar->get_max_val(), sysvar->get_flags(), true))) {
@@ -302,7 +302,7 @@ int ObMPBase::free_session()
     if (OB_FAIL(gctx_.session_mgr_->free_session(ctx))) {
       LOG_WARN("fail to free session", K(ctx), K(ret));
     } else {
-      LOG_INFO("free session successfully", K(ctx));
+
       conn->is_sess_free_ = true;
       if (OB_UNLIKELY(OB_FAIL(sql::ObSQLSessionMgr::is_need_clear_sessid(conn, is_need_clear)))) {
         LOG_ERROR("fail to judge need clear", K(ret), "sessid", conn->sessid_);
@@ -310,7 +310,7 @@ int ObMPBase::free_session()
         if (OB_FAIL(GCTX.session_mgr_->mark_sessid_unused(conn->sessid_))) {
           LOG_WARN("mark session id unused failed", K(ret), "sessid", conn->sessid_);
         } else {
-          LOG_INFO("mark session id unused", "sessid", conn->sessid_);
+
         }
       }
     }
@@ -575,7 +575,7 @@ int ObMPBase::process_extra_info(sql::ObSQLSessionInfo &session,
 {
   int ret = OB_SUCCESS;
   sql::SessionInfoVerifacation sess_info_verification;
-  LOG_DEBUG("process extra info", K(ret),K(pkt.get_extra_info().exist_sess_info_veri()));
+
   if (FALSE_IT(session.set_has_query_executed(true))) {
   } else if (pkt.get_extra_info().exist_sync_sess_info()
               && OB_FAIL(ObMPUtils::sync_session_info(session,

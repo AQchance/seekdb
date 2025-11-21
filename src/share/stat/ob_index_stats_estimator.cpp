@@ -113,7 +113,7 @@ int ObIndexStatsEstimator::estimate(const ObOptStatGatherParam &param,
     } else if (OB_FAIL(do_estimate(param, raw_sql.string(), true, src_opt_stat, dst_opt_stats))) {
       LOG_WARN("failed to evaluate basic stats", K(ret));
     } else {
-      LOG_TRACE("index stats is collected", K(dst_opt_stats.count()));
+
     }
   }
   return ret;
@@ -146,7 +146,7 @@ int ObIndexStatsEstimator::fill_index_info(common::ObIAllocator &alloc,
         if (OB_FAIL(add_hint(index_str, alloc))) {
           LOG_WARN("failed to add hint", K(ret));
         } else {
-          LOG_TRACE("succeed to fill index info", K(index_str));
+
         }
       }
     }
@@ -194,7 +194,7 @@ int ObIndexStatsEstimator::fill_index_group_by_info(ObIAllocator &allocator,
         const int64_t len_group_by = strlen("GROUP BY ");
         calc_part_id_str.assign_ptr(group_by_string_.ptr() + len_group_by,
                                     group_by_string_.length() - len_group_by);
-        LOG_TRACE("Succeed to fill group by info", K(group_by_string_), K(calc_part_id_str));
+
       }
     }
   }
@@ -235,7 +235,7 @@ int ObIndexStatsEstimator::fill_partition_condition(ObIAllocator &allocator,
         LOG_WARN("failed to print partition hint", K(ret), K(real_len), K(len), K(param));
       } else {
         where_string_.assign(buf, real_len);
-        LOG_TRACE("Succeed to fill group by info", K(where_string_));
+
       }
     }
   }
@@ -257,7 +257,7 @@ int ObIndexStatsEstimator::fast_gather_index_stats(ObExecContext &ctx,
   bool use_column_store = false;
   bool use_split_part = false;
   is_fast_gather = false;
-  LOG_TRACE("begin to fast gather index stats", K(data_param), K(index_param));
+
   if (OB_FAIL(get_all_need_gather_partition_ids(data_param, index_param, gather_part_ids))) {
     LOG_WARN("failed to get all need gather partition ids", K(ret));
   } else if (gather_part_ids.empty()) {
@@ -332,7 +332,7 @@ int ObIndexStatsEstimator::fast_gather_index_stats(ObExecContext &ctx,
               if (OB_FAIL(index_table_stats.push_back(index_stat))) {
                 LOG_WARN("failed to push back", K(ret));
               } else {
-                LOG_TRACE("Succeed to fast gather index stat", K(index_table_stats));
+
               }
             }
           }
@@ -527,7 +527,7 @@ int ObIndexStatsEstimator::add_no_use_das_hint(common::ObIAllocator &alloc, cons
         if (OB_FAIL(add_hint(hint, alloc))) {
           LOG_WARN("failed to add hint", K(ret));
         } else {
-          LOG_TRACE("succeed to fill no_use_das hint", K(hint));
+
         }
       }
     }

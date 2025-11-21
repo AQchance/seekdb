@@ -160,7 +160,7 @@ int TestSSMicroCacheReachMemLimit::TestSSMicroCacheReachMemLimitThread::parallel
             const int64_t start_us = ObTimeUtility::current_time();
             const int64_t exceed_cnt = arc_info.calc_exceed_micro_cnt_by_mem(arc_info.micro_cnt_limit_);
             const int64_t begin = ObTimeUtility::current_time();
-            LOG_INFO("start time: wait arc_task to del micro_meta", K(idx), K(i), K(j), K(exceed_cnt));
+
             while (OB_SS_CACHE_REACH_MEM_LIMIT == ret || OB_ALLOCATE_MEMORY_FAILED == ret) {
               ob_usleep(1000);
               ret = micro_cache->add_micro_block_cache(
@@ -175,7 +175,7 @@ int TestSSMicroCacheReachMemLimit::TestSSMicroCacheReachMemLimitThread::parallel
             if (OB_FAIL(ret)) {
               LOG_WARN("fail to add micro_block, unexpected behavior", KR(ret), K(idx), K(i), K(j), K(micro_key));
             } else {
-              LOG_INFO("finish time: wait arc_task to del micro_meta", K(idx), K(i), K(j), K(free_cnt), K(cost_ms));
+
             }
           }
         }
@@ -198,7 +198,7 @@ int TestSSMicroCacheReachMemLimit::TestSSMicroCacheReachMemLimitThread::parallel
 TEST_F(TestSSMicroCacheReachMemLimit, test_alloc_micro_meta_reach_mem_limit)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_alloc_micro_meta_reach_mem_limit");
+
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ObSSMicroMetaManager &micro_meta_mgr = micro_cache->micro_meta_mgr_;
   micro_cache->task_runner_.release_cache_task_.is_inited_ = false;
@@ -270,7 +270,7 @@ TEST_F(TestSSMicroCacheReachMemLimit, test_alloc_micro_meta_reach_mem_limit)
 TEST_F(TestSSMicroCacheReachMemLimit, test_reach_cache_mem_limit)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("TEST_CASE: start test_reach_cache_mem_limit");
+
   ObArenaAllocator allocator;
   ObSSMicroCache *micro_cache = MTL(ObSSMicroCache *);
   ASSERT_EQ(OB_SUCCESS, micro_cache->resize_micro_cache_file_size(10 * (1L << 30)));

@@ -183,7 +183,7 @@ int ObAlterMviewUtils::resolve_mv_options(const ParseNode &node,
         }
       }
     }
-    LOG_INFO("[ALTER MVIEW] resolve mv options", KR(ret), K(alter_mview_arg));
+
   }
 
   return ret;
@@ -251,7 +251,7 @@ int ObAlterMviewUtils::resolve_mlog_options(const ParseNode &node,
         }
       }
     }
-    LOG_INFO("[ALTER MLOG] resolve mlog options", KR(ret), K(alter_mlog_arg));
+
   }
 
   return ret;

@@ -513,7 +513,7 @@ int AlterTableSchema::assign(const ObTableSchema &src_schema)
       } else if (OB_FAIL(add_column<AlterColumnSchema>(column))) {
         LOG_WARN("Fail to add column", K(ret));
       } else {
-        LOG_DEBUG("add column success", K(column));
+
       }
     }
 

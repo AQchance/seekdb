@@ -149,7 +149,7 @@ public:
   virtual int batch_process_tasks(const common::ObIArray<ObPTUpdateTask> &tasks, bool &stopped)
   {
     UNUSED(tasks);
-    LOG_INFO("batch process task", K(tasks.count()), K(stopped), K(batch_count_));
+
     if (batch_count_ < 10) {
       sleep(2);
     }
@@ -158,7 +158,7 @@ public:
   }
   int process_barrier(const ObPTUpdateTask &task, bool &stopped)
   {
-    LOG_INFO("barrier process task", K(task), K(stopped));
+
     return OB_SUCCESS;
   }
 private:

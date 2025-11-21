@@ -63,7 +63,7 @@ struct RawFixFilterNeonFunc_T<0, 0, CMP_TYPE>
         res.set(row_id);
       }
     }
-    LOG_DEBUG("[Neon filter] fast filter for 1 byte unsigned data");
+
   }
 };
 
@@ -99,7 +99,7 @@ struct RawFixFilterNeonFunc_T<1, 0, CMP_TYPE>
         res.set(row_id);
       }
     }
-    LOG_DEBUG("[Neon filter] fast filter for 1 byte signed data");
+
   }
 };
 
@@ -134,7 +134,7 @@ struct RawFixFilterNeonFunc_T<0, 1, CMP_TYPE>
         res.set(row_id);
       }
     }
-    LOG_DEBUG("[Neon filter] fast filter for 2 byte unsigned data");
+
   }
 };
 
@@ -169,7 +169,7 @@ struct RawFixFilterNeonFunc_T<1, 1, CMP_TYPE>
         res.set(row_id);
       }
     }
-    LOG_DEBUG("[Neon filter] fast filter for 2 byte signed data");
+
   }
 };
 #endif

@@ -42,7 +42,7 @@ int ObTenantMetaSnapshotHandler::create_tenant_snapshot(const ObTenantSnapshotID
     LOG_WARN("fail to check snapshot version", K(ret));
   } else if (OB_UNLIKELY(tenant->is_hidden())) {
     ret = OB_NOT_SUPPORTED;
-    LOG_INFO("shouldn't create snapshot for hidden tenant", K(ret));
+
   } else if (OB_UNLIKELY(!last_super_block.is_valid())) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("fail to get tenant super block", K(ret), K(last_super_block));
@@ -207,7 +207,7 @@ int ObTenantMetaSnapshotHandler::get_ls_meta_entry(
     LOG_WARN("invalid arg", K(ret), K(snapshot_id));
   } else if (OB_UNLIKELY(tenant->is_hidden())) {
     ret = OB_NOT_SUPPORTED;
-    LOG_INFO("shouldn't get snapshot from hidden tenant", K(ret));
+
   } else if (OB_UNLIKELY(!super_block.is_valid())) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("fail to get tenant super block", K(ret), K(super_block));

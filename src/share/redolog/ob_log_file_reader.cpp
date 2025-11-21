@@ -373,7 +373,7 @@ int ObLogFileReader2::get_fd(
 
   if (OB_SUCC(ret) && !hit_cache) {
     const int64_t duration = ObTimeUtility::current_time() - start_time;
-    LOG_TRACE("get_fd cost", K(duration), K(hit_cache), K(*ret_item), KP(ret_item));
+
   }
   return ret;
 }
@@ -397,14 +397,14 @@ int ObLogFileReader2::do_clear_work()
         if (OB_FAIL(evict_fd_from_map(cur->key_))) {
           LOG_WARN("erase item from map fail", K(ret), K(*cur));
         } else {
-          LOG_TRACE("evict fd from map", K(*cur));
+
         }
       }
       if (OB_SUCC(ret)) { // release 0 ref count fd
         ObLogReadFdCacheItem *prev = cur->prev_;
         if (0 == cur->get_ref()) {
           recycle_item = cur;
-          LOG_TRACE("recycle item", K(*recycle_item), KP(recycle_item), KP(head_), KP(tail_));
+
           if (tail_ == cur) {
             tail_ = cur->prev_;
           }
@@ -479,7 +479,7 @@ int ObLogFileReader2::put_new_item(
   if (OB_SUCC(ret)) {
     if (quick_map_.size() >= max_cache_fd_cnt_) {
       is_tmp = true;
-      LOG_DEBUG("cached map is full, return temporary item", K(quick_map_.size()), K(*ret_item));
+
     } else {
       if (OB_FAIL(quick_map_.set_refactored(fd_key, new_item))
           && OB_HASH_EXIST != ret) {
@@ -506,7 +506,7 @@ int ObLogFileReader2::put_new_item(
         if (nullptr == tail_) {
           tail_ = head_;
         }
-        LOG_DEBUG("add item to head", KP(ret_item), KP(head_), KP(tail_), K(*ret_item));
+
       }
     }
   }
@@ -553,7 +553,7 @@ int ObLogFileReader2::try_get_cache(const ObLogReadFdKey &fd_key, ObLogReadFdCac
   } else {
     ret_item = p_item;
     ret_item->timestamp_ = ObTimeUtility::fast_current_time();
-    LOG_DEBUG("move item to head", KP(ret_item), KP(head_), KP(tail_), K(*ret_item));
+
   }
   return ret;
 }

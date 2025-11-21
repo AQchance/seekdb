@@ -149,7 +149,7 @@ int ObSetKvAttributeHelper::check_tablegroup_name_()
     LOG_WARN("fail to get tablegroup id", KR(ret), K(tablegroup_name));
   } else if (tablegroup_id_ == OB_INVALID_ID) {
     ret = OB_TABLEGROUP_NOT_EXIST;
-    LOG_INFO("create tablegroup while tablegroup exists", KR(ret), K(tablegroup_name), K_(tablegroup_id));
+
   }
   return ret;
 }

@@ -63,7 +63,7 @@ int ObDeviceManifestTask::run()
   int ret = OB_SUCCESS;
   ObCurTraceId::init(GCONF.self_addr_);
   const int64_t start_us = common::ObTimeUtility::fast_current_time();
-  LOG_INFO("device manifest task start", K(start_us));
+
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
     LOG_WARN("device manifest task has not been initialized", KR(ret));
@@ -71,7 +71,7 @@ int ObDeviceManifestTask::run()
     LOG_WARN("fail to do work", KR(ret));
   }
   const int64_t cost_us = common::ObTimeUtility::fast_current_time() - start_us;
-  LOG_INFO("device manifest task finish", K(cost_us));
+
   return ret;
 }
 
@@ -80,7 +80,7 @@ int ObDeviceManifestTask::try_update_new_device_configs()
   int ret = OB_SUCCESS;
   ObCurTraceId::init(GCONF.self_addr_);
   const int64_t start_us = common::ObTimeUtility::fast_current_time();
-  LOG_INFO("start to try update new device configs", K(start_us));
+
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
     LOG_WARN("device manifest task has not been initialized", KR(ret));
@@ -105,7 +105,7 @@ int ObDeviceManifestTask::try_update_new_device_configs()
     } while ((cur_op_id > pre_op_id) || ((cur_op_id == pre_op_id) && (cur_sub_op_id > pre_sub_op_id)));
   }
   const int64_t cost_us = common::ObTimeUtility::fast_current_time() - start_us;
-  LOG_INFO("finish to try update new device configs", K(cost_us));
+
   return ret;
 }
 
@@ -113,7 +113,7 @@ int ObDeviceManifestTask::add_new_device_configs(const ObIArray<ObZoneStorageTab
 {
   int ret = OB_SUCCESS;
   const int64_t start_us = common::ObTimeUtility::fast_current_time();
-  LOG_INFO("start to try update all device config", K(start_us));
+
   if (OB_UNLIKELY(storage_infos.empty())) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", KR(ret), K(storage_infos));
@@ -130,7 +130,7 @@ int ObDeviceManifestTask::add_new_device_configs(const ObIArray<ObZoneStorageTab
     }
   }
   const int64_t cost_us = common::ObTimeUtility::fast_current_time() - start_us;
-  LOG_INFO("finish to try update all device config", KR(ret), K(cost_us));
+
   return ret;
 }
 
@@ -166,7 +166,7 @@ int ObDeviceManifestTask::try_update_all_device_config()
 {
   int ret = OB_SUCCESS;
   const int64_t start_us = common::ObTimeUtility::fast_current_time();
-  LOG_INFO("start to try update all device config", K(start_us));
+
   const char *zone = GCONF.zone.str();
   SMART_VAR(ObArray<ObZoneStorageTableInfo>, ordered_zone_storage_infos) {
     // 1. get all storage infos of this zone from __all_zone_storage, which are ordered by op_id
@@ -174,7 +174,7 @@ int ObDeviceManifestTask::try_update_all_device_config()
                                        ordered_zone_storage_infos))) {
       LOG_WARN("fail to get ordered zone storage infos", KR(ret), K(zone));
     } else if (ordered_zone_storage_infos.empty()) {
-      LOG_INFO("no storage infos exist in table, thus no need to update device config", K(zone));
+
     } else {
       // 2. check connectivity and add into manifest for each storage info
       const int64_t zone_storage_info_cnt = ordered_zone_storage_infos.count();
@@ -187,7 +187,7 @@ int ObDeviceManifestTask::try_update_all_device_config()
                                                 tmp_storage_op_info))) {
           if (OB_ENTRY_NOT_EXIST == ret) {
             ret = OB_SUCCESS; // ignore ret
-            LOG_INFO("storage operation info does not exist in table", "op_id", tmp_op_id);
+
           } else {
             LOG_WARN("fail to get max sub_op info", KR(ret), "op_id", tmp_op_id);
           }
@@ -213,7 +213,7 @@ int ObDeviceManifestTask::try_update_all_device_config()
   }
   // if OB_FAIL(ret), rm manifest file?
   const int64_t cost_us = common::ObTimeUtility::fast_current_time() - start_us;
-  LOG_INFO("finish to try update all device config", KR(ret), K(cost_us));
+
   return ret;
 }
 
@@ -223,7 +223,7 @@ int ObDeviceManifestTask::try_update_next_device_config(
 {
   int ret = OB_SUCCESS;
   const int64_t start_us = common::ObTimeUtility::fast_current_time();
-  LOG_INFO("start to try update next device config", K(start_us));
+
   const char *zone = GCONF.zone.str();
   // 1. get storage operation info with min (op_id, sub_op_id) larger than
   // (last_op_id, last_sub_op_id) from __all_zone_storage_operation
@@ -291,7 +291,7 @@ int ObDeviceManifestTask::check_connectivity(
              OB_FAIL(device_conn_check_mgr.check_device_connectivity(storage_dest))) {
     LOG_WARN("fail to check device connectivity", KR(ret), K(storage_dest));
   } else {
-    LOG_INFO("succ to check device connectivity", K(storage_dest));
+
   }
   is_connective = OB_SUCC(ret) ? true : false;
   return ret;
@@ -326,7 +326,7 @@ int ObDeviceManifestTask::add_device_config(
       LOG_WARN("fail to add device config", KR(ret), K(zone_storage_info), K(device_config));
     }
   }
-  LOG_INFO("finish to add device config", KR(ret), K(storage_op_info));
+
   return ret;
 }
 
@@ -358,7 +358,7 @@ int ObDeviceManifestTask::add_device_config(
       LOG_WARN("fail to add device config", KR(ret), K(zone_storage_info), K(device_config));
     }
   }
-  LOG_INFO("finish to add device config", KR(ret));
+
   return ret;
 }
 
@@ -380,7 +380,7 @@ int ObDeviceManifestTask::update_device_manifest(const ObZoneStorageOperationTab
         // e.g., op_type<op_id,sub_op_id>: adding/changing<6,0> -> added/changed<6,1> -> changing<7,2>
         // added/changed with op_id=6 is overwritten by changing with op_id=7 in __all_zone_storage
         ret = OB_SUCCESS; // ignore ret
-        LOG_INFO("zone storage info does not exist, may be overwritten by subsequent operations", K(op_id), K(op_type));
+
         if (OB_FAIL(ObDeviceConfigMgr::get_instance().update_last_op_and_sub_op_id(op_id, sub_op_id))) {
           LOG_WARN("fail to update last_op_id and last_sub_op_id", KR(ret), K(op_id), K(sub_op_id));
         }
@@ -423,7 +423,7 @@ int ObDeviceManifestTask::update_device_manifest(const ObZoneStorageOperationTab
       LOG_WARN("invalid op_type", KR(ret), K(op_type), K(storage_op_info));
     }
   }
-  LOG_INFO("finish to update device manifest", KR(ret), K(storage_op_info));
+
   return ret;
 }
 
@@ -442,7 +442,7 @@ int ObDeviceManifestTask::remove_device_config(
       LOG_WARN("fail to remove device config", KR(ret), K(device_config));
     }
   }
-  LOG_INFO("finish to remove device config", KR(ret), K(zone_storage_info), K(storage_op_info));
+
   return ret;
 }
 
@@ -507,7 +507,7 @@ int ObDeviceManifestTask::update_device_config(
       }
     }
   }
-  LOG_INFO("finish to update device config", KR(ret), K(zone_storage_info), K(storage_op_info));
+
   return ret;
 }
 

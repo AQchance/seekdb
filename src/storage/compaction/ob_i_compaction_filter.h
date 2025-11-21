@@ -96,11 +96,11 @@ public:
     T *new_filter = nullptr;
     if (OB_ISNULL(buf = allocator.alloc(sizeof(T)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed to alloc memory", K(ret));
+
     } else {
       new_filter = new (buf) T();
       if (OB_FAIL(new_filter->init(args...))) {
-        STORAGE_LOG(WARN, "failed to init filter", K(ret));
+
         allocator.free(new_filter);
         new_filter = nullptr;
       } else {

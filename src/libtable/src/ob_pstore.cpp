@@ -75,7 +75,7 @@ int ObPStore::get(const ObString &table_name, const ObString &column_family, con
   } else if (OB_FAIL(kv_table->get(key, value))) {
     LOG_WARN("failed to get kv table", K(ret), K(key));
   } else {
-    LOG_DEBUG("get succ", K(table_name), K(column_family), K(key), K(value));
+
   }
   KV_TABLE_END();
   return ret;
@@ -89,7 +89,7 @@ int ObPStore::put(const ObString &table_name, const ObString &column_family, con
   } else if (OB_FAIL(kv_table->put(key, value))) {
     LOG_WARN("failed to get kv table", K(ret), K(key));
   } else {
-    LOG_DEBUG("put succ", K(table_name), K(column_family), K(key), K(value));
+
   }
   KV_TABLE_END();
   return ret;
@@ -103,7 +103,7 @@ int ObPStore::remove(const ObString &table_name, const ObString &column_family, 
   } else if (OB_FAIL(kv_table->remove(key))) {
     LOG_WARN("failed to get kv table", K(ret), K(key));
   } else {
-    LOG_DEBUG("remove succ", K(table_name), K(column_family), K(key));
+
   }
   KV_TABLE_END();
   return ret;
@@ -117,7 +117,7 @@ int ObPStore::multi_get(const ObString &table_name, const ObString &column_famil
   } else if (OB_FAIL(kv_table->multi_get(keys, values))) {
     LOG_WARN("failed to multi_get", K(ret));
   } else {
-    LOG_DEBUG("multi_get succ", K(table_name), K(column_family), "count", keys.count());
+
   }
   KV_TABLE_END();
   return ret;
@@ -131,7 +131,7 @@ int ObPStore::multi_put(const ObString &table_name, const ObString &column_famil
   } else if (OB_FAIL(kv_table->multi_put(keys, values))) {
     LOG_WARN("failed to multi_put", K(ret));
   } else {
-    LOG_DEBUG("multi_put succ", K(table_name), K(column_family), "count", keys.count());
+
   }
   KV_TABLE_END();
   return ret;
@@ -146,7 +146,7 @@ int ObPStore::multi_remove(const ObString &table_name, const ObString &column_fa
   } else if (OB_FAIL(kv_table->multi_remove(keys))) {
     LOG_WARN("failed to multi_remove", K(ret));
   } else {
-    LOG_DEBUG("multi_remove succ", K(table_name), K(column_family), "count", keys.count());
+
   }
   KV_TABLE_END();
   return ret;

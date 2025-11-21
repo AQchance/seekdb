@@ -442,7 +442,7 @@ int ObAlterTableResolver::set_table_options()
       alter_table_schema.reset();
       SQL_RESV_LOG(WARN, "Set table options error!", K(ret));
     } else {
-      LOG_DEBUG("alter table resolve end", K(alter_table_schema));
+
     }
   }
   return ret;
@@ -4446,7 +4446,7 @@ int ObAlterTableResolver::resolve_modify_check_constraint_state_oracle(const Par
             if (OB_FAIL(alter_table_stmt->add_column(alter_column_schema))) {
               LOG_WARN("add alter column schema failed", K(ret));
             }
-            LOG_DEBUG("modify not null constraint", KPC(origin_col_schema), K(alter_column_schema));
+
           }
         } else if (OB_UNLIKELY(col_schema->is_identity_column())) {
           ret = col_schema->is_default_on_null_identity_column()
@@ -4861,7 +4861,7 @@ int ObAlterTableResolver::resolve_split_partition(const ParseNode *node,
         LOG_WARN("failed to assign func expr", K(ret));
       }
     }
-    LOG_DEBUG("succ to resolve_part_func", KPC(alter_table_stmt), K(part_info.part_func_exprs_), K(ret));
+
 
     /*T_SPLIT_ACTION
      *  - T_PARTITION_LIST
@@ -6439,7 +6439,7 @@ int ObAlterTableResolver::resolve_rename_column(const ParseNode &node)
       if (OB_FAIL(alter_table_stmt->add_column(alter_column_schema))) {
         SQL_RESV_LOG(WARN, "add alter column schema failed", K(ret));
       }
-      LOG_DEBUG("rename column", KPC(origin_col_schema), K(alter_column_schema));
+
     }
   }
   return ret;
@@ -6460,7 +6460,7 @@ int ObAlterTableResolver::resolve_modify_all_trigger(const ParseNode &node)
       OX (new_tg_arg.set_is_enable(is_enable));
       OX (new_tg_arg.set_trigger_id(table_schema_->get_trigger_list().at(i)));
       OZ (alter_table_stmt->get_tg_arg().trigger_infos_.push_back(new_tg_arg));
-      LOG_DEBUG("alter table all triggers", K(new_tg_arg.get_trigger_id()), K(ret));
+
     }
   }
   return ret;

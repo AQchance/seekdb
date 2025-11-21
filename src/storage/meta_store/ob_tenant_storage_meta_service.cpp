@@ -462,13 +462,13 @@ int ObTenantStorageMetaService::get_next_major_shared_blocks_for_tablet(
       LOG_WARN("failed to init obj", KR(ret), K(tablet_id), K(obj_buf));
     } else if (OB_FAIL(tablet_id_obj.read_object(obj_buf))) {
       if (OB_OBJECT_NOT_EXIST == ret) {
-        LOG_DEBUG("tablet id have not output macro on shared storage", KR(ret), K(tablet_id), K(last_tablet_version));
+
         ret = OB_SUCCESS;
       } else {
         LOG_WARN("failed to read object", KR(ret), K(tablet_id));
       }
     } else if (OB_UNLIKELY(tablet_id_obj.get_compaction_scn() <= last_tablet_version)) {
-      LOG_INFO("not output macro after last tablet version, no need to gc", KR(ret), K(last_tablet_version), K(tablet_id_obj));
+
     } else {
       ObSimpleTaskCheckpointMgr mgr;
       if (OB_FAIL(mgr.get_all_macro_start_seq(
@@ -479,7 +479,7 @@ int ObTenantStorageMetaService::get_next_major_shared_blocks_for_tablet(
           block_ids))) {
         LOG_WARN("failed to get all macro seq", KR(ret), K(root_macro_seq));
       } else {
-        LOG_INFO("success to get macro seq", KR(ret), K(root_macro_seq), K(block_ids));
+
       }
     }
   }
@@ -499,7 +499,7 @@ int ObTenantStorageMetaService::inner_get_gc_tablet_scn_arr_(
     LOG_WARN("fail to check existence", K(ret), K(opt));
   } else if (!is_exist) {
     ret = OB_ENTRY_NOT_EXIST;
-    LOG_TRACE("entry not exist", K(ret), K(opt));
+
   } else if (OB_FAIL(ObStorageMetaIOUtil::read_storage_meta_object(
       opt, allocator, MTL_ID(), 0/*do not need ls_epoch*/, gc_tablet_scn_arr))) {
     LOG_WARN("failed to get object: gc_tablet_sc_arr", K(ret), K(opt), K(MTL_ID()), K(gc_tablet_scn_arr));
@@ -620,7 +620,7 @@ int ObTenantStorageMetaService::update_shared_tablet_meta_list(
     } else if (gc_scn < tablet_meta_scn) {
       if (tablet_meta_scn >= new_tablet_meta_scn) {
         ret = OB_ENTRY_EXIST;
-        LOG_INFO("new tablet_meta_version is not more than old tablet_meta_version", K(ret), K(new_tablet_meta_scn), K(tablet_meta_scn));
+
       } else if (OB_FAIL(new_tablet_meta_version_list.tablet_version_arr_.push_back(ObGCTabletMetaInfo(tablet_meta_scn, tablet_meta_create_ts)))) {
         LOG_WARN("failed to push back", K(ret), K(i), K(new_tablet_meta_version_list)); 
       }

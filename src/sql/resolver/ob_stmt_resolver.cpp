@@ -436,7 +436,7 @@ int ObStmtResolver::get_column_schema(const uint64_t table_id,
       LOG_WARN("fail to get column schema", K(table_id), K(column_name), K(ret));
     } else if (!hidden && column_schema->is_hidden() && !column_schema->is_generated_column()) {
       ret = OB_ERR_BAD_FIELD_ERROR;
-      LOG_INFO("do not get hidden column", K(table_id), K(column_name), K(ret));
+
     }
   }
   return ret;

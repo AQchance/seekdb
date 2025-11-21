@@ -144,7 +144,7 @@ int ObTabletMediumCompactionInfoRecorder::init(
     ls_id_ = ls_id;
     tablet_id_ = tablet_id;
     is_inited_ = true;
-    LOG_INFO("success to init medium clog recorder", K(ret), K_(ls_id), K_(tablet_id), K(max_saved_version));
+
   }
   return ret;
 }
@@ -240,7 +240,7 @@ int ObTabletMediumCompactionInfoRecorder::inner_replay_clog(
     } else if (OB_FAIL(replay_executor.execute(scn, ls_id_, tablet_id_))) {
       if (OB_TABLET_NOT_EXIST == ret || OB_NO_NEED_UPDATE == ret) {
         ret = OB_SUCCESS;
-        LOG_INFO("skip reply medium info", KR(ret), K(replay_medium_info));
+
       } else {
         LOG_WARN("failed to replay medium info", K(ret), K(replay_medium_info));
       }
@@ -544,7 +544,7 @@ int ObMediumCompactionInfoList::serialize(char *buf, const int64_t buf_len, int6
       if (OB_FAIL(static_cast<const ObMediumCompactionInfo *>(info)->serialize(buf, buf_len, new_pos))) {
         LOG_WARN("failed to serialize medium compaction info", K(ret), K(buf), K(buf_len), K(new_pos), KPC(info));
       } else {
-        LOG_DEBUG("success to serialize medium info", K(ret), KPC(info));
+
       }
     }
   }
@@ -604,7 +604,7 @@ int ObMediumCompactionInfoList::deserialize(
         ret = OB_ERR_SYS;
         LOG_WARN("failed to add into medium info list", K(ret), KPC(new_info));
       } else {
-        LOG_DEBUG("success to deserialize medium info", K(ret), K(new_info));
+
       }
 
       if (OB_FAIL(ret) && nullptr != new_info) {

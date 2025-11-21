@@ -1249,7 +1249,7 @@ int ObSqlParameterization::construct_no_check_type_params(const ObIArray<int64_t
     }
   } // for end
 
-  LOG_DEBUG("ps obj param infos", K(params), K(no_check_type_offsets), K(need_check_type_offsets));
+
   return ret;
 }
 
@@ -2423,7 +2423,7 @@ int ObSqlParameterization::get_select_item_param_info(const common::ObIArray<ObP
         // pop stack
         stack_frames.pop_back();
         --frame_idx;
-        LOG_DEBUG("after popping frame", K(stack_frames), K(frame_idx));
+
       } else {
         // do nothing
       }
@@ -2443,7 +2443,7 @@ int ObSqlParameterization::get_select_item_param_info(const common::ObIArray<ObP
               LOG_WARN("failed to push back element", K(ret));
             } else {
               stack_frames.at(frame_idx).next_child_idx_ = i + 1;
-              LOG_DEBUG("after pushing frame", K(stack_frames));
+
               break;
             }
           } // for end
@@ -2476,7 +2476,7 @@ int ObSqlParameterization::get_select_item_param_info(const common::ObIArray<ObP
     tree->value_ = select_item_param_infos->count() - 1;
     tree->is_val_paramed_item_idx_ = 1;
 
-    LOG_DEBUG("add a paramed info", K(param_info));
+
   }
 
   // MySQL sets the alias of standalone null value("\N","null"...) to "NULL" during projection.

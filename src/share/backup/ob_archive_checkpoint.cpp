@@ -75,7 +75,7 @@ int ObDestRoundCheckpointer::init(ObArchiveRoundHandler *round_handler, const Pi
 void ObDestRoundCheckpointer::set_allow_force_stop()
 {
   allow_force_stop_ = true;
-  LOG_INFO("set allow force stop");
+
 }
 
 int ObDestRoundCheckpointer::checkpoint(const ObTenantArchiveRoundAttr &round_info, const ObDestRoundSummary &summary)
@@ -128,7 +128,7 @@ int ObDestRoundCheckpointer::count_(
     if (!ls_round.has_piece()) {
       // has not started archive.
       counter.not_start_cnt_++;
-      LOG_INFO("encounter a log stream which has not started archive.", K(ls_round));
+
     } else if (ls_round.is_deleted_) {
       // All log had been archived before delete the log stream.
       counter.deleted_ls_count_++;
@@ -174,7 +174,7 @@ int ObDestRoundCheckpointer::count_(
     }
   }
 
-  LOG_INFO("print count result", K(ret), K(counter));
+
 
   return ret;
 }
@@ -221,7 +221,7 @@ int ObDestRoundCheckpointer::calc_next_checkpoint_scn_(
     // search the piece
     int64_t idx = ls_round.get_piece_idx(max_avail_piece_id);
     if (-1 == idx) {
-      LOG_INFO("ls piece not found", K(ret), K(max_avail_piece_id), K(ls_round));
+
     } else {
       bool last_piece = false;
       const ObLSDestRoundSummary::OnePiece &ls_piece = ls_round.piece_list_.at(idx);
@@ -302,13 +302,13 @@ int ObDestRoundCheckpointer::gen_new_round_info_(
       } else if (OB_FAIL(new_round_info.comment_.assign(comment.ptr()))) {
         LOG_WARN("failed to assign comment", K(ret), K(new_round_info), K(counter), K(comment));
       }
-      LOG_INFO("switch to INTERRUPTED state", K(ret), K(old_round_info), K(counter), K(new_round_info), K(is_no_logging));
+
     } else if (next_checkpoint_scn <= old_round_info.start_scn_) {
       need_checkpoint = false;
     } else if (OB_FALSE_IT(new_round_info.checkpoint_scn_ = next_checkpoint_scn)) {
     } else if (counter.doing_cnt_ == actual_count) {
       new_round_info.state_.set_doing();
-      LOG_INFO("switch to DOING state", K(old_round_info), K(counter), K(new_round_info));
+
     } else {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("unexpected error occur", K(ret), K(old_round_info), K(counter), K(new_round_info));
@@ -341,7 +341,7 @@ int ObDestRoundCheckpointer::gen_new_round_info_(
       } else if (OB_FAIL(new_round_info.comment_.assign(comment.ptr()))) {
         LOG_WARN("failed to assign comment", K(ret), K(new_round_info), K(counter), K(is_no_logging), K(comment));
       }
-      LOG_INFO("switch to INTERRUPTED state", K(ret), K(old_round_info), K(counter), K(is_no_logging), K(new_round_info));
+
     } else if (counter.doing_cnt_ == actual_count) {
     } else {
       ret = OB_ERR_UNEXPECTED;
@@ -351,7 +351,7 @@ int ObDestRoundCheckpointer::gen_new_round_info_(
     if (counter.suspended_cnt_ + counter.not_start_cnt_ == actual_count) {
       // previous state is SUSPENDING, expected next state is SUSPEND.
       new_round_info.state_.set_suspend();
-      LOG_INFO("switch to SUSPEND state", K(old_round_info), K(counter), K(new_round_info));
+
     } else if (counter.suspended_cnt_ + counter.not_start_cnt_ < actual_count) {
     } else {
       ret = OB_ERR_UNEXPECTED;
@@ -361,7 +361,7 @@ int ObDestRoundCheckpointer::gen_new_round_info_(
     if (counter.stopped_cnt_ + counter.not_start_cnt_ == actual_count) {
       // previous state is STOPPING, expected next state is STOP.
       new_round_info.state_.set_stop();
-      LOG_INFO("switch to STOP state", K(old_round_info), K(counter), K(new_round_info));
+
     } else if (counter.stopped_cnt_ + counter.not_start_cnt_ < actual_count) {
     } else {
       ret = OB_ERR_UNEXPECTED;
@@ -423,7 +423,7 @@ int ObDestRoundCheckpointer::generate_pieces_(const ObTenantArchiveRoundAttr &ol
 
   if (old_round_info.state_ == result.new_round_info_.state_ && result.new_round_info_.max_scn_ == old_round_info.start_scn_) {
     // No log stream started archive before disable archive, then no piece generated in the round.
-    LOG_INFO("no piece generated.", K(old_round_info), K(result));
+
   } else {
     int64_t active_input_bytes = 0;
     int64_t active_output_bytes = 0;
@@ -508,7 +508,7 @@ int ObDestRoundCheckpointer::generate_one_piece_(const ObTenantArchiveRoundAttr 
     // search the piece
     int64_t idx = ls_round.get_piece_idx(piece_id);
     if (-1 == idx) {
-      LOG_INFO("ls piece not found", K(ret), K(piece_id), K(ls_round));
+
     } else {
       // piece is found.
       // fill ls piece

@@ -52,7 +52,7 @@ int ObRemoteScheduler::schedule(ObExecContext &ctx, ObPhysicalPlan *phy_plan)
       LOG_WARN("execute with plan failed", K(ret));
     }
   }
-  LOG_TRACE("remote_scheduler", K(ctx.use_remote_sql()), KPC(phy_plan));
+
   return ret;
 }
 
@@ -229,7 +229,7 @@ int ObRemoteScheduler::execute_with_sql(ObExecContext &ctx, ObPhysicalPlan *phy_
     LOG_WARN("failed to add changed package info to session", K(ret));
   } else {
     session->reset_all_package_changed_info();
-    LOG_DEBUG("execute remote task", K(task));
+
     ObOperator *op = NULL;
     if (OB_FAIL(phy_plan->get_root_op_spec()->create_operator(ctx, op))) {
       LOG_WARN("create operator from spec failed", K(ret));

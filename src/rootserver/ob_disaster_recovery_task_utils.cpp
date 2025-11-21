@@ -123,7 +123,7 @@ int DisasterRecoveryUtils::get_dr_tasks_count(
         LOG_WARN("fail to send rpc", KR(ret), K(arg));                                                        \
       }                                                                                                       \
       if (OB_SUCC(ret)) {                                                                                     \
-        LOG_INFO("send rpc success", K(leader), K(arg));                                                      \
+                                                      \
         break;                                                                                                \
       } else if (OB_TMP_FAIL(GCTX.location_service_->nonblock_renew(                                          \
                                 GCONF.cluster_id, meta_tenant_id, SYS_LS))) {                                 \
@@ -440,7 +440,7 @@ int DisasterRecoveryUtils::lock_service_epoch(
   } else if (INVALID_DR_SERVICE_EPOCH_VALUE == service_epoch) {
     // if service_epoch is set to the default value of INVALID_DR_SERVICE_EPOCH_VALUE -1,
     // skip check service epoch value.
-    LOG_TRACE("service_epoch is invalid, no need check");
+
   } else if (service_epoch != disaster_recovery_service_epoch) {
     ret = OB_STATE_NOT_MATCH;
     LOG_WARN("state not match, can not provide service",
@@ -465,7 +465,7 @@ int DisasterRecoveryUtils::record_history_and_clean_task(
   if (OB_UNLIKELY(ERRSIM_CLEAN_TASK_FROM_DRTASK_TABLE_ERROR)) {
     // errsim here, do nothing
     ret = ERRSIM_CLEAN_TASK_FROM_DRTASK_TABLE_ERROR;
-    LOG_INFO("errsim here, do not clean task from task table", KR(ret));
+
   } else if (OB_UNLIKELY(!task.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", KR(ret), K(task));
@@ -500,7 +500,7 @@ int DisasterRecoveryUtils::record_history_and_clean_task(
     }
   }
   COMMIT_DISASTER_RECOVERY_UTILS_TRANS
-  LOG_INFO("[DRTASK_NOTICE] record history and clean task", KR(ret), K(task));
+
   return ret;
 }
 
@@ -520,7 +520,7 @@ int DisasterRecoveryUtils::send_rpc_to_cancel_task(
   } else if (OB_FAIL(GCTX.srv_rpc_proxy_->to(task.get_dst_server()).by(task.get_tenant_id()).timeout(GCONF.rpc_timeout)
                                 .ls_cancel_replica_task(rpc_arg))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
-      LOG_INFO("task not exist", KR(ret), K(task));
+
       LOG_USER_ERROR(OB_ENTRY_NOT_EXIST, "Task not exist");
     } else {
       LOG_WARN("fail to execute cancel task rpc", KR(ret), K(rpc_arg), K(task));
@@ -583,7 +583,7 @@ int DisasterRecoveryUtils::clean_task_while_task_finish(
   }
   FREE_DISASTER_RECOVERY_UTILS_TASK_MEMORY
   const int64_t cost = ObTimeUtility::fast_current_time() - start_time;
-  LOG_INFO("[DRTASK_NOTICE] clean task while task finish", KR(ret), K(task_id), K(cost));
+
   return ret;
 }
 

@@ -141,9 +141,9 @@ public:
     if (OB_FAIL(ret)) {
     } else if (OB_ISNULL(left) || OB_ISNULL(right)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "unexpected null root block desc", K(ret));
+
     } else if (OB_FAIL(left->last_key_.compare(right->last_key_, datum_utils_, cmp_ret))) {
-      STORAGE_LOG(WARN, "Failed to compare last key", K(ret), KPC(left), KPC(right));
+
       cmp_ret = 0;
     }
     return cmp_ret < 0;
@@ -164,7 +164,7 @@ public:
     if (OB_FAIL(ret)) {
     } else if (OB_ISNULL(left) || OB_ISNULL(right) || left->task_idx_ < 0 || right->task_idx_ < 0) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "unexpected null root block desc", K(ret), KPC(left), KPC(right));
+
     } else {
       cmp_ret = left->task_idx_ < right->task_idx_;
     }
@@ -187,13 +187,13 @@ public:
     if (OB_FAIL(ret)) {
     } else if (OB_ISNULL(left) || OB_ISNULL(right)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "unexpected null meta", K(ret));
+
     } else if (OB_FAIL(left->get_rowkey(left_key))) {
-      STORAGE_LOG(WARN, "Failed to get last key", K(ret), KPC(left));
+
     } else if (OB_FAIL(right->get_rowkey(right_key))) {
-      STORAGE_LOG(WARN, "Failed to get last key", K(ret), KPC(right));
+
     } else if (OB_FAIL(left_key.compare(right_key, datum_utils_, cmp_ret))) {
-      STORAGE_LOG(WARN, "Failed to compare last key", K(ret), KPC(left), KPC(right));
+
       cmp_ret = 0;
     }
     return cmp_ret < 0;

@@ -68,13 +68,13 @@ int ObUpdateLogPlan::generate_normal_raw_plan()
   } else {
     bool need_limit = true;
     ObSEArray<OrderItem, 4> order_items;
-    LOG_TRACE("start to allocate operators for ", "sql", optimizer_context_.get_query_ctx()->get_sql_stmt());
+
     OPT_TRACE("generate plan for ", get_stmt());
     // step. generate access paths
     if (OB_FAIL(generate_plan_tree())) {
       LOG_WARN("failed to generate plan tree for plain select", K(ret));
     } else {
-      LOG_TRACE("succ to generate plan tree", K(candidates_.candidate_plans_.count()));
+
     }
     // allocate subplan filter if needed, mainly for the subquery in where statement
     if (OB_SUCC(ret) && !get_subquery_filters().empty()) {
@@ -143,7 +143,7 @@ int ObUpdateLogPlan::generate_normal_raw_plan()
       if (OB_FAIL(candi_allocate_err_log(update_stmt))) {
         LOG_WARN("fail to allocate err_log", K(ret));
       } else {
-        LOG_TRACE("succeed to allocate err log", K(candidates_.candidate_plans_.count()));
+
       }
     }
 
@@ -246,13 +246,13 @@ int ObUpdateLogPlan::candi_allocate_update()
                                          update_plans))) {
     LOG_WARN("failed to create update plans", K(ret));
   } else if (!update_plans.empty()) {
-    LOG_TRACE("succeed to create update plan using hint", K(update_plans.count()));
+
   } else if (OB_FAIL(create_update_plans(candi_plans, lock_row_flag_expr,
                                          false, false,
                                          update_plans))) {
     LOG_WARN("failed to create update plans", K(ret));
   } else {
-    LOG_TRACE("succeed to create update plan ignore hint", K(update_plans.count()));
+
   }
   if (OB_SUCC(ret)) {
     if (OB_FAIL(prune_and_keep_best_plans(update_plans))) {
@@ -392,7 +392,7 @@ int ObUpdateLogPlan::candi_allocate_pdml_update()
                                                             index_insert_info))) {
             LOG_WARN("failed to allocate one pdml insert operator", K(ret));
           } else {
-            LOG_TRACE("succeed to allocate pdml row-movement update");
+
           }
         }
       } else {
@@ -409,7 +409,7 @@ int ObUpdateLogPlan::candi_allocate_pdml_update()
                                                    index_dml_info))) {
           LOG_WARN("failed to allocate one pdml update operator", K(ret));
         } else {
-          LOG_TRACE("succeed to allocate pdml update operator", K(ret));
+
         }
       }
     }

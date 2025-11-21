@@ -125,7 +125,7 @@ int ObExprNullif::se_deduce_type(ObExprResType &type,
     if (OB_SUCC(ret)) {
       type.set_calc_meta(cmp_type.get_calc_meta());
       type.set_calc_accuracy(cmp_type.get_calc_accuracy());
-      LOG_DEBUG("se_deduce_type", K(type), K(type.get_calc_meta()), K(type.get_calc_accuracy()));
+
     }
   }
   return ret;

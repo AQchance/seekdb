@@ -1807,7 +1807,7 @@ int ObSortOpImpl::build_ems_heap(int64_t &merge_ways)
         merge_ways = std::max(merge_ways, get_memory_limit() / ObChunkDatumStore::BLOCK_SIZE);
       }
       merge_ways = std::min(merge_ways, max_ways);
-      LOG_TRACE("do merge sort ", K(first->level_), K(merge_ways), K(sort_chunks_.get_size()), K(get_memory_limit()), K(sql_mem_processor_.get_profile()));
+
     }
 
     if (OB_SUCC(ret)) {
@@ -2439,7 +2439,7 @@ int ObSortOpImpl::add_heap_sort_row(const common::ObIArray<ObExpr*> &exprs,
       }
     } else {
       store_row = new_row;
-      LOG_DEBUG("in memory topn sort check add row", KPC(new_row));
+
     }
     if (OB_SUCC(ret) && topn_heap_->heap_.count() == topn_cnt_) {
       // the first time reach heap capacity, set_need_update to update topn filter data;
@@ -2649,7 +2649,7 @@ int ObSortOpImpl::adjust_topn_heap_with_ties(const common::ObIArray<ObExpr*> &ex
         }
       } else {
         store_row = new_row;
-        LOG_DEBUG("in memory topn sort with ties add ties array", KPC(new_row));
+
       }
     } else if (OB_FAIL(generate_new_row(pre_heap_top_row, alloc, copy_pre_heap_top_row))) {
       LOG_WARN("failed to generate new row", K(ret));
@@ -3020,7 +3020,7 @@ int ObPrefixSortImpl::fetch_rows(const common::ObIArray<ObExpr *> &all_exprs)
         LOG_WARN("add stored row is NULL", K(ret));
       } else {
         next_prefix_row_ = NULL;
-        LOG_DEBUG("trace restore row", K(ObToStringExprRow(*eval_ctx_, all_exprs)));
+
       }
     }
     while (OB_SUCC(ret)) {
@@ -3413,7 +3413,7 @@ int ObUniqueSortImpl::get_next_batch(const common::ObIArray<ObExpr*> &exprs,
               LOG_WARN("compare failed", K(ret));
             }
           }
-          LOG_DEBUG("debug cmp unique key", K(cmp));
+
           if (OB_FAIL(ret)) {
           } else if (0 == cmp) {
           } else {

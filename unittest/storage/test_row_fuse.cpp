@@ -40,7 +40,7 @@ void check_row_fuse(const char *input, const char *expect)
   ObMockStoreRowIterator iter;
   ObMockStoreRowIterator expect_iter;
   if (OB_FAIL(malloc_store_row(allocator, OB_ROW_MAX_COLUMNS_COUNT, result))) {
-    STORAGE_LOG(WARN, "no memory");
+
   } else {
     SCOPED_TRACE(expect);
     SCOPED_TRACE(input);
@@ -52,12 +52,12 @@ void check_row_fuse(const char *input, const char *expect)
     // run row fuse
     ASSERT_EQ(OB_SUCCESS, iter.from(input));
     if (OB_SUCCESS != (ret = nop_pos.init(allocator, 256))) {
-      STORAGE_LOG(WARN, "nop position initialize error", K(ret));
+
     }
     while (OB_SUCCESS == ret && !final_result) {
       if (OB_ITER_END != iter.get_next_row(input_row)) {
         ret = ObRowFuse::fuse_row(*input_row, *result, nop_pos, final_result);
-        STORAGE_LOG(INFO, "fuse row", K(ret), KPC(input_row), KPC(result));
+
       } else {
         break;
       }
@@ -68,7 +68,7 @@ void check_row_fuse(const char *input, const char *expect)
     ASSERT_EQ(OB_SUCCESS, expect_iter.from(expect));
     //ASSERT_EQ(OB_SUCCESS, iter.get_next_row(expect_row));
     //ASSERT_TRUE(expect_iter.equals(*expect_row));
-    STORAGE_LOG(INFO, "result row", K(ret), KPC(result));
+
     ASSERT_TRUE(expect_iter.equals(*result));
 
     free_store_row(allocator, result);
@@ -85,7 +85,7 @@ void check_simple_row_fuse(const char *input, const char *expect)
   ObMockStoreRowIterator iter;
   ObMockStoreRowIterator expect_iter;
   if (OB_FAIL(malloc_store_row(allocator, OB_ROW_MAX_COLUMNS_COUNT, result))) {
-    STORAGE_LOG(WARN, "no memory");
+
   } else {
     SCOPED_TRACE(expect);
     SCOPED_TRACE(input);
@@ -97,7 +97,7 @@ void check_simple_row_fuse(const char *input, const char *expect)
     // run row fuse
     ASSERT_EQ(OB_SUCCESS, iter.from(input));
     if (OB_SUCCESS != (ret = nop_pos.init(allocator, 256))) {
-      STORAGE_LOG(WARN, "nop position initialize error", K(ret));
+
     }
     while (OB_SUCCESS == ret && !final_result) {
       if (OB_ITER_END != iter.get_next_row(input_row)) {

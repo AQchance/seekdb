@@ -51,7 +51,7 @@ int64_t WorkloadRepositoryTask::get_snapshot_interval(bool is_laze_load /* = tru
     int64_t tmp_interval_s = 0;
     if (OB_TMP_FAIL(fetch_interval_num_from_wr_control(tmp_interval_s))) {
       interval = DEFAULT_SNAPSHOT_INTERVAL;
-      LOG_INFO("failed to fetch interval num from wr control", K(tmp_ret));
+
     } else if (tmp_interval_s == 0) {
       interval = DEFAULT_SNAPSHOT_INTERVAL;
     } else {
@@ -103,7 +103,7 @@ int WorkloadRepositoryTask::start()
     LOG_WARN("failed to start wr task", K(ret));
   } else {
     is_inited_ = true;
-    LOG_INFO("init wr task thread finished", K_(tg_id));
+
   }
   return ret;
 }
@@ -162,7 +162,7 @@ void WorkloadRepositoryTask::runTimerTask()
   // current snapshot task must stop when next task is time to schedule.
   timeout_ts_ = common::ObTimeUtility::current_time() +  get_snapshot_interval(false/*is_laze_load*/) * 60 * 1000L * 1000L;
   int64_t snap_id = 0;
-  LOG_INFO("start to take wr snapshot", KPC(this));
+
 
   // take one snapshot
   if (OB_SUCC(ret) && OB_FAIL(do_snapshot(false /*is_user_submit*/, wr_proxy_, snap_id))) {
@@ -229,7 +229,7 @@ int WorkloadRepositoryTask::do_snapshot(
       // FIXME: if all nodes of a cluster down for quiet long time, how to determine interval time?
       // TODO(roland.qk): Need to look at Oracle's behavior after restart
       begin_interval_time = end_interval_time;
-      LOG_INFO("first time to take wr snapshot, set ", K(begin_interval_time));
+
     }
     for (int i = 0; OB_SUCC(ret) && i < all_tenants.size(); i++) {
       const uint64_t cur_tenant_id = all_tenants.at(i);
@@ -273,7 +273,7 @@ int WorkloadRepositoryTask::do_snapshot(
           }
         }
       } else {
-        LOG_DEBUG("Only system and user tenants support WR diagnostics", K(ret), K(cur_tenant_id));
+
       }
     }
   }
@@ -327,7 +327,7 @@ int WorkloadRepositoryTask::get_next_snapshot_id(int64_t &snap_id)
   if (OB_FAIL(fetch_snapshot_id_sequence_nextval(snap_id))) {
     if (OB_OBJECT_NAME_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("wr snapshot id sequence not exist, create it now");
+
       if (OB_FAIL(create_snapshot_id_sequence())) {
         LOG_WARN("failed to create wr snap_id sequence.", KR(ret));
       } else if (OB_FAIL(fetch_snapshot_id_sequence_nextval(snap_id))) {
@@ -419,7 +419,7 @@ int WorkloadRepositoryTask::get_begin_interval_time(int64_t &begin_interval_time
         // cluster.
         ret = OB_SUCCESS;
         begin_interval_time = 0;
-        LOG_INFO("first time to take wr snapshot in this cluster", K(begin_interval_time));
+
       } else {
         LOG_WARN("get next result failed", KR(ret), K(sql));
       }
@@ -476,7 +476,7 @@ int WorkloadRepositoryTask::setup_tenant_snapshot_info(int64_t snap_id, uint64_t
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("invalid affected rows", KR(ret), K(affected_rows), K(sql));
   } else {
-    LOG_DEBUG("success to insert snapshot info", K(sql));
+
   }
   return ret;
 }
@@ -637,7 +637,7 @@ int WorkloadRepositoryTask::check_all_tenant_last_snapshot_task_finished(bool &i
     if (OB_EMPTY_RESULT == ret) {
       ret = OB_SUCCESS;
       is_all_finished = true;
-      LOG_INFO("no wr snapshot records before");
+
     }
   } else if (OB_FAIL(check_snapshot_task_finished_for_snap_id(snap_id, is_all_finished))) {
     LOG_WARN("failed to get last snapshot status", KR(ret), K(snap_id));
@@ -648,7 +648,7 @@ int WorkloadRepositoryTask::check_all_tenant_last_snapshot_task_finished(bool &i
       LOG_WARN("failed to last snapshot task begin time", KR(tmp_ret));
     } else if (task_begin_ts + DEFAULT_SNAPSHOT_INTERVAL * 60 * 1000L * 1000L <=
                common::ObTimeUtility::current_time()) {
-      LOG_INFO("previous task not finished but timeout", K(snap_id));
+
       is_all_finished = true;
     }
   }
@@ -748,11 +748,11 @@ int WorkloadRepositoryTask::check_snapshot_task_finished_for_snap_id(
                 }
                 case ObWrSnapshotStatus::PROCESSING: {
                   is_finished = false;
-                  LOG_DEBUG("wr snapshot still has unfinished tasks", K(snap_id), K(tenant_id));
+
                   break;
                 }
                 case ObWrSnapshotStatus::SUCCESS: {
-                  LOG_DEBUG("wr snapshot success", K(snap_id), K(tenant_id));
+
                   break;
                 }
                 default: {
@@ -832,7 +832,7 @@ int WorkloadRepositoryTask::do_delete_single_tenant_snapshot(const uint64_t tena
       }
     }
   } else {
-    LOG_DEBUG("Only system and user tenants support WR diagnostics", K(ret), K(tenant_id));
+
   }
   return ret;
 }
@@ -865,7 +865,7 @@ int WorkloadRepositoryTask::do_delete_single_tenant_snapshot(const uint64_t tena
       }
     }
   } else {
-    LOG_DEBUG("Only system and user tenants support WR diagnostics", K(ret), K(tenant_id));
+
   }
   return ret;
 }
@@ -919,7 +919,7 @@ int WorkloadRepositoryTask::update_wr_control(const char *time_num_col_name, con
                  ObWrCollector::exec_write_sql_with_retry(gen_meta_tenant_id(tenant_id), sql.ptr(), affected_rows))) {
     LOG_WARN("failed to write snapshot_info", KR(ret), K(sql), K(gen_meta_tenant_id(tenant_id)));
   } else if (affected_rows != 1) {
-    LOG_TRACE("affected rows is not 1", KR(ret), K(affected_rows), K(sql));
+
   }
   return ret;
 }
@@ -960,7 +960,7 @@ int WorkloadRepositoryTask::fetch_retention_usec_from_wr_control(int64_t &retent
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("unexpected affected_rows", K(affected_rows));
         }
-        LOG_INFO("no record in __wr_control table, set default value", K(retention));
+
       } else {
         LOG_WARN("get next result failed", KR(ret), K(tenant_id), K(sql));
       }
@@ -968,7 +968,7 @@ int WorkloadRepositoryTask::fetch_retention_usec_from_wr_control(int64_t &retent
       EXTRACT_INT_FIELD_MYSQL(*result, "retention_num", retention, int64_t);
       if (OB_SUCC(ret)) {
         retention = retention * 1000L * 1000L;
-        LOG_TRACE("current retention in us for wr", K(retention));
+
       }
     }
   }
@@ -1011,7 +1011,7 @@ int WorkloadRepositoryTask::fetch_interval_num_from_wr_control(int64_t &interval
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("unexpected affected_rows", K(affected_rows));
         }
-        LOG_INFO("no record in __wr_control table, set default value", K(interval));
+
       } else {
         LOG_WARN("get next result failed", KR(ret), K(tenant_id), K(sql));
       }

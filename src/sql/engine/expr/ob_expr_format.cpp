@@ -309,7 +309,7 @@ int ObExprFormat::convert_num_to_str(const ObDatumMeta &x_meta,
   }
   if (OB_SUCC(ret)) {
     num_str.assign_ptr(buf, static_cast<int32_t>(str_len));
-    LOG_DEBUG("convert_num_to_str", K(ret), K(num_str), K(str_len));
+
   }
   return ret;
 }

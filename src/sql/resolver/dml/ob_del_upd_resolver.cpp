@@ -507,7 +507,7 @@ int ObDelUpdResolver::generate_wrapper_expr_for_assignemnts(ObIArray<ObAssignmen
           *params_.expr_factory_, *session_info_, as.expr_, as.expr_))) {
         LOG_WARN("failed to build wrapper inner expr", K(ret));
       } else {
-        LOG_DEBUG("add wrapper inner expr", K(*as.expr_), K(as.expr_));
+
       }
     }
   }
@@ -731,7 +731,7 @@ int ObDelUpdResolver::add_assignment(common::ObIArray<ObTableAssignment> &assign
     ret = OB_BATCHED_MULTI_STMT_ROLLBACK;
     //batch stmt execution does not support update lob locator columns
     //because we can not do defensive check with lob locator columns
-    LOG_TRACE("batch stmt can not supported with lob locator", K(ret));
+
   }
   for (int64_t i = 0; OB_SUCC(ret) && i < N; ++i) {
     ObTableAssignment &ta = assigns.at(i);
@@ -1651,7 +1651,7 @@ int ObDelUpdResolver::add_index_related_columns_to_stmt(const TableItem &table_i
       if (OB_FAIL(add_all_columns_to_stmt(table_item, column_items))) {
         LOG_WARN("add all columns to stmt failed", K(ret));
       } else {
-        LOG_DEBUG("add all column to stmt due to the update column is primary key");
+
       }
     } else {
       uint64_t index_tids[OB_MAX_AUX_TABLE_PER_MAIN_TABLE];
@@ -2436,7 +2436,7 @@ int ObDelUpdResolver::build_column_conv_function_with_value_desc(ObInsertTableIn
       } else {
         skip_convert = table_schema->is_index_table() ||
                        column_item->column_id_ == OB_HIDDEN_PK_INCREMENT_COLUMN_ID;
-        LOG_TRACE("skip convert expr in ddl", K(table_item->ddl_table_id_), K(skip_convert));
+
       }
     } else {
       const TableItem *table_item = NULL;
@@ -2470,7 +2470,7 @@ int ObDelUpdResolver::build_column_conv_function_with_value_desc(ObInsertTableIn
           LOG_WARN("failed to build wrapper inner expr", K(ret));
       } else {
         table_info.column_conv_exprs_.at(idx) = column_ref;
-        LOG_TRACE("add column conv expr", K(*column_ref), K(trigger_exist));
+
       }
     }
   }
@@ -2571,7 +2571,7 @@ int ObDelUpdResolver::build_column_conv_function_with_default_expr(ObInsertTable
     }
     if (OB_SUCC(ret)) {
       table_info.column_conv_exprs_.at(idx) = function_expr;
-      LOG_DEBUG("add column conv expr", K(*function_expr));
+
     }
   }
   return ret;
@@ -2615,7 +2615,7 @@ int ObDelUpdResolver::generate_autoinc_params(ObInsertTableInfo &table_info)
       }
     }//end for
   }
-  LOG_DEBUG("generate autoinc_params", "autoinc_params", del_upd_stmt->get_autoinc_params());
+
   return ret;
 }
 
@@ -3540,7 +3540,7 @@ int ObDelUpdResolver::remove_dup_dep_cols_for_heap_table(ObIArray<ObColumnRefRaw
     OX(dep_cols.reset());
     OZ(dep_cols.assign(cols_no_dup));
   }
-  LOG_DEBUG("remove dup dep cols done", K(dep_cols));
+
   return ret;
 }
 

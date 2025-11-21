@@ -197,7 +197,7 @@ int ObSysVariableMgr::get_sys_variable_schema(
     if (OB_FAIL(sys_variable_map_.get_refactored(hash_wrap, tmp_schema))) {
       if (OB_HASH_NOT_EXIST == ret) {
         ret = OB_SUCCESS;
-        LOG_DEBUG("sys_variable is not exist", K(tenant_id));
+
       }
     } else {
       sys_variable_schema = tmp_schema;
@@ -254,7 +254,7 @@ int ObSysVariableMgr::add_sys_variable(const ObSimpleSysVariableSchema &sys_vari
     } else if (OB_ISNULL(tmp_schema)) {
       ret = OB_ERR_UNEXPECTED;
     } else {
-      LOG_INFO("sys variable schema", K(*tmp_schema));
+
     }
   }
   return ret;

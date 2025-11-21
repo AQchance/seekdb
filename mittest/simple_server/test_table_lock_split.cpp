@@ -72,7 +72,7 @@ public:
 
 void ObLockTableSplitBeforeRestartTest::add_rx_in_trans_lock(sqlclient::ObISQLConnection *&connection)
 {
-  LOG_INFO("insert data start");
+
   // common::ObMySQLProxy &sql_proxy = get_curr_simple_server().get_sql_proxy2();
   int64_t affected_rows = 0;
   ObSqlString sql;
@@ -105,11 +105,11 @@ void ObLockTableSplitBeforeRestartTest::commit_tx(sqlclient::ObISQLConnection *&
 TEST_F(ObLockTableSplitBeforeRestartTest, add_tenant)
 {
   // create tenant
-  LOG_INFO("step 1: 创建普通租户tt1");
+
   ASSERT_EQ(OB_SUCCESS, create_tenant());
-  LOG_INFO("step 2: 获取租户tt1的tenant_id");
+
   ASSERT_EQ(OB_SUCCESS, get_tenant_id(RunCtx.tenant_id_));
-  LOG_INFO("step 3: 初始化普通租户tt1的sql proxy");
+
   ASSERT_NE(0, RunCtx.tenant_id_);
   ASSERT_EQ(OB_SUCCESS, get_curr_simple_server().init_sql_proxy2());
 }

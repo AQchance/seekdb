@@ -677,7 +677,7 @@ int ObWrCollector::collect_statname()
       if (OB_FAIL(ObWrCollector::exec_write_sql_with_retry(exec_tenant_id, sql.ptr(), affected_rows))) {
         LOG_WARN("execute sql failed", KR(ret), K(tenant_id), K(exec_tenant_id), K(sql));
       } else if (OB_UNLIKELY(affected_rows > 0)) {
-        LOG_TRACE("the stat name has changed, there are new statname.", K(affected_rows));
+
       } else if (OB_UNLIKELY(affected_rows < 0)) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("unexpected affected_rows", KR(ret), K(expected_rows), K(affected_rows));
@@ -733,7 +733,7 @@ int ObWrCollector::collect_eventname()
       if (OB_FAIL(ObWrCollector::exec_write_sql_with_retry(exec_tenant_id, sql.ptr(), affected_rows))) {
         LOG_WARN("execute sql failed", KR(ret), K(tenant_id), K(exec_tenant_id), K(sql));
       } else if (OB_UNLIKELY(affected_rows > 0)) {
-        LOG_TRACE("the event name has changed, there are new event name.", K(affected_rows));
+
       } else if (OB_UNLIKELY(affected_rows < 0)) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("unexpected affected_rows", KR(ret), K(expected_rows), K(affected_rows));
@@ -1218,7 +1218,7 @@ int ObWrCollector::update_last_snapshot_end_time()
   ObSqlString sql;
   int64_t affected_rows = 0;
 
-  LOG_DEBUG("wr snapshot update last snapshot end time", K(tenant_id), K(snapshot_begin_time_), K(snapshot_end_time_));
+
   SMART_VAR(ObISQLClient::ReadResult, res)
   {
     ObMySQLResult *result = nullptr;
@@ -1260,7 +1260,7 @@ int ObWrCollector::update_last_snapshot_end_time()
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("invalid affected rows", KR(ret), K(affected_rows), K(sql));
     } else {
-      LOG_DEBUG("success to insert snapshot info", K(sql));
+
     } 
   }
   return ret;
@@ -1610,7 +1610,7 @@ int ObWrCollector::write_to_wr(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("invalid affected rows", KR(ret), K(affected_rows), K(cur_row), K(sql));
   } else {
-    LOG_TRACE("execute wr batch insertion sql success", K(sql), K(affected_rows));
+
     dml_splicer.reset();
   }
   return ret;
@@ -1650,7 +1650,7 @@ int ObWrCollector::write_to_wr_sql_plan_and_aux(ObDMLSqlSplicer &dml_splicer, Ob
   } else {
     dml_splicer.reset();
     dml_splicer_aux.reset();
-    LOG_TRACE("insert wr sql and aux", K(sql), K(affected_rows));
+
   }
   if (trans.is_started() && OB_TMP_FAIL(trans.end(OB_SUCC(ret)))) {
     LOG_WARN("failed to commit trans", K(ret), K(tmp_ret));
@@ -1913,7 +1913,7 @@ int ObWrDeleter::modify_snapshot_status(const uint64_t tenant_id, const int64_t 
   } else if (OB_FAIL(ObWrCollector::exec_write_sql_with_retry(meta_tenant_id, sql.ptr(), affected_rows))) {
     LOG_WARN("execute sql failed", KR(ret), K(tenant_id), K(meta_tenant_id), K(sql));
   } else if (OB_UNLIKELY(affected_rows == 0)) {
-    LOG_TRACE("the snapshot is already marked as deleted, execute delete process anyway", K(snap_id), K(tenant_id), K(affected_rows));
+
   } else if (OB_UNLIKELY(affected_rows < 0)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected affected_rows", KR(ret), K(snap_id), K(tenant_id), K(affected_rows));
@@ -1990,7 +1990,7 @@ int ObWrCollector::exec_sql_with_retry(const uint64_t tenant_id, const char * sq
     const int64_t max_timeout = 1 * 60 * 1000 * 1000L; // 1 min
     const int64_t old_worker_timeout_ts = THIS_WORKER.get_timeout_ts();
     if (THIS_WORKER.get_timeout_ts() >= (common::ObTimeUtility::current_time() + max_timeout)) {
-      LOG_INFO("the query timeout is too big!!!", K(ret), K(old_worker_timeout_ts), K(max_timeout), K(common::ObTimeUtility::current_time()));
+
       THIS_WORKER.set_timeout_ts(common::ObTimeUtility::current_time() + max_timeout);
     }
 
@@ -2015,7 +2015,7 @@ int ObWrCollector::exec_sql_with_retry(const uint64_t tenant_id, const char * sq
           ++retry_cnt;
           ret = OB_NEED_RETRY;
           ob_usleep(1000L * 1000L); //1s
-          LOG_INFO("wr sql execute failed , need retry", K(ret), K(tmp_ret), K(retry_cnt), K(sql));
+
         } else {
           ret = tmp_ret;
         }

@@ -91,7 +91,7 @@ int ObTenantSnapshotCreateDag::create_first_task()
   } else if (OB_FAIL(add_task(*task))) {
     LOG_WARN("fail to add task", KR(ret), KPC(this), KPC(task));
   } else {
-    LOG_INFO("success to add ObTenantSnapshotCreateTask", KPC(this), KPC(task));
+
   }
   return ret;
 }
@@ -211,7 +211,7 @@ int ObTenantSnapshotCreateTask::process()
     tenant_snapshot_mgr_->revert_tenant_snapshot(tenant_snapshot);
   }
 
-  LOG_INFO("ObTenantSnapshotCreateTask process finished", KR(ret), K(tenant_snapshot_id_), KPC(this));
+
   return ret;
 }
 
@@ -286,7 +286,7 @@ int ObTenantSnapshotGCDag::create_first_task()
   } else if(OB_FAIL(add_task(*task))) {
     LOG_WARN("fail to add task", KR(ret), KPC(this));
   } else {
-    LOG_INFO("success to add ObTenantSnapshotGCTask", KPC(this));
+
   }
   return ret;
 }

@@ -130,7 +130,7 @@ int ObTenantChecker::check_garbage_tenant_(bool &passed)
         } else if (OB_ISNULL(tenant_schema)) {
           tmp_ret = OB_TENANT_NOT_EXIST;
         } else if (tenant_schema->is_restore()) {
-          LOG_INFO("tenant is in restore", KPC(tenant_schema));
+
         } else if (tenant_schema->is_creating()) {
           LOG_ERROR("the tenant may be in the process of creating, if the error reports continuously, please check", K(tenant_id));
           LOG_DBA_WARN(OB_ERR_ROOT_INSPECTION, "msg", "the tenant may be in the process of creating, if the error reports continuously, please check",
@@ -381,7 +381,7 @@ int ObInspector::process()
       if (OB_SUCCESS != tmp_ret) {
         LOG_WARN("inpection task failed", K(tmp_ret), K(i), "task", inspection_tasks[i]->get_task_name());
       } else if (passed) {
-        LOG_INFO("inspection task succ", K(i), "task", inspection_tasks[i]->get_task_name());
+
       } else {
         LOG_ERROR(warning_info);
         ROOTSERVICE_EVENT_ADD("inspector", inspection_tasks[i]->get_task_name(),
@@ -411,7 +411,7 @@ ObPurgeRecyclebinTask::ObPurgeRecyclebinTask(ObRootService &rs)
 
 int ObPurgeRecyclebinTask::process()
 {
-  LOG_INFO("purge recyclebin task begin");
+
   int ret = OB_SUCCESS;
   const int64_t PURGE_EACH_TIME = 1000;
   int64_t delay = 1 * 60 * 1000 * 1000;
@@ -429,9 +429,9 @@ int ObPurgeRecyclebinTask::process()
     // overwrite ret
     LOG_WARN("schedule purge recyclebin task failed", KR(ret), K(delay));
   } else {
-    LOG_INFO("submit purge recyclebin task success", K(delay));
+
   }
-  LOG_INFO("purge recyclebin task end", K(delay));
+
   return OB_SUCCESS;
 }
 

@@ -144,9 +144,9 @@ int ObIndexBlockRowDesc::init(const ObDataStoreDesc &data_store_desc,
   const ObIndexBlockRowMinorMetaInfo *index_row_meta = nullptr;
   const int64_t rowkey_column_count = data_store_desc.get_rowkey_column_count();
   if (OB_FAIL(row_key_.assign(index_row.storage_datums_, rowkey_column_count))) {
-    STORAGE_LOG(WARN, "fail to assign src rowkey", K(ret), K(rowkey_column_count), K(index_row));
+
   } else if (OB_FAIL(idx_row_parser.get_header(index_row_header))){
-    STORAGE_LOG(WARN, "fail to get index row header", K(ret), K(idx_row_parser));
+
   } else {
     set_merge_type(data_store_desc.get_merge_type());
     set_end_scn(data_store_desc.get_end_scn());
@@ -176,7 +176,7 @@ int ObIndexBlockRowDesc::init(const ObDataStoreDesc &data_store_desc,
     const char *agg_row_buf = nullptr;
     int64_t agg_buf_size = 0;
     if (OB_FAIL(idx_row_parser.parse_minor_meta_and_agg_row(index_row_meta, agg_row_buf, agg_buf_size))) {
-      STORAGE_LOG(WARN, "fail to parse minor meta and agg row", K(ret), K(idx_row_parser));
+
     } else {
       if (nullptr != index_row_meta) {
         max_merged_trans_version_ = index_row_meta->max_merged_trans_version_;
@@ -299,13 +299,13 @@ int ObIndexBlockRowBuilder::init(ObIAllocator &allocator,
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("Invalid data store description", K(ret), K(data_desc), K(index_desc));
   } else if (OB_FAIL(row_.init(allocator, index_desc.get_rowkey_column_count() + 1))) {
-    STORAGE_LOG(WARN, "Failed to init row", K(ret), K(index_desc.get_rowkey_column_count()));
+
   } else {
     allocator_ = &allocator;
     data_desc_ = &data_desc;
     rowkey_column_count_ = index_desc.get_rowkey_column_count();
     is_inited_ = true;
-    STORAGE_LOG(TRACE, "success to init ObIndexBlockRowBuilder", K(rowkey_column_count_), K(data_desc), K(index_desc));
+
   }
   return ret;
 }
@@ -324,9 +324,9 @@ int ObIndexBlockRowBuilder::build_row(const ObIndexBlockRowDesc &desc, const ObD
     LOG_WARN("Index block description is not valid", K(ret));
   } else if (OB_UNLIKELY(desc.row_offset_ < 0)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected row offset", K(ret), K(desc));
+
   } else if (OB_FAIL(row_.reserve(rowkey_column_count_ + 1))) {
-    STORAGE_LOG(WARN, "Failed to reserve index row", K(ret), K(rowkey_column_count_));
+
   } else if (OB_FAIL(set_rowkey(desc))) {
     LOG_WARN("Fail to set rowkey", K(ret));
   } else if (nullptr != desc.aggregated_row_ && !desc.is_serialized_agg_row_
@@ -350,7 +350,7 @@ int ObIndexBlockRowBuilder::build_row(const ObIndexBlockRowDesc &desc, const ObD
     row_.storage_datums_[rowkey_column_count_].set_string(str);
     row_.row_flag_.set_flag(ObDmlFlag::DF_INSERT);
     row = &row_;
-    LOG_DEBUG("build index row", K_(desc.row_key), KPC_(header));
+
   }
   return ret;
 }
@@ -377,9 +377,9 @@ int ObIndexBlockRowBuilder::set_rowkey(const ObDatumRowkey &rowkey)
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("Rowkey column count mismatch", K(ret), K_(rowkey_column_count), K(rowkey));
   } else if (OB_FAIL(dest_rowkey.assign(row_.storage_datums_, rowkey_column_count_))) {
-    STORAGE_LOG(WARN, "Failed to assign dest rowkey", K(ret), K(rowkey_column_count_));
+
   } else if (OB_FAIL(rowkey.semi_copy(dest_rowkey, index_data_allocator_))) {
-    STORAGE_LOG(WARN, "Failed to semi copy dest rowkey", K(ret), K(rowkey));
+
   }
 
   return ret;

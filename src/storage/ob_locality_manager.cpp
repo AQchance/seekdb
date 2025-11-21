@@ -60,7 +60,7 @@ void ObLocalityManager::destroy()
     locality_info_.destroy();
     server_locality_cache_.destroy();
     refresh_locality_task_queue_.destroy();
-    STORAGE_LOG(INFO, "ObLocalityManager destroy finished");
+
   }
 }
 
@@ -69,21 +69,21 @@ int ObLocalityManager::init(const ObAddr &self, ObMySQLProxy *sql_proxy)
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(is_inited_)) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObLocalityManager init twice", K(ret));
+
   } else if (!self.is_valid() || OB_ISNULL(sql_proxy)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(self), KP(sql_proxy));
+
   } else if (OB_FAIL(server_locality_cache_.init())) {
-    STORAGE_LOG(WARN, "server_locality_cache_ init failed", K(ret), K(self));
+
   } else if (OB_FAIL(refresh_locality_task_queue_.init(1,
                                                        "LocltyRefTask",
                                                        REFRESH_LOCALITY_TASK_NUM,
                                                        REFRESH_LOCALITY_TASK_NUM))) {
-    STORAGE_LOG(WARN, "fail to initialize refresh locality task queue", K(ret));
+
   } else if (OB_FAIL(reload_locality_task_.init(this))) {
-    STORAGE_LOG(WARN, "init reload locality task failed", K(ret));
+
   } else if (OB_FAIL(TG_START(lib::TGDefIDs::LocalityReload))) {
-    STORAGE_LOG(WARN, "fail to initialize locality timer");
+
   } else {
     self_ = self;
     sql_proxy_ = sql_proxy;
@@ -96,15 +96,15 @@ int ObLocalityManager::start()
 {
   int ret = OB_SUCCESS;
   bool repeat = true;
-  STORAGE_LOG(INFO, "start locality manager");
+
   if (OB_UNLIKELY(!is_inited_)) {
-    STORAGE_LOG(ERROR, "locality manager not inited, cannot start.");
+
     ret = OB_NOT_INIT;
   } else if (OB_FAIL(TG_SCHEDULE(lib::TGDefIDs::LocalityReload,
                                  reload_locality_task_,
                                  RELOAD_LOCALITY_INTERVAL,
                                  repeat))) {
-    STORAGE_LOG(ERROR, "fail to schedule reload locality task");
+
   }
   return ret;
 }
@@ -114,7 +114,7 @@ int ObLocalityManager::stop()
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(ERROR, "locality manager not inited, cannot stop.", K(ret));
+
   } else {
     TG_STOP(lib::TGDefIDs::LocalityReload);
     refresh_locality_task_queue_.stop();
@@ -139,13 +139,13 @@ int ObLocalityManager::is_server_legitimate(const ObAddr& addr, bool& is_valid)
   is_valid = true;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLocalityManager not init", K(ret));
+
   } else if (OB_FAIL(server_locality_cache_.get_server_locality_array(
                      server_locality_array,
                      has_readonly_zone))) {
-    STORAGE_LOG(WARN, "fail to get server locality array", K(ret));
+
   } else if (server_locality_array.count() <= 0) {
-    STORAGE_LOG(INFO, "check server legitimate, wait load server list");
+
   } else {
     bool find = false;
     for (int64_t i = 0; !find && OB_SUCC(ret) && i < server_locality_array.count(); i++) {
@@ -172,7 +172,7 @@ void ObLocalityManager::set_ssl_invited_nodes(const common::ObString &new_value)
       ssl_invited_nodes_buf_[new_value.length()] =  '\0';
     }
   }
-  STORAGE_LOG(INFO, "set_ssl_invited_nodes", K(new_value));
+
 }
 
 int ObLocalityManager::load_region()
@@ -182,12 +182,12 @@ int ObLocalityManager::load_region()
   int64_t schema_version = OB_INVALID_VERSION;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLocalityManager not init", K(ret));
+
   } else if (OB_ISNULL(schema_service)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "schema service is null", K(ret));
+
   } else if (OB_FAIL(schema_service->get_tenant_refreshed_schema_version(OB_SYS_TENANT_ID, schema_version))) {
-    STORAGE_LOG(WARN, "failed to get schema guard", K(ret));
+
   } else {
     //Firstly, check it's need to warn
     check_if_locality_has_been_loaded();
@@ -200,11 +200,11 @@ int ObLocalityManager::load_region()
                                                  *sql_proxy_,
                                                  locality_info,
                                                  server_locality_cache_))) {
-        STORAGE_LOG(WARN, "localitity operator load region error", K(ret));
+
       } else if (OB_FAIL(set_locality_info(locality_info))) {
-        STORAGE_LOG(WARN, "set locality_info fail", K(ret), K(locality_info));
+
       } else if (OB_FAIL(set_version(schema_version))) {
-        STORAGE_LOG(WARN, "set version fail", K(ret));
+
       } else if (!is_loaded_) {
         is_loaded_ = true;
       }
@@ -223,7 +223,7 @@ int ObLocalityManager::load_arb_service_info()
   ObAddr arb_service_addr;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLocalityManager not init", K(ret));
+
   } else if (OB_FAIL(arbitration_service_table_operator_.get(
                          *sql_proxy_,
                          arbitration_service_key,
@@ -236,14 +236,14 @@ int ObLocalityManager::load_arb_service_info()
       arb_service_addr_.reset();
     }
   } else if (OB_FAIL(arb_service_addr.parse_from_string(arb_service_info.get_arbitration_service_string()))) {
-    STORAGE_LOG(WARN, "parse_from_string failed", K(ret));
+
   } else if (arb_service_addr == arb_service_addr_) {
     // no need update
   } else {
     SpinWLockGuard guard(rwlock_);
     arb_service_addr_ = arb_service_addr;
   }
-  STORAGE_LOG(INFO, "load_arb_service_info finshed", K(ret), K_(arb_service_addr));
+
   return ret;
 }
 
@@ -251,7 +251,7 @@ int ObLocalityManager::get_arb_service_addr(common::ObAddr &arb_service_addr) co
 {
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_inited_)) {
-    STORAGE_LOG(ERROR, "locality manager not inited, cannot start.");
+
     ret = OB_NOT_INIT;
   } else {
     SpinRLockGuard guard(rwlock_);
@@ -272,11 +272,11 @@ int ObLocalityManager::get_server_locality_array(
   SpinRLockGuard guard(rwlock_);
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLocalityManager not init", K(ret));
+
   } else if (OB_FAIL(server_locality_cache_.get_server_locality_array(
                      server_locality_array,
                      has_readonly_zone))) {
-    STORAGE_LOG(WARN, "fail to get server locality array", K(ret));
+
   }
   return ret;
 }
@@ -287,12 +287,12 @@ int ObLocalityManager::get_server_zone_type(const common::ObAddr &server,
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLocalityManager not init", KR(ret));
+
   } else if (!server.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K(server));
+
   } else if (OB_FAIL(server_locality_cache_.get_server_zone_type(server, zone_type))) {
-    STORAGE_LOG(WARN, "fail to get server zone type", KR(ret), K(server));
+
   }
   return ret;
 }
@@ -303,12 +303,12 @@ int ObLocalityManager::get_server_region(const common::ObAddr &server,
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLocalityManager not init", K(ret));
+
   } else if (!server.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(server));
+
   } else if (OB_FAIL(server_locality_cache_.get_server_region(server, region))) {
-    STORAGE_LOG(WARN, "fail to get server region", K(ret), K(server));
+
   }
   return ret;
 }
@@ -320,12 +320,12 @@ int ObLocalityManager::get_server_zone(const common::ObAddr &server,
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLocalityManager not init", K(ret));
+
   } else if (!server.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(server));
+
   } else if (OB_FAIL(server_locality_cache_.get_server_zone(server, zone))) {
-    STORAGE_LOG(WARN, "fail to get server zone", K(ret), K(server));
+
   }
   return ret;
 }
@@ -337,12 +337,12 @@ int ObLocalityManager::get_server_idc(const common::ObAddr &server,
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLocalityManager not init", K(ret));
+
   } else if (!server.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(server));
+
   } else if (OB_FAIL(server_locality_cache_.get_server_idc(server, idc))) {
-    STORAGE_LOG(WARN, "fail to get server idc", K(ret), K(server));
+
   } else {
     // do nothing
   }
@@ -362,11 +362,11 @@ int ObLocalityManager::is_local_server(const ObAddr &server, bool &is_local)
   SpinRLockGuard guard(rwlock_);
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLocalityManager not init", K(ret));
+
   } else if (OB_FAIL(server_locality_cache_.get_server_locality_array(
                      server_locality_array,
                      has_readonly_zone))) {
-    STORAGE_LOG(WARN, "fail to get server locality array", K(ret));
+
   } else {
     local_region = locality_info_.local_region_;
     bool find = false;
@@ -380,7 +380,7 @@ int ObLocalityManager::is_local_server(const ObAddr &server, bool &is_local)
     }
     if (OB_SUCC(ret) && !find) {
       ret = OB_ENTRY_NOT_EXIST;
-      STORAGE_LOG(DEBUG, "fail to find server locality info", K(ret), K(server));
+
     }
   }
   return ret;
@@ -394,14 +394,14 @@ int ObLocalityManager::is_same_zone(const common::ObAddr &server, bool &is_same_
   is_same_zone = false;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLocalityManager not init", K(ret));
+
   } else if (!server.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(server));
+
   } else if (OB_FAIL(get_server_zone(self_, self_zone))) {
-    STORAGE_LOG(WARN, "fail to get self zone", K(ret), K(self_));
+
   } else if (OB_FAIL(get_server_zone(server, svr_zone))) {
-    STORAGE_LOG(WARN, "fail to get server zone", K(ret), K(server));
+
   } else if (self_zone == svr_zone) {
     is_same_zone = true;
   }
@@ -414,7 +414,7 @@ int ObLocalityManager::check_if_locality_has_been_loaded()
   SpinRLockGuard guard(rwlock_);
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLocalityManager not init", K(ret));
+
   } else if (!is_loaded_) {
     const int64_t start_service_time = GCTX.start_service_time_;
     if (start_service_time > 0) {
@@ -437,12 +437,12 @@ int ObLocalityManager::set_locality_info(share::ObLocalityInfo &locality_info)
   SpinWLockGuard guard(rwlock_);
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLocalityManager not init", K(ret));
+
   } else if (!locality_info.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "locality_info is invalid", K(ret));
+
   } else if (OB_FAIL(locality_info.copy_to(locality_info_))) {
-    STORAGE_LOG(WARN, "set locality_info fail", K(ret), K_(locality_info));
+
   }
   return ret;
 }
@@ -454,7 +454,7 @@ int ObLocalityManager::is_local_zone_read_only(bool &is_readonly)
   is_readonly = false;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLocalityManager not init", K(ret));
+
   } else if (common::ObZoneType::ZONE_TYPE_READONLY == locality_info_.get_local_zone_type()){
     is_readonly = true;
   }
@@ -467,7 +467,7 @@ int ObLocalityManager::set_version(int64_t version)
   SpinWLockGuard guard(rwlock_);
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObLocalityManager not init", K(ret));
+
   } else {
     locality_info_.set_version(version);
   }
@@ -480,10 +480,10 @@ int ObLocalityManager::add_refresh_locality_task()
   ObRefreshLocalityTask task(this);
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "locality is not initialized", K(ret));
+
   } else if (OB_FAIL(refresh_locality_task_queue_.add_task(task))) {
     if (OB_EAGAIN != ret) {
-      STORAGE_LOG(WARN, "add refresh locality task failed", K(ret));
+
     }
   }
   return ret;
@@ -500,10 +500,10 @@ int ObLocalityManager::ReloadLocalityTask::init(ObLocalityManager *locality_mgr)
   int ret = OB_SUCCESS;
   if (is_inited_) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ReloadLocalityTask init twice", K(ret));
+
   } else if (OB_ISNULL(locality_mgr)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(locality_mgr));
+
   } else {
     is_inited_ = true;
     locality_mgr_ = locality_mgr;
@@ -518,11 +518,11 @@ void ObLocalityManager::ReloadLocalityTask::runTimerTask()
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ReloadLocalityTask not init", K(ret));
+
   } else if (OB_FAIL(locality_mgr_->add_refresh_locality_task())) {
-    STORAGE_LOG(WARN, "runTimer to refresh locality_info fail", K(ret));
+
   } else {
-    STORAGE_LOG(INFO, "runTimer to refresh locality_info", K(ret));
+
   }
 }
 
@@ -562,7 +562,7 @@ IObDedupTask *ObLocalityManager::ObRefreshLocalityTask::deep_copy(
   ObRefreshLocalityTask *task = NULL;
   if (OB_UNLIKELY(OB_ISNULL(buffer))
       || OB_UNLIKELY(buf_size < get_deep_copy_size())) {
-    STORAGE_LOG_RET(WARN, OB_INVALID_ARGUMENT, "invalid argument", KP(buffer), K(buf_size));
+
   } else {
     task = new(buffer) ObRefreshLocalityTask(locality_mgr_);
   }
@@ -574,12 +574,12 @@ int ObLocalityManager::ObRefreshLocalityTask::process()
   int ret = OB_SUCCESS;
   if (OB_ISNULL(locality_mgr_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "locality manager is null", K(ret));
+
   } else if (OB_FAIL(locality_mgr_->load_region())) {
-    STORAGE_LOG(WARN, "process refresh locality task fail", K(ret));
+
 #ifdef OB_BUILD_ARBITRATION
   } else if (OB_FAIL(locality_mgr_->load_arb_service_info())) {
-    STORAGE_LOG(WARN, "load_arb_service_info fail", K(ret));
+
 #endif
   }
   return ret;

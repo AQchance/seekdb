@@ -322,7 +322,7 @@ int ObDBMSJobUtils::get_dbms_job_info(
             ret = OB_ERR_UNEXPECTED;
           }
         } else if (OB_ITER_END == ret) {
-          LOG_INFO("job not exists, may delete alreay!", K(ret), K(tenant_id), K(job_id));
+
           ret = OB_SUCCESS; // job not exist, do nothing ...
         } else {
           LOG_WARN("failed to get next", K(ret), K(tenant_id), K(job_id));

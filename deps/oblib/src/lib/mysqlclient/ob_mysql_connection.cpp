@@ -437,12 +437,12 @@ int ObMySQLConnection::execute_read(const uint64_t tenant_id, const ObString &sq
     ret = get_last_error();
     //const int ER_LOCK_WAIT_TIMEOUT = -1205;
     if (-1205 == ret) {
-      LOG_INFO("query failed", K(get_server()), K(sql), K(ret));
+
     } else {
       LOG_WARN("query failed", K(get_server()), K(sql), K(ret));
     }
   } else {
-    LOG_DEBUG("query succeed", K(get_server()), K(sql), K(ret));
+
   }
   return ret;
 }
@@ -490,10 +490,10 @@ int ObMySQLConnection::set_session_variable(const ObString &name, int64_t val)
     } else if (OB_FAIL(stmt.execute_update())) {
       LOG_WARN("execute sql failed", K(sql), K(ret));
     } else {
-      LOG_DEBUG("set session variable", K(name), K(val));
+
       if (0 == name.case_compare("ob_read_consistency")) {
         read_consistency_ = val;
-        LOG_INFO("set mysql connection' ob_read_consistency", K(val), K(sql));
+
       }
     }
   }
@@ -529,7 +529,7 @@ int ObMySQLConnection::set_session_variable(const ObString &name, const ObString
     } else if (OB_FAIL(stmt.execute_update())) {
       LOG_WARN("execute sql failed", K(sql), K(ret));
     } else {
-      LOG_DEBUG("set session variable", K(name), K(val), K(sql));
+
     }
   }
   return ret;

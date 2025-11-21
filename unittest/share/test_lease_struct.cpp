@@ -86,7 +86,7 @@ protected:
 TEST_F(TestLeaseStruct, ObServerResourceInfo)
 {
   ObServerResourceInfo &res = *alloc<ObServerResourceInfo>();
-  LOG_INFO("to_string", K(res));
+
 
   res.cpu_ = 1;
   res.mem_in_use_ = 2;
@@ -94,7 +94,7 @@ TEST_F(TestLeaseStruct, ObServerResourceInfo)
   res.disk_in_use_ = 4;
   res.disk_total_ = 5;
 
-  LOG_INFO("to_string", K(res));
+
 
   check_serialize(res);
 }
@@ -102,7 +102,7 @@ TEST_F(TestLeaseStruct, ObServerResourceInfo)
 TEST_F(TestLeaseStruct, ObLeaseRequest)
 {
   ObLeaseRequest &req = *alloc<ObLeaseRequest>();
-  LOG_INFO("to_string", K(req));
+
 
   req.version_ = 1;
   req.zone_ = "test";
@@ -110,14 +110,14 @@ TEST_F(TestLeaseStruct, ObLeaseRequest)
   req.inner_port_ = 8080;
   strcpy(req.build_version_, "test");
 
-  LOG_INFO("to_string", K(req));
+
   check_serialize(req);
 }
 
 TEST_F(TestLeaseStruct, ObLeaseResponse)
 {
   ObLeaseResponse &res = *alloc<ObLeaseResponse>();
-  LOG_INFO("to_string", K(res));
+
 
   res.version_ = 1;
   res.lease_expire_time_ = ::oceanbase::common::ObTimeUtility::current_time();
@@ -125,14 +125,14 @@ TEST_F(TestLeaseStruct, ObLeaseResponse)
   res.frozen_version_ = 1024;
   res.schema_version_ = ::oceanbase::common::ObTimeUtility::current_time();
 
-  LOG_INFO("to_string", K(res));
+
   check_serialize(res);
 }
 
 TEST_F(TestLeaseStruct, ObZoneLeaseInfo)
 {
   ObZoneLeaseInfo &info = *alloc<ObZoneLeaseInfo>();
-  LOG_INFO("to_string", K(info));
+
 
   info.zone_ = "test";
   info.privilege_version_ = ::oceanbase::common::ObTimeUtility::current_time();
@@ -142,7 +142,7 @@ TEST_F(TestLeaseStruct, ObZoneLeaseInfo)
   info.last_merged_version_ = 2;
   info.suspend_merging_ = true;
 
-  LOG_INFO("to_string", K(info));
+
 }
 
 } // end namespace share

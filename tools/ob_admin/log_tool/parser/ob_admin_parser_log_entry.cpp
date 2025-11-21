@@ -63,7 +63,7 @@ int ObAdminParserLogEntry::parse()
   } else if (OB_FAIL(parse_different_entry_type_(header))){
     LOG_WARN("parse_different_entry_type_ failed", K(ret), K(header));
   } else {
-    LOG_TRACE("ObAdminParserLogEntry parse success", K(header), K(str_arg_));
+
   }
   return ret;
 }
@@ -81,7 +81,7 @@ int ObAdminParserLogEntry::get_entry_header_(ObLogBaseHeader &header)
         && str_arg_.flag_ != LogFormatFlag::STAT_FORMAT ) {
       fprintf(stdout, ", BASE_HEADER:%s", helper.convert(header));
     }
-    LOG_INFO("get_entry_header success", K(header), K(pos_), K(entry_));
+
   }
   return ret;
 }
@@ -98,7 +98,7 @@ int ObAdminParserLogEntry::parse_trans_service_log_(ObTxLogBlock &tx_log_block, 
   } else if (FALSE_IT(tx_id = tx_block_header.get_tx_id().get_id())) {
   } else if (str_arg_.filter_.is_tx_id_valid() && tx_id != str_arg_.filter_.get_tx_id()) {
     //just skip this
-    LOG_TRACE("skip with tx_id", K(str_arg_), K(tx_id), K(block_name_), K(lsn_));
+
   } else {
 
     str_arg_.log_stat_->tx_block_header_size_ += tx_block_header.get_serialize_size();
@@ -156,7 +156,7 @@ int ObAdminParserLogEntry::parse_trans_service_log_(ObTxLogBlock &tx_log_block, 
         }
       } else {
         str_arg_.log_stat_->tx_log_header_size_ += log_header.get_serialize_size();
-        LOG_TRACE("ObTxLogBlock get_next_log's log_header succ", K(ret), K(log_header));
+
         ObTxLogType tx_log_type = log_header.get_tx_log_type();
         if (LogFormatFlag::FILTER_FORMAT == str_arg_.flag_ && str_arg_.filter_.is_tablet_id_valid()) {
           //filter_format with valid tablet_id only cares redo log
@@ -321,7 +321,7 @@ int ObAdminParserLogEntry::parse_trans_service_log_(ObTxLogBlock &tx_log_block, 
             }
           }
         }
-        LOG_TRACE("finish parse one trans log", K(ret), K(log_header));
+
       }
     }
 
@@ -743,7 +743,7 @@ int ObAdminParserLogEntry::prepare_log_buf_(ObLogBaseHeader &header)
       ret = OB_ERR_UNEXPECTED;
       LOG_ERROR("succ to decompress", K(header), K(local_pos), K(header_len));
     } else {
-      LOG_INFO("succ to decompress", K(header), K(entry_));
+
       buf_ = str_arg_.decompress_buf_;
       buf_len_ = decompressed_len + local_pos;
     }

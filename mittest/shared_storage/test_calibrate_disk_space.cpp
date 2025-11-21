@@ -61,10 +61,10 @@ public:
         if (is_delete_dir_) {
           const int64_t start_calc_size_time_s = ObTimeUtility::current_time_s();
           ob_usleep(1L * 1000L * 1000L); //1s
-          LOG_INFO("start to calibrate tmp file alloc disk size");
+
           ASSERT_EQ(OB_NO_SUCH_FILE_OR_DIRECTORY, tenant_file_mgr->calibrate_disk_space_task_.calibrate_alloc_disk_size(
                     ObStorageObjectType::TMP_FILE, start_calc_size_time_s, 0, 0));
-          LOG_INFO("finish to calibrate tmp file alloc disk size");
+
         } else {
           if (is_gc_tmp_file_) {
             //because delete remote files need 9ms, delete local files need 5s
@@ -73,15 +73,15 @@ public:
             // because write 10w files need 10s
             ob_usleep(5L * 1000L * 1000L); //5s
           }
-          LOG_INFO("start to calibrate tmp file");
+
           int64_t start_us = ObTimeUtility::current_time();
           ASSERT_EQ(OB_SUCCESS, tenant_file_mgr->calibrate_disk_space_task_.calibrate_disk_space());
           const int64_t cost_us = ObTimeUtility::current_time() - start_us;
-          LOG_INFO("finish to calibrate tmp file", K(cost_us));
+
         }
       } else {
         if (is_delete_dir_) {
-          LOG_INFO("start to delete tmp file dir");
+
           int64_t start_us = ObTimeUtility::current_time();
           for (int64_t i = dir_num_; i >= 0; --i) {
             MacroBlockId tmp_file;
@@ -91,10 +91,10 @@ public:
             ASSERT_EQ(OB_SUCCESS, tenant_file_mgr->delete_local_tmp_file(tmp_file));
           }
           const int64_t cost_us = ObTimeUtility::current_time() - start_us;
-          LOG_INFO("finish to delete tmp file dir", K(cost_us));
+
         } else {
           if (is_gc_tmp_file_) {
-            LOG_INFO("start to delete tmp file");
+
             int64_t start_us = ObTimeUtility::current_time();
             const int64_t DELETE_FILE_TIMEOUT = 10L * 1000L * 1000L;
             MacroBlockId tmp_file;
@@ -103,14 +103,14 @@ public:
             tmp_file.set_second_id(tmp_file_id_); // tmp_file_id
             ASSERT_EQ(OB_SUCCESS, tenant_file_mgr->delete_tmp_file(tmp_file));
             const int64_t cost_us = ObTimeUtility::current_time() - start_us;
-            LOG_INFO("finish to delete tmp file", K(cost_us));
+
           } else {
-            LOG_INFO("start to write tmp file");
+
             int64_t start_us = ObTimeUtility::current_time();
             const int64_t segment_id_pos = file_num_;
             TestCalibrateDisk::prepare(segment_id_pos);
             const int64_t cost_us = ObTimeUtility::current_time() - start_us;
-            LOG_INFO("finish to write tmp file", K(cost_us));
+
           }
         }
       }
@@ -260,7 +260,7 @@ TEST_F(TestCalibrateDisk, calibrate_and_delete_file)
   ASSERT_EQ(OB_SUCCESS, OB_DIR_MGR.get_local_tmp_file_dir(dir_path, sizeof(dir_path), MTL_ID(), MTL_EPOCH_ID(), tmp_file_id_));
   ASSERT_EQ(OB_SUCCESS, ObIODeviceLocalFileOp::stat(dir_path, statbuf));
   expected_disk_size += statbuf.size_;
-  LOG_INFO("local tmp file dir size", K(statbuf.size_), K(expected_disk_size), K(tmp_file_write_cache_alloc_size));
+
   ASSERT_EQ(expected_disk_size, tmp_file_write_cache_alloc_size);
 
   // test gc files and calibrate

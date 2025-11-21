@@ -75,7 +75,7 @@ int ObTabletTruncateInfoReader::get_next_truncate_info(
     LOG_WARN("not init", K(ret), K_(is_inited));
   } else if (OB_FAIL(iter_.get_next_mds_kv(allocator_, kv))) {
     if (OB_ITER_END == ret) {
-      LOG_DEBUG("iter end", K(ret));
+
     } else {
       LOG_WARN("fail to get next mds kv", K(ret));
     }
@@ -106,7 +106,7 @@ int ObTabletTruncateInfoReader::get_next_mds_kv(
   kv = nullptr;
   if (OB_FAIL(iter_.get_next_mds_kv(allocator, kv))) {
     if (OB_ITER_END == ret) {
-      LOG_DEBUG("iter end", K(ret));
+
     } else {
       LOG_WARN("fail to get next mds kv", K(ret));
     }

@@ -93,11 +93,11 @@ public:
     int ret = OB_SUCCESS;
     if (OB_ISNULL(rand_ = rand)) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "invalid argument", KR(ret));
+
     } else if (OB_FAIL(row_generate_.init(src_schema, is_multi_version_row))) {
-      STORAGE_LOG(WARN, "fail to init row generate", KR(ret));
+
     } else if (direct_load_datum_row_.init(src_schema.get_column_count(), &allocator_)) {
-      STORAGE_LOG(WARN, "fail to init datum row", KR(ret));
+
     } else {
       rowkey_column_count_ = src_schema.get_rowkey_column_num();
       direct_load_datum_row_.seq_no_ = 0;
@@ -111,11 +111,11 @@ public:
     datum_row_.storage_datums_ = direct_load_datum_row_.storage_datums_;
     datum_row_.count_ = direct_load_datum_row_.count_;
     if (OB_FAIL(row_generate_.get_next_row(rand_->generate(), datum_row_))) {
-      STORAGE_LOG(WARN, "fail to generate row", KR(ret));
+
     } else {
       direct_load_datum_row_.seq_no_++;
       if (OB_FAIL(external_row_.external_row_.from_datum_row(direct_load_datum_row_, rowkey_column_count_))) {
-        STORAGE_LOG(WARN, "fail to from datum row", KR(ret));
+
       } else {
         const_row = external_row_;
       }
@@ -205,9 +205,9 @@ int TestChunkSort::prepare_schecma(int64_t rowkey_count, int64_t column_num, int
   table_schema.reset();
   if (rowkey_count != (str_rowkey_count + int_rowkey_count)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K(rowkey_count), K(str_rowkey_count), K(int_rowkey_count));
+
   } else  if (OB_FAIL((table_schema.set_table_name("test_adaptive_aqs_sort")))) {
-    STORAGE_LOG(WARN, "fail to set table name", KR(ret));
+
   } else {
     table_schema.set_tenant_id(1);
     table_schema.set_tablegroup_id(1);
@@ -237,9 +237,9 @@ int TestChunkSort::prepare_schecma(int64_t rowkey_count, int64_t column_num, int
       column.set_rowkey_position(i + 1);
       column.set_collation_type(ObCollationType::CS_TYPE_UTF8MB4_GENERAL_CI);
       if (OB_FAIL(column.set_column_name(name))) {
-        STORAGE_LOG(WARN, "fail to set column name", KR(ret));
+
       } else if (OB_FAIL(table_schema.add_column(column))) {
-        STORAGE_LOG(WARN, "fail to add column", KR(ret));
+
       }
     } else {
       int_rowkey_count_left--;
@@ -252,9 +252,9 @@ int TestChunkSort::prepare_schecma(int64_t rowkey_count, int64_t column_num, int
       column.set_rowkey_position(i + 1);
       column.set_collation_type(ObCollationType::CS_TYPE_UTF8MB4_GENERAL_CI);
       if (OB_FAIL(column.set_column_name(name))) {
-        STORAGE_LOG(WARN, "fail to set column name", KR(ret));
+
       } else if (OB_FAIL(table_schema.add_column(column))) {
-        STORAGE_LOG(WARN, "fail to add column", KR(ret));
+
       }
     }
   }
@@ -270,9 +270,9 @@ int TestChunkSort::prepare_schecma(int64_t rowkey_count, int64_t column_num, int
     column.set_rowkey_position(0);
     column.set_collation_type(ObCollationType::CS_TYPE_UTF8MB4_GENERAL_CI);
     if (OB_FAIL(column.set_column_name(name))) {
-      STORAGE_LOG(WARN, "fail to set column name", KR(ret));
+
     } else if (OB_FAIL(table_schema.add_column(column))) {
-      STORAGE_LOG(WARN, "fail to add column", KR(ret));
+
     }    
   }
   return ret;  
@@ -303,7 +303,7 @@ int TestChunkSort::init_table_id_enc_params(const ObTableSchema &table_schema, O
   param.is_null_first_ = (np == 0);
   param.is_asc_ = (odr == 0);
   if (OB_FAIL(enc_params.push_back(param))) {
-    STORAGE_LOG(WARN, "fail to push back enc param", KR(ret));
+
   }
   return ret;
 }
@@ -313,7 +313,7 @@ int TestChunkSort::init_primary_key_enc_param(const ObTableSchema &table_schema,
   int ret = OB_SUCCESS;
   ObArray<ObColDesc> col_descs;
   if (OB_FAIL(table_schema.get_column_ids(col_descs))) {
-    STORAGE_LOG(WARN, "fail to get column ids", KR(ret));
+
   }
   for (int i = 0; OB_SUCC(ret) && i < table_schema.get_rowkey_column_num(); i++) {
     share::ObEncParam param;
@@ -337,15 +337,15 @@ int TestChunkSort::init_primary_key_enc_param(const ObTableSchema &table_schema,
     // order: asc -> 0, desc -> 1
     if (odr != 0 && odr != 1) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "invalid argument", KR(ret), K(odr));
+
     } else if (np != 0 && np != 1) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "invalid argument", KR(ret), K(np));
+
     } else {
       param.is_null_first_ = (np == 0);
       param.is_asc_ = (odr == 0);
       if (OB_FAIL(enc_params.push_back(param))) {
-        STORAGE_LOG(WARN, "fail to push back enc param", KR(ret));
+
       }
     }
   }
@@ -377,7 +377,7 @@ int TestChunkSort::init_seq_no_enc_param(const ObTableSchema &table_schema, ObAr
   param.is_null_first_ = (np == 0);
   param.is_asc_ = (odr == 0);
   if (OB_FAIL(enc_params.push_back(param))) {
-    STORAGE_LOG(WARN, "fail to push back enc param", KR(ret));
+
   }
   return ret;
 }
@@ -393,19 +393,19 @@ int TestChunkSort::prepare_utils(const ObTableSchema &table_schema,
   bool ignore_seq_no = false;
   //prepare util
   if (OB_FAIL(table_schema.get_column_ids(col_descs))) {
-    STORAGE_LOG(WARN, "fail to get column ids", KR(ret));
+
   } else if (OB_FAIL(datum_util.init(col_descs, table_schema.get_rowkey_column_num(), false, allocator))) {
-    STORAGE_LOG(WARN, "fail to init datum util", KR(ret));
+
   //prepare compare
   } else if (OB_FAIL(compare.init(datum_util, dup_action, ignore_seq_no))) {
-    STORAGE_LOG(WARN, "fail to init compare", KR(ret));
+
   //prepare enc_params
   } else if (OB_FAIL(init_table_id_enc_params(table_schema, enc_params))) {
-    STORAGE_LOG(WARN, "fail to init enc params", KR(ret));
+
   } else if (OB_FAIL(init_primary_key_enc_param(table_schema, enc_params))) {
-    STORAGE_LOG(WARN, "fail to init enc params", KR(ret));
+
   } else if (OB_FAIL(init_seq_no_enc_param(table_schema, enc_params))) {
-    STORAGE_LOG(WARN, "fail to init enc params", KR(ret));
+
   }
   return ret;
 }
@@ -459,36 +459,36 @@ int TestChunkSort::sort_test(int64_t test_row_num, RandomBase *rand,
   int ret = OB_SUCCESS;
   RowGenerate generate;
   if (OB_FAIL(generate.init(table_schema, rand))) {
-    STORAGE_LOG(WARN, "fail to init row generate", KR(ret));
+
   } else {
     ChunkType chunk;
     if (OB_FAIL(chunk.init(table_schema.get_tenant_id(), 512 * 1024LL * 1024LL))) {
-      STORAGE_LOG(WARN, "fail to init chunk", KR(ret));
+
     } else {
       //prepare same row key prefix
       ObDirectLoadConstExternalMultiPartitionRow const_row;
       ObDirectLoadConstExternalMultiPartitionRow *prefix_row = nullptr;
       if (OB_FAIL(generate.generate_row(const_row))) {
-        STORAGE_LOG(WARN, "fail to generate row", KR(ret));
+
       } else {
         const int64_t item_size =
           sizeof(ObDirectLoadConstExternalMultiPartitionRow) + const_row.get_deep_copy_size();
         char *buf = nullptr;
         if (OB_ISNULL(buf = static_cast<char *>(allocator.alloc(item_size)))) {
           ret = common::OB_ALLOCATE_MEMORY_FAILED;
-          STORAGE_LOG(WARN, "fail to allocate memory", KR(ret), K(item_size));
+
         } else {
           prefix_row = new (buf) ObDirectLoadConstExternalMultiPartitionRow();
           int64_t buf_pos = sizeof(ObDirectLoadConstExternalMultiPartitionRow);
           if (OB_FAIL(prefix_row->deep_copy(const_row, buf, item_size, buf_pos))) {
-            STORAGE_LOG(WARN, "fail to deep copy row", KR(ret));
+
           }
         }
       }
 
       for (int i = 0; OB_SUCC(ret) && i < test_row_num; i++) {
         if (OB_FAIL(generate.generate_row(const_row))) {
-          STORAGE_LOG(WARN, "fail to generate row", KR(ret));
+
         } else {
           for (int64_t k = 0; k < same_rowkey_num; k++) {
             const_row.rowkey_datum_array_.datums_[k] = prefix_row->rowkey_datum_array_.datums_[k];
@@ -497,10 +497,10 @@ int TestChunkSort::sort_test(int64_t test_row_num, RandomBase *rand,
             if (OB_BUF_NOT_ENOUGH == ret) {
               ret = OB_SUCCESS;
               if (OB_FAIL(chunk.sort(compare, enc_params))) {
-                STORAGE_LOG(WARN, "fail to sort chunk", KR(ret));
+
               } else if (FALSE_IT(chunk.reuse())) {
               } else if (OB_FAIL(chunk.add_item(const_row))) {
-                STORAGE_LOG(WARN, "fail to add item", KR(ret));
+
               }
             }
           }
@@ -508,7 +508,7 @@ int TestChunkSort::sort_test(int64_t test_row_num, RandomBase *rand,
       }
       if (OB_SUCCESS == ret && chunk.get_size() > 0) {
           if (OB_FAIL(chunk.sort(compare, enc_params))) {
-            STORAGE_LOG(WARN, "fail to sort chunk", KR(ret));
+
           }
       }
     }

@@ -65,7 +65,7 @@ void add_ddl_event(const ObComplementDataParam *param, const ObString &stmt)
       "schema_version", param->dest_schema_version_,
       tablet_id_buffer);
   }
-  LOG_INFO("complement data task.", K(ret), "ddl_event_info", ObDDLEventInfo(), K(stmt), KPC(param));
+
 }
 
 int ObComplementDataParam::fill_tablet_param()
@@ -263,7 +263,7 @@ int ObComplementDataParam::prepare_task_ranges()
         LOG_WARN("push back range failed", K(ret), K(datum_range));
       } else {
         concurrent_cnt_ = 1;
-        LOG_INFO("succeed to to init task ranges", K(ret), K(user_parallelism_), K(concurrent_cnt_), K(ranges_));
+
       }
     } else if (!is_remote_exec && OB_FAIL(split_task_ranges(task_id_,
                                                             orig_ls_id_,
@@ -467,7 +467,7 @@ int ObComplementDataContext::init(
   } else if (OB_FAIL(ObTabletDDLUtil::check_and_get_major_sstable(param.dest_ls_id_, param.dest_tablet_id_, first_major_sstable, table_store_wrapper))) {
     LOG_WARN("check if major sstable exist failed", K(ret), K(param));
   } else if (nullptr != first_major_sstable) {
-    LOG_INFO("major exists, skip create tablet direct load mgr", K(ret), K(param));
+
   } else if (OB_FAIL(hidden_table_schema.get_is_column_store(is_column_store))) {
     LOG_WARN("failed to check is column store", K(ret));
   } else if (OB_FAIL(ObDirectLoadMgrUtil::check_cs_replica_exist(param.dest_ls_id_, param.dest_tablet_id_, is_cs_replica_exist))) {
@@ -601,7 +601,7 @@ int ObComplementDataDag::init(const ObDDLBuildSingleReplicaRequestArg &arg)
     LOG_WARN("not supported, reject request util finish update", K(ret), K(param_.data_format_version_));
   }
 
-  LOG_INFO("finish to init complement data dag", K(ret), K(param_));
+
   return ret;
 }
 
@@ -801,7 +801,7 @@ int ObComplementDataDag::prepare_context()
   } else if (OB_FAIL(context_.init(param_, *hidden_table_schema))) {
     LOG_WARN("fail to init context", K(ret), K(param_));
   }
-  LOG_INFO("finish to prepare complement context", K(ret), K(param_), K(context_));
+
   return ret;
 }
 
@@ -857,7 +857,7 @@ int ObComplementDataDag::report_replica_build_status()
 #ifdef ERRSIM
     if (OB_SUCC(ret)) {
       ret = OB_E(EventTable::EN_DDL_REPORT_REPLICA_BUILD_STATUS_FAIL) OB_SUCCESS;
-      LOG_INFO("report replica build status errsim", K(ret));
+
     }
 #endif
     obrpc::ObDDLBuildSingleReplicaResponseArg arg;
@@ -985,7 +985,7 @@ int ObComplementPrepareTask::process()
                                                     param_->tablet_task_id_))) {
     LOG_WARN("failed to delete checksum", K(ret), KPC(param_));
   } else {
-    LOG_INFO("finish the complement prepare task", K(ret), KPC(param_), "ddl_event_info", ObDDLEventInfo());
+
   }
 
   if (OB_FAIL(ret)) {
@@ -1146,7 +1146,7 @@ int ObComplementWriteTask::get_next_chunk(ObChunk *&next_chunk)
           if (OB_FAIL(context_->add_column_checksum(report_col_checksums, report_col_ids))) {
             LOG_WARN("add column checksum failed", K(ret));
           } else {
-            LOG_INFO("use new checksum", K(param_->orig_table_id_), K(report_col_checksums), K(param_->orig_tablet_id_));
+
           }
         } else {
           if (OB_FAIL(ObDDLChecksumOperator::update_checksum(param_->dest_tenant_id_,
@@ -1161,7 +1161,7 @@ int ObComplementWriteTask::get_next_chunk(ObChunk *&next_chunk)
                   *GCTX.sql_proxy_))) {
             LOG_WARN("fail to report origin table checksum", K(ret));
           } else {
-            LOG_INFO("update checksum successfully", K(param_->orig_tenant_id_), K(param_->orig_table_id_), K(report_col_checksums));
+
           }
         }
       }
@@ -1222,7 +1222,7 @@ int ObComplementWriteTask::preprocess()
       LOG_WARN("local scan and append row for column redefinition failed", K(ret), K(task_id_));
     } else {
       ObDDLEventInfo event_info;
-      LOG_INFO("finish the complement write task", K(ret), "ddl_event_info", ObDDLEventInfo());
+
     }
   } else if (OB_FAIL(remote_scan())) {
     LOG_WARN("remote scan for recover restore table ddl failed", K(ret));
@@ -1275,7 +1275,7 @@ int ObComplementWriteTask::generate_next_task(ObITask *&next_task)
     LOG_WARN("fail to init complement write task", K(ret));
   } else {
     next_task = write_task;
-    LOG_INFO("generate next complement write task", K(ret), K(param_->dest_table_id_));
+
   }
   if (OB_FAIL(ret) && OB_NOT_NULL(context_)) {
     if (OB_ITER_END != ret) {
@@ -1389,7 +1389,7 @@ int ObComplementWriteTask::local_scan_by_range()
     LOG_WARN("invalid arguments", K(ret), KPC(param_), KPC(context_));
   } else {
     concurrent_cnt = param_->concurrent_cnt_;
-    LOG_INFO("start to do local scan by range", K(task_id_), K(concurrent_cnt), KPC(param_));
+
   }
   if (OB_FAIL(ret)) {
     // do nothing
@@ -1399,7 +1399,7 @@ int ObComplementWriteTask::local_scan_by_range()
     LOG_WARN("fail to do local scan", K(ret), K_(col_ids), K_(org_col_ids));
   } else {
     int64_t cost_time = ObTimeUtility::current_time() - start_time;
-    LOG_INFO("finish local scan by range", K(ret), K(cost_time), K(task_id_), K(concurrent_cnt));
+
   }
   return ret;
 }
@@ -1511,7 +1511,7 @@ int ObComplementWriteTask::remote_scan()
   } else if (OB_FAIL(do_remote_scan())) {
     LOG_WARN("fail to do remote scan", K_(task_id), KPC(param_));
   } else {
-    LOG_INFO("finish remote scan", K(ret), "cost_time", ObTimeUtility::current_time() - start_time , K_(task_id));
+
   }
   return ret;
 }
@@ -1740,13 +1740,13 @@ int ObLocalScan::init(
     } else if (OB_FAIL(hidden_table_schema.get_multi_version_column_descs(mult_version_cols_desc_))) {
       LOG_WARN("get column descs failed", K(ret));
     } else if (OB_FAIL(tmp_default_row.init(allocator_, org_col_ids.count()))) {
-      STORAGE_LOG(WARN, "Failed to init datum row", K(ret));
+
     } else if (OB_FAIL(default_row_.init(allocator_, org_col_ids.count()))) {
-      STORAGE_LOG(WARN, "Failed to init datum row", K(ret));
+
     } else if (unique_index_checking && OB_FAIL(write_row_.init(allocator_, org_col_ids.count()))) { // without extra rowkey for unique index check.
-      STORAGE_LOG(WARN, "Failed to init datum row", K(ret));
+
     } else if (!unique_index_checking && OB_FAIL(write_row_.init(allocator_, org_col_ids.count() + extra_rowkey_cnt))) { // with extra rowkey.
-      STORAGE_LOG(WARN, "Failed to init datum row", K(ret));
+
     } else {
       tmp_default_row.row_flag_.set_flag(ObDmlFlag::DF_INSERT); // default_row.row_flag_ will be set by deep_copy
       if (OB_FAIL(hidden_table_schema.get_orig_default_row(org_col_ids, tmp_default_row))) {
@@ -1958,7 +1958,7 @@ int ObLocalScan::construct_access_param(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected error", K(ret), K(cols_index), K(extended_gc_));
   } else if (OB_FAIL(data_table_schema.check_if_oracle_compat_mode(is_oracle_mode))) {
-      STORAGE_LOG(WARN, "Failed to check oralce mode", K(ret));
+
   } else if (OB_FAIL(read_info_.init(allocator_,
                                      data_table_schema.get_column_count(),
                                      data_table_schema.get_rowkey_column_num(),
@@ -1982,7 +1982,7 @@ int ObLocalScan::construct_access_param(
       access_param_.iter_param_.table_scan_opt_.io_read_gap_size_ = 0;
     }
     if (OB_FAIL(access_param_.iter_param_.refresh_lob_column_out_status())) {
-      STORAGE_LOG(WARN, "Failed to refresh lob column", K(ret), K(access_param_.iter_param_));
+
     } else {
       access_param_.is_inited_ = true;
     }
@@ -2023,7 +2023,7 @@ int ObLocalScan::construct_multiple_scan_merge(
 {
   int ret = OB_SUCCESS;
   void *buf = nullptr;
-  LOG_INFO("start to do output_store.scan");
+
   if (OB_FAIL(get_table_param_.tablet_iter_.assign(table_iter))) {
     LOG_WARN("fail to assign tablet iterator", K(ret));
   } else if (OB_ISNULL(buf = allocator_.alloc(sizeof(ObMultipleScanMerge)))) {

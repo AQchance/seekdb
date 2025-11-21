@@ -616,7 +616,7 @@ int ObTableApiRowIterator::get_next_row(ObNewRow *&row)
   } else {
     row_count_++;
   }
-  LOG_DEBUG("ObTableApiRowIterator::get_next_row", K(ret), KPC(row));
+
   return ret;
 }
 

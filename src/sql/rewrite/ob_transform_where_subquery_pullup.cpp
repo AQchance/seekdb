@@ -90,11 +90,11 @@ int ObWhereSubQueryPullup::transform_one_stmt_with_outline(ObIArray<ObParentDMLS
     } else if (!is_happened && OB_FAIL(transform_single_set_query(stmt, unnest_stmts, is_happened))) {
       LOG_WARN("failed to transform single set query", K(ret));
     } else if (!is_happened) {
-      LOG_TRACE("can not do subquery pullup with outline", K(ctx_->src_qb_name_));
+
     } else {
       ++ctx_->trans_list_loc_;
       trans_happened = true;
-      LOG_TRACE("succeed to do subquery pullup with outline", K(ctx_->src_qb_name_));
+
     }
   } while (OB_SUCC(ret) && is_happened);
   if (OB_SUCC(ret) && trans_happened && OB_FAIL(add_transform_hint(*stmt, &unnest_stmts))) {
@@ -194,7 +194,7 @@ int ObWhereSubQueryPullup::gather_transform_params(ObDMLStmt *stmt,
     if (OB_FAIL(check_transform_validity(stmt, expr, trans_param))) {
       LOG_WARN("failed to check can be pulled up ", K(*expr), K(ret));
     } else {
-      LOG_TRACE("finish to check where subquery pull up", K(trans_param), K(ret));
+
     }
   }
   return ret;

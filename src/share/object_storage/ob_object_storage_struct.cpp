@@ -306,7 +306,7 @@ int ObStorageDestCheck::parse_shared_storage_info(
     LOG_WARN("fail to assign attribute", KR(ret), K(attribute));
   } else {
     result.op_ = obrpc::ObAdminStorageArg::AdminStorageOp::ADD;
-    LOG_INFO("succeed to parse shared storage info", KR(ret), K(result));
+
   }
   return ret;
 }

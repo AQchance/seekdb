@@ -30,7 +30,7 @@ ObSelfBufferWriter::ObSelfBufferWriter(
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(ensure_space(size))) {
-    STORAGE_LOG(WARN, "cannot allocate memory for data buffer.", K(size), K(ret));
+
   }
 }
 
@@ -60,7 +60,7 @@ int ObSelfBufferWriter::clean()
   int ret = OB_SUCCESS;
   if (OB_ISNULL(data_) || capacity_ <= 0) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "do not clean ", KR(ret), KP(data_), K(capacity_));
+
   } else {
     MEMSET(data_, 0, capacity_);
   }
@@ -74,12 +74,12 @@ int ObSelfBufferWriter::ensure_space(int64_t size)
   if (size <= 0) {
     // do nothing.
   } else if (is_aligned_ && size % BUFFER_ALIGN_SIZE != 0) {
-    STORAGE_LOG(WARN, "not aligned buffer size", K(is_aligned_), K(size));
+
     ret = OB_INVALID_ARGUMENT;
   } else if (NULL == data_) {
     if (NULL == (data_ = alloc(size))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "allocate buffer memory error.", K(ret), K(size));
+
     } else {
       pos_ = 0;
       capacity_ = size;
@@ -89,7 +89,7 @@ int ObSelfBufferWriter::ensure_space(int64_t size)
     char *new_data = NULL;
     if (NULL == (new_data = alloc(size))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "allocate buffer memory error.", K(ret), K(size));
+
     } else {
       MEMCPY(new_data, data_, pos_);
       free();

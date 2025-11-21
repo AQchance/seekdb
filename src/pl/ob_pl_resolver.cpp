@@ -1412,7 +1412,7 @@ int ObPLResolver::resolve_sp_scalar_type(ObIAllocator &allocator,
       }
     }
   }
-  LOG_DEBUG("resolve sp scalar type result", K(ret), K(data_type), K(lbt()));
+
   return ret;
 }
 
@@ -3225,7 +3225,7 @@ int ObPLResolver::resolve_return(const ObStmtNodeTree *parse_tree, ObPLReturnStm
       bool is_ref_cursor_type = false;
       OZ (is_return_ref_cursor_type(expr, is_ref_cursor_type));
       OX (stmt->set_is_ref_cursor_type(is_ref_cursor_type));
-      LOG_DEBUG("return ref cursor type: ", K(is_ref_cursor_type));
+
     }
   }
 
@@ -7268,7 +7268,7 @@ int ObPLResolver::try_transform_assign_to_dynamic_SQL(ObPLStmt *&old_stmt, ObPLF
           OZ (transform_to_new_assign_stmt(var_val_pos_array, assign_stmt));
           OZ (transform_var_val_to_dynamic_SQL(sql_expr_index, into_expr_index, func));
           OX (is_need_transform_to_dynamic = true);
-          LOG_INFO("try transform var_val to dynamic SQL!",K(ret), K(sql_expr_index), K(into_expr_index), K(i));
+
       } else {
         OZ (var_val_pos_array.push_back(i));
       }
@@ -7324,7 +7324,7 @@ int ObPLResolver::transform_var_val_to_dynamic_SQL(int64_t sql_expr_index, int64
     }
   }
   OZ (current_block_->add_stmt(stmt));
-  LOG_INFO("now transform var_val to dynamic SQL!",K(ret), K(sql_expr_index), K(into_expr_index), K(str_val));
+
   return ret;
 }
 
@@ -7362,7 +7362,7 @@ int ObPLResolver::check_expr_can_pre_calc(ObRawExpr *expr, bool &pre_calc)
   for (int64_t i = 0; OB_SUCC(ret) && pre_calc && i < expr->get_param_count(); ++i) {
     OZ (SMART_CALL(check_expr_can_pre_calc(expr->get_param_expr(i), pre_calc)));
   }
-  LOG_DEBUG("check_expr_can_pre_calc", K(pre_calc), K(ret), KPC(expr));
+
   return ret;
 }
 
@@ -7371,7 +7371,7 @@ int ObPLResolver::replace_to_const_expr_if_need(ObRawExpr *&expr)
   int ret = OB_SUCCESS;
   bool pre_calc = false;
   CK (OB_NOT_NULL(expr));
-  LOG_DEBUG("start replaceto const expr if need", K(ret), KPC(expr));
+
   if (OB_SUCC(ret) && expr->is_const_expr()) {
     pre_calc = true;
     OZ (check_expr_can_pre_calc(expr, pre_calc));
@@ -7389,7 +7389,7 @@ int ObPLResolver::replace_to_const_expr_if_need(ObRawExpr *&expr)
     OX (const_expr->set_value(result));
     OX (expr = const_expr);
   }
-  LOG_DEBUG("end replaceto const expr if need", K(ret), KPC(expr));
+
   return ret;
 }
 
@@ -12098,7 +12098,7 @@ int ObPLResolver::resolve_local_cursor(
                                           check_mode,
                                           for_external_cursor)), K(name));
     } else if (check_mode) {
-      LOG_DEBUG("can not found cursor", K(name));
+
     } else {
       ret = OB_ERR_SP_CURSOR_MISMATCH;
       LOG_WARN("can not found cursor", K(ret), K(name));

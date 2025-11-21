@@ -170,7 +170,7 @@ int ObColumnRedefinitionTask::update_complete_sstable_job_status(const common::O
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("snapshot version not match", K(ret), K(addr), K(snapshot_version), K(snapshot_version_));
   } else if (execution_id < execution_id_) {
-    LOG_INFO("receive a mismatch execution result, ignore", K(addr), K(ret_code), K(execution_id), K(execution_id_));
+
   } else if (OB_FAIL(replica_builder_.update_build_progress(tablet_id,
                                                             addr,
                                                             ret_code,
@@ -231,7 +231,7 @@ int ObColumnRedefinitionTask::copy_table_indexes()
               LOG_WARN("push back index id failed", K(ret));
             }
           }
-          LOG_INFO("indexes schema are already built", K(index_ids));
+
         } else {
           int64_t rpc_timeout = 0;
           int64_t all_tablet_count = 0;
@@ -282,7 +282,7 @@ int ObColumnRedefinitionTask::copy_table_indexes()
             } else if (is_final_index_status(index_schema->get_index_status())) {
               // index status is final
               need_rebuild_index = false;
-              LOG_INFO("index status is final", K(ret), K(task_id_), K(index_id), K(need_rebuild_index));
+
             } else if (index_schema->is_built_in_index()) {
               // Only domain index need rebuild, while rebuilding vector/fulltext/multivalue index.
               need_rebuild_index = false;
@@ -339,7 +339,7 @@ int ObColumnRedefinitionTask::copy_table_indexes()
                 }
               }
               add_event_info("create column redefinition index succ");
-              LOG_INFO("add build index task", K(ret), K(task_key), K(status), K(ddl_event_info));
+
             }
           }
         }
@@ -399,7 +399,7 @@ int ObColumnRedefinitionTask::copy_table_constraints()
           LOG_WARN("rebuild hidden table constraint failed", K(ret));
         }
       } else {
-        LOG_INFO("constraint has already been built");
+
       }
       DEBUG_SYNC(COLUMN_REDEFINITION_COPY_TABLE_CONSTRAINTS);
       if (OB_SUCC(ret)) {
@@ -541,7 +541,7 @@ int ObColumnRedefinitionTask::copy_table_dependent_objects(const ObDDLTaskStatus
             unused_addr, false /* is_ddl_retry_task */, *GCTX.sql_proxy_, error_message, unused_user_msg_len))) {
             if (OB_ENTRY_NOT_EXIST == ret) {
               ret = OB_SUCCESS;
-              LOG_INFO("ddl task not finish", K(task_key), K(child_task_id), K(target_object_id));
+
             } else {
               LOG_WARN("fail to get ddl error message", K(ret), K(task_key), K(child_task_id), K(target_object_id));
             }
@@ -603,7 +603,7 @@ int ObColumnRedefinitionTask::take_effect(const ObDDLTaskStatus next_task_status
     ret = OB_TABLE_NOT_EXIST;
     LOG_WARN("table schema not exist", K(ret), K(target_object_id_));
   } else if (!table_schema->is_user_hidden_table()) {
-    LOG_INFO("target schema took effect", K(target_object_id_));
+
   } else if (table_schema->is_table_with_hidden_pk_column() && OB_FAIL(sync_tablet_autoinc_seq())) {
     if (OB_TIMEOUT == ret || OB_NOT_MASTER == ret) {
       ret = OB_SUCCESS;

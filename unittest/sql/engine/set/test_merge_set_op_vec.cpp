@@ -658,7 +658,7 @@ void ObMergeSetVecTest::run_test(int64_t print_row_cnt)
     for (int64_t i = 0; i < res_cell_cnt; i++) {
       s.append_fmt("%ld, ", r[i]);
     }
-    LOG_INFO("RES:", K(s.ptr()));
+
   };
 
   ResArray merge_res_vec;

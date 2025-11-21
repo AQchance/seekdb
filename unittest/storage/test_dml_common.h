@@ -160,19 +160,19 @@ int TestDmlCommon::create_ls(
   obrpc::ObCreateLSArg create_ls_arg;
 
   if (OB_FAIL(gen_create_ls_arg(tenant_id, ls_id, create_ls_arg))) {
-    STORAGE_LOG(WARN, "failed to build create ls arg", K(ret), K(tenant_id), K(ls_id));
+
   } else if (OB_FAIL(ls_svr->create_ls(create_ls_arg))) {
-    STORAGE_LOG(WARN, "failed to create ls", K(create_ls_arg));
+
   } else if (OB_FAIL(ls_svr->check_ls_exist(ls_id, b_exist))) {
-    STORAGE_LOG(WARN, "failed to check ls exist", K(ls_id));
+
   } else if (!b_exist) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected error, ls does not exist", K(ret), K(ls_id));
+
   } else if (OB_FAIL(ls_svr->get_ls(ls_id, ls_handle, ObLSGetMod::STORAGE_MOD))) {
-    STORAGE_LOG(WARN, "failed to get ls", K(ls_id));
+
   } else if (OB_ISNULL(ls = ls_handle.get_ls())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "ls is null", K(ret), K(ls_handle));
+
   }
 
   // set member list
@@ -188,12 +188,12 @@ int TestDmlCommon::create_ls(
   }
 
   // check leader
-  STORAGE_LOG(INFO, "check leader");
+
   ObRole role;
   for (int i = 0; OB_SUCC(ret) && i < 15; i++) {
     int64_t proposal_id = 0;
     if (OB_FAIL(ls->get_log_handler()->get_role(role, proposal_id))) {
-      STORAGE_LOG(WARN, "failed to get role", K(ret));
+
     } else if (role == ObRole::LEADER) {
       break;
     }
@@ -203,7 +203,7 @@ int TestDmlCommon::create_ls(
   if (OB_FAIL(ret)) {
   } else if (OB_UNLIKELY(ObRole::LEADER != role)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected error, role is not leader", K(ret), K(role));
+
   }
 
   return ret;
@@ -219,7 +219,7 @@ int TestDmlCommon::create_data_tablet(
   obrpc::ObBatchCreateTabletArg arg;
 
   if (OB_FAIL(create_ls(tenant_id, ls_id, ls_handle))) {
-    STORAGE_LOG(WARN, "failed to create ls", K(ret), K(tenant_id), K(ls_id));
+
   } else if (OB_FAIL(build_pure_data_tablet_arg(tenant_id, ls_id, tablet_id, arg))) {
     STORAGE_LOG(WARN, "failed to build pure data tablet arg", K(ret),
         K(tenant_id), K(ls_id), K(tablet_id));
@@ -241,7 +241,7 @@ int TestDmlCommon::create_data_and_index_tablets(
   obrpc::ObBatchCreateTabletArg arg;
 
   if (OB_FAIL(create_ls(tenant_id, ls_id, ls_handle))) {
-    STORAGE_LOG(WARN, "failed to create ls", K(ret), K(tenant_id), K(ls_id));
+
   } else if (OB_FAIL(build_mixed_tablets_arg(tenant_id, ls_id,
       data_tablet_id, index_tablet_id_array, arg))) {
     STORAGE_LOG(WARN, "failed to build pure data tablet arg", K(ret),
@@ -263,10 +263,10 @@ int TestDmlCommon::mock_ls_tablet_service(
   ObLS *ls = nullptr;
 
   if (OB_FAIL(ls_svr->get_ls(ls_id, ls_handle, ObLSGetMod::STORAGE_MOD))) {
-    STORAGE_LOG(WARN, "failed to get ls", K(ret), K(ls_id));
+
   } else if (OB_ISNULL(ls = ls_handle.get_ls())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "ls is null", K(ret), K(ls));
+
   } else {
     ObLSTabletService &svc = ls->ls_tablet_svr_;
     MockInsertRowsLSTabletService *mock_svc = OB_NEW(MockInsertRowsLSTabletService, ObModIds::TEST);
@@ -274,9 +274,9 @@ int TestDmlCommon::mock_ls_tablet_service(
     ObLSTabletService::GetAllTabletIDOperator get_all_tablet_id_op(tablet_ids);
     if (OB_ISNULL(mock_svc)) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed to alloc memory", K(ret));
+
     } else if (OB_FAIL(svc.tablet_id_set_.foreach(get_all_tablet_id_op))) {
-      STORAGE_LOG(WARN, "fail to get all tablet ids from set", K(ret));
+
     } else {
       mock_svc->ls_ = svc.ls_;
       // ignore ObTxDataMemtableMgr and ObTxCtxMemtableMgr
@@ -285,7 +285,7 @@ int TestDmlCommon::mock_ls_tablet_service(
       for (int64_t i = 0; OB_SUCC(ret) && i < tablet_ids.count(); ++i) {
         const common::ObTabletID &tablet_id = tablet_ids.at(i);
         if (mock_svc->tablet_id_set_.set(tablet_id)) {
-          STORAGE_LOG(WARN, "failed to insert tablet id", K(tablet_id));
+
         }
       }
 
@@ -316,10 +316,10 @@ int TestDmlCommon::mock_access_service(
 
   if (OB_ISNULL(tablet_service)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", K(ret), K(tablet_service));
+
   } else if (OB_ISNULL(mock_svc)) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "failed to alloc memory", K(ret));
+
   } else {
     ObAccessService *svc = MTL(ObAccessService*);
     // do copy
@@ -349,9 +349,9 @@ int TestDmlCommon::build_table_param(
   //use table schema as index schema
   if (OB_UNLIKELY(!table_schema.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", K(ret), K(table_schema));
+
   } else if (OB_FAIL(table_param.convert(table_schema, output_column_ids, 0 /* disable enable_column_store */))) {
-    STORAGE_LOG(WARN, "failed to convert to table param", K(ret), K(table_schema), K(output_column_ids));
+
   }
 
   return ret;
@@ -380,7 +380,7 @@ int TestDmlCommon::build_table_scan_param(
 {
   int ret = build_table_scan_param_base_(tenant_id, table_param, false, scan_param);
   if (FAILEDx(scan_param.snapshot_.assign(read_snapshot))) {
-    STORAGE_LOG(WARN, "assign snapshot fail", K(ret));
+
   }
   return ret;
 }
@@ -537,9 +537,9 @@ int TestDmlCommon::build_tx_desc(const uint64_t tenant_id, ObTxDesc *&tx_desc)
   int ret = OB_SUCCESS;
   transaction::ObTransService *tx_service = MTL(transaction::ObTransService*);
   if (OB_FAIL(tx_service->acquire_tx(tx_desc, 100))) {
-    STORAGE_LOG(WARN, "failed to acquire tx", K(ret));
+
   } else {
-    STORAGE_LOG(INFO, "acquired tx desc", KPC(tx_desc));
+
   }
   return ret;
 }
@@ -550,7 +550,7 @@ void TestDmlCommon::build_tx_param(ObTxParam &tx_param)
   tx_param.isolation_ = transaction::ObTxIsolationLevel::RC;
   tx_param.cluster_id_ = 1221;
   tx_param.timeout_us_ = TX_EXPIRE_TIME_US;
-  STORAGE_LOG(INFO, "build tx param", K(tx_param));
+
 }
 
 void TestDmlCommon::release_tx_desc(ObTxDesc &tx_desc)
@@ -576,18 +576,18 @@ int TestDmlCommon::build_pure_data_tablet_arg(
 
   arg.reset();
   if (OB_FAIL(tablet_id_array.push_back(data_tablet_id))) {
-    STORAGE_LOG(WARN, "failed to push tablet id into array", K(ret), K(data_tablet_id));
+
   } else if (OB_FAIL(tablet_schema_index_array.push_back(0))) {
-    STORAGE_LOG(WARN, "failed to push index into array", K(ret));
+
   } else if (OB_FAIL(tablet_info.init(tablet_id_array, data_tablet_id, tablet_schema_index_array, lib::Worker::CompatMode::MYSQL, false, create_commit_versions, false /*has_cs_replica*/))) {
     STORAGE_LOG(WARN, "failed to init tablet info", K(ret), K(tablet_id_array),
         K(data_tablet_id), K(tablet_schema_index_array));
   } else if (OB_FAIL(arg.init_create_tablet(ls_id, share::SCN::min_scn(), false/*need_check_tablet_cnt*/))) {
-    STORAGE_LOG(WARN, "failed to init create tablet", K(ret), K(tenant_id), K(ls_id));
+
   } else if (OB_FAIL(arg.table_schemas_.push_back(table_schema))) {
-    STORAGE_LOG(WARN, "failed to push back table schema", K(ret), K(table_schema));
+
   } else if (OB_FAIL(arg.tablets_.push_back(tablet_info))) {
-    STORAGE_LOG(WARN, "failed to push back tablet info", K(ret), K(tablet_info));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -617,32 +617,32 @@ int TestDmlCommon::build_mixed_tablets_arg(
 
   arg.reset();
   if (OB_FAIL(tablet_id_array.push_back(data_tablet_id))) {
-    STORAGE_LOG(WARN, "failed to push tablet id into array", K(ret), K(data_tablet_id));
+
   } else {
     for (int64_t i = 0; OB_SUCC(ret) && i < index_tablet_id_array.count(); ++i) {
       const common::ObTabletID &index_tablet_id = index_tablet_id_array.at(i);
       if (OB_FAIL(tablet_id_array.push_back(index_tablet_id))) {
-        STORAGE_LOG(WARN, "failed to push back index tablet id", K(ret), K(index_tablet_id));
+
       }
     }
   }
 
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(tablet_schema_index_array.push_back(0))) {
-    STORAGE_LOG(WARN, "failed to push index into array", K(ret));
+
   } else if (OB_FAIL(tablet_schema_index_array.push_back(1))) {
-    STORAGE_LOG(WARN, "failed to push index into array", K(ret));
+
   } else if (OB_FAIL(tablet_info.init(tablet_id_array, data_tablet_id, tablet_schema_index_array, lib::Worker::CompatMode::MYSQL, false, create_commit_versions, false /*has_cs_replica*/))) {
     STORAGE_LOG(WARN, "failed to init tablet info", K(ret), K(tablet_id_array),
         K(data_tablet_id), K(tablet_schema_index_array));
   } else if (OB_FAIL(arg.init_create_tablet(ls_id, share::SCN::min_scn(), false/*need_check_tablet_cnt*/))) {
-    STORAGE_LOG(WARN, "failed to init create tablet", K(ret), K(tenant_id), K(ls_id));
+
   } else if (OB_FAIL(arg.table_schemas_.push_back(data_table_schema))) {
-    STORAGE_LOG(WARN, "failed to push back data table schema", K(ret), K(data_table_schema));
+
   } else if (OB_FAIL(arg.table_schemas_.push_back(index_table_schema))) {
-    STORAGE_LOG(WARN, "failed to push back index table schema", K(ret), K(index_table_schema));
+
   } else if (OB_FAIL(arg.tablets_.push_back(tablet_info))) {
-    STORAGE_LOG(WARN, "failed to push back tablet info", K(ret), K(tablet_info));
+
   }
 
   if (OB_FAIL(ret)) {

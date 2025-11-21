@@ -163,7 +163,7 @@ ObTableAPITransCb::ObTableAPITransCb()
 
 ObTableAPITransCb::~ObTableAPITransCb()
 {
-  LOG_DEBUG("[yzfdebug] ObTableAPITransCb destruct", K_(ref_count));
+
 }
 
 void ObTableAPITransCb::destroy_cb_if_no_ref()
@@ -194,7 +194,7 @@ void ObTableAPITransCb::check_callback_timeout()
   const int64_t cost = cur_ts - create_ts_;
   const int64_t config_ts = GCONF.trace_log_slow_query_watermark; // default 1s
   if (cost > config_ts) {
-    LOG_INFO("obkv trans callback cost too mush time", K(ret), K(cost), K(config_ts), K_(trace_id));
+
   }
 }
 
@@ -227,7 +227,7 @@ void ObTableExecuteEndTransCb::callback(int cb_param)
   if (OB_FAIL(response_sender_.response(cb_param))) {
     LOG_WARN("failed to send response", K(ret), K(cb_param));
   } else {
-    LOG_DEBUG("async send execute response", K(cb_param));
+
   }
 
   this->destroy_cb_if_no_ref();
@@ -293,7 +293,7 @@ void ObTableBatchExecuteEndTransCb::callback(int cb_param)
     if (OB_FAIL(response_sender_.response(cb_param))) {
       LOG_WARN("failed to send response", K(ret), K(cb_param));
     } else {
-      LOG_DEBUG("yzfdebug async send batch_execute response", K(cb_param));
+
     }
   }
   this->destroy_cb_if_no_ref();
@@ -360,7 +360,7 @@ void ObTableLSExecuteEndTransCb::callback(int cb_param)
     if (OB_FAIL(response_sender_.response(cb_param))) {
       LOG_WARN("failed to send response", K(ret), K(cb_param));
     } else {
-      LOG_DEBUG("send ls execute response", K(cb_param));
+
     }
   }
 

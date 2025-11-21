@@ -46,7 +46,7 @@ int ObTenantSeqGenerator::init(const bool is_shared_storage, ObTenantStorageMeta
         LOG_WARN("fail to update tenant prealloacated seqs", K(ret), K_(preallocated_seqs));
       } else {
         is_inited_ = true;
-        LOG_INFO("succeed to init ObTenantSeqGenerator", K_(curr_seqs), K_(preallocated_seqs));
+
       }
     } else {
       is_inited_ = true;
@@ -212,7 +212,7 @@ int ObTenantSeqGenerator::try_preallocate_()
         ATOMIC_STORE(&preallocated_seqs_.object_seq_, seqs.object_seq_);
         ATOMIC_STORE(&preallocated_seqs_.tmp_file_seq_, seqs.tmp_file_seq_);
         ATOMIC_STORE(&preallocated_seqs_.write_seq_, seqs.write_seq_);
-        LOG_INFO("succeed to update tenant preallocated seqs", K(preallocated_seqs_), K(seqs));
+
       }
     }
   }

@@ -87,7 +87,7 @@ public:
       const int64_t point_id = fixed_point_array_.at(i);
       entry.second.fixed_points_[point_id] = true;
     }
-    LOG_INFO("update tenant param of ddl sim point success", K(new_context_), K(fixed_point_array_), K(entry.second));
+
     return OB_SUCCESS;
   }
 public:

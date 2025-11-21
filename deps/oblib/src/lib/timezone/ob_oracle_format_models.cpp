@@ -304,7 +304,7 @@ int ObDFMUtil::parse_datetime_format_string(const ObString &fmt_str, ObDFMElemAr
       }
     }
     if (OB_SUCC(ret)) {
-      LOG_DEBUG("dmf parse format string result", K(fmt_str), K(elements));
+
     }
   }
   return ret;
@@ -516,7 +516,7 @@ int ObDFMUtil::check_semantic(const ObDFMElemArr &elements, ObFixedBitSet<OB_DEF
   }
 
   if (OB_SUCC(ret)) {
-    LOG_DEBUG("conflict summary", K(conflict_group_bitset));
+
   }
   return ret;
 }
@@ -585,7 +585,7 @@ int ObDFMUtil::print_literal(char *buf, const int64_t buf_len, int64_t &pos, con
   } else if (OB_FAIL(databuff_printf(buf, buf_len, pos, "%.*s", literal.length(), literal.ptr()))) {
     LOG_WARN("databuff printf failed", K(ret), K(buf_len), K(pos), K(literal));
   } else {
-    LOG_DEBUG("dfm print literal", K(ObString(pos, buf)), K(literal), K(elem), K(format));
+
   }
   return ret;
 }

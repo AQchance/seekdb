@@ -80,7 +80,7 @@ int ObLoadDataResolver::resolve(const ParseNode &parse_tree)
   } else {
     load_stmt->set_is_load_data_url((T_LOAD_DATA_URL == node->type_));
     stmt_ = load_stmt;
-    LOG_DEBUG("load data parser tree", "tree", SJ(ObParserResultPrintWrapper(*node)));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -111,7 +111,7 @@ int ObLoadDataResolver::resolve(const ParseNode &parse_tree)
     } else {
       load_args.load_file_storage_ = ObLoadFileLocation::SERVER_DISK;
     }
-    LOG_DEBUG("load data location", K(load_args.load_file_storage_));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -224,7 +224,7 @@ int ObLoadDataResolver::resolve(const ParseNode &parse_tree)
       } else {
         load_args.combined_name_.assign_ptr(buf, pos);
       }
-      LOG_DEBUG("resolve table info result", K(tenant_id), K(database_name), K(table_name));
+
     }
   }
 
@@ -246,7 +246,7 @@ int ObLoadDataResolver::resolve(const ParseNode &parse_tree)
         if (OB_FAIL(ret)) {
           LOG_USER_ERROR(OB_INVALID_ARGUMENT, "unknown compression format or cannot detect compression format by filename");
         } else {
-          LOG_TRACE("load data with compression format", K(load_args.compression_format_));
+
         }
       }
     }
@@ -438,7 +438,7 @@ int ObLoadDataResolver::resolve(const ParseNode &parse_tree)
     }
   }
 
-  LOG_DEBUG("finish resolve load_data", KPC(load_stmt), K(ret));
+
   return ret;
 }
 
@@ -476,7 +476,7 @@ int ObLoadDataResolver::resolve_hints(const ParseNode &node)
       if (!hint_node) {
         continue;
       }
-      LOG_DEBUG("LOAD DATA resolve hint node", "type", hint_node->type_);
+
 
       switch (hint_node->type_) {
       case T_DIRECT: {
@@ -545,7 +545,7 @@ int ObLoadDataResolver::resolve_hints(const ParseNode &node)
                         ObLoadDataHint::PARALLEL_THREADS, hint_node->children_[0]->value_))) {
           LOG_WARN("fail to set concurrent value", K(ret));
         } else {
-          LOG_DEBUG("LOAD DATA resolve parallel", "value", hint_node->children_[0]->value_);
+
         }
         break;
       }
@@ -912,7 +912,7 @@ int ObLoadDataResolver::validate_stmt(ObLoadDataStmt* stmt)
     if (OB_SUCC(ret)) {
       stmt->get_load_arguments().is_csv_format_ = true;
     }
-    LOG_DEBUG("LOAD DATA : data_struct_in_file validation done", K(data_struct_in_file));
+
   }
   return ret;
 }
@@ -1087,7 +1087,7 @@ int ObLoadDataResolver::resolve_field_or_var_list_node(const ParseNode &node,
         LOG_WARN("resolve field var list failed", K(ret), K(child_node));
       }
     }//end of for
-    LOG_DEBUG("check field var list", K(load_stmt.get_field_or_var_list()));
+
   }
   return ret;
 }
@@ -1227,7 +1227,7 @@ int ObLoadDataResolver::resolve_each_set_node(const ParseNode &node, const ObNam
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid node", K(node.num_child_), K(node.children_), K(ret));
   } else {
-    LOG_DEBUG("check parse node", "parse tree", SJ(ObParserResultPrintWrapper(node)));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -1251,7 +1251,7 @@ int ObLoadDataResolver::resolve_each_set_node(const ParseNode &node, const ObNam
                      table_name.length(), table_name.ptr());
     } else {
       assignment.column_expr_ = ref_expr;
-      LOG_DEBUG("check column expr", KPC(ref_expr));
+
     }
   }
 
@@ -1300,7 +1300,7 @@ int ObLoadDataResolver::resolve_each_set_node(const ParseNode &node, const ObNam
         LOG_USER_ERROR(OB_NOT_SUPPORTED, "set expression");
       } else {
         assignment.expr_ = expr;
-        LOG_DEBUG("check expr", KPC(expr), K(sys_vars));
+
       }
     }
   }
@@ -1467,7 +1467,7 @@ int ObLoadDataResolver::local_infile_enabled(bool &enabled) const
                 K(proxy_cap.capability_), K(proxy_cap.is_load_local_support()));
       if (!proxy_cap.is_load_local_support()) {
         enabled = false;
-        LOG_INFO("load data local infile is disabled by client: the obclient proxy capability flag is not set");
+
       }
     }
   }

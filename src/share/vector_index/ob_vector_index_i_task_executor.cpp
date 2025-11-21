@@ -154,7 +154,7 @@ int ObVecITaskExecutor::start_task()
             ObVecIndexAsyncTaskHandler &task_handle = vector_index_service_->get_vec_async_task_handle();
             int tmp_ret = OB_SUCCESS;
             if (task_ctx->in_thread_pool_) {                // skip push task 
-              LOG_DEBUG("task is in thread pool already", KPC(task_ctx));
+
             } else if (OB_FAIL(task_handle.push_task(tenant_id_, ls_->get_ls_id(), task_ctx, task_opt.get_allocator()))) {
               LOG_WARN("fail to push task to thread pool", K(ret), K(tenant_id_), K(ls_->get_ls_id()), K(*task_ctx));
             } else if (FALSE_IT(task_ctx->in_thread_pool_ = true)) {
@@ -242,7 +242,7 @@ int ObVecITaskExecutor::update_status_and_ret_code(ObVecIndexAsyncTaskCtx *task_
           tenant_id_, OB_ALL_VECTOR_INDEX_TASK_TNAME, trans, key, update_fields))) {
         LOG_WARN("fail to update task status", K(ret));
       } else {
-        LOG_DEBUG("success to update_status_and_ret_code", KPC(task_ctx));
+
       }
       if (trans.is_started()) {
         int tmp_ret = OB_SUCCESS;
@@ -281,7 +281,7 @@ int ObVecITaskExecutor::clear_task_ctx(
     task_opt.get_allocator()->free(task_ctx); // arena need free ??
     task_ctx = nullptr;
   }
-  LOG_DEBUG("clear task ctx", K(task_ctx));
+
   return ret;
 }
 
@@ -315,7 +315,7 @@ int ObVecITaskExecutor::check_task_result(ObVecIndexAsyncTaskCtx *task_ctx)
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid task ctx", K(ret), KP(task_ctx));
   } else {
-    LOG_DEBUG("ObVecAsyncTaskExector::check_task_result", K(task_ctx->task_status_));
+
     common::ObSpinLockGuard ctx_guard(task_ctx->lock_);
     if (task_ctx->task_status_.status_ == ObVecIndexAsyncTaskStatus::OB_VECTOR_ASYNC_TASK_RUNNING) {
       LOG_WARN("ObVecAsyncTaskExector::check_task_result status=running", KPC(task_ctx));

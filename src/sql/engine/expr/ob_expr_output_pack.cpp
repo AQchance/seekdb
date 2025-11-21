@@ -135,7 +135,7 @@ int ObOutputPackInfo::init_output_pack_info(uint64_t extra,
 
     if (OB_SUCC(ret)) {
       rt_expr.extra_info_ = output_pack_info;
-      LOG_DEBUG("succ init_output_pack_info", KPC(output_pack_info));
+
     }
   }
   return ret;
@@ -264,7 +264,7 @@ int ObExprOutputPack::convert_text_value_charset(common::ObObj& value,
   ObString raw_str = value.get_string();
   if (OB_ISNULL(raw_str.ptr()) || raw_str.length() == 0) {
     // may need return error?
-    LOG_DEBUG("get null lob locator v2", K(ret));
+
   } else if (OB_FAIL(my_session.get_character_set_results(charset_type))) {
     LOG_WARN("fail to get result charset", K(ret));
     } else if (OB_FAIL(my_session.get_ncharacter_set_connection(ncharset_type))) {

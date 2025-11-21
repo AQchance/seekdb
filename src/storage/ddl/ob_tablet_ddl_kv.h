@@ -431,15 +431,15 @@ int ObDDLKV::access_first_ddl_memtable(_callback &callback) const
   TCRLockGuard guard(lock_);
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (OB_UNLIKELY(!is_inc_minor_ddl_kv())) {
     ret = OB_NOT_SUPPORTED;
-    STORAGE_LOG(WARN, "not support get for full direct load", K(ret));
+
   } else if (ddl_memtables_.count() == 0) {
     ret = OB_ENTRY_NOT_EXIST;
   } else if (ddl_memtables_.count() != 1) {
     ret = OB_NOT_SUPPORTED;
-    STORAGE_LOG(WARN, "inc direct load do not support column store yet", K(ret));
+
   } else {
     ObDDLMemtable *ddl_memtable = ddl_memtables_.at(0);
     ret = callback(ddl_memtable);

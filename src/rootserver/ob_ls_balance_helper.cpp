@@ -742,7 +742,7 @@ int ObLSBalanceTaskHelper::construct_shrink_src_param_(const int64_t target_coun
             get_factor = 1;
           }
           ObSplitLSParam split_param(param.get_ls_info(), get_factor);
-          LOG_TRACE("split param", KR(ret), K(split_param), K(i), K(j));
+
           if (OB_FAIL(src_array.push_back(split_param))) {
             LOG_WARN("failed to push back split param", KR(ret), K(split_param));
           }
@@ -972,7 +972,7 @@ int ObLSBalanceTaskHelper::construct_ls_part_info_(const ObSplitLSParam &src_ls,
       } else if (OB_FAIL(task_array.push_back(task))) {                           \
         LOG_WARN("push_back fail", KR(ret), K(task));                             \
       } else {                                                                    \
-        LOG_INFO("gen balance task successfully", K(task));                       \
+                       \
       }                                                                           \
     }                                                                             \
   } while (0)

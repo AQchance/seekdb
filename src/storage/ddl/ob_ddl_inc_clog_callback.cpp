@@ -141,7 +141,7 @@
    {
      ObSpinLockGuard data_buffer_guard(data_buffer_lock_);
      if (is_data_buffer_freed_) {
-       LOG_INFO("data buffer is freed, do not need to callback");
+
      } else if (OB_FAIL(macro_block.block_handle_.set_block_id(macro_block_id_))) {
        LOG_WARN("set macro block id failed", K(ret), K(macro_block_id_));
      } else if (OB_FAIL(macro_block.set_data_macro_meta(macro_block_id_,

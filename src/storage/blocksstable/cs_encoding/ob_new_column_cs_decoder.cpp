@@ -38,7 +38,7 @@ int ObNewColumnCSDecoder::get_aggregate_result(
   } else if (OB_FAIL(agg_cell.eval(datum))) {
     LOG_WARN("Failed to eval datum", K(ret), K(datum));
   }
-  LOG_DEBUG("[NEW_COLUMN_DECODE] get aggregate(min/max) result", K(datum), K(lbt()));
+
   return ret;
 }
 

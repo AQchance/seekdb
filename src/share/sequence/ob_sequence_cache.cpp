@@ -320,7 +320,7 @@ int ObSequenceCache::refill_sequence_cache(const ObSequenceSchema &schema,
         if (schema.get_increment_by() > static_cast<int64_t>(0)) {
           if (cache.curr_node_.start() > next_range.start()) {
             cache.base_on_last_number_ = false;
-            LOG_INFO("got next batch in a new cycle", K(cache));
+
           } else if (OB_FAIL(cache.last_number().add(schema.get_increment_by(),
                                                     next_number,
                                                     allocator))) {
@@ -336,7 +336,7 @@ int ObSequenceCache::refill_sequence_cache(const ObSequenceSchema &schema,
         } else {
           if (cache.curr_node_.start() < next_range.start()) {
             cache.base_on_last_number_ = false;
-            LOG_INFO("got next batch in a new cycle", K(cache));
+
           } else if (OB_FAIL(cache.last_number().add(schema.get_increment_by(),
                                                      next_number,
                                                      allocator))) {
@@ -367,7 +367,7 @@ int ObSequenceCache::refill_sequence_cache(const ObSequenceSchema &schema,
       }
     }
     if (times == 2) {
-      LOG_INFO("refetch next batch result", K(cache), K(ret));
+
     }
   } while (OB_SUCC(ret) && need_refetch);
   return ret;
@@ -483,13 +483,13 @@ int ObSequenceCache::nextval(const ObSequenceSchema &schema,
       /* prohibit the scheduler from suspending the query during refill_sequence_cache */
       lib::DisableSchedInterGuard sched_guard;
       {
-        LOG_DEBUG("nextval", K(schema));
+
         // step 1. get the next value from the cache
         ret = move_next(schema, *item, allocator, nextval);
         // step 2. the values in the cache have been used up, need to refill the cache
         // Note: Under normal circumstances of the prefetch function, this branch will not be reached
         if (OB_SIZE_OVERFLOW == ret) {
-          LOG_INFO("no more avaliable value in current cache, try refill cache", K(*item), K(ret));
+
           if (OB_FAIL(refill_sequence_cache(schema, allocator, *item))) {
             LOG_WARN("fail refill sequence cache", K(*item), K(ret));
           } else if (OB_FAIL(move_next(schema, *item, allocator, nextval))) {
@@ -543,9 +543,9 @@ int ObSequenceCache::nextval(const ObSequenceSchema &schema,
           ret = OB_SUCCESS;
           LOG_WARN("fail refill sequence cache. ignore prefrech error", K(prefetch_err), K(ret));
         } else {
-          LOG_INFO("dump item", K(mock_item), K(*item));
+
           if (item->with_prefetch_node_) {
-            LOG_INFO("new item has been fetched by other, ignore");
+
           } else {
             item->last_refresh_ts_ = mock_item.last_refresh_ts_;
             item->with_prefetch_node_ = true;

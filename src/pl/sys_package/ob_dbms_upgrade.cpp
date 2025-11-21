@@ -178,7 +178,7 @@ int ObDBMSUpgrade::flush_dll_ncomp(sql::ObExecContext &ctx, sql::ParamStore &par
   }
   // delete old version disk cache obj
   OZ (ctx.get_sql_proxy()->write(tenant_id, job_action.ptr(), affected_rows));
-  LOG_INFO("flush dll ncomp", K(ret), K(job_action), K(query_sql), K(affected_rows));
+
 
   return ret;
 }

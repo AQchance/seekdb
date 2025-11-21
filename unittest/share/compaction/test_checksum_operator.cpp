@@ -72,7 +72,7 @@ TEST(ObPTSqlSplicer, batch) {
     ASSERT_EQ(OB_SUCCESS, splicer.finish_row());
   }
   ASSERT_EQ(OB_SUCCESS, splicer.splice_batch_insert_update_sql("tname", sql));
-  LOG_INFO("finish splice batch insert update sql", K(ret), K(sql), K(result));
+
   ASSERT_EQ(0, result.compare(sql.string()));
 }
 

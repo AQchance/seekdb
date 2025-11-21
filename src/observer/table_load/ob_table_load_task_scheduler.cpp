@@ -264,7 +264,7 @@ void ObTableLoadTaskThreadPoolScheduler::run(uint64_t thread_idx)
   lib::Worker::set_compatibility_mode(mode);
   CONSUMER_GROUP_FUNC_GUARD(ObFunctionType::PRIO_IMPORT);
 
-  LOG_INFO("table load task thread run", KP(this), "pid", get_tid_cache(), K(thread_idx));
+
 
   WorkerContext &worker_ctx = worker_ctx_array_[thread_idx];
   while (OB_SUCC(ret) && OB_LIKELY(STATE_RUNNING == state_)) {
@@ -288,7 +288,7 @@ void ObTableLoadTaskThreadPoolScheduler::run(uint64_t thread_idx)
     state_ = STATE_STOPPING;
   }
 
-  LOG_INFO("table load task thread stopped", KP(this), "pid", get_tid_cache(), K(thread_idx));
+
 }
 
 int ObTableLoadTaskThreadPoolScheduler::add_task(int64_t thread_idx, ObTableLoadTask *task)

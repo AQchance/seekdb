@@ -91,7 +91,7 @@ int ObAggRowWriter::sort_metas(const ObIArray<ObSkipIndexColMeta> &agg_col_arr,
     }
     lib::ob_sort(col_meta_list_.begin(), col_meta_list_.end());
     for (int64_t i = 0; OB_SUCC(ret) && i < column_count_; ++i) {
-      LOG_DEBUG("sort", K(i), K(col_meta_list_.at(i).first), K(col_meta_list_.at(i).second));
+
     }
   }
   return ret;
@@ -224,13 +224,13 @@ int ObAggRowWriter::write_cell(
       } else {
         col_off_arr.set(idx, pos - orig_pos);
         MEMCPY(buf + pos, datum.ptr_, datum.len_); // copy data
-        LOG_DEBUG("write cell", K(idx), K(datum), K(pos), K(type_bitmap_val), K(start), K(end));
+
         pos += datum.len_;
       }
       ++idx;
     }
     if (OB_SUCC(ret) && stored_col_cnt > 0) {
-      LOG_DEBUG("write cell(reserved)", K(idx), K(pos), K(orig_pos), K(header_));
+
       col_off_arr.set(stored_col_cnt - 1, pos - orig_pos); // cell end
     }
   }
@@ -388,7 +388,7 @@ int ObAggRowReader::read(const ObSkipIndexColMeta &meta, ObDatum &datum, bool &i
   } else if (OB_FAIL(binary_search_col(meta.col_idx_, pos))) {
     LOG_WARN("failed to find column idx", K(ret), K(meta));
   } else if (!pos) {
-    LOG_DEBUG("not aggregated", K(ret), K(meta));
+
   } else if (OB_FAIL(find_col(pos, meta.col_type_, datum, is_prefix))) {
     LOG_WARN("failed to find agg data", K(ret), K(meta));
   }
@@ -474,7 +474,7 @@ int ObAggRowReader::read_cell(
       int64_t cell_prefix_bitmap_val = row_helper_.col_bitmap_gen_.get_array().at(ObAggRowHeader::PREFIX_BITMAP_IDX);
       is_prefix = cell_prefix_bitmap_val & tar_mask;
     }
-    LOG_DEBUG("read cell", K(ret), K(pre_cnt), K(col_off), K(col_len));
+
   }
   return ret;
 }

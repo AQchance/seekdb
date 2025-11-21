@@ -164,14 +164,14 @@ int ObDDLMergePrepareTask::inner_process()
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("storage schema should not be nullptr", K(ret), KPC(tablet_param));
   } else if (nullptr != guard_task_) {
-    LOG_INFO("guard task has been created", K(ret), K(merge_param_));
+
   } else if (OB_FAIL(dag->alloc_task(guard_task_))) {
     LOG_WARN("failed to alloc task", K(ret));
   }
 
   if (OB_FAIL(ret)) {
   } else if (guard_task_->is_inited_) {
-    LOG_INFO("gaurd task already init", K(tablet_id));
+
   } else if (OB_FAIL(guard_task_->init(merge_param_.for_replay_, tablet_id))) {
     LOG_WARN("failed to init merge guard task", K(ret));
   } else if (OB_FAIL(guard_task_->deep_copy_children(get_child_nodes()))) {

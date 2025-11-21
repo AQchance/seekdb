@@ -255,7 +255,7 @@ bool ObLobAccessParam::lob_handle_has_char_len_field() const
     if (handle_size_ >= ObLobConstants::LOB_OUTROW_FULL_SIZE) {
       bret = true;
     } else {
-      LOG_INFO("old old data", KPC(this));
+
     }
   }
   return bret;
@@ -312,7 +312,7 @@ int ObLobAccessParam::update_handle_data_size(const ObLobMetaInfo *old_info, con
       char_len = *char_len_ptr;
     }
   }
-  LOG_DEBUG("update handle success", K(ret), K_(byte_size), KP(char_len_ptr), K(char_len), K_(lob_data), KPC(old_info), KPC(new_info));
+
   return ret;
 }
 
@@ -366,14 +366,14 @@ int ObLobAccessParam::init_seq_no(const uint64_t modified_len)
       }
     } else {
       // do nothing, for direct load has no tx desc, do not use seq no
-      LOG_DEBUG("tx_desc is null", KPC(this));
+
     }
   }
 
   if (OB_SUCC(ret)) {
     used_seq_cnt_ = 0;
     total_seq_cnt_ = need_seq_cnt;
-    LOG_DEBUG("init lob seq no success", K_(op_type), K(modified_len), K_(update_len),  K(store_chunk_size), K_(schema_chunk_size), K_(seq_no_st), K_(total_seq_cnt));
+
   }
 
   return ret;
@@ -406,7 +406,7 @@ int ObLobAccessParam::init_out_row_ctx(uint64_t modified_len)
     out_row_ctx->modified_len_ = modified_len;
     out_row_ctx->first_meta_offset_ = 0;
 
-    LOG_DEBUG("init lob out_row_ctx success", KPC_(lob_data), KPC(out_row_ctx), K(modified_len), K_(op_type), K_(seq_no_st));
+
   }
   return ret;
 }
@@ -424,7 +424,7 @@ int ObLobAccessParam::update_out_row_ctx(const ObLobMetaInfo *old_info, const Ob
     // no need check_sum and modified_len of updated lob data
     // and seq_no_cnt is not needed actually, this is just for debug
     out_row_ctx->seq_no_cnt_ = this->used_seq_cnt_;
-    LOG_DEBUG("update outrow ctx success", K_(op_type), KPC_(lob_data), KPC(out_row_ctx), KPC(old_info), K(new_info));
+
   } else {
     // update seq no
     // it sholud be update when each lob meta table row is modified (insert/delete/update)
@@ -452,7 +452,7 @@ int ObLobAccessParam::update_out_row_ctx(const ObLobMetaInfo *old_info, const Ob
     int64_t new_meta_len = (new_info.byte_len_);
     out_row_ctx->modified_len_ += std::abs(new_meta_len - old_meta_len);
 
-    LOG_DEBUG("update outrow ctx success", K_(op_type), KPC_(lob_data), KPC(out_row_ctx), K(new_meta_len), K(old_meta_len), KPC(old_info), K(new_info));
+
   }
   return ret;
 }

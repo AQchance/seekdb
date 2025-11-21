@@ -140,7 +140,7 @@ int ObPLCompilerUtils::compile_routine(ObExecContext &ctx,
     CK (OB_NOT_NULL(ctx.get_pl_engine()));
     if (OB_FAIL(ret)) {
     } else if (OB_FAIL(pl::ObPLCacheMgr::get_pl_cache(ctx.get_my_session()->get_plan_cache(), cacheobj_guard, pc_ctx))) {
-      LOG_TRACE("get pl function from ol cache failed", K(ret), K(pc_ctx.key_));
+
       HANDLE_PL_CACHE_RET_VALUE(ret);
     } else {
       routine = static_cast<pl::ObPLFunction*>(cacheobj_guard.get_cache_obj());

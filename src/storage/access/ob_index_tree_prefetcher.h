@@ -142,9 +142,9 @@ public:
     int ret = OB_SUCCESS;
     if (OB_UNLIKELY(nullptr == micro_handle_)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "Unexpect null micro_handle ", K(ret));
+
     } else if (OB_FAIL(micro_handle_->get_micro_block_data(&block_reader, block_data))) {
-      STORAGE_LOG(WARN, "Fail to get block data ", K(ret));
+
     }
     return ret;
   }
@@ -405,7 +405,7 @@ public:
     {
       int ret = OB_SUCCESS;
       if (OB_FAIL(ObSSTableReadHandle::assign(other))) {
-        STORAGE_LOG(WARN, "Fail to assign ObSSTableReadHandle", K(ret));
+
         this->reset();
       } else {
         this->cur_level_ = other.cur_level_;
@@ -413,7 +413,7 @@ public:
         this->micro_handle_idx_ = other.micro_handle_idx_;
         for (int64_t i = 0; OB_SUCC(ret) && i < DEFAULT_MULTIGET_MICRO_DATA_HANDLE_CNT; ++i) {
           if (OB_FAIL(this->micro_handles_[i].assign(other.micro_handles_[i]))) {
-            STORAGE_LOG(WARN, "Fail to assign micro_handles_", K(ret));
+
             reset();
           }
         }
@@ -736,17 +736,17 @@ protected:
       int ret = OB_SUCCESS;
       if (OB_FAIL(index_scanner_.get_next(block_info, is_multi_check))) {
         if (OB_UNLIKELY(OB_ITER_END != ret)) {
-          STORAGE_LOG(WARN, "Fail to get_next index row", K(ret), K_(index_scanner));
+
         }
       } else if (OB_UNLIKELY(!block_info.is_data_block())) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "Unexpected not data block", K(ret), K(block_info));
+
       } else {
         if (can_blockscan_) {
           block_info.set_blockscan();
         }
         if (OB_FAIL(block_info.copy_skipping_filter_results(current_block_read_handle().index_info_))) {
-          STORAGE_LOG(WARN, "Failed to copy skipping filter results", K_(current_block_read_handle().index_info));
+
         }
       }
       return ret;
@@ -759,10 +759,10 @@ protected:
       while (OB_SUCC(ret)) {
         if (OB_FAIL(index_scanner_.get_next(block_info, prefetcher.is_multi_check()))) {
           if (OB_UNLIKELY(OB_ITER_END != ret)) {
-            STORAGE_LOG(WARN, "Fail to get_next index row", K(ret), K_(index_scanner));
+
           } else if (fetch_idx_ < prefetch_idx_) {
             if (OB_FAIL(forward(prefetcher))) {
-              STORAGE_LOG(WARN, "Fail to forward index tree handle", K(ret));
+
             }
           }
         } else {
@@ -770,7 +770,7 @@ protected:
             block_info.set_blockscan();
           }
           if (OB_FAIL(block_info.copy_skipping_filter_results(current_block_read_handle().index_info_))) {
-            STORAGE_LOG(WARN, "Failed to copy skipping filter results", K_(current_block_read_handle().index_info));
+
           }
           break;
         }
@@ -804,11 +804,11 @@ protected:
       } else if (FALSE_IT(macro_id = index_info.get_shared_data_macro_id())) {
       } else if (OB_UNLIKELY(ObStorageObjectType::SHARED_MAJOR_DATA_MACRO != macro_id.storage_object_type()))  {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "macro id type is not SHARED_MAJOR_DATA_MACRO");
+
       } else if (OB_FAIL(prefetch_macro_block(macro_id))) {
-        STORAGE_LOG(WARN, "fail to prefetch data macro block", K(ret), K(level));
+
       } else {
-        STORAGE_LOG(DEBUG, "succeed to prefetch data macro block", K(level), K(macro_id));
+
       }
       return ret;
     }
@@ -821,9 +821,9 @@ protected:
         // do nothing
       } else if (OB_UNLIKELY(!macro_id.is_valid())) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "get unexpected invalid macro id", K(ret), K(macro_id));
+
       } else if (OB_FAIL(MTL(ObTenantFileManager*)->get_preread_cache_mgr().push_file_id_to_lru(macro_id))) {
-        STORAGE_LOG(WARN, "fail to push macro id into lru read cache", K(ret), K(macro_id));
+
       }
       return ret;
     }
@@ -838,7 +838,7 @@ protected:
       if (!can_blockscan_) {
       } else if (index_scanner_.end_of_block()) {
       } else if (OB_FAIL(index_scanner_.check_blockscan(border_rowkey, can_blockscan_))) {
-        STORAGE_LOG(WARN, "Fail to update_blockscan", K(ret), K(index_scanner_), K(border_rowkey));
+
       }
       return ret;
     }

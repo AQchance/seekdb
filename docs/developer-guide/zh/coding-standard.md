@@ -1162,7 +1162,7 @@ if (NULL != table_name || NULL != column_name) {
 // 隐式检查过的变量，要在变量赋值的地方予以说明：
 if (!param.is_valid() || !context.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument", K(ret), K(param), K(param));
+
   } else {
     // block_cache_非空已在前面的context.is_valid()中检查过
     ObMicroBlockCache *block_cache = context.cache_context_.block_cache_;

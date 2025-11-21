@@ -863,7 +863,7 @@ int ObMySQLPreparedStatement::init(ObMySQLConnection &conn, const ObString &sql,
   } else if (result_column_count_ > 0 && OB_FAIL(alloc_bind_params(result_column_count_, result_params_))) {
     LOG_WARN("fail to alloc result bind params", K(ret));
   } else {
-    LOG_INFO("conn_handler", "handler", conn_->get_handler(), K_(stmt), K_(stmt_param_count), K_(result_column_count));
+
   }
   return ret;
 }

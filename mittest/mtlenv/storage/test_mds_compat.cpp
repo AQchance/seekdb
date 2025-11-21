@@ -328,7 +328,7 @@ TEST_F(TestMdsCompat, migration_param)
   ObTabletMdsData mocked_mds_data;
   ret = tablet->read_mds_table(allocator_, mds_table_data, false/*for_flush*/);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("read mds table", K(ret), K(mds_table_data));
+
   ret = mocked_mds_data.init_for_mds_table_dump(allocator_, mds_table_data, base_data, 0/*finish_medium_scn*/);
   ASSERT_EQ(OB_SUCCESS, ret);
 
@@ -361,7 +361,7 @@ TEST_F(TestMdsCompat, migration_param)
   ret = param.mds_data_.init(param.allocator_, mocked_mds_data);
   ASSERT_EQ(OB_SUCCESS, ret);
 
-  LOG_INFO("start generate mds sstable from param", K(ret), K(param));
+
   ObTableHandleV2 table_handle;
   ret = ObMdsDataCompatHelper::generate_mds_mini_sstable(param, allocator_, table_handle);
   ASSERT_EQ(common::OB_SUCCESS, ret);
@@ -426,7 +426,7 @@ TEST_F(TestMdsCompat, compat)
   ObTabletMdsData mocked_mds_data;
   ret = tablet->read_mds_table(allocator_, mds_table_data, false/*for_flush*/);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("read mds table", K(ret), K(mds_table_data));
+
   ret = mocked_mds_data.init_for_mds_table_dump(allocator_, mds_table_data, base_data, 0/*finish_medium_scn*/);
   ASSERT_EQ(OB_SUCCESS, ret);
 

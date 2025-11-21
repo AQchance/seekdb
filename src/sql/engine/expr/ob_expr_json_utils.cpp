@@ -253,7 +253,7 @@ int ObJsonUtil::datetime_scale_check(const ObAccuracy &accuracy,
         value = temp_value;
       } else {
         ret = OB_ERR_NULL_VALUE; // set null for res
-        LOG_DEBUG("Invalid datetime val, return set_null", K(temp_value));
+
       }
     }
   }
@@ -289,7 +289,7 @@ int ObJsonUtil::mdatetime_scale_check(const ObAccuracy &accuracy,
         value = temp_value;
       } else {
         ret = OB_ERR_NULL_VALUE; // set null for res
-        LOG_DEBUG("Invalid datetime val, return set_null", K(temp_value));
+
       }
     }
   }
@@ -617,7 +617,7 @@ int ObJsonUtil::padding_char_for_cast(int64_t padding_cnt,
                 K(padding_cs_type));
     }
   }
-  LOG_DEBUG("pad char done", K(ret), K(padding_cnt), K(padding_cs_type), K(padding_res));
+
   return ret;
 }
 
@@ -1216,7 +1216,7 @@ int cast_to_year(common::ObIAllocator *allocator,
   } else if ((!cast_param.relaxed_time_convert_) 
               && (0 != int_val && (int_val < min_year || int_val > max_year))) {
     // different with cast, if 0 < int val < 100, do not add base year
-    LOG_DEBUG("int out of year range", K(int_val));
+
     ret = OB_DATA_OUT_OF_RANGE;
   } else if(CAST_FAIL(ObTimeConverter::int_to_year(int_val, val))) {
     LOG_WARN("int to year failed.", K(ret), K(int_val));
@@ -1475,7 +1475,7 @@ int ObJsonUtil::cast_to_res(common::ObIAllocator *allocator,
     LOG_WARN("fail to deal json cast to sql scalar", K(ret));
   }
 
-  LOG_DEBUG("finish cast_to_res.", K(ret), K(cast_param.dst_type_));
+
 
   return ret;
 }

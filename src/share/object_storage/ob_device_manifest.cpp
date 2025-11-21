@@ -57,7 +57,7 @@ void ObDeviceManifest::destroy()
 {
   data_dir_ = nullptr;
   is_inited_ = false;
-  LOG_INFO("device manifest finish to destroy");
+
 }
 
 int ObDeviceManifest::load(ObIArray<ObDeviceConfig> &config_arr, HeadSection &head)
@@ -93,7 +93,7 @@ int ObDeviceManifest::load(ObIArray<ObDeviceConfig> &config_arr, HeadSection &he
       LOG_ERROR("fail to close file", KR(ret), K(errno), KERRMSG);
     }
   }
-  LOG_INFO("finish to load device manifest", KR(ret), K(config_arr), K(head));
+
   return ret;
 }
 
@@ -151,7 +151,7 @@ int ObDeviceManifest::parse_file_(FILE *fp, ObIArray<ObDeviceConfig> &config_arr
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("device num does not match between head and device sections", KR(ret), K(head), K(config_arr));
   }
-  LOG_INFO("finish to parse file", KR(ret), K(config_arr), K(head));
+
   return ret;
 }
 
@@ -300,7 +300,7 @@ int ObDeviceManifest::dump2file(
         ret = ObIODeviceLocalFileOp::convert_sys_errno();
         LOG_WARN("fail to fclose", KR(ret), K(fd), K(errno), KERRMSG);
       } else {
-        LOG_INFO("write tmp device manifest successfully", K(tmp_manifest_path), K(configs));
+
         if (0 != ::rename(manifest_path, his_manifest_path) && errno != ENOENT) {
           ret = ObIODeviceLocalFileOp::convert_sys_errno();
           LOG_WARN("fail to backup history device manifest", KR(ret), K(manifest_path),
@@ -313,7 +313,7 @@ int ObDeviceManifest::dump2file(
       }
     }
   }
-  LOG_INFO("finish to dump device manifest", KR(ret), K(config_arr), K(head));
+
   return ret;
 }
 
@@ -349,7 +349,7 @@ int ObDeviceManifest::write_head_(FILE *fp, const HeadSection &head) const
   } else if (OB_FAIL(print_file_line_(fp, "%s%ld\n", LAST_SUB_OP_ID_KEY, head.last_sub_op_id_))) { // last_sub_op_id=
     LOG_WARN("fail to print file line", KR(ret));
   }
-  LOG_INFO("finish to write manifest head", KR(ret));
+
   return ret;
 }
 
@@ -449,10 +449,10 @@ int ObDeviceManifest::write_device_config_(
       } else if (OB_FAIL(print_file_line_(fp, "%s\n", DEVICE_END_SECTION))) { // [device end]
         LOG_WARN("fail to print file line", KR(ret));
       }
-      LOG_INFO("finish to write manifest device", KR(ret), K(buf));
+
     }
   }
-  LOG_INFO("finish to write device config", KR(ret));
+
   return ret;
 }
 

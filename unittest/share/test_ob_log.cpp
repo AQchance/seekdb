@@ -139,7 +139,7 @@ TEST(ObLoggerTest, logger_test)
   SQL_OPT_LOG(DEBUG, "!! SQL_OPT_LOG DEBUG, should not be printed!");
   EXPECT_FALSE(OB_LOG_SUBMOD_NEED_TO_PRINT(SQL, OPT, DEBUG));
 
-  STORAGE_LOG(INFO, "!! STORAGE_LOG INFO, should not be printed!");
+
   EXPECT_FALSE(OB_LOG_MOD_NEED_TO_PRINT(STORAGE, INFO));
 
   OB_LOG(ERROR, "ERROR message");

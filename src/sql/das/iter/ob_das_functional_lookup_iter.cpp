@@ -164,7 +164,7 @@ int ObDASFuncLookupIter::inner_get_next_row()
   int64_t simulate_batch_row_cnt = - EVENT_CALL(EventTable::EN_TABLE_LOOKUP_BATCH_ROW_COUNT);
   const bool use_simulate_batch_row_cnt = simulate_batch_row_cnt > 0 && simulate_batch_row_cnt < default_batch_row_count_;
   int64_t default_row_batch_cnt  = use_simulate_batch_row_cnt ? simulate_batch_row_cnt : default_batch_row_count_;
-  LOG_DEBUG("simulate lookup row batch count", K(simulate_batch_row_cnt), K(default_row_batch_cnt));
+
   index_scan_rowsize_ = index_scan_param.key_ranges_.count();
   if (index_scan_param.key_ranges_.empty()) {
     ret = OB_ITER_END;
@@ -193,7 +193,7 @@ int ObDASFuncLookupIter::inner_get_next_rows(int64_t &count, int64_t capacity)
   int64_t simulate_batch_row_cnt = - EVENT_CALL(EventTable::EN_TABLE_LOOKUP_BATCH_ROW_COUNT);
   const bool use_simulate_batch_row_cnt = simulate_batch_row_cnt > 0 && simulate_batch_row_cnt < default_batch_row_count_;
   int64_t default_row_batch_cnt  = use_simulate_batch_row_cnt ? simulate_batch_row_cnt : default_batch_row_count_;
-  LOG_DEBUG("simulate lookup row batch count", K(simulate_batch_row_cnt), K(default_row_batch_cnt));
+
   if (index_scan_param.key_ranges_.empty()) {
     ret = OB_ITER_END;
   } else if (OB_FAIL(ObDASLookupIter::inner_get_next_rows(count, capacity))) {

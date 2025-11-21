@@ -102,13 +102,13 @@ int ObSimpleRowsMerger<T, Comparator>::init(const int64_t max_table_cnt, const i
     SERVER_LOG(WARN, "The merge has been inited", K(ret));
   } else if (table_cnt <= 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid table cnt", K(ret), K(table_cnt));
+
   } else {
     table_cnt_ = table_cnt;
     allocator_ = &allocator;
     if (nullptr == (items_ = static_cast<T*>(allocator_->alloc(sizeof(T) * USE_SIMPLE_MERGER_MAX_TABLE_CNT)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "Failed to allocate items", K(ret), K(table_cnt_));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -126,7 +126,7 @@ int ObSimpleRowsMerger<T, Comparator>::open(const int64_t table_cnt)
     SERVER_LOG(WARN, "not inited", K(ret));
   } else if (table_cnt <= 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid table cnt", K(ret), K(table_cnt));
+
   } else {
     table_cnt_ = table_cnt;
   }
@@ -166,7 +166,7 @@ int ObSimpleRowsMerger<T, Comparator>::push(const T &item)
     LIB_LOG(WARN, "The merger is not init", K(ret));
   } else if (item_cnt_ + 1 > table_cnt_) {
     ret = OB_SIZE_OVERFLOW;
-    STORAGE_LOG(WARN, "Unexpected state", K(ret), K(item_cnt_), K(table_cnt_));
+
   } else {
     if (0 == item_cnt_) {
       items_[0] = item;
@@ -176,7 +176,7 @@ int ObSimpleRowsMerger<T, Comparator>::push(const T &item)
       int64_t i = item_cnt_ - 1;
       for ( ; OB_SUCC(ret) && i >= 0; --i) {
         if (OB_FAIL(cmp_.cmp(item, items_[i], cmp_ret))) {
-          STORAGE_LOG(WARN, "Fail to compare item", K(ret), K(i), K(items_[i]), K(item));
+
           break;
         } else if (cmp_ret < 0) {
           items_[i+1] = items_[i];
@@ -231,7 +231,7 @@ int ObSimpleRowsMerger<T, Comparator>::top(const T *&item)
   int ret = OB_SUCCESS;
   if (empty()) {
     ret = OB_EMPTY_RESULT;
-    STORAGE_LOG(WARN, "The merger is empty", K(ret), K(*this));
+
   } else {
     item = &items_[0];
   }
@@ -247,7 +247,7 @@ int ObSimpleRowsMerger<T, Comparator>::pop()
     LIB_LOG(WARN, "The merger is not init", K(ret));
   } else if (empty()) {
     ret = OB_EMPTY_RESULT;
-    STORAGE_LOG(WARN, "The merger is empty", K(ret), K(*this));
+
   } else {
     for (int64_t i = 0; i < item_cnt_ - 1; ++i) {
       items_[i] = items_[i+1];

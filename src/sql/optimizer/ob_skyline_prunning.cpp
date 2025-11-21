@@ -287,7 +287,7 @@ int RangeSubsetComp::do_compare(const uint64_t *left, const int64_t left_cnt,
           found_cnt++;
           last_pos = ++j;
         } else {
-          LOG_TRACE("not equal", K(left[i]), K(right[j]));
+
         }
       }
       if (!found) {
@@ -416,7 +416,7 @@ int ObIndexSkylineDim::compare(const ObIndexSkylineDim &other, ObSkylineDim::Com
   int ret = OB_SUCCESS;
   status = ObSkylineDim::EQUAL;
   int64_t compare_result = 0;
-  LOG_TRACE("begin skyline compare index", KPC(this), K(other));
+
   OPT_TRACE("compare index", get_index_id(), "to index", other.get_index_id());
   OPT_TRACE_BEGIN_SECTION;
   for (int i = 0; OB_SUCC(ret) && status != ObSkylineDim::UNCOMPARABLE && i < dim_count_; ++i) {
@@ -449,7 +449,7 @@ int ObIndexSkylineDim::compare(const ObIndexSkylineDim &other, ObSkylineDim::Com
           status = ObSkylineDim::UNCOMPARABLE;
         }
       }
-      LOG_TRACE("skyline compare dim", K(i), K(tmp_status), K(compare_result), KPC(left_dim), KPC(right_dim));
+
       OPT_TRACE("compare dim", static_cast<int64_t>(i), "result:", static_cast<int64_t>(tmp_status));
       OPT_TRACE("left dim: ", *left_dim);
       OPT_TRACE("right dim:", *right_dim);
@@ -473,7 +473,7 @@ int ObIndexSkylineDim::compare(const ObIndexSkylineDim &other, ObSkylineDim::Com
       }
     }
   }
-  LOG_TRACE("finish skyline compare index", K(status));
+
   OPT_TRACE("compare result (UNCOMPARABLE:-2, RIGHT_DOMINATED:-1, EQUAL:0, LEFT_DOMINATED:1):", static_cast<int64_t>(status));
   OPT_TRACE_END_SECTION;
   return ret;
@@ -510,7 +510,7 @@ int ObIndexSkylineDim::add_index_back_dim(const bool is_index_back,
     if (OB_FAIL(add_skyline_dim(*dim))) {
       LOG_WARN("failed to add skyline dimension", K(ret));
     } else {
-      LOG_TRACE("add index back dim success", K(ret), K(*dim));
+
     }
   }
   return ret;
@@ -554,7 +554,7 @@ int ObIndexSkylineDim::add_interesting_order_dim(const bool is_index_back,
       if (OB_FAIL(add_skyline_dim(*dim))) {
         LOG_WARN("failed to add skylined dimension", K(ret));
       } else {
-        LOG_TRACE("add interesting order dim success", K(ret), K(*dim));
+
       }
     }
   }
@@ -580,7 +580,7 @@ int ObIndexSkylineDim::add_query_range_dim(const ObIArray<uint64_t> &prefix_rang
       } else if (OB_FAIL(add_skyline_dim(*dim))) {
         LOG_WARN("failed to add_skylined_dim", K(ret));
       } else {
-        LOG_TRACE("add query range dim success", K(ret), K(*dim));
+
       }
     }
   }
@@ -601,7 +601,7 @@ int ObIndexSkylineDim::add_unique_range_dim(int64_t range_cnt, ObIAllocator &all
     if (OB_FAIL(add_skyline_dim(*dim))) {
       LOG_WARN("failed to add_skylined_dim", K(ret));
     } else {
-      LOG_TRACE("add query range dim success", K(ret), K(*dim));
+
     }
   }
   return ret;
@@ -624,7 +624,7 @@ int ObIndexSkylineDim::add_sharding_info_dim(ObShardingInfo *sharding_info,
     if (OB_FAIL(add_skyline_dim(*dim))) {
       LOG_WARN("failed to add_skylined_dim", K(ret));
     } else {
-      LOG_TRACE("add partition num dim success", K(ret), K(*dim));
+
     }
   }
   return ret;
@@ -636,7 +636,7 @@ int ObSkylineDimRecorder::add_index_dim(const ObIndexSkylineDim &dim, bool &has_
   has_add = false;
   ObArray<int64_t> remove_idxs;
   bool need_add = true;
-  LOG_TRACE("Skyline Pruning try to add index", K(dim));
+
   OPT_TRACE("try to add index", dim.get_index_id());
   OPT_TRACE_BEGIN_SECTION;
   if (!dim.can_prunning()) {
@@ -646,7 +646,7 @@ int ObSkylineDimRecorder::add_index_dim(const ObIndexSkylineDim &dim, bool &has_
     } else {
       has_add = true;
     }
-    LOG_TRACE("Index can not be pruning");
+
     OPT_TRACE("Index can not be pruning");
   } else {
     if (OB_FAIL(has_dominate_dim(dim, remove_idxs, need_add))) {
@@ -667,7 +667,7 @@ int ObSkylineDimRecorder::add_index_dim(const ObIndexSkylineDim &dim, bool &has_
           has_add = true;
         }
       }
-      LOG_TRACE("succeed to add index", K(dim));
+
       OPT_TRACE("succeed to add index ", dim.get_index_id());
     }
   }
@@ -708,7 +708,7 @@ int ObSkylineDimRecorder::has_dominate_dim(const ObIndexSkylineDim &dim,
     ObSkylineDim::CompareStat status = ObSkylineDim::UNCOMPARABLE;
     const ObIndexSkylineDim *index_dim = index_dims_.at(i);
     if (!index_dim->can_prunning()) {
-      LOG_TRACE("ignore index that can't not be prunning", K(*index_dim));
+
       OPT_TRACE("index", index_dim->get_index_id(), "can't be prunning");
     } else if (OB_FAIL(index_dim->compare(dim, status))) {
       LOG_WARN("compare skyline dimension failed", K(ret), K(dim), K(i)); 
@@ -719,7 +719,7 @@ int ObSkylineDimRecorder::has_dominate_dim(const ObIndexSkylineDim &dim,
                  K(ret), K(i), K(remove_idxs), K(*index_dim), K(dim));
       } else {
         need_add = false;
-        LOG_TRACE("index is prunning by exists index", KPC(index_dim));
+
         OPT_TRACE("index", dim.get_index_id(), "is prunning by index", index_dim->get_index_id());
         break;//not continue
       }
@@ -728,7 +728,7 @@ int ObSkylineDimRecorder::has_dominate_dim(const ObIndexSkylineDim &dim,
       if (OB_FAIL(remove_idxs.push_back(i))) {
         LOG_WARN("failed to add dominate idx", K(ret));
       }
-      LOG_TRACE("index rigit dominated exists index", KPC(index_dim));
+
       OPT_TRACE("index", dim.get_index_id(), "prune index", index_dim->get_index_id());
     }
   }

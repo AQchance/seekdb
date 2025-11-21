@@ -233,7 +233,7 @@ int ObDASInsertOp::insert_row_with_fetch()
       LOG_WARN("fail to get ls read_snapshot", K(ret), K(ls_id_), K(THIS_WORKER.get_timeout_ts()));
     } else {
       snapshot = das_gts_opt_info_.get_response_snapshot();
-      LOG_TRACE("succ get ls snaoshot", K(ls_id_), K(tablet_id_), KPC(snapshot));
+
     }
   }
 
@@ -309,7 +309,7 @@ int ObDASInsertOp::insert_row_with_fetch()
     if (is_local_unique_index) {
       // insert it before
     } else if (is_duplicated_) {
-      LOG_TRACE("is duplicated before, not need write non_unique index");
+
     } else if (OB_FAIL(dml_iter.rewind(index_ins_ctdef, nullptr/*fts_doc_word_info*/))) {
       LOG_WARN("rewind dml iter failed", K(ret));
     } else {
@@ -361,7 +361,7 @@ int ObDASInsertOp::store_conflict_row(ObDASInsertResult &ins_result)
     }
   }
   while (OB_SUCC(ret) && OB_SUCC(result_->get_next_row(dup_row))) {
-    LOG_DEBUG("fetch one conflict row", KPC(dup_row));
+
     if (OB_FAIL(ssr.shadow_copy(*dup_row))) {
       LOG_WARN("shadow copy ObNewRow failed", K(ret));
     } else if (OB_FAIL(result_buffer.try_add_row(ssr, das::OB_DAS_MAX_PACKET_SIZE, added))) {
@@ -629,7 +629,7 @@ int ObDASConflictIterator::get_next_row(ObDatumRow *&row)
     }
     if (curr_iter_ == duplicated_iter_list_.end()) {
       ret = OB_ITER_END;
-      LOG_DEBUG("fetch conflict row iterator end");
+
     } else {
       blocksstable::ObDatumRowIterator *dup_row_iter = *curr_iter_;
       if (OB_ISNULL(dup_row_iter)) {
@@ -645,7 +645,7 @@ int ObDASConflictIterator::get_next_row(ObDatumRow *&row)
         ret = OB_INVALID_ARGUMENT;
         LOG_WARN("invalid argument", K(ret), KP(dup_row));
       } else {
-        LOG_DEBUG("get one duplicate key", KPC(dup_row));
+
       }
     }
   } while (OB_SUCC(ret) && find_next_iter);

@@ -39,7 +39,7 @@ int ObFeedbackProxyUtils::append_feedback_proxy_info(common::ObIAllocator &alloc
 
   if (sess.is_need_send_feedback_proxy_info()) {
     len = get_serialize_size_(sess);
-    LOG_DEBUG("begin to feedback proxy info", K(sess.get_server_sid()), K(len));
+
     if (len == 0) {
       // no new feedback_proxy_info needs to be sent, do nothing
     } else if (OB_UNLIKELY(len < 0 || len > MAX_FEEDBACK_INFO_LENGTH)) {

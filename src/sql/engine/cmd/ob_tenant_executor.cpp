@@ -130,7 +130,7 @@ int ObCreateTenantExecutor::wait_schema_refreshed_(const uint64_t tenant_id)
                  && ObSchemaService::is_formal_version(user_schema_version)) {
         break;
       } else {
-        LOG_INFO("wait schema refreshed", K(tenant_id), K(meta_schema_version), K(user_schema_version));
+
         ob_usleep(500 * 1000L); // 500ms
       }
     }
@@ -176,7 +176,7 @@ int ObCreateTenantExecutor::wait_user_ls_valid_(const uint64_t tenant_id)
       } else if (user_ls_valid) {
       } else {
         const int64_t INTERVAL = 500 * 1000L; // 500ms
-        LOG_INFO("wait user ls valid", KR(ret), K(tenant_id));
+
         ob_usleep(INTERVAL);
       }
     }// end while
@@ -745,7 +745,7 @@ int ObDropTenantExecutor::execute(ObExecContext &ctx, ObDropTenantStmt &stmt)
   } else if (OB_ISNULL(tenant_schema)) {
     if (drop_tenant_arg.if_exist_) {
       LOG_USER_NOTE(OB_TENANT_NOT_EXIST, drop_tenant_arg.tenant_name_.length(), drop_tenant_arg.tenant_name_.ptr());
-      LOG_INFO("tenant not exist, no need to delete it", K(drop_tenant_arg));
+
     } else {
       ret = OB_TENANT_NOT_EXIST;
       LOG_USER_ERROR(OB_TENANT_NOT_EXIST, drop_tenant_arg.tenant_name_.length(), drop_tenant_arg.tenant_name_.ptr());
@@ -790,11 +790,11 @@ int ObDropTenantExecutor::check_tenant_has_been_dropped_(
                  tenant_id, is_dropped))) {
         LOG_WARN("fail to check tenant has been dropped", KR(ret), K(tenant_id));
       } else if (is_dropped) {
-        LOG_INFO("tenant has been dropped", KR(ret), K(tenant_id));
+
         break;
       } else {
         const int64_t INTERVAL = 1000 * 1000L; // 1s
-        LOG_INFO("tenant has not be dropped yet", KR(ret), K(tenant_id));
+
         ob_usleep(INTERVAL);
       }
     }
@@ -905,7 +905,7 @@ int ObPurgeRecycleBinExecutor::execute(ObExecContext &ctx, ObPurgeRecycleBinStmt
       LOG_INFO("purge recycle objects", KR(ret), K(cost_time), K(cal_timeout),
                K(total_purge_count), K(purge_recyclebin_arg), K(affected_rows), K(is_tenant_finish));
     }
-    LOG_INFO("purge recyclebin success", KR(ret), K(purge_recyclebin_arg), K(total_purge_count));
+
   }
   return ret;
 }

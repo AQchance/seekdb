@@ -639,7 +639,7 @@ int ObSchemaCache::get_schema(
       if (OB_HASH_NOT_EXIST == hash_ret) {
         ret = OB_ENTRY_NOT_EXIST;
       } else if (OB_SUCCESS == hash_ret) {
-        LOG_DEBUG("get value from sys cache succeed");
+
       } else {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("get value from sys cache failed", K(ret));
@@ -660,7 +660,7 @@ int ObSchemaCache::get_schema(
             } else if (OB_FAIL(cache_.put_and_fetch(cache_key, *tmp_cache_value, cache_value, handle))) {
               LOG_WARN("put value to cache failed", KR(ret), K(cache_key));
             } else {
-              LOG_DEBUG("put value to cache succeed", K(cache_key));
+
             }
           }
         }
@@ -671,7 +671,7 @@ int ObSchemaCache::get_schema(
           }
           EVENT_INC(ObStatEventIds::SCHEMA_CACHE_MISS);
         } else {
-          LOG_DEBUG("get value from cache succeed", K(cache_key), K(ret));
+
           EVENT_INC(ObStatEventIds::SCHEMA_CACHE_HIT);
         }
       }
@@ -778,7 +778,7 @@ void ObSchemaCache::clear_bootstrap_schema()
     }
   }
   bootstrap_cache_.clear();
-  LOG_INFO("Bootstrap cache cleared successfully");
+
 }
 
 int ObSchemaCache::put_schema(
@@ -814,7 +814,7 @@ int ObSchemaCache::put_schema(
         LOG_WARN("put value to schema cache failed",
                  K(cache_key), K(cache_value), KR(ret));
       } else {
-        LOG_DEBUG("put value to schema cache succeed", K(cache_key), K(cache_value));
+
       }
     }
   }
@@ -857,7 +857,7 @@ int ObSchemaCache::put_and_fetch_schema(
       LOG_WARN("new cache value is null", KR(ret), K(cache_key));
     } else {
       new_schema = new_cache_value->schema_;
-      LOG_DEBUG("put and fetch schema cache succeed", K(cache_key), K(cache_value));
+
     }
   }
   return ret;
@@ -887,7 +887,7 @@ int ObSchemaCache::get_tablet_cache(
   } else {
     table_id = value->get_table_id();
   }
-  LOG_TRACE("get tablet-table cache", KR(ret), K(key), K(table_id));
+
   return ret;
 }
 
@@ -908,7 +908,7 @@ int ObSchemaCache::put_tablet_cache(
   } else if (OB_FAIL(tablet_cache_.put(key, value))) {
     LOG_WARN("fail to put tablet cache", KR(ret), K(key), K(value));
   }
-  LOG_TRACE("put tablet-table cache", KR(ret), K(key), K(value));
+
   return ret;
 }
 
@@ -942,7 +942,7 @@ int ObSchemaCache::get_schema_history_cache(
     } else {
       precise_schema_version = cache_value->schema_version_;
       EVENT_INC(ObStatEventIds::SCHEMA_HISTORY_CACHE_HIT);
-      LOG_TRACE("get schema history cache succeed", KR(ret), K(cache_key));
+
     }
   }
   return ret;
@@ -971,7 +971,7 @@ int ObSchemaCache::put_schema_history_cache(
     if (OB_FAIL(history_cache_.put(cache_key, cache_value))) {
       LOG_WARN("put value to schema cache failed", KR(ret), K(cache_key), K(cache_value));
     } else {
-      LOG_TRACE("put schema history cache succeed", KR(ret), K(cache_key), K(cache_value));
+
     }
   }
   return ret;
@@ -1024,7 +1024,7 @@ int ObSchemaFetcher::fetch_schema(ObSchemaType schema_type,
 {
   int ret = OB_SUCCESS;
 
-  LOG_TRACE("fetch schema", K(schema_type), K(schema_id), K(schema_version));
+
 
   bool retry = false;
   const int64_t RETRY_TIMES_MAX = 8;
@@ -1050,7 +1050,7 @@ int ObSchemaFetcher::fetch_schema(ObSchemaType schema_type,
           break;
         }
       } else {
-        LOG_TRACE("schema version is readable", K(schema_type), K(schema_version), K(retry_times), K(schema_id));
+
       }
       schema = NULL;
       switch (schema_type) {
@@ -1318,7 +1318,7 @@ int ObSchemaFetcher::fetch_sys_variable_schema(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("sys_variable_schema is null", K(ret), K(tenant_id), K(schema_version), K(schema_status));
   } else {
-    LOG_TRACE("fetch sys variable schema succeed", K(tenant_id), K(schema_version), K(schema_status));
+
   }
 
   return ret;
@@ -1475,7 +1475,7 @@ int ObSchemaFetcher::fetch_table_schema(const ObRefreshSchemaStatus &schema_stat
     LOG_WARN("unexpected schema count", KR(ret), K(table_id), K(schema_version));
   } else {
     table_schema = schema_array.at(0);
-    LOG_TRACE("fetch table schema succeed", KR(ret), K(table_id), K(schema_version), KPC(table_schema));
+
   }
   return ret;
 }

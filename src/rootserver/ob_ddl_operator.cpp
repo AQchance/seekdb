@@ -1277,7 +1277,7 @@ int ObDDLOperator::sync_version_for_cascade_table(
                       new_schema_version))) {
             RS_LOG(WARN, "fail to sync schema version", K(ret), K(id), K(tenant_id));
           } else {
-            LOG_INFO("synced schema version for depend table", K(id), "from", old_schema_version, "to", new_schema_version);
+
           }
         }
       }
@@ -1536,7 +1536,7 @@ int ObDDLOperator::reinit_autoinc_row(const ObTableSchema &table_schema,
     }
   }
   int64_t finish_time = ObTimeUtility::current_time();
-  LOG_INFO("finish reinit_auto_row", KR(ret), "cost_ts", finish_time - start_time);
+
   return ret;
 }
 
@@ -2620,7 +2620,7 @@ int ObDDLOperator::drop_table_constraints(const ObTableSchema &orig_table_schema
       (*iter)->set_tenant_id(orig_table_schema.get_tenant_id());
       (*iter)->set_table_id(orig_table_schema.get_table_id());
       if (nullptr == new_table_schema.get_constraint((*iter)->get_constraint_id())) {
-        LOG_INFO("constraint has already been dropped", K(ret), K(**iter));
+
       } else if (OB_FAIL(schema_service_.gen_new_schema_version(tenant_id, new_schema_version))) {
         LOG_WARN("fail to gen new schema_version", K(ret), K(tenant_id));
       } else if (OB_FAIL(schema_service->get_table_sql_service().delete_single_constraint(
@@ -6126,7 +6126,7 @@ int ObDDLOperator::init_sys_tenant_charset(ObMySQLTransaction &trans)
   }
 
   if (OB_SUCC(ret)) {
-    LOG_INFO("create charset sql", K(sql));
+
     int64_t affected_rows = 0;
     if (OB_FAIL(trans.write(sql.ptr(), affected_rows))) {
       LOG_WARN("execute sql failed", K(ret), K(sql));
@@ -6178,7 +6178,7 @@ int ObDDLOperator::init_sys_tenant_collation(ObMySQLTransaction &trans)
   }
 
   if (OB_SUCC(ret)) {
-    LOG_INFO("create collation sql", K(sql));
+
     int64_t affected_rows = 0;
     if (OB_FAIL(trans.write(sql.ptr(), affected_rows))) {
       LOG_WARN("execute sql failed", K(ret), K(sql));
@@ -6225,7 +6225,7 @@ int ObDDLOperator::init_sys_tenant_privilege(ObMySQLTransaction &trans)
   }
 
   if (OB_SUCC(ret)) {
-    LOG_INFO("create privileges sql", K(sql));
+
     int64_t affected_rows = 0;
     if (OB_FAIL(trans.write(sql.ptr(), affected_rows))) {
       LOG_WARN("execute sql failed", K(ret), K(sql));
@@ -6705,7 +6705,7 @@ int ObDDLOperator::alter_user_default_role(const ObString &ddl_str,
     }
   }
 
-  LOG_DEBUG("alter_user_default_role", K(schema));
+
   return ret;
 }
 
@@ -8680,7 +8680,7 @@ int ObDDLOperator::revise_not_null_constraint_info(
       }
     }
   }
-  LOG_INFO("revise not null constraint info", K(ret), K(arg));
+
   return ret;
 }
 

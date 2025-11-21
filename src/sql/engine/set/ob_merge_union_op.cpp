@@ -144,7 +144,7 @@ int ObMergeUnionOp::get_first_row(const ObIArray<ObExpr*> *&output_row)
     candidate_output_row_ = cmp < 0 ? &right_->get_spec().output_ : &left_->get_spec().output_;
     cur_child_op_ = cmp < 0 ? left_ : right_;
     output_row = cmp < 0 ? &left_->get_spec().output_ : &right_->get_spec().output_;
-    LOG_DEBUG("trace first row", K(ROWEXPR2STR(eval_ctx_, *output_row)), K(cmp), K(ret));
+
   }
   return ret;
 }
@@ -337,7 +337,7 @@ int ObMergeUnionOp::distinct_get_next_row()
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_DEBUG("trace output row", K(ROWEXPR2STR(eval_ctx_, MY_SPEC.set_exprs_)), K(cmp));
+
   }
   return ret;
 }

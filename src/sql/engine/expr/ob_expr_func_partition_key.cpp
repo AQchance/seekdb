@@ -157,7 +157,7 @@ int ObExprFuncPartKey::calc_partition_key_vector(const ObExpr &expr,
       } else {
         const int64_t v = static_cast<int64_t>(batch_hash_vals[i]);
         batch_hash_vals[i] = std::abs(v);
-        LOG_DEBUG("calc partition key vector", K(batch_hash_vals[i]));
+
         flags.set(i);
       }
     }

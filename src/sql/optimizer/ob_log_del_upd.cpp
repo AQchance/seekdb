@@ -594,14 +594,14 @@ int ObLogDelUpd::find_trans_info_producer() {
     } else if (NULL == producer) {
       // No error can be reported here,
       // the producer of the corresponding trans_info expression was not found, ignore these
-      LOG_TRACE("can not found trans debug info expr producer", K(ret), K(index_dml_info->table_id_));
+
     } else if (OB_FAIL(add_var_to_array_no_dup(produced_trans_exprs_,
                                                index_dml_info->trans_info_expr_))) {
       LOG_WARN("fail to push trans_info_expr_", K(ret));
     } else {
       if (producer->get_type() == log_op_def::LOG_TABLE_SCAN) {
         if (static_cast<ObLogTableScan *>(producer)->get_trans_info_expr() == index_dml_info->trans_info_expr_) {
-          LOG_DEBUG("this expr has find the producer", K(ret));
+
         } else {
           static_cast<ObLogTableScan *>(producer)->
                       set_trans_info_expr(static_cast<ObOpPseudoColumnRawExpr *>(index_dml_info->trans_info_expr_));

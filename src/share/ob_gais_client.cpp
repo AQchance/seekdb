@@ -45,7 +45,7 @@ int ObGAISClient::init(const ObAddr &self, ObGAISRequestRpc *gais_request_rpc)
     self_ = self;
     gais_request_rpc_ = gais_request_rpc;
     is_inited_ = true;
-    LOG_INFO("gais client init success", K(self), KP(this));
+
   }
   return ret;
 }
@@ -91,7 +91,7 @@ int ObGAISClient::get_value(const AutoincKey &key,
       start_inclusive = rpc_result.start_inclusive_;
       end_inclusive = rpc_result.end_inclusive_;
       sync_value = rpc_result.sync_value_;
-      LOG_DEBUG("handle gais success", K(rpc_result));
+
     }
   }
   return ret;
@@ -121,7 +121,7 @@ int ObGAISClient::get_sequence_value(const AutoincKey &key, const int64_t &autoi
       (void)refresh_location_(tenant_id);
     } else {
       sequence_value = rpc_result.sequence_value_;
-      LOG_DEBUG("handle gais success", K(rpc_result));
+
     }
   }
 
@@ -165,7 +165,7 @@ int ObGAISClient::get_auto_increment_values(
           } else if (OB_FAIL(seq_values.set_refactored(key, rpc_result.sequence_value_))) {
             LOG_WARN("fail to get int_value.", K(ret));
           } else {
-            LOG_DEBUG("handle gais success", K(rpc_result));
+
           }
         }
       }
@@ -205,7 +205,7 @@ int ObGAISClient::local_push_to_global_value(const AutoincKey &key,
       (void)refresh_location_(tenant_id);
     } else {
       global_sync_value = new_sync_value;
-      LOG_DEBUG("handle gais success", K(global_sync_value));
+
     }
   }
   return ret;
@@ -238,7 +238,7 @@ int ObGAISClient::local_sync_with_global_value(const AutoincKey &key, const int6
       LOG_WARN("rpc result is unexpected", K(ret), K(rpc_result));
     } else {
       global_sync_value = rpc_result.sync_value_;
-      LOG_DEBUG("handle gais success", K(global_sync_value));
+
     }
   }
   return ret;
@@ -266,7 +266,7 @@ int ObGAISClient::clear_global_autoinc_cache(const AutoincKey &key)
       LOG_WARN("handle gais request failed", K(ret), K(msg));
       (void)refresh_location_(key.tenant_id_);
     } else {
-      LOG_DEBUG("clear global autoinc cache success", K(msg));
+
     }
   }
   return ret;
@@ -300,7 +300,7 @@ int ObGAISClient::get_sequence_next_value(const schema::ObSequenceSchema &schema
       (void)refresh_location_(tenant_id);
     } else {
       nextval.assign(rpc_result.nextval_);
-      LOG_DEBUG("handle gais success", K(rpc_result));
+
     }
   }
   return ret;
@@ -325,7 +325,7 @@ int ObGAISClient::get_leader_(const uint64_t tenant_id, ObAddr &leader)
     } else if (OB_FAIL(gais_cache_leader_map_.set_refactored(tenant_id, leader, 1))) {
       LOG_WARN("fail to set leader to map", K(ret), K(tenant_id), K(leader));
     } else {
-      LOG_INFO("succ to refresh leader", K(cluster_id), K(tenant_id), K(leader));
+
     }
   } else {
     LOG_WARN("fail get cache from hash map", K(ret));

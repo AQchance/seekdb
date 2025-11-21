@@ -283,7 +283,7 @@ int ObObjectStorageInfo::register_cluster_version_mgr(ObClusterVersionBaseMgr *c
     LOG_WARN("cluster_version_mgr is null", K(ret));
   } else {
     cluster_version_mgr_ = cluster_version_mgr;
-    LOG_INFO("register cluster_version_mgr successfully", K(ret), KP_(cluster_version_mgr));
+
   }
   return ret;
 }
@@ -464,7 +464,7 @@ int ObObjectStorageInfo::parse_storage_info_(const char *storage_info, bool &has
           LOG_WARN("failed to databuff printf", K(ret));
         } else if (1 == sscanf(buf, "max_iops=%ld", &value)) {
           max_iops_ = value;
-          LOG_INFO("set max iops", K(ret), K(value));
+
         } else {
           ret = OB_INVALID_ARGUMENT;
           LOG_WARN("failed to set max iops", K(ret), K(value));
@@ -483,7 +483,7 @@ int ObObjectStorageInfo::parse_storage_info_(const char *storage_info, bool &has
             LOG_WARN("convert failed", K(ret), K(buf));
           } else {
             max_bandwidth_ = value;
-            LOG_INFO("parse bandwidth value", K(buf), K(value));
+
           }
         }
       } else if (0 == strncmp(APPID, token, strlen(APPID))) {
@@ -1821,7 +1821,7 @@ int ObDeviceCredentialMgr::refresh()
           LOG_WARN("failed to delete credential", K(ret), K(i), K(credential_key_to_delete[i]));
         }
       } else {
-        LOG_INFO("succeed delete expired credential", K(i), K(credential_key_to_delete[i]));
+
       }
     }
   }

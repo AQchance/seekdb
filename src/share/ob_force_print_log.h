@@ -48,7 +48,7 @@
 #define FLOG_INFO(args...)                               \
     do {                                                  \
       oceanbase::share::ObTaskController::get().allow_next_syslog();        \
-      LOG_INFO (args);                                  \
+                                  \
     } while (0)
 
 #define _FLOG_INFO(args...)                              \

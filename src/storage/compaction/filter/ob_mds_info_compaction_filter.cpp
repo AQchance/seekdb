@@ -57,10 +57,10 @@ int ObMdsInfoCompactionFilter::filter(
     LOG_WARN("failed to check row in truncate filter", KR(ret), K(row));
   } else if (filtered) {
     filter_ret = FILTER_RET_REMOVE;
-    LOG_TRACE("[TRUNCATE_INFO] filter row", KR(ret), K(row), K(filtered)); // for debug, remove later
+ // for debug, remove later
   } else {
     filter_ret = FILTER_RET_NOT_CHANGE;
-    LOG_TRACE("[TRUNCATE_INFO] keep row", KR(ret), K(row), K(filtered)); // for debug, remove later
+ // for debug, remove later
   }
   return OB_SUCCESS;
 }

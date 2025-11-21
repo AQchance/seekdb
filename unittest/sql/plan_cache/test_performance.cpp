@@ -210,10 +210,10 @@ void do_operation(const char *query, uint64_t tenant_id)
                   SQL_PC_LOG(INFO, "plan has been exised in plan_cache");
                 } else if (OB_REACH_MEMORY_LIMIT == ret) {
                   ret = OB_SUCCESS;
-                  LOG_DEBUG("plan cache reached memory limit, don't add plan to plan cache now");
+
                 } else if (OB_NOT_SUPPORTED == ret) {
                   ret = OB_SUCCESS;
-                  LOG_DEBUG("plan cache don't support add this kind of plan now", K(phy_plan->get_plan_type()));
+
                 } else if (OB_FAIL(ret)) {
                   SQL_PC_LOG(INFO, "Failed to add plan to ObPlanCache", K(ret));
                 } else {
@@ -348,7 +348,7 @@ public:
   void run1()
   {
     UNUSED(arg);
-    LOG_INFO("start thread", K(thread));
+
 
     const char *tmp_file = "test_plan_cache.temp";
     if (NULL != thread) {

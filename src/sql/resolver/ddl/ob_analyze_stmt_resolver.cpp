@@ -98,7 +98,7 @@ int ObAnalyzeStmtResolver::resolve(const ParseNode &parse_tree)
         }
       }
     }
-    LOG_DEBUG("analyze statement", K(*analyze_stmt));
+
   }
   return ret;
 }
@@ -297,7 +297,7 @@ int ObAnalyzeStmtResolver::resolve_table_info(const ParseNode *table_node,
                                                                      last_table.get_column_group_params()))) {
       LOG_WARN("failed to init column stat param", K(ret));
     } else {
-      LOG_TRACE("succeed to resolve table info", K(last_table));
+
     }
   }
   return ret;

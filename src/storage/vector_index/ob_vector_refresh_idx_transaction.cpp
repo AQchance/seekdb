@@ -207,7 +207,7 @@ int ObVectorRefreshIdxTransaction::start(ObSQLSessionInfo *session_info, ObISQLC
     } else {
       session_info_ = session_info;
       in_trans_ = true;
-      LOG_DEBUG("start transaction success", K(tenant_id));
+
     }
   }
   if (OB_FAIL(ret)) {
@@ -228,7 +228,7 @@ int ObVectorRefreshIdxTransaction::end(const bool commit)
     if (OB_FAIL(end_transaction(commit))) {
       LOG_WARN("fail to end transation", KR(ret));
     } else {
-      LOG_DEBUG("end transaction success", K(commit));
+
     }
     in_trans_ = false;
   }

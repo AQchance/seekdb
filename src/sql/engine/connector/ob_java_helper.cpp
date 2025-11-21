@@ -228,7 +228,7 @@ int JVMFunctionHelper::get_lib_path(char *path, uint64_t length, const char* lib
   int ret = OB_SUCCESS;
   const char *env_var_name = "LD_LIBRARY_PATH";
   char *env_str = getenv(env_var_name);
-  LOG_INFO("LD_LIBRARY_PATH: ", K(ObString(env_str)));
+
   bool found = false;
   if (OB_ISNULL(env_str)) {
     ret = OB_ERR_UNEXPECTED;
@@ -317,7 +317,7 @@ int JVMFunctionHelper::get_lib_path(char *path, uint64_t length, const char* lib
     // LOG_USER_ERROR(OB_JNI_ENV_ERROR, user_error_len, user_error_str);
     LOG_WARN("failed to find path", K(ret), K(ObString(env_str)), K(lib_name));
   } else {
-    LOG_TRACE("succ to find path", K(ret), K(ObString(env_str)), K(path), K(lib_name));
+
   }
   return ret;
 }
@@ -364,7 +364,7 @@ int JVMFunctionHelper::open_java_lib(ObJavaEnvContext &java_env_ctx)
     // LOG_USER_ERROR(OB_JNI_ENV_ERROR, dlerror_str_len, dlerror_str);
     LOG_WARN("failed to open jvm lib from path", K(ret), K(ObString(jvm_lib_buf)), K(dlerror_str));
   } else {
-    LOG_TRACE("use jvm lib from path", K(ret), K(ObString(jvm_lib_buf)));
+
 
     if (OB_FAIL(ret) && OB_NOT_NULL(jvm_lib_handle_)) {
       if (OB_JNI_ENV_ERROR == ret) {
@@ -407,7 +407,7 @@ int JVMFunctionHelper::open_hdfs_lib(ObHdfsEnvContext &hdfs_env_ctx)
     // LOG_USER_ERROR(OB_JNI_ENV_ERROR, dlerror_str_len, dlerror_str);
     LOG_WARN("failed to open hdfs lib from path", K(ret), K(ObString(hdfs_lib_buf)), K(dlerror_str));
   } else {
-    LOG_TRACE("succ to open jvm and hdfs lib from patch", K(ObString(hdfs_lib_buf)), K(ObString(hdfs_lib_buf)));
+
     LIB_SYMBOL(hdfs_lib_handle_, "getJNIEnv", getJNIEnv, GETJNIENV);
     LIB_SYMBOL(hdfs_lib_handle_, "detachCurrentThread", detachCurrentThread, DETACHCURRENTTHREAD);
     LIB_SYMBOL(hdfs_lib_handle_, "destroyJNIEnv", destroyJNIEnv, DESTROYJNIENV);
@@ -490,21 +490,21 @@ int JVMFunctionHelper::load_lib(ObJavaEnvContext &java_env_ctx,
   obsys::ObWLockGuard wg(load_lib_lock_);
   if (java_env_ctx.is_valid() && hdfs_env_ctx.is_valid()) {
     // do nothing
-    LOG_TRACE("already success to open java and hdfs lib", K(ret));
+
   } else if (OB_NOT_NULL(jvm_lib_handle_) && OB_NOT_NULL(hdfs_lib_handle_)) {
     // do nothing
-    LOG_TRACE("already success to open java and hdfs lib", K(ret));
+
   } else if (OB_ISNULL(jvm_lib_handle_) && OB_FAIL(open_java_lib(java_env_ctx))) {
     LOG_WARN("failed to open java lib", K(ret));
   } else if (OB_ISNULL(hdfs_lib_handle_) && OB_FAIL(open_hdfs_lib(hdfs_env_ctx))) {
     LOG_WARN("failed to open hdfs lib", K(ret));
   } else {
-    LOG_TRACE("succ to open java and hdfs lib", K(ret));
-    LOG_TRACE("start to load most important method: getJNIEnv", K(ret));
+
+
     LIB_SYMBOL(hdfs_lib_handle_, "getJNIEnv", getJNIEnv, GETJNIENV);
 
     if (OB_SUCC(ret)) {
-      LOG_TRACE("success to load most important method: getJNIEnv", K(ret));
+
       java_env_ctx.jvm_loaded_ = true;
       hdfs_env_ctx.hdfs_loaded_ = true;
     }
@@ -523,7 +523,7 @@ int JVMFunctionHelper::detach_current_thread()
     ret = OB_JNI_METHOD_NOT_FOUND_ERROR;
     LOG_WARN("method detachCurrentThread not exists", K(ret));
   } else { /* do nothing */}
-  LOG_TRACE("start to detatch current thread", K(ret));
+
   if (OB_SUCC(ret)) {
     jint rv = detachCurrentThread();
     if (0 != rv) {
@@ -565,7 +565,7 @@ int JVMFunctionHelper::init_jni_env() {
     const char *jo = std::getenv("JAVA_OPTS");
     const char *cp = std::getenv("CLASSPATH");
     const char *ch = std::getenv("CONNECTOR_PATH");
-    LOG_TRACE("get env variables in init_jni_env", K(ret), K(jh), K(jo), K(cp), K(ch));
+
   }
   return ret;
 }
@@ -707,7 +707,7 @@ int detect_java_runtime() {
   int ret = OB_SUCCESS;
 
   const char *java_home = std::getenv("JAVA_HOME");
-  LOG_TRACE("get current java home", K(ret), K(java_home));
+
   if (nullptr == java_home) {
     ret = OB_JNI_JAVA_HOME_NOT_FOUND_ERROR;
     LOG_WARN("env 'JAVA_HOME' is not set", K(ret), K(java_home));

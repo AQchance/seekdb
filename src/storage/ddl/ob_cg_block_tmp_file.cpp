@@ -180,7 +180,7 @@ int ObCGBlockFile::BlockStore::close()
     LOG_WARN("fail to remove tmp file fd", K(ret), K(fd_));
   } else {
     is_inited_ = false;
-    LOG_INFO("success to close cg block tmp file", K(ret), K(file_dir_), K(fd_));
+
   }
   return ret;
 }

@@ -76,7 +76,7 @@ int ObSemiStructColumnEncodeCtx::scan()
     schema_not_match_block_count_ = 0;
     not_encode_block_count_ = 0;
     if (sub_schema_.get_freq_column_count() <= 0) {
-      LOG_TRACE("local sub schema don't have frequent column, so don't semistruct encoding", KPC(this));
+
       disable_encoding();
       sub_schema_.reset();
       previous_cs_encoding_.reset();
@@ -814,18 +814,18 @@ int ObSemiStructDecodeHandler::check_can_pushdown(
 
   can_pushdown = false;
   if (! sql::is_support_pushdown_json_expr(json_expr->type_)) {
-    LOG_INFO("not support pushdown json expr", K(ret), KPC(json_expr));
+
   } else if (OB_FAIL(sub_schema_->get_column(col_path, sub_col))) {
     if (OB_SEARCH_NOT_FOUND != ret) {
       LOG_WARN("get sub column fail", K(ret), K(col_path), KPC(sub_schema_));
     } else {
       ret = OB_SUCCESS;
-      LOG_INFO("sub column not found, so not white pushdown", K(col_path), KPC(sub_schema_));
+
     }
   } else if (OB_ISNULL(sub_col)) {
-    LOG_INFO("pushdown not support for not found json sub column", K(col_path), KPC(sub_col), KPC(sub_schema_));
+
   } else if (sub_col->is_spare_storage()) {
-    LOG_INFO("pushdown not support for spare json sub column", K(col_path), KPC(sub_col), KPC(sub_schema_));
+
   } else if (sub_col->get_col_id() < 0 || sub_col->get_col_id() >= sub_schema_->get_store_column_count()) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("invalid sub_col_idx", K(ret), K(col_path), KPC(sub_col), KPC(sub_schema_));

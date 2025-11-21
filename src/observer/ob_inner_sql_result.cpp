@@ -219,7 +219,7 @@ int ObInnerSQLResult::inner_close()
   SQL_INFO_GUARD(session_.get_current_query_string(), session_.get_cur_sql_id());
   ObInnerSQLSessionGuard sess_guard(&session_);
   ObInterruptCheckerGuard interrupt_guard(interrupt_checker_);
-  LOG_DEBUG("compat_mode_", K(ret), K(compat_mode_), K(lbt()));
+
 
   MAKE_TENANT_SWITCH_SCOPE_GUARD(tenant_guard);
   ObInnerSqlWaitGuard guard(is_inner_session(), inner_sql_di_, &session_);
@@ -249,7 +249,7 @@ int ObInnerSQLResult::next()
   ObInnerSqlWaitGuard guard(is_inner_session(), inner_sql_di_, &session_);
   ACTIVE_SESSION_FLAG_SETTER_GUARD(in_sql_execution);
   ObInterruptCheckerGuard interrupt_guard(interrupt_checker_);
-  LOG_DEBUG("compat_mode_", K(ret), K(compat_mode_), K(lbt()));
+
   if (!opened_) {
     ret = OB_NOT_INIT;
     LOG_WARN("not opened", K(ret));
@@ -382,7 +382,7 @@ int ObInnerSQLResult::find_idx(const char *col_name, int64_t &idx) const
       } else {                                                                                \
         const ObObj &obj = row_->cells_[idx];                                                 \
         if (OB_FAIL(check_extend_value(obj))) {                                               \
-          LOG_DEBUG("check extend value failed", K(ret));                                     \
+                                     \
         } else if (OB_FAIL(obj.obj_name(val))) {                                              \
           LOG_WARN("get "#type" value from obj failed", K(ret), K(obj), K(obj.get_meta().get_type()), K(col_idx), K_(row)); \
         }                                                                                     \
@@ -422,7 +422,7 @@ int ObInnerSQLResult::get_timestamp(const int64_t col_idx, const common::ObTimeZ
     } else {
       const ObObj &obj = row_->cells_[idx];
       if (OB_FAIL(check_extend_value(obj))) {
-        LOG_DEBUG("check extend value failed", K(ret));
+
       } else {
         val = obj.get_timestamp();
       }
@@ -491,7 +491,7 @@ int ObInnerSQLResult::get_number_impl(const int64_t col_idx, number::ObNumber &r
     } else {
       const ObObj &obj = row_->cells_[idx];
       if (OB_FAIL(check_extend_value(obj))) {
-        LOG_DEBUG("check extend value failed", K(ret));
+
       } else if (obj.is_decimal_int()) {
         if (OB_FAIL(wide::to_number(obj.get_decimal_int(), obj.get_int_bytes(), obj.get_scale(),
                                     mem_context_->get_arena_allocator(), ret_nmb))) {
@@ -732,7 +732,7 @@ int ObInnerSQLResult::get_obj(const int64_t col_idx, const common::ObObj *&resul
     } else {
       const ObObj &obj = row_->cells_[idx];
       if (OB_FAIL(check_extend_value(obj))) {
-        LOG_DEBUG("check extend value failed", K(ret));
+
       } else {
         result = &obj;
       }
@@ -748,7 +748,7 @@ int ObInnerSQLResult::print_info() const
     ret = OB_NOT_INIT;
     LOG_WARN("not opened", K(ret));
   } else {
-    LOG_INFO("result", K_(result_set));
+
   }
   return ret;
 }

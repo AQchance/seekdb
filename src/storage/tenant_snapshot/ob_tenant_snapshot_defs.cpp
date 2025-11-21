@@ -76,13 +76,13 @@ int ObTenantSnapshot::load()
         if (OB_FAIL(ls_snapshot->load())) {
           LOG_WARN("fail to load", KR(ret), K(tenant_snapshot_id_), K(ls_id));
         } else {
-          LOG_INFO("ls snapshot load succ", K(tenant_snapshot_id_), K(ls_id));
+
         }
         ls_snapshot_mgr_->revert_ls_snapshot(ls_snapshot);
       }
     }
   }
-  LOG_INFO("tenant snapshot load finished", KR(ret), K(tenant_snapshot_id_));
+
   return ret;
 }
 
@@ -103,7 +103,7 @@ int ObTenantSnapshot::try_start_create_tenant_snapshot_dag(ObArray<ObLSID>& crea
     LOG_WARN("ObTenantSnapshot is not running", KR(ret), KPC(this));
   } else if (has_unfinished_dag_()) {
     ret = OB_EAGAIN;
-    LOG_INFO("ObTenantSnapshot has unfinished dag", KR(ret), KPC(this));
+
   } else if (OB_FAIL(ObTenantSnapshotMetaTable::acquire_tenant_snapshot_svr_info(tenant_snapshot_id_,
                                                                                  svr_info))) {
     if (OB_TENANT_SNAPSHOT_NOT_EXIST == ret) {
@@ -120,7 +120,7 @@ int ObTenantSnapshot::try_start_create_tenant_snapshot_dag(ObArray<ObLSID>& crea
     LOG_WARN("fail to get_creating_ls_id_arr", KR(ret), K(tenant_snapshot_id_), K(svr_info));
   } else if (creating_ls_id_arr.empty()) {
     ret = OB_NO_NEED_UPDATE;
-    LOG_INFO("creating_ls_id_arr is empty", KR(ret), K(tenant_snapshot_id_), K(svr_info));
+
   } else {
     ObTenantSnapshotMetaTable::acquire_tenant_snapshot_trace_id(tenant_snapshot_id_,
                                                                 ObTenantSnapOperation::CREATE,
@@ -156,7 +156,7 @@ int ObTenantSnapshot::try_start_gc_tenant_snapshot_dag(const bool tenant_has_bee
         KR(ret), KPC(this));
   } else if (has_unfinished_dag_()) {
     ret = OB_EAGAIN;
-    LOG_INFO("ObTenantSnapshot has unfinished dag", KR(ret), KPC(this));
+
   } else if (tenant_has_been_dropped) {
     gc_tenant_snapshot = true;
     FLOG_INFO("tenant has been dropped, need gc", KPC(this));
@@ -165,11 +165,11 @@ int ObTenantSnapshot::try_start_gc_tenant_snapshot_dag(const bool tenant_has_bee
     if (OB_TENANT_SNAPSHOT_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
       gc_tenant_snapshot = true;
-      LOG_INFO("tenant snapshot not exist, need gc", K(tenant_snapshot_id_));
+
     }
   } else if (ObTenantSnapStatus::DELETING == svr_info.get_tenant_snap_item().get_status()) {
     gc_tenant_snapshot = true;
-    LOG_INFO("tenant snapshot status is DELETING, need gc", K(tenant_snapshot_id_));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -180,7 +180,7 @@ int ObTenantSnapshot::try_start_gc_tenant_snapshot_dag(const bool tenant_has_bee
                                                gc_ls_id_arr))) {
         LOG_WARN("fail to get_need_gc_ls_snapshot_arr_", KR(ret), K(svr_info));
       } else if (gc_ls_id_arr.count() > 0) {
-        LOG_INFO("ls snapshot need gc", K(gc_ls_id_arr));
+
       }
     }
   }
@@ -223,12 +223,12 @@ int ObTenantSnapshot::execute_gc_tenant_snapshot_dag(const bool gc_tenant_snapsh
   }
   if (OB_SUCC(ret)) {
     if (gc_tenant_snapshot) {
-      LOG_INFO("gc_tenant_snapshot_ with ls_snapshot", K(tenant_snapshot_id_));
+
       if (OB_FAIL(gc_tenant_snapshot_())) {
         LOG_WARN("fail to gc_tenant_snapshot_", KR(ret), KPC(this));
       }
     } else {
-      LOG_INFO("gc_ls_snapshots_ only", K(tenant_snapshot_id_), K(gc_ls_id_arr));
+
       if (OB_FAIL(gc_ls_snapshots_(gc_ls_id_arr))) {
         LOG_WARN("fail to gc_ls_snapshots_", KR(ret), KPC(this));
       }
@@ -324,7 +324,7 @@ int ObTenantSnapshot::finish_gc_tenant_snapshot_dag()
 
 int ObTenantSnapshot::clear_meta_snapshot_()
 {
-  LOG_INFO("clear tenant meta snapshot", KPC(this));
+
 
   int ret = OB_SUCCESS;
   if (meta_existed_) {
@@ -357,10 +357,10 @@ int ObTenantSnapshot::build_tenant_snapshot_meta_()
       LOG_WARN("fail to do ObTenantMetaSnapshotHandler::create_tenant_snapshot", KR(ret), KPC(this));
     } else {
       meta_existed_ = true;
-      LOG_INFO("ObTenantMetaSnapshotHandler::create_tenant_snapshot succ", KPC(this));
+
     }
   } else {
-    LOG_INFO("the tenant snapshot meta already existed", KPC(this));
+
   }
   return ret;
 }
@@ -377,7 +377,7 @@ void ObTenantSnapshot::build_all_ls_snapshots_(const ObArray<ObLSID>& creating_l
     }
   }
 
-  LOG_INFO("build_all_ls_snapshots_ complete");
+
 }
 
 int ObTenantSnapshot::build_one_ls_snapshot_(const ObLSID& creating_ls_id)
@@ -394,7 +394,7 @@ int ObTenantSnapshot::build_one_ls_snapshot_(const ObLSID& creating_ls_id)
     ret = OB_ERR_UNEXPECTED;
     LOG_ERROR("ls_snapshot is unexpected nullptr", KR(ret));
   } else if (ls_snapshot->is_build_finished()) {
-    LOG_INFO("ls_snapshot is already build finished", KR(ret), KPC(this), KPC(ls_snapshot));
+
   } else if (OB_FAIL(build_one_ls_snapshot_meta_(ls_snapshot))) {
     LOG_WARN("fail to build_one_ls_snapshot_meta_", KR(ret), KPC(this), KPC(ls_snapshot));
   }
@@ -464,7 +464,7 @@ void ObTenantSnapshot::report_one_ls_snapshot_build_rlt_(ObLSSnapshot* ls_snapsh
           LOG_WARN("fail to report_create_ls_snapshot_succ_rlt_", KR(ret), K(creating_ls_id));
         }
       } else {
-        LOG_INFO("ls_ret is OB_EAGAIN, which can be retried", KR(ret), K(creating_ls_id));
+
       }
     }
 
@@ -591,7 +591,7 @@ int ObTenantSnapshot::gc_tenant_snapshot_()
     notify_ls_snapshots_tenant_gc_();
   }
 
-  LOG_INFO("gc tenant snapshot finished", KR(ret), KPC(this));
+
   return ret;
 }
 
@@ -720,7 +720,7 @@ int ObTenantSnapshot::destroy()
     } else if (OB_FAIL(destroy_all_ls_snapshots_())) {
       LOG_ERROR("fail to destroy_all_ls_snapshots_", KR(ret), KPC(this));
     } else {
-      LOG_INFO("tenant snapshot destroy succ");
+
     }
     is_inited_ = false;
   }
@@ -771,13 +771,13 @@ int ObTenantSnapshot::inc_clone_ref()
     LOG_WARN("ObTenantSnapshot is not running", KR(ret), KPC(this));
   } else if (has_unfinished_dag_()) {
     ret = OB_EAGAIN;
-    LOG_INFO("ObTenantSnapshot has unfinished dag", KR(ret), KPC(this));
+
   } else if (!meta_existed_) {
     ret = OB_ENTRY_NOT_EXIST;
     LOG_WARN("ObTenantSnapshot meta not existed", KR(ret), KPC(this));
   } else {
     ++clone_ref_;
-    LOG_INFO("ObTenantSnapshot inc clone ref succ", KPC(this));
+
   }
 
   return ret;
@@ -793,7 +793,7 @@ int ObTenantSnapshot::dec_clone_ref()
     LOG_WARN("ObTenantSnapshot clone_ref_ is unexpected value", KR(ret), KPC(this));
   } else {
     --clone_ref_;
-    LOG_INFO("ObTenantSnapshot dec clone ref succ", KPC(this));
+
   }
 
   return ret;
@@ -844,7 +844,7 @@ int ObTenantSnapshot::get_ls_snapshot_tablet_meta_entry(const ObLSID &ls_id,
     if (OB_FAIL(ls_snapshot->get_tablet_meta_entry(tablet_meta_entry))) {
       LOG_WARN("fail to get_tablet_meta_entry", KR(ret), KPC(this));
     } else {
-      LOG_INFO("get_tablet_meta_entry succ", KR(ret), KPC(this), K(tablet_meta_entry));
+
     }
     ls_snapshot_mgr_->revert_ls_snapshot(ls_snapshot);
   }

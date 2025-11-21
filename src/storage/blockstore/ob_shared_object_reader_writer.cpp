@@ -638,7 +638,7 @@ int ObSharedObjectLinkIter::read_next_block(ObSharedObjectReadHandle &shared_obj
     } else {
       cur_ = header.prev_addr_;
     }
-    LOG_DEBUG("get next link block", K(ret), K(head_), K(cur_), K(header));
+
   }
   return ret;
 }

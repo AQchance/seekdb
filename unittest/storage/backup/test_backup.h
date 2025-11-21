@@ -145,7 +145,7 @@ template <class T>
 static bool cmp(const common::ObIArray<T> &lhs_list, const common::ObIArray<T> &rhs_list)
 {
   bool bret = true;
-  LOG_INFO("compare summary", "lhs_count", lhs_list.count(), "rhs_count", rhs_list.count());
+
   if (lhs_list.count() != rhs_list.count()) {
     bret = false;
     LOG_WARN_RET(OB_ERR_UNEXPECTED, "count not match", K(lhs_list.count()), K(rhs_list.count()));

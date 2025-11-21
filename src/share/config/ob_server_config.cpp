@@ -213,7 +213,7 @@ int ObServerMemoryConfig::reload_config(const ObServerConfig& server_config)
   }
   hard_memory_limit_ = phy_mem_size * MAX_PHY_MEM_PERCENTAGE / 100;
   memory_limit_ = MIN(memory_limit, hard_memory_limit_);
-  LOG_INFO("update observer memory config", K_(memory_limit), K_(hard_memory_limit));
+
   return ret;
 }
 
@@ -326,7 +326,7 @@ int ObServerConfig::publish_special_config_after_dump()
     ret = OB_INVALID_CONFIG;
     LOG_WARN("Invalid config string", K(ret));
   } else if (!(*pp_item)->dump_value_updated()) {
-    LOG_INFO("config dump value is not set, no need read", K((*pp_item)->spfile_str()));
+
   } else {
     uint64_t new_data_version = 0;
     uint64_t old_data_version = 0;

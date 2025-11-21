@@ -49,7 +49,7 @@ int ObStorageIOUsageRepoter::init()
         LOG_ERROR("IOUsageReportedTask init failed", K(ret));
     } else {
         is_inited_ = true;
-        LOG_INFO("IOUsageRepoter inited success");
+
     }
 
     return ret;

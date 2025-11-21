@@ -82,7 +82,7 @@ public:
 
   int deliver(rpc::ObRequest &req)
   {
-    LOG_INFO("request", K(req));
+
     const ObRpcPacket &pkt = dynamic_cast<const ObRpcPacket&>(req.get_packet());
 
     switch (pkt.get_pcode()) {

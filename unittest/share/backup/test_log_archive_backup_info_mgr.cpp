@@ -58,14 +58,14 @@ int check_piece(ObArray<share::ObBackupPieceInfo> &result, ObArray<share::ObBack
   }
   if (OB_FAIL(ret)) {
     for (int64_t i = 0; i < result.count(); ++i) {
-      LOG_INFO("dump result piece", K(ret), K(i), "result", result.at(i));
+
     }
     for (int64_t i = 0; i < expect.count(); ++i) {
-      LOG_INFO("dump expect piece", K(ret), K(i), "expect", expect.at(i));
+
     }
   } else {
     for (int64_t i = 0; i < result.count(); ++i) {
-      LOG_INFO("dump result piece", K(ret), K(i), "result", result.at(i));
+
     }
   }
   return ret;

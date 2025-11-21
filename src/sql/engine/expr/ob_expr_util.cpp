@@ -406,7 +406,7 @@ int ObExprUtil::get_mb_str_info(const ObString &str,
           LOG_WARN("byte_num.push_back failed", K(ret), K(byte_num));
         }
       }
-      LOG_DEBUG("get_byte_offset", K(ret), K(str), K(byte_offsets), K(byte_num));
+
     }
   }
   return ret;
@@ -425,7 +425,7 @@ double ObExprUtil::round_double(double val, int64_t dec)
   } else {
     res = dec < 0 ? rint(val_div_tmp) * pow_val : rint(val_mul_tmp) / pow_val;
   }
-  LOG_DEBUG("round double done", K(val), K(dec), K(res));
+
   return res;
 }
 
@@ -450,7 +450,7 @@ uint64_t ObExprUtil::round_uint64(uint64_t val, int64_t dec)
       res = (val - tmp) >= (div / 2) ? tmp + div : tmp;
     }
   }
-  LOG_DEBUG("round int64 done", K(val), K(dec), K(res));
+
   return res;
 }
 
@@ -471,7 +471,7 @@ double ObExprUtil::trunc_double(double val, int64_t dec)
       res = dec < 0 ? ceil(val_div_tmp) * pow_val : ceil(val_mul_tmp) / pow_val;
     }
   }
-  LOG_DEBUG("trunc int64 done", K(val), K(dec), K(res));
+
   return res;
 }
 
@@ -689,7 +689,7 @@ int ObExprUtil::eval_stack_overflow_check(const ObExpr &expr,
   stack_size = std::abs(stack_size);
   char *cur_stack[stack_size];
   if (stack_size > 0) {
-    LOG_DEBUG("cur stack", KP(cur_stack));
+
   }
 
   if (OB_FAIL(SMART_CALL(expr.eval_param_value(ctx)))) {
@@ -736,7 +736,7 @@ int ObExprUtil::get_real_expr_without_cast(const ObExpr *expr, const ObExpr *&ou
     }
     if (OB_SUCC(ret)) {
       out_expr = expr;
-      LOG_DEBUG("get_real_expr_without_cast done", K(*out_expr));
+
     }
   }
   return ret;

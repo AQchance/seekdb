@@ -129,7 +129,7 @@ int ObPxMultiPartSSTableInsertOp::inner_open()
     op_monitor_info_.otherstat_2_value_ = 0;
     op_monitor_info_.otherstat_5_id_ = ObSqlMonitorStatIds::DDL_TASK_ID;
     op_monitor_info_.otherstat_5_value_ = MY_SPEC.plan_->get_ddl_task_id();
-    LOG_INFO("update table context", K(MY_SPEC.ins_ctdef_.das_ctdef_.table_id_), K(MY_SPEC.ins_ctdef_.das_ctdef_.index_tid_));
+
     if (OB_SUCC(ret)) {
       ddl_dag_ = ctx_.get_sqc_handler()->get_sub_coord().get_ddl_dag();
       if (OB_ISNULL(ddl_dag_)) {
@@ -315,7 +315,7 @@ int ObPxMultiPartSSTableInsertOp::init_table_autoinc_param(const ObTabletID &tab
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("autoinc param is not valid", K(ret), K(autoinc_param));
     }
-    LOG_TRACE("init table level autoinc param", K(autoinc_param));
+
   }
   return ret;
 }
@@ -517,7 +517,7 @@ int ObPxMultiPartSSTableInsertOp::check_need_idempotence()
           need_idempotent_doc_id_ = !data_table_schema->is_table_without_pk();
         }
       }
-      LOG_TRACE("check need idempotent doc id or table autoinc", K(need_idempotent_doc_id_), K(need_idempotent_table_autoinc_), K(MY_SPEC.plan_->get_ddl_table_id()));
+
     }
   }
   return ret;
@@ -717,7 +717,7 @@ int ObPxMultiPartSSTableInsertOp::get_or_create_heap_writer(const ObTabletID &ta
         } else if (OB_FAIL(static_cast<ObHeapCsSliceWriter *>(slice_writer)->init(write_param, parallel_count, tablet_autoinc_column_idx_, direct_write_macro_block, max_batch_size, need_idempotent_tablet_autoinc_))) {
           LOG_WARN("init tablet writer failed", K(ret), K(tablet_id), K(slice_idx), K(parallel_count), K(tablet_autoinc_column_idx_), K(max_batch_size));
         } else {
-          LOG_TRACE("init heap cs slice writer", K(ret), KPC(slice_writer));
+
         }
       } else {
         if (OB_ISNULL(slice_writer = OB_NEWx(ObHeapRsSliceWriter, &allocator_))) {
@@ -726,7 +726,7 @@ int ObPxMultiPartSSTableInsertOp::get_or_create_heap_writer(const ObTabletID &ta
         } else if (OB_FAIL(static_cast<ObHeapRsSliceWriter *>(slice_writer)->init(write_param, parallel_count, tablet_autoinc_column_idx_, need_idempotent_tablet_autoinc_))) {
           LOG_WARN("init tablet writer failed", K(ret), K(tablet_id), K(slice_idx), K(parallel_count), K(tablet_autoinc_column_idx_));
         } else {
-          LOG_TRACE("init heap rs slice writer", K(ret), KPC(slice_writer));
+
         }
       }
       if (OB_SUCC(ret)) {

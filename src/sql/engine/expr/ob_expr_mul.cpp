@@ -299,7 +299,7 @@ int ObExprMul::mul_double(ObObj &res,
       LOG_WARN("double out of range", K(ret), K(left), K(right), K(res));
       res.set_null();
     }
-    LOG_DEBUG("succ to mul double", K(left), K(right));
+
   }
   UNUSED(allocator);
   UNUSED(scale);
@@ -320,7 +320,7 @@ int ObExprMul::mul_double_no_overflow(ObObj &res,
     double left_d = left.get_double();
     double right_d = right.get_double();
     res.set_double(left_d * right_d);
-    LOG_DEBUG("succ to mul double", K(left), K(right));
+
   }
   return ret;
 }
@@ -634,7 +634,7 @@ int ObExprMul::mul_number(EVAL_FUNC_ARG_DECL)
 
 int ObExprMul::mul_number_batch(BATCH_EVAL_FUNC_ARG_DECL)
 {
-  LOG_DEBUG("mul_number_batch begin");
+
   int ret = OB_SUCCESS;
   ObDatumVector l_datums;
   ObDatumVector r_datums;
@@ -690,7 +690,7 @@ int ObExprMul::mul_number_batch(BATCH_EVAL_FUNC_ARG_DECL)
       }
     }
   }
-  LOG_DEBUG("mul_number_batch done");
+
   return ret;
 
 }
@@ -1190,7 +1190,7 @@ int ObExprMul::cg_expr(ObExprCGCtx &op_cg_ctx,
 
   rt_expr.inner_functions_ = NULL;
   rt_expr.may_not_need_raw_check_ = false;
-  LOG_DEBUG("arrive here cg_expr", K(ret), K(rt_expr));
+
   switch (rt_expr.datum_meta_.type_) {
     case ObIntType: {
       SET_MUL_FUNC_PTR(mul_int_int);

@@ -395,7 +395,7 @@ TEST_F(TestLocationService, test_clear_tablet_ls_cache)
   ASSERT_EQ(OB_SUCCESS, tablet_ls_service->clear_expired_cache());
   cache_size = tablet_ls_service->inner_cache_.size();
   ASSERT_TRUE(cache_size_before_renew == cache_size);
-  LOG_INFO("TEST: clear 1 million cache", "cost_time", ObTimeUtility::current_time() - start_time); // cost_time = 1.67s
+ // cost_time = 1.67s
 }
 
 TEST_F(TestLocationService, test_clear_ls_location)

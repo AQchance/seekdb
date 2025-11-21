@@ -871,9 +871,9 @@ int ObTenantStorageMetaPersister::ss_remove_tablet_(
     if (OB_EMPTY_RESULT == ret) {
       ret = OB_SUCCESS;
       gc_type = GCTabletType::CreateAbort;
-      STORAGE_LOG(INFO, "tablet_status is not commit", KR(ret), K(ls_id), K(tablet_id));
+
     } else {
-      STORAGE_LOG(WARN, "failed to get CreateDeleteMdsUserData", KR(ret), K(ls_id), K(tablet_id));
+
     }
   } else if (ObTabletStatus::DELETED == data.tablet_status_) {
     gc_type = GCTabletType::DropTablet;

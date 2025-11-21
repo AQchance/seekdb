@@ -40,7 +40,7 @@ inline int ObCSEncodingPool<EncodingItem>::alloc(T *&item)
     void *p = pool_.alloc();
     if (NULL == p) {
       ret = common::OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "allocate memory failed", K(ret));
+
     } else {
       item = new (p) T();
     }
@@ -96,10 +96,10 @@ int ObCSEncodingAllocator<EncodingItem>::init()
         || OB_FAIL(add_pool(&int_dict_pool_))
         || OB_FAIL(add_pool(&str_dict_pool_))
         || OB_FAIL(add_pool(&semistruct_pool_))) {
-      STORAGE_LOG(WARN, "add_pool failed", K(ret));
+
     } else if (pool_cnt_ != size_index_) {
       ret = common::OB_INNER_STAT_ERROR;
-      STORAGE_LOG(WARN, "pool_cnt and size_index not same", K(ret), K_(pool_cnt), K_(size_index));
+
     } else if (pool_cnt_ != ObCSColumnHeader::MAX_TYPE) {
       ret = common::OB_INNER_STAT_ERROR;
       STORAGE_LOG(WARN, "not all encoder has pool", K(ret), K_(pool_cnt),
@@ -119,11 +119,11 @@ inline int ObCSEncodingAllocator<EncodingItem>::alloc(T *&item)
   item = NULL;
   if (OB_UNLIKELY(!inited_)) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else {
     // performance critical, don't check params
     if (OB_FAIL(pools_[T::type_]->alloc(item))) {
-      STORAGE_LOG(WARN, "allocate failed", K(ret));
+
     }
   }
   return ret;
@@ -145,7 +145,7 @@ int ObCSEncodingAllocator<EncodingItem>::add_pool(Pool *pool)
   int ret = common::OB_SUCCESS;
   if (NULL == pool) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "pool is null", K(ret));
+
   } else if (pool_cnt_ >= ObCSColumnHeader::MAX_TYPE) {
     ret = common::OB_SIZE_OVERFLOW;
     STORAGE_LOG(WARN, "pool array size overflow", K(ret), K_(pool_cnt),

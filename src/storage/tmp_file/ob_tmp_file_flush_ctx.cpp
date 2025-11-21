@@ -33,7 +33,7 @@ void ObTmpFileWriteBlockTask::runTimerTask()
   int ret = OB_SUCCESS;
 
   if (OB_FAIL(flush_task_.write_one_block())) {
-    STORAGE_LOG(WARN, "fail to async write blocks", KR(ret), K(flush_task_));
+
   }
 
   flush_task_.atomic_set_write_block_ret_code(ret);
@@ -132,7 +132,7 @@ int ObTmpFileBatchFlushContext::prepare_flush_ctx(
   if (OB_FAIL(ret)) {
     flush_failed_array_.reset();
     iter_.reset();
-    LOG_INFO("failed to prepare flush ctx, rollback ctx", KR(ret), KPC(this));
+
   }
   return ret;
 }
@@ -170,7 +170,7 @@ int ObTmpFileBatchFlushContext::clear_flush_ctx(ObTmpFileFlushPriorityManager &p
 
   if (OB_FAIL(ret)) {
   } else if (flush_seq_ctx_.prepare_finished_cnt_ == flush_seq_ctx_.create_flush_task_cnt_) {
-    LOG_DEBUG("reset flush_seq_ctx_", KPC(this));
+
     flush_seq_ctx_.prepare_finished_cnt_ = 0;
     flush_seq_ctx_.create_flush_task_cnt_ = 0;
     flush_seq_ctx_.flush_sequence_ += 1;
@@ -217,7 +217,7 @@ int ObTmpFileBatchFlushContext::RemoveFileOp::operator () (hash::HashMapPair<int
       } else if (OB_FAIL(file.remove_meta_flush_node())) {
         LOG_ERROR("fail to remove file meta node from flush priority mgr", KR(ret), K(file));
       } else {
-        LOG_DEBUG("succ to remove flush node from flush priority mgr", K(file));
+
       }
     }
   }
@@ -475,7 +475,7 @@ int ObTmpFileFlushTask::wait_macro_block_handle()
   } else {
     atomic_set_ret_code(OB_SUCCESS);
     atomic_set_io_finished(true);
-    LOG_DEBUG("macro block handle io finished", KR(ret), KPC(this));
+
   }
   return ret;
 }

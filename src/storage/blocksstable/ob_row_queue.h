@@ -84,7 +84,7 @@ public:
   void print_rows()
   {
     for (int64_t i = 0; i < rows_.count(); i++) {
-      STORAGE_LOG_RET(WARN, common::OB_SUCCESS, "print rows of row queue", K(i), KPC(rows_.at(i)));
+
     }
   }
   TO_STRING_KV(K_(col_cnt),

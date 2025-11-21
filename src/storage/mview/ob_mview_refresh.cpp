@@ -126,9 +126,9 @@ int ObMViewRefresher::refresh()
     }
     if (OB_ERR_TASK_SKIPPED == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("skip this refresh", K(ret), K(refresh_param_));
+
     }
-    LOG_INFO("mview refresh finish", KR(ret), K(refresh_param_));
+
   }
 #ifdef ERRSIM
   if (OB_SUCC(ret) && OB_FAIL(ERRSIM_MVIEW_REFRESH)) {
@@ -283,7 +283,7 @@ int ObMViewRefresher::prepare_for_refresh()
                        mview_refresh_scn_range, base_table_scn_range))) {
       LOG_WARN("fail to calc scn range", K(ret));
     }
-    LOG_INFO("calc mview scn range", K(mview_refresh_scn_range), K(base_table_scn_range));
+
   }
   // check refresh type
   if (OB_SUCC(ret)) {
@@ -326,7 +326,7 @@ int ObMViewRefresher::prepare_for_refresh()
                  OB_ERR_MVIEW_MISSING_DEPENDENCE == ret) {
         refresh_type = ObMVRefreshType::COMPLETE;
         ret = OB_SUCCESS;
-        LOG_INFO("try complete refresh when dependents changed", K(ret));
+
       } else {
         refresh_type = ObMVRefreshType::FAST; // for refresh_stats record
         LOG_WARN("fail to check check fast refreshable", KR(ret));
@@ -347,7 +347,7 @@ int ObMViewRefresher::prepare_for_refresh()
         } else if (OB_FAIL(refresh_ctx_->refresh_sqls_.push_back(fast_refresh_sql))) {
           LOG_WARN("fail to push back", KR(ret));
         }
-        LOG_INFO("print fast refresh sql", K(fast_refresh_sql));
+
       }
     }
   }
@@ -497,7 +497,7 @@ int ObMViewRefresher::check_fast_refreshable_(
                     K(mlog_info), K(check_scn));
           }
         }
-        LOG_DEBUG("check fast refresh", K(ret), K(mlog_info), K(refresh_ctx_->mview_info_));
+
       }
     }
   }
@@ -556,7 +556,7 @@ int ObMViewRefresher::complete_refresh()
       } else if (OB_FAIL(GCTX.rs_mgr_->get_master_root_server(rs_addr))) {
         LOG_WARN("fail to rootservice address", KR(ret));
       } else {
-        LOG_INFO("mview complete refresh start", K(rs_addr), K(arg));
+
         if (OB_FAIL(GCTX.rs_rpc_proxy_->to(rs_addr)
                       .timeout(timeout_ctx.get_timeout())
                       .mview_complete_refresh(arg, res))) {
@@ -565,7 +565,7 @@ int ObMViewRefresher::complete_refresh()
                                                               GCTX.rs_rpc_proxy_))) {
           LOG_WARN("fail to wait mview complete refresh finish", KR(ret), K(arg));
         } else {
-          LOG_INFO("mview complete refresh success", K(arg), K(res));
+
         }
       }
     }
@@ -656,7 +656,7 @@ int ObMViewRefresher::fast_refresh()
       LOG_WARN("fail to execute write", KR(ret), K(fast_refresh_sql));
     }
     const int64_t exec_end_time = ObTimeUtil::current_time();
-    LOG_INFO("mview_refresh", K(tenant_id), K(mview_id), K(parallelism), K(i), K(fast_refresh_sql), "time", exec_end_time - exec_start_time);
+
     // collect stmt stats
     if (OB_SUCC(ret) && nullptr != refresh_stats_collection_) {
       const int64_t execution_time = (exec_end_time - exec_start_time) / 1000 / 1000;
@@ -848,7 +848,7 @@ int ObMViewRefresher::calc_scn_range(
   uint64_t base_table_left_bound = OB_INVALID_SCN_VAL;
   if (!mview_info.is_valid() || !current_scn.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    LOG_INFO("invalid argument", K(mview_info), K(current_scn));
+
   } else {
     // compute mview scn range and base table scn range
     if (mview_info.get_is_synced()) {

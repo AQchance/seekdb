@@ -199,7 +199,7 @@ int ObExprRegexpReplace::cg_expr(ObExprCGCtx &op_cg_ctx, const ObRawExpr &raw_ex
       rt_expr.extra_ = (!const_text && const_pattern) ? 1 : 0;
       const bool is_use_hs = op_cg_ctx.session_->get_enable_hyperscan_regexp_engine();
       rt_expr.eval_func_ = is_use_hs ? eval_hs_regexp_replace : eval_regexp_replace;
-      LOG_DEBUG("regexp reeplace expr cg", K(const_text), K(const_pattern), K(rt_expr.extra_));
+
       if (rt_expr.arg_cnt_ >= 2 && rt_expr.args_[0]->is_batch_result()) {
         bool vector_flag = true;
         for (int i = 1; i < rt_expr.arg_cnt_; i++) {
@@ -844,7 +844,7 @@ int ObExprRegexpReplace::regexp_replace(const ObExpr &expr, ObEvalCtx &ctx, ObDa
       } else {
         expr_datum.set_string(out.ptr(), out.length());
       }
-      LOG_DEBUG("replace result", K(ObString(expr_datum.len_, expr_datum.ptr_)));
+
     } else { // output is text type
       ObTextStringDatumResult text_res(expr.datum_meta_.type_, &expr, &ctx, &expr_datum);
       if (OB_FAIL(ObExprUtil::convert_string_collation_for_regexp(res_replace,

@@ -37,7 +37,7 @@ namespace tablelock
 
 int ObLockTable::restore_lock_table_(ObITable &sstable)
 {
-  LOG_INFO("ObLockTable::restore_lock_table", K(sstable));
+
 
   int ret = OB_SUCCESS;
   ObStoreRowIterator *row_iter = nullptr;
@@ -95,7 +95,7 @@ int ObLockTable::restore_lock_table_(ObITable &sstable)
                                     row_iter))) {
     LOG_WARN("failed to scan trans table", K(ret));
   } else if (NULL == row_iter) {
-    LOG_INFO("NULL == row_ite, do nothing");
+
   } else if (OB_FAIL(get_lock_memtable(handle))) {
     LOG_WARN("get_lock_memtable_handle fail.", KR(ret));
   } else if (OB_FAIL(handle.get_lock_memtable(memtable))) {
@@ -113,7 +113,7 @@ int ObLockTable::restore_lock_table_(ObITable &sstable)
     }
 
     if (OB_ITER_END == ret) {
-      LOG_INFO("reload lock table in memory OK", KR(ret), K(sstable));
+
       ret = OB_SUCCESS;
     }
   }
@@ -154,7 +154,7 @@ int ObLockTable::recover_(const blocksstable::ObDatumRow &row)
   } else if (OB_FAIL(memtable->recover_obj_lock(store_info))) {
     LOG_WARN("failed to recover_obj_lock", K(ret), K(store_info));
   }
-  LOG_INFO("ObLockTable::recover_ finished", K(ret), K(store_info));
+
 
   return ret;
 }
@@ -258,7 +258,7 @@ int ObLockTable::offline()
 {
   int ret = OB_SUCCESS;
   if (OB_NOT_NULL(parent_)) {
-    LOG_INFO("lock table offline", K(parent_->get_ls_id()));
+
   }
 
   // release all lock memtables before clean cache
@@ -266,7 +266,7 @@ int ObLockTable::offline()
     if (OB_FAIL(lock_mt_mgr_->release_memtables())) {
       if (OB_NOT_INIT == ret) {
         ret = OB_SUCCESS;
-        LOG_INFO("modify ret code to success because lock memtable mgr is not init and do not need offline.");
+
       } else {
         LOG_WARN("release all memtable in lock memtable mgr failed", KR(ret), KPC(lock_mt_mgr_));
       }
@@ -287,13 +287,13 @@ int ObLockTable::online()
   ObTabletMemberWrapper<ObTabletTableStore> table_store_wrapper;
   ObLSTabletService *ls_tablet_svr = nullptr;
   if (OB_NOT_NULL(parent_)) {
-    LOG_INFO("online lock table", K(parent_->get_ls_id()));
+
   }
   
   CreateMemtableArg arg;
   if (OB_ISNULL(ls_tablet_svr = parent_->get_tablet_svr())) {
     ret = OB_ERR_UNEXPECTED;
-    LOG_INFO("get ls tablet svr failed", K(ret));
+
   } else if (OB_FAIL(ls_tablet_svr->get_tablet(LS_LOCK_TABLET,
                                                handle))) {
     LOG_WARN("get tablet failed", K(ret));
@@ -451,7 +451,7 @@ int ObLockTable::check_lock_conflict(
         LOG_WARN("lock failed.", K(ret), K(lock_op));
       }
     }
-    LOG_DEBUG("finish check_lock_conflict", K(ret), K(param), K(ctx));
+
   }
   return ret;
 }
@@ -486,7 +486,7 @@ int ObLockTable::check_lock_conflict(
   } else {
     // do nothing
   }
-  LOG_DEBUG("finish check lock conflict", K(ret), K(lock_op));
+
   return ret;
 }
 
@@ -533,7 +533,7 @@ int ObLockTable::lock(
         LOG_WARN("lock failed.", K(ret), K(lock_op));
       }
     }
-    LOG_DEBUG("finish lock", K(ret), K(param), K(ctx));
+
   }
   return ret;
 }
@@ -576,7 +576,7 @@ int ObLockTable::unlock(
       LOG_WARN("unlock failed.", K(ret), K(unlock_op));
     }
   }
-  LOG_DEBUG("ObLockTable::unlock ", K(ret), K(param), K(ctx));
+
   return ret;
 }
 
@@ -803,7 +803,7 @@ int ObLockTable::add_lock_into_queue(storage::ObStoreCtx &ctx, const ObLockParam
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("unexpected create ts", K(ret), K(lock_op));
     }
-    LOG_DEBUG("add priority task", K(ret), K(lock_op));
+
   }
   return ret;
 }

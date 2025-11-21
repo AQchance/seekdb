@@ -108,7 +108,7 @@ int ObSrvNetworkFrame::init()
   } else {
     opts.enable_tcp_keepalive_ = 0;
   }
-  LOG_INFO("io thread connection negotiation enabled!");
+
   negotiation_enable = 1;
 
   deliver_.set_host(gctx_.self_addr());
@@ -163,7 +163,7 @@ int ObSrvNetworkFrame::start()
       int numa_node_count = AFFINITY_CTRL.get_num_nodes();
       if (sql_net_thread_count < numa_node_count) {
         sql_net_thread_count = common::upper_align(sql_net_thread_count, numa_node_count);
-        LOG_INFO("sql nio net thread count adjusted", K(sql_net_thread_count));
+
       }
     }
     if (OB_FAIL(obmysql::global_sql_nio_server->start(
@@ -188,16 +188,16 @@ int ObSrvNetworkFrame::reload_config()
 
   if (GCONF._enable_easy_keepalive) {
     enable_easy_keepalive = 1;
-    LOG_INFO("easy keepalive enabled.");
+
   } else {
-    LOG_INFO("easy keepalive disabled.");
+
   }
 
   if (GCONF.enable_tcp_keepalive) {
     enable_tcp_keepalive = 1;
-    LOG_INFO("tcp keepalive enabled.");
+
   } else {
-    LOG_INFO("tcp keepalive disabled.");
+
   }
 
   if (OB_FAIL(update_tcp_keepalive_parameters_for_sql_nio_server(enable_tcp_keepalive,
@@ -364,7 +364,7 @@ int ObSrvNetworkFrame::reload_ssl_config()
       LOG_ERROR("locality manager should not be null", K(ret), KP(gctx_.locality_manager_));
     } else if (FALSE_IT(gctx_.locality_manager_->set_ssl_invited_nodes(invited_nodes))) {
     } else if (last_ssl_info_hash_ == new_hash_value) {
-      LOG_INFO("no need reload_ssl_config", K(new_hash_value));
+
     } else {
       bool use_bkmi = false;
       bool use_sm = false;
@@ -394,7 +394,7 @@ int ObSrvNetworkFrame::reload_ssl_config()
               if (OB_FAIL(ob_ssl_load_config(OB_SSL_CTX_ID_SQL_NIO, ssl_config))) {
                 LOG_WARN("create ssl ctx failed!", K(ret));
               } else {
-                LOG_INFO("create ssl ctx success!", K(use_bkmi), K(use_sm));
+
               }
             }
           }
@@ -404,7 +404,7 @@ int ObSrvNetworkFrame::reload_ssl_config()
   } else {
     last_ssl_info_hash_ = UINT64_MAX;
     GCTX.ssl_key_expired_time_ =  0;
-    LOG_INFO("finish reload_ssl_config, close ssl");
+
   }
   return ret;
 }

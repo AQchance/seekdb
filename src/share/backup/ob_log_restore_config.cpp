@@ -255,7 +255,7 @@ int ObLogRestoreSourceServiceConfigParser::check_before_update_inner_config(
       LOG_WARN("check_begin_lsn failed", K(tenant_id_), K(service_attr_.user_.tenant_id_));
     } else {
       compat_mode = service_attr_.user_.mode_;
-      LOG_INFO("check_before_update_inner_config success", K(tenant_id_), K(service_attr_), K(compat_mode));
+
     }
   }
   return ret;
@@ -344,7 +344,7 @@ int ObLogRestoreSourceServiceConfigParser::
         primary_tenant_id = service_attr_.user_.tenant_id_;
         primary_cluster_id = service_attr_.user_.cluster_id_;
       }
-      LOG_INFO("get primary server info", K(primary_tenant_id), K(primary_cluster_id), K(addr_list));
+
     }
   }
   return ret;

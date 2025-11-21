@@ -129,7 +129,7 @@ int ObRLEEncoder::get_encoding_store_meta_need_space(int64_t &need_size) const
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(dict_encoder_.get_encoding_store_meta_need_space(need_size))) {
-    STORAGE_LOG(WARN, "fail to get_encoding_store_meta_need_space", K(ret), K(dict_encoder_));
+
   } else {
     need_size = need_size + sizeof(ObRLEMetaHeader) + count_ * (row_id_byte_ + ref_byte_);
   }
@@ -182,7 +182,7 @@ int ObRLEEncoder::store_meta(ObBufferWriter &buf_writer)
         }
       }
     }
-    LOG_DEBUG("test rle meta header", K_(column_index), K_(*rle_meta_header));
+
   }
   return ret;
 }

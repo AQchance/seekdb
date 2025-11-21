@@ -169,11 +169,11 @@ int ObCompactionBuffer::init(const int64_t capacity, const int64_t reserve_size)
 
   if (OB_UNLIKELY(is_inited_)) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "micro buffer writer is inited", K(ret), K(capacity_));
+
   } else if (OB_UNLIKELY(reserve_size < 0 || capacity > MAX_DATA_BUFFER_SIZE
       || capacity < reserve_size)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(capacity), K(reserve_size));
+
   } else {
     capacity_ = capacity;
     len_ = 0;
@@ -185,7 +185,7 @@ int ObCompactionBuffer::init(const int64_t capacity, const int64_t reserve_size)
 
   if (OB_SUCC(ret)) {
     if(OB_FAIL(reserve(reserve_size))) {
-      STORAGE_LOG(WARN, "failed to reserve", K(ret), K(reserve_size));
+
     } else {
       default_reserve_ = reserve_size;
       is_inited_ = true;
@@ -222,7 +222,7 @@ void ObCompactionBuffer::reuse()
       void *buf = nullptr;
       if (OB_ISNULL(buf = allocator_.alloc(default_reserve_))) {
         int ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "failed to reclaim memory", K(ret), K(default_reserve_));
+
       } else {
         allocator_.free(data_);
         buffer_size_ = default_reserve_;
@@ -242,7 +242,7 @@ int ObCompactionBuffer::expand(const int64_t size)
 
   if (OB_UNLIKELY(capacity_ <= buffer_size_ || size > capacity_)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(size), K(buffer_size_), K(capacity_));
+
   } else {
     int64_t expand_size = buffer_size_ * 2;
     while (expand_size < size) {
@@ -250,7 +250,7 @@ int ObCompactionBuffer::expand(const int64_t size)
     }
     expand_size = MIN(expand_size, capacity_);
     if (OB_FAIL(reserve(expand_size))) {
-      STORAGE_LOG(WARN, "fail to reserve", K(ret), K(expand_size));
+
     }
   }
 
@@ -263,14 +263,14 @@ int ObCompactionBuffer::reserve(const int64_t size)
   
   if (OB_UNLIKELY(size < 0 || size > capacity_)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(size), K(capacity_));
+
   } else if (size <= buffer_size_) {//do nothing
   } else {
     void* buf = nullptr;
     const int64_t alloc_size = MAX(size, MIN_BUFFER_SIZE);
     if (OB_ISNULL(buf = allocator_.alloc(alloc_size))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed to alloc memory", K(ret), K(alloc_size));
+
     } else if (data_ != nullptr) {
       has_expand_ = true;
       MEMCPY(buf, data_, len_);
@@ -294,7 +294,7 @@ int ObCompactionBuffer::ensure_space(const int64_t append_size)
     ret = OB_BUF_NOT_ENOUGH;
   } else if (len_ + append_size > buffer_size_) {
     if (OB_FAIL(expand(len_ + append_size))) {
-      STORAGE_LOG(WARN, "failed to expand size", K(ret), K(len_), K(append_size));
+
     }
   } 
 
@@ -307,10 +307,10 @@ int ObCompactionBuffer::write_nop(const int64_t size, bool is_zero)
 
   if (OB_UNLIKELY(size < 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(size), K(len_), K(capacity_));
+
   } else if (OB_FAIL(ensure_space(size))) {
     if (ret != OB_BUF_NOT_ENOUGH) {
-      STORAGE_LOG(WARN, "failed to ensure space", K(ret), K(size));
+
     }
   } else {
     if (is_zero) {
@@ -328,10 +328,10 @@ int ObCompactionBuffer::write(const void *buf, int64_t size)
 
   if (OB_UNLIKELY(buf == nullptr || size < 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(buf), K(size), K(len_), K(capacity_));
+
   } else if (OB_FAIL(ensure_space(size))) {
     if (ret != OB_BUF_NOT_ENOUGH) {
-      STORAGE_LOG(WARN, "failed to ensure space", K(ret), K(size));
+
     }
   } else {
     MEMCPY(data_ + len_, buf, size);
@@ -347,7 +347,7 @@ int ObCompactionBuffer::advance(const int64_t size)
 
   if (OB_UNLIKELY(size < 0 || len_ + size > buffer_size_)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(size), K(len_), K(buffer_size_));
+
   } else {
     len_ += size;
   }
@@ -360,7 +360,7 @@ int ObCompactionBuffer::set_length(const int64_t len)
 
   if (OB_UNLIKELY(len > buffer_size_)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(len), K(len_), K(buffer_size_));
+
   } else {
     len_ = len;
   }

@@ -224,7 +224,7 @@ TEST_F(TestDictLargeVarchar, test_dict_large_varchar)
   ASSERT_EQ(OB_SUCCESS, read_row.init(full_column_cnt_));
   ASSERT_EQ(OB_SUCCESS, decoder.init(micro_data, nullptr));
   ASSERT_EQ(OB_SUCCESS, decoder.get_row(0, read_row));
-  STORAGE_LOG(DEBUG, "read row", K(read_row));
+
 
   ASSERT_EQ(row.storage_datums_[3].len_, read_row.storage_datums_[3].len_);
   ASSERT_TRUE(ObDatum::binary_equal(row.storage_datums_[3], read_row.storage_datums_[3]));
@@ -294,12 +294,12 @@ TEST_F(TestColumnEqualExceptionList, test_column_equal_ext_offset_overflow)
   ASSERT_EQ(row_cnt, encoder.get_row_count());
   const int64_t encoder_checksum = encoder.get_micro_block_checksum();
 
-  STORAGE_LOG(INFO, "before build block", K(encoder_checksum), K(row_cnt), K(encoder.get_row_count()));
+
 
   char *buf = nullptr;
   int64_t size = 0;
   ASSERT_EQ(OB_SUCCESS, encoder.build_block(buf, size));
-  STORAGE_LOG(INFO, "after build block", KPC(encoder.encoders_[0]), KPC(encoder.encoders_[1]), KPC(encoder.encoders_[2]));
+
   ASSERT_EQ(encoder.encoders_[1]->get_type(), ObColumnHeader::COLUMN_EQUAL);
   ObColumnEqualEncoder *ce_encoder = static_cast<ObColumnEqualEncoder *>(encoder.encoders_[1]);
   ASSERT_EQ(true, ce_encoder->base_meta_writer_.meta_.is_var_exc());
@@ -315,7 +315,7 @@ TEST_F(TestColumnEqualExceptionList, test_column_equal_ext_offset_overflow)
 
   for (int64_t i = 0; i < row_cnt; ++i) {
     ASSERT_EQ(OB_SUCCESS, decoder.get_row(i, read_row));
-    STORAGE_LOG(DEBUG, "read row", K(read_row));
+
     for (int64_t j = 0; j < column_cnt_; ++j) {
       const bool is_invalid_datum = (read_row.storage_datums_[j].is_null() && read_row.storage_datums_[j].len_ != 0);
       ASSERT_EQ(false, is_invalid_datum);
@@ -394,7 +394,7 @@ TEST_F(TestStringDiffNullLength, test_string_diff_null_length)
   int64_t size = 0;
   ASSERT_EQ(OB_SUCCESS, encoder.build_block(buf, size));
 
-  LOG_INFO("show sizes", K(encoder.length_), K(size));
+
 
   ObMicroBlockData micro_data(buf, size);
   ObMicroBlockDecoder decoder;

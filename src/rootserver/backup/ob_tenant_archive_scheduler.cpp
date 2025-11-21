@@ -453,7 +453,7 @@ int ObArchiveHandler::open_archive_mode()
   } else if (OB_FAIL(archive_table_op_.open_archive_mode(*sql_proxy_))) {
     LOG_WARN("failed to open archive mode", K(ret), K_(tenant_id));
   } else {
-    LOG_INFO("open archive mode", K_(tenant_id));
+
   }
 
   ROOTSERVICE_EVENT_ADD("log_archive", "open_archive_mode", "tenant_id", tenant_id_,
@@ -489,7 +489,7 @@ int ObArchiveHandler::close_archive_mode()
   } else if (OB_FAIL(archive_table_op_.close_archive_mode(*sql_proxy_))) {
     LOG_WARN("failed to close archive mode", K(ret), K_(tenant_id));
   } else {
-    LOG_INFO("close archive mode", K_(tenant_id));
+
   }
 
   ROOTSERVICE_EVENT_ADD("log_archive", "close_archive_mode", "tenant_id", tenant_id_,
@@ -590,7 +590,7 @@ int ObArchiveHandler::enable_archive(const int64_t dest_no)
         LOG_WARN("notify failed", K(tmp_ret), K(new_round_attr));
       }
     }
-    LOG_INFO("enable archive", K(dest_no), K(new_round_attr));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -626,7 +626,7 @@ int ObArchiveHandler::disable_archive(const int64_t dest_no)
     if (OB_TMP_FAIL(notify_(new_round_attr))) {
       LOG_WARN("notify failed", K(tmp_ret), K(new_round_attr));
     }
-    LOG_INFO("disable archive", K(dest_no), K(new_round_attr));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -654,7 +654,7 @@ int ObArchiveHandler::defer_archive(const int64_t dest_no)
     if (OB_TMP_FAIL(notify_(new_round_attr))) {
       LOG_WARN("notify failed", K(tmp_ret), K(new_round_attr));
     }
-    LOG_INFO("defer archive", K(dest_no), K(new_round_attr));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -695,7 +695,7 @@ int ObArchiveHandler::checkpoint_(ObTenantArchiveRoundAttr &round_info)
 {
   int ret = OB_SUCCESS;
 
-  LOG_INFO("schedule archive", K(round_info));
+
 
   switch (round_info.state_.status_) {
     case ObArchiveRoundState::Status::STOP:
@@ -772,7 +772,7 @@ int ObArchiveHandler::start_archive_(ObTenantArchiveRoundAttr &round_attr)
     LOG_WARN("notify failed", K(tmp_ret), K(new_round));
   }
 
-  LOG_INFO("beginning archive", K(ret), K(new_round));
+
   return ret;
 }
 
@@ -837,12 +837,12 @@ int ObArchiveHandler::notify_(const ObTenantArchiveRoundAttr &round)
         LOG_WARN("failed to set server_addr in notify_addr_set", K(ret), "ls_id", ls_attr.get_ls_id(), K(leader_addr));
       }
     }
-    LOG_INFO("leader_addr_set to be notified archive:", K(notify_addr_set));
+
     for (hash::ObHashSet<ObAddr>::const_iterator it = notify_addr_set.begin(); it != notify_addr_set.end(); it++) {
       if (OB_TMP_FAIL(rpc_proxy_->to(it->first).notify_archive(arg))) {
         LOG_WARN("failed to notify ls leader archive", K(tmp_ret), K(arg));
       } else {
-        LOG_INFO("succeed to notify ls leader archive", K(arg), K(it->first));
+
       }
     }
   }

@@ -179,7 +179,7 @@ int ObSqlTransControl::explicit_start_trans(ObSQLSessionInfo *session,
              K(ret), K(hint), K(read_only), "session_id", (session ? session->get_server_sid() : 0));
   }
 #ifndef NDEBUG
-  LOG_INFO("start_trans", K(ret), K(tx_id), KPC(session), K(read_only));
+
 #endif
   return ret;
 }
@@ -361,9 +361,9 @@ int ObSqlTransControl::kill_tx(ObSQLSessionInfo *session, int cause)
   if (!session->get_is_deserialized() && session->is_in_transaction()) {
     uint32_t session_id = session->get_server_sid();
     if (cause >= 0) {
-      LOG_INFO("begin to kill tx", "caused_by", ObTxAbortCauseNames::of(cause), K(cause), K(session_id), KPC(session));
+
     } else {
-      LOG_INFO("begin to kill tx", "caused_by", common::ob_error_name(cause), K(cause), K(session_id), KPC(session));
+
     }
     ObTxDesc *tx_desc = session->get_tx_desc();
     uint64_t tx_tenant_id = tx_desc->get_tenant_id();
@@ -374,7 +374,7 @@ int ObSqlTransControl::kill_tx(ObSQLSessionInfo *session, int cause)
       CK(OB_NOT_NULL(txs = MTL_WITH_CHECK_TENANT(ObTransService*, tx_tenant_id)));
       OZ(txs->abort_tx(*tx_desc, cause), *session, tx_desc->get_tx_id());
       // NOTE that the tx_desc is set to NULL in xa case, DO NOT print anything in tx_desc
-      LOG_INFO("kill tx done", K(ret), K(cause), K(session_id), K(tx_id));
+
     }
   }
   return ret;
@@ -1218,7 +1218,7 @@ int ObSqlTransControl::end_stmt(ObExecContext &exec_ctx, const bool rollback, co
             savepoint, stmt_expire_ts, touched_ls, policy);
         // prioritize returning session error code
         if (session->is_terminate(ret)) {
-          LOG_INFO("trans has terminated when end stmt", K(ret), K(tx_id_before_rollback));
+
         }
       }
       // use first occurred error
@@ -1369,7 +1369,7 @@ int ObSqlTransControl::reset_session_tx_state(ObBasicSessionInfo *session,
                                               const uint64_t data_version)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("reset session tx state", KPC(session->get_tx_desc()), K(lbt()));
+
   if (OB_NOT_NULL(session->get_tx_desc())) {
     ObSQLSessionInfo::LockGuard data_lock_guard(session->get_thread_data_lock());
     ObTxDesc &tx_desc = *session->get_tx_desc();

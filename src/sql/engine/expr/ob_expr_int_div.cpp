@@ -387,7 +387,7 @@ int ObExprIntDiv::cg_expr(ObExprCGCtx &op_cg_ctx,
   const ObObjTypeClass right_tc = ob_obj_type_class(right);
 
   rt_expr.inner_functions_ = NULL;
-  LOG_DEBUG("arrive here cg_expr", K(ret), K(rt_expr), K(left), K(right));
+
   if (ObIntTC == left_tc) {
     if (ObIntTC == right_tc) {
       rt_expr.eval_func_ = ObExprIntDiv::div_int_int;

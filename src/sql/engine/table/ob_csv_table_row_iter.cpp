@@ -93,7 +93,7 @@ int ObCSVTableRowIterator::expand_buf()
     state_.data_end_ = new_buf + remain_len;
 
 
-    LOG_DEBUG("extend buf", K(new_buf_len));
+
   }
 
   return ret;
@@ -201,7 +201,7 @@ int ObCSVTableRowIterator::open_next_file()
     if (state_.file_idx_ == 1) {
       // Skip to handle first file
     } else {
-      LOG_TRACE("print lastest csv file state infos", K(ret), K(state_));
+
       state_.duration_ = 0;
     }
 
@@ -252,12 +252,12 @@ int ObCSVTableRowIterator::open_next_file()
         OZ (ob_write_string(arena_alloc_, full_name.string(), state_.cur_file_url_));
       }
     }
-    LOG_DEBUG("try next file", K(ret), K(url_), K(file_url), K(state_));
+
   } while (OB_SUCC(ret) && file_size <= 0);
 
   OZ(file_reader_.open(url_.ptr()));
 
-  LOG_DEBUG("open external file", K(ret), K(url_), K(location));
+
 
   return ret;
 }

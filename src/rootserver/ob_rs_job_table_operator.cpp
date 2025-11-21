@@ -156,7 +156,7 @@ int ObRsJobTableOperator::init(common::ObMySQLProxy *sql_client, const common::O
     sql_client_ = sql_client;
     rs_addr_ = rs_addr;
     inited_ = true;
-    LOG_INFO("__all_rootservice_job table operator inited", K_(rs_addr));
+
   }
   return ret;
 }
@@ -206,7 +206,7 @@ int ObRsJobTableOperator::create_job(ObRsJobType job_type, share::ObDMLSqlSplice
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("insert succeeded but affected_rows is not one", K(ret), K(affected_rows));
       } else {
-        LOG_INFO("rootservice job started", K(job_id), "job_info", sql.ptr(), K(common::lbt()));
+
         (void)ATOMIC_AAF(&row_count_, 1);
       }
     }
@@ -265,7 +265,7 @@ int ObRsJobTableOperator::cons_job_info(const sqlclient::ObMySQLResult &res, ObR
   EXTRACT_INT_FIELD_MYSQL_SKIP_RET(res, "resource_pool_id", job_info.resource_pool_id_, int64_t);
   if (OB_SUCC(ret)) {
     if (OB_FAIL(job_info.deep_copy_self())) {
-      LOG_INFO("failed to deep copy job info itself", K(ret));
+
     }
   }
   return ret;
@@ -392,7 +392,7 @@ int ObRsJobTableOperator::complete_job(int64_t job_id, int result_code, common::
     } else if (OB_FAIL(update_job(job_id, pairs, trans))) {
       LOG_WARN("failed to update job", K(ret), K(job_id));
     } else {
-      LOG_INFO("rootservice job completed", K(job_id), K(result_code));
+
     }
   }
   return ret;
@@ -411,7 +411,7 @@ int ObRsJobTableOperator::complete_all_job_for_dropping_tenant(int64_t tenant_id
   } else if (OB_FAIL(trans.write(OB_SYS_TENANT_ID, sql.ptr(), affected_rows))) {
     LOG_WARN("execute sql failed", K(sql), K(ret));
   } else {
-    LOG_INFO("the tenant is dropped, set all its inprogress rs job as FAILED", K(tenant_id), K(affected_rows));
+
   }
   return ret;
 }
@@ -465,7 +465,7 @@ int ObRsJobTableOperator::alloc_job_id(int64_t &job_id)
       if (OB_FAIL(load_max_job_id(max_job_id, row_count)) || max_job_id < 0) {
         LOG_WARN("failed to load max job id from the table", K(ret), K(max_job_id));
       } else {
-        LOG_INFO("load the max job id", K(max_job_id));
+
         (void)ATOMIC_SET(&max_job_id_, max_job_id);
         job_id = ATOMIC_AAF(&max_job_id_, 1);
         (void)ATOMIC_SET(&row_count_, row_count);

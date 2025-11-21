@@ -94,12 +94,12 @@ int ObILibCacheNode::get_cache_obj(ObILibCacheCtx &ctx,
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(ret), K(key));
   } else if (OB_FAIL(inner_get_cache_obj(ctx, key, obj))) {
-    LOG_DEBUG("failed to inner get cache obj", K(ret), K(key));
+
   } else {
     CacheRefHandleID ref_handle = obj->get_dynamic_ref_handle();
     ref_handle = (ref_handle != MAX_HANDLE ? ref_handle : LC_REF_CACHE_NODE_HANDLE);
     obj->inc_ref_count(ref_handle);
-    LOG_DEBUG("succ to get cache obj", KPC(obj));
+
   }
   return ret;
 }
@@ -129,7 +129,7 @@ int ObILibCacheNode::add_cache_obj(ObILibCacheCtx &ctx,
       ref_handle = (ref_handle != MAX_HANDLE ? ref_handle : LC_REF_CACHE_NODE_HANDLE);
       obj->inc_ref_count(ref_handle);
       obj->set_added_lc(true);
-      LOG_DEBUG("succ to add cache obj", KPC(obj));
+
     }
   }
   if (OB_FAIL(ret) && ret != OB_SQL_PC_PLAN_DUPLICATE) {
@@ -213,7 +213,7 @@ int64_t ObILibCacheNode::dec_ref_count(const CacheRefHandleID ref_handle)
   if (ref_count > 0) {
     // do nothing
   } else if (0 == ref_count) {
-    LOG_DEBUG("remove cache node", K(ref_count), K(this));
+
     if (OB_ISNULL(lib_cache_)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_ERROR("invalid null lib cache");
@@ -231,7 +231,7 @@ int64_t ObILibCacheNode::dec_ref_count(const CacheRefHandleID ref_handle)
 int ObILibCacheNode::before_cache_evicted()
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("before_cache_evicted", K(this), KPC(this));
+
   return ret;
 }
 

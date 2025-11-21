@@ -422,7 +422,7 @@ int ObBackupSetFilter::func(const dirent *entry)
     } else if (OB_FAIL(backup_set_name_array_.push_back(backup_set_dir_name))) {
       LOG_WARN("fail to push backup set name", K(ret));
     } else {
-      LOG_INFO("backup set dir name", K(ret), K(backup_set_dir_name));
+
     }
   }
   return ret;
@@ -739,7 +739,7 @@ int ObBackupDataStore::read_deleted_tablet_info(const ObLSID &ls_id, ObIArray<Ob
   } else if (OB_FAIL(read_single_file(full_path, deleted_tablet_info))) {
     if (OB_OBJECT_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("backup deleted file not exist", K(ret));
+
     } else {
       LOG_WARN("failed to read single file", K(ret), K(full_path));
     }
@@ -954,7 +954,7 @@ int ObBackupDataStore::read_backup_set_info(ObExternBackupSetInfoDesc &backup_se
   } else if (OB_FAIL(read_single_file(full_path, backup_set_info))) {
     LOG_WARN("failed to read single file", K(ret), K(full_path));
   } else {
-    LOG_INFO("read backup set info", K(backup_set_info));
+
   }
   return ret;
 }
@@ -1243,7 +1243,7 @@ int ObBackupDataStore::do_get_backup_set_array_(const common::ObString &passwd_a
           LOG_WARN("fail to set refactored backup set map", K(ret), "backup set id", backup_set_file.backup_set_id_, K(backup_set_file));
         } else {
           restore_start_scn = backup_set_file.start_replay_scn_;
-          LOG_INFO("find one full backup set", K(backup_set_file));
+
         }
       } else if (backup_set_file.backup_type_.is_inc_backup()) {
         share::ObBackupSetDesc value;
@@ -1267,7 +1267,7 @@ int ObBackupDataStore::do_get_backup_set_array_(const common::ObString &passwd_a
               K(backup_set_desc));
         } else {
           restore_start_scn = backup_set_file.start_replay_scn_;
-          LOG_INFO("find one inc backup set", K(backup_set_file));
+
         }
       } else {
         ret = OB_ERR_UNEXPECTED;
@@ -1351,7 +1351,7 @@ int ObBackupDataStore::get_max_sys_ls_retry_id(const share::ObBackupPath &backup
       } else if (OB_FAIL(extract_id_from_str(tmp_entry.name_, sys_data_prefix, id_val, match))) {
         LOG_WARN("failed to parse ls id", K(ret));
       } else if (!match) {
-        LOG_INFO("not match", K(tmp_entry.name_), K(sys_data_prefix));
+
         continue;
       } else {
         if (id_val > max_retry_id) {
@@ -1383,10 +1383,10 @@ int ObBackupDataStore::extract_id_from_str(const common::ObString &file_name, co
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("get invalid args", K(ret), K(file_name));
   } else if (!file_name.prefix_match(prefix)) {
-    LOG_INFO("prefix not match", K(file_name), K(prefix));
+
     match = false;
   } else if (file_name.length() <= prefix.length()) {
-    LOG_INFO("file length not match", K(file_name), K(prefix));
+
     match = false;
   } else {
     const int64_t suffix_length = file_name.length() - prefix.length();
@@ -1399,7 +1399,7 @@ int ObBackupDataStore::extract_id_from_str(const common::ObString &file_name, co
       file_id = tmp_file_id;
       match = true;
     }
-    LOG_INFO("extract backup id", K(match), K(file_name), K(prefix), K(tmp_file_id), K(file_id), K(suffix_ptr), K(suffix_length));
+
   }
   return ret;
   
@@ -1494,7 +1494,7 @@ int ObBackupDataStore::read_deleted_tablet_info_v_4_1_x(
   } else if (OB_FAIL(read_single_file(full_path, deleted_tablet_info))) {
     if (OB_OBJECT_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("backup deleted file not exist", K(ret));
+
     } else {
       LOG_WARN("failed to read single file", K(ret), K(full_path));
     }
@@ -1627,7 +1627,7 @@ int ObBackupDataStore::write_major_compaction_mview_dep_tablet_list(const ObBack
   } else if (OB_FAIL(write_single_file(full_path, desc))) {
     LOG_WARN("fail to write single file", K(ret), K(desc));
   } else {
-    LOG_INFO("write mview dep tablet list", K(desc));
+
   }
   return ret;
 }
@@ -1647,7 +1647,7 @@ int ObBackupDataStore::read_major_compaction_mview_dep_tablet_list(ObBackupMajor
   } else if (OB_FAIL(read_single_file(full_path, desc))) {
     LOG_WARN("fail to read single file", K(ret), K(full_path));
   } else {
-    LOG_INFO("read mview dep tablet list", K(desc));
+
   }
   return ret;
 }

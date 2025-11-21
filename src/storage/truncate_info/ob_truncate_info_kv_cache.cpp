@@ -140,7 +140,7 @@ int ObTruncateInfoCacheValue::deep_copy(char *buf, const int64_t buf_len, ObIKVC
     pos += sizeof(ObTruncateInfo) * count_;
     for (int64_t i = 0; OB_SUCC(ret) && i < count_; ++i) {
       if (OB_FAIL(truncate_info_array_[i].deep_copy(buf, buf_len, pos, pfuse_value->truncate_info_array_[i]))) {
-        STORAGE_LOG(WARN, "Failed to deep copy truncate info", K(ret), K(i), K(truncate_info_array_[i]));
+
       }
     }
 
@@ -199,7 +199,7 @@ int ObTruncateInfoKVCache::put_truncate_info_array(const ObTruncateInfoCacheKey 
       LOG_WARN("fail to put truncate into cache", K(ret), K(key), K(value));
     }
   } else {
-    LOG_INFO("success to put truncate info cache", KR(ret), K(key), K(value));
+
   }
   return ret;
 }

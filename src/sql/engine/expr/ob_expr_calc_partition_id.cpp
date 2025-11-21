@@ -314,7 +314,7 @@ int ObExprCalcPartitionBase::init_calc_part_info(ObIAllocator *allocator,
       calc_part_info->partition_id_calc_type_ = calc_type;
       calc_part_info->may_add_interval_part_ = add_part;
       calc_part_info->calc_id_type_ = get_calc_id_type();
-      LOG_DEBUG("table location expr info", KPC(calc_part_info), K(ret));
+
     }
   }
 
@@ -1055,7 +1055,7 @@ int ObExprCalcPartitionBase::calc_part_and_tablet_id(const ObExpr *calc_part_id,
     LOG_WARN("extract part and tablet id failed", K(ret));
   } else if (ObExprCalcPartitionId::NONE_PARTITION_ID == partition_id) {
     ret = OB_NO_PARTITION_FOR_GIVEN_VALUE;
-    LOG_DEBUG("no partition matched", K(ret), KPC(calc_part_id), KPC(partition_id_datum));
+
   }
   return ret;
 }

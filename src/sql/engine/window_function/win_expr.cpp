@@ -293,7 +293,7 @@ int Ntile::process_window(WinExprEvalCtx &ctx, const Frame &frame, const int64_t
     int64_t y = total % bucket_num;
     const int64_t f_row_idx = row_idx - frame.head_;
     int64_t result = 0;
-    LOG_DEBUG("print ntile param", K(total), K(x), K(y), K(f_row_idx));
+
     if (0 == x) {
       result  = f_row_idx + 1;
     } else {
@@ -408,7 +408,7 @@ int NthValue::process_window(WinExprEvalCtx &ctx, const Frame &frame, const int6
       int64_t k = 0, cur_idx = (is_from_first ? frame.head_ : frame.tail_ - 1);
       bool is_calc_nth = false;
       const RowMeta &input_row_meta = ctx.win_col_.op_.get_input_row_meta();
-      LOG_DEBUG("nth value params", K(is_param_null), K(nth_val), K(is_from_first), K(is_ignore_null), K(frame));
+
       while (OB_SUCC(ret) && k < nth_val) {
         op.clear_evaluated_flag();
         int64_t batch_size = std::min(nth_val - k, ctx.win_col_.op_.get_spec().max_batch_size_);
@@ -587,7 +587,7 @@ int LeadOrLag::process_window(WinExprEvalCtx &ctx, const Frame &frame, const int
   } else {
     offset = 1; // default to 1
   }
-  LOG_DEBUG("lead/lag expr", K(is_lead_lag_offset_used), K(offset), K(lead_lag_offset_direction));
+
   if (OB_SUCC(ret)) {
     // FIXME: opt this code
     int64_t step = 0;
@@ -758,7 +758,7 @@ int AggrExpr::process_window(WinExprEvalCtx &ctx, const Frame &frame, const int6
   int64_t row_start = frame.head_;
   ObBatchRows tmp_brs;
   aggregate::RemovalInfo &removal_info = ctx.win_col_.agg_ctx_->removal_info_;
-  LOG_DEBUG("aggregate expr process window", K(frame), K(removal_info), K(row_start));
+
   char *res_buf = nullptr;
   int total_calc_size = 0, pushdown_skip_cnt = 0;
   while (OB_SUCC(ret) && total_size > 0) {
@@ -2167,7 +2167,7 @@ int WinExprWrapper<Derived>::update_frame(WinExprEvalCtx &ctx, const Frame &prev
   whole_frame = true;
   const ObWindowFunctionVecSpec &spec = static_cast<const ObWindowFunctionVecSpec &>(ctx.win_col_.op_.get_spec());
   if (OB_UNLIKELY(new_frame.head_ == INT64_MAX || new_frame.tail_ == INT64_MAX)) {
-    LOG_DEBUG("invalid frame", K(new_frame));
+
     valid_frame = false;
   } else if (FALSE_IT(valid_frame = Frame::valid_frame(part_frame, new_frame))) {
   } else if (!valid_frame) {
@@ -2232,7 +2232,7 @@ int WinExprWrapper<Derived>::process_partition(WinExprEvalCtx &ctx, const int64_
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("invalid partition", K(part_start), K(part_end), K(row_start), K(row_end));
     } else if (OB_UNLIKELY(part_start >= part_end || row_start >= row_end)) {
-      LOG_DEBUG("empty partition", K(part_start), K(part_end), K(row_start), K(row_end));
+
     } else if (OB_UNLIKELY(skip.accumulate_bit_cnt(row_end - row_start) == row_end - row_start)) {
       // do nothing
     } else {

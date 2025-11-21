@@ -356,7 +356,7 @@ void TestRATempRowStore::SetUp()
   for (int64_t i = 0; i < BUF_SIZE; i++) {
     str_buf_[i] += i % 26;
   }
-  LOG_INFO("setup finished");
+
 }
 
 void TestRATempRowStore::TearDown()
@@ -367,7 +367,7 @@ void TestRATempRowStore::TearDown()
   rs_.~ObRATempRowStore();
 
   blocksstable::ObTmpFileManager::get_instance().destroy();
-  LOG_INFO("TearDown finished", K_(rs));
+
 }
 
 TEST_F(TestRATempRowStore, basic)
@@ -398,7 +398,7 @@ TEST_F(TestRATempRowStore, basic)
   reader_.reset();
   rs_.reset();
 
-  LOG_INFO("============== start to test batch ===============");
+
   CALL(batch_append_rows, 300); // no need to dump
   CALL(verify_n_rows, rs_.get_row_cnt(), true);
   reader_.reset();
@@ -407,7 +407,7 @@ TEST_F(TestRATempRowStore, basic)
   rs_.reset();
   ASSERT_EQ(0, rs_alloc_.total_);
 
-  LOG_INFO("============= start to test batch dump ===========");
+
   CALL(batch_append_rows, 30000); // need dump
   ASSERT_EQ(30000, rs_.get_row_cnt());
   CALL(batch_verify_all, 0);

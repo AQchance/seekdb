@@ -41,16 +41,16 @@ int ObMultipleGetMerge::open(const common::ObIArray<ObDatumRowkey> &rowkeys)
 
   if (OB_UNLIKELY(rowkeys.count() <= 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to do multi get", K(ret), K(rowkeys));
+
   } else if (OB_FAIL(ObMultipleMerge::open())) {
-    STORAGE_LOG(WARN, "Fail to open ObMultipleMerge, ", K(ret));
+
   } else {
     rowkeys_ = &rowkeys;
     if (OB_FAIL(construct_iters())) {
-      STORAGE_LOG(WARN, "fail to construct iters", K(ret));
+
     } else {
       get_row_range_idx_ = 0;
-      STORAGE_LOG(DEBUG, "Success to open ObMultipleGetMerge", K(rowkeys));
+
     }
   }
 
@@ -93,12 +93,12 @@ int ObMultipleGetMerge::calc_scan_range()
     // no row has been iterated
   } else if (OB_ISNULL(rowkeys_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "rowkeys is NULL", K(ret));
+
   } else {
     ObSEArray<ObDatumRowkey, OB_DEFAULT_MULTI_GET_ROWKEY_NUM> tmp_rowkeys;
     for (int64_t i = 0; i < rowkeys_->count() && OB_SUCC(ret); ++i) {
       if (OB_FAIL(tmp_rowkeys.push_back(rowkeys_->at(i)))) {
-        STORAGE_LOG(WARN, "push back rowkey failed", K(ret));
+
       }
     }
 
@@ -117,10 +117,10 @@ int ObMultipleGetMerge::calc_scan_range()
       range_idx_delta_ += curr_scan_index_ + 1;
       for (int64_t i = l; i < r && OB_SUCC(ret); ++i) {
         if (OB_FAIL(cow_rowkeys_.push_back(tmp_rowkeys.at(i)))) {
-          STORAGE_LOG(WARN, "push back rowkey failed", K(ret));
+
         }
       }
-      STORAGE_LOG(DEBUG, "skip rowkeys", K(cow_rowkeys_), K(range_idx_delta_));
+
     }
   }
 
@@ -132,7 +132,7 @@ int ObMultipleGetMerge::is_range_valid() const
   int ret = OB_SUCCESS;
   if (OB_ISNULL(rowkeys_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "rowkeys is null", K(ret));
+
   } else if (0 == rowkeys_->count()) {
     ret = OB_ITER_END;
   }
@@ -150,21 +150,21 @@ int ObMultipleGetMerge::construct_iters()
   for (int64_t i = tables_.count() - 1; OB_SUCC(ret) && i >= 0; --i) {
     ObITable *table = nullptr;
     if (OB_FAIL(tables_.at(i, table))) {
-      STORAGE_LOG(WARN, "fail to get table", K(ret));
+
     } else {
       if (OB_ISNULL(iter_param = get_actual_iter_param(table))) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "fail to get iter param", K(ret), K(i), K(*table));
+
       } else if (iter_idx >= iter_cnt) {
         if (OB_FAIL(table->multi_get(*iter_param, *access_ctx_, *rowkeys_, iter))) {
-          STORAGE_LOG(WARN, "fail to multi get", K(ret));
+
         } else if (OB_FAIL(iters_.push_back(iter))) {
           iter->~ObStoreRowIterator();
           iter = nullptr;
-          STORAGE_LOG(WARN, "fail to push back iter", K(ret));
+
         }
       } else if (OB_FAIL(iters_.at(iter_idx)->init(*iter_param, *access_ctx_, table, rowkeys_))) {
-        STORAGE_LOG(WARN, "fail to init iterator", K(ret));
+
       }
       ++iter_idx;
     }
@@ -199,19 +199,19 @@ int ObMultipleGetMerge::inner_get_next_row(ObDatumRow &row)
               ret = OB_SUCCESS;
             }
           } else {
-            STORAGE_LOG(WARN, "Iterator get next row failed", K(i), K(ret), K(tables_));
+
           }
         } else if (OB_ISNULL(tmp_row)) {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(WARN, "tmp_row is NULL", K(ret));
+
         } else {
           // fuse working row and result row
           REALTIME_MONITOR_INC_READ_ROW_CNT(iters_[i], access_ctx_);
           if (!final_result) {
             if (OB_FAIL(ObRowFuse::fuse_row(*tmp_row, fuse_row, nop_pos_, final_result))) {
-              STORAGE_LOG(WARN, "failed to merge rows", K(*tmp_row), K(row), K(ret));
+
             } else {
-              STORAGE_LOG(DEBUG, "fuse row, ", K(*tmp_row), K(fuse_row));
+
             }
           }
         }
@@ -221,12 +221,12 @@ int ObMultipleGetMerge::inner_get_next_row(ObDatumRow &row)
         if (fuse_row.row_flag_.is_exist_without_delete() || (need_iter_del_row() && fuse_row.row_flag_.is_delete())) {
           if (get_row_range_idx_ > rowkeys_->count()) {
             ret = OB_ERR_UNEXPECTED;
-            STORAGE_LOG(WARN, "unexptected range idx", K(ret), K(get_row_range_idx_), K(rowkeys_->count()));
+
           } else {
             // find result
             fuse_row.scan_index_ = get_row_range_idx_ - 1;
             fuse_row.group_idx_ = rowkeys_->at(get_row_range_idx_ - 1).get_group_idx();
-            STORAGE_LOG(DEBUG, "Success to merge get row, ", KP(this), K(fuse_row), K(get_row_range_idx_), K(fuse_row.group_idx_));
+
           }
           break;
         } else {

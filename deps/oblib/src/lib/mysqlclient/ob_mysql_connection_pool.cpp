@@ -225,7 +225,7 @@ void ObMySQLConnectionPool::stop()
         TG_STOP(tg_id_);
         TG_WAIT(tg_id_);
         tg_id_ = -1;
-        LOG_INFO("ObMySQLConnectionPool stop succ", K(origin_tg_id));
+
       }
     }
     is_stop_ = true;
@@ -235,7 +235,7 @@ void ObMySQLConnectionPool::stop()
 void ObMySQLConnectionPool::signal_refresh()
 {
   TG_CANCEL(tg_id_, *this);
-  LOG_INFO("signal_refresh");
+
   runTimerTask();
 }
 
@@ -284,7 +284,7 @@ int ObMySQLConnectionPool::renew_server_connection_pool(common::ObAddr &server)
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("pool is null", K(ret));
     } else if (pool->get_server() == server) {
-      LOG_TRACE("server pool renewed", K(server));
+
       pool->renew();
       found = true;
     }
@@ -309,7 +309,7 @@ int ObMySQLConnectionPool::create_server_connection_pool(const common::ObAddr &s
   } else if (OB_FAIL(server_list_.push_back(pool))) {
     LOG_WARN("push pool to list fail. destroyed", K(ret));
   } else {
-    LOG_INFO("new server pool created", K(server), K(config_.sqlclient_per_observer_conn_limit_));
+
   }
 
   if (OB_FAIL(ret) && OB_LIKELY(NULL != pool)) {
@@ -340,7 +340,7 @@ int ObMySQLConnectionPool::purge_connection_pool()
        */
       pool->set_server_gone(true); // defensive code, not required.
           // normally when it reachs here, it has been marked 'gone' already
-      LOG_INFO("server pool removed", K(pool->get_server()));
+
       if (OB_FAIL(to_delete.push_back(iter))) {
         LOG_WARN("push iter to delete list fail", K(ret));
       }
@@ -432,7 +432,7 @@ int ObMySQLConnectionPool::get_tenant_server_pool(const uint64_t tenant_id, ObTe
     ret = OB_ENTRY_NOT_EXIST;
     LOG_ERROR("tenant_server_pool is null", K(ret), K(tenant_id), K(usr_tenant_id));
   } else {
-    LOG_TRACE("get tenant_server_pool succ", K(ret), K(this), K(tenant_id), K(usr_tenant_id), K(tenant_server_pool));
+
   }
 
   return ret;
@@ -505,7 +505,7 @@ int ObMySQLConnectionPool::do_acquire(const uint64_t tenant_id, ObMySQLConnectio
     ATOMIC_INC((uint64_t *)&busy_conn_count_);
     connection->set_busy(true);
     connection->set_timestamp(::oceanbase::common::ObTimeUtility::current_time());
-    LOG_TRACE("connection acquire", K(this), K(tenant_id), K(busy_conn_count_), K(connection), K(pool));
+
   }
   return ret;
 }
@@ -610,7 +610,7 @@ void ObMySQLConnectionPool::runTimerTask()
   int64_t refresh_period_ms = 0;
   common::ObAddr server;
 
-  LOG_TRACE("start timer task for refresh connection pool");
+
   if (OB_ISNULL(server_provider_) || -1 == tg_id_) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("invalid connection pool", K(server_provider_), K(tg_id_), K(ret));
@@ -623,12 +623,12 @@ void ObMySQLConnectionPool::runTimerTask()
     obsys::ObWLockGuard lock(get_lock_);
     if (OB_FAIL(server_provider_->refresh_server_list())) {
       if (!is_updated_) { // has never successfully updated, it is in startup time, should not print ERROR
-        LOG_INFO("fail to refresh mysql server list in startup time, it's normal", K(ret));
+
       } else {
         LOG_WARN("fail to refresh mysql server list", K(ret));
       }
     } else if ((count = server_provider_->get_server_count()) == 0) {
-      LOG_TRACE("no alive ms found, skip refresh conncetion pool");
+
     } else {
       is_updated_ = true;
       mark_all_server_connection_gone();
@@ -688,10 +688,10 @@ void ObMySQLConnectionPool::runTimerTask()
       if (OB_FAIL(TG_SCHEDULE(tg_id_, *this, refresh_period_ms, false))) {
         LOG_ERROR("fail to schedule timer again in mysql connection pool", K(ret));
       } else {
-        LOG_TRACE("schedule timer task for refresh next time", K(refresh_period_ms));
+
       }
     } else {
-      LOG_INFO("stop schedule the refresh connection pool task");
+
     }
   }
 }
@@ -783,7 +783,7 @@ int ObMySQLConnectionPool::renew_tenant_server_pool_map()
     if (OB_TMP_FAIL(purge_tenant_server_pool_map_(tenant_array))) {
       LOG_WARN("purge_tenant_server_pool_map_ failed, skip this error", K(ret), K(tmp_ret), K(tenant_array));
     } else {
-      LOG_TRACE("renew tenant_server_conn_pool_map succ");
+
     }
   }
 
@@ -846,7 +846,7 @@ int ObMySQLConnectionPool::renew_tenant_server_pool_(const uint64_t tenant_id)
           } else if (OB_FAIL(tenant_server_pool_map_.insert_and_get(tenant_id, tenant_server_conn_pool))) {
             LOG_ERROR("insert tenant_server_conn_pool failed", K(ret), K(tenant_id));
           } else {
-            LOG_INFO("[STAT][TENANT_CONN_POOL][ADD] alloc tenant_server_conn_pool succ", K(tenant_id));
+
           }
         } else {
           LOG_ERROR("get_tenant_server_pool failed", K(ret), K(tenant_id));
@@ -861,7 +861,7 @@ int ObMySQLConnectionPool::renew_tenant_server_pool_(const uint64_t tenant_id)
         LOG_ERROR("refresh tenant_server_conn_pool failed", K(ret),
             K(tenant_id), K(tenant_server_list));
       } else {
-        LOG_TRACE("[STAT][TENANT_CONN_POOL][RENEW_SVR]", K(tenant_id), K(tenant_server_list));
+
       }
 
       if (OB_NOT_NULL(tenant_server_conn_pool)) {
@@ -926,7 +926,7 @@ bool ObMySQLConnectionPool::TenantServerConnPoolPurger::operator()(
   } else if (is_tenant_not_serve_(tenant_key.tenant_id_)) {
     need_purge = true;
     purge_count_++;
-    LOG_INFO("[STAT][TENANT_CONN_POOL][PURGE]", K(tenant_key));
+
   }
 
   return need_purge;

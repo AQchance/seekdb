@@ -100,7 +100,7 @@ int TestTenantTabletChecksumIterator::insert_tablet_checksum_item(
     ret = OB_ERR_UNEXPECTED;
     LOG_ERROR("unexpected affected rows", KR(ret), K(affected_rows), K(item));
   } else {
-    LOG_INFO("succ to update info item", K(sql), K(item));
+
   }
   return ret;
 }

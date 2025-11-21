@@ -146,7 +146,7 @@ namespace table
     if (OB_SUCC(ret)) {
       if (query.get_tablet_ids().empty()) {
         ret = OB_ITER_END;
-        LOG_DEBUG("tablet id is empty", K(ret));
+
       } else if (OB_ISNULL(hbase_query_ = OB_NEWx(ObHbaseQuery,
                                                   &allocator_,
                                                   table_id,

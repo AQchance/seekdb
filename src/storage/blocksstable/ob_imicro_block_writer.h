@@ -143,7 +143,7 @@ public:
                            const int64_t row_count)
   {
     int ret = OB_NOT_SUPPORTED;
-    STORAGE_LOG(ERROR, "Unspport append_batch", K(ret));
+
     return ret;
   }
   virtual int build_block(char *&buf, int64_t &size) = 0;
@@ -160,7 +160,7 @@ public:
   virtual int append_hash_index(ObMicroBlockHashIndexBuilder& hash_index_builder)
   {
     int ret = OB_NOT_SUPPORTED;
-    STORAGE_LOG(WARN, "Unspported micro block format for hash index", K(ret));
+
     return ret; 
   }
   virtual bool has_enough_space_for_hash_index(const int64_t hash_index_size) const
@@ -243,7 +243,7 @@ protected:
       ++last_rows_count_;
     }
     is_last_row_last_flag_ = row.is_last_multi_version_row();
-    STORAGE_LOG(DEBUG, "cal row stat", K(row), K(row.mvcc_row_flag_), K_(row_count_delta), K_(last_rows_count));
+
   }
 
   OB_INLINE bool need_cal_row_checksum() const

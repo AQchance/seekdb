@@ -145,7 +145,7 @@ static void iter_list(SortedLightyList<Node> &list, int64_t node_cnt)
 
 TEST(TESTCDCRbTree, init_and_free)
 {
-  LOG_INFO("========== test begin ==========");
+
   int node_cnt = 500000;
   INIT_NODES;
   FREE_NODES;
@@ -162,7 +162,7 @@ TEST(TESTCDCRbTree, sequential_verify)
   iter_tree(tree, node_cnt);
   int64_t verify_ts = get_timestamp();
 
-  LOG_INFO("sequential_verify", "build_cost", built_ts - start_ts, "verify_cost", verify_ts - built_ts);
+
 
   FREE_NODES;
 };
@@ -180,7 +180,7 @@ TEST(TESTCDCRbTree, part_reverse_verify)
   iter_tree(tree, node_cnt);
   int64_t verify_ts = get_timestamp();
 
-  LOG_INFO("part_reverse_verify", "build_cost", built_ts - start_ts, "verify_cost", verify_ts - built_ts);
+
 
   FREE_NODES;
 };
@@ -198,7 +198,7 @@ TEST(TESTCDCRbTree, part_reverse_verify_5w)
   iter_tree(tree, node_cnt);
   int64_t verify_ts = get_timestamp();
 
-  LOG_INFO("part_reverse_verify_5w", "build_cost", built_ts - start_ts, "verify_cost", verify_ts - built_ts);
+
 
   FREE_NODES;
 };
@@ -215,7 +215,7 @@ TEST(TESTCDCRbTree, total_reverse_verify)
   iter_tree(tree, node_cnt);
   int64_t verify_ts = get_timestamp();
 
-  LOG_INFO("total_reverse_verify", "build_cost", built_ts - start_ts, "verify_cost", verify_ts - built_ts);
+
 
   FREE_NODES;
 
@@ -231,7 +231,7 @@ TEST(TESTCDCLightyList, sequential_verify)
   int64_t built_ts = get_timestamp();
   iter_list(list, node_cnt);
   int64_t verify_ts = get_timestamp();
-  LOG_INFO("sequential_verify", "build_cost", built_ts - start_ts, "verify_cost", verify_ts - built_ts);
+
 
   list.reset();
   FREE_NODES;
@@ -248,7 +248,7 @@ TEST(TESTCDCLightyList, part_reverse_verify)
   int64_t built_ts = get_timestamp();
   iter_list(list, node_cnt);
   int64_t verify_ts = get_timestamp();
-  LOG_INFO("part_reverse_verify", "build_cost", built_ts - start_ts, "verify_cost", verify_ts - built_ts);
+
 
   list.reset();
   FREE_NODES;
@@ -279,9 +279,9 @@ TEST(TESTCDCRbTree, detect_balance_node_count)
     bool is_tree_better = (tree_build_time < list_build_time);
 
     if (is_tree_better) {
-      LOG_INFO("tree_build_time less than list_build_time", K(node_cnt), K(tree_build_time), K(list_build_time));
+
     } else {
-      LOG_INFO("tree_build_time greater than list_build_time", K(node_cnt), K(tree_build_time), K(list_build_time));
+
     }
   }
 };
@@ -304,7 +304,7 @@ TEST(TESTCDCRbTree, list_to_tree)
   }
   int64_t end_ts = get_timestamp();
   list.reset();
-  LOG_INFO("list_to_tree", K(node_cnt), "cost_us", end_ts-start_ts);
+
   int64_t start_ts1 = get_timestamp();
   node = tree.get_first();
   while (NULL != node) {
@@ -314,7 +314,7 @@ TEST(TESTCDCRbTree, list_to_tree)
     node = next;
   }
   int64_t end_ts1 = get_timestamp();
-  LOG_INFO("tree_to_list", K(node_cnt), "cost_us", end_ts1-start_ts1);
+
 };
 
 }

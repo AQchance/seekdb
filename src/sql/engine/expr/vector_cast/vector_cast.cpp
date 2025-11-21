@@ -89,7 +89,7 @@ ObExpr::EvalVectorFunc VectorCasterUtil::get_vector_cast(const VecValueTypeClass
   } else {
     ret_func = VECTOR_CAST_FUNCS[in_tc][out_tc][CM_IS_IMPLICIT_CAST(cast_mode)];
   }
-  LOG_DEBUG("choose vector casting funcs", K(in_tc), K(out_tc), K(is_eval_arg_cast), K(cast_mode));
+
   return ret_func;
 }
 

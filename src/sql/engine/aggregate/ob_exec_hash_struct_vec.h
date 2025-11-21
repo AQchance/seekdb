@@ -1708,7 +1708,7 @@ int ObExtendHashTableVec<GroupRowBucket>::check_popular_values_validity(uint64_t
   if (OB_FAIL(ret)) {
   } else if (!has_valid_popular_value) {
     popular_map->reuse();
-    LOG_DEBUG("no has_valid_popular_value, reuse popular_map!", K(has_valid_popular_value), K(popular_map->size()));
+
   }
   return ret;
 }                                    

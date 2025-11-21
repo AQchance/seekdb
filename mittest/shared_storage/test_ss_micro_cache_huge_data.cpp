@@ -219,7 +219,7 @@ TEST_F(TestSSMicroCacheHugeData, test_add_huge_micro_data)
   ctx.interval_us_ = 50;
   ctx.arc_limit_ = micro_meta_mgr.arc_info_.limit_;
   int64_t start_us = ObTimeUtility::current_time();
-  LOG_INFO("TEST: start case", K(ctx));
+
 
   TestSSMicroCacheHugeData::TestSSMicroCacheHugeDataThread threads(ObTenantEnv::get_tenant(), ctx);
   threads.set_thread_count(thread_num);
@@ -228,7 +228,7 @@ TEST_F(TestSSMicroCacheHugeData, test_add_huge_micro_data)
   ASSERT_EQ(0, threads.get_fail_cnt());
 
   const int64_t cost_ms = (ObTimeUtility::current_time() - start_us) / 1000;
-  LOG_INFO("TEST: finish case, check result", K(cost_ms), K(cache_stat), K(arc_info));
+
 
   ob_usleep(10 * 1000 * 1000);
   start_us = ObTimeUtility::current_time();
@@ -246,7 +246,7 @@ TEST_F(TestSSMicroCacheHugeData, test_add_huge_micro_data)
   ASSERT_GT(max_result_val, cache_stat.micro_stat().valid_micro_size_);
   const int64_t ori_valid_size = arc_info.get_valid_size();
   
-  LOG_INFO("TEST: start update arc", K(cache_stat), K(arc_info));
+
   micro_ckpt_task.ckpt_op_.enable_update_arc_limit_ = false;
   ob_usleep(1000);
   const int64_t tmp_arc_limit = arc_info.limit_ / 4;
@@ -254,7 +254,7 @@ TEST_F(TestSSMicroCacheHugeData, test_add_huge_micro_data)
   ASSERT_EQ(tmp_arc_limit, arc_info.limit_);
 
   ob_usleep(10 * 1000 * 1000);
-  LOG_INFO("TEST: finish update arc", K(cache_stat), K(arc_info));
+
   ASSERT_LT(arc_info.get_valid_size(), ori_valid_size);
   
 }

@@ -107,7 +107,7 @@ int ObColumnSchemaV2::assign(const ObColumnSchemaV2 &src_schema)
     if (OB_FAIL(ret)) {
       error_ret_ = ret;
     }
-    LOG_DEBUG("operator =", K(src_schema), K(*this));
+
   }
   return ret;
 }
@@ -507,7 +507,7 @@ int ObColumnSchemaV2::add_cascaded_column_id(uint64_t column_id)
     if (OB_FAIL(column_ref_idxs_->add_member(column_id - OB_APP_MIN_COLUMN_ID))) {
       LOG_WARN("add member to cascaded column idxs failed", K(ret));
     } else {
-      LOG_DEBUG("succ to add_cascaded_column_id", K(ret), K(*this), K(column_id), K(lbt()));
+
     }
   }
   return ret;

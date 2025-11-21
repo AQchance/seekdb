@@ -1091,7 +1091,7 @@ int ObDASSPIVMergeIter::do_brute_force(ObIAllocator &allocator, bool is_vectoriz
         } else {
           ObDocIdExt cur_docid;
           if (OB_FAIL(rowkey2docid(*rowkey, cur_docid))) {
-            LOG_INFO("failed to get docid from rowkey", K(ret));
+
           } else if (OB_FAIL(result_docids_.push_back(cur_docid))) {
             LOG_WARN("failed to push back docid", K(ret));
           }

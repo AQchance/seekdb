@@ -129,7 +129,7 @@ int ObLobDataReader::read_lob_data_impl(blocksstable::ObStorageDatum &datum, ObC
             ret = OB_ERR_UNEXPECTED;
             LOG_WARN("query result length is not equal.", K(ret), K(output_data), K(param));
           } else {
-            LOG_DEBUG("read output for query.", K(output_data));
+
             datum.set_string(output_data);
           }
         }

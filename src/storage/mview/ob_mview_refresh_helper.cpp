@@ -91,11 +91,11 @@ int ObMViewRefreshHelper::lock_mview(ObMViewTransaction &trans, const uint64_t t
       }
     }
     if (OB_SUCC(ret)) {
-      LOG_DEBUG("lock obj start", K(lock_arg));
+
       if (OB_FAIL(ObInnerConnectionLockUtil::lock_obj(tenant_id, lock_arg, conn))) {
         LOG_WARN("fail to lock obj", KR(ret));
       }
-      LOG_DEBUG("lock obj end", KR(ret));
+
     }
   }
   return ret;
@@ -457,7 +457,7 @@ int ObMViewRefreshHelper::sync_get_min_target_data_sync_scn(
       min_target_scn = res.target_data_sync_scn_;
     }
   }
-  LOG_INFO("get min target scn for nested refresh", K(ret), K(mview_id), K(min_target_scn));
+
   return ret;
 }
 
@@ -506,7 +506,7 @@ int ObMViewRefreshHelper::check_dep_mviews_satisfy_target_scn(
     if (OB_FAIL(ret)) {
     } else if (dep_mview_ids.empty()) {
       satisfy = true;
-      LOG_INFO("no dep mview");
+
     } else if (OB_FAIL(ObMViewInfo::bacth_fetch_mview_infos(sql_proxy, tenant_id,
                        read_snapshot.get_val_for_sql(), dep_mview_ids, dep_mview_infos, oracle_mode))) {
       LOG_WARN("fail to batch fetch mview info", K(ret));
@@ -517,14 +517,14 @@ int ObMViewRefreshHelper::check_dep_mviews_satisfy_target_scn(
         ObMViewInfo &dep_mview_info = dep_mview_infos.at(idx);
         if (OB_FAIL(ObMViewInfo::check_satisfy_target_data_sync_scn(
                     dep_mview_info, target_data_sync_ts, satisfy))) {
-          LOG_INFO("fail to check satisfy target data sync scn", K(ret), K(dep_mview_info));
+
           break;
         } else if (!satisfy) {
           break;
         }
       }
     }
-    LOG_INFO("check satified", K(tenant_id), K(target_data_sync_scn), K(satisfy));
+
   }
   return ret;
 }
@@ -601,7 +601,7 @@ int ObMViewRefreshHelper::replace_all_snapshot_zero(
     }
   }
   // for debug
-  LOG_DEBUG("print generate sql", K(input.c_str()), K(output.c_str()), K(oracle_mode));
+
   return ret;
 }
 } // namespace storage

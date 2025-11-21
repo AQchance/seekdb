@@ -213,7 +213,7 @@ int ObTabletFullMemoryMdsData::scan_all_mds_data_with_op(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected valid uncommitted kv", K(ret), K(aux_tablet_info_uncommitted_kv_));
   } else if (tablet_status_uncommitted_kv_.is_valid()) {
-    LOG_INFO("tablet status uncommitted kv is valid", K(ret), K(tablet_status_uncommitted_kv_));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -226,7 +226,7 @@ int ObTabletFullMemoryMdsData::scan_all_mds_data_with_op(
   if (OB_SUCC(ret)) {
     mds::MdsDumpKV tmp_mds_kv;
     if (!auto_inc_seq_.is_valid()) {
-      LOG_INFO("auto inc seq is invalid", K(ret), K(auto_inc_seq_));
+
     } else if (CLICK_FAIL(mock_convert_auto_inc_seq_to_mds_dump_kv(allocator,
         auto_inc_seq_, mds_ckpt_scn, tmp_mds_kv))) {
       LOG_WARN("failed to convert auto_inc_seq to mds_dump_kv",

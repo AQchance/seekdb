@@ -198,7 +198,7 @@ TEST_F(TestIndexBlockRowStruct, test_parser_normal)
   const ObDatumRow *row;
   ret = row_builder.build_row(row_desc, row);
   EXPECT_EQ(OB_SUCCESS, ret);
-  STORAGE_LOG(INFO, "intermediate row info,", K(*row));
+
 
   //paser copy row
   ObIndexBlockRowParser row_parser;
@@ -207,7 +207,7 @@ TEST_F(TestIndexBlockRowStruct, test_parser_normal)
   EXPECT_EQ(OB_SUCCESS, ret);
   ret = row_parser.get_header(parsed_header);
   EXPECT_EQ(OB_SUCCESS, ret);
-  STORAGE_LOG(INFO, "header info,", K(*parsed_header));
+
 
   EXPECT_TRUE(parsed_header->is_valid());
   EXPECT_TRUE(parsed_header->is_data_block());

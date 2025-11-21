@@ -512,7 +512,7 @@ int ObTabletDirectLoadMgrV3::close_sstable_slice_v2(const ObDirectLoadSliceInfo 
         task_finish_count = ATOMIC_AAF(&task_finish_count_, 1);
       }
     }
-    LOG_INFO("inc task finish count", K(tablet_id_), K(task_finish_count), K(build_param_.runtime_only_param_.task_cnt_));
+
     if (OB_ISNULL(storage_schema_)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("invalid tablet handle", K(ret), KP(storage_schema_));
@@ -845,7 +845,7 @@ int ObSNTabletDirectLoadMgr::inner_close()
     } else if (OB_FAIL(ObTabletDDLCompleteMdsHelper::record_ddl_complete_arg_to_mds(complete_arg, allocator))) {
       LOG_WARN("failed to record ddl complete arg to mds", KR(ret), K(complete_arg));
     } else {
-      LOG_INFO("ddl write commit log", K(ret), "ddl_event_info", ObDDLEventInfo());
+
     }
   }
 
@@ -1009,7 +1009,7 @@ int ObSSTabletDirectLoadMgr::create_ddl_ro_sstable(ObTablet &tablet,
       } else if (OB_FAIL(calc_root_macro_seq(res.root_macro_seq_))) {
           LOG_WARN("failed calc root macro seq", K(ret));
       } else {
-        LOG_INFO("[SHARED STORAGE]build ddl sstable res success", K(last_meta_seq_), K(last_data_seq_), K(res), K(table_key_));
+
       }
 
       if (OB_FAIL(ret)) {

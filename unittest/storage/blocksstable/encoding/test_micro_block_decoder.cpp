@@ -152,7 +152,7 @@ TEST_F(TestMicroBlockDecoder, decode_test)
   }
   for (int64_t i = 0; i < ROW_CNT; ++i) {
     ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(seeds[i], row));
-    LOG_INFO("generate row", K(i),  K(row));
+
     ASSERT_EQ(OB_SUCCESS, encoder_.append_row(row)) << "i: " << i << std::endl;
   }
   char *buf = NULL;
@@ -160,16 +160,16 @@ TEST_F(TestMicroBlockDecoder, decode_test)
   ASSERT_EQ(OB_SUCCESS, encoder_.build_block(buf, size));
   ObMicroBlockDecoder decoder;
   ObMicroBlockData data(encoder_.data_buffer_.data(), encoder_.data_buffer_.length());
-  LOG_INFO("col_descs before init decoder : ",K(col_descs_));
+
   ASSERT_EQ(OB_SUCCESS, decoder.init(data, nullptr)) << "buffer size: " << data.get_buf_size() << std::endl;
   ObDatumRow single_row;
   ASSERT_EQ(OB_SUCCESS, single_row.init(allocator_, full_column_cnt_));
   for (int64_t i = 0; i < ROW_CNT; ++i) {
     ASSERT_EQ(OB_SUCCESS, decoder.get_row(i, single_row));
     ASSERT_EQ(OB_SUCCESS, row_generate_.get_next_row(seeds[i], row));
-    LOG_INFO("Current row: ", K(i));
+
     for (int64_t j = 0; j < full_column_cnt_; ++j) {
-      LOG_INFO("current col: ", K(j), K(single_row.storage_datums_[j]), K(row.storage_datums_[j]));
+
       ASSERT_TRUE(ObDatum::binary_equal(single_row.storage_datums_[j], row.storage_datums_[j]));
     }
   }

@@ -54,7 +54,7 @@ int ObBackupSetFileOperator::insert_backup_set_file(common::ObISQLClient &proxy,
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("[DATA_BACKUP]error unexpected, invalid affected rows", K(ret), K(affected_rows), K(backup_set_desc));
   } else {
-    LOG_INFO("[DATA_BACKUP]insert one backup job", K(backup_set_desc), K(sql));
+
   }
   return ret;
 }
@@ -178,7 +178,7 @@ int ObBackupSetFileOperator::get_backup_set_files(
       } else if (OB_FAIL(parse_backup_set_info_result_(*result, tenant_backup_set_infos))) {
         LOG_WARN("[DATA_BACKUP]failed to parse result", K(ret));
       } else {
-        LOG_INFO("[DATA_BACKUP]success tenant backup set infos", K(tenant_backup_set_infos));
+
       }
     }
   }
@@ -209,7 +209,7 @@ int ObBackupSetFileOperator::get_backup_set_files_specified_dest(
       } else if (OB_FAIL(parse_backup_set_info_result_(*result, backup_set_infos))) {
         LOG_WARN("[DATA_BACKUP]failed to parse result", K(ret));
       } else {
-        LOG_INFO("[DATA_BACKUP]success get backup set info", K(backup_set_infos), K(dest_id));
+
       }
     }
   }
@@ -279,7 +279,7 @@ int ObBackupSetFileOperator::get_backup_set_file(
       }
     }
   }
-  LOG_INFO("[DATA_BACKUP]get_backup_set_file", K(ret), K(sql), K(backup_set_desc));
+
   return ret;
 }
 
@@ -321,7 +321,7 @@ int ObBackupSetFileOperator::get_one_backup_set_file(
       }
     }
   }
-  LOG_INFO("[DATA_BACKUP]get_backup_set_file", K(ret), K(sql), K(backup_set_desc));
+
   return ret;
 }
 
@@ -434,7 +434,7 @@ int ObBackupSetFileOperator::update_backup_set_file(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("[DATA_BACKUP]invalid affected_rows", K(ret), K(affected_rows), K(sql), K(backup_set_desc));
   } else {
-    LOG_INFO("[DATA_BACKUP]update backup set", K(backup_set_desc));
+
   }
   return ret;
 }
@@ -489,7 +489,7 @@ int ObBackupSetFileOperator::get_prev_backup_set_id(
         prev_full_backup_set_id = backup_set_desc.prev_full_backup_set_id_;
         prev_inc_backup_set_id = backup_set_desc.backup_set_id_;
       }
-      LOG_INFO("[DATA_BACKUP]get prev backup set id", K(prev_full_backup_set_id), K(prev_inc_backup_set_id));
+
     }
   }
   return ret;
@@ -523,7 +523,7 @@ int ObBackupSetFileOperator::get_candidate_obsolete_backup_sets(
       }
     }
   }
-  LOG_INFO("get_candidate_obsolete_backup_sets", K(ret), K(sql), K(backup_set_descs));
+
   return ret;
 }
 
@@ -558,7 +558,7 @@ int ObBackupSetFileOperator::get_all_backup_set_between(
       } else if (OB_FAIL(parse_backup_sets_(*result, backup_set_descs))) {
         LOG_WARN("failed to do parese backup set", K(ret));
       } else {
-        LOG_INFO("get all backupset between", K(tenant_id), K(min_backup_set_id), K(max_backup_set_id), K(backup_set_descs));
+
       }
     }
   }
@@ -614,7 +614,7 @@ int ObBackupSetFileOperator::update_backup_set_file_status(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, invalid affected rows", K(ret), K(affected_rows), K(sql));
   } else {
-    LOG_INFO("update backup set file_status", K(sql));
+
   }
   return ret; 
 }
@@ -643,7 +643,7 @@ int ObBackupJobOperator::insert_job(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("[DATA_BACKUP]error unexpected, invalid affected rows", K(ret), K(affected_rows), K(job_attr));
   } else {
-    LOG_INFO("[DATA_BACKUP]insert one backup job", K(job_attr), K(sql));
+
   }
   return ret;
 }
@@ -713,7 +713,7 @@ int ObBackupJobOperator::get_jobs(
     } else if (OB_FAIL(parse_job_result_(*result, job_attrs))) {
       LOG_WARN("[DATA_BACKUP]failed to parse result", K(ret));
     } else {
-      LOG_INFO("[DATA_BACKUP]success get jobs", K(job_attrs));
+
     }
   }
   return ret;
@@ -821,7 +821,7 @@ int ObBackupJobOperator::cancel_jobs(common::ObISQLClient &proxy, const uint64_t
   } else if (OB_FAIL(proxy.write(get_exec_tenant_id(tenant_id), sql.ptr(), affected_rows))) {
     LOG_WARN("[DATA_BACKUP]failed to exec sql", K(ret), K(sql));
   } else {
-    LOG_INFO("success cancel the backup jobs of tenant", K(ret), K(tenant_id));
+
   }
   return ret;
 }
@@ -1004,7 +1004,7 @@ int ObBackupJobOperator::advance_job_status(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("[DATA_BACKUP]invalid affected_rows", K(ret), K(affected_rows), K(sql), K(next_status));
   } else {
-    LOG_INFO("[DATA_BACKUP]advance status", K(job_attr), K(next_status));
+
   }
   return ret;
 }
@@ -1032,7 +1032,7 @@ int ObBackupJobOperator::move_job_to_his(common::ObISQLClient &proxy, const uint
   } else if (OB_FAIL(proxy.write(get_exec_tenant_id(tenant_id), sql.ptr(), affected_rows))) {
     LOG_WARN("[DATA_BACKUP]failed to exec sql", K(ret), K(sql), K(tenant_id));
   } else {
-    LOG_INFO("[DATA_BACKUP]succeed move backup job to history table", K(tenant_id), K(job_id));
+
   }
   return ret;
 }
@@ -1081,7 +1081,7 @@ int ObBackupJobOperator::update_comment(common::ObISQLClient &proxy, const ObBac
   } else if (OB_FAIL(proxy.write(get_exec_tenant_id(job_attr.tenant_id_), sql.ptr(), affected_rows))) {
     LOG_WARN("[DATA_BACKUP]failed to exec sql", K(ret), K(sql));
   } else {
-    LOG_INFO("[DATA_BACKUP]update comment", K(job_attr));
+
   }
   return ret;
 }
@@ -1268,7 +1268,7 @@ int ObBackupTaskOperator::insert_backup_task(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("[DATA_BACKUP]error unexpected, invalid affected rows", K(ret), K(affected_rows), K(backup_set_task));
   } else {
-    LOG_INFO("[DATA_BACKUP]insert one backup set task", K(backup_set_task), K(sql));
+
   }
   return ret;
 }
@@ -1398,7 +1398,7 @@ int ObBackupTaskOperator::get_backup_task(
         } else if (OB_FAIL(set_task_attr.user_ls_start_scn_.convert_for_inner_table_field(user_ls_start_scn))) {
           LOG_WARN("fail to set user ls start scn", K(ret), K(user_ls_start_scn));
         } else {
-          LOG_INFO("[DATA_BACKUP]succeed to get set task", K(set_task_attr));
+
         }
       }
     }
@@ -1446,7 +1446,7 @@ int ObBackupTaskOperator::advance_task_status(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("[DATA_BACKUP]invalid affected_rows", K(ret), K(affected_rows), K(sql), K(next_status));
   } else {
-    LOG_INFO("[DATA_BACKUP]advance status", K(set_task_attr), K(next_status), K(sql));
+
   }
   return ret;
 }
@@ -1483,7 +1483,7 @@ int ObBackupTaskOperator::move_task_to_his(
   } else if (OB_FAIL(proxy.write(get_exec_tenant_id(tenant_id), sql.ptr(), affected_rows))) {
     LOG_WARN("[DATA_BACKUP]failed to exec sql", K(ret), K(sql));
   } else {
-    LOG_INFO("[DATA_BACKUP]succeed move backup set task to history table", K(tenant_id), K(job_id));
+
   }
   return ret;
 }
@@ -1533,7 +1533,7 @@ int ObBackupTaskOperator::update_stats(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("[DATA_BACKUP]invalid affected_rows", K(ret), K(sql));
   } else {
-    LOG_INFO("[DATA_BACKUP]success update stats", K(sql));
+
   }
   return ret;
 }
@@ -1566,7 +1566,7 @@ int ObBackupTaskOperator::update_turn_id(common::ObISQLClient &proxy, share::ObB
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("invalid affected_rows", K(ret), K(sql));
   } else {
-    LOG_INFO("[DATA_BACKUP]success update turn id", K(sql));
+
   }
   return ret;
 }
@@ -1595,7 +1595,7 @@ int ObBackupTaskOperator::update_user_ls_start_scn(common::ObISQLClient &proxy, 
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("invalid affected_rows", K(ret), K(sql));
   } else {
-    LOG_INFO("[DATA_BACKUP]success update start scn", K(sql));
+
   }
   return ret;
 }
@@ -1624,7 +1624,7 @@ int ObBackupLSTaskOperator::insert_ls_task(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("[DATA_BACKUP]error unexpected, invalid affected rows", K(ret), K(affected_rows), K(ls_attr));
   } else {
-    LOG_INFO("[DATA_BACKUP]insert one ls task", K(ls_attr), K(sql));
+
   }
   return ret;
 }
@@ -1645,7 +1645,7 @@ int ObBackupLSTaskOperator::report_ls_task(common::ObISQLClient &proxy, const Ob
   } else if (OB_FAIL(proxy.write(get_exec_tenant_id(ls_attr.tenant_id_), sql.ptr(), affected_rows))) {
     LOG_WARN("[DATA_BACKUP]fail to exec sql", K(ret), K(sql));
   } else {
-    LOG_INFO("[DATA_BACKUP]update one ls task", K(ls_attr), K(sql), K(affected_rows));
+
   }
   return ret;
 }
@@ -1669,7 +1669,7 @@ int ObBackupLSTaskOperator::report_ls_task(
   } else if (OB_FAIL(proxy.write(get_exec_tenant_id(ls_attr.tenant_id_), sql.ptr(), affected_rows))) {
     LOG_WARN("[DATA_BACKUP]fail to exec sql", K(ret), K(sql));
   } else {
-    LOG_INFO("[DATA_BACKUP]update one ls task", K(ls_attr), K(sql), K(affected_rows));
+
   }
   return ret;
 }
@@ -1795,7 +1795,7 @@ int ObBackupLSTaskOperator::get_ls_tasks(
       }
     }
     if (OB_SUCC(ret)) {
-      LOG_INFO("succ to get ls tasks", K(ls_attrs));
+
     }
   }
   return ret;
@@ -1838,7 +1838,7 @@ int ObBackupLSTaskOperator::get_ls_task(
       } else if (OB_FAIL(do_parse_ls_result_(*result, ls_attr))) {
         LOG_WARN("[DATA_BACKUP]failed to do parse ls result");
       } else {
-        LOG_INFO("[DATA_BACKUP]success get ls task", K(ls_attr));
+
       }
     }
   }
@@ -2007,7 +2007,7 @@ int ObBackupLSTaskOperator::do_parse_ls_result_(ObMySQLResult &result, ObBackupL
     } else if (OB_FAIL(ls_attr.max_tablet_checkpoint_scn_.convert_for_inner_table_field(max_tablet_checkpoint_scn))) {
       LOG_WARN("fail to set max tablet checkpoint scn", K(ret), K(max_tablet_checkpoint_scn));
     } else {
-      LOG_INFO("[DATA_BACKUP]success to read ls attr", K(ls_attr));
+
     }
   }
   return ret;
@@ -2061,7 +2061,7 @@ int ObBackupLSTaskOperator::update_dst_and_status(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("[DATA_BACKUP]invalid affected_rows", K(ret), K(affected_rows), K(sql));
   } else {
-    LOG_INFO("[DATA_BACKUP]success update dst and status", K(sql));
+
   }
   return ret;
 }
@@ -2111,7 +2111,7 @@ int ObBackupLSTaskOperator::update_stats(
   } else if (OB_FAIL(proxy.write(get_exec_tenant_id(tenant_id), sql.ptr(), affected_rows))) {
     LOG_WARN("[DATA_BACKUP]failed to exec sql", K(ret), K(sql));
   } else {
-    LOG_INFO("[DATA_BACKUP]success update stats", K(sql));
+
   }
   return ret;
 }
@@ -2127,7 +2127,7 @@ int ObBackupLSTaskOperator::insert_build_index_task(
   } else if (OB_FAIL(insert_ls_task(proxy, build_index_attr))) {
     LOG_WARN("[DATA_BACKUP]failed to insert build index task", K(ret), K(build_index_attr));
   } else {
-    LOG_INFO("[DATA_BACKUP]insert build index task succ", K(build_index_attr));
+
   }
   return ret;
 }
@@ -2151,7 +2151,7 @@ int ObBackupLSTaskOperator::delete_build_index_task(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("[DATA_BACKUP]invalid affected_rows", K(ret), K(affected_rows), K(sql));
   } else {
-    LOG_INFO("[DATA_BACKUP]delete build index task succ", K(build_index_attr), K(sql));
+
   }
   return ret;
 }
@@ -2185,7 +2185,7 @@ int ObBackupLSTaskOperator::move_ls_to_his(common::ObISQLClient &proxy, const ui
   } else if (OB_FAIL(proxy.write(get_exec_tenant_id(tenant_id), sql.ptr(), affected_rows))) {
     LOG_WARN("[DATA_BACKUP]failed to exec sql", K(ret), K(sql));
   } else {
-    LOG_INFO("[DATA_BACKUP]succeed move backup ls task to history table", K(tenant_id), K(job_id));
+
   }
   return ret;
 }
@@ -2205,7 +2205,7 @@ int ObBackupLSTaskOperator::delete_ls_task_without_sys(common::ObISQLClient &pro
   } else if (OB_FAIL(proxy.write(get_exec_tenant_id(tenant_id), sql.ptr(), affected_rows))) {
     LOG_WARN("failed to exec sql", K(ret), K(sql));
   } else {
-    LOG_INFO("succeed delete ls task", K(tenant_id), K(task_id));
+
   }
   return ret;
 }
@@ -2237,7 +2237,7 @@ int ObBackupLSTaskOperator::update_max_tablet_checkpoint_scn(
   } else if (OB_FAIL(proxy.write(get_exec_tenant_id(tenant_id), sql.ptr(), affected_rows))) {
     LOG_WARN("[DATA_BACKUP]failed to exec sql", K(ret), K(sql));
   } else {
-    LOG_INFO("[DATA_BACKUP]success update max tablet checkpoint scn", K(task_id), K(tenant_id), K(ls_id), K(max_tablet_checkpoint_scn));
+
   }
   return ret;
 }
@@ -2485,7 +2485,7 @@ int ObBackupMViewOperator::get_all_major_compaction_mview_dep_tablet_list(
       }
     }
   }
-  LOG_INFO("get all mview dep tablet list", K(ret), K(sql), K(tablet_list));
+
   return ret;
 }
 
@@ -2518,7 +2518,7 @@ int ObBackupLSTaskInfoOperator::update_ls_task_info_final(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("[DATA_BACKUP]invalid affected_rows", K(ret), K(sql), K(affected_rows));
   } else {
-    LOG_INFO("[DATA_BACKUP]success update ls task info to final", K(sql));
+
   }
   return ret;
 }
@@ -2552,7 +2552,7 @@ int ObBackupLSTaskInfoOperator::get_statistics_info(
       } else if (OB_FAIL(parse_ls_task_info_(*result, task_infos))) {
         LOG_WARN("[DATA_BACKUP]failed to parse result", K(ret), K(task_id), K(tenant_id), K(ls_id), K(turn_id), K(retry_id));
       } else {
-        LOG_INFO("[DATA_BACKUP]success get statis info", K(task_infos));
+
       }
     }
   }
@@ -2639,7 +2639,7 @@ int ObBackupLSTaskInfoOperator::move_ls_task_info_to_his(
   } else if (OB_FAIL(proxy.write(get_exec_tenant_id(tenant_id), sql.ptr(), affected_rows))) {
     LOG_WARN("[DATA_BACKUP]failed to exec sql", K(ret), K(sql));
   } else {
-    LOG_INFO("[DATA_BACKUP]succeed move backup ls task info to history table", K(tenant_id), K(task_id));
+
   }
   return ret;
 }
@@ -2878,7 +2878,7 @@ int ObLSBackupInfoOperator::insert_item_with_update(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected affected rows", K(ret), K(affected_rows));
   } else {
-    LOG_INFO("execute sql success", K(sql));
+
   }
   return ret;
 }
@@ -2937,7 +2937,7 @@ int ObLSBackupInfoOperator::set_item_value(Value &dst_value, const char *src_buf
     } else {
       STRNCPY(dst_value.ptr(), src_buf, len);
       dst_value.ptr()[len] = '\0';
-      LOG_DEBUG("set value", K(src_buf), K(strlen(src_buf)), K(dst_value));
+
     }
   }
   return ret;

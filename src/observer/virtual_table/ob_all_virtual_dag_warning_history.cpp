@@ -65,14 +65,14 @@ int ObAllVirtualDagWarningHistory::process_curr_tenant(ObNewRow *&row)
   int n = 0;
   if (!dag_warning_info_iter_.is_opened()) {
     if (OB_FAIL(MTL(ObDagWarningHistoryManager *)->open_iter(dag_warning_info_iter_))) {
-      STORAGE_LOG(WARN, "fail to begin ObTenantSSTableMergeInfoMgr::Iterator", K(ret));
+
     }
   }
   if (OB_SUCC(ret)) {
     if (FALSE_IT(MEMSET(comment_, '\0', sizeof(comment_)))) {
     } else if (OB_FAIL(dag_warning_info_iter_.get_next(&dag_warning_info_, comment_, sizeof(comment_)))) {
       if (OB_ITER_END != ret) {
-        STORAGE_LOG(WARN, "fail to get next sstable merge info", K(ret));
+
       }
     }
   }

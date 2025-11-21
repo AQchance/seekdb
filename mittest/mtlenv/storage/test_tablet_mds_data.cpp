@@ -30,19 +30,19 @@
           compaction::ObMediumCompactionInfo *info = nullptr; \
           if (OB_FAIL(ret)) { \
           } else if (OB_FAIL(ObTabletObjLoadHelper::alloc_and_new(allocator_, info))) { \
-            STORAGE_LOG(WARN, "failed to alloc and new", K(ret)); \
+ \
           } else { \
             if (OB_FAIL(MediumInfoHelper::build_medium_compaction_info(allocator_, *info, id))) { \
-              STORAGE_LOG(WARN, "failed to build medium info", K(ret)); \
+ \
             } else { \
               const int64_t size = info->get_serialize_size(); \
               char *buffer = static_cast<char*>(allocator_.alloc(size)); \
               int64_t pos = 0; \
               if (OB_ISNULL(buffer)) { \
                 ret = OB_ALLOCATE_MEMORY_FAILED; \
-                STORAGE_LOG(WARN, "failed to alloc memory", K(ret), K(size)); \
+ \
               } else if (OB_FAIL(info->serialize(buffer, size, pos))) { \
-                STORAGE_LOG(WARN, "failed to serialize", K(ret), K(size)); \
+ \
               } else { \
                 ObSharedObjectWriteInfo write_info; \
                 write_info.buffer_ = buffer; \
@@ -52,7 +52,7 @@
                 blocksstable::ObStorageObjectOpt curr_opt; \
                 curr_opt.set_private_object_opt(); \
                 if (OB_FAIL(reader_writer.async_link_write(write_info, curr_opt, write_handle))) { \
-                  STORAGE_LOG(WARN, "failed to async link write", K(ret)); \
+ \
                 } \
               } \
             } \

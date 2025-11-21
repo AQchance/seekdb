@@ -70,7 +70,7 @@ int ObExprConvertTZ::calc_convert_tz(int64_t timestamp_data,
         LOG_WARN("source time zone parse failed", K(ret), K(tz_str_d));
       }
     } else if (OB_SUCCESS != ret) {
-      LOG_DEBUG("calc_convert_tz failed", K(ret), K(tz_str_s), K(tz_str_d));
+
     }
   }
   if (OB_FAIL(ret)) {
@@ -78,7 +78,7 @@ int ObExprConvertTZ::calc_convert_tz(int64_t timestamp_data,
     result.set_null();
   } else {
     int64_t res_value = timestamp_data + (static_cast<int64_t>(offset_couple)) * 1000000;
-    LOG_DEBUG("calc_convert_tz succeed", K(offset_couple), K(timestamp_data));
+
     if (OB_UNLIKELY(res_value < MYSQL_TIMESTAMP_MIN_VAL || res_value > MYSQL_TIMESTAMP_MAX_VAL)) {
       result.set_null();
     } else {
@@ -143,7 +143,7 @@ int ObExprConvertTZ::handle_timezone_offset(int64_t &timestamp_data, const Conve
     } else {
       timestamp_data -= (offset * USECS_PER_SEC);
     }
-    LOG_DEBUG(is_destination ? "dst to offset succeed" : "src to offset succeed", K(offset));
+
   }
   return ret;
 }
@@ -243,7 +243,7 @@ int ObExprConvertTZ::parse_string(int64_t &timestamp_data, const ObString &tz_st
     }
   } else if (OB_ERR_UNKNOWN_TIME_ZONE == ret) {
     // Fallback to str_to_offset when timezone not found in table
-    LOG_DEBUG("time zone not found in tz_info, try str_to_offset", K(tz_str));
+
     if (OB_FAIL(ObTimeConverter::str_to_offset(tz_str, offset, ret_more,
                                 false /* oracle_mode */, true /* need_check_valid */))) {
       LOG_WARN("both time zone search and str_to_offset failed", K(ret), K(tz_str));
@@ -253,7 +253,7 @@ int ObExprConvertTZ::parse_string(int64_t &timestamp_data, const ObString &tz_st
       // str_to_offset succeeded, apply offset directly
       ret = OB_SUCCESS;
       timestamp_data += (input_utc_time ? 1 : -1) * offset * USECS_PER_SEC;
-      LOG_DEBUG("str to offset succeed", K(tz_str), K(offset));
+
     }
   } else {
     LOG_WARN("find_time_zone_pos failed with unexpected error", K(ret), K(tz_str));
@@ -311,7 +311,7 @@ int ObExprConvertTZ::calc(int64_t &timestamp_data, const ObTimeZoneInfoPos &tz_i
       LOG_WARN("sub timezone offset fail", K(ret));
     }
   }
-  LOG_DEBUG("convert tz calc", K(timestamp_data), K(input_utc_time));
+
   return ret;
 }
 
@@ -408,7 +408,7 @@ int ObExprConvertTZ::convert_tz_vector(const ObExpr &expr,
               LOG_WARN("source time zone parse failed", K(ret), K(tz_str_d));
             }
           } else if (OB_SUCCESS != ret) {
-            LOG_DEBUG("calc_convert_tz failed", K(ret), K(tz_str_s), K(tz_str_d));
+
           }
         }
         if (OB_FAIL(ret)){

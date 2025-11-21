@@ -67,7 +67,7 @@ int ObMajorRefreshMJVPrinter::set_refresh_table_scan_flag_for_mr_mv(ObSelectStmt
     LOG_WARN("unexpected null table", K(ret));
   } else {
     table->mr_mv_flags_ = common::ObQueryFlag::RefreshMode;
-    LOG_INFO("set refresh mode for major refresh mview refresh query", K(table->get_table_name()));
+
   }
   return ret;
 }
@@ -91,7 +91,7 @@ int ObMajorRefreshMJVPrinter::get_rowkey_pos_in_select(ObIArray<int64_t> &rowkey
       LOG_WARN("failed to push back", K(ret));
     }
   }
-  LOG_TRACE("finish get rowkey pos in select", K(rowkey_sel_pos));
+
   return ret;
 }
 
@@ -170,7 +170,7 @@ int ObMajorRefreshMJVPrinter::set_real_time_table_scan_flag_for_mr_mv(ObSelectSt
         LOG_WARN("unexpect tables", K(ret));
       } else {
         base_table->mr_mv_flags_ = common::ObQueryFlag::RealTimeMode;
-        LOG_TRACE("set real time mode for major refresh mview real time query", K(base_table->get_table_name()));
+
       }
     }
   }

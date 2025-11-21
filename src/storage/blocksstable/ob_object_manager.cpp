@@ -247,7 +247,7 @@ int ObObjectManager::init(const bool is_shared_storage, const int64_t macro_obje
     is_shared_storage_ = is_shared_storage;
     macro_object_size_ = macro_object_size;
     is_inited_ = true;
-    LOG_INFO("succeed to init object mgr", K(is_shared_storage));
+
   }
   return ret;
 }
@@ -539,7 +539,7 @@ int  ObObjectManager::read_or_format_super_block_(const bool need_format)
     if (OB_FAIL(OB_SERVER_BLOCK_MGR.read_super_block(super_block_, super_block_buf_holder_))) {
       LOG_WARN("fail to read server super block", K(ret));
     } else {
-      LOG_INFO("succeed to read super block", K_(super_block));
+
     }
   } else {
     if (OB_FAIL(super_block_.format_startup_super_block(
@@ -807,7 +807,7 @@ int ObObjectManager::ss_read_super_block_(
       super_block_buf_holder_.get_buffer(), super_block_buf_holder_.get_len(), pos))) {
     LOG_WARN("deserialize super block fail", K(ret), K(pos));
   } else {
-    LOG_INFO("succeed read super block", K(ret), K(super_block), K(pos));
+
   }
   return ret;
 }
@@ -836,7 +836,7 @@ int ObObjectManager::ss_write_super_block_(const ObServerSuperBlock &super_block
     if (OB_FAIL(write_object(opt, write_info, object_handle))) {
       LOG_WARN("fail to write super block", K(ret), K(opt), K(object_handle));
     } else {
-      LOG_INFO("succeed to write super block", K(ret), K(opt), K(super_block));
+
     }
   }
   return ret;

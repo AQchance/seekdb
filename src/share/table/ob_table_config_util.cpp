@@ -165,7 +165,7 @@ int ObKVConfigUtil::get_compress_type(const int64_t tenant_id,
     } else if (compressor_type == NONE_COMPRESSOR || result_size < compress_threshold) {
       compressor_type = INVALID_COMPRESSOR;
     }
-    LOG_DEBUG("[TABLEAPI] the rpc compress type", K(ret), K(compressor_type), K(result_size));
+
   }
   return ret;
 }

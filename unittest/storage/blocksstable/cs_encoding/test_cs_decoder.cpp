@@ -86,7 +86,7 @@ TEST_P(TestCSDecoder, test_integer_decoder)
   ObMicroBlockDesc micro_block_desc;
   ObMicroBlockHeader *header = nullptr;
   ASSERT_EQ(OB_SUCCESS, build_micro_block_desc(encoder, micro_block_desc, header));
-  LOG_INFO("finish build_micro_block_desc", K(micro_block_desc));
+
   ASSERT_EQ(OB_SUCCESS, full_transform_check_row(header, micro_block_desc, row_arr, row_cnt, true));
   ASSERT_EQ(OB_SUCCESS, part_transform_check_row(header, micro_block_desc, row_arr, row_cnt, true));
   ASSERT_EQ(OB_SUCCESS, check_get_row_count(header, micro_block_desc, row_cnt_without_null, col_cnt, false));
@@ -490,7 +490,7 @@ TEST_P(TestCSDecoder, test_decoder_with_all_stream_encoding_types)
   for (int type = 1; type < ObIntegerStream::EncodingType::MAX_TYPE; type++) {
     stream_types_[0] = {ObIntegerStream::EncodingType(type)};
     stream_types_[1] = {ObIntegerStream::EncodingType(type)};
-    LOG_INFO("test stream ecoding type", K(type));
+
     ASSERT_EQ(OB_SUCCESS, encoder.ctx_.previous_cs_encoding_.update_stream_detect_info(
       0, ObColumnEncodingIdentifier(ObCSColumnHeader::Type::INTEGER, 1, 0), stream_types_, DATA_VERSION_1_0_0_0, true));
     ASSERT_EQ(OB_SUCCESS, encoder.ctx_.previous_cs_encoding_.update_stream_detect_info(

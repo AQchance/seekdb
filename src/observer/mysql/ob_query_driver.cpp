@@ -111,13 +111,13 @@ int ObQueryDriver::response_query_header(const ColumnsFieldIArray &fields,
           if (OB_FAIL(ObMySQLResultSet::to_new_result_field(ob_field, field))) {
             LOG_WARN("fail to new result field", K(ret), K(ob_field), K(field));
           } else {
-            LOG_DEBUG("debug succ to new result field", K(ob_field), K(field));
+
           }
         } else {
           if (OB_FAIL(ObMySQLResultSet::to_mysql_field(ob_field, field))) {
             LOG_WARN("fail to old result field", K(ret), K(ob_field), K(field));
           } else {
-            LOG_DEBUG("debug succ to old result field", K(ob_field), K(field));
+
           }
         }
         if (OB_SUCC(ret)) {
@@ -230,7 +230,7 @@ int ObQueryDriver::response_query_result(ObResultSet &result,
   while (OB_SUCC(ret) && row_num < limit_count && !OB_FAIL(result.get_next_row(result_row)) ) {
     ObNewRow *row = const_cast<ObNewRow*>(result_row);
     if (is_prexecute_ && row_num == limit_count - 1) {
-      LOG_DEBUG("is_prexecute_ and row_num is equal with limit_count", K(limit_count));
+
       break;
     }
     // If it is the first line, then reply to the client with field information etc.
@@ -297,7 +297,7 @@ int ObQueryDriver::response_query_result(ObResultSet &result,
             K(can_retry));
         // break;
       } else {
-        LOG_DEBUG("response row succ", K(*row));
+
       }
       if (OB_SUCC(ret)) {
         ++row_num;
@@ -598,7 +598,7 @@ int ObQueryDriver::convert_text_value_charset(ObObj& value,
   if (value.is_null() || value.is_nop_value()) {
   } else if (OB_ISNULL(raw_str.ptr()) || raw_str.length() == 0) {
     if (!value.has_lob_header() || !value.is_lob_storage()) {
-      LOG_DEBUG("Lob: get empty or null obj without header or not lob", K(value));
+
     } else {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("Lob: get  empty or null lob obj with header", K(ret), K(value));

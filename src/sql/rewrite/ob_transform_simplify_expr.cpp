@@ -39,7 +39,7 @@ int ObTransformSimplifyExpr::transform_one_stmt(common::ObIArray<ObParentDMLStmt
       LOG_WARN("failed to flatten stmt exprs", K(is_happened));
     } else {
       trans_happened |= is_happened;
-      LOG_TRACE("succeed to flatten stmt exprs", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -48,7 +48,7 @@ int ObTransformSimplifyExpr::transform_one_stmt(common::ObIArray<ObParentDMLStmt
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("replace is null condition:", is_happened);
-      LOG_TRACE("succeed to replace is null condition", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -57,7 +57,7 @@ int ObTransformSimplifyExpr::transform_one_stmt(common::ObIArray<ObParentDMLStmt
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("replace op null condition:", is_happened);
-      LOG_TRACE("succeed to replace op null condition", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -66,7 +66,7 @@ int ObTransformSimplifyExpr::transform_one_stmt(common::ObIArray<ObParentDMLStmt
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("transform is false true expr:", is_happened);
-      LOG_TRACE("succeed to transform is false true expr", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -75,7 +75,7 @@ int ObTransformSimplifyExpr::transform_one_stmt(common::ObIArray<ObParentDMLStmt
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("convert vector predicate to scalar:", is_happened);
-      LOG_TRACE("succeed to convert vector predicate to scalar", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -84,7 +84,7 @@ int ObTransformSimplifyExpr::transform_one_stmt(common::ObIArray<ObParentDMLStmt
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("remove dummy exprs:", is_happened);
-      LOG_TRACE("succeed to remove dummy exprs", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -93,7 +93,7 @@ int ObTransformSimplifyExpr::transform_one_stmt(common::ObIArray<ObParentDMLStmt
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("remove ora_decode", is_happened);
-      LOG_TRACE("succeed to remove decode", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)){
@@ -102,7 +102,7 @@ int ObTransformSimplifyExpr::transform_one_stmt(common::ObIArray<ObParentDMLStmt
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("convert nvl predicate:", is_happened);
-      LOG_TRACE("succeed to convert nvl predicate", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -111,7 +111,7 @@ int ObTransformSimplifyExpr::transform_one_stmt(common::ObIArray<ObParentDMLStmt
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("remove subquery when filter is false", is_happened);
-      LOG_TRACE("succeed to remove subquery when filter is false", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -120,7 +120,7 @@ int ObTransformSimplifyExpr::transform_one_stmt(common::ObIArray<ObParentDMLStmt
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("convert case when predicate", is_happened);
-      LOG_TRACE("succeed to convert case when predicate", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -129,7 +129,7 @@ int ObTransformSimplifyExpr::transform_one_stmt(common::ObIArray<ObParentDMLStmt
     } else {
       trans_happened |= is_happened;
       OPT_TRACE("canonicalize condition:", is_happened);
-      LOG_TRACE("succeed to canonicalize_condition", K(is_happened));
+
     }
   }
   if (OB_SUCC(ret) && trans_happened) {
@@ -834,7 +834,7 @@ int ObTransformSimplifyExpr::remove_dummy_filter_exprs(common::ObIArray<ObRawExp
   if (OB_FAIL(ObTransformUtils::check_integer_result_type(exprs, is_valid_type))) {
     LOG_WARN("check valid type fail", K(ret));
   } else if (!is_valid_type) {
-    LOG_TRACE("expr list is not valid for removing dummy exprs", K(is_valid_type));
+
   } else if (OB_FAIL(inner_remove_dummy_expr(exprs, constraints))) {
     LOG_WARN("fail to remove dummy expr in exprs", K(ret));
   } else if (exprs.empty()) {
@@ -912,10 +912,10 @@ int ObTransformSimplifyExpr::inner_remove_dummy_expr(ObRawExpr *&expr,
   } else if (OB_FAIL(is_valid_transform_type(expr, is_valid_type))) {
     LOG_WARN("failed to check is valid transform type", K(ret));
   } else if (!is_valid_type) {
-    LOG_TRACE("expr is not valid for removing dummy exprs", K(*expr));
+
   } else {
     // remove dummy filter for children exprs first
-    LOG_TRACE("expr is valid for removing dummy exprs", K(*expr));
+
     ObOpRawExpr *op_expr = static_cast<ObOpRawExpr*>(expr);
     ObRawExpr *transed_expr = NULL;
     const int64_t old_cons_count = constraints.count();
@@ -1935,7 +1935,7 @@ int ObTransformSimplifyExpr::is_filter_exprs_false(common::ObIArray<ObRawExpr*>&
           LOG_WARN("failed to compute const expr", K(ret), K(*filter_expr));
         } else if ((!is_cal_true) || (!result.is_integer_type())) {
         // do nothing if plan cache does not check the bool value, or the result is not integer type
-          LOG_TRACE("plan cache does not check this bool value, ignore it", K(is_cal_true), K(result.get_type()));
+
         } else if (OB_FAIL(ObObjEvaluator::is_true(result, is_cal_true))) {
           LOG_WARN("failed to get bool value", K(ret));
         } else if (!is_cal_true) {
@@ -2453,7 +2453,7 @@ int ObTransformSimplifyExpr::do_canonicalize(ObDMLStmt *stmt, ObIArray<ObRawExpr
       OPT_TRACE("   push_not_happend:", push_not_happend);
       OPT_TRACE("   remove_duplicate_happend:", remove_duplicate_happend);
       OPT_TRACE("   pull_similar_happend:", pull_similar_happend);
-      LOG_TRACE("do canonicalize", K(push_not_happend), K(remove_duplicate_happend), K(pull_similar_happend));
+
     }
   }
   return ret;

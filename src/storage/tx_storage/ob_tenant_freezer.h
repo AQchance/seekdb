@@ -364,7 +364,7 @@ public:
     reset();
     if (OB_ISNULL(tenant_freezer)) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "invalid tx data table", KR(ret));
+
     } else {
       can_freeze_ = (false == ATOMIC_CAS(&(tenant_freezer->is_freezing_tx_data_), false, true));
       if (can_freeze_) {

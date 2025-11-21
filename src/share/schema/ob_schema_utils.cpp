@@ -53,7 +53,7 @@ uint64_t ObSchemaUtils::get_real_table_mappings_tid(const uint64_t ref_table_id)
   int ret = OB_SUCCESS;
   uint64_t base_table_id = share::get_real_table_mappings_tid(ref_table_id);
   if (common::OB_INVALID_ID != base_table_id) {
-    LOG_DEBUG("debug get real table id", K(ret), K(ref_table_id), K(base_table_id));
+
   }
   return base_table_id;
 }
@@ -166,7 +166,7 @@ int ObSchemaUtils::cascaded_generated_column(ObTableSchema &table_schema,
           column.add_column_flag(MULTIVALUE_INDEX_GENERATED_COLUMN_FLAG);
         }
       } else {
-        LOG_DEBUG("succ to resolve_generated_column_info", K(col_def), K(root_expr_type), K(columns_names), K(table_schema));
+
       }
     }
     // TODO: materialized view
@@ -1374,7 +1374,7 @@ int ObSchemaUtils::batch_get_table_schemas_from_cache_(
       ObSimpleTableSchemaV2 *new_table_schema = NULL;
       const ObTableLatestSchemaVersion &table_schema_version = table_schema_versions.at(idx);
       if (table_schema_version.is_deleted()) {
-        LOG_INFO("table has been deleted", K(tenant_id), K(table_schema_version));
+
         // skip
       } else if (OB_FAIL(schema_guard.get_simple_table_schema(
           tenant_id,

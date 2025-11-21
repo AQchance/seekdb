@@ -200,7 +200,7 @@ TEST_F(TestObMySQLUtil, TestPrependZero)
   PREPEND_ZEROS(0, 2, "hello", "00");
   PREPEND_ZEROS(0, 5, "hello", "00000");
   //
-  LOG_INFO("buf", K(ObString(buf)));
+
 }
 
 TEST_F(TestObMySQLUtil, serialize_test)
@@ -423,7 +423,7 @@ TEST_F(TestObMySQLUtil, serialize_test)
   std::istream_iterator<std::string> it_expected(if_expected);
   ASSERT_TRUE(std::equal(it_result, std::istream_iterator<std::string>(), it_expected));
   std::remove(tmp_file);
-  LOG_INFO("buf", K(ObString(buf)));
+
 }
 
 int main(int argc, char *argv[])

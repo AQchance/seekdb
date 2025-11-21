@@ -204,7 +204,7 @@ TEST_F(TestDictDecoder, batch_decode_single_var_len_dict) {
   sql::ObExpr col_expr;
   ASSERT_EQ(OB_SUCCESS, VectorDecodeTestUtil::generate_column_output_expr(
       ROW_CNT, col_meta, VEC_UNIFORM, eval_ctx, col_expr, frame_allocator));
-  LOG_INFO("Current col: ", K(varchar_col_idx), K(col_meta),  K(*decoder.decoders_[varchar_col_idx].ctx_), K(precision), K(vec_tc));
+
 
   ObVectorDecodeCtx vector_ctx(ptr_arr, len_arr, &row_id, 1, 0, col_expr.get_vector_header(eval_ctx));
   ASSERT_EQ(OB_SUCCESS, decoder.decoders_[varchar_col_idx].decode_vector(decoder.row_index_, vector_ctx));

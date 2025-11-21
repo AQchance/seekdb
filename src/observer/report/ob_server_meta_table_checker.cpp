@@ -126,7 +126,7 @@ int ObServerMetaTableChecker::start()
     } else if (OB_FAIL(schedule_tablet_meta_check_task())) {
       LOG_WARN("schedule tablet meta check task failed", KR(ret), K_(tablet_tg_id));
     } else {
-      LOG_INFO("ObServerMetaTableChecker start success", K_(ls_tg_id), K_(tablet_tg_id));
+
     }
   }
   return ret;
@@ -138,7 +138,7 @@ void ObServerMetaTableChecker::stop()
     stopped_ = true;
     TG_STOP(ls_tg_id_);
     TG_STOP(tablet_tg_id_);
-    LOG_INFO("ObServerMetaTableChecker stop finished", K_(ls_tg_id), K_(tablet_tg_id));
+
   }
 }
 
@@ -147,7 +147,7 @@ void ObServerMetaTableChecker::wait()
   if (OB_LIKELY(inited_)) {
     TG_WAIT(ls_tg_id_);
     TG_WAIT(tablet_tg_id_);
-    LOG_INFO("ObServerMetaTableChecker wait finished", K_(ls_tg_id), K_(tablet_tg_id));
+
   }
 }
 
@@ -162,7 +162,7 @@ void ObServerMetaTableChecker::destroy()
     stopped_ = true;
     TG_DESTROY(ls_tg_id_);
     TG_DESTROY(tablet_tg_id_);
-    LOG_INFO("ObServerMetaTableChecker destroy finished", K_(ls_tg_id), K_(tablet_tg_id));
+
   }
 }
 
@@ -223,7 +223,7 @@ int ObServerMetaTableChecker::check_meta_table(const ObMetaTableCheckType check_
         LOG_WARN("invalid check type", KR(ret), K(check_type));
       }
     }
-    LOG_TRACE("ObServerMetaTableChecker finish check meta table", KR(ret), K(nonlocal_tenant_ids));
+
   }
   return ret;
 }
@@ -325,7 +325,7 @@ int ObServerMetaTableChecker::schedule_ls_meta_check_task()
   } else if (OB_FAIL(TG_SCHEDULE(ls_tg_id_, ls_meta_check_task_, CHECK_INTERVAL, false/*repeat*/))) {
     LOG_WARN("TG_SCHEDULE ls meta check task failed", KR(ret), K_(ls_tg_id), K(CHECK_INTERVAL));
   } else {
-    LOG_TRACE("schedule ls meta check task success", K_(ls_tg_id));
+
   }
   return ret;
 }
@@ -343,7 +343,7 @@ int ObServerMetaTableChecker::schedule_tablet_meta_check_task()
   } else if (OB_FAIL(TG_SCHEDULE(tablet_tg_id_, tablet_meta_check_task_, CHECK_INTERVAL, false/*repeat*/))) {
     LOG_WARN("TG_SCHEDULE tablet meta check task failed", KR(ret), K_(tablet_tg_id), K(CHECK_INTERVAL));
   } else {
-    LOG_TRACE("schedule tablet meta check task success", K_(tablet_tg_id));
+
   }
   return ret;
 }

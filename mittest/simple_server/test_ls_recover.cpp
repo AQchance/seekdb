@@ -120,7 +120,7 @@ public:
 
 void ObLSBeforeRestartTest::prepare_uncommitted_data()
 {
-  LOG_INFO("insert data start");
+
   common::ObMySQLProxy &sql_proxy = get_curr_simple_server().get_sql_proxy2();
   int64_t i = 0;
   int64_t affected_rows = 0;
@@ -138,7 +138,7 @@ void ObLSBeforeRestartTest::prepare_uncommitted_data()
   // create a data in tx ctx table.
   WRITE_SQL_BY_CONN(connection, "begin;");
   WRITE_SQL_FMT_BY_CONN(connection, "insert into test_ls_recover_t values(1, 1);");
-  LOG_INFO("insert data finish");
+
 }
 
 void ObLSBeforeRestartTest::minor_freeze()
@@ -148,12 +148,12 @@ void ObLSBeforeRestartTest::minor_freeze()
   int64_t affected_rows = 0;
   ObSqlString sql;
   EXE_SQL("alter system minor freeze tenant tt1;");
-  LOG_INFO("minor freeze done");
+
 }
 
 void ObLSBeforeRestartTest::minor_freeze_tx_ctx_table()
 {
-  LOG_INFO("ObLSBeforeRestartTest::minor_freeze_tx_ctx_table begin");
+
   int ret = OB_SUCCESS;
   share::ObTenantSwitchGuard tguard;
   common::ObSharedGuard<ObLSIterator> guard;
@@ -193,12 +193,12 @@ void ObLSBeforeRestartTest::minor_freeze_tx_ctx_table()
       ASSERT_EQ(share::SCN::max_scn(), tx_ctx_memtable->get_rec_scn());
     }
   }
-  LOG_INFO("ObLSBeforeRestartTest::minor_freeze_tx_ctx_table done");
+
 }
 
 void ObLSBeforeRestartTest::wait_minor_finish()
 {
-  LOG_INFO("wait minor begin");
+
   common::ObMySQLProxy &sql_proxy = get_curr_simple_server().get_sql_proxy();
 
   int ret = OB_SUCCESS;
@@ -216,7 +216,7 @@ void ObLSBeforeRestartTest::wait_minor_finish()
     }
     usleep(100 * 1000); // 100_ms
   }
-  LOG_INFO("minor finished", K(row_cnt));
+
 }
 
 TEST_F(ObLSBeforeRestartTest, dump_uncommitted_tx)
@@ -224,17 +224,17 @@ TEST_F(ObLSBeforeRestartTest, dump_uncommitted_tx)
   ObSqlString sql;
   int64_t affected_rows = 0;
   // create tenant
-  LOG_INFO("create_tenant start");
+
   ASSERT_EQ(OB_SUCCESS, create_tenant());
   ASSERT_EQ(OB_SUCCESS, get_tenant_id(RunCtx.tenant_id_));
   ASSERT_NE(0, RunCtx.tenant_id_);
   ASSERT_EQ(OB_SUCCESS, get_curr_simple_server().init_sql_proxy2());
 
   // create table
-  LOG_INFO("create_table start");
+
   common::ObMySQLProxy &sql_proxy = get_curr_simple_server().get_sql_proxy2();
   EXE_SQL("create table test_ls_recover_t (c1 int, c2 int, primary key(c1))");
-  LOG_INFO("create_table success");
+
 
   // begin and insert
   prepare_uncommitted_data();
@@ -264,9 +264,9 @@ TEST_F(ObLSBeforeRestartTest, create_unfinished_ls_without_disk)
   ObLSID id_100(100);
   const ObMigrationStatus migration_status = ObMigrationStatus::OB_MIGRATION_STATUS_NONE;
 
-  LOG_INFO("ObLSBeforeRestartTest::create_unfinished_ls_without 1", K(tenant_id));
+
   ASSERT_EQ(OB_SUCCESS, gen_create_ls_arg(tenant_id, id_100, arg));
-  LOG_INFO("create_ls", K(arg), K(id_100));
+
   ASSERT_EQ(OB_SUCCESS, ls_svr->inner_create_ls_(arg.get_ls_id(),
                                                  migration_status,
                                                  ObLSRestoreStatus(ObLSRestoreStatus::NONE),
@@ -295,9 +295,9 @@ TEST_F(ObLSBeforeRestartTest, create_unfinished_ls_with_disk)
   palf::PalfBaseInfo palf_base_info;
   const ObMigrationStatus migration_status = ObMigrationStatus::OB_MIGRATION_STATUS_NONE;
 
-  LOG_INFO("ObLSBeforeRestartTest::create_unfinished_ls_with_disk 1");
+
   ASSERT_EQ(OB_SUCCESS, gen_create_ls_arg(tenant_id, id_101, arg));
-  LOG_INFO("create_ls", K(arg), K(id_101));
+
   ASSERT_EQ(OB_SUCCESS, ls_svr->inner_create_ls_(arg.get_ls_id(),
                                                  migration_status,
                                                  ObLSRestoreStatus(ObLSRestoreStatus::NONE),
@@ -333,9 +333,9 @@ TEST_F(ObLSBeforeRestartTest, create_unfinished_ls_with_inner_tablet)
   palf::PalfBaseInfo palf_base_info;
   const ObMigrationStatus migration_status = ObMigrationStatus::OB_MIGRATION_STATUS_NONE;
 
-  LOG_INFO("ObLSBeforeRestartTest::create_unfinished_ls_with_inner_tablet 1");
+
   ASSERT_EQ(OB_SUCCESS, gen_create_ls_arg(tenant_id, id_102, arg));
-  LOG_INFO("create_ls", K(arg), K(id_102));
+
   ASSERT_EQ(OB_SUCCESS, ls_svr->inner_create_ls_(arg.get_ls_id(),
                                                  migration_status,
                                                  ObLSRestoreStatus(ObLSRestoreStatus::NONE),
@@ -373,9 +373,9 @@ TEST_F(ObLSBeforeRestartTest, create_unfinished_ls_with_commit_slog)
   palf::PalfBaseInfo palf_base_info;
   const ObMigrationStatus migration_status = ObMigrationStatus::OB_MIGRATION_STATUS_NONE;
 
-  LOG_INFO("ObLSBeforeRestartTest::create_unfinished_ls_with_inner_tablet 1");
+
   ASSERT_EQ(OB_SUCCESS, gen_create_ls_arg(tenant_id, id_103, arg));
-  LOG_INFO("create_ls", K(arg), K(id_103));
+
   ASSERT_EQ(OB_SUCCESS, ls_svr->inner_create_ls_(arg.get_ls_id(),
                                                  migration_status,
                                                  ObLSRestoreStatus(ObLSRestoreStatus::NONE),
@@ -416,9 +416,9 @@ TEST_F(ObLSBeforeRestartTest, create_restore_ls)
   int64_t create_type = ObLSCreateType::RESTORE;
   const ObMigrationStatus migration_status = ObMigrationStatus::OB_MIGRATION_STATUS_NONE;
 
-  LOG_INFO("ObLSBeforeRestartTest::create_unfinished_ls_with_inner_tablet 1");
+
   ASSERT_EQ(OB_SUCCESS, gen_create_ls_arg(tenant_id, id_104, arg));
-  LOG_INFO("create_ls", K(arg), K(id_104));
+
   ASSERT_EQ(OB_SUCCESS, ls_svr->inner_create_ls_(arg.get_ls_id(),
                                                  migration_status,
                                                  ObLSRestoreStatus(ObLSRestoreStatus::RESTORE_START),
@@ -464,9 +464,9 @@ TEST_F(ObLSBeforeRestartTest, create_rebuild_ls)
   int64_t create_type = ObLSCreateType::NORMAL;
   const ObMigrationStatus migration_status = ObMigrationStatus::OB_MIGRATION_STATUS_NONE;
 
-  LOG_INFO("ObLSBeforeRestartTest::create_unfinished_ls_with_inner_tablet 1");
+
   ASSERT_EQ(OB_SUCCESS, gen_create_ls_arg(tenant_id, id_105, arg));
-  LOG_INFO("create_ls", K(arg), K(id_105));
+
   ASSERT_EQ(OB_SUCCESS, ls_svr->inner_create_ls_(arg.get_ls_id(),
                                                  migration_status,
                                                  ObLSRestoreStatus(ObLSRestoreStatus::NONE),
@@ -508,7 +508,7 @@ void ObLSAfterRestartTest::insert_existed_table()
   common::ObMySQLProxy &sql_proxy = get_curr_simple_server().get_sql_proxy2();
   int ret = OB_SUCCESS;
 
-  LOG_INFO("insert existed table start");
+
   const int MAX_TRY_SELECT_CNT = 20;
   int try_insert_cnt = 0;
   bool insert_succ = false;
@@ -528,21 +528,21 @@ void ObLSAfterRestartTest::insert_existed_table()
 
 TEST_F(ObLSAfterRestartTest, observer_restart)
 {
-  LOG_INFO("observer restart begin");
+
   // init sql proxy2 to use tenant tt1
   ASSERT_EQ(OB_SUCCESS, get_curr_simple_server().init_sql_proxy2());
-  LOG_INFO("observer restart succ");
+
 }
 
 TEST_F(ObLSAfterRestartTest, insert_existed_table)
 {
-  LOG_INFO("insert_existed_table");
+
   insert_existed_table();
 }
 
 TEST_F(ObLSAfterRestartTest, check_unfinished_ls)
 {
-  LOG_INFO("check_unfinished_ls");
+
   uint64_t tenant_id = 0;
   ObLSHandle ls_handle;
   ObLS *ls = nullptr;
@@ -572,34 +572,34 @@ TEST_F(ObLSAfterRestartTest, check_unfinished_ls)
   ObLSID normal_ls[NORMAL_NUM] = {id_103};
 
   ObLSService* ls_svr = MTL(ObLSService*);
-  LOG_INFO("check_unfinished_ls not exist ls");
+
   for (int i = 0; i < NOT_EXIST_NUM; i++) {
-    LOG_INFO("check_unfinished_ls not exist ls", K(not_exist_ls[i]));
+
     ASSERT_EQ(OB_SUCCESS, ls_svr->check_ls_exist(not_exist_ls[i], exist));
     ASSERT_FALSE(exist);
   }
 
-  LOG_INFO("check_unfinished_ls exist ls");
+
   for (int i = 0; i < EXIST_NUM; i++) {
-    LOG_INFO("check_unfinished_ls exist ls", K(exist_ls[i]));
+
     ASSERT_EQ(OB_SUCCESS, ls_svr->check_ls_exist(exist_ls[i], exist));
     ASSERT_TRUE(exist);
   }
 
-  LOG_INFO("check exist ls offlined status");
+
   for (int i = 0; i < OFFLINED_NUM; i++) {
-    LOG_INFO("check_unfinished_ls offlined ls", K(offlined_ls[i]));
+
     ASSERT_EQ(OB_SUCCESS, ls_svr->get_ls(offlined_ls[i], ls_handle, ObLSGetMod::TXSTORAGE_MOD));
     ls = ls_handle.get_ls();
     ASSERT_NE(nullptr, ls);
-    LOG_INFO("ls status", KPC(ls));
+
     ASSERT_TRUE(ls->is_offline());
     ASSERT_TRUE(ls->get_persistent_state().is_ha_state());
   }
 
-  LOG_INFO("check exist ls normal status");
+
   for (int i = 0; i < NORMAL_NUM; i++) {
-    LOG_INFO("check_unfinished_ls normal ls", K(normal_ls[i]));
+
     ASSERT_EQ(OB_SUCCESS, ls_svr->get_ls(normal_ls[i], ls_handle, ObLSGetMod::TXSTORAGE_MOD));
     ls = ls_handle.get_ls();
     ASSERT_NE(nullptr, ls);

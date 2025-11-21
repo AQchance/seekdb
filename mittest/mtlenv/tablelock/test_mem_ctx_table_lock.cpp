@@ -56,7 +56,7 @@ public:
       fake_t3m_(common::OB_SERVER_TENANT_ID),
       mem_ctx_(fake_memtable_ctx_)
   {
-    LOG_INFO("construct TestMemCtxTableLock");
+
   }
   ~TestMemCtxTableLock() {}
 
@@ -66,11 +66,11 @@ public:
   {
     create_memtable();
     init_mem_ctx();
-    LOG_INFO("set up success");
+
   }
   virtual void TearDown() override
   {
-    LOG_INFO("tear down success");
+
   }
 public:
   void create_memtable()
@@ -104,30 +104,30 @@ private:
 
 void TestMemCtxTableLock::SetUpTestCase()
 {
-  LOG_INFO("SetUpTestCase");
+
   init_default_lock_test_value();
 }
 
 void TestMemCtxTableLock::TearDownTestCase()
 {
-  LOG_INFO("TearDownTestCase");
+
 }
 
 TEST_F(TestMemCtxTableLock, add_lock_record)
 {
-  LOG_INFO("TestMemCtxTableLock::add_lock_record");
+
   int ret = OB_SUCCESS;
   bool lock_exist = false;
   uint64_t lock_mode_cnt_in_same_trans[TABLE_LOCK_MODE_COUNT] = {0, 0, 0, 0, 0};
   ObMemCtxLockOpLinkNode *lock_op_node = nullptr;
   // 1. IN TRANS LOCK
   // 1.1 add lock record
-  LOG_INFO("TestMemCtxTableLock::add_lock_record 1.1");
+
   ret = mem_ctx_.add_lock_record(DEFAULT_IN_TRANS_LOCK_OP,
                                  lock_op_node);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 1.2 check lock exist
-  LOG_INFO("TestMemCtxTableLock::add_lock_record 1.2");
+
   ret = mem_ctx_.check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.lock_mode_,
@@ -138,12 +138,12 @@ TEST_F(TestMemCtxTableLock, add_lock_record)
   ASSERT_EQ(lock_exist, true);
   // 2. OUT TRANS LOCK
   // 2.1 add lock redord
-  LOG_INFO("TestMemCtxTableLock::add_lock_record 2.1");
+
   ret = mem_ctx_.add_lock_record(DEFAULT_OUT_TRANS_LOCK_OP,
                                  lock_op_node);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 2.2 check lock exist
-  LOG_INFO("TestMemCtxTableLock::add_lock_record 2.2");
+
   ret = mem_ctx_.check_lock_exist(DEFAULT_OUT_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_OUT_TRANS_LOCK_OP.owner_id_,
                                   DEFAULT_OUT_TRANS_LOCK_OP.lock_mode_,
@@ -154,7 +154,7 @@ TEST_F(TestMemCtxTableLock, add_lock_record)
   ASSERT_EQ(lock_exist, true);
   // 3. REMOVE CHECK
   // 3.1 in trans lock remove test
-  LOG_INFO("TestMemCtxTableLock::add_lock_record 3.1");
+
   mem_ctx_.remove_lock_record(DEFAULT_IN_TRANS_LOCK_OP);
   ret = mem_ctx_.check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
@@ -165,7 +165,7 @@ TEST_F(TestMemCtxTableLock, add_lock_record)
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(lock_exist, false);
   // 3.2 out trans lock remove test
-  LOG_INFO("TestMemCtxTableLock::add_lock_record 3.2");
+
   mem_ctx_.remove_lock_record(DEFAULT_OUT_TRANS_LOCK_OP);
   ret = mem_ctx_.check_lock_exist(DEFAULT_OUT_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_OUT_TRANS_LOCK_OP.owner_id_,
@@ -178,7 +178,7 @@ TEST_F(TestMemCtxTableLock, add_lock_record)
 
   // 4 REMOVE WITH PTR
   // 4.1 add lock record
-  LOG_INFO("TestMemCtxTableLock::add_lock_record 4.1");
+
   ret = mem_ctx_.add_lock_record(DEFAULT_IN_TRANS_LOCK_OP,
                                  lock_op_node);
   ASSERT_EQ(OB_SUCCESS, ret);
@@ -191,7 +191,7 @@ TEST_F(TestMemCtxTableLock, add_lock_record)
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(lock_exist, true);
   // 4.2 remove lock record
-  LOG_INFO("TestMemCtxTableLock::add_lock_record 4.2");
+
   mem_ctx_.remove_lock_record(lock_op_node);
   ret = mem_ctx_.check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
@@ -205,7 +205,7 @@ TEST_F(TestMemCtxTableLock, add_lock_record)
 
 TEST_F(TestMemCtxTableLock, clear_table_lock)
 {
-  LOG_INFO("TestMemCtxTableLock::clear_table_lock");
+
   int ret = OB_SUCCESS;
   bool lock_exist = false;
   uint64_t lock_mode_cnt_in_same_trans[TABLE_LOCK_MODE_COUNT] = {0, 0, 0, 0, 0};
@@ -216,14 +216,14 @@ TEST_F(TestMemCtxTableLock, clear_table_lock)
   commit_version.set_min();
   commit_scn.set_min();
   // 1 EMPTY CLEAR
-  LOG_INFO("TestMemCtxTableLock::clear_table_lock 1");
+
   ret = mem_ctx_.clear_table_lock(is_committed, commit_version, commit_scn);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 2 COMMIT CLEAR
   is_committed = true;
   commit_version = share::SCN::plus(share::SCN::min_scn(), 1);
   // 2.1 in trans lock record
-  LOG_INFO("TestMemCtxTableLock::clear_table_lock 2.1");
+
   ret = mem_ctx_.add_lock_record(DEFAULT_IN_TRANS_LOCK_OP,
                                  lock_op_node);
   ASSERT_EQ(OB_SUCCESS, ret);
@@ -238,7 +238,7 @@ TEST_F(TestMemCtxTableLock, clear_table_lock)
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(lock_exist, false);
   // 2.2 out trans lock record
-  LOG_INFO("TestMemCtxTableLock::clear_table_lock 2.2");
+
   ret = mem_ctx_.add_lock_record(DEFAULT_OUT_TRANS_LOCK_OP,
                                  lock_op_node);
   ASSERT_EQ(OB_SUCCESS, ret);
@@ -253,7 +253,7 @@ TEST_F(TestMemCtxTableLock, clear_table_lock)
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(lock_exist, false);
   // 2.3 out trans unlock record
-  LOG_INFO("TestMemCtxTableLock::clear_table_lock 2.3");
+
   ret = mem_ctx_.add_lock_record(DEFAULT_OUT_TRANS_UNLOCK_OP,
                                  lock_op_node);
   ASSERT_EQ(OB_SUCCESS, ret);
@@ -270,7 +270,7 @@ TEST_F(TestMemCtxTableLock, clear_table_lock)
 
   // 3 ABORT CLEAR
   is_committed = false;
-  LOG_INFO("TestMemCtxTableLock::clear_table_lock 3.1");
+
   ret = mem_ctx_.add_lock_record(DEFAULT_IN_TRANS_LOCK_OP,
                                  lock_op_node);
   ASSERT_EQ(OB_SUCCESS, ret);
@@ -287,21 +287,21 @@ TEST_F(TestMemCtxTableLock, clear_table_lock)
 
 TEST_F(TestMemCtxTableLock, rollback_table_lock)
 {
-  LOG_INFO("TestMemCtxTableLock::rollback_table_lock");
+
   int ret = OB_SUCCESS;
   bool lock_exist = false;
   ObMemCtxLockOpLinkNode *lock_op_node = nullptr;
   uint64_t lock_mode_cnt_in_same_trans[TABLE_LOCK_MODE_COUNT] = {0, 0, 0, 0, 0};
   // 1. check rollback IN_TRANS lock
   // 1.1 add lock record
-  LOG_INFO("TestMemCtxTableLock::rollback_table_lock 1.1");
+
   ObTableLockOp lock_op1 = DEFAULT_IN_TRANS_LOCK_OP;
   lock_op1.lock_seq_no_ = ObTxSEQ(2, 0);
   ret = mem_ctx_.add_lock_record(lock_op1,
                                  lock_op_node);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 1.2 check exist
-  LOG_INFO("TestMemCtxTableLock::rollback_table_lock 1.2");
+
   ret = mem_ctx_.check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.lock_mode_,
@@ -312,7 +312,7 @@ TEST_F(TestMemCtxTableLock, rollback_table_lock)
   ASSERT_EQ(lock_exist, true);
 
   // 1.3 rollback and check exist
-  LOG_INFO("TestMemCtxTableLock::rollback_table_lock 1.3");
+
   auto rollback_to_seq_no = ObTxSEQ(1, 0);
   auto rollback_from_seq_no = ObTxSEQ(100, 0);
   ret = mem_ctx_.rollback_table_lock(rollback_to_seq_no, rollback_from_seq_no);
@@ -328,7 +328,7 @@ TEST_F(TestMemCtxTableLock, rollback_table_lock)
 
   // 2. check rollback OUT_TRANS lock 
   // 2.1 add lock record
-  LOG_INFO("TestMemCtxTableLock::rollback_table_lock 2.1");
+
   ObTableLockOp lock_op2 = DEFAULT_OUT_TRANS_LOCK_OP;
   lock_op2.lock_seq_no_ = ObTxSEQ(3, 0);
   ret = mem_ctx_.add_lock_record(lock_op2,
@@ -336,7 +336,7 @@ TEST_F(TestMemCtxTableLock, rollback_table_lock)
   ASSERT_EQ(OB_SUCCESS, ret);
 
   // 2.2 check exist
-  LOG_INFO("TestMemCtxTableLock::rollback_table_lock 2.2");
+
   ret = mem_ctx_.check_lock_exist(DEFAULT_OUT_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_OUT_TRANS_LOCK_OP.owner_id_,
                                   DEFAULT_OUT_TRANS_LOCK_OP.lock_mode_,
@@ -347,7 +347,7 @@ TEST_F(TestMemCtxTableLock, rollback_table_lock)
   ASSERT_EQ(lock_exist, true);
 
   // 2.3 rollback and check exist
-  LOG_INFO("TestMemCtxTableLock::rollback_table_lock 2.3");
+
   ret = mem_ctx_.rollback_table_lock(rollback_to_seq_no, rollback_from_seq_no);
   ASSERT_EQ(OB_TRANS_NEED_ROLLBACK, ret);
   ret = mem_ctx_.check_lock_exist(DEFAULT_OUT_TRANS_LOCK_OP.lock_id_,
@@ -361,13 +361,13 @@ TEST_F(TestMemCtxTableLock, rollback_table_lock)
 
   // 3. check rollback OUT_TRANS and IN_TRANS lock 
   // 3.1 add lock record
-  LOG_INFO("TestMemCtxTableLock::rollback_table_lock 3.1");
+
   ret = mem_ctx_.add_lock_record(lock_op1,
                                  lock_op_node);
   ASSERT_EQ(OB_SUCCESS, ret);
 
   // 3.2 check exist
-  LOG_INFO("TestMemCtxTableLock::rollback_table_lock 3.2");
+
   ret = mem_ctx_.check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.lock_mode_,
@@ -378,7 +378,7 @@ TEST_F(TestMemCtxTableLock, rollback_table_lock)
   ASSERT_EQ(lock_exist, true);
 
   // 3.3 rollback OUT_TRANS and check exist
-  LOG_INFO("TestMemCtxTableLock::rollback_table_lock 3.3");
+
   rollback_from_seq_no = ObTxSEQ(3, 0);
   rollback_to_seq_no = ObTxSEQ(2, 0);
   ret = mem_ctx_.rollback_table_lock(rollback_to_seq_no, rollback_from_seq_no);
@@ -402,7 +402,7 @@ TEST_F(TestMemCtxTableLock, rollback_table_lock)
   ASSERT_EQ(lock_exist, true);
 
   // 3.4 rollback IN_TRANS and check exist
-  LOG_INFO("TestMemCtxTableLock::rollback_table_lock 3.4");
+
   rollback_from_seq_no = ObTxSEQ(2, 0);
   rollback_to_seq_no = ObTxSEQ(1, 0);
   ret = mem_ctx_.rollback_table_lock(rollback_to_seq_no, rollback_from_seq_no);
@@ -426,7 +426,7 @@ TEST_F(TestMemCtxTableLock, rollback_table_lock)
   ASSERT_EQ(lock_exist, true);
 
   // 3.5 rollback all and check exist
-  LOG_INFO("TestMemCtxTableLock::rollback_table_lock 3.4");
+
 
   ret = mem_ctx_.add_lock_record(lock_op1,
                                  lock_op_node);
@@ -455,7 +455,7 @@ TEST_F(TestMemCtxTableLock, rollback_table_lock)
   ASSERT_EQ(lock_exist, true);
 
   // 3.4 clean lock record 
-  LOG_INFO("TestMemCtxTableLock::rollback_table_lock 3.4");
+
   mem_ctx_.remove_lock_record(lock_op1);
   mem_ctx_.remove_lock_record(lock_op2);
   ret = mem_ctx_.check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
@@ -479,7 +479,7 @@ TEST_F(TestMemCtxTableLock, rollback_table_lock)
 
 TEST_F(TestMemCtxTableLock, check_lock_need_replay)
 {
-  LOG_INFO("TestMemCtxTableLock::check_lock_need_replay");
+
   uint64_t lock_mode_cnt_in_same_trans[TABLE_LOCK_MODE_COUNT] = {0, 0, 0, 0, 0};
   int ret = OB_SUCCESS;
   bool lock_exist = false;
@@ -488,33 +488,33 @@ TEST_F(TestMemCtxTableLock, check_lock_need_replay)
   bool need_replay = false;
   ObMemCtxLockOpLinkNode *lock_op_node = nullptr;
   // 1.1 empty check.
-  LOG_INFO("TestMemCtxTableLock::check_lock_need_replay 1.1");
+
   ret = mem_ctx_.check_lock_need_replay(scn,
                                         DEFAULT_IN_TRANS_LOCK_OP,
                                         need_replay);
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(need_replay, true);
   // 1.2 add a lock record
-  LOG_INFO("TestMemCtxTableLock::check_lock_need_replay 1.2");
+
   ret = mem_ctx_.add_lock_record(DEFAULT_IN_TRANS_LOCK_OP,
                                  lock_op_node);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 1.3 not need replay because the lock op exist.
-  LOG_INFO("TestMemCtxTableLock::check_lock_need_replay 1.3");
+
   ret = mem_ctx_.check_lock_need_replay(scn,
                                         DEFAULT_IN_TRANS_LOCK_OP,
                                         need_replay);
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(need_replay, false);
   // 1.4 need replay because of lock op no exist.
-  LOG_INFO("TestMemCtxTableLock::check_lock_need_replay 1.4");
+
   ret = mem_ctx_.check_lock_need_replay(scn,
                                         DEFAULT_OUT_TRANS_LOCK_OP,
                                         need_replay);
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(need_replay, true);
   // 1.5 can not replay because of log ts too small
-  LOG_INFO("TestMemCtxTableLock::check_lock_need_replay 1.5");
+
   scn = share::SCN::plus(share::SCN::min_scn(), 2);
   mem_ctx_.max_durable_scn_ = scn;
   scn = share::SCN::plus(share::SCN::min_scn(), 1);
@@ -524,7 +524,7 @@ TEST_F(TestMemCtxTableLock, check_lock_need_replay)
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(need_replay, false);
   // 1.6 clear the lock op
-  LOG_INFO("TestMemCtxTableLock::check_lock_need_replay 1.6");
+
   mem_ctx_.remove_lock_record(lock_op_node);
   ret = mem_ctx_.check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
@@ -538,7 +538,7 @@ TEST_F(TestMemCtxTableLock, check_lock_need_replay)
 
 TEST_F(TestMemCtxTableLock, get_table_lock_store_info)
 {
-  LOG_INFO("TestMemCtxTableLock::check_lock_need_replay");
+
   int ret = OB_SUCCESS;
   bool lock_exist = false;
   ObMemCtxLockOpLinkNode *lock_op_node = nullptr;
@@ -548,7 +548,7 @@ TEST_F(TestMemCtxTableLock, get_table_lock_store_info)
   scn.set_min();
   // 1 CHECK NOT LOGGED LOCK
   // 1.1 add in trans lock
-  LOG_INFO("TestMemCtxTableLock::check_lock_need_replay 1.1");
+
   ret = mem_ctx_.add_lock_record(DEFAULT_IN_TRANS_LOCK_OP,
                                  lock_op_node);
   ASSERT_EQ(OB_SUCCESS, ret);
@@ -557,7 +557,7 @@ TEST_F(TestMemCtxTableLock, get_table_lock_store_info)
   op_count = table_lock_info.table_lock_ops_.count();
   ASSERT_EQ(1, op_count);
   // 2 CHECK LOGGED LOCK
-  LOG_INFO("TestMemCtxTableLock::check_lock_need_replay 2.1");
+
   scn.set_base();
   table_lock_info.reset();
   mem_ctx_.sync_log_succ(scn);
@@ -567,7 +567,7 @@ TEST_F(TestMemCtxTableLock, get_table_lock_store_info)
   ASSERT_EQ(1, op_count);
   ASSERT_EQ(scn, table_lock_info.max_durable_scn_);
   // 3 CHECK LOGGED WITH NOT LOGGED
-  LOG_INFO("TestMemCtxTableLock::check_lock_need_replay 3.1");
+
   table_lock_info.reset();
   ret = mem_ctx_.add_lock_record(DEFAULT_OUT_TRANS_LOCK_OP,
                                  lock_op_node);
@@ -578,7 +578,7 @@ TEST_F(TestMemCtxTableLock, get_table_lock_store_info)
   ASSERT_EQ(2, op_count);
   ASSERT_EQ(scn, table_lock_info.max_durable_scn_);
   // 4 CHECK TWO LOGGED
-  LOG_INFO("TestMemCtxTableLock::check_lock_need_replay 4.1");
+
   table_lock_info.reset();
   scn = share::SCN::plus(share::SCN::min_scn(), 2);
   mem_ctx_.sync_log_succ(scn);
@@ -588,7 +588,7 @@ TEST_F(TestMemCtxTableLock, get_table_lock_store_info)
   ASSERT_EQ(2, op_count);
   ASSERT_EQ(scn, table_lock_info.max_durable_scn_);
   // 5 CLEAN TEST
-  LOG_INFO("TestMemCtxTableLock::check_lock_need_replay 5.1");
+
   mem_ctx_.remove_lock_record(DEFAULT_IN_TRANS_LOCK_OP);
   mem_ctx_.remove_lock_record(DEFAULT_OUT_TRANS_LOCK_OP);
   table_lock_info.reset();

@@ -121,7 +121,7 @@ int ObUnifiedAddrAgent::store(const ObIAddrList &addr_list, const ObIAddrList &r
           }
           //ret = OB_SUCCESS == ret ? ret : tmp_ret;
         } else {
-          LOG_INFO("store rs list succeed", "agent", i, K(addr_list), K(force));
+
         }
       }
     }
@@ -222,7 +222,7 @@ int ObRsMgr::init(
       ObLockGuard<ObSpinLock> lock_guard(lock_);
       master_rs_ = rs_list.at(0);
     }
-    LOG_INFO("ObRsMgr init successfully! master rootserver", K_(master_rs));
+
   }
   return ret;
 }
@@ -270,7 +270,7 @@ int ObRsMgr::force_set_master_rs(const ObAddr &master_rs)
   } else {
     ObLockGuard<ObSpinLock> lock_guard(lock_);
     master_rs_ = master_rs;
-    LOG_INFO("[RS_MGR] force set rs list", K(master_rs));
+
   }
   return ret;
 }
@@ -352,7 +352,7 @@ int ObRsMgr::renew_master_rootserver(const int64_t cluster_id)
       LOG_WARN("fail to set remote master rs", KR(ret), K(cluster_id), K(leader));
     }
     ObTaskController::get().allow_next_syslog();
-    LOG_INFO("[RS_MGR] new master rootserver found", "rootservice", leader, K(cluster_id));
+
   }
   return ret;
 }

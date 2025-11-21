@@ -160,10 +160,10 @@ int ObPxTransmitChProvider::inner_get_part_ch_map(ObPxPartChInfo &map)
         if (OB_FAIL(map.part_ch_array_.push_back(tmp_part_ch_item))) {
           LOG_WARN("failed to push back part ch item", K(ret));
         } else {
-          LOG_DEBUG("debug partition map", K(tmp_part_ch_item));
+
         }
       }
-      LOG_DEBUG("debug get partition map", K(map.part_ch_array_));
+
     } else {
       // PK scene map & PDML scene map:
       // [tablet_id, prefiex_task_count + sqc_task_id(i.e., sqc_worker_id)]
@@ -171,7 +171,7 @@ int ObPxTransmitChProvider::inner_get_part_ch_map(ObPxPartChInfo &map)
       if (OB_FAIL(map.part_ch_array_.push_back(tmp_part_ch_item))) {
         LOG_WARN("failed to push back part ch item", K(ret));
       } else {
-        LOG_DEBUG("debug get partition map", K(map.part_ch_array_));
+
       }
     }
   }
@@ -191,7 +191,7 @@ int ObPxTransmitChProvider::wait_msg(int64_t timeout_ts)
       wait_count++;
       // trace log each 100ms
       if (0 == wait_count % 100) {
-        LOG_TRACE("wait for data channel ready", K(wait_count), K(lbt()));
+
       }
       if (OB_UNLIKELY(IS_INTERRUPTED())) {
         // Interrupt error handling
@@ -202,15 +202,15 @@ int ObPxTransmitChProvider::wait_msg(int64_t timeout_ts)
         break;
       } else if (!msg_set_) { // wake up by leader, retry
         ret = OB_DTL_WAIT_EAGAIN;
-        LOG_TRACE("wake up by leader, retry");
+
         break;
       }
     } else {
-      LOG_TRACE("[CMD] wait msg ok", K(wait_count), K(ret));
+
     }
     if (timeout_ts <= ObTimeUtility::current_time()) {
       ret = OB_TIMEOUT;
-      LOG_TRACE("wait for data channel fail", K(wait_count), K(lbt()), K(ret));
+
       break;
     }
   }
@@ -226,7 +226,7 @@ int ObPxTransmitChProvider::add_msg(const ObPxTransmitDataChannelMsg &msg)
     ObThreadCondGuard guard(msg_ready_cond_);
     msg_set_ = true;
     msg_ready_cond_.broadcast();
-    LOG_TRACE("set transmit data ch msg to provider done", K(msg));
+
   }
   return ret;
 }
@@ -359,7 +359,7 @@ int ObPxReceiveChProvider::add_msg(const ObPxReceiveDataChannelMsg &msg)
   }
   if (OB_SUCC(ret)) {
     msg_ready_cond_.broadcast();
-    LOG_TRACE("set receive data ch msg to provider done", K(msg));
+
   }
   return ret;
 }
@@ -399,7 +399,7 @@ int ObPxReceiveChProvider::wait_msg(int64_t child_dfo_id, int64_t timeout_ts)
           break;
         } else {
           ret = OB_DTL_WAIT_EAGAIN;
-          LOG_TRACE("follower is wake up by leader, retry");
+
           break;
         }
       }
@@ -477,7 +477,7 @@ int ObPxBloomfilterChProvider::add_msg(const ObPxCreateBloomFilterChannelMsg &ms
   } else {
     msg_set_ = true;
     msg_ready_cond_.broadcast();
-    LOG_TRACE("set bloom filter data ch msg to provider done", K(msg));
+
   }
   return ret;
 }

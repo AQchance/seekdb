@@ -154,7 +154,7 @@ int ObLSRecoveryStatOperator::create_new_ls(const ObLSStatusInfo &ls_info,
     } else if (OB_FAIL(exec_write(ls_info.tenant_id_, sql, this, trans))) {
       LOG_WARN("failed to exec write", KR(ret), K(ls_info), K(sql));
     }
-    LOG_INFO("[LS_RECOVERY] create new ls", KR(ret), K(ls_info), K(create_ls_scn), K(init_scn));
+
   }
   return ret;
 }
@@ -187,7 +187,7 @@ int ObLSRecoveryStatOperator::drop_ls(const uint64_t &tenant_id,
     } else if (OB_FAIL(exec_write(tenant_id, sql, this, trans))) {
       LOG_WARN("failed to exec write", KR(ret), K(tenant_id), K(ls_id), K(sql));
     }
-    LOG_INFO("[LS_RECOVERY] drop ls", KR(ret), K(tenant_id), K(ls_id));
+
   }
   return ret;
 }
@@ -327,7 +327,7 @@ int ObLSRecoveryStatOperator::set_ls_offline(const uint64_t &tenant_id,
     }
   }
 
-  LOG_INFO("[LS_RECOVERY]set ls drop ts", KR(ret), K(tenant_id), K(ls_id), K(drop_scn));
+
 
   return ret;
 }
@@ -633,7 +633,7 @@ int ObLSRecoveryStatOperator::get_user_ls_sync_scn(const uint64_t tenant_id,
       if (OB_ERR_NULL_VALUE == ret) {
         ret = OB_SUCCESS;
         sync_scn.set_max();
-        LOG_INFO("no user ls, set sync scn max", K(tenant_id), K(sql));
+
       } else {
         LOG_WARN("failed to get tenant stat", KR(ret), K(tenant_id), K(sql));
       }

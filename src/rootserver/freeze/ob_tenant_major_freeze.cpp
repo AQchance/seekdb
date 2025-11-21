@@ -97,12 +97,12 @@ int ObTenantMajorFreeze::start()
 void ObTenantMajorFreeze::stop()
 {
   if (is_primary_service()) {
-    LOG_INFO("daily_launcher start to stop", K_(tenant_id), K_(is_primary_service));
+
     daily_launcher_.stop();
   }
-  LOG_INFO("freeze_info_detector start to stop", K_(tenant_id), K_(is_primary_service));
+
   major_merge_info_detector_.stop();
-  LOG_INFO("merge_scheduler start to stop", K_(tenant_id), K_(is_primary_service));
+
   merge_scheduler_.stop();
 }
 
@@ -110,12 +110,12 @@ int ObTenantMajorFreeze::wait()
 {
   int ret = OB_SUCCESS;
   if (is_primary_service()) {
-    LOG_INFO("daily_launcher start to wait", K_(tenant_id), K_(is_primary_service));
+
     daily_launcher_.wait();
   }
-  LOG_INFO("freeze_info_detector start to wait", K_(tenant_id), K_(is_primary_service));
+
   major_merge_info_detector_.wait();
-  LOG_INFO("merge_scheduler start to wait", K_(tenant_id), K_(is_primary_service));
+
   merge_scheduler_.wait();
   return ret;
 }
@@ -124,19 +124,19 @@ int ObTenantMajorFreeze::destroy()
 {
   int ret = OB_SUCCESS;
   if (is_primary_service()) {
-    LOG_INFO("daily_launcher start to destroy", K_(tenant_id), K_(is_primary_service));
+
     if (OB_FAIL(daily_launcher_.destroy())) {
       LOG_WARN("fail to destroy daily_launcher", KR(ret), K_(tenant_id), K_(is_primary_service));
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("freeze_info_detector start to destroy", K_(tenant_id), K_(is_primary_service));
+
     if (OB_FAIL(major_merge_info_detector_.destroy())) {
       LOG_WARN("fail to destroy freeze_info_detector", KR(ret), K_(tenant_id), K_(is_primary_service));
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("merge_scheduler start to destroy", K_(tenant_id), K_(is_primary_service));
+
     if (OB_FAIL(merge_scheduler_.destroy())) {
       LOG_WARN("fail to destroy merge_scheduler", KR(ret), K_(tenant_id), K_(is_primary_service));
     }
@@ -209,7 +209,7 @@ int ObTenantMajorFreeze::try_schedule_minor_before_major_()
                                                     .root_minor_freeze(arg))) {
     LOG_WARN("fail to execute root_minor_freeze rpc", KR(ret), K(arg));
   } else {
-    LOG_INFO("try_schedule_minor_before_major_", KR(ret), K(contains), K(rs_addr));
+
     // wait for freeze finish
     const int64_t wait_us = GCONF.rpc_timeout;
     ob_usleep(wait_us);
@@ -220,7 +220,7 @@ int ObTenantMajorFreeze::try_schedule_minor_before_major_()
 int ObTenantMajorFreeze::launch_major_freeze(const ObMajorFreezeReason freeze_reason)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("launch_major_freeze", K_(tenant_id));
+
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", KR(ret), K_(tenant_id));
@@ -238,7 +238,7 @@ int ObTenantMajorFreeze::launch_major_freeze(const ObMajorFreezeReason freeze_re
   } else if (OB_FAIL(check_freeze_info())) {
     LOG_WARN("fail to check freeze info", KR(ret), K_(tenant_id));
     if ((OB_MAJOR_FREEZE_NOT_FINISHED == ret) || (OB_FROZEN_INFO_ALREADY_EXIST == ret)) {
-      LOG_INFO("should not launch major freeze again", KR(ret), K_(tenant_id));
+
     } else {
       LOG_WARN("fail to check freeze info", KR(ret), K_(tenant_id));
     }

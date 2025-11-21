@@ -102,7 +102,7 @@ int ObPxDistTransmitOp::next_batch(const int64_t max_row_cnt)
       OZ(sampled_input_rows_.get_row(cur_transmit_sampled_rows_->first + i, sr));
       OZ(sr->to_expr(MY_SPEC.sampling_saving_row_, eval_ctx_));
       if (OB_SUCC(ret)) {
-        LOG_DEBUG("fetch row for transmit", "row", ROWEXPR2STR(eval_ctx_, MY_SPEC.sampling_saving_row_));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -166,7 +166,7 @@ int ObPxDistTransmitOp::next_vector(const int64_t max_row_cnt)
         OZ(sampled_input_rows_.get_row(cur_transmit_sampled_rows_->first + i, sr));
         OZ(sr->to_expr(MY_SPEC.sampling_saving_row_, eval_ctx_));
         if (OB_SUCC(ret)) {
-          LOG_DEBUG("fetch row for transmit", "row", ROWEXPR2STR(eval_ctx_, MY_SPEC.sampling_saving_row_));
+
         }
       }
     }

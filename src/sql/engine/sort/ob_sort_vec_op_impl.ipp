@@ -1842,7 +1842,7 @@ int ObSortVecOpImpl<Compare, Store_Row, has_addon>::build_ems_heap(int64_t &merg
   } else {
     SortVecOpChunk *first = sort_chunks_.get_first();
     if (first->level_ != first->get_next()->level_) {
-      LOG_TRACE("only one chunk in current level, move to next level directly", K(first->level_));
+
       first->level_ = first->get_next()->level_;
     }
     int64_t max_ways = 1;

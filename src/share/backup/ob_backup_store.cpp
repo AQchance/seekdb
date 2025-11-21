@@ -361,11 +361,11 @@ int ObBackupStore::read_single_file(const ObBackupPathString &full_path, ObIBack
     if (OB_OBJECT_NOT_EXIST != ret) {
       LOG_WARN("failed to get file length.", K(ret), K(full_path));
     } else {
-      LOG_INFO("file not exist.", K(ret), K(full_path));
+
     }
   } else if (0 == file_length) {
     ret = OB_ERR_UNEXPECTED;
-    LOG_INFO("file is empty.", K(ret), K(full_path));
+
   } else if (OB_ISNULL(buf = reinterpret_cast<char*>(allocator.alloc(file_length)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     LOG_WARN("failed to alloc buf", K(ret), K(full_path), K(file_length));
@@ -492,7 +492,7 @@ int ObBackupDestMgr::check_dest_validity(obrpc::ObSrvRpcProxy &rpc_proxy, const 
     }
   } else {
     if (!need_format_file) {
-      LOG_INFO("succ check dest validity", K_(backup_dest), K(is_empty)); 
+ 
     } else {
       ret = OB_BACKUP_FORMAT_FILE_NOT_EXIST;
       LOG_WARN("format file does not exist", K(ret), K_(backup_dest), K(is_empty));

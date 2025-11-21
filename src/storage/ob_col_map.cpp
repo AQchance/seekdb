@@ -33,12 +33,12 @@ int ObColMap::init(const int64_t col_count)
   const uint64_t count = static_cast<uint64_t>(col_count);
   if (OB_UNLIKELY(is_inited_)) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObColMap init twice", K(ret));
+
   } else if (count <= FINAL_LEVEL_MAX_COL_NUM) {
     if (OB_UNLIKELY(count > FIRST_LEVEL_MAX_COL_NUM)) {
       if (NULL == (ptr = ob_malloc(sizeof(ColMapFinal), ObModIds::OB_COL_MAP))) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(ERROR, "fail to allocate memory for column_ids map", K(ret));
+
       } else {
         col_map_final_ = new (ptr) ColMapFinal();
       }
@@ -48,7 +48,7 @@ int ObColMap::init(const int64_t col_count)
     }
   } else {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid column count, not support", K(ret), K(col_count));
+
   }
   if (OB_SUCCESS != ret && !is_inited_) {
     destroy();
@@ -61,10 +61,10 @@ int ObColMap::set_refactored(const uint64_t col_id, const int64_t col_idx)
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ColMap is not initialized", K(ret));
+
   } else if (OB_UNLIKELY(OB_INVALID_ID == col_id) || OB_UNLIKELY(col_idx < 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(col_id), K(col_idx));
+
   } else if (OB_UNLIKELY(NULL != col_map_final_)) {
     ret = col_map_final_->set_refactored(col_id, col_idx);
   } else {
@@ -78,10 +78,10 @@ int ObColMap::get_refactored(const uint64_t col_id, int64_t &col_idx) const
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ColMap is not initialized", K(ret));
+
   } else if (OB_UNLIKELY(OB_INVALID_ID == col_id)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(col_id));
+
   } else if (OB_UNLIKELY(NULL != col_map_final_)) {
     ret = col_map_final_->get_refactored(col_id, col_idx);
   } else {
@@ -97,10 +97,10 @@ int64_t *ObColMap::get(const uint64_t col_id)
   int64_t *col_idx = NULL;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ColMap is not initialized", K(ret));
+
   } else if (OB_UNLIKELY(OB_INVALID_ID == col_id)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(col_id));
+
   } else if (OB_UNLIKELY(NULL != col_map_final_)) {
     col_idx = col_map_final_->get(col_id);
   } else {

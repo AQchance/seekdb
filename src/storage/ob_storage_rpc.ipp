@@ -45,7 +45,7 @@ int ObStorageStreamRpcReader<RPC_CODE>::init(
 
   if (OB_UNLIKELY(is_inited_)) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "can not init twice", K(ret));
+
   } else {
     bandwidth_throttle_ = &bandwidth_throttle;
     buf_size = OB_MALLOC_BIG_BLOCK_SIZE;
@@ -58,10 +58,10 @@ int ObStorageStreamRpcReader<RPC_CODE>::init(
   if (OB_SUCC(ret)) {
     if (NULL == (buf = reinterpret_cast<char*>(allocator_.alloc(buf_size)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed to alloc buf", K(ret));
+
     } else if (!rpc_buffer_.set_data(buf, buf_size)) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed to set rpc buffer", K(ret));
+
     } else {
       is_inited_ = true;
     }
@@ -77,12 +77,12 @@ int ObStorageStreamRpcReader<RPC_CODE>::fetch_next_buffer_if_need()
   bool need_fetch = false;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (OB_FAIL(check_need_fetch_next_buffer(need_fetch))) {
-    STORAGE_LOG(WARN, "check need fetch next buffer failed", K(ret), K(need_fetch));
+
   } else if (need_fetch && OB_FAIL(fetch_next_buffer())) {
     if (OB_ITER_END != ret) {
-      STORAGE_LOG(WARN, "fail to fetch next buffer", K(ret), K(need_fetch), K(rpc_buffer_), K(rpc_buffer_parse_pos_));
+
     }
   }
   return ret;
@@ -95,18 +95,18 @@ int ObStorageStreamRpcReader<RPC_CODE>::fetch_and_decode(Data &data)
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (OB_FAIL(fetch_next_buffer_if_need())) {
     if (OB_ITER_END != ret) {
-      STORAGE_LOG(WARN, "failed to fetch buffer", K(ret));
+
     }
   } else if (OB_FAIL(serialization::decode(rpc_buffer_.get_data(),
                                            rpc_buffer_.get_position(),
                                            rpc_buffer_parse_pos_,
                                            data))) {
-    STORAGE_LOG(WARN, "failed to decode", K_(rpc_buffer), K_(rpc_buffer_parse_pos), K(ret));
+
   } else {
-    STORAGE_LOG(INFO, "decode data",K(rpc_buffer_), K(rpc_buffer_parse_pos_), K(data));
+
   }
   return ret;
 }
@@ -118,16 +118,16 @@ int ObStorageStreamRpcReader<RPC_CODE>::fetch_and_decode(ObIAllocator& allocator
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (OB_FAIL(fetch_next_buffer_if_need())) {
     if (OB_ITER_END != ret) {
-      STORAGE_LOG(WARN, "failed to fetch buffer", K(ret));
+
     }
   } else if (OB_FAIL(data.deserialize(allocator,
                                       rpc_buffer_.get_data(),
                                       rpc_buffer_.get_position(),
                                       rpc_buffer_parse_pos_))) {
-    STORAGE_LOG(WARN, "failed to decode", K_(rpc_buffer), K_(rpc_buffer_parse_pos), K(ret));
+
   }
   return ret;
 }
@@ -140,21 +140,21 @@ int ObStorageStreamRpcReader<RPC_CODE>::fetch_and_decode_list(ObIAllocator& allo
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else {
     Data tmp_data;
     while (OB_SUCC(ret)) {
       if (OB_FAIL(fetch_next_buffer_if_need())) {
         if (OB_ITER_END != ret) {
-          STORAGE_LOG(WARN, "failed to fetch buffer", K(ret));
+
         }
       } else if (OB_FAIL(tmp_data.deserialize(allocator,
                                               rpc_buffer_.get_data(),
                                               rpc_buffer_.get_position(),
                                               rpc_buffer_parse_pos_))) {
-        STORAGE_LOG(WARN, "failed to decode", K(rpc_buffer_), K(ret));
+
       } else if (OB_FAIL(data_list.push_back(tmp_data))) {
-        STORAGE_LOG(WARN, "failed to push back", K(ret));
+
       }
     }
   }
@@ -173,23 +173,23 @@ int ObStorageStreamRpcReader<RPC_CODE>::fetch_and_decode_list(const int64_t data
   int64_t index = 0;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (data_list_count < 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "fetch and decode list get invalid argument", K(ret), K(data_list_count));
+
   } else {
     Data tmp_data;
     while (OB_SUCC(ret) && index < data_list_count) {
       if (OB_FAIL(fetch_next_buffer_if_need())) {
         if (OB_ITER_END != ret) {
-          STORAGE_LOG(WARN, "failed to fetch buffer", K(ret));
+
         }
       } else if (OB_FAIL(tmp_data.deserialize(rpc_buffer_.get_data(),
                                               rpc_buffer_.get_position(),
                                               rpc_buffer_parse_pos_))) {
-        STORAGE_LOG(WARN, "failed to decode", K(rpc_buffer_), K(ret), K(data_list));
+
       } else if (OB_FAIL(data_list.push_back(tmp_data))) {
-        STORAGE_LOG(WARN, "failed to push back", K(ret));
+
       } else {
         index++;
       }
@@ -203,7 +203,7 @@ int ObStorageStreamRpcReader<RPC_CODE>::fetch_and_decode_list(const int64_t data
   if (OB_SUCC(ret)) {
     if (data_list.count() != data_list_count) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "data list count is unexpected", K(ret), K(data_list), K(data_list_count));
+
     }
   }
   return ret;
@@ -217,14 +217,14 @@ int ObStorageStreamRpcReader<RPC_CODE>::check_need_fetch_next_buffer(bool &need_
 
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (rpc_buffer_parse_pos_ < 0 || last_send_time_ < 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", K(ret), K(rpc_buffer_parse_pos_), K(last_send_time_));
+
   } else if (rpc_buffer_.get_position() - rpc_buffer_parse_pos_ > 0) {
     // do nothing
     need_fetch = false;
-    STORAGE_LOG(DEBUG, "has left data, no need to get more", K(rpc_buffer_), K(rpc_buffer_parse_pos_), K(need_fetch));
+
   } else {
     need_fetch = true;
   }
@@ -238,12 +238,12 @@ int ObStorageStreamRpcReader<RPC_CODE>::fetch_next_buffer()
   const int64_t max_idle_time = OB_DEFAULT_STREAM_WAIT_TIMEOUT - OB_DEFAULT_STREAM_RESERVE_TIME;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else {
     int tmp_ret = bandwidth_throttle_->limit_in_and_sleep(rpc_buffer_.get_position(),
                                                           last_send_time_, max_idle_time);
     if (OB_SUCCESS != tmp_ret) {
-      STORAGE_LOG(WARN, "failed to sleep_for_bandlimit", K(tmp_ret));
+
     }
 
     rpc_buffer_.get_position() = 0;
@@ -251,18 +251,18 @@ int ObStorageStreamRpcReader<RPC_CODE>::fetch_next_buffer()
     if (handle_.has_more()) {
       handle_.reset_timeout();
       if (OB_FAIL(handle_.get_more(rpc_buffer_))) {
-        STORAGE_LOG(WARN, "get_more(send request) failed", K(ret));
+
       } else if (rpc_buffer_.get_position() <= 0) {
         ret = OB_ERR_SYS;
-        STORAGE_LOG(ERROR, "rpc buffer has no data", K(ret), K(rpc_buffer_));
+
       } else {
-        STORAGE_LOG(DEBUG, "get more data", K(rpc_buffer_), K(rpc_buffer_parse_pos_));
+
         data_size_ += rpc_buffer_.get_position();
       }
       last_send_time_ = ObTimeUtility::current_time();
     } else {
       ret = OB_ITER_END;
-      STORAGE_LOG(INFO, "no more data", K(rpc_buffer_), K(rpc_buffer_parse_pos_));
+
     }
   }
   return ret;
@@ -282,14 +282,14 @@ int do_fetch_next_buffer_if_need(
 
   if (rpc_buffer_parse_pos < 0 || last_send_time < 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", KR(ret), K(rpc_buffer_parse_pos), K(last_send_time));
+
   } else if (rpc_buffer.get_position() - rpc_buffer_parse_pos > 0) {
     // do nothing
-    STORAGE_LOG(DEBUG, "has left data, no need to get more", K(rpc_buffer), K(rpc_buffer_parse_pos));
+
   } else {
     int tmp_ret = bandwidth_throttle.limit_in_and_sleep(rpc_buffer.get_position(), last_send_time, max_idle_time);
     if (OB_SUCCESS != tmp_ret) {
-      STORAGE_LOG(WARN, "failed to sleep_for_bandlimit", K(tmp_ret));
+
     }
 
     rpc_buffer.get_position() = 0;
@@ -297,26 +297,26 @@ int do_fetch_next_buffer_if_need(
     if (handle.has_more()) {
       handle.reset_timeout();
       if (OB_FAIL(handle.get_more(rpc_buffer))) {
-        STORAGE_LOG(WARN, "get_more(send request) failed", KR(ret));
+
       } else if (rpc_buffer.get_position() < 0) {
         ret = OB_ERR_SYS;
-        STORAGE_LOG(ERROR, "rpc buffer has no data", KR(ret), K(rpc_buffer));
+
       } else if (0 == rpc_buffer.get_position()) {
         if (!handle.has_more()) {
           ret = OB_ITER_END;
-          STORAGE_LOG(DEBUG, "empty rpc buffer, no more data", K(rpc_buffer), K(rpc_buffer_parse_pos));
+
         } else {
           ret = OB_ERR_SYS;
-          STORAGE_LOG(ERROR, "rpc buffer has no data", KR(ret), K(rpc_buffer));
+
         }
       } else {
-        STORAGE_LOG(DEBUG, "get more data", K(rpc_buffer), K(rpc_buffer_parse_pos));
+
         total_data_size += rpc_buffer.get_position();
       }
       last_send_time = ObTimeUtility::current_time();
     } else {
       ret = OB_ITER_END;
-      STORAGE_LOG(DEBUG, "no more data", K(rpc_buffer), K(rpc_buffer_parse_pos));
+
     }
   }
   return ret;

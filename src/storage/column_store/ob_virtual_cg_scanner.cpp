@@ -281,13 +281,13 @@ int ObDefaultCGScanner::init(
                         access_ctx.stmt_allocator_ == nullptr ||
                         !wrapper.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "unexpected argument", K(ret), K(wrapper), K(iter_param), K(access_ctx));
+
   } else if (OB_FAIL(init_datum_infos_and_default_row(iter_param, access_ctx))) {
-    STORAGE_LOG(WARN, "Failed to init_datum_infos_and_default_row", K(ret), K(iter_param), K(access_ctx));
+
   } else if (OB_FAIL(init_agg_group(iter_param, access_ctx))) {
-    STORAGE_LOG(WARN, "failed to init agg group", K(ret), K(iter_param), K(access_ctx));
+
   } else if (OB_FAIL(wrapper.get_merge_row_cnt(iter_param, total_row_count_))) {
-    STORAGE_LOG(WARN, "fail to get merge row cnt", K(ret), K(iter_param), K(total_row_count_), K(wrapper));
+
   } else {
     query_range_valid_row_count_ = 0;
     iter_param_ = &iter_param;
@@ -333,7 +333,7 @@ int ObDefaultCGScanner::init_agg_group(const ObTableIterParam &iter_param, ObTab
     agg_cells = OB_NEWx(ObCGAggCells, access_ctx.stmt_allocator_);
     if (OB_ISNULL(agg_cells)) {
       ret = common::OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed to alloc mermory", K(ret));
+
     } else {
       for (int64_t i = 0; OB_SUCC(ret) && i < iter_param.aggregate_exprs_->count(); ++i) {
         ObAggCell *cell = nullptr;
@@ -366,21 +366,21 @@ int ObDefaultCGScanner::init_datum_infos_and_default_row(const ObTableIterParam 
 
   if (OB_UNLIKELY(1 != iter_param.read_info_->get_request_count())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected request count", K(ret), KPC(iter_param.read_info_));
+
   } else if (OB_FAIL(default_row_.init(iter_param.read_info_->get_request_count()))) {
-    STORAGE_LOG(WARN, "Failed to init datum row", K(ret));
+
   } else if (OB_FAIL(iter_param.get_cg_column_param(column_param))) {
-    STORAGE_LOG(WARN, "failed to get cg column param", K(ret), K(iter_param));
+
   } else if (OB_ISNULL(column_param)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected null column_param", K(ret), K(iter_param));
+
   } else if (OB_FAIL(default_row_.storage_datums_[0].from_obj_enhance(column_param->get_orig_default_value()))) {
-    STORAGE_LOG(WARN, "Failed to transefer obj to datum", K(ret));
+
   } else if (is_pad_char_to_full_length(access_ctx.sql_mode_) &&
              OB_FAIL(pad_column(column_param->get_meta_type(), column_param->get_accuracy(), *access_ctx.stmt_allocator_, default_row_.storage_datums_[0]))) {
     LOG_WARN("Failed to pad default column", K(ret), KPC(column_param), K_(default_row));
   } else if (OB_FAIL(add_lob_header_if_need(*column_param, default_row_.local_allocator_, default_row_.storage_datums_[0]))) {
-    STORAGE_LOG(WARN, "Failed to add lob header to default value", K(ret));
+
   } else if (iter_param.vectorized_enabled_ && !iter_param.enable_pd_aggregate()) {
     const int64_t expr_count = iter_param.output_exprs_->count();
     datum_infos_.set_allocator(access_ctx.stmt_allocator_);
@@ -431,9 +431,9 @@ int ObDefaultCGScanner::switch_context(
                         access_ctx.stmt_allocator_ == nullptr ||
                         !wrapper.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "unexpected argument", K(ret), K(wrapper), K(iter_param), K(access_ctx));
+
   } else if (OB_FAIL(wrapper.get_merge_row_cnt(iter_param, total_row_count_))) {
-    STORAGE_LOG(WARN, "fail to get ddl merge row cnt", K(ret), K(iter_param), K(total_row_count_), K(wrapper));
+
   } else {
     query_range_valid_row_count_ = 0;
     iter_param_ = &iter_param;
@@ -475,16 +475,16 @@ int ObDefaultCGScanner::apply_filter(
 
   if (OB_UNLIKELY(nullptr == filter)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected filter node", K(ret), KPC(filter));
+
   } else if (filter_ != nullptr) {
     if (filter != filter_) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "filter not equal", K(ret), KPC(filter), KPC(filter_));
+
     } else {
       result = filter_result_;
     }
   } else if (OB_FAIL(do_filter(filter, *filter_info.skip_bit_, result))) {
-    STORAGE_LOG(WARN, "failed to do filter", K(ret), KPC(filter));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -508,13 +508,13 @@ int ObDefaultCGScanner::get_next_rows(uint64_t &count, const uint64_t capacity)
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObDefaultCGScanner not init", K(ret));
+
   } else if (OB_UNLIKELY(query_range_valid_row_count_ == 0)) {
     ret = OB_ITER_END;
   } else if (agg_group_ != nullptr) {
     count = query_range_valid_row_count_;
     if (OB_FAIL(agg_group_->eval(default_row_.storage_datums_[0], count))) {
-      STORAGE_LOG(WARN, "failed to eval default datum", K(ret), K_(default_row), K(count));
+
     }
   } else {
     count = query_range_valid_row_count_ > capacity ? capacity : query_range_valid_row_count_;
@@ -528,7 +528,7 @@ int ObDefaultCGScanner::get_next_rows(uint64_t &count, const uint64_t capacity)
         int32_t col_idx = iter_param_->out_cols_project_->at(i);
         if (OB_UNLIKELY(col_idx >= default_row_.get_column_count())) {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(WARN, "unexpected col idx", K(ret), K(col_idx), K(default_row_), KPC(iter_param_));
+
         } else if (OB_FAIL(datum.from_storage_datum(default_row_.storage_datums_[col_idx], datum_infos_.at(i).get_obj_datum_map()))) {
           LOG_WARN("Failed to from storage datum", K(ret), K(col_idx), K(default_row_), K(datum_infos_.at(i).get_obj_datum_map()));
         }
@@ -587,7 +587,7 @@ int ObDefaultCGScanner::do_filter(sql::ObPushdownFilterExecutor *filter, const s
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("Unexpected null child filter", K(ret));
         } else if (OB_FAIL(do_filter(children[i], skip_bit, result))) {
-          STORAGE_LOG(WARN, "failed to do filter", K(ret), KPC(children[i]));
+
         } else if ((result && filter->is_logic_or_node()) || (!result && filter->is_logic_and_node())) {
           break;
         }
@@ -611,7 +611,7 @@ int ObDefaultCGScanner::add_lob_header_if_need(
     ObString data = datum.get_string();
     ObString out;
     if (OB_FAIL(ObLobManager::fill_lob_header(allocator, data, out))) {
-      STORAGE_LOG(WARN, "fill lob header fail", K(ret), K(meta), K(datum), K(data));
+
     } else {
       datum.set_string(out);
     }
@@ -680,7 +680,7 @@ int ObDefaultCGGroupByScanner::decide_group_size(int64_t &group_size)
 {
   int ret = OB_SUCCESS;
   group_size = query_range_valid_row_count_;
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(group_size));
+
   return ret;
 }
 
@@ -696,7 +696,7 @@ int ObDefaultCGGroupByScanner::decide_can_group_by(
     query_range_valid_row_count_, query_range_valid_row_count_, 1, bitmap, can_group_by))) {
     LOG_WARN("Failed to decide use group by", K(ret));
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(query_range_valid_row_count_), K(can_group_by));
+
   return ret;
 }
 
@@ -710,7 +710,7 @@ int ObDefaultCGGroupByScanner::read_distinct(const int32_t group_by_col)
   } else {
     group_by_cell_->set_distinct_cnt(1);
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), KPC(group_by_cell_));
+
   return ret;
 }
 
@@ -727,7 +727,7 @@ int ObDefaultCGGroupByScanner::read_reference(const int32_t group_by_col)
     group_by_cell_->set_ref_cnt(read_cnt);
     query_range_valid_row_count_ -= read_cnt;
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), KPC(group_by_cell_));
+
   return ret;
 }
 
@@ -741,7 +741,7 @@ int ObDefaultCGGroupByScanner::fill_group_by_col_lob_locator()
       LOG_WARN("Failed to fill lob locator", K(ret), K(col_param), KPC(group_by_cell_), KPC(iter_param_));
     }
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), KPC(col_param), KPC(group_by_cell_));
+
   return ret;
 }
 

@@ -27,7 +27,7 @@ namespace oceanbase {
 namespace tools {
 
 #define STORAGE_LOG_FILTER(level, info_string, args...) \
-  STORAGE_LOG(level, info_string, ##args); \
+ \
   if (strcmp(#level, "ERROR") == 0) {                  \
     std::cout << LIGHT_RED << "ERROR INFO: " << info_string << NONE_COLOR << std::endl;  \
   }

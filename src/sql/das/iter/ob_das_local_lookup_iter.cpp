@@ -167,7 +167,7 @@ int ObDASLocalLookupIter::init_scan_param(ObTableScanParam &param, const ObDASSc
     }
   }
 
-  LOG_DEBUG("init local index lookup param finished", K(param), K(ret));
+
   return ret;
 }
 
@@ -345,7 +345,7 @@ int ObDASLocalLookupIter::check_index_lookup()
     int simulate_error = EVENT_CALL(EventTable::EN_DAS_SIMULATE_DUMP_WRITE_BUFFER);
     if (0 != simulate_error) {
       for (int64_t i = 0; i < trans_info_array_.count(); i++) {
-        LOG_INFO("dump trans info of local lookup das task", K(i), KPC(trans_info_array_.at(i)));
+
       }
     }
   }

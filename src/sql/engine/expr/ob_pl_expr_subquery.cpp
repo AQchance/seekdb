@@ -329,7 +329,7 @@ int ObExprOpSubQueryInPl::fetch_row(void *result_set, int64_t &row_count, ObNewR
     }
   }
 
-  LOG_DEBUG("spi fetch row", K(cur_row), K(row_count), K(ret));
+
   return ret;
 }
 

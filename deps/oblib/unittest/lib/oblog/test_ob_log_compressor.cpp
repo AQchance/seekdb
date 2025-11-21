@@ -253,7 +253,7 @@ TEST(ObLogCompressor, syslog_compressor_base_test)
   // compress
   ObCompressor *compressor_zstd;
   ASSERT_EQ(OB_SUCCESS, ObCompressorPool::get_instance().get_compressor(ZSTD_1_3_8_COMPRESSOR, compressor_zstd));
-  LOG_INFO("start to init syslog compressor ");
+
   strncpy(OB_LOG_COMPRESSOR.syslog_dir_, TEST_DIR, strlen(TEST_DIR));
   OB_LOG_COMPRESSOR.compressor_ = compressor_zstd;
   ASSERT_EQ(true, OB_LOG_COMPRESSOR.is_inited_);
@@ -281,7 +281,7 @@ TEST(ObLogCompressor, syslog_compressor_base_test)
   ASSERT_EQ(OB_SUCCESS, OB_LOG_COMPRESSOR.set_compress_func("none"));
 
   // clear
-  LOG_INFO("start to destroy syslog compressor ");
+
   ob_free(src_buf);
   unlink(file_name_str.c_str());
   unlink(file_name_str_2.c_str());
@@ -296,7 +296,7 @@ TEST(ObLogCompressor, syslog_compressor_thread_test)
   // init log compressor
   ASSERT_EQ(OB_SUCCESS, ObClockGenerator::get_instance().init());
   // loop faster
-  LOG_INFO("start to init syslog compressor ");
+
   ASSERT_EQ(true, OB_LOG_COMPRESSOR.is_inited_);
   strncpy(OB_LOG_COMPRESSOR.syslog_dir_, TEST_DIR, strlen(TEST_DIR));
   strncpy(OB_LOG_COMPRESSOR.alert_log_dir_, TEST_ALERT_DIR, strlen(TEST_ALERT_DIR));
@@ -421,7 +421,7 @@ TEST(ObLogCompressor, syslog_compressor_thread_test)
 
   // clear
   ASSERT_EQ(0, system(RM_COMMAND));
-  LOG_INFO("start to destroy syslog compressor ");
+
 }
 
 }  // namespace common

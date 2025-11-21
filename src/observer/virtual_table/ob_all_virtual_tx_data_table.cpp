@@ -238,7 +238,7 @@ int ObAllVirtualTxDataTable::prepare_row_data_(ObITable *tx_data_table, RowData 
     ObSSTable *tx_data_sstable = static_cast<ObSSTable *>(tx_data_table);
     ObSSTableMetaHandle sstable_meta_hdl;
     if (OB_FAIL(tx_data_sstable->get_meta(sstable_meta_hdl))) {
-      STORAGE_LOG(WARN, "fail to get sstable meta handle", K(ret), KPC(tx_data_sstable));
+
     } else {
       row_data.state_ = ObITable::get_table_type_name(tx_data_table->get_key().table_type_);
       row_data.tx_data_count_ = sstable_meta_hdl.get_sstable_meta().get_row_count();
@@ -246,7 +246,7 @@ int ObAllVirtualTxDataTable::prepare_row_data_(ObITable *tx_data_table, RowData 
       row_data.max_tx_scn_ = tx_data_sstable->get_key().scn_range_.end_scn_;
     }
   } else {
-    STORAGE_LOG_RET(WARN, OB_ERR_UNEXPECTED, "Iterate an invalid table while select virtual tx data table.");
+
   }
   return ret;
 }

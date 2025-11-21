@@ -311,7 +311,7 @@ int ObExprCast::calc_result_type2(ObExprResType &type,
                                         dst_type.get_type(), dst_type.get_collation_type()))) {
     if (session->is_varparams_sql_prepare()) {
       type.set_null();
-      LOG_TRACE("ps prepare phase ignores type deduce error");
+
     } else {
       ret = OB_ERR_INVALID_TYPE_FOR_OP;
       LOG_WARN("transition does not support", "src", ob_obj_type_str(type1.get_type()),
@@ -324,7 +324,7 @@ int ObExprCast::calc_result_type2(ObExprResType &type,
                                  is_explicit_cast)) {
     if (session->is_varparams_sql_prepare()) {
       type.set_null();
-      LOG_TRACE("ps prepare phase ignores type deduce error");
+
     } else {
       ret = OB_ERR_INVALID_TYPE_FOR_OP;
       LOG_WARN("explicit cast to lob type not allowed", K(ret), K(dst_type));
@@ -632,7 +632,7 @@ int ObExprCast::get_cast_type(const bool enable_decimal_int,
         }
       }
     }
-    LOG_DEBUG("get_cast_type", K(dst_type), K(param_type2));
+
   }
   return ret;
 }

@@ -82,12 +82,12 @@ public:
     ObClockGenerator::init();
     create_memtable();
     tx_table_.online();
-    LOG_INFO("set up success");
+
   }
   virtual void TearDown() override
   {
     ObClockGenerator::destroy();
-    LOG_INFO("tear down success");
+
   }
 public:
   void create_memtable()
@@ -120,20 +120,20 @@ private:
 
 void TestLockMemtable::SetUpTestCase()
 {
-  LOG_INFO("SetUpTestCase");
+
   EXPECT_EQ(OB_SUCCESS, MockTenantModuleEnv::get_instance().init());
   init_default_lock_test_value();
 }
 
 void TestLockMemtable::TearDownTestCase()
 {
-  LOG_INFO("TearDownTestCase");
+
   MockTenantModuleEnv::get_instance().destroy();
 }
 
 TEST_F(TestLockMemtable, lock)
 {
-  LOG_INFO("TestLockMemtable::lock");
+
   // 1. IN TRANS LOCK
   // 2. OUT TRANS LOCK
   int ret = OB_SUCCESS;
@@ -153,12 +153,12 @@ TEST_F(TestLockMemtable, lock)
   min_commited_scn.set_min();
   flushed_scn.set_min();
   // 1.1 get store ctx
-  LOG_INFO("TestLockMemtable::lock 1.1");
+
   start_tx(DEFAULT_TRANS_ID, default_ctx);
   get_store_ctx(default_ctx, store_ctx);
   default_ctx.tx_ctx_.change_to_leader();
   // 1.2 lock
-  LOG_INFO("TestLockMemtable::lock 1.2");
+
   param.is_try_lock_ = is_try_lock;
   param.expired_time_ = expired_time;
   ret = memtable_.lock(param,
@@ -166,7 +166,7 @@ TEST_F(TestLockMemtable, lock)
                        DEFAULT_IN_TRANS_LOCK_OP);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 1.3 check lock exist at memctx.
-  LOG_INFO("TestLockMemtable::lock 1.3");
+
   mem_ctx = store_ctx.mvcc_acc_ctx_.mem_ctx_;
   ret = mem_ctx->check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
@@ -176,16 +176,16 @@ TEST_F(TestLockMemtable, lock)
                                   lock_mode_cnt_in_same_trans);
   ASSERT_EQ(lock_exist, true);
   // 1.4 check lock at lock map
-  LOG_INFO("TestLockMemtable::lock 1.4");
+
   ret = memtable_.obj_lock_map_.get_obj_lock_with_ref_(DEFAULT_TABLET_LOCK_ID,
                                                        obj_lock);
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(obj_lock->row_exclusive_, 1);
   // 1.5 remove lock op at memtable.
-  LOG_INFO("TestLockMemtable::lock 1.5");
+
   memtable_.remove_lock_record(DEFAULT_IN_TRANS_LOCK_OP);
   // 1.6 check again
-  LOG_INFO("TestLockMemtable::lock 1.6");
+
   ret = mem_ctx->check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.lock_mode_,
@@ -194,7 +194,7 @@ TEST_F(TestLockMemtable, lock)
                                   lock_mode_cnt_in_same_trans);
   ASSERT_EQ(lock_exist, true);
   // 1.7 remove lock op at memctx.
-  LOG_INFO("TestLockMemtable::lock 1.7");
+
   mem_ctx->lock_mem_ctx_.remove_lock_record(DEFAULT_IN_TRANS_LOCK_OP);
   ret = mem_ctx->check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
@@ -205,7 +205,7 @@ TEST_F(TestLockMemtable, lock)
   ASSERT_EQ(lock_exist, false);
 
   // 2.1 lock
-  LOG_INFO("TestLockMemtable::lock 2.1");
+
   param.is_try_lock_ = is_try_lock;
   param.expired_time_ = expired_time;
   ret = memtable_.lock(param,
@@ -213,7 +213,7 @@ TEST_F(TestLockMemtable, lock)
                        DEFAULT_OUT_TRANS_LOCK_OP);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 2.2 check lock exist at memctx.
-  LOG_INFO("TestLockMemtable::lock 2.2");
+
   mem_ctx = store_ctx.mvcc_acc_ctx_.mem_ctx_;
   ret = mem_ctx->check_lock_exist(DEFAULT_OUT_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_OUT_TRANS_LOCK_OP.owner_id_,
@@ -223,7 +223,7 @@ TEST_F(TestLockMemtable, lock)
                                   lock_mode_cnt_in_same_trans);
   ASSERT_EQ(lock_exist, true);
   // 2.3 unlock not complete lock
-  LOG_INFO("TestLockMemtable::lock 2.3");
+
   MyTxCtx ctx2;
   start_tx(TRANS_ID2, ctx2);
   get_store_ctx(ctx2, unlock_store_ctx);
@@ -234,7 +234,7 @@ TEST_F(TestLockMemtable, lock)
                          expired_time);
   ASSERT_EQ(OB_OBJ_LOCK_NOT_COMPLETED, ret);
   // 2.4 commit out trans lock
-  LOG_INFO("TestLockMemtable::lock 2.4");
+
   share::SCN commit_version;
   share::SCN commit_scn;
   commit_version.set_base();
@@ -249,7 +249,7 @@ TEST_F(TestLockMemtable, lock)
   ASSERT_EQ(min_commited_scn, commit_scn);
   memtable_.obj_lock_map_.print();
   // 2.5 unlock complete lock
-  LOG_INFO("TestLockMemtable::lock 2.5");
+
   ret = memtable_.unlock(unlock_store_ctx,
                          DEFAULT_OUT_TRANS_UNLOCK_OP,
                          is_try_lock,
@@ -257,7 +257,7 @@ TEST_F(TestLockMemtable, lock)
   ASSERT_EQ(OB_SUCCESS, ret);
   memtable_.obj_lock_map_.print();
   // 2.6 unlock commit
-  LOG_INFO("TestLockMemtable::lock 2.6");
+
   ret = memtable_.update_lock_status(DEFAULT_OUT_TRANS_UNLOCK_OP,
                                      commit_version,
                                      commit_scn,
@@ -268,7 +268,7 @@ TEST_F(TestLockMemtable, lock)
                             flushed_scn);
   ASSERT_EQ(min_commited_scn, share::SCN::max_scn());
   // 2.7 check unlock with the same trans: should be succeed.
-  LOG_INFO("TestLockMemtable::lock 2.7");
+
   ret = memtable_.unlock(unlock_store_ctx,
                          DEFAULT_OUT_TRANS_UNLOCK_OP,
                          is_try_lock,
@@ -276,7 +276,7 @@ TEST_F(TestLockMemtable, lock)
   ASSERT_EQ(OB_SUCCESS, ret);
 
   // 2.8 check with another trans: should be OB_OBJ_LOCK_NOT_EXIST
-  LOG_INFO("TestLockMemtable::lock 2.8");
+
   MyTxCtx ctx3;
   ObStoreCtx unlock_store_ctx3;
   start_tx(TRANS_ID3, ctx3);
@@ -292,7 +292,7 @@ TEST_F(TestLockMemtable, lock)
 
 TEST_F(TestLockMemtable, replay)
 {
-  LOG_INFO("TestLockMemtable::replay");
+
   uint64_t lock_mode_cnt_in_same_trans[TABLE_LOCK_MODE_COUNT] = {0, 0, 0, 0, 0};
   int ret = OB_SUCCESS;
   bool is_try_lock = true;
@@ -315,7 +315,7 @@ TEST_F(TestLockMemtable, replay)
   mem_ctx = store_ctx.mvcc_acc_ctx_.mem_ctx_;
   // 1. REPLAY ROW
   // 1.1 replay row
-  LOG_INFO("TestLockMemtable::replay 1.1");
+
   ObStoreRowkey rowkey;
   uint64_t table_id = 0;
   uint64_t table_version = 1;
@@ -337,7 +337,7 @@ TEST_F(TestLockMemtable, replay)
                              &mmi);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 1.2 check exist at memctx
-  LOG_INFO("TestLockMemtable::replay 1.2");
+
   ret = mem_ctx->check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.lock_mode_,
@@ -346,16 +346,16 @@ TEST_F(TestLockMemtable, replay)
                                   lock_mode_cnt_in_same_trans);
   ASSERT_EQ(lock_exist, true);
   // 1.3 check lock at lock map
-  LOG_INFO("TestLockMemtable::replay 1.3");
+
   ret = memtable_.obj_lock_map_.get_obj_lock_with_ref_(DEFAULT_TABLET_LOCK_ID,
                                                        obj_lock);
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(obj_lock->row_exclusive_, 1);
   // 1.4 remove lock op at memtable.
-  LOG_INFO("TestLockMemtable::replay 1.4");
+
   memtable_.remove_lock_record(DEFAULT_IN_TRANS_LOCK_OP);
   // 1.5 check again
-  LOG_INFO("TestLockMemtable::replay 1.5");
+
   ret = mem_ctx->check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.lock_mode_,
@@ -364,7 +364,7 @@ TEST_F(TestLockMemtable, replay)
                                   lock_mode_cnt_in_same_trans);
   ASSERT_EQ(lock_exist, true);
   // 1.6 remove lock op at memctx.
-  LOG_INFO("TestLockMemtable::replay 1.6");
+
   mem_ctx->lock_mem_ctx_.remove_lock_record(DEFAULT_IN_TRANS_LOCK_OP);
   ret = mem_ctx->check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
@@ -377,12 +377,12 @@ TEST_F(TestLockMemtable, replay)
   // 2.1 replay lock
   share::SCN scn;
   scn.set_base();
-  LOG_INFO("TestLockMemtable::replay 2.1");
+
   ret = memtable_.replay_lock(mem_ctx,
                               DEFAULT_OUT_TRANS_LOCK_OP,
                               scn);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("TestLockMemtable::replay 2.2");
+
   ret = mem_ctx->check_lock_exist(DEFAULT_OUT_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_OUT_TRANS_LOCK_OP.owner_id_,
                                   DEFAULT_OUT_TRANS_LOCK_OP.lock_mode_,
@@ -391,7 +391,7 @@ TEST_F(TestLockMemtable, replay)
                                   lock_mode_cnt_in_same_trans);
   ASSERT_EQ(lock_exist, true);
   // 2.3 unlock not complete lock
-  LOG_INFO("TestLockMemtable::replay 2.3");
+
   MyTxCtx ctx2;
   start_tx(TRANS_ID2, ctx2);
   get_store_ctx(ctx2, unlock_store_ctx);
@@ -402,7 +402,7 @@ TEST_F(TestLockMemtable, replay)
                          expired_time);
   ASSERT_EQ(OB_OBJ_LOCK_NOT_COMPLETED, ret);
   // 2.4 commit out trans lock
-  LOG_INFO("TestLockMemtable::replay 2.4");
+
   share::SCN commit_version;
   share::SCN commit_scn;
   commit_version.set_base();
@@ -417,7 +417,7 @@ TEST_F(TestLockMemtable, replay)
   ASSERT_EQ(min_commited_scn, commit_scn);
   memtable_.obj_lock_map_.print();
   // 2.5 unlock complete lock
-  LOG_INFO("TestLockMemtable::replay 2.5");
+
   ret = memtable_.unlock(unlock_store_ctx,
                          DEFAULT_OUT_TRANS_UNLOCK_OP,
                          is_try_lock,
@@ -425,7 +425,7 @@ TEST_F(TestLockMemtable, replay)
   ASSERT_EQ(OB_SUCCESS, ret);
   memtable_.obj_lock_map_.print();
   // 2.6 unlock commit
-  LOG_INFO("TestLockMemtable::replay 2.6");
+
   ret = memtable_.update_lock_status(DEFAULT_OUT_TRANS_UNLOCK_OP,
                                      commit_version,
                                      commit_scn,
@@ -436,14 +436,14 @@ TEST_F(TestLockMemtable, replay)
                             flushed_scn);
   ASSERT_EQ(min_commited_scn, share::SCN::max_scn());
   // 2.7 check unlock
-  LOG_INFO("TestLockMemtable::replay 2.7");
+
   ret = memtable_.unlock(unlock_store_ctx,
                          DEFAULT_OUT_TRANS_UNLOCK_OP,
                          is_try_lock,
                          expired_time);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 2.8 check with another trans: should be OB_OBJ_LOCK_NOT_EXIST
-  LOG_INFO("TestLockMemtable::replay 2.8");
+
   MyTxCtx ctx3;
   ObStoreCtx unlock_store_ctx3;
   start_tx(TRANS_ID3, ctx3);
@@ -458,7 +458,7 @@ TEST_F(TestLockMemtable, replay)
 
 TEST_F(TestLockMemtable, recover)
 {
-  LOG_INFO("TestLockMemtable::recover");
+
   int ret = OB_SUCCESS;
   bool is_try_lock = true;
   int64_t expired_time = ObClockGenerator::getClock() + 1 * 1000 * 1000;
@@ -475,17 +475,17 @@ TEST_F(TestLockMemtable, recover)
   ObStoreCtx unlock_store_ctx;
   // 1. recover in trans lock
   // 1.1 recover
-  LOG_INFO("TestLockMemtable::recover 1.1");
+
   ret = memtable_.recover_obj_lock(DEFAULT_IN_TRANS_LOCK_OP);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 1.2 check exist
-  LOG_INFO("TestLockMemtable::recover 1.2");
+
   ret = memtable_.obj_lock_map_.get_obj_lock_with_ref_(DEFAULT_TABLET_LOCK_ID,
                                                        obj_lock);
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(obj_lock->row_exclusive_, 1);
   // 1.3 commit
-  LOG_INFO("TestLockMemtable::recover 1.3");
+
   memtable_.remove_lock_record(DEFAULT_IN_TRANS_LOCK_OP);
   // 1.4 check exist
   // We move obj lock garbage collect process to gc thread
@@ -499,18 +499,18 @@ TEST_F(TestLockMemtable, recover)
 
   // 2. recover out trans lock
   // 2.1 recover
-  LOG_INFO("TestLockMemtable::recover 2.1");
+
   ret = memtable_.recover_obj_lock(DEFAULT_OUT_TRANS_LOCK_OP);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 2.2 commit
-  LOG_INFO("TestLockMemtable::recover 2.2");
+
   ret = memtable_.update_lock_status(DEFAULT_OUT_TRANS_LOCK_OP,
                                      commit_version,
                                      commit_scn,
                                      COMMIT_LOCK_OP_STATUS);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 2.3 unlock
-  LOG_INFO("TestLockMemtable::recover 2.3");
+
   start_tx(TRANS_ID2, ctx2);
   get_store_ctx(ctx2, unlock_store_ctx);
   ctx2.tx_ctx_.change_to_leader();
@@ -520,21 +520,21 @@ TEST_F(TestLockMemtable, recover)
                          expired_time);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 2.4 unlock commit
-  LOG_INFO("TestLockMemtable::recover 2.4");
+
   ret = memtable_.update_lock_status(DEFAULT_OUT_TRANS_UNLOCK_OP,
                                      commit_version,
                                      commit_scn,
                                      COMMIT_LOCK_OP_STATUS);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 2.5 check with unlock with the same trans: should be succeed.
-  LOG_INFO("TestLockMemtable::recover 2.5");
+
   ret = memtable_.unlock(unlock_store_ctx,
                          DEFAULT_OUT_TRANS_UNLOCK_OP,
                          is_try_lock,
                          expired_time);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 2.6 check with another trans: should be OB_OBJ_LOCK_NOT_EXIST
-  LOG_INFO("TestLockMemtable::recover 2.6");
+
   MyTxCtx ctx3;
   ObStoreCtx unlock_store_ctx3;
   start_tx(TRANS_ID3, ctx3);
@@ -549,7 +549,7 @@ TEST_F(TestLockMemtable, recover)
 
 TEST_F(TestLockMemtable, pre_check_lock)
 {
-  LOG_INFO("TestLockMemtable::pre_check_lock");
+
   uint64_t lock_mode_cnt_in_same_trans[TABLE_LOCK_MODE_COUNT] = {0, 0, 0, 0, 0};
   int ret = OB_SUCCESS;
   bool is_try_lock = true;
@@ -562,20 +562,20 @@ TEST_F(TestLockMemtable, pre_check_lock)
   ObTxIDSet conflict_tx_set;
   ObLockParam param;
   // 1.1 get store ctx
-  LOG_INFO("TestLockMemtable::pre_check_lock 1.1");
+
   start_tx(DEFAULT_TRANS_ID, default_ctx);
   get_store_ctx(default_ctx, store_ctx);
   default_ctx.tx_ctx_.change_to_leader();
   mem_ctx = store_ctx.mvcc_acc_ctx_.mem_ctx_;
   // 1.2 check before lock
-  LOG_INFO("TestLockMemtable::pre_check_lock 1.2");
+
   ret = memtable_.check_lock_conflict(mem_ctx,
                                       DEFAULT_IN_TRANS_LOCK_OP,
                                       conflict_tx_set,
                                       expired_time);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 1.3 lock
-  LOG_INFO("TestLockMemtable::pre_check_lock 1.3");
+
   param.is_try_lock_ = is_try_lock;
   param.expired_time_ = expired_time;
   ret = memtable_.lock(param,
@@ -583,14 +583,14 @@ TEST_F(TestLockMemtable, pre_check_lock)
                        DEFAULT_IN_TRANS_LOCK_OP);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 1.4 pre_check_lock exist return OB_SUCCESS
-  LOG_INFO("TestLockMemtable::pre_check_lock 1.4");
+
   ret = memtable_.check_lock_conflict(mem_ctx,
                                       DEFAULT_IN_TRANS_LOCK_OP,
                                       conflict_tx_set,
                                       expired_time);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 1.5 check allow lock
-  LOG_INFO("TestLockMemtable::pre_check_lock 1.5");
+
   ObTableLockOp lock_op = DEFAULT_IN_TRANS_LOCK_OP;
   lock_op.lock_mode_ = ROW_SHARE;
   ret = memtable_.check_lock_conflict(mem_ctx,
@@ -599,10 +599,10 @@ TEST_F(TestLockMemtable, pre_check_lock)
                                       expired_time);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 1.6 remove lock op at memtable.
-  LOG_INFO("TestLockMemtable::pre_check_lock 1.6");
+
   memtable_.remove_lock_record(DEFAULT_IN_TRANS_LOCK_OP);
   // 1.7 check again
-  LOG_INFO("TestLockMemtable::pre_check_lock 1.7");
+
   ret = mem_ctx->check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.lock_mode_,
@@ -611,7 +611,7 @@ TEST_F(TestLockMemtable, pre_check_lock)
                                   lock_mode_cnt_in_same_trans);
   ASSERT_EQ(lock_exist, true);
   // 1.8 remove lock op at memctx.
-  LOG_INFO("TestLockMemtable::pre_check_lock 1.8");
+
   mem_ctx->lock_mem_ctx_.remove_lock_record(DEFAULT_IN_TRANS_LOCK_OP);
   ret = mem_ctx->check_lock_exist(DEFAULT_IN_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_IN_TRANS_LOCK_OP.owner_id_,
@@ -624,7 +624,7 @@ TEST_F(TestLockMemtable, pre_check_lock)
 
 TEST_F(TestLockMemtable, lock_twice_out)
 {
-  LOG_INFO("TestLockMemtable::lock_twice_out");
+
   // 1. LOCK TWICE: OUT DOING CONFLICT
   // 2. LOCK TWICE: OUT COMPLETE SUCCESS
   // 3. LOCK TWICE: LOCK, UNLOCK DOING CONFLICT
@@ -645,7 +645,7 @@ TEST_F(TestLockMemtable, lock_twice_out)
   ObStoreCtx store_ctx2;
 
   // 1.1 lock first
-  LOG_INFO("TestLockMemtable::lock_twice_out 1.1");
+
   start_tx(DEFAULT_TRANS_ID, default_ctx);
   get_store_ctx(default_ctx, store_ctx);
   default_ctx.tx_ctx_.change_to_leader();
@@ -659,14 +659,14 @@ TEST_F(TestLockMemtable, lock_twice_out)
                        lock_first);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 1.2 lock second
-  LOG_INFO("TestLockMemtable::lock_twice_out 1.2");
+
   ret = memtable_.lock(param,
                        store_ctx2,
                        lock_second);
   ASSERT_EQ(OB_ERR_EXCLUSIVE_LOCK_CONFLICT, ret);
 
   // 2.1 update to complete
-  LOG_INFO("TestLockMemtable::lock_twice_out 2.1");
+
   share::SCN commit_version;
   share::SCN commit_scn;
   commit_version.set_base();
@@ -677,14 +677,14 @@ TEST_F(TestLockMemtable, lock_twice_out)
                                      COMMIT_LOCK_OP_STATUS);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 2.2 lock again
-  LOG_INFO("TestLockMemtable::lock_twice_out 2.2");
+
   ret = memtable_.lock(param,
                        store_ctx2,
                        lock_second);
   ASSERT_EQ(OB_SUCCESS, ret);
 
   // 3.1 unlock doing
-  LOG_INFO("TestLockMemtable::lock_twice_out 3.1");
+
   MyTxCtx ctx3;
   ObStoreCtx unlock_store_ctx;
   start_tx(TRANS_ID3, ctx3);
@@ -696,13 +696,13 @@ TEST_F(TestLockMemtable, lock_twice_out)
                          expired_time);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 3.2 lock again conflict
-  LOG_INFO("TestLockMemtable::lock_twice_out 3.2");
+
   ret = memtable_.lock(param,
                        store_ctx2,
                        lock_second);
   ASSERT_EQ(OB_ERR_EXCLUSIVE_LOCK_CONFLICT, ret);
   // clean: unlock complete.
-  LOG_INFO("TestLockMemtable::lock_twice_out clean");
+
   share::SCN min_commited_scn;
   share::SCN flushed_scn;
   min_commited_scn.set_min();
@@ -719,7 +719,7 @@ TEST_F(TestLockMemtable, lock_twice_out)
 
 TEST_F(TestLockMemtable, out_trans_multi_source)
 {
-  LOG_INFO("TestLockMemtable::out_trans_multi_source");
+
   // 1. NOT REGISTER(replay)
   // 2. REGISTER (not replay)
   // 3. NOTIFY (do nothing: REGISTER_SUCC/ON_REDO/ON_PREPARE/ON_COMMIT/ON_ABORT)
@@ -752,14 +752,14 @@ TEST_F(TestLockMemtable, out_trans_multi_source)
   default_ctx.tx_ctx_.change_to_leader();
   ctx2.tx_ctx_.change_to_leader();
   // 1.1 replay register
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 1.1");
+
   is_replay = true;
   mem_ctx = store_ctx.mvcc_acc_ctx_.mem_ctx_;
   // should not call register:
   // ret = mem_ctx->register_multi_source_data_if_need_(lock_op);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 1.2 check exist at memctx
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 1.2");
+
   ret = mem_ctx->check_lock_exist(lock_op.lock_id_,
                                   lock_op.owner_id_,
                                   lock_op.lock_mode_,
@@ -769,17 +769,17 @@ TEST_F(TestLockMemtable, out_trans_multi_source)
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(lock_exist, false);
   // 1.3 check exist at multi source
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 1.3");
+
   mds_array.reset();
   ret = default_ctx.tx_ctx_.gen_total_mds_array_(mds_array);
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(mds_array.count(), 0);
   // 2.1 register (not replay)
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 2.1");
+
   ret = mem_ctx->register_multi_source_data_if_need_(lock_op);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 2.2 check exist at memctx
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 2.2");
+
   ret = mem_ctx->check_lock_exist(lock_op.lock_id_,
                                   lock_op.owner_id_,
                                   lock_op.lock_mode_,
@@ -789,13 +789,13 @@ TEST_F(TestLockMemtable, out_trans_multi_source)
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(lock_exist, false);
   // 2.3 check exist at multi source
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 2.3");
+
   mds_array.reset();
   ret = default_ctx.tx_ctx_.gen_total_mds_array_(mds_array);
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(mds_array.count(), 1);
   // 3.1 notify REGISTER_SUCC/ON_REDO/ON_PREPARE
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 3.1");
+
   is_replay = false;
   ret = default_ctx.tx_ctx_.notify_data_source_(NotifyType::REGISTER_SUCC, scn, is_replay, mds_array);
   ASSERT_EQ(OB_SUCCESS, ret);
@@ -812,7 +812,7 @@ TEST_F(TestLockMemtable, out_trans_multi_source)
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(lock_exist, false);
   // 3.2 notify ON_COMMIT/ON_ABORT
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 3.2");
+
   ret = default_ctx.tx_ctx_.notify_data_source_(NotifyType::ON_COMMIT, scn, is_replay, mds_array);
   ASSERT_EQ(OB_SUCCESS, ret);
   ret = mem_ctx->check_lock_exist(lock_op.lock_id_,
@@ -835,7 +835,7 @@ TEST_F(TestLockMemtable, out_trans_multi_source)
   ASSERT_EQ(lock_exist, false);
 
   // 4.1 notify TX_END
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 4.1");
+
   is_replay = true;
   scn = share::SCN::base_scn();
   ret = default_ctx.tx_ctx_.notify_data_source_(NotifyType::TX_END, scn, is_replay, mds_array);
@@ -851,7 +851,7 @@ TEST_F(TestLockMemtable, out_trans_multi_source)
 
   // 5 NOTIFY UNLOCK
   // 5.1 register unlock op
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 5.1");
+
   mem_ctx = store_ctx2.mvcc_acc_ctx_.mem_ctx_;
   ret = mem_ctx->register_multi_source_data_if_need_(unlock_op);
   ASSERT_EQ(OB_SUCCESS, ret);
@@ -859,14 +859,14 @@ TEST_F(TestLockMemtable, out_trans_multi_source)
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(mds_array_unlock.count(), 1);
   // 5.2 replay unlock op
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 5.2");
+
   scn = share::SCN::plus(share::SCN::min_scn(), 2);
   is_replay = true;
   ret = ctx2.tx_ctx_.notify_data_source_(NotifyType::TX_END, scn , is_replay, mds_array_unlock);
   ASSERT_EQ(OB_SUCCESS, ret);
 
   // 6.1 commit unlock op before lock committed
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 6.1");
+
   is_commit = true;
   commit_version = share::SCN::plus(share::SCN::min_scn(), 2);
   commit_scn = share::SCN::plus(share::SCN::min_scn(), 2);
@@ -886,7 +886,7 @@ TEST_F(TestLockMemtable, out_trans_multi_source)
 
   // 7 UNLOCK COMMITTED AFTER LOCK COMMITTED
   // 7.1 commi lock op
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 7.1");
+
   is_commit = true;
   commit_version.set_base();
   commit_scn.set_base();
@@ -896,7 +896,7 @@ TEST_F(TestLockMemtable, out_trans_multi_source)
                                    commit_scn);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 7.2 check lock op exist
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 7.2");
+
   commit_version.set_base();
   commit_scn.set_base();
   ret = memtable_.update_lock_status(lock_op,
@@ -906,7 +906,7 @@ TEST_F(TestLockMemtable, out_trans_multi_source)
   ASSERT_EQ(OB_SUCCESS, ret);
 
   // 7.3 commit unlock op after lock committed
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 7.3");
+
   scn = share::SCN::plus(share::SCN::min_scn(), 2);
   is_replay = true;
   ret = ctx2.tx_ctx_.notify_data_source_(NotifyType::TX_END, scn, is_replay, mds_array_unlock);
@@ -920,7 +920,7 @@ TEST_F(TestLockMemtable, out_trans_multi_source)
                                    commit_scn);
   ASSERT_EQ(OB_SUCCESS, ret);
   // 7.4 check lock op exist
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 7.4");
+
   commit_version.set_base();
   commit_scn.set_base();
   ret = memtable_.update_lock_status(lock_op,
@@ -929,7 +929,7 @@ TEST_F(TestLockMemtable, out_trans_multi_source)
                                      COMMIT_LOCK_OP_STATUS);
   ASSERT_EQ(OB_OBJ_LOCK_NOT_EXIST, ret);
   // 7.5 check unlock op exist
-  LOG_INFO("TestLockMemtable::out_trans_multi_source 7.5");
+
   commit_version = share::SCN::plus(share::SCN::min_scn(), 2);
   commit_scn = share::SCN::plus(share::SCN::min_scn(), 2);
   ret = memtable_.update_lock_status(unlock_op,
@@ -987,7 +987,7 @@ TEST_F(TestLockMemtable, out_trans_multi_source)
 
 TEST_F(TestLockMemtable, test_lock_retry)
 {
-  LOG_INFO("TestLockMemtable::test_lock_retry");
+
   // 1. LOCK PART CTX
   // 2. DO OBJ LOCK
   // 3. CHECK:
@@ -1026,7 +1026,7 @@ TEST_F(TestLockMemtable, test_lock_retry)
   ASSERT_EQ(OB_SUCCESS, default_ctx.tx_ctx_.lock_.lock());
 
   // 2. do obj lock
-  LOG_INFO("TestLockMemtable::test_lock_retry 2 do obj lock");
+
   param.is_try_lock_ = is_try_lock;
   param.expired_time_ = expired_time;
   ret = memtable_.lock(param,
@@ -1036,14 +1036,14 @@ TEST_F(TestLockMemtable, test_lock_retry)
 
   // 3. check
   // 3.1 check lock at map
-  LOG_INFO("TestLockMemtable::test_lock_retry 3.1 check lock at map");
+
   ret = memtable_.obj_lock_map_.get_obj_lock_with_ref_(DEFAULT_TABLE_LOCK_ID,
                                                        obj_lock);
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(0, obj_lock->size_without_lock());
 
   // 3.2 check lock at mem ctx
-  LOG_INFO("TestLockMemtable::test_lock_retry 3.2 check lock at mem ctx");
+
   mem_ctx = store_ctx.mvcc_acc_ctx_.mem_ctx_;
   ret = mem_ctx->check_lock_exist(DEFAULT_OUT_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_OUT_TRANS_LOCK_OP.owner_id_,
@@ -1054,14 +1054,14 @@ TEST_F(TestLockMemtable, test_lock_retry)
   ASSERT_EQ(lock_exist, false);
 
   // 3.3 check lock at part ctx
-  LOG_INFO("TestLockMemtable::test_lock_retry 3.3 check lock at part ctx");
+
   ASSERT_EQ(default_ctx.tx_ctx_.mds_cache_.mds_list_.empty(), true);
 
   // 4. unlock part ctx
   default_ctx.tx_ctx_.lock_.unlock();
 
   // 5. do obj lock again.
-  LOG_INFO("TestLockMemtable::test_lock_retry 5 do lock again");
+
   param.is_try_lock_ = is_try_lock;
   param.expired_time_ = ObClockGenerator::getClock() + 1 * 1000 * 1000;
   ret = memtable_.lock(param,
@@ -1071,7 +1071,7 @@ TEST_F(TestLockMemtable, test_lock_retry)
 
   // 6. check
   // 6.1 check lock at map
-  LOG_INFO("TestLockMemtable::test_lock_retry 6.1 check lock at map");
+
   ret = memtable_.obj_lock_map_.get_obj_lock_with_ref_(DEFAULT_TABLE_LOCK_ID,
                                                        obj_lock);
   ASSERT_EQ(OB_SUCCESS, ret);
@@ -1079,7 +1079,7 @@ TEST_F(TestLockMemtable, test_lock_retry)
   obj_lock->print();
 
   // 6.2 check lock at mem ctx
-  LOG_INFO("TestLockMemtable::test_lock_retry 6.2 check lock at mem ctx");
+
   mem_ctx = store_ctx.mvcc_acc_ctx_.mem_ctx_;
   ret = mem_ctx->check_lock_exist(DEFAULT_OUT_TRANS_LOCK_OP.lock_id_,
                                   DEFAULT_OUT_TRANS_LOCK_OP.owner_id_,
@@ -1090,12 +1090,12 @@ TEST_F(TestLockMemtable, test_lock_retry)
   ASSERT_EQ(lock_exist, true);
 
   // 6.3 check lock at part ctx
-  LOG_INFO("TestLockMemtable::test_lock_retry 6.3 check lock at part ctx");
+
   ASSERT_EQ(default_ctx.tx_ctx_.mds_cache_.mds_list_.empty(), false);
 
   // 7. clean
   // 7.1 commit out trans lock
-  LOG_INFO("TestLockMemtable::test_lock_retry 7.1");
+
   share::SCN commit_version;
   share::SCN commit_scn;
   commit_version.set_base();
@@ -1114,7 +1114,7 @@ TEST_F(TestLockMemtable, test_lock_retry)
   start_tx(TRANS_ID2, ctx2);
   get_store_ctx(ctx2, unlock_store_ctx);
   ctx2.tx_ctx_.change_to_leader();
-  LOG_INFO("TestLockMemtable::test_lock_retry 7.2");
+
   expired_time = ObClockGenerator::getClock() + 1 * 1000 * 1000;
   ret = memtable_.unlock(unlock_store_ctx,
                          DEFAULT_OUT_TRANS_UNLOCK_OP,
@@ -1123,7 +1123,7 @@ TEST_F(TestLockMemtable, test_lock_retry)
   ASSERT_EQ(OB_SUCCESS, ret);
   memtable_.obj_lock_map_.print();
   // 7.3 unlock commit
-  LOG_INFO("TestLockMemtable::test_lock_retry 7.3");
+
   ret = memtable_.update_lock_status(DEFAULT_OUT_TRANS_UNLOCK_OP,
                                      commit_version,
                                      commit_scn,
@@ -1134,7 +1134,7 @@ TEST_F(TestLockMemtable, test_lock_retry)
   ASSERT_EQ(min_commited_scn, share::SCN::max_scn());
 
   // 7.4 check
-  LOG_INFO("TestLockMemtable::test_lock_retry 7.4");
+
   MyTxCtx ctx3;
   ObStoreCtx unlock_store_ctx3;
   start_tx(TRANS_ID3, ctx3);
@@ -1150,7 +1150,7 @@ TEST_F(TestLockMemtable, test_lock_retry)
 
 TEST_F(TestLockMemtable, test_lock_retry_lock_conflict)
 {
-  LOG_INFO("TestLockMemtable::test_lock_retry_lock_conflict");
+
   // 1. LOCK
   // 2. LOCK AGAIN
   // 3. UNLOCK
@@ -1196,7 +1196,7 @@ TEST_F(TestLockMemtable, test_lock_retry_lock_conflict)
   get_store_ctx(ctx3, unlock_store_ctx);
   ctx3.tx_ctx_.change_to_leader();
 
-  LOG_INFO("TestLockMemtable::test_lock_retry_lock_conflict 1 lock first");
+
   param.is_try_lock_ = is_try_lock;
   param.expired_time_ = expired_time;
   ret = memtable_.lock(param,
@@ -1205,7 +1205,7 @@ TEST_F(TestLockMemtable, test_lock_retry_lock_conflict)
   ASSERT_EQ(OB_SUCCESS, ret);
 
   // 2. lock second, must conflict and retry until timeout
-  LOG_INFO("TestLockMemtable::test_lock_retry_lock_conflict 2 lock second");
+
   ret = memtable_.lock(param,
                        store_ctx2,
                        lock_second);
@@ -1213,7 +1213,7 @@ TEST_F(TestLockMemtable, test_lock_retry_lock_conflict)
 
   // 3. unlock
   // 3.1 commit out trans lock
-  LOG_INFO("TestLockMemtable::test_lock_retry_lock_conflict 3.1");
+
   share::SCN commit_version;
   share::SCN commit_scn;
   commit_version.set_base();
@@ -1228,7 +1228,7 @@ TEST_F(TestLockMemtable, test_lock_retry_lock_conflict)
   memtable_.obj_lock_map_.print();
 
   // 3.2 unlock complete lock
-  LOG_INFO("TestLockMemtable::test_lock_retry_lock_conflict 3.2");
+
   expired_time = ObClockGenerator::getClock() + 1 * 1000 * 1000;
   ret = memtable_.unlock(unlock_store_ctx,
                          DEFAULT_OUT_TRANS_UNLOCK_OP,
@@ -1237,7 +1237,7 @@ TEST_F(TestLockMemtable, test_lock_retry_lock_conflict)
   ASSERT_EQ(OB_SUCCESS, ret);
   memtable_.obj_lock_map_.print();
   // 3.3 unlock commit
-  LOG_INFO("TestLockMemtable::test_lock_retry_lock_conflict 3.3");
+
   ret = memtable_.update_lock_status(DEFAULT_OUT_TRANS_UNLOCK_OP,
                                      commit_version,
                                      commit_scn,
@@ -1248,7 +1248,7 @@ TEST_F(TestLockMemtable, test_lock_retry_lock_conflict)
   ASSERT_EQ(min_commited_scn, share::SCN::max_scn());
 
   // 4. lock again
-  LOG_INFO("TestLockMemtable::test_lock_retry_lock_conflict 4 lock again");
+
   param.expired_time_ = ObClockGenerator::getClock() + 1 * 1000 * 1000;
   ret = memtable_.lock(param,
                        store_ctx2,
@@ -1257,14 +1257,14 @@ TEST_F(TestLockMemtable, test_lock_retry_lock_conflict)
 
   // 5. check
   // 5.1 check lock at map
-  LOG_INFO("TestLockMemtable::test_lock_retry_lock_conflict 5.1 check lock at map");
+
   ret = memtable_.obj_lock_map_.get_obj_lock_with_ref_(DEFAULT_TABLE_LOCK_ID,
                                                        obj_lock);
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(1, obj_lock->size_without_lock());
 
   // 5.2 check lock at mem ctx
-  LOG_INFO("TestLockMemtable::test_lock_retry_lock_conflict 5.2 check lock at mem ctx");
+
   mem_ctx = store_ctx2.mvcc_acc_ctx_.mem_ctx_;
   ret = mem_ctx->check_lock_exist(lock_second.lock_id_,
                                   lock_second.owner_id_,
@@ -1276,7 +1276,7 @@ TEST_F(TestLockMemtable, test_lock_retry_lock_conflict)
 
   // 6. clean
   // 6.1 commit out trans lock
-  LOG_INFO("TestLockMemtable::test_lock_retry_lock_conflict 6.1");
+
   commit_version.set_base();
   commit_scn.set_base();
   ret = memtable_.update_lock_status(lock_second,
@@ -1289,7 +1289,7 @@ TEST_F(TestLockMemtable, test_lock_retry_lock_conflict)
   memtable_.obj_lock_map_.print();
 
   // 6.2 unlock complete lock
-  LOG_INFO("TestLockMemtable::test_lock_retry_lock_conflict 6.2");
+
   expired_time = ObClockGenerator::getClock() + 1 * 1000 * 1000;
   ObTableLockOp unlock_op = DEFAULT_OUT_TRANS_UNLOCK_OP;
   unlock_op.owner_id_ = lock_second.owner_id_;
@@ -1301,7 +1301,7 @@ TEST_F(TestLockMemtable, test_lock_retry_lock_conflict)
   ASSERT_EQ(OB_SUCCESS, ret);
   memtable_.obj_lock_map_.print();
   // 6.3 unlock commit
-  LOG_INFO("TestLockMemtable::test_lock_retry_lock_conflict 6.3");
+
   ret = memtable_.update_lock_status(unlock_op,
                                      commit_version,
                                      commit_scn,
@@ -1314,7 +1314,7 @@ TEST_F(TestLockMemtable, test_lock_retry_lock_conflict)
 
 TEST_F(TestLockMemtable, test_replace)
 {
-  LOG_INFO("TestLockMemtable::test_replace");
+
   int ret = OB_SUCCESS;
   bool is_try_lock = false;
   int64_t expired_time = ObClockGenerator::getClock() + 10 * 1000 * 1000;
@@ -1347,9 +1347,9 @@ TEST_F(TestLockMemtable, test_replace)
   get_store_ctx(ctx2, store_ctx2);
   ctx2.tx_ctx_.change_to_leader();
 
-  LOG_INFO("TestLockMemtable::test_replace 1");
+
   // 1.1 lock first
-  LOG_INFO("TestLockMemtable::test_replace 1.1");
+
   param.is_try_lock_ = is_try_lock;
   param.expired_time_ = expired_time;
   ret = memtable_.lock(param,
@@ -1358,7 +1358,7 @@ TEST_F(TestLockMemtable, test_replace)
   ASSERT_EQ(OB_SUCCESS, ret);
 
   // 1.2 check lock exist at memctx.
-  LOG_INFO("TestLockMemtable::test_replace 1.2");
+
   mem_ctx = store_ctx1.mvcc_acc_ctx_.mem_ctx_;
   ret = mem_ctx->check_lock_exist(lock_first.lock_id_,
                                   lock_first.owner_id_,
@@ -1369,7 +1369,7 @@ TEST_F(TestLockMemtable, test_replace)
   ASSERT_EQ(lock_exist, true);
 
   // 1.3 commit out trans lock
-  LOG_INFO("TestLockMemtable::test_replace 1.3");
+
   share::SCN commit_version;
   share::SCN commit_scn;
   commit_version.set_base();
@@ -1385,16 +1385,16 @@ TEST_F(TestLockMemtable, test_replace)
   memtable_.obj_lock_map_.print();
 
   // 2. replace lock_first with lock_second
-  LOG_INFO("TestLockMemtable::test_replace 2");
+
   // 2.1 replace to owner 1
-  LOG_INFO("TestLockMemtable::test_replace 2.1");
+
   param.is_for_replace_ = true;
   ret = memtable_.replace(store_ctx2, param, unlock_first, lock_second);
   ASSERT_EQ(OB_SUCCESS, ret);
   memtable_.obj_lock_map_.print();
 
   // 2.2 check lock exist at memctx
-  LOG_INFO("TestLockMemtable::test_replace 2.2");
+
   mem_ctx = store_ctx2.mvcc_acc_ctx_.mem_ctx_;
   ret = mem_ctx->check_lock_exist(lock_second.lock_id_,
                                   lock_second.owner_id_,
@@ -1407,7 +1407,7 @@ TEST_F(TestLockMemtable, test_replace)
   // 2.3 commit replace lock
   // We should commit all lock_ops in the same tx,
   // so we commit unlock_op and lock_op together here
-  LOG_INFO("TestLockMemtable::test_replace 2.3");
+
   commit_version.set_base();
   commit_scn.set_base();
   ret = memtable_.update_lock_status(unlock_first,
@@ -1426,14 +1426,14 @@ TEST_F(TestLockMemtable, test_replace)
   memtable_.obj_lock_map_.print();
 
   // 3. unlock
-  LOG_INFO("TestLockMemtable::test_replace 3");
+
   MyTxCtx ctx3;
   ObStoreCtx unlock_store_ctx3;
   start_tx(TRANS_ID3, ctx3);
   get_store_ctx(ctx3, unlock_store_ctx3);
   ctx3.tx_ctx_.change_to_leader();
   // 3.1 unlock with owner 0: should be OB_OBJ_LOCK_NOT_EXIST.
-  LOG_INFO("TestLockMemtable::test_replace 3.1");
+
   ret = memtable_.unlock(unlock_store_ctx3,
                          unlock_first,
                          is_try_lock,
@@ -1441,7 +1441,7 @@ TEST_F(TestLockMemtable, test_replace)
   ASSERT_EQ(OB_OBJ_LOCK_NOT_EXIST, ret);
 
   // 3.2 unlock with owner 1: should be success
-  LOG_INFO("TestLockMemtable::test_replace 3.2");
+
   ret = memtable_.unlock(unlock_store_ctx3,
                          unlock_second,
                          is_try_lock,
@@ -1449,7 +1449,7 @@ TEST_F(TestLockMemtable, test_replace)
   ASSERT_EQ(OB_SUCCESS, ret);
 
   // 3.3 commit unlock
-  LOG_INFO("TestLockMemtable::test_replace 3.3");
+
   commit_version.set_base();
   commit_scn.set_base();
   ret = memtable_.update_lock_status(unlock_second,

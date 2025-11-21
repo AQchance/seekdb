@@ -74,7 +74,7 @@ int ObAllVirtualLSReplicaTaskPlan::inner_get_next_row(ObNewRow *&row)
     if (FAILEDx(task_worker.get_task_plan_display(task_stats))) {
       LOG_WARN("fail to get tasks", KR(ret));
     } else {
-      LOG_INFO("success to get task plans from worker", KR(ret), K(task_stats));
+
       ObArray<Column> columns;
       for (int64_t j = 0; OB_SUCC(ret) && j < task_stats.count(); ++j) {
         const ObLSReplicaTaskDisplayInfo *task_stat = &(task_stats.at(j));

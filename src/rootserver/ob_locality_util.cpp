@@ -1333,7 +1333,7 @@ int ObLocalityDistribution::parse_locality(
     const common::ObIArray<share::schema::ObZoneRegion> *zone_region_list)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("start to parse locality", K(locality), K(zone_list));
+
 
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;

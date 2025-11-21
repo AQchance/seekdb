@@ -432,7 +432,7 @@ int ObTableColumns::fill_row_cells(const ObTableSchema &table_schema,
         break;
       }
     case NULLABLE: {
-        LOG_DEBUG("desc t nullable", K(column_schema));
+
         const char *ptr = column_schema.is_not_null_validate_column()
                           || !column_schema.is_nullable() ? "NO" : "YES";
         ObString nullable_val = ObString::make_string(ptr);
@@ -1012,7 +1012,7 @@ int ObTableColumns::deduce_column_attributes(
                                   is_string_lob))) {
         LOG_WARN("fail to get data type str", K(ret));
       } else {
-        LOG_DEBUG("succ to ob_sql_type_str", K(ret), K(result_type), K(select_stmt), KPC(select_item.expr_), K(precision_or_length_semantics));
+
       }
     }
   }

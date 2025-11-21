@@ -55,7 +55,7 @@ int ObMajorMergeInfoDetector::init(
     major_merge_info_mgr_ = &major_merge_info_mgr;
     major_scheduler_idling_ = &major_scheduler_idling;
     is_inited_ = true;
-    LOG_INFO("freeze info detector init succ", K_(tenant_id));
+
   }
   return ret;
 }
@@ -72,7 +72,7 @@ int ObMajorMergeInfoDetector::start()
   } else if (OB_FAIL(ObRsReentrantThread::start())) {
     LOG_WARN("fail to start thread", KR(ret), K_(tenant_id));
   } else {
-    LOG_INFO("ObMajorMergeInfoDetector start succ", K_(tenant_id));
+
   }
   return ret;
 }
@@ -86,12 +86,12 @@ void ObMajorMergeInfoDetector::run3()
     LOG_WARN("not init", KR(ret), K_(tenant_id));
   } else {
     const int64_t start_time_us = ObTimeUtil::current_time();
-    LOG_INFO("start freeze_info_detector", K_(tenant_id));
+
     ObThreadCondGuard guard(get_cond());
     while (!stop_) {
       update_last_run_timestamp();
       ObCurTraceId::init(GCONF.self_addr_);
-      LOG_TRACE("run freeze info detector", K_(tenant_id));
+
 
       bool can_work = false;
       bool skip_refresh_zone_info = false;
@@ -151,7 +151,7 @@ void ObMajorMergeInfoDetector::run3()
 #ifdef ERRSIM
         if (OB_UNLIKELY(SKIP_REFRESH_ZONE_INFO)) {
           skip_refresh_zone_info = true;
-          LOG_INFO("ERRSIM SKIP_REFRESH_ZONE_INFO", K(ret));
+
           ret = OB_SUCCESS;
         }
 #endif        
@@ -166,7 +166,7 @@ void ObMajorMergeInfoDetector::run3()
       }
     }
   }
-  LOG_INFO("stop freeze_info_detector", K_(tenant_id));
+
 }
 
 int ObMajorMergeInfoDetector::check_need_broadcast(bool &need_broadcast, const int64_t expected_epoch)
@@ -230,7 +230,7 @@ int ObMajorMergeInfoDetector::try_minor_freeze()
                      .root_minor_freeze(arg))) {
     LOG_WARN("fail to execute root_minor_freeze rpc", KR(ret), K(arg));
   } else {
-    LOG_INFO("succ to execute root_minor_freeze rpc", KR(ret), K(arg));
+
   }
   return ret;
 }
@@ -268,7 +268,7 @@ int ObMajorMergeInfoDetector::can_start_work(bool &can_work)
   // 2. common tenant(except sys tenant) init snapshot_gc_ts complete(in set_tenant_init_global_stat),
   //    when tenant schema is noraml state, so can start work directly;
   } else if ((nullptr == tenant_schema) || !tenant_schema->is_normal()) {
-    LOG_INFO("tenant is in abnormal status, no need detect now", K_(tenant_id), KPC(tenant_schema));
+
     can_work = false;
   } else if (is_sys_tenant(tenant_id_)) {
     // 3. sys tenant init global stat(snpshot_gc_ts) in ObBootstrap(ObBootstrap::init_global_stat()),
@@ -284,7 +284,7 @@ int ObMajorMergeInfoDetector::can_start_work(bool &can_work)
         ret = OB_SUCCESS;
         can_work = false;
       } else {
-        LOG_INFO("snapshot_gc_scn init succ", K(snapshot_gc_scn), K_(tenant_id));
+
         is_gc_scn_inited_ = true;
       }
     }

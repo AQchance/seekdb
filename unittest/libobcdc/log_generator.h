@@ -281,7 +281,7 @@ void ObTxLogGenerator::gen_record_log()
     EXPECT_EQ(OB_SUCCESS, record_log_ref.redo_lsns_.push_back(lsn_arr_.at(i)));
   }
   ObTxRecordLog record_log(record_log_ref);
-  LOG_DEBUG("gen record", K(record_log));
+
   has_record_log_ = true;
   EXPECT_EQ(OB_SUCCESS, block_builder_.fill_tx_log_except_redo(record_log));
   lsn_arr_.reset();
@@ -294,7 +294,7 @@ void ObTxLogGenerator::gen_commit_info_log()
     EXPECT_EQ(OB_SUCCESS, commit_info_log_ref.redo_lsns_.push_back(lsn_arr_.at(i)));
   }
   ObTxCommitInfoLog commit_info_log(commit_info_log_ref);
-  LOG_DEBUG("gen commit_info_log", K(commit_info_log));
+
   EXPECT_EQ(OB_SUCCESS, block_builder_.fill_tx_log_except_redo(commit_info_log));
 }
 
@@ -304,7 +304,7 @@ void ObTxLogGenerator::gen_prepare_log()
   transaction::LogOffSet prev_lsn = last_lsn_();
   ObTxPrevLogType prev_log_type(ObTxPrevLogType::TypeEnum::COMMIT_INFO);
   ObTxPrepareLog prepare_log(inc_ls_arr, prev_lsn, prev_log_type);
-  LOG_DEBUG("gen prepare_log", K(prepare_log));
+
   EXPECT_EQ(OB_SUCCESS, block_builder_.fill_tx_log_except_redo(prepare_log));
   trans_type_ = transaction::TransType::DIST_TRANS; // dist trans.
 }
@@ -337,7 +337,7 @@ void ObTxLogGenerator::gen_commit_log()
       last_lsn_(),
       ls_info_arr, 
       prev_log_type);
-  LOG_DEBUG("gen commit_log", K(commit_log));
+
   EXPECT_EQ(OB_SUCCESS, block_builder_.fill_tx_log_except_redo(commit_log));
 }
 

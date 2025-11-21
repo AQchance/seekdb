@@ -144,7 +144,7 @@ void ObMViewPushSnapshotTask::runTimerTask()
     } else if (!backup_jobs.empty() && OB_FAIL(check_space_occupy_(space_danger))) {
       LOG_WARN("backup jobs exist, check space occupy failed", KR(ret), K(tenant_id_));
     } else if (!backup_jobs.empty() && !space_danger) {
-      LOG_INFO("backup jobs exist, space is not in danger just skip push snapshot", KR(ret), K(tenant_id_));
+
     } else if (OB_FAIL(snapshot_proxy.push_snapshot_for_major_refresh_mv(trans, tenant_id_,
                                                                          min_refresh_scn))) {
       LOG_WARN("fail to push snapshot for major refresh mv", KR(ret), K(tenant_id_),
@@ -186,7 +186,7 @@ int ObMViewPushSnapshotTask::check_space_occupy_(bool &space_danger)
       int64_t occupy = 0;
       EXTRACT_INT_FIELD_MYSQL(*result, "occupy", occupy, int64_t);
       int64_t upper_bound = GCONF._datafile_usage_upper_bound_percentage;
-      LOG_INFO("check_space_occupy", KR(ret), K(occupy), K(upper_bound), K(sql));
+
       if (OB_SUCC(ret)) {
         if (occupy >= GCONF._datafile_usage_upper_bound_percentage) {
           space_danger = true;

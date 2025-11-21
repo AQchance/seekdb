@@ -111,7 +111,7 @@ int ObDASIDCache::update_das_id(const int64_t start_id, const int64_t end_id)
   const int64_t cache_idx = ATOMIC_LOAD(&cache_idx_);
   const int64_t cur_idx = ATOMIC_LOAD(&cur_idx_);
   if (cache_idx - cur_idx >= MAX_CACHE_NUM - 1) {
-    LOG_TRACE("drop das id", K(MTL_ID()), K(start_id), K(end_id));
+
   } else {
     IdCache *id_cache = &(id_cache_[cache_idx % MAX_CACHE_NUM]);
     inc_update(&(id_cache->start_id), start_id);
@@ -165,7 +165,7 @@ int ObDASIDCache::get_das_id(int64_t &das_id, const bool force_renew)
       } else if (OB_SUCCESS != res.get_status()) {
         if (OB_NOT_MASTER == res.get_status() || OB_TENANT_NOT_IN_SERVER == res.get_status()) {
           ret = OB_EAGAIN;
-          LOG_INFO("das id rpc need retry", KR(res.get_status()), KR(ret));
+
         } else {
           ret = res.get_status();
           LOG_WARN("das id rpc failed", KR(ret), K(res));
@@ -175,7 +175,7 @@ int ObDASIDCache::get_das_id(int64_t &das_id, const bool force_renew)
       }
       ATOMIC_STORE(&is_requesting_, false);
       if (OB_SUCC(ret)) {
-        LOG_TRACE("das id rpc succeeded", K(req), K(res));
+
       }
     }
     if (left_cache_count <= PRE_CACHE_NUM / 2) {

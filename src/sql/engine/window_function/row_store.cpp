@@ -152,14 +152,14 @@ int RowStore::process_dump(const int64_t target_size, const int64_t g_mem_limit_
   int64_t mem_used = ra_rs_.get_mem_used();
   dumped_size = 0;
   if (ra_rs_.is_empty_save_block_cnt()) {
-    LOG_DEBUG("no need dumping"); // CHANGE TO DEBUG
+ // CHANGE TO DEBUG
   } else if (OB_FAIL(ra_rs_.dump(false, target_size))) {
     LOG_WARN("dump store failed", K(ret));
   } else {
     dumped_size = mem_used - ra_rs_.get_mem_used();
     // reset reader after dumping
     ra_reader_.reset();
-    LOG_TRACE("dumped store", K(*this), K(dumped_size), K(local_mem_limit_version_), K(target_size));
+
   }
   return ret;
 }

@@ -66,7 +66,7 @@ int ObTransformTempTable::transform_one_stmt(common::ObIArray<ObParentDMLStmt> &
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("generate with clause:", is_happened);
-        LOG_TRACE("succeed to generate with clause",  K(is_happened));
+
       }
     }
 
@@ -82,7 +82,7 @@ int ObTransformTempTable::transform_one_stmt(common::ObIArray<ObParentDMLStmt> &
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("project pruning for temp table:", is_happened);
-        LOG_TRACE("succeed to do project pruning for temp table", K(temp_table_infos),  K(is_happened));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -91,7 +91,7 @@ int ObTransformTempTable::transform_one_stmt(common::ObIArray<ObParentDMLStmt> &
       } else {
         trans_happened |= is_happened;
         OPT_TRACE("inline temp table:", is_happened);
-        LOG_TRACE("succeed to inline temp table",  K(is_happened));
+
       }
     }
   }
@@ -1283,7 +1283,7 @@ int ObTransformTempTable::create_temp_table(ObDMLStmt &root_stmt,
           LOG_WARN("failed to append equal param constraints", K(ret));
         }
       }
-      LOG_TRACE("succeed to create temp table", KPC(temp_table_query));
+
     }
   }
 
@@ -1400,7 +1400,7 @@ int ObTransformTempTable::inner_create_temp_table(ObSelectStmt *parent_stmt,
     if (OB_FAIL(ObTransformUtils::pack_stmt(ctx_, parent_stmt, true))) {
       LOG_WARN("failed to create temp table for set stmt", K(ret));
     } else {
-      LOG_TRACE("succeed to create temp table", KPC(parent_stmt));
+
     }
   } else {
     TableItem *view_table = NULL;
@@ -2465,7 +2465,7 @@ int ObTransformTempTable::accept_cte_transform(ObDMLStmt &origin_root_stmt,
   } else if (force_accept) {
     trans_happened = true;
   } else if (ctx_->is_set_stmt_oversize_) {
-    LOG_TRACE("not accept transform because large set stmt", K(ctx_->is_set_stmt_oversize_));
+
   } else if (OB_FAIL(evaluate_cte_cost(origin_root_stmt, false, origin_stmts, stmt_ptrs, origin_costs, NULL, dummy))) {
     LOG_WARN("failed to evaluate cost for the origin stmt", K(ret));
   } else if (OB_FAIL(evaluate_cte_cost(origin_root_stmt, true, trans_stmts, stmt_ptrs, trans_costs, temp_table, temp_table_costs))) {
@@ -2661,7 +2661,7 @@ int ObTransformTempTable::accept_cte_transform_v2(ObDMLStmt &origin_root_stmt,
       OPT_TRACE("Materialize stmt :", trans_stmts.at(i));
     }
   } else if (ctx_->is_set_stmt_oversize_) {
-    LOG_TRACE("not accept transform because large set stmt", K(ctx_->is_set_stmt_oversize_));
+
   } else if (OB_FAIL(pick_out_stmts_in_blacklist(ctx_->materialize_blacklist_, 
                                                  origin_stmts, 
                                                  trans_stmts,
@@ -3319,7 +3319,7 @@ int ObTransformTempTable::evaluate_inline_materialize_costs(ObDMLStmt *origin_ro
           }
         }
         OPT_TRACE("choose `inline` due to global cost check");
-        LOG_TRACE("choose `inline` due to global cost check", K(inline_global_cost), K(materialize_global_cost));
+
       } else {
         for (int64_t i = 0; OB_SUCC(ret) && i < copy_materialize_stmts.count(); ++i) {
           if (OB_FAIL(choosed_materialize_idxs.push_back(i))) {
@@ -3327,7 +3327,7 @@ int ObTransformTempTable::evaluate_inline_materialize_costs(ObDMLStmt *origin_ro
           }
         }
         OPT_TRACE("choose `materialize` due to global cost check");
-        LOG_TRACE("choose `materialize` due to global cost check", K(inline_global_cost), K(materialize_global_cost));
+
       }
     }
   }
@@ -3375,11 +3375,11 @@ int ObTransformTempTable::evaluate_inline_materialize_costs(ObDMLStmt *origin_ro
         } else {
           choosed_materialize_idxs.reset();
           OPT_TRACE("choose `inline` due to partial cost check");
-          LOG_TRACE("choose `inline` due to partial cost check", K(cte_cost), K(cte_profit));
+
         }
       } else {
         OPT_TRACE("choose `materialize` due to partial cost check");
-        LOG_TRACE("choose `materialize` due to partial cost check", K(cte_cost), K(cte_profit));
+
       }
     }
   }

@@ -342,7 +342,7 @@ void free_memdata_resource(ObVectorIndexRecordType type,
                            ObIAllocator *allocator,
                            uint64_t tenant_id)
 {
-  LOG_INFO("free memdata", K(type), KP(memdata), K(allocator), K(lbt())); // remove later
+ // remove later
   if (OB_NOT_NULL(memdata->bitmap_)) {
     if (OB_NOT_NULL(memdata->bitmap_->insert_bitmap_)) {
       lib::ObMallocHookAttrGuard malloc_guard(lib::ObMemAttr(tenant_id, "VIBitmapADPD"));
@@ -361,7 +361,7 @@ void free_memdata_resource(ObVectorIndexRecordType type,
   }
   if (OB_NOT_NULL(memdata->index_)) {
     obvectorutil::delete_index(memdata->index_);
-    LOG_INFO("delete vector index", K(type), KP(memdata->index_), K(lbt())); // remove later
+ // remove later
     memdata->index_ = nullptr;
   }
   free_hnswsq_array_data(memdata, allocator);
@@ -438,7 +438,7 @@ ObPluginVectorIndexAdaptor::ObPluginVectorIndexAdaptor(common::ObIAllocator *all
 ObPluginVectorIndexAdaptor::~ObPluginVectorIndexAdaptor()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("destruct adaptor and free resources", K(is_complete()), K(this), KPC(this), K(lbt())); // remove later
+ // remove later
   // inc
   if (OB_NOT_NULL(incr_data_)
       && (OB_FAIL(try_free_memdata_resource(VIRT_INC, incr_data_, allocator_, tenant_id_)))) {
@@ -587,7 +587,7 @@ int ObPluginVectorIndexAdaptor::set_param(ObString init_str, int64_t dim)
     type_ = hnsw_param->type_;
     algo_data_ = hnsw_param;
     hnsw_param->dim_ = dim;
-    LOG_INFO("init vector index adapter with param", KPC(hnsw_param)); // change log to debug level later
+ // change log to debug level later
   }
 
   if (OB_FAIL(ret)) {
@@ -827,7 +827,7 @@ int ObPluginVectorIndexAdaptor::init_mem_data(ObVectorIndexRecordType type, ObVe
           incr_data_->bitmap_->delete_bitmap_ = nullptr;
           incr_data_->set_inited(); // should release memory if fail
         }
-        LOG_INFO("create incr index success.", K(ret), KP(incr_data_->index_), K(lbt())); // remove later
+ // remove later
       }
 
       if (OB_FAIL(ret)) {
@@ -908,7 +908,7 @@ int ObPluginVectorIndexAdaptor::init_mem_data(ObVectorIndexRecordType type, ObVe
 
       if (OB_SUCC(ret)) {
         snap_data_->set_inited();
-        LOG_INFO("create snap data success.", K(ret), KP(snap_data_->index_), K(lbt())); // remove later
+ // remove later
       }
       if (OB_FAIL(ret)) {
         free_memdata_resource(type, snap_data_, get_allocator(), tenant_id_);
@@ -969,7 +969,7 @@ int ObPluginVectorIndexAdaptor::init_snap_data_without_lock(ObVectorIndexAlgorit
 
     if (OB_SUCC(ret)) {
       snap_data_->set_inited();
-      LOG_INFO("create snap data success.", K(ret), KP(snap_data_->index_));
+
     }
     if (OB_FAIL(ret)) {
       free_memdata_resource(VIRT_SNAP, snap_data_, get_allocator(), tenant_id_);
@@ -1811,7 +1811,7 @@ int ObPluginVectorIndexAdaptor::add_snap_index(float *vectors, int64_t *vids, Ob
             if (OB_FAIL(obvectorutil::add_index(snap_data_->index_, vectors, vids, dim, extra_info_buf, num))) {
               LOG_WARN("failed to add index.", K(ret), K(dim), K(num));
             } else {
-              LOG_INFO("HgraphIndex add into hnswsq index success", K(ret), K(dim), K(num), K(vids[0]), K(vids[num - 1]));
+
             }
           } else {
             TCWLockGuard lock_guard(snap_data_->mem_data_rwlock_);
@@ -1837,7 +1837,7 @@ int ObPluginVectorIndexAdaptor::add_snap_index(float *vectors, int64_t *vids, Ob
                   LOG_WARN("failed to append extra info buf", K(ret));
                 }
               }
-              LOG_INFO("HgraphIndex add into cache array success", K(ret), K(dim), K(num), K(vids[0]), K(vids[num - 1]), KPC(snap_data_->vid_array_));
+
       
               // second: construct hnsw+sq index
               ObVecIdxVidArray *vids_array = snap_data_->vid_array_;
@@ -1858,7 +1858,7 @@ int ObPluginVectorIndexAdaptor::add_snap_index(float *vectors, int64_t *vids, Ob
               if (OB_FAIL(obvectorutil::add_index(snap_data_->index_, vectors, vids, dim, extra_info_buf, num))) {
                 LOG_WARN("failed to add index.", K(ret), K(dim), K(num));
               } else {
-                LOG_INFO("HgraphIndex add into hnswsq index success", K(ret), K(dim), K(num), K(vids[0]), K(vids[num - 1]));
+
               }
             }
           } // end for No sq index was built
@@ -1887,7 +1887,7 @@ int ObPluginVectorIndexAdaptor::build_hnswsq_index(ObVectorIndexParam *param)
     } else if (OB_FAIL(snap_data_->mem_ctx_->init(parent_mem_ctx_, all_vsag_use_mem_, tenant_id_))) {
       LOG_WARN("failed to init incr data mem ctx.", K(ret));
     } else {
-      LOG_INFO("HgraphIndex build hnswsq index success", K(ret), K(param->dim_), K(vid_array->count()));
+
       lib::ObMallocHookAttrGuard malloc_guard(lib::ObMemAttr(tenant_id_, "VIndexVsagADP"));
       lib::ObLightBacktraceGuard light_backtrace_guard(false);
       if (OB_FAIL(ret)) {
@@ -1998,7 +1998,7 @@ int ObPluginVectorIndexAdaptor::set_snapshot_key_prefix(const ObString &snapshot
   int ret = OB_SUCCESS;
   if (!snapshot_key_prefix_.empty() && snapshot_key_prefix_ == snapshot_key_prefix) {
     // do nothing
-    LOG_INFO("try to change same vector index snapshot_key_prefix", K(snapshot_key_prefix), K(*this));
+
   } else if (snapshot_key_prefix.empty()) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("vector index snapshot_key_prefix is empty", KR(ret), K(*this));
@@ -2013,7 +2013,7 @@ int ObPluginVectorIndexAdaptor::set_snapshot_key_prefix(const ObString &snapshot
     if (OB_FAIL(ob_write_string(*allocator_, snapshot_key_prefix, snapshot_key_prefix_))) {
       LOG_WARN("fail set vector index snapshot_key_prefix ", KR(ret), K(*this));
     } else {
-      LOG_INFO("change vector index snapshot_key_prefix success", K(snapshot_key_prefix), K(*this));
+
     }
   }
   return ret;
@@ -2111,7 +2111,7 @@ int ObPluginVectorIndexAdaptor::check_snap_hnswsq_index()
                                                  vid_array->count()))) {
         LOG_WARN("failed to add vsag index.", K(ret), K(snap_data_->index_), KPC(param));
       } else {
-        LOG_INFO("HNSW build index success", K(ret), K(param->dim_), K(vid_array->count()));
+
       }
       if (OB_SUCC(ret)) {
         snap_data_->set_inited();
@@ -2130,7 +2130,7 @@ int ObPluginVectorIndexAdaptor::check_snap_hnswsq_index()
     if (OB_FAIL(obvectorutil::get_index_number(snap_data_->index_, snap_index_size))) {
       LOG_WARN("failed to get snap index number.", K(ret));
     } else {
-      LOG_INFO("get snap index element and array", K(ret), K(snap_index_size));
+
     }
     free_hnswsq_array_data(snap_data_, get_allocator());
   }
@@ -2277,7 +2277,7 @@ int ObPluginVectorIndexAdaptor::write_into_delta_mem(ObVectorQueryAdaptorResultC
       if (OB_SUCC(ret)) {
         incr_data_->set_vid_bound(vid_bound);
       }
-      LOG_TRACE("write into delta mem.", K(ret), K(ctx->get_dim()), K(count));
+
     }
   }
 
@@ -2354,7 +2354,7 @@ int ObPluginVectorIndexAdaptor::complete_delta_buffer_table_data(ObVectorQueryAd
         }
       }
     }
-    LOG_INFO("SYCN_DELTA_complete_data", K(ctx->vec_data_));
+
     // print_vids(vids, ctx_vec_cnt);
     // print_vectors(vectors, ctx_vec_cnt, dim);
   }
@@ -2412,10 +2412,10 @@ int ObPluginVectorIndexAdaptor::complete_delta_buffer_table_data(ObVectorQueryAd
       ctx->do_next_batch();
       if (ctx->if_next_batch()) {
         ctx->status_ = PVQ_COM_DATA;
-        LOG_INFO("SYCN_DELTA_next_batch", K(ctx->vec_data_));
+
       } else {
         ctx->status_ = PVQ_LACK_SCN;
-        LOG_INFO("SYCN_DELTA_batch_end", K(ctx->vec_data_));
+
       }
     }
   }
@@ -2535,7 +2535,7 @@ int ObPluginVectorIndexAdaptor::write_into_index_mem(int64_t dim, SCN read_scn,
 #endif
 
     vbitmap_data_->scn_ = read_scn;
-    LOG_TRACE("write into index mem.", K(ret), K(i_vids.count()), K(d_vids.count()), K(read_scn));
+
   }
 
   return ret;
@@ -2547,7 +2547,7 @@ bool ObPluginVectorIndexAdaptor::check_if_complete_index(SCN read_scn)
   SCN bitmap_scn = vbitmap_data_->scn_;
   if (read_scn > bitmap_scn) {
     res = true;
-    LOG_DEBUG("need complete index mem data.", K(read_scn), K(bitmap_scn));
+
   }
   
   return res;
@@ -2774,9 +2774,9 @@ int ObPluginVectorIndexAdaptor::prepare_delta_mem_data(roaring::api::roaring64_b
         if (is_sparse_vector_index_type()) {
           // The actual vector data will be filled later when reading from tables
           // For now, we just initialize the structure
-          LOG_INFO("SYCN_DELTA_prepare_data for sparse vector", K(ctx->vec_data_));
+
         } else {
-          LOG_INFO("SYCN_DELTA_prepare_data", K(ctx->vec_data_));
+
         }
       }
 
@@ -2810,7 +2810,7 @@ int ObPluginVectorIndexAdaptor::serialize(ObIAllocator *allocator, ObOStreamBuf:
     LOG_WARN("failed to get snap index number.", K(ret));
   } else if (snap_index_size == 0) {
     // do nothing
-    LOG_INFO("[vec index] empty snap index, do not need to serialize");
+
   } else if (OB_FAIL(index_seri.serialize(snap_data_->index_, cb_param, cb, tenant_id_))) {
     LOG_WARN("serialize index failed.", K(ret));
   } else {
@@ -2869,7 +2869,7 @@ int ObPluginVectorIndexAdaptor::merge_and_generate_bitmap(ObVectorQueryAdaptorRe
     ROARING_TRY_CATCH(roaring64_bitmap_andnot_inplace(ibitmap, dbitmap));
     iFilter.set_roaring_bitmap(ibitmap);
     dFilter.set_roaring_bitmap(dbitmap);
-    LOG_DEBUG("vbitmap is not inited.", K(ret));
+
   } else {
     lib::ObMallocHookAttrGuard malloc_guard(lib::ObMemAttr(tenant_id_, "VIBitmapADPQ"));
     ibitmap = ctx->bitmaps_->insert_bitmap_;
@@ -2889,7 +2889,7 @@ int ObPluginVectorIndexAdaptor::merge_and_generate_bitmap(ObVectorQueryAdaptorRe
     ROARING_TRY_CATCH(roaring64_bitmap_andnot_inplace(ibitmap, dbitmap));
     iFilter.set_roaring_bitmap(ibitmap);
     dFilter.set_roaring_bitmap(dbitmap);
-    LOG_DEBUG("vbitmap is inited.", K(ret));
+
 
 #ifndef NDEBUG      
     output_bitmap(ibitmap);
@@ -2921,7 +2921,7 @@ int ObPluginVectorIndexAdaptor::print_bitmap(roaring::api::roaring64_bitmap_t *b
         sprintf(buf, "%llu ", static_cast<unsigned long long>(nums[i]));
         buffer.append(buf);
       }
-      LOG_INFO("PRINT_BITMAP_DEBUG", K(buffer), KP(buffer.ptr()), K(buffer.string()));
+
     }
   }
   return ret;
@@ -2940,7 +2940,7 @@ void ObPluginVectorIndexAdaptor::print_sparse_vectors(uint32_t *lens, uint32_t *
         buffer.append(buf, -1);
       }
       pos += lens[i];
-      LOG_INFO("SYCN_DELTA_vectors", K(buffer), KP(buffer.ptr()), K(buffer.string()));
+
     }
   }
 }
@@ -3360,7 +3360,7 @@ int ObPluginVectorIndexAdaptor::vsag_query_vids(ObVectorQueryAdaptorResultContex
     // but for other situation, merge and make sure result is less than limit K, cuz its the final res
       max_res_cnt = tmp_result_cnt < query_cond->query_limit_ ? tmp_result_cnt : query_cond->query_limit_;
     }
-    LOG_TRACE("query result info", K(delta_res_cnt), K(snap_res_cnt));
+
 
     if (max_res_cnt == 0) {
       // when max_res_cnt == 0, it means (snap_res_cnt == 0 && delta_res_cnt == 0), there is no data in table, do not need alloc memory for res_vid_array
@@ -3397,7 +3397,7 @@ int ObPluginVectorIndexAdaptor::vsag_query_vids(ObVectorQueryAdaptorResultContex
     } else if (OB_FAIL(vids_iter->init(actual_res_cnt, merge_vids, merge_distance, merge_extra_info_ptr, ctx->allocator_))) {
       LOG_WARN("iter init failed.", K(ret), K(actual_res_cnt), K(merge_vids), K(merge_extra_info_ptr), K(ctx->allocator_));
     } else if (actual_res_cnt == 0) {
-      LOG_INFO("query vector result 0", K(actual_res_cnt), K(delta_res_cnt), K(snap_res_cnt));
+
     }
   }
   // TODO(ningxin.ning): remove here after sindi support setting allocator in knn_search
@@ -3424,7 +3424,7 @@ int ObPluginVectorIndexAdaptor::vsag_query_vids(ObVectorQueryAdaptorResultContex
   // ibitmap = nullptr;
   // dbitmap = nullptr;
 
-  LOG_TRACE("now all_vsag_used is: ", K(ATOMIC_LOAD(all_vsag_use_mem_)));
+
   return ret;
 }
 
@@ -3611,7 +3611,7 @@ int ObPluginVectorIndexAdaptor::query_next_result(ObVectorQueryAdaptorResultCont
       const ObVsagQueryResult delta_data = {delta_res_cnt, delta_vids, delta_distances, delta_extra_info_ptr};
       const ObVsagQueryResult snap_data = {snap_res_cnt, snap_vids, snap_distances, snap_extra_info_ptr};
       uint64_t max_res_cnt = delta_res_cnt + snap_res_cnt;
-      LOG_TRACE("query result info", K(delta_res_cnt), K(snap_res_cnt));
+
 
       if (max_res_cnt == 0) {
         // when max_res_cnt == 0, it means (snap_res_cnt == 0 && delta_res_cnt == 0), there is no data in table, do not need alloc memory for res_vid_array
@@ -3645,7 +3645,7 @@ int ObPluginVectorIndexAdaptor::query_next_result(ObVectorQueryAdaptorResultCont
       } else if (OB_FAIL(vids_iter->init(actual_res_cnt, merge_vids, merge_distance, merge_extra_info_ptr, ctx->allocator_))) {
         LOG_WARN("iter init failed.", K(ret), K(actual_res_cnt), K(merge_vids), K(ctx->allocator_));
       } else if (actual_res_cnt == 0) {
-        LOG_INFO("query vector result 0", K(actual_res_cnt), K(delta_res_cnt), K(snap_res_cnt));
+
       }
     }
 
@@ -3813,7 +3813,7 @@ int ObPluginVectorIndexAdaptor::try_init_snap_data(ObVectorIndexAlgorithmType ac
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get serialize type invalid", K(ret), K(actual_type), K(type_));
   }
-  LOG_INFO("HgraphIndex vector index try init snap data without lock", K(ret), K(type_), K(actual_type));
+
   return ret;
 }
 
@@ -3889,7 +3889,7 @@ int ObPluginVectorIndexAdaptor::set_index_identity(ObString &index_identity)
   int ret = OB_SUCCESS;
   if (!index_identity_.empty() && index_identity_ == index_identity) {
     // do nothing
-    LOG_INFO("try to change same vector index identity", K(index_identity), K(*this));
+
   } else if (index_identity.empty()) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("vector index identity is empty", KR(ret), K(*this));
@@ -3904,7 +3904,7 @@ int ObPluginVectorIndexAdaptor::set_index_identity(ObString &index_identity)
     if (OB_FAIL(ob_write_string(*allocator_, index_identity, index_identity_))) {
       LOG_WARN("fail set vector index identity ", KR(ret), K(*this));
     } else {
-      LOG_INFO("change vector index identity success", K(index_identity), K(*this));
+
     }
   }
   return ret;
@@ -4123,7 +4123,7 @@ bool ObPluginVectorIndexAdaptor::dec_ref_and_check_release()
 {
   int64_t ref_count = ATOMIC_SAF(&ref_cnt_, 1);
   if (ref_count <= 0) {
-    LOG_INFO("dec ref count", K(ref_count), KP(this), KPC(this), K(lbt()));
+
   }
   return (ref_count <= 0);
 }
@@ -4205,7 +4205,7 @@ void ObPluginVectorIndexAdaptor::output_bitmap(roaring::api::roaring64_bitmap_t 
     uint64_t *vids = static_cast<uint64_t *>(tmp_allocator.alloc(sizeof(uint64_t) * bitmap_cnt));
     if (OB_NOT_NULL(vids)) {
       roaring64_bitmap_to_uint64_array(bitmap, vids);
-      LOG_INFO("BITMAP_INFO:", K(ret), K(bitmap_cnt), KP(vids), K(vids[0]), K(vids[bitmap_cnt - 1]));
+
     }
   }
   tmp_allocator.reset();
@@ -4272,7 +4272,7 @@ int ObPluginVectorIndexAdaptor::get_inc_index_row_cnt(int64_t &count)
   if (OB_NOT_NULL(get_incr_index()) && OB_FAIL(obvectorutil::get_index_number(get_incr_index(), count))) {
     LOG_WARN("failed to get inc index number.", K(ret));
   } else {
-    LOG_DEBUG("succ to get inc index row cnt", K(ret), K(count));
+
   }
   return ret;
 }
@@ -4284,7 +4284,7 @@ int ObPluginVectorIndexAdaptor::get_snap_index_row_cnt(int64_t &count)
   if (OB_NOT_NULL(get_snap_index()) && OB_FAIL(obvectorutil::get_index_number(get_snap_index(), count))) {
     LOG_WARN("failed to get snap index number.", K(ret));
   } else {
-    LOG_DEBUG("succ to get snap index row cnt", K(ret), K(count));
+
   }
   return ret;
 } 

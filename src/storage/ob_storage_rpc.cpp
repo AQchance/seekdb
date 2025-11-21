@@ -581,16 +581,16 @@ int ObStorageStreamRpcP<RPC_CODE>::fill_data(const Data &data)
   int ret = OB_SUCCESS;
   const int64_t curr_ts = ObTimeUtil::current_time();
   if (NULL == (this->result_.get_data())) {
-    STORAGE_LOG(WARN, "fail to alloc migration data buffer.");
+
     ret = OB_ALLOCATE_MEMORY_FAILED;
   } else if (serialization::encoded_length(data) > this->result_.get_remain()
       || (curr_ts - last_send_time_ >= FLUSH_TIME_INTERVAL
           && this->result_.get_capacity() != this->result_.get_remain())) {
     if (0 == this->result_.get_position()) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(ERROR, "data is too large", K(ret));
+
     } else if (OB_FAIL(flush_and_wait())) {
-      STORAGE_LOG(WARN, "failed to flush_and_wait", K(ret));
+
     }
   }
 
@@ -599,7 +599,7 @@ int ObStorageStreamRpcP<RPC_CODE>::fill_data(const Data &data)
                                       this->result_.get_capacity(),
                                       this->result_.get_position(),
                                       data))) {
-      STORAGE_LOG(WARN, "failed to encode", K(ret));
+
     }
   }
   return ret;
@@ -611,7 +611,7 @@ int ObStorageStreamRpcP<RPC_CODE>::fill_buffer(blocksstable::ObBufferReader &dat
   int ret = OB_SUCCESS;
   const int64_t curr_ts = ObTimeUtil::current_time();
   if (NULL == (this->result_.get_data())) {
-    STORAGE_LOG(WARN, "fail to alloc migration data buffer.");
+
     ret = OB_ALLOCATE_MEMORY_FAILED;
   } else {
     while (OB_SUCC(ret) && data.remain() > 0) {
@@ -619,18 +619,18 @@ int ObStorageStreamRpcP<RPC_CODE>::fill_buffer(blocksstable::ObBufferReader &dat
           || (curr_ts - last_send_time_ >= FLUSH_TIME_INTERVAL
               && this->result_.get_capacity() != this->result_.get_remain())) {
         if (OB_FAIL(flush_and_wait())) {
-          STORAGE_LOG(WARN, "failed to flush_and_wait", K(ret));
+
         }
       } else {
         int64_t fill_length = std::min(this->result_.get_remain(), data.remain());
         if (fill_length <= 0) {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(ERROR, "fill_length must larger than 0", K(ret), K(fill_length), K(this->result_), K(data));
+
         } else {
           MEMCPY(this->result_.get_cur_pos(), data.current(), fill_length);
           this->result_.get_position() += fill_length;
           if (OB_FAIL(data.advance(fill_length))) {
-            STORAGE_LOG(WARN, "failed to advance fill length", K(ret), K(fill_length), K(data));
+
           }
         }
       }
@@ -650,18 +650,18 @@ int ObStorageStreamRpcP<RPC_CODE>::flush_and_wait()
 
   if (NULL == bandwidth_throttle_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "bandwidth_throttle_ must not null", K(ret));
+
   } else {
     Thread::WaitGuard guard(Thread::WAIT_FOR_IO_EVENT);
     if (OB_SUCCESS != (tmp_ret = bandwidth_throttle_->limit_out_and_sleep(
         this->result_.get_position(), last_send_time_, max_idle_time))) {
-      STORAGE_LOG(WARN, "failed limit out band", K(tmp_ret));
+
     }
 
     if (OB_FAIL(this->check_timeout())) {
       LOG_WARN("rpc is timeout, no need flush", K(ret));
     } else if (OB_FAIL(this->flush())) {
-      STORAGE_LOG(WARN, "failed to flush", K(ret));
+
     } else {
       this->result_.get_position() = 0;
       last_send_time_ = ObTimeUtility::current_time();
@@ -685,7 +685,7 @@ int ObStorageStreamRpcP<RPC_CODE>::is_follower_ls(logservice::ObLogService *log_
     LOG_WARN("fail to get role", K(ret), "ls_id", ls->get_ls_id());
   } else if (!is_follower(role)) {
     is_ls_follower = false;
-    STORAGE_LOG(WARN, "I am not follower", K(ret), K(role), K(proposal_id));
+
   } else {
     is_ls_follower = true;
   }
@@ -866,7 +866,7 @@ int ObNotifyRestoreTabletsP::process()
     int64_t disk_abnormal_time = 0;
     bool is_follower = false;
 
-    LOG_INFO("start to notify follower restore tablets", K(arg_));
+
 
 #ifdef ERRSIM
     if (OB_SUCC(ret) && DEVICE_HEALTH_NORMAL == dhs && GCONF.fake_disk_error) {
@@ -879,14 +879,14 @@ int ObNotifyRestoreTabletsP::process()
       LOG_WARN("notify follower restore tablets get invalid argument", K(ret), K(arg_));
     } else if (DEVICE_HEALTH_NORMAL == dhs
         && OB_FAIL(ObIOManager::get_instance().get_device_health_status(dhs, disk_abnormal_time))) {
-      STORAGE_LOG(WARN, "failed to check is disk error", K(ret));
+
     } else if (DEVICE_HEALTH_ERROR == dhs) {
       ret = OB_DISK_ERROR;
       STORAGE_LOG(ERROR, "observer has disk error, cannot restore", KR(ret),
           "disk_health_status", device_health_status_to_str(dhs), K(disk_abnormal_time));
     } else if (OB_ISNULL(ls_service = MTL(ObLSService *))) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "ls service should not be null", K(ret), KP(ls_service));
+
     } else if (OB_FAIL(ls_service->get_ls(arg_.ls_id_, ls_handle, ObLSGetMod::STORAGE_MOD))) {
       LOG_WARN("failed to get log stream", K(ret), K(arg_));
     } else if (OB_ISNULL(ls = ls_handle.get_ls())) {
@@ -899,7 +899,7 @@ int ObNotifyRestoreTabletsP::process()
       LOG_WARN("failed to check is follower", K(ret), KP(ls), K(arg_));
     } else if (!is_follower) {
       ret = OB_NOT_FOLLOWER;
-      STORAGE_LOG(WARN, "I am not follower", K(ret), K(arg_));
+
     } else {
       ObLSRestoreHandler *ls_restore_handler = ls->get_ls_restore_handler();
       if (OB_FAIL(ls_restore_handler->handle_pull_tablet(
@@ -937,7 +937,7 @@ int ObInquireRestoreP::process()
     int64_t disk_abnormal_time = 0;
     bool is_follower = false;
 
-    LOG_INFO("start to inquire restore status", K(arg_));
+
 
 #ifdef ERRSIM
     if (OB_SUCC(ret) && DEVICE_HEALTH_NORMAL == dhs && GCONF.fake_disk_error) {
@@ -950,14 +950,14 @@ int ObInquireRestoreP::process()
       LOG_WARN("notify follower restore get invalid argument", K(ret), K(arg_));
     } else if (DEVICE_HEALTH_NORMAL == dhs
         && OB_FAIL(ObIOManager::get_instance().get_device_health_status(dhs, disk_abnormal_time))) {
-      STORAGE_LOG(WARN, "failed to check is disk error", KR(ret));
+
     } else if (DEVICE_HEALTH_ERROR == dhs) {
       ret = OB_DISK_ERROR;
       STORAGE_LOG(ERROR, "observer has disk error, cannot restore", KR(ret),
           "disk_health_status", device_health_status_to_str(dhs), K(disk_abnormal_time));
     } else if (OB_ISNULL(ls_service = MTL(ObLSService *))) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "ls service should not be null", K(ret), KP(ls_service));
+
     } else if (OB_FAIL(ls_service->get_ls(arg_.ls_id_, ls_handle, ObLSGetMod::STORAGE_MOD))) {
       LOG_WARN("failed to get log stream", K(ret), K(arg_));
     } else if (OB_ISNULL(ls = ls_handle.get_ls())) {
@@ -974,12 +974,12 @@ int ObInquireRestoreP::process()
       result_.tenant_id_ = arg_.tenant_id_;
       result_.ls_id_ = arg_.ls_id_;
       result_.is_leader_ = false;
-      LOG_INFO("succ to inquire restore status from follower", K(result_));
+
     } else {
       result_.tenant_id_ = arg_.tenant_id_;
       result_.ls_id_ = arg_.ls_id_;
       result_.is_leader_ = true;
-      LOG_INFO("succ to inquire restore status from leader", K(ret), K(arg_), K(result_));
+
     }
   }
   return ret;
@@ -1004,7 +1004,7 @@ int ObUpdateLSMetaP::process()
     ObDeviceHealthStatus dhs = DEVICE_HEALTH_NORMAL;
     int64_t disk_abnormal_time = 0;
 
-    LOG_INFO("start to update ls meta", K(arg_));
+
 
 #ifdef ERRSIM
     if (OB_SUCC(ret) && DEVICE_HEALTH_NORMAL == dhs && GCONF.fake_disk_error) {
@@ -1016,18 +1016,18 @@ int ObUpdateLSMetaP::process()
       LOG_WARN("notify follower restore get invalid argument", K(ret), K(arg_));
     } else if (DEVICE_HEALTH_NORMAL == dhs
         && OB_FAIL(ObIOManager::get_instance().get_device_health_status(dhs, disk_abnormal_time))) {
-      STORAGE_LOG(WARN, "failed to check is disk error", KR(ret));
+
     } else if (DEVICE_HEALTH_ERROR == dhs) {
       ret = OB_DISK_ERROR;
       STORAGE_LOG(ERROR, "observer has disk error, cannot restore", KR(ret),
           "disk_health_status", device_health_status_to_str(dhs), K(disk_abnormal_time));
     } else if (OB_ISNULL(ls_service = MTL(ObLSService *))) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "ls service should not be null", K(ret), KP(ls_service));
+
     } else if (OB_FAIL(ls_service->restore_update_ls(arg_.ls_meta_package_))) {
       LOG_WARN("failed to get log stream", K(ret), K(arg_));
     } else {
-      LOG_INFO("succ to update ls meta", K(ret), K(arg_));
+
     }
   }
   return ret;
@@ -1065,7 +1065,7 @@ int ObLobQueryP::process_read()
   int64_t buf_len = ObLobQueryArg::OB_LOB_QUERY_BUFFER_LEN - sizeof(ObLobQueryBlock);
   if (OB_ISNULL(out_buf = reinterpret_cast<char*>(allocator_.alloc(buf_len)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "failed to alloc out data buffer.", K(ret));
+
   } else {
     ObString out;
     ObLobAccessParam param;
@@ -1084,16 +1084,16 @@ int ObLobQueryP::process_read()
         out.assign_buffer(out_buf, buf_len);
         if (OB_FAIL(iter->get_next_row(out))) {
           if (OB_ITER_END != ret) {
-            STORAGE_LOG(WARN, "failed to get next buffer", K(ret));
+
           }
         } else {
           header.size_ = out.length();
           data.assign(out.ptr(), out.length());
           // only scan backward need header
           if (OB_FAIL(fill_data(header))) {
-            STORAGE_LOG(WARN, "failed to fill header", K(ret), K(header));
+
           } else if (OB_FAIL(fill_buffer(data))) {
-            STORAGE_LOG(WARN, "failed to fill buffer", K(ret), K(data));
+
           }
         }
       }
@@ -1129,7 +1129,7 @@ int ObLobQueryP::process_getlength()
     LOG_WARN("failed to getlength lob.", K(ret), K(param));
   } else if (FALSE_IT(header.size_ = static_cast<int64_t>(len))) {
   } else if (OB_FAIL(fill_data(header))) {
-    STORAGE_LOG(WARN, "failed to fill header", K(ret), K(header));
+
   }
   return ret;
 }
@@ -1144,13 +1144,13 @@ int ObLobQueryP::process()
     int64_t buf_len = ObLobQueryArg::OB_LOB_QUERY_BUFFER_LEN;
     if (OB_ISNULL(buf = reinterpret_cast<char*>(allocator_.alloc(buf_len)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed to alloc result data buffer.", K(ret));
+
     } else if (!result_.set_data(buf, buf_len)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "failed set data to result", K(ret));
+
     } else if (!arg_.lob_locator_.is_valid()) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "lob locator is invalid", K(ret));
+
     } else if (!arg_.lob_locator_.is_persist_lob()) {
       ret = OB_NOT_SUPPORTED;
       LOG_WARN("unsupport remote query non-persist lob.", K(ret), K(arg_.lob_locator_));
@@ -1182,7 +1182,7 @@ int ObFetchMicroBlockKeysP::set_header_attr_(
       || blk_idx < 0
       || count < 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "header attr is invalid", K(ret), K(connect_status), K(blk_idx), K(count));
+
   } else {
     header.connect_status_ = connect_status;
     header.end_blk_idx_ = blk_idx;
@@ -1206,7 +1206,7 @@ int ObFetchMicroBlockKeysP::process()
     int64_t key_set_count = 0;
     int64_t key_count = 0;
     ObCopyMicroBlockKeySetRpcHeader::ConnectStatus connect_status = ObCopyMicroBlockKeySetRpcHeader::ConnectStatus::MAX_STATUS;
-    LOG_INFO("start to fetch micro block header", K(arg_));
+
 
     if (!arg_.is_valid()) {
       ret = OB_INVALID_ARGUMENT;
@@ -1223,14 +1223,14 @@ int ObFetchMicroBlockKeysP::process()
             connect_status = ObCopyMicroBlockKeySetRpcHeader::ConnectStatus::ENDCONNECT;
             break;
           } else {
-            STORAGE_LOG(WARN, "failed to get next micro block key set", K(ret));
+
           }
         } else if (!key_set.is_valid()) {
-          LOG_INFO("skip this key set", K(arg_), K(key_set));
+
         } else {
           // dest will judge ObMigrateWarmupKeySet serialize size,
           if (OB_FAIL(result_.key_set_array_.key_sets_.push_back(key_set))) {
-            STORAGE_LOG(WARN, "fail to fill key set", K(ret), K(key_set));
+
           } 
 #ifdef ERRSIM
           else if (EN_MICRO_KEY_SET_RECONNECT && key_set_count > 0) {
@@ -1283,7 +1283,7 @@ int ObFetchMicroBlockP::process()
     ObSArray<ObSSMicroBlockCacheKeyMeta> key_meta_array;
     const int64_t start_ts = ObTimeUtil::current_time();
     const int64_t first_receive_ts = this->get_receive_timestamp();
-    LOG_INFO("start to fetch micro block", K(arg_));
+
     if (!arg_.is_valid()) {
       ret = OB_INVALID_ARGUMENT;
       LOG_WARN("get invalid args", K(ret), K_(arg));
@@ -1298,13 +1298,13 @@ int ObFetchMicroBlockP::process()
     // so key_meta_array + data less than 6M
     else if (NULL == (buf = reinterpret_cast<char*>(allocator_.alloc(OB_MALLOC_BIG_BLOCK_SIZE * 3)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed to alloc migrate data buffer.", K(ret));
+
     } else if (!result_.set_data(buf, OB_MALLOC_BIG_BLOCK_SIZE * 3)) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed set data to result", K(ret));
+
     } else if (OB_ISNULL(bandwidth_throttle_)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(ERROR, "bandwidth_throttle must not null", K(ret), KP_(bandwidth_throttle));
+
     } else {
       SMART_VAR(storage::ObCopyMicroBlockDataProducer, producer) {
         if (OB_FAIL(producer.init(arg_.key_sets_))) {
@@ -1314,17 +1314,17 @@ int ObFetchMicroBlockP::process()
             key_meta_array.reset();
             if (OB_FAIL(producer.get_next_micro_block_data(key_meta_array, data))) {
               if (OB_ITER_END != ret) {
-                STORAGE_LOG(WARN, "failed to get next micro block set", K(ret));
+
               } else {
                 ret = OB_SUCCESS;
               }
               break;
             } else if (key_meta_array.empty()) {
-              LOG_INFO("skip this key and size arr", K(arg_));
+
             } else if (OB_FAIL(fill_data(key_meta_array))) {
-              STORAGE_LOG(WARN, "failed to fill data length", K(ret), K(data.pos()), K(key_meta_array));
+
             } else if (OB_FAIL(fill_buffer(data))) {
-              STORAGE_LOG(WARN, "failed to fill data", K(ret), K(key_meta_array));
+
             } else {
               key_count += key_meta_array.count();
               STORAGE_LOG(INFO, "succeed to fill micro block set",
@@ -1358,7 +1358,7 @@ int ObGetMicroBlockCacheInfoP::process()
       if (OB_FAIL(micro_cache->get_ls_cache_info(arg_.ls_id_, result_.ls_cache_info_))) {
         LOG_WARN("fail to get ls cache info", KR(ret), K_(arg));
       }
-      LOG_INFO("send cache info", K(ret), K(result_), K(arg_));
+
     }
   }
   return ret;
@@ -1387,7 +1387,7 @@ int ObGetMigrationCacheJobInfoP::process()
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("job info count is unexpected", K(ret), K(arg_), K(result_));
     } else {
-      LOG_INFO("send job info", K(block_ranges), K(result_.job_infos_));
+
     }
   }
   return ret;
@@ -1426,7 +1426,7 @@ int ObFetchReplicaPrewarmMicroBlockP::process()
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!arg_.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K_(arg));
+
   } else {
     MTL_SWITCH(arg_.tenant_id_) {
       blocksstable::ObBufferReader data;
@@ -1437,13 +1437,13 @@ int ObFetchReplicaPrewarmMicroBlockP::process()
 
       if (OB_ISNULL(buf = static_cast<char *>(allocator_.alloc(OB_MALLOC_BIG_BLOCK_SIZE)))) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "fail to alloc data buffer.", KR(ret));
+
       } else if (!result_.set_data(buf, OB_MALLOC_BIG_BLOCK_SIZE)) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "fail to set data to result", KR(ret));
+
       } else if (OB_ISNULL(bandwidth_throttle_)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(ERROR, "bandwidth_throttle must not null", KR(ret), KP_(bandwidth_throttle));
+
       } else {
         SMART_VARS_2((storage::ObReplicaPrewarmMicroBlockProducer, producer),
                      (ObSSLSFetchMicroBlockArg, arg)) {
@@ -1456,17 +1456,17 @@ int ObFetchReplicaPrewarmMicroBlockP::process()
               ObSSMicroBlockCacheKeyMeta micro_meta;
               if (OB_FAIL(producer.get_next_micro_block(micro_meta, data))) {
                 if (OB_ITER_END != ret) {
-                  STORAGE_LOG(WARN, "fail to get next micro block", KR(ret));
+
                 } else {
                   ret = OB_SUCCESS;
                 }
                 break;
               } else if (OB_FAIL(fill_data(micro_meta))) {
-                STORAGE_LOG(WARN, "fail to fill data length", KR(ret), K(data.pos()), K(micro_meta));
+
               } else if (OB_FAIL(fill_buffer(data))) {
-                STORAGE_LOG(WARN, "fail to fill data", KR(ret), K(micro_meta));
+
               } else {
-                STORAGE_LOG(INFO, "succ to fill micro block", K(micro_meta));
+
               }
             }
           }
@@ -1508,7 +1508,7 @@ int ObStorageRpc::init(
   int ret = OB_SUCCESS;
   if (is_inited_) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "storage rpc has inited", K(ret));
+
   } else if (OB_ISNULL(rpc_proxy) || !self.is_valid() || OB_ISNULL(rs_rpc_proxy)) {
     ret = OB_INVALID_ARGUMENT;
     STORAGE_LOG(WARN, "ObStorageRpc init with invalid argument",
@@ -1545,13 +1545,13 @@ int ObStorageRpc::notify_restore_tablets(
   ObNotifyRestoreTabletsArg arg;
   if (!is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "storage rpc is not inited", K(ret));
+
   } else if (!follower_info.is_valid() || !ls_id.is_valid()
       || (tablet_id_array.empty() && (restore_status.is_restore_tablets_meta() || restore_status.is_quick_restore() || restore_status.is_restore_major_data()))) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "notify follower restore get invalid argument", K(ret), K(follower_info), K(ls_id), K(tablet_id_array));
+
   } else if (OB_FAIL(arg.tablet_id_array_.assign(tablet_id_array))) {
-    STORAGE_LOG(WARN, "failed to assign tablet id array", K(ret), K(follower_info), K(ls_id), K(tablet_id_array));
+
   } else {
     arg.tenant_id_ = tenant_id;
     arg.ls_id_ = ls_id;
@@ -1579,10 +1579,10 @@ int ObStorageRpc::inquire_restore(
   int ret = OB_SUCCESS;
   if (!is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "storage rpc is not inited", K(ret));
+
   } else if (!src_info.is_valid() || !ls_id.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "inquire restore get invalid argument", K(ret), K(src_info), K(ls_id));
+
   } else {
     ObInquireRestoreArg arg;
     arg.tenant_id_ = tenant_id;
@@ -1608,10 +1608,10 @@ int ObStorageRpc::update_ls_meta(
   int ret = OB_SUCCESS;
   if (!is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "storage rpc is not inited", K(ret));
+
   } else if (!dest_info.is_valid() || !ls_meta.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(dest_info), K(ls_meta));
+
   } else {
     ObRestoreUpdateLSMetaArg arg;
     arg.tenant_id_ = tenant_id;
@@ -1643,7 +1643,7 @@ int ObStorageRpc::get_ls_micro_block_cache_info(
 
   if (!is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "storage rpc is not inited", K(ret));
+
   } else if (OB_INVALID_ID == tenant_id || !ls_id.is_valid() || !src_info.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument!", K(ret), K(tenant_id), K(ls_id), K(src_info));
@@ -1675,7 +1675,7 @@ int ObStorageRpc::get_ls_migration_cache_job_info(
 
   if (!is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "storage rpc is not inited", K(ret));
+
   } else if (OB_INVALID_ID == tenant_id || !ls_id.is_valid() || !src_info.is_valid() || task_count <= 0) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(ret), K(tenant_id), K(ls_id), K(src_info), K(task_count));
@@ -1706,7 +1706,7 @@ int ObStorageRpc::get_micro_block_key_set(
 
   if (!is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "storage rpc is not inited", K(ret));
+
   } else if (OB_INVALID_ID == tenant_id || !ls_id.is_valid() || !src_info.is_valid() || !job_info.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(ret), K(tenant_id), K(ls_id), K(src_info), K(job_info));

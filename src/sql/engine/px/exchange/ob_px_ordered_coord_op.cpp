@@ -68,7 +68,7 @@ int ObPxOrderedCoordOp::ObPxOrderedCoordOpEventListener::on_root_data_channel_se
       px_coord_op_.msg_loop_.get_channel_count() - cnt,
       px_coord_op_.msg_loop_.get_channel_count());
   px_coord_op_.channel_idx_ = 0;
-  LOG_TRACE("px coord setup", K(cnt), K(px_coord_op_.msg_loop_.get_channel_count()));
+
   return ret;
 }
 
@@ -204,7 +204,7 @@ int ObPxOrderedCoordOp::inner_get_next_row()
       if (all_rows_finish_ && coord_info_.all_threads_finish_) {
         (void) msg_proc_.on_process_end(ctx_);
         ret = OB_ITER_END;
-        LOG_TRACE("all rows received, all sqcs reported, qc says: byebye!", K(ret));
+
         LOG_TRACE("TIMERECORD ",
                  "reserve:=1 name:=RQC dfoid:=-1 sqcid:=-1 taskid:=-1 end:",
                  ObTimeUtility::current_time());
@@ -216,7 +216,7 @@ int ObPxOrderedCoordOp::inner_get_next_row()
       LOG_WARN("fail check status, maybe px query timeout", K(ret));
     } else if (OB_FAIL(msg_loop_.process_one_if(&receive_order_, nth_channel))) {
       if (OB_DTL_WAIT_EAGAIN == ret) {
-        LOG_TRACE("no message, try again", K(ret));
+
         ret = OB_SUCCESS;
         if (channel_idx_ < task_ch_set_.count() && first_row_sent_) {
           if (OB_FAIL(msg_loop_.unblock_channel(receive_order_.get_data_channel_start_idx(),
@@ -257,7 +257,7 @@ int ObPxOrderedCoordOp::inner_get_next_row()
   }
   if (ret == OB_ITER_END && !iter_end_) {
     iter_end_ = true;
-    LOG_TRACE("RECORDTIME", K(time_recorder_));
+
   } else if (OB_UNLIKELY(OB_SUCCESS != ret)) {
     int ret_terminate = terminate_running_dfos(coord_info_.dfo_mgr_);
     LOG_WARN("QC get error code", K(ret), K(ret_terminate));
@@ -274,7 +274,7 @@ int ObPxOrderedCoordOp::next_row(ObReceiveRowReader &reader, bool &wait_next_msg
 {
   int ret = OB_SUCCESS;
   wait_next_msg = true;
-  LOG_TRACE("Begin next_row");
+
   metric_.mark_interval_start(); 
   ret = reader.get_next_row(MY_SPEC.child_exprs_, MY_SPEC.dynamic_const_exprs_, eval_ctx_);
   metric_.mark_interval_end(&time_recorder_);
@@ -293,7 +293,7 @@ int ObPxOrderedCoordOp::next_row(ObReceiveRowReader &reader, bool &wait_next_msg
                "total_task_chan_cnt", task_channels_.count(),
                K(ret));
     } else {
-      LOG_TRACE("All channel finish", "finish_ch_cnt", finish_ch_cnt_, K(ret));
+
       all_rows_finish_ = true;
       ret = OB_SUCCESS;
     }
@@ -340,7 +340,7 @@ int ObPxOrderedCoordOp::inner_get_next_batch(const int64_t max_row_cnt)
           if (OB_FAIL(next_rows(*reader, max_row_cnt, read_rows))) {
             LOG_WARN("next rows failed", K(ret));
           }
-          LOG_DEBUG("[VEC2.0 PX] order coord get rows from channel", K(idx), K(reader), K(max_row_cnt), K(read_rows));
+
           if (!first_row_sent_) {
             first_row_sent_ = true;
             LOG_TRACE("TIMERECORD ",
@@ -362,7 +362,7 @@ int ObPxOrderedCoordOp::inner_get_next_batch(const int64_t max_row_cnt)
       if (all_rows_finish_ && coord_info_.all_threads_finish_) {
         (void) msg_proc_.on_process_end(ctx_);
         ret = OB_ITER_END;
-        LOG_TRACE("all rows received, all sqcs reported, qc says: byebye!", K(ret));
+
         LOG_TRACE("TIMERECORD ",
                  "reserve:=1 name:=RQC dfoid:=-1 sqcid:=-1 taskid:=-1 end:",
                  ObTimeUtility::current_time());
@@ -374,7 +374,7 @@ int ObPxOrderedCoordOp::inner_get_next_batch(const int64_t max_row_cnt)
       LOG_WARN("fail check status, maybe px query timeout", K(ret));
     } else if (OB_FAIL(msg_loop_.process_one_if(&receive_order_, nth_channel))) {
       if (OB_DTL_WAIT_EAGAIN == ret) {
-        LOG_TRACE("no message, try again", K(ret));
+
         ret = OB_SUCCESS;
         if (channel_idx_ < task_ch_set_.count() && first_row_sent_) {
           if (OB_FAIL(msg_loop_.unblock_channel(receive_order_.get_data_channel_start_idx(),
@@ -416,7 +416,7 @@ int ObPxOrderedCoordOp::inner_get_next_batch(const int64_t max_row_cnt)
   if (ret == OB_ITER_END) {
     if (!iter_end_) {
       iter_end_ = true;
-      LOG_TRACE("RECORDTIME", K(time_recorder_));
+
     }
     ret = OB_SUCCESS;
   }
@@ -439,7 +439,7 @@ int ObPxOrderedCoordOp::inner_get_next_batch(const int64_t max_row_cnt)
 int ObPxOrderedCoordOp::next_rows(ObReceiveRowReader &reader, int64_t max_row_cnt, int64_t &read_rows)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("Begin next_rows", K(max_row_cnt));
+
   metric_.mark_interval_start();
   read_rows = 0;
   if (MY_SPEC.use_rich_format_) {
@@ -465,7 +465,7 @@ int ObPxOrderedCoordOp::next_rows(ObReceiveRowReader &reader, int64_t max_row_cn
                "total_task_chan_cnt", task_channels_.count(),
                K(ret));
     } else {
-      LOG_TRACE("All channel finish", "finish_ch_cnt", finish_ch_cnt_, K(ret));
+
       all_rows_finish_ = true;
       ret = OB_SUCCESS;
     }

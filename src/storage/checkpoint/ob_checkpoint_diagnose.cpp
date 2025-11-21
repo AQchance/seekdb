@@ -127,7 +127,7 @@ int ObCheckpointDiagnoseMgr::acquire_trace_id(const share::ObLSID &ls_id,
       trace_id = ++last_pos_;
       trace_info_arr_[trace_id % MAX_TRACE_INFO_ARR_SIZE].init(trace_id, ls_id, start_time);
       reset_old_trace_infos_without_pos_lock_();
-      LOG_INFO("acquire_trace_id", K(trace_id), K(ls_id));
+
     }
   }
   return ret;
@@ -152,7 +152,7 @@ int ObCheckpointDiagnoseMgr::update_freeze_clock(const share::ObLSID &ls_id,
     }
     if (checkpoint::INVALID_TRACE_ID != tmp_trace_id) {
       trace_info_arr_[tmp_trace_id % MAX_TRACE_INFO_ARR_SIZE].update_freeze_clock(tmp_trace_id, logstream_clock);
-      LOG_INFO("update_freeze_clock", K(trace_info_arr_[tmp_trace_id % MAX_TRACE_INFO_ARR_SIZE]));
+
     }
   }
   return ret;

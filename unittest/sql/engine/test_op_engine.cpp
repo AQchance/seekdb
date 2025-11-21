@@ -113,19 +113,19 @@ int TestOpEngine::prepare_io(const std::string & test_data_name_suffix)
   char slog_dir[OB_MAX_FILE_NAME_LENGTH];
   if (NULL == getcwd(cur_dir, OB_MAX_FILE_NAME_LENGTH)) {
     ret = OB_BUF_NOT_ENOUGH;
-    STORAGE_LOG(WARN, "cannot get cur dir", K(ret));
+
   } else if (OB_FAIL(databuff_printf(test_data_name, OB_MAX_FILE_NAME_LENGTH, "%s", test_data_name_suffix.data()))) {
-    STORAGE_LOG(WARN, "failed to gen test name", K(ret));
+
   } else if (OB_FAIL(databuff_printf(data_dir, OB_MAX_FILE_NAME_LENGTH, "%s/data_%s", cur_dir, test_data_name))) {
-    STORAGE_LOG(WARN, "failed to gen data dir", K(ret));
+
   } else if (OB_FAIL(databuff_printf(file_dir, OB_MAX_FILE_NAME_LENGTH, "%s/sstable/", data_dir))) {
-    STORAGE_LOG(WARN, "failed to databuff printf", K(ret));
+
   } else if (OB_FAIL(databuff_printf(slog_dir, OB_MAX_FILE_NAME_LENGTH, "%s/slog/", data_dir))) {
-    STORAGE_LOG(WARN, "failed to gen slog dir", K(ret));
+
   } else if (OB_FAIL(databuff_printf(clog_dir, OB_MAX_FILE_NAME_LENGTH, "%s/clog/", data_dir))) {
-    STORAGE_LOG(WARN, "failed to gen clog dir", K(ret));
+
   } else if (OB_FAIL(OB_FILE_SYSTEM_ROUTER.get_instance().init(data_dir, clog_dir))) {
-    STORAGE_LOG(WARN, "failed to init file system router", K(ret));
+
   } else if (OB_FAIL(ObDeviceManager::get_instance().init_devices_env())) {
     LOG_WARN("fail to init device manager", K(ret));
   }
@@ -179,11 +179,11 @@ int TestOpEngine::prepare_io(const std::string & test_data_name_suffix)
   } else if (OB_FAIL(ObIOManager::get_instance().start())) {
     LOG_WARN("fail to start io manager", K(ret));
   } else if (OB_FAIL(FileDirectoryUtils::create_full_path(file_dir))) {
-    STORAGE_LOG(WARN, "failed to create file dir", K(ret), K(file_dir));
+
   } else if (OB_FAIL(OB_STORAGE_OBJECT_MGR.start(0/*reserved_size*/))) {
-    STORAGE_LOG(WARN, "Fail to start storage object mgr", K(ret));
+
   } else if (OB_FAIL(OB_SERVER_BLOCK_MGR.first_mark_device())) {
-    STORAGE_LOG(WARN, "Fail to start first mark device", K(ret));
+
   } else if (OB_FAIL(OB_STORE_CACHE.init(10, 1, 1, 1, 1, 10000, 10))) {
     LOG_WARN("fail to init OB_STORE_CACHE, ", K(ret));
   } else {
@@ -342,7 +342,7 @@ int TestOpEngine::get_tested_op_from_string(const std::string &sql, bool vector_
     if (OB_FAIL(sql_plan.print_sql_plan(log_plan->get_plan_root(), EXPLAIN_EXTENDED_NOADDR, option, plan_strs))) {
       LOG_WARN("failed to store sql plan", K(ret));
     } else {
-      LOG_INFO("Generate Logical plan:");
+
       _OB_LOG(INFO, "%*s", plan_strs.at(0).length(), plan_strs.at(0).ptr());
     }
 
@@ -561,7 +561,7 @@ int TestOpEngine::print_and_cmp_final_output(const ObBatchRows *brs, ObOperator 
           temp_cmp_data_[i].push_back(result_str);
         }
       }
-      LOG_INFO(output_line.data());
+
       output_line.clear();
     }
   }
@@ -634,7 +634,7 @@ int TestOpEngine::basic_random_test(const std::string &test_file)
       const ObBatchRows *original_child_brs = nullptr;
       const ObBatchRows *vec_2_child_brs = nullptr;
 
-      LOG_INFO("============== Final output ===============", K(round));
+
       while (!original_root->brs_.end_ || !vec_2_root->brs_.end_) {
         if (OB_FAIL(original_root->get_next_batch(max_row_cnt, original_child_brs))) {
           LOG_ERROR("root op fail to get_next_batch data", K(original_root));
@@ -642,7 +642,7 @@ int TestOpEngine::basic_random_test(const std::string &test_file)
         }
 
         temp_cmp_data_.resize(original_child_brs->size_);
-        LOG_INFO("============== Original ===============", K(round));
+
         if (ObTestOpConfig::get_instance().output_result_to_file_) {
           if (OB_FAIL(print_to_file(original_child_brs, original_root, original_root->spec_.output_, true,
                                     &out_origin_result_stream_))) {
@@ -661,7 +661,7 @@ int TestOpEngine::basic_random_test(const std::string &test_file)
           break;
         }
 
-        LOG_INFO("============== Vectorization 2.0 ===============", K(round));
+
         if (ObTestOpConfig::get_instance().output_result_to_file_) {
           if (OB_FAIL(
                 print_to_file(vec_2_child_brs, vec_2_root, vec_2_root->spec_.output_, true, &out_vec_result_stream_))) {
@@ -750,14 +750,14 @@ int TestOpEngine::basic_random_test(const std::string &test_file)
 
   EXPECT_EQ(ret, 0);
   if (ret == OB_SUCCESS) {
-    LOG_INFO(" ======================= ");
-    LOG_INFO("Test Pass!");
-    LOG_INFO("All new operator output is equal to the original one.");
-    LOG_INFO(" ======================= ");
+
+
+
+
   } else {
-    LOG_INFO(" ======================= ");
-    LOG_INFO("Test Fail!");
-    LOG_INFO(" ======================= ");
+
+
+
   }
   return ret;
 }
@@ -785,7 +785,7 @@ int TestOpEngine::basic_random_test_output_to_file(const std::string &test_file,
       const int64_t max_row_cnt = 256;
       const ObBatchRows *child_brs = nullptr;
 
-      LOG_INFO("============== Final output ===============", K(round));
+
       while (!root->brs_.end_) {
         if (OB_FAIL(root->get_next_batch(max_row_cnt, child_brs))) {
           LOG_ERROR("root op fail to get_next_batch data", K(root));

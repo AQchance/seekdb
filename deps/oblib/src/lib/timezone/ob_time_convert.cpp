@@ -448,7 +448,7 @@ int ObTimeConverter::str_to_datetime(const ObString &str, const ObTimeConvertCtx
   } else if (OB_FAIL(ob_time_to_datetime(ob_time, cvrt_ctx, value))) {
     LOG_WARN("failed to convert ob time to datetime", K(ret));
   } else {
-    LOG_DEBUG("succ to str_to_datetime", K(str), K(ob_time), K(cvrt_ctx.is_timestamp_), K(value));
+
   }
   return ret;
 }
@@ -474,7 +474,7 @@ int ObTimeConverter::str_to_mdatetime(const ObString &str, const ObTimeConvertCt
   } else if (OB_FAIL(ob_time_to_mdatetime(ob_time, value))) {
     LOG_WARN("failed to convert ob time to datetime", K(ret));
   } else {
-    LOG_DEBUG("succ to str_to_datetime", K(str), K(ob_time), K(cvrt_ctx.is_timestamp_), K(value));
+
   }
   if (OB_UNLIKELY(value.microseconds_ >= DT_PART_MAX[DT_USEC])) {
     carry_over_microseconds(value);
@@ -500,7 +500,7 @@ int ObTimeConverter::literal_date_validate_oracle(const ObString &str, const ObT
   } else if (OB_FAIL(ob_time_to_datetime(ob_time, cvrt_ctx, value))) {
     LOG_WARN("failed to convert ob time to date oracle", K(ret));
   } else {
-    LOG_DEBUG("succ to validate oracle literal date", K(str), K(ob_time), K(value), K(scale), KCSTRING(lbt()));
+
   }
   return ret;
 }
@@ -529,7 +529,7 @@ int ObTimeConverter::literal_timestamp_validate_oracle(const ObString &str, cons
     } else if (OB_FAIL(ob_time_to_otimestamp(ob_time, value))) {
       LOG_WARN("failed to convert obtime to timestamp_tz", K(ret));
     } else {
-      LOG_DEBUG("succ to validate oracle literal timestamp", K(obj_type), K(str), K(ob_time), K(value), KCSTRING(lbt()));
+
     }
   }
   return ret;
@@ -584,7 +584,7 @@ int ObTimeConverter::str_to_otimestamp(const ObString &str, const ObTimeConvertC
   } else if (str.empty()) {
     value.set_null_value();
     scale = OB_MAX_TIMESTAMP_TZ_PRECISION;
-    LOG_DEBUG("succ to convert null str to otimestamp", K(target_type), K(str), K(value), K(scale), KCSTRING(lbt()));
+
   } else {
     ObTime ob_time;
     if (OB_FAIL(str_to_ob_time_oracle_dfm(str, cvrt_ctx, target_type, ob_time, scale))) {
@@ -999,7 +999,7 @@ int ObTimeConverter::datetime_to_str(int64_t value, const ObTimeZoneInfo *tz_inf
   } else if (nls_format.empty()) {
     if (OB_FAIL(ob_time_to_str(ob_time, DT_TYPE_DATETIME, scale, buf, buf_len, pos, with_delim))) {
       if (OB_SIZE_OVERFLOW == ret) {
-        LOG_TRACE("failed to convert ob time to string", K(ret));
+
       } else {
         LOG_WARN("failed to convert ob time to string", K(ret));
       }
@@ -1008,7 +1008,7 @@ int ObTimeConverter::datetime_to_str(int64_t value, const ObTimeZoneInfo *tz_inf
     if (OB_FAIL(ob_time_to_str_oracle_dfm(ob_time, scale, nls_format, buf, buf_len, pos))) {
       LOG_WARN("failed to convert ob time to string", K(ob_time), K(nls_format), K(buf_len), K(pos), K(ret), KCSTRING(lbt()));
     } else {
-      LOG_DEBUG("succ to datetime_to_str", K(value), K(scale), K(ob_time), K(nls_format), KCSTRING(lbt()));
+
     }
   }
   return ret;
@@ -1026,7 +1026,7 @@ int ObTimeConverter::mdatetime_to_str(ObMySQLDateTime value, const ObTimeZoneInf
   } else if (nls_format.empty()) {
     if (OB_FAIL(ob_time_to_str(ob_time, DT_TYPE_MYSQL_DATETIME, scale, buf, buf_len, pos, with_delim))) {
       if (OB_SIZE_OVERFLOW == ret) {
-        LOG_TRACE("failed to convert ob time to string", K(ret));
+
       } else {
         LOG_WARN("failed to convert ob time to string", K(ret));
       }
@@ -1035,7 +1035,7 @@ int ObTimeConverter::mdatetime_to_str(ObMySQLDateTime value, const ObTimeZoneInf
     if (OB_FAIL(ob_time_to_str_oracle_dfm(ob_time, scale, nls_format, buf, buf_len, pos))) {
       LOG_WARN("failed to convert ob time to string", K(ob_time), K(nls_format), K(buf_len), K(pos), K(ret), KCSTRING(lbt()));
     } else {
-      LOG_DEBUG("succ to datetime_to_str", K(value), K(scale), K(ob_time), K(nls_format), KCSTRING(lbt()));
+
     }
   }
   return ret;
@@ -1047,7 +1047,7 @@ int ObTimeConverter::otimestamp_to_str(const ObOTimestampData &ot_data, const Ob
 {
   int ret = OB_SUCCESS;
   if (ot_data.is_null_value()) {
-    LOG_DEBUG("succ to null otimestamp_to_str", K(ot_data), K(type), K(scale), KCSTRING(lbt()));
+
   } else {
     const ObOTimestampData &tmp_ot_data = round_otimestamp(scale, ot_data);
     const bool store_utc_time = false;
@@ -1357,7 +1357,7 @@ int ObTimeConverter::odate_to_otimestamp(int64_t in_value_us, const ObTimeZoneIn
   int ret = OB_SUCCESS;
   if (ZERO_DATETIME == in_value_us) {
     out_value.set_null_value();
-    LOG_DEBUG("null odate_to_otimestamp", K(ret), K(in_value_us), K(out_type),  KCSTRING(lbt()));
+
   } else if (OB_ISNULL(tz_info)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("tz_info is null, it should not happened", K(ret));
@@ -1385,7 +1385,7 @@ int ObTimeConverter::otimestamp_to_odate(const ObObjType in_type, const ObOTimes
   } else {
     ret = OB_ERR_UNEXPECTED;
   }
-  LOG_DEBUG("succ otimestamp_to_odate", K(ret), K(in_type), K(in_value), K(out_usec));
+
   return ret;
 }
 
@@ -1400,7 +1400,7 @@ int ObTimeConverter::otimestamp_to_otimestamp(const ObObjType in_type,
   } else if (out_type == in_type) {
     out_value = in_value;
   }
-  LOG_DEBUG("succ otimestamp_to_otimestamp", K(ret), K(in_type), K(in_value), K(out_type), K(out_value));
+
   return ret;
 }
 
@@ -1775,7 +1775,7 @@ int ObTimeConverter::str_to_offset(const ObString &str, int32_t &value, int &ret
           ret = OB_ERR_UNKNOWN_TIME_ZONE;
           LOG_WARN("invalid time zone offset", K(ret), K(minute.value_), K(str));
         }
-        LOG_DEBUG("finish str_to_offset", K(str),  K(value), K(ret), KCSTRING(lbt()));
+
       } else {
         if (OB_UNLIKELY(!(OFFSET_MIN <= value && value <= OFFSET_MAX))) {
           ret_more = (minute.value_ >= DT_PART_BASE[DT_MIN] ? OB_ERR_INVALID_TIME_ZONE_MINUTE : OB_ERR_INVALID_TIME_ZONE_HOUR);
@@ -1785,7 +1785,7 @@ int ObTimeConverter::str_to_offset(const ObString &str, int32_t &value, int &ret
       }
     }
   }
-  LOG_DEBUG("finish str_to_offset", K(ret), K(ret_more), K(str), K(value));
+
   return ret;
 }
 
@@ -2834,7 +2834,7 @@ int ObTimeConverter::calc_date_with_year_week_wday(const ObYearWeekWdayElems &el
   if (OB_FAIL(date_to_ob_time(date_value, ot))) {
     LOG_WARN("date to ob time failed", K(ret));
   }
-  LOG_DEBUG("%x %v", K(ret), K(elements), K(tmp_ot), K(offset), K(date_value), K(ot));
+
   return ret;
 }
 
@@ -2974,7 +2974,7 @@ int ObTimeConverter::datetime_to_ob_time(int64_t value, const ObTimeZoneInfo *tz
   } else if (OB_FAIL(usec_to_ob_time(usec, ob_time))) {
     LOG_WARN("failed to usec_to_ob_time", K(ret));
   } else {
-    LOG_DEBUG("succ datetime_to_ob_time", K(value), K(ob_time), K(lbt()));
+
   }
   return ret;
 }
@@ -3013,7 +3013,7 @@ int ObTimeConverter::otimestamp_to_ob_time(const ObObjType type, const ObOTimest
   }
 
   if (OB_SUCC(ret)) {
-    LOG_DEBUG("succ to otimestamp_to_ob_time", K(ret), K(ot_data), K(type), K(ob_time), KCSTRING(lbt()));
+
   }
 
   return ret;
@@ -3444,7 +3444,7 @@ int ObTimeConverter::adjust_ob_time(ObTime &ob_time, const bool has_date)
 {
   // '2:59:59.9999995' ---> '03:00:00.000000'
   int ret = OB_SUCCESS;
-  LOG_TRACE("adjust_ob_time", K(ob_time));
+
   if (ob_time.parts_[DT_USEC] == DT_PART_BASE[DT_USEC]) {
     if (has_date) {
       int32_t days = DAYS_PER_MON[IS_LEAP_YEAR(ob_time.parts_[DT_YEAR])][ob_time.parts_[DT_MON]];
@@ -3674,7 +3674,7 @@ int ObTimeConverter::str_to_ob_time_oracle_strict(const ObString &str,
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_DEBUG("convert to oracle timestamp succ", K(ret), K(ob_time));
+
   } else {
     LOG_WARN("convert to oracle timestamp failed", K(ret), K(ob_time));
   }
@@ -3823,7 +3823,7 @@ int ObTimeConverter::str_to_ob_time_by_dfm_elems(const ObString &str,
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("element is invalid", K(ret), K(elem));
         } else {
-          LOG_DEBUG("DFM DEBUG: start element", K(elem), K(ctx));
+
         }
 
         //1. check separate chars and skip blank chars first
@@ -4418,7 +4418,7 @@ int ObTimeConverter::str_to_ob_time_by_dfm_elems(const ObString &str,
         if (OB_FAIL(ret)) {
           LOG_WARN("failed to convert string to ob time by oracle dfm", K(ret), K(elem), K(ctx));
         } else {
-          LOG_DEBUG("DFM DEBUG: finish element", K(elem), K(ctx));
+
         }
       } //end for
 
@@ -4954,7 +4954,7 @@ int ObTimeConverter::ob_time_to_str_by_dfm_elems(const ObTime &ob_time,
           LOG_WARN("failed to print otimestamp", "buf", ObString(pos, buf), K(ret));
         }
       }
-      LOG_DEBUG("succ to print otimestamp", "buf", ObString(pos, buf), K(ret));
+
     }
 
     if (OB_UNLIKELY(OB_SIZE_OVERFLOW == ret)) {
@@ -5019,7 +5019,7 @@ int ObTimeConverter::deduce_max_len_from_oracle_dfm(const ObString &format,
       LOG_WARN("data format is to long for internal buffer", K(ret), K(ori_ret));
     }
   }
-  LOG_DEBUG("deduce max len from oracle dfm", K(format), K(max_char_len));
+
   return ret;
 }
 
@@ -6248,7 +6248,7 @@ int ObTimeConverter::date_add_nmonth(const int64_t ori_date_value, const int64_t
     }
   }
 
-  LOG_DEBUG("debug add nmonth to date", K(ob_time), K(ori_date_value), K(nmonth), K(result_date_value));
+
   return ret;
 }
 
@@ -6262,7 +6262,7 @@ int ObTimeConverter::date_add_nsecond(const int64_t ori_date_value, const int64_
     ret = OB_ERR_INVALID_YEAR_VALUE; 
     LOG_WARN("invalid date value", K(ret), K(ori_date_value), K(seconds), K(result_date_value));
   }
-  LOG_DEBUG("debug add nsecond to date", K(ori_date_value), K(seconds), K(result_date_value));
+
   return ret;
 }
 
@@ -6306,7 +6306,7 @@ int ObTimeConverter::calc_last_date_of_the_month(const int64_t ori_datetime_valu
 
     }
   }
-  LOG_DEBUG("debug calc_last_mday", K(ob_time), K(ori_datetime_value), K(result_date_value));
+
   return ret;
 }
 
@@ -6332,7 +6332,7 @@ int ObTimeConverter::calc_last_mdate_of_the_month(const ObMySQLDateTime mdatetim
       mdate.day_ = ob_time.parts_[DT_MDAY];
     }
   }
-  LOG_DEBUG("debug calc_last_mday", K(ob_time), K(mdatetime), K(mdate));
+
   return ret;
 }
 

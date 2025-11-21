@@ -54,7 +54,7 @@ int ObLobLocationUtil::get_ls_leader(ObLobAccessParam& param, const uint64_t ten
           }
         }
       } else {
-        LOG_DEBUG("get ls leader", K(tenant_id), K(ls_id), K(leader), K(cluster_id));
+
       }
     } while (OB_LS_LOCATION_NOT_EXIST == ret && renew_count < max_renew_count);
 
@@ -191,7 +191,7 @@ int ObLobLocationUtil::lob_refresh_location(ObLobAccessParam &param, int last_er
       }
     }
   }
-  LOG_TRACE("[LOB RETRY] after do fresh location", K(ret), K(last_err), K(retry_cnt), K(has_retry_info), K(param));
+
   return ret;
 }
 
@@ -229,7 +229,7 @@ int ObLobLocationUtil::get_ls_leader(ObLobAccessParam& param)
           }
         }
       } else {
-        LOG_TRACE("[LOB] get ls leader", K(tenant_id), K(ls_id), K(leader_addr), K(cluster_id), K(renew_count));
+
       }
     } while (OB_LS_LOCATION_NOT_EXIST == ret && renew_count < max_renew_count);
 

@@ -60,7 +60,7 @@ int ObAshRefreshTask::start()
     if (OB_FAIL(wr_proxy_.init(GCTX.net_frame_->get_req_transport()))) {
       LOG_WARN("failed to init wr proxy", K(ret));
     }
-    LOG_INFO("AshRefresh init OK");
+
     last_scheduled_snapshot_time_ = ObTimeUtility::current_time();
     is_inited_ = true;
   }
@@ -181,7 +181,7 @@ void ObAshRefreshTask::runTimerTask()
                 }
               }
             } else {
-              LOG_DEBUG("Only system and user tenants support WR diagnostics", K(ret), K(tenant_id));
+
             }
             if (OB_FAIL(ret)) {
               ret = OB_SUCCESS;
@@ -218,7 +218,7 @@ bool ObAshRefreshTask::require_snapshot_ahead()
   }
   if (EN_FORCE_ENABLE_SNAPSHOT_AHEAD) {
     bret = true;
-    LOG_INFO("force enable snapshot ahead");
+
   }
   return bret;
 }

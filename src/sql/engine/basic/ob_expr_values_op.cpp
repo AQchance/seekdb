@@ -225,7 +225,7 @@ int ObExprValuesOp::inner_open()
       // CM_CHARSET_CONVERT_IGNORE_ERR is will give '?' when do string_string convert.
       // eg: insert into t(gbk_col) values('𐐀');
       cm_ = cm_ | CM_WARN_ON_FAIL | CM_CHARSET_CONVERT_IGNORE_ERR;
-      LOG_TRACE("is ignore, set CM_WARN_ON_FAIL and CM_CHARSET_CONVERT_IGNORE_ERR", K(cm_));
+
     }
     if (0 == child_cnt_) {
     } else if (1 == child_cnt_) {
@@ -257,7 +257,7 @@ int ObExprValuesOp::inner_open()
       } else {
         real_value_cnt_ = my_spec.get_value_count();
       }
-      LOG_TRACE("init expr values op", K(real_value_cnt_), K(param_cnt_), K(param_idx_));
+
     }
   }
   return ret;
@@ -324,7 +324,7 @@ int ObExprValuesOp::inner_get_next_row()
           err_log_rt_def_.curr_err_log_record_num_++;
         }
       } else {
-        LOG_DEBUG("output row", "row", ROWEXPR2STR(eval_ctx_, my_spec.output_));
+
       }
     } while (OB_SUCC(ret) &&
         my_spec.err_log_ct_def_.is_error_logging_ &&

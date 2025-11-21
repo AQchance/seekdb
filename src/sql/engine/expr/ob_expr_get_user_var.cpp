@@ -92,7 +92,7 @@ int ObExprGetUserVar::calc_result_type1(ObExprResType &type,
       type.set_length_semantics(type_ctx.get_session()->get_actual_nls_length_semantics());
     }
   }
-  LOG_DEBUG("get_user_var calc_result_type", K(type1), K(type1), K(type));
+
   return ret;
 }
 

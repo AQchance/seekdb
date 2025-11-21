@@ -217,7 +217,7 @@ ObMvccTransNode *ObMemtableRowCompactor::construct_compact_node_(const SCN snaps
     ret = OB_ERR_UNEXPECTED;
     TRANS_LOG(ERROR, "get tx table failed", K(ret), KPC(memtable_));
   } else if (OB_FAIL(compact_datum_row.init(OB_ROW_DEFAULT_COLUMNS_COUNT))) {
-    STORAGE_LOG(WARN, "Failed to init datum row", K(ret));
+
   }
 
   TRANS_LOG(DEBUG, "chaser debug start compact memtable row", K(memtable_->get_key()));
@@ -260,7 +260,7 @@ ObMvccTransNode *ObMemtableRowCompactor::construct_compact_node_(const SCN snaps
         TRANS_LOG(WARN, "Failed to read row header", K(ret));
       } else if (OB_ISNULL(row_header)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "Unexpected null row header", K(ret));
+
       } else {
         rowkey_cnt = row_header->get_rowkey_count();
         compact_datum_row.count_ = rowkey_cnt;
@@ -292,7 +292,7 @@ ObMvccTransNode *ObMemtableRowCompactor::construct_compact_node_(const SCN snaps
       } else if (OB_FAIL(row_reader.read_row(mtd->buf_, mtd->buf_len_, nullptr, *datum_row))) {
         TRANS_LOG(WARN, "Failed to read datum row", K(ret));
       } else if (OB_FAIL(compact_datum_row.reserve(datum_row->get_column_count(), true))) {
-          STORAGE_LOG(WARN, "Failed to reserve datum row", K(ret), KPC(datum_row));
+
       } else {
         compact_datum_row.count_ = MAX(datum_row->get_column_count(), compact_datum_row.count_);
         if (ObDmlFlag::DF_NOT_EXIST == dml_flag) {

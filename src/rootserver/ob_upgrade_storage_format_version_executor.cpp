@@ -48,14 +48,14 @@ int ObUpgradeStorageFormatVersionTask::process()
 {
   int ret = OB_SUCCESS;
   const int64_t start = ObTimeUtility::current_time();
-  LOG_INFO("[UPGRADE] start to execute upgrade storage format version task", K(start));
+
   if (OB_ISNULL(executor_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("error unexpected, executor must not be NULL", K(ret));
   } else if (OB_FAIL(executor_->execute())) {
     LOG_WARN("fail to execute upgrade storage format version task", K(ret));
   }
-  LOG_INFO("[UPGRADE] finish execute upgrade storage format version task", K(ret), "cost_time", ObTimeUtility::current_time() - start);
+
   return ret;
 }
 
@@ -160,7 +160,7 @@ int ObUpgradeStorageFormatVersionExecutor::execute()
       if (OB_FAIL(root_service_->get_zone_mgr().get_storage_format_version(cur_version))) {
          LOG_WARN("fail to get current version", K(ret), K(cur_version));
        } else if (cur_version >= OB_STORAGE_FORMAT_VERSION_MAX - 1) {
-         LOG_INFO("UpgradeStorageFormatVersion task skipped", K(cur_version), K(OB_STORAGE_FORMAT_VERSION_MAX));
+
        } else {
          if (OB_FAIL(upgrade_storage_format_version())) {
            LOG_WARN("fail to optimize all tenant", K(ret));
@@ -185,7 +185,7 @@ int ObUpgradeStorageFormatVersionExecutor::execute()
 int ObUpgradeStorageFormatVersionExecutor::upgrade_storage_format_version()
 {
   const int64_t start = ObTimeUtility::current_time();
-  LOG_INFO("[UPGRADE] start to execute upgrade_storage_format_version", K(start));
+
   int ret = OB_SUCCESS;
   ObSchemaGetterGuard schema_guard;
   ObArray<uint64_t> tenant_ids;
@@ -249,7 +249,7 @@ int ObUpgradeStorageFormatVersionExecutor::upgrade_storage_format_version()
               LOG_WARN("fail to check if oracle compat mode", K(ret));
             } else {
               const int64_t end = ObTimeUtility::current_time();
-              LOG_INFO("[UPGRADE] start to optimize table", K(ret), K(tenant_id), "table_name", table_schema->get_table_name());
+
               alter_table_arg.exec_tenant_id_ = table_schema->get_tenant_id();
               alter_table_arg.ddl_stmt_str_ = sql.string();
               alter_table_arg.alter_table_schema_.set_origin_database_name(database_schema->get_database_name());
@@ -289,7 +289,7 @@ int ObUpgradeStorageFormatVersionExecutor::upgrade_storage_format_version()
 int ObUpgradeStorageFormatVersionExecutor::check_schema_sync()
 {
   const int64_t start = ObTimeUtility::current_time();
-  LOG_INFO("[UPGRADE] start to check schema sync", K(start));
+
   int ret = OB_SUCCESS;
   if (!is_inited_) {
     ret = OB_NOT_INIT;
@@ -305,7 +305,7 @@ int ObUpgradeStorageFormatVersionExecutor::check_schema_sync()
       } else if (is_sync) {
         break;
       } else {
-        LOG_INFO("schema not sync, should wait", K(ret));
+
         ob_usleep(static_cast<useconds_t>((WAIT_US)));
       }
     }

@@ -92,7 +92,7 @@ int ObDDLReplayExecutor::check_need_replay_ddl_inc_log_(
     if (OB_SUCC(ret)) {
       ret = CHECK_NEED_REPLAY_DDL_INC_LOG ? : OB_SUCCESS;
       if (OB_FAIL(ret)) {
-        STORAGE_LOG(ERROR, "fake CHECK_NEED_REPLAY_DDL_INC_LOG", K(ret));
+
       }
     }
 #endif
@@ -165,7 +165,7 @@ int ObDDLReplayExecutor::check_need_replay_(
   } else if (ObMigrationStatus::OB_MIGRATION_STATUS_ADD_FAIL == migration_status
       || ObMigrationStatus::OB_MIGRATION_STATUS_MIGRATE_FAIL == migration_status) {
     need_replay = false;
-    LOG_INFO("ls migration failed, so ddl log skip replay", "ls_id", ls->get_ls_id(), K(tablet_handle), K(migration_status));
+
   } else if (OB_ISNULL(tablet = tablet_handle.get_obj())) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("tablet is null", K(ret), K(tablet_handle));
@@ -257,7 +257,7 @@ int ObDDLStartReplayExecutor::do_replay_(ObTabletHandle &tablet_handle)
     if (OB_FAIL(ls_->replay_get_tablet_no_check(lob_meta_tablet_id, scn_,
         replay_allow_tablet_not_exist, lob_meta_tablet_handle))) {
       if (OB_OBSOLETE_CLOG_NEED_SKIP == ret) {
-        LOG_INFO("clog is already obsolete, should skip replay", K(ret), K(lob_meta_tablet_id), K(scn_));
+
         ret = OB_SUCCESS;
       } else {
         LOG_WARN("get tablet handle failed", K(ret), K(lob_meta_tablet_id), K(scn_));
@@ -336,7 +336,7 @@ int ObDDLStartReplayExecutor::replay_ddl_start(ObTabletHandle &tablet_handle, co
             is_major_sstable_exist))) {
       if (OB_ENTRY_NOT_EXIST == ret && is_major_sstable_exist) {
         ret = OB_SUCCESS;
-        LOG_INFO("ddl start log is expired, skip", K(ret), KPC(log_), K(scn_));
+
       } else {
         LOG_WARN("get tablet mgr failed", K(ret), K(tablet_id));
       }
@@ -353,7 +353,7 @@ int ObDDLStartReplayExecutor::replay_ddl_start(ObTabletHandle &tablet_handle, co
         ret = OB_SUCCESS; // ignored expired ddl start log
       }
     } else {
-      LOG_INFO("succeed to replay ddl start log", K(ret), KPC_(log), K_(scn));
+
     }
   }
   FLOG_INFO("[DDL_REPLAY] finish replay ddl start log", K(ret), K(need_replay), K(tablet_id), KPC_(log), K_(scn), "ddl_event_info", ObDDLEventInfo());
@@ -430,7 +430,7 @@ int ObDDLRedoReplayExecutor::do_replay_(ObTabletHandle &tablet_handle)
       } else if (OB_FAIL(do_inc_replay_(tablet_handle, write_info, macro_block, redo_info.type_))) {
         LOG_WARN("fail to do inc replay", K(ret));
         if (OB_TABLET_NOT_EXIST == ret || OB_NO_NEED_UPDATE == ret) {
-          LOG_INFO("no need to replay ddl inc redo log", K(ret));
+
           ret = OB_SUCCESS;
         } else if (OB_EAGAIN != ret) {
           LOG_WARN("failed to do_inc_replay_", K(ret), K(log_), K(scn_));
@@ -561,7 +561,7 @@ int check_idem_block_exist(const ObDDLMacroBlockRedoInfo &redo_info, ObTabletHan
     LOG_WARN("failed to check block exist", K(ret), K(redo_info));
   } else if (is_macro_block_exist ) {
     need_replay = false;
-    LOG_INFO("macro block already exist, skip replay the redo", K(redo_info), K(need_replay), K(checksum));
+
   }
   return ret;
 }
@@ -613,7 +613,7 @@ int ObDDLRedoReplayExecutor::do_full_replay_(
     // major sstable already exist, means ddl commit success
     need_replay = false;
     if (REACH_TIME_INTERVAL(1000L * 1000L)) {
-      LOG_INFO("no need to replay ddl log, because the major sstable already exist", K_(tablet_id));
+
     }
   } else if (OB_TMP_FAIL(check_idem_block_exist(log_->get_redo_info(), tablet_handle, need_replay, checksum))) {
     /* using tmp fail to avoid replay redo log */
@@ -700,10 +700,10 @@ int ObDDLRedoReplayExecutor::do_full_replay_(
            if (OB_ENTRY_EXIST == ret && is_idem_type(redo_info.type_))  {
             ret = OB_SUCCESS;
             need_replay = false;
-            LOG_INFO("macro block already exist, skip replay the redo", K(ret), K(macro_block), K(snapshot_version), K(data_format_version));
+
           } else if (OB_TASK_EXPIRED == ret) {
             need_replay = false;
-            LOG_INFO("task expired, skip replay the redo", K(ret), K(macro_block), K(snapshot_version), K(data_format_version));
+
             ret = OB_SUCCESS;
           } else {
             LOG_WARN("set macro block into ddl kv failed", K(ret), K(tablet_handle), K(macro_block),
@@ -797,7 +797,7 @@ int ObDDLRedoReplayExecutor::filter_redo_log_(
   if (OB_SUCC(ret)) {
     ret = EN_REPLAY_REDO_DDL_LOG_WAIT;
     if (OB_FAIL(ret)) {
-      LOG_INFO("EN_REPLAY_REDO_DDL_LOG_WAIT replay ddl redo failed", K(ret), K(redo_info), K(can_skip));
+
     }
   }
 #endif
@@ -852,7 +852,7 @@ int ObDDLCommitReplayExecutor::do_replay_(ObTabletHandle &tablet_handle)
     if (OB_FAIL(ls_->replay_get_tablet_no_check(lob_meta_tablet_id, scn_,
         replay_allow_tablet_not_exist, lob_meta_tablet_handle))) {
       if (OB_OBSOLETE_CLOG_NEED_SKIP == ret) {
-        LOG_INFO("clog is already obsolete, should skip replay", K(ret), K(lob_meta_tablet_id), K(scn_));
+
         ret = OB_SUCCESS;
       } else {
         LOG_WARN("get tablet handle failed", K(ret), K(lob_meta_tablet_id), K(scn_));
@@ -906,7 +906,7 @@ int ObDDLCommitReplayExecutor::replay_ddl_commit(ObTabletHandle &tablet_handle)
           is_major_sstable_exist))) {
     if (OB_ENTRY_NOT_EXIST == ret && is_major_sstable_exist) {
       ret = OB_SUCCESS;
-      LOG_INFO("ddl commit log is expired, skip", K(ret), KPC(log_), K(scn_));
+
     } else {
       LOG_WARN("get tablet mgr failed", K(ret), K(tablet_id));
     }
@@ -920,7 +920,7 @@ int ObDDLCommitReplayExecutor::replay_ddl_commit(ObTabletHandle &tablet_handle)
       LOG_WARN("replay ddl commit log failed", K(ret), K_(log), K_(scn));
     }
   } else {
-    LOG_INFO("replay ddl commit log success", K(ret), K_(log), K_(scn));
+
   }
   FLOG_INFO("[DDL_REPLAY] finish replay ddl commit log", K(ret), K(need_replay), K(tablet_id), KPC_(log), K_(scn), "ddl_event_info", ObDDLEventInfo());
   return ret;
@@ -1045,7 +1045,7 @@ int ObSplitStartReplayExecutor::check_need_wait_split_finished(
     if (OB_FAIL(handle.get_obj()->get_restore_status(restore_status))) {
       LOG_WARN("get restore status failed", K(ret), K(handle));
     } else if (ObTabletRestoreStatus::is_full(restore_status)) {
-      LOG_TRACE("full restore status, ignore to wait", K(ret), K(restore_status));
+
     } else if (OB_FAIL(MTL(ObLSService *)->get_ls(ls_id, ls_handle, ObLSGetMod::DDL_MOD))) {
       LOG_WARN("failed to get log stream", K(ret), K(ls_id));
     } else if (OB_FAIL(ObTabletSplitUtil::check_tablet_restore_status(
@@ -1087,7 +1087,7 @@ int ObSplitStartReplayExecutor::do_replay_(ObTabletHandle &handle)
         ret = OB_SUCCESS;
       } else if (ObSplitStartReplayExecutor::is_split_log_retry_ret(ret)) {
         if (REACH_TIME_INTERVAL(10L * 1000L * 1000L)) {
-          LOG_INFO("schedule wait lob tablet split end", K(ret), K(param));
+
         }
       } else {
         LOG_WARN("schedule lob tablet split dag failed", K(ret), K(param));
@@ -1103,7 +1103,7 @@ int ObSplitStartReplayExecutor::do_replay_(ObTabletHandle &handle)
         ret = OB_SUCCESS;
       } else if (ObSplitStartReplayExecutor::is_split_log_retry_ret(ret)) {
         if (REACH_TIME_INTERVAL(10L * 1000L * 1000L)) {
-          LOG_INFO("schedule wait lob tablet split end", K(ret), K(param));
+
         }
       } else {
         LOG_WARN("schedule lob tablet split dag failed", K(ret), K(param));
@@ -1117,7 +1117,7 @@ int ObSplitStartReplayExecutor::do_replay_(ObTabletHandle &handle)
       ret = OB_EAGAIN;
     }
   }
-  LOG_INFO("finish replay tablet split start log", K(ret), K(is_data_split_finished), K(scn_), KPC(log_));
+
   return ret;
 }
 
@@ -1172,7 +1172,7 @@ int ObSplitFinishReplayExecutor::do_replay_(ObTabletHandle &handle)
   } else if (OB_FAIL(check_can_skip_replay(handle, can_skip))) {
     LOG_WARN("failed to check can skip replay", K(ret), KPC(log_));
   } else if (can_skip) {
-    LOG_INFO("skip replay split finish log", KPC(log_));
+
   } else if (OB_ISNULL(dest_tablet_ids = &(log_->basic_info_.dest_tablets_id_))) {
     ret = OB_NULL_CHECK_ERROR;
     LOG_WARN("unexpected nullptr of dest_tablet_ids", K(ret), KPC(dest_tablet_ids));
@@ -1188,7 +1188,7 @@ int ObSplitFinishReplayExecutor::do_replay_(ObTabletHandle &handle)
     if (is_lob_tablet && OB_FAIL(compaction::ObScheduleDagFunc::schedule_lob_tablet_split_dag(lob_split_param))) {
       if (ObSplitStartReplayExecutor::is_split_log_retry_ret(ret)) {
         if (REACH_TIME_INTERVAL(10L * 1000L * 1000L)) {
-          LOG_INFO("schedule wait lob tablet split end", K(ret), K(lob_split_param));
+
         }
       } else {
         LOG_WARN("schedule lob tablet split dag failed", K(ret), K(lob_split_param));
@@ -1196,7 +1196,7 @@ int ObSplitFinishReplayExecutor::do_replay_(ObTabletHandle &handle)
     } else if (!is_lob_tablet && OB_FAIL(compaction::ObScheduleDagFunc::schedule_tablet_split_dag(data_split_param))) {
       if (ObSplitStartReplayExecutor::is_split_log_retry_ret(ret)) {
         if (REACH_TIME_INTERVAL(10L * 1000L * 1000L)) {
-          LOG_INFO("schedule wait data tablet split end", K(ret), K(lob_split_param));
+
         }
       } else {
         LOG_WARN("schedule data tablet split failed", K(ret), K(data_split_param));
@@ -1211,7 +1211,7 @@ int ObSplitFinishReplayExecutor::do_replay_(ObTabletHandle &handle)
     }
   }
   if (OB_TABLET_STATUS_NO_NEED_TO_SPLIT == ret) {
-    LOG_INFO("skip replaying the tablet split finish log", K(ret), K(is_data_split_finished), KPC(log_));
+
     //overwrite ret 
     ret = OB_SUCCESS;
     if (OB_FAIL(modify_tablet_restore_status_if_need(*dest_tablet_ids, handle, ls_))) {
@@ -1276,7 +1276,7 @@ int ObSplitFinishReplayExecutor::modify_tablet_restore_status_if_need(
         LOG_WARN("failed to update tablet restore status", K(ret), KPC(tablet));
       } else {
         (void) ls->get_ls_restore_handler()->try_record_one_tablet_to_restore(t_id);
-        LOG_INFO("modify tablet restore status", K(tablet->get_tablet_id()), "old status", des_restore_status, "new status", ObTabletRestoreStatus::STATUS::EMPTY);
+
       }
     }
   }
@@ -1295,7 +1295,7 @@ int ObSplitFinishReplayExecutor::check_can_skip_replay(ObTabletHandle &handle, b
     LOG_WARN("unexpected null ptr of tablet", K(ret), "tablet", *handle.get_obj());
   } else if (scn_ < handle.get_obj()->get_mds_checkpoint_scn()) {
     can_skip = true;
-    LOG_INFO("skip replay split finish log", KPC(log_), K(scn_), "tablet", *handle.get_obj());
+
   }
   return ret;
 }
@@ -1347,11 +1347,11 @@ int ObTabletFreezeReplayExecutor::do_replay_(ObTabletHandle &handle)
       } else if (OB_FAIL(freezer->tablet_freeze(ls_id, tablet_id, true/*is_sync*/, abs_timeout_ts, need_rewrite_tablet_meta, ObFreezeSourceFlag::TABLET_SPLIT))) {
         LOG_WARN("fail to freeze tablet", K(ret), K(tenant_id), K(ls_id), K(tablet_id));
       } else {
-        LOG_INFO("succeed to freeze tablet", K(ret), K(tenant_id), K(ls_id), K(tablet_id));
+
       }
     }
   }
-  LOG_INFO("finish replay tablet freeze log", K(ret), KPC(log_));
+
   return ret;
 }
 
@@ -1682,7 +1682,7 @@ int ObSchemaChangeReplayExecutor::do_replay_(ObTabletHandle &handle)
   if (OB_FAIL(handle.get_obj()->replay_schema_version_change_log(log_->get_schema_version()))) {
     LOG_WARN("fail to replay schema version change log", K(ret), KPC_(log));
   } else {
-    LOG_INFO("replay tablet schema version change log success", KPC_(log), K_(scn));
+
   }
   return ret;
 }

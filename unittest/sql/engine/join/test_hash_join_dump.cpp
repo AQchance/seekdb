@@ -247,7 +247,7 @@ void ObHashJoinDumpTest::run_test(int64_t print_row_cnt)
         ASSERT_EQ(OB_ITER_END, ret);
       } else {
         if (cnt < print_row_cnt) {
-          LOG_INFO("join res", K(*row));
+
         }
         auto r = static_cast<int64_t *>(alloc.alloc(sizeof(int64_t) * res_cell_cnt));
         ASSERT_TRUE(NULL != r);
@@ -271,7 +271,7 @@ void ObHashJoinDumpTest::run_test(int64_t print_row_cnt)
     for (int64_t i = 0; i < res_cell_cnt; i++) {
       s.append_fmt("%ld, ", r[i]);
     }
-    LOG_INFO("RES:", K(s.ptr()));
+
   };
 
   ResArray hash_res;

@@ -48,7 +48,7 @@ class ObPluginVectorIndexMgr;
       LOG_WARN("fail to check task is cancel", KPC(ctx_));  \
     } else if (is_cancel || (OB_NOT_NULL(vec_idx_mgr_) && vec_idx_mgr_->get_async_task_opt().is_stop())) { \
       ret = OB_CANCELED;  \
-      LOG_INFO("async task is cancel", KPC(ctx_));  \
+  \
     } else {  \
       loop_cnt = 0; \
     } \

@@ -997,14 +997,14 @@ int ObCreateViewResolver::check_view_stmt_col_name(
         if (ret == OB_WRONG_COLUMN_NAME) {
           need_gen_name = true;
           ret = OB_SUCCESS;
-          LOG_TRACE("view column name end with space is not real_alias will auto gen col name");
+
         } else {
           LOG_WARN("fail to check column name", K(col_name), K(ret));
         }
       } else if ((OB_HASH_EXIST == (hash_ret = view_col_names.exist_refactored(dup_col_name)))) {
         need_gen_name = true;
         ret = OB_SUCCESS;
-        LOG_TRACE("view column name end with space is not real_alias will auto gen col name");
+
       } else if (OB_FAIL(view_col_names.set_refactored(dup_col_name, 0))) {
         SQL_RESV_LOG(WARN, "set column name to hash set failed", K(ret), K(col_name));
       }
@@ -1123,7 +1123,7 @@ int ObCreateViewResolver::resolve_mv_options(const ObSelectStmt *stmt,
         table_schema.set_mv_major_refresh(IS_MV_MAJOR_REFRESH);
         container_table_schema.set_mv_major_refresh(IS_MV_MAJOR_REFRESH);
         refresh_info.refresh_mode_ = ObMVRefreshMode::MAJOR_COMPACTION;
-        LOG_INFO("[MAJ_REF_MV] match major refresh mv", K(table_schema.get_table_name()));
+
       }
       if (OB_SUCC(ret) && table_schema.mv_on_query_computation() &&
           OB_FAIL(check_on_query_computation_supported(stmt))) {
@@ -1234,7 +1234,7 @@ int ObCreateViewResolver::resolve_mv_refresh_info(ParseNode *refresh_info_node,
               break;
           }
         }
-        LOG_INFO("nested refresh mode", K(nested_refresh_mode_node->value_));
+
       } else if (OB_ISNULL(nested_refresh_node)) {
         refresh_info.nested_refresh_mode_ = ObMVNestedRefreshMode::INDIVIDUAL; 
       }
@@ -1501,7 +1501,7 @@ int ObCreateViewResolver::add_column_infos(const uint64_t tenant_id,
       } else if (OB_FAIL(table_schema.add_column(column))) {
         LOG_WARN("add column to table_schema failed", K(ret), K(column));
       } else {
-        LOG_DEBUG("ctas mysql mode, create_table_column_count = 0,end", K(column));
+
       }
     }
   }
@@ -1587,7 +1587,7 @@ int ObCreateViewResolver::load_mview_dep_session_vars(ObSQLSessionInfo &session_
   } else if (OB_FAIL(get_dep_session_vars_from_stmt(session_info, stmt, dep_vars))) {
     LOG_WARN("fail to get dep session vars from stmt", K(ret));
   } else {
-    LOG_TRACE("finish load mview dep session vars", K(session_info.get_sql_mode()), K(dep_vars));
+
   }
   return ret;
 }

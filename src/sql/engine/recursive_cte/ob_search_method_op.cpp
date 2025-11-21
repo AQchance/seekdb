@@ -211,7 +211,7 @@ int ObBreadthFirstSearchOp::add_result_rows()
         } else if (OB_FAIL(search_results_.push_back(node))) {
           LOG_WARN("Push back data to layer_results failed", K(ret));
         } else {
-          LOG_DEBUG("Result node", K(node));
+
         }
       }
     }
@@ -323,7 +323,7 @@ int ObBreadthFirstSearchBulkOp::add_result_rows(bool left_branch)
     } else if (OB_FAIL(last_iter_input_rows_.push_back(input_rows_.at(i)))) {
       LOG_WARN("Failed to push back last iter input rows");
     } else {
-      LOG_DEBUG("Result node", K(tree_node));
+
     }
   }
   input_rows_.reuse();

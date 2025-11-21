@@ -103,7 +103,7 @@ void ObPxTaskProcess::run()
   ObPxWorkerStatList::instance().push(stat);
   ret = process();
   ObPxWorkerStatList::instance().remove(stat);
-  LOG_TRACE("end process task", KP(this), K(ret));
+
   // Tenant Px Pool don't have any feedback, so all error should be handled by interruption.
   UNUSED(ret);
 }
@@ -338,7 +338,7 @@ int ObPxTaskProcess::execute(const ObOpSpec &root_spec)
       // Need to store the corresponding affected row into sqc task
       arg_.sqc_task_ptr_->set_affected_rows(ctx.get_physical_plan_ctx()->get_affected_rows());
       arg_.sqc_task_ptr_->dml_row_info_.set_px_dml_row_info(*ctx.get_physical_plan_ctx());
-      LOG_TRACE("the affected row from sqc task", K(arg_.sqc_task_ptr_->get_affected_rows()));
+
     }
     // record ret code
     if (OB_FAIL(ret)) {
@@ -358,7 +358,7 @@ int ObPxTaskProcess::execute(const ObOpSpec &root_spec)
       LOG_WARN("fail close dfo op", K(ret), K(close_ret));
       ret = OB_SUCCESS == ret ? close_ret : ret;
     }
-    LOG_TRACE("finish open & close task ops", K(ret), K(close_ret));
+
   }
   return ret;
 }
@@ -366,7 +366,7 @@ int ObPxTaskProcess::execute(const ObOpSpec &root_spec)
 ERRSIM_POINT_DEF(ERRSIM_INTERRUPT_QC_FAILED)
 int ObPxTaskProcess::do_process()
 {
-  LOG_TRACE("[CMD] run task", "task", arg_.task_);
+
 
   int ret = OB_SUCCESS;
   int64_t task_id = arg_.task_.get_task_id();
@@ -399,8 +399,8 @@ int ObPxTaskProcess::do_process()
     LOG_TRACE("TIMERECORD ", "reserve:=0 name:=TASK dfoid:",dfo_id,"sqcid:",
              sqc_id,"taskid:", task_id,"start:", ObTimeUtility::current_time(),
              "addr:", arg_.task_.get_exec_addr());
-    LOG_DEBUG("begin to execute sql task", K(task_id));
-    LOG_DEBUG("async task physical plan", "phy_plan", arg_.des_phy_plan_);
+
+
 
     if (OB_SUCC(ret)) {
       ObTaskExecutorCtx *executor_ctx = NULL;
@@ -478,7 +478,7 @@ int ObPxTaskProcess::do_process()
       if (nullptr != arg_.op_spec_root_) {
         const ObPxSqcMeta &sqc_meta = arg_.sqc_handler_->get_sqc_init_arg().sqc_;
         // show monitoring information from qc
-        LOG_DEBUG("receive monitoring information", K(sqc_meta.get_monitoring_info()));
+
         ObExtraServerAliveCheck qc_alive_checker(sqc_meta.get_qc_addr(),
           arg_.exec_ctx_->get_my_session()->get_process_query_time());
         ObExtraServerAliveCheck::Guard check_guard(*arg_.exec_ctx_, qc_alive_checker);
@@ -529,7 +529,7 @@ int ObPxTaskProcess::do_process()
     }
   }
 
-  LOG_TRACE("notify SQC task exit", K(dfo_id), K(sqc_id), K(task_id), K(ret));
+
 
   return ret;
 }
@@ -748,7 +748,7 @@ int ObPxTaskProcess::OpPreparation::apply(ObExecContext &ctx,
         LOG_WARN("input not found for op", "op_id", op.id_, K(ret));
       } else if (hj_spec.is_shared_ht_) {
         input->set_task_id(task_id_);
-        LOG_TRACE("debug pre apply info", K(task_id_), K(op.id_));
+
       }
     }
   } else if (PHY_VEC_HASH_JOIN == op.type_) {
@@ -763,7 +763,7 @@ int ObPxTaskProcess::OpPreparation::apply(ObExecContext &ctx,
         LOG_WARN("input not found for op", "op_id", op.id_, K(ret));
       } else if (hj_spec.is_shared_ht_) {
         input->set_task_id(task_id_);
-        LOG_TRACE("debug pre apply info", K(task_id_), K(op.id_));
+
       }
     }
   } else if (PHY_SELECT_INTO == op.type_) {
@@ -829,9 +829,9 @@ int ObPxTaskProcess::OpPostparation::apply(ObExecContext &ctx, const ObOpSpec &o
       } else if (hj_spec.is_shared_ht_ && OB_SUCCESS != ret_) {
         // set error_code = OB_GOT_SIGNAL_ABORTING if this error code is used to interrupt other tasks.
         input->set_error_code(OB_GOT_SIGNAL_ABORTING);
-        LOG_TRACE("debug post apply info", K(ret_));
+
       } else {
-        LOG_TRACE("debug post apply info", K(ret_));
+
       }
     }
   } else if (PHY_VEC_HASH_JOIN == op.type_) {
@@ -846,9 +846,9 @@ int ObPxTaskProcess::OpPostparation::apply(ObExecContext &ctx, const ObOpSpec &o
         LOG_WARN("input not found for op", "op_id", op.id_, K(ret));
       } else if (hj_spec.is_shared_ht_ && OB_SUCCESS != ret_) {
         input->set_error_code(OB_GOT_SIGNAL_ABORTING);
-        LOG_TRACE("debug post apply info", K(ret_));
+
       } else {
-        LOG_TRACE("debug post apply info", K(ret_));
+
       }
     }
   } else if (PHY_WINDOW_FUNCTION == op.type_) {
@@ -863,9 +863,9 @@ int ObPxTaskProcess::OpPostparation::apply(ObExecContext &ctx, const ObOpSpec &o
         LOG_WARN("input not found for op", "op_id", op.id_, K(ret));
       } else if (wf_spec.is_participator() && OB_SUCCESS != ret_) {
         input->set_error_code(OB_GOT_SIGNAL_ABORTING);
-        LOG_TRACE("debug post apply info", K(ret_));
+
       } else {
-        LOG_TRACE("debug post apply info", K(ret_));
+
       }
     }
   } else if (PHY_VEC_WINDOW_FUNCTION == op.type_) {
@@ -880,9 +880,9 @@ int ObPxTaskProcess::OpPostparation::apply(ObExecContext &ctx, const ObOpSpec &o
         LOG_WARN("input is null", K(ret));
       } else if (wf_spec.is_participator() && OB_SUCCESS != ret_) {
         input->set_error_code(OB_GOT_SIGNAL_ABORTING);
-        LOG_TRACE("debug post apply info", K(ret_));
+
       } else {
-        LOG_TRACE("debug post apply info", K(ret_));
+
       }
     }
   } else if (PHY_PX_MULTI_PART_INSERT == op.get_type()) {
@@ -896,9 +896,9 @@ int ObPxTaskProcess::OpPostparation::apply(ObExecContext &ctx, const ObOpSpec &o
         LOG_WARN("input not found for op", "op_id", op.id_, K(ret));
       } else if (OB_SUCCESS != ret_) {
         input->set_error_code(ret_);
-        LOG_TRACE("debug post apply info", K(ret_));
+
       } else {
-        LOG_TRACE("debug post apply info", K(ret_));
+
       }
     }
   } else if (PHY_TABLE_DIRECT_INSERT == op.get_type()) {
@@ -912,9 +912,9 @@ int ObPxTaskProcess::OpPostparation::apply(ObExecContext &ctx, const ObOpSpec &o
         LOG_WARN("input not found for op", "op_id", op.id_, K(ret));
       } else if (OB_SUCCESS != ret_) {
         input->set_error_code(ret_);
-        LOG_TRACE("debug post apply info", K(ret_));
+
       } else {
-        LOG_TRACE("debug post apply info", K(ret_));
+
       }
     }
   }

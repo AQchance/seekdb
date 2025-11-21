@@ -69,7 +69,7 @@ int ObTxDataMinorFilter::filter(
     } else if (trans_end_scn <= filter_val_) {
       filter_ret = FILTER_RET_REMOVE;
       max_filtered_end_scn_ = SCN::max(max_filtered_end_scn_, trans_end_scn);
-      LOG_DEBUG("filter row", K(ret), K(row), K(filter_val_));
+
     } else {
       filter_ret = FILTER_RET_NOT_CHANGE;
     }

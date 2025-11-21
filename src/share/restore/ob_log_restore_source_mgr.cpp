@@ -52,7 +52,7 @@ int ObLogRestoreSourceMgr::update_recovery_until_scn(const SCN &recovery_until_s
     if (OB_FAIL(table_operator_.update_source_until_scn(item))) {
       LOG_WARN("table_operator_ update_source_until_scn failed", K(ret), K(recovery_until_scn));
     } else {
-      LOG_INFO("update log restore source recovery until ts succ", K(recovery_until_scn));
+
     }
   }
   return ret;
@@ -67,7 +67,7 @@ int ObLogRestoreSourceMgr::delete_source()
   } else if (OB_FAIL(table_operator_.delete_source())) {
     LOG_WARN("table_operator_ delete_source failed", K(ret));
   } else {
-    LOG_INFO("delete log restore source succ");
+
   }
   return ret;
 }
@@ -91,7 +91,7 @@ int ObLogRestoreSourceMgr::add_service_source(const SCN &recovery_until_scn,
     if (OB_FAIL(table_operator_.insert_source(item))) {
       LOG_WARN("table_operator_ insert_source failed", K(ret), K(item));
     } else {
-      LOG_INFO("add service source succ", K(recovery_until_scn), K(service_source));
+
     }
   }
   return ret;
@@ -124,7 +124,7 @@ int ObLogRestoreSourceMgr::add_location_source(const SCN &recovery_until_scn,
     if (OB_FAIL(table_operator_.insert_source(item))) {
       LOG_WARN("table_operator_ insert_source failed", K(ret), K(item));
     } else {
-      LOG_INFO("add location source succ", K(recovery_until_scn), K(archive_dest));
+
     }
   }
   return ret;
@@ -170,7 +170,7 @@ int ObLogRestoreSourceMgr::add_rawpath_source(const SCN &recovery_until_scn, con
       if (OB_FAIL(table_operator_.insert_source(item))) {
         LOG_WARN("table_operator_ insert_source failed", K(ret), K(item));
       } else {
-        LOG_INFO("add rawpath source succ", K(recovery_until_scn), K(array));
+
       }
     }
   }
@@ -189,7 +189,7 @@ int ObLogRestoreSourceMgr::get_source(ObLogRestoreSourceItem &item)
   } else if (OB_FAIL(table_operator_.get_source(item))) {
     LOG_WARN("table_operator_ get_source failed", K(ret));
   } else {
-    LOG_TRACE("get_source succ", K(item));
+
   }
   return ret;
 }
@@ -206,7 +206,7 @@ int ObLogRestoreSourceMgr::get_source_for_update(ObLogRestoreSourceItem &item, c
   } else if (OB_FAIL(table_operator_.get_source_for_update(item, trans))) {
     LOG_WARN("table_operator_ get_source failed", K(ret));
   } else {
-    LOG_TRACE("get_source succ", K(item));
+
   }
   return ret;
 }

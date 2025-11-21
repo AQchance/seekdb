@@ -154,7 +154,7 @@ int ObPushDownTopNFilterMsg::init(const ObPushDownTopNFilterInfo *pd_topn_filter
     set_msg_expect_cnt(1); // TODO fix me in shared msg
     set_msg_cur_cnt(1);
   }
-  LOG_TRACE("[TopN Filter] init ObPushDownTopNFilterMsg", K(ret), K(effective_sk_cnt));
+
   return ret;
 }
 
@@ -165,7 +165,7 @@ int ObPushDownTopNFilterMsg::destroy()
   heap_top_datums_.reset();
   cells_size_.reset();
   allocator_.reset();
-  LOG_DEBUG("[TopN Filter] destroy ObPushDownTopNFilterMsg", K(common::lbt()));
+
   return OB_SUCCESS;
 }
 
@@ -357,11 +357,11 @@ int ObPushDownTopNFilterMsg::update_filter_data(ObCompactRow *compact_row, const
   } else {
     is_updated = true;
     int64_t v = ATOMIC_AAF(&data_version_, 1);
-    LOG_TRACE("[TopN Filter] update_filter_data", K(v));
+
   }
   if (OB_SUCC(ret) && is_updated && OB_UNLIKELY(is_empty_)) {
     is_empty_ = false;
-    LOG_TRACE("[TopN Filter] first update filter data");
+
   }
   return ret;
 }
@@ -379,11 +379,11 @@ int ObPushDownTopNFilterMsg::update_filter_data(ObChunkDatumStore::StoredRow *st
   } else {
     is_updated = true;
     int64_t v = ATOMIC_AAF(&data_version_, 1);
-    LOG_TRACE("[TopN Filter] update_filter_data", K(v));
+
   }
   if (OB_SUCC(ret) && is_updated && OB_UNLIKELY(is_empty_)) {
     is_empty_ = false;
-    LOG_TRACE("[TopN Filter] first update filter data");
+
   }
   return ret;
 }

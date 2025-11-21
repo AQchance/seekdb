@@ -671,7 +671,7 @@ int ObTabletReplicaChecksumOperator::inner_batch_remove_by_sql_(
   if (FAILEDx(trans.write(meta_tenant_id, sql.ptr(), affected_rows))) {
     LOG_WARN("fail to execute sql", KR(ret), K(meta_tenant_id), K(sql));
   } else {
-    LOG_INFO("will batch delete tablet replica checksum", K(affected_rows));
+
   }
   return ret;
 }
@@ -703,7 +703,7 @@ int ObTabletReplicaChecksumOperator::remove_residual_checksum(
   } else if (OB_FAIL(sql_client.write(sql_tenant_id, sql.ptr(), affected_rows))) {
     LOG_WARN("execute sql failed", KR(ret), K(sql), K(sql_tenant_id));
   } else if (affected_rows > 0) {
-    LOG_INFO("finish to remove residual checksum", KR(ret), K(tenant_id), K(affected_rows));
+
   }
   return ret;
 }
@@ -738,7 +738,7 @@ int ObTabletReplicaChecksumOperator::get_tablets_replica_checksum(
       }
     }
     if (OB_SUCC(ret)) {
-      LOG_TRACE("success to get tablet replica checksum items", KR(ret), K(pairs_cnt));
+
     }
   }
   return ret;
@@ -828,7 +828,7 @@ int ObTabletReplicaChecksumOperator::construct_tablet_replica_checksum_items_(
       } else if (item.get_tablet_id().id() > ObTabletID::MIN_USER_TABLET_ID) {
           ret = OB_E(EventTable::EN_RS_CANT_GET_ALL_TABLET_CHECKSUM) ret;
           if (OB_FAIL(ret)) { // skip push item
-            LOG_INFO("ERRSIM EN_RS_CANT_GET_ALL_TABLET_CHECKSUM", K(ret), K(items), K(item));
+
           } else if (OB_FAIL(items.push_back(item))) {
             LOG_WARN("fail to push back checksum item", KR(ret), K(item));
           }
@@ -938,14 +938,14 @@ int ObTabletReplicaChecksumOperator::construct_tablet_replica_checksum_item_(
         if (OB_FAIL(recover_mock_column_meta(item.column_meta_))) {
           LOG_WARN("fail to recover mock large column meta", KR(ret));
         } else {
-          LOG_INFO("ERRSIM EN_MOCK_LARGE_COLUMN_META", K(ret));
+
         }
       }
     }
 #endif
   }
 
-  LOG_TRACE("construct tablet checksum item", KR(ret), K(item));
+
   return ret;
 }
 
@@ -1025,7 +1025,7 @@ int ObTabletReplicaChecksumOperator::inner_batch_insert_or_update_by_sql_(
           if (OB_FAIL(mock_large_column_meta(cur_item.column_meta_, mock_column_meta))) {
             LOG_WARN("fail to mock large column meta", KR(ret));
           } else {
-            LOG_INFO("ERRSIM EN_MOCK_LARGE_COLUMN_META", K(ret));
+
             column_meta = &mock_column_meta;
           }
         }
@@ -1141,7 +1141,7 @@ int ObTabletReplicaChecksumOperator::build_ckm_info_map_(
       ret = (OB_ITER_END == ret ? OB_SUCCESS : ret);
     }
   }
-  LOG_TRACE("build ckm info map", KR(ret), K(map.size()));
+
   return ret;
 }
 
@@ -1237,7 +1237,7 @@ int ObTabletReplicaChecksumOperator::update_with_map_(
         if (OB_FAIL(mock_large_column_meta(item.column_meta_, mock_column_meta))) {
           LOG_WARN("fail to mock large column meta", KR(ret));
         } else {
-          LOG_INFO("ERRSIM EN_MOCK_LARGE_COLUMN_META", K(ret));
+
           column_meta = &mock_column_meta;
         }
       }
@@ -1710,7 +1710,7 @@ int ObTabletDataChecksumChecker::check_data_checksum(const ObTabletReplicaChecks
     if (OB_ISNULL(normal_ckm_item_)) {
       normal_ckm_item_ = &curr_item;
     } else if (normal_ckm_item_->compaction_scn_ != curr_item.compaction_scn_) {
-      LOG_INFO("no need to check data checksum", K(curr_item), KPC(this));
+
     } else if (normal_ckm_item_->data_checksum_ != curr_item.data_checksum_) {
       ret = OB_CHECKSUM_ERROR;
       LOG_WARN("find data checksum error", K(ret), K(curr_item), KPC_(normal_ckm_item));

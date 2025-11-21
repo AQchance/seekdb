@@ -817,7 +817,7 @@ int ObTscCgService::generate_pd_storage_flag(const ObLogPlan *log_plan,
     pd_spec.pd_storage_flag_.set_blockscan_pushdown(pd_blockscan);
     pd_spec.pd_storage_flag_.set_filter_pushdown(pd_filter);
     pd_spec.pd_storage_flag_.set_enable_skip_index(enable_skip_index);
-    LOG_DEBUG("chaser debug pd block", K(op_type), K(pd_blockscan), K(pd_filter), K(enable_skip_index));
+
   }
   return ret;
 }
@@ -1148,7 +1148,7 @@ int ObTscCgService::extract_tsc_access_columns(const ObLogTableScan &op,
   } else if (OB_FAIL(ObRawExprUtils::extract_column_exprs(tsc_exprs, access_exprs, true))) {
     LOG_WARN("extract column exprs failed", K(ret));
   }
-  LOG_TRACE("extract tsc access columns", K(ret), K(tsc_exprs), K(access_exprs), K(op.get_output_exprs()));
+
   return ret;
 }
 
@@ -1229,7 +1229,7 @@ int ObTscCgService::generate_access_ctdef(const ObLogTableScan &op,
         LOG_WARN("store output column ids failed", K(ret));
       } else {
         has_rowscn = true;
-        LOG_DEBUG("need row scn");
+
       }
     } else if (T_PSEUDO_OLD_NEW_COL == expr->get_expr_type()) {
       OZ(access_column_ids.push_back(OB_MAJOR_REFRESH_MVIEW_OLD_NEW_COLUMN_ID));
@@ -1506,7 +1506,7 @@ int ObTscCgService::generate_das_scan_ctdef(const ObLogTableScan &op,
                     *scan_ctdef.pd_expr_spec_.pd_storage_filters_.get_pushdown_filter()))) {
           LOG_WARN("failed to check lob column pushdown", K(ret));
         }
-        LOG_TRACE("index merge pushdown filters", K(scan_ctdef.ref_table_id_), K(scan_pushdown_filters));
+
       }
     }
   }
@@ -5073,7 +5073,7 @@ int ObTscCgService::generate_das_sort_ctdef(
   } else if (OB_FAIL(sort_ctdef->result_output_.assign(result_output))) {
     LOG_WARN("failed to assign result output", K(ret));
   } else {
-    LOG_TRACE("generate sort ctdef finished", K(sort_keys), K(sort_ctdef->sort_exprs_), K(result_output), K(ret));
+
   }
   return ret;
 }

@@ -31,7 +31,7 @@ static int deal_with_fo(ObBackupComplementLogCtx *ctx, const int64_t result)
   } else if (OB_FAIL(ctx->set_result(result, false/*need_retry*/))) {
     LOG_WARN("failed to set result", K(ret));
   } else {
-    LOG_INFO("deal with fo", K(ret), K(result));
+
   }
   return ret;
 }
@@ -188,11 +188,11 @@ int ObBackupPieceOp::func(const dirent *entry)
   } else if (!entry_suffix.prefix_match(OB_ARCHIVE_SUFFIX)) {
     // not ended with archive suffix
     ObString file_name_str(entry->d_name);
-    LOG_INFO("skip file which is not archive file", K(file_name_str), K(entry_suffix));
+
   } else if (OB_FAIL(databuff_printf(file_name, sizeof(file_name), "%.*s", len, entry->d_name))) {
     LOG_WARN("fail to save tmp file name", K(ret), K(file_name));
   } else if (0 == ObString::make_string(file_name).case_compare(OB_STR_LS_FILE_INFO)) {
-    LOG_INFO("skip ls file info");
+
   } else if (OB_FAIL(ob_atoll(file_name, file_id))) {
     LOG_WARN("failed to change string to number", K(ret), K(file_name));
   } else if (OB_FAIL(file_id_list_.push_back(file_id))) {
@@ -302,13 +302,13 @@ int ObBackupComplementLogDagNet::start_running()
       LOG_WARN("failed to add dag into dag_scheduler", K(ret), KP(finish_dag));
     } else {
       add_finish_dag_success = true;
-      LOG_INFO("success to add finish dag into dag_net", K(ret), KP(finish_dag));
+
     }
     if (FAILEDx(dag_scheduler->add_dag(complement_dag))) {
       LOG_WARN("failed to add dag into dag_scheduler", K(ret), KP(complement_dag));
     } else {
       add_complement_dag_success = true;
-      LOG_INFO("success to add complement log dag into dag_net", K(ret), KP(complement_dag));
+
     }
     if (OB_FAIL(ret) && OB_NOT_NULL(dag_scheduler) && OB_NOT_NULL(finish_dag)) {
       // add finish dag success and add complement log dag failed, need cancel finish dag
@@ -457,7 +457,7 @@ int ObBackupLSLogGroupDag::create_first_task()
   } else if (OB_FAIL(add_task(*task))) {
     LOG_WARN("failed to add task", K(ret));
   } else {
-    LOG_INFO("success to add complement log task", K(ret), KPC(this), KPC(task));
+
   }
   return ret;
 }
@@ -637,7 +637,7 @@ int ObBackupLSLogGroupTask::generate_ls_dag_()
           ret = OB_EAGAIN;
         }
       } else {
-        LOG_INFO("succeed to schedule ls backup dag", KPC(ls_dag));
+
         ls_dag = nullptr;
       }
 
@@ -729,7 +729,7 @@ int ObBackupLSLogDag::create_first_task()
   } else if (OB_FAIL(add_task(*task))) {
     LOG_WARN("failed to add task", K(ret));
   } else {
-    LOG_INFO("success to add backup ls log task", K(ret), KPC(this), KPC(task));
+
   }
   return ret;
 }
@@ -912,7 +912,7 @@ int ObBackupLSLogTask::deal_with_piece_meta_(
     if (OB_FAIL(inner_deal_with_piece_meta_(piece_attr))) {
       LOG_WARN("failed to backup complement log for piece", K(ret), K(piece_attr));
     } else {
-      LOG_INFO("inner deal with piece meta", K(piece_attr));
+
     }
   }
   return ret;
@@ -958,7 +958,7 @@ int ObBackupLSLogTask::generate_ls_copy_task_(const bool is_only_calc_stat, cons
     } else if (OB_FAIL(dag_->add_task(*finish_task))) {
       LOG_WARN("failed to add finish task to dag", K(ret));
     } else {
-      LOG_INFO("generate ls copy task", K(ls_id));
+
     }
   } else {
     ObBackupLSLogFinishTask *finish_task = NULL;
@@ -971,7 +971,7 @@ int ObBackupLSLogTask::generate_ls_copy_task_(const bool is_only_calc_stat, cons
     } else if (OB_FAIL(dag_->add_task(*finish_task))) {
       LOG_WARN("failed to add finish task to dag", K(ret));
     } else {
-      LOG_INFO("generate ls copy task", K(ls_id));
+
     }
   }
   return ret;
@@ -1001,13 +1001,13 @@ int ObBackupLSLogTask::get_ls_replay_start_scn_if_not_newly_created_(const share
   } else if (OB_FAIL(store.read_ls_meta_infos(ls_id, ls_meta_package))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("should be newly created ls", K(ls_id));
+
     } else {
       LOG_WARN("failed to read ls meta infos", K(ret), K(ls_id));
     }
   } else {
     start_scn = ls_meta_package.palf_meta_.prev_log_info_.scn_;
-    LOG_INFO("get ls replay start scn if not newly created", K(ls_id), K(start_scn));
+
   }
   return ret;
 }
@@ -1042,7 +1042,7 @@ int ObBackupLSLogTask::calc_backup_file_range_(const int64_t dest_id, const shar
   } else if (OB_FAIL(get_all_piece_file_list_(tenant_id, ls_id, piece_list, start_scn, end_scn, file_list))) {
     LOG_WARN("failed to get all piece file list", K(ret), K(tenant_id), K(ls_id), K(start_piece_id), K(end_piece_id));
   } else {
-    LOG_INFO("get all piece file list", K(tenant_id), K(start_piece_id), K(end_piece_id), K(piece_list), K(file_list));
+
   }
   return ret;
 }
@@ -1124,7 +1124,7 @@ int ObBackupLSLogTask::get_piece_id_by_scn_(const uint64_t tenant_id,
     LOG_WARN("failed to get pieces by range", K(ret), K(tenant_id), K(dest_id), K(scn));
   } else {
     piece_id = piece.key_.piece_id_;
-    LOG_INFO("get piece id by scn", K(tenant_id), K(scn), K(piece_id));
+
   }
   return ret;
 }
@@ -1140,7 +1140,7 @@ int ObBackupLSLogTask::get_all_pieces_(const uint64_t tenant_id, const int64_t d
   } else if (OB_FAIL(helper.get_pieces_by_range(*ctx_->report_ctx_.sql_proxy_, dest_id, start_piece_id, end_piece_id, piece_list))) {
     LOG_WARN("failed to get pieces by range", K(ret), K(tenant_id), K(dest_id), K(start_piece_id), K(end_piece_id));
   } else {
-    LOG_INFO("get pieces by range", K(tenant_id), K(start_piece_id), K(end_piece_id), K(piece_list));
+
   }
   return ret;
 }
@@ -1152,7 +1152,7 @@ int ObBackupLSLogTask::wait_pieces_frozen_(const common::ObArray<share::ObTenant
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("piece list should not be empty", K(ret));
   } else if (1 == piece_list.count()) {
-    LOG_INFO("only one piece, no need wait frozen", K(piece_list));
+
   } else {
     int64_t start_idx = piece_list.count() - 2;
     for (int64_t i = start_idx; OB_SUCC(ret) && i >= 0; i--) {
@@ -1184,10 +1184,10 @@ int ObBackupLSLogTask::wait_piece_frozen_(const share::ObTenantArchivePieceAttr 
       } else if (OB_FAIL(check_piece_frozen_(piece, is_frozen))) {
         LOG_WARN("failed to get ls meta", K(ret), K(piece));
       } else if (is_frozen) {
-        LOG_INFO("piece already frozen", K(piece), "wait_time", cur_ts - start_ts);
+
         break;
       } else {
-        LOG_INFO("wait piece frozen", K(piece), "wait_time", cur_ts - start_ts);
+
         ob_usleep(CHECK_TIME_INTERVAL);
         share::dag_yield();
       }
@@ -1233,14 +1233,14 @@ int ObBackupLSLogTask::get_all_piece_file_list_(const uint64_t tenant_id, const 
         int64_t end_file_id = 0;
         if (OB_FAIL(locate_archive_file_id_by_scn_(round_piece, ls_id, start_scn, start_file_id))) {
           if (OB_ENTRY_NOT_EXIST == ret) {
-            LOG_INFO("path may not exist", K(ret), K(round_piece), K(ls_id), K(start_scn));
+
             ret = OB_SUCCESS;
           } else {
             LOG_WARN("failed to locate archive file id by scn", K(ret), K(round_piece), K(ls_id), K(start_scn));
           }
         } else if (OB_FAIL(locate_archive_file_id_by_scn_(round_piece, ls_id, end_scn, end_file_id))) {
           if (OB_ENTRY_NOT_EXIST == ret) {
-            LOG_INFO("path may not exist", K(ret), K(round_piece), K(ls_id), K(end_scn));
+
             ret = OB_SUCCESS;
           } else {
             LOG_WARN("failed to locate archive file id by scn", K(ret), K(round_piece), K(ls_id), K(end_scn));
@@ -1256,7 +1256,7 @@ int ObBackupLSLogTask::get_all_piece_file_list_(const uint64_t tenant_id, const 
         int64_t file_id = 0;
         if (OB_FAIL(locate_archive_file_id_by_scn_(round_piece, ls_id, start_scn, file_id))) {
           if (OB_ENTRY_NOT_EXIST == ret) {
-            LOG_INFO("path may not exist", K(ret), K(round_piece), K(ls_id), K(end_scn));
+
             ret = OB_SUCCESS;
           } else {
             LOG_WARN("failed to locate archive file id by scn", K(ret), K(round_piece), K(ls_id), K(end_scn));
@@ -1268,7 +1268,7 @@ int ObBackupLSLogTask::get_all_piece_file_list_(const uint64_t tenant_id, const 
         int64_t file_id = 0;
         if (OB_FAIL(locate_archive_file_id_by_scn_(round_piece, ls_id, end_scn, file_id))) {
           if (OB_ENTRY_NOT_EXIST == ret) {
-            LOG_INFO("path may not exist", K(ret), K(round_piece), K(ls_id), K(end_scn));
+
             ret = OB_SUCCESS;
           } else {
             LOG_WARN("failed to locate archive file id by scn", K(ret), K(round_piece), K(ls_id), K(end_scn));
@@ -1336,7 +1336,7 @@ int ObBackupLSLogTask::locate_archive_file_id_by_scn_(
       dest_id, round_id, piece_id, ls_id, scn, file_id))) {
     LOG_WARN("failed to locate file by scn", K(ret), K(archive_dest), K(ls_id), K(scn), K(piece_attr));
   } else {
-    LOG_INFO("locate archive file id by scn", K(piece_attr), K(ls_id), K(scn), K(file_id));
+
   }
 #else
   UNUSED(piece_attr);
@@ -1742,7 +1742,7 @@ int ObBackupLSLogTask::get_archive_backup_dest_(
   } else if (OB_FAIL(archive_dest_.deep_copy(archive_dest))) {
     LOG_WARN("failed to deep copy archive dest", K(ret));
   } else {
-    LOG_INFO("succ get backup dest", K(path));
+
   }
   return ret;
 }
@@ -1835,7 +1835,7 @@ int ObBackupLSLogFileTask::process()
   } else if (OB_FAIL(inner_process_(backup_piece_file_))) {
     LOG_WARN("failed to inner process", K(ret), K_(backup_piece_file));
   } else {
-    LOG_INFO("inner process backup log file", K_(backup_piece_file));
+
   }
   if (OB_FAIL(ret)) {
     if (OB_TMP_FAIL(deal_with_fo(ctx_, ret))) {
@@ -1911,7 +1911,7 @@ int ObBackupLSLogFileTask::inner_process_(const ObBackupPieceFile &piece_file)
                     "piece_id", piece_file.piece_id_,
                     "file_id", piece_file.file_id_);
     DEBUG_SYNC(AFTER_REPORT_BACKUP_COMPL_LOG);
-    LOG_INFO("inner backup complement log", K(piece_file), K(src_path), K(dst_path));
+
   }
   return ret;
 }
@@ -1923,7 +1923,7 @@ int ObBackupLSLogFileTask::inner_backup_complement_log_(
   if (OB_FAIL(transfer_clog_file_(src_path, dst_path))) {
     LOG_WARN("failed to transfer clog file", K(ret), K(src_path), K(dst_path));
   } else {
-    LOG_INFO("backup complement log", K(src_path), K(dst_path));
+
   }
   return ret;
 }
@@ -1957,7 +1957,7 @@ int ObBackupLSLogFileTask::get_archive_backup_dest_(
   } else if (OB_FAIL(archive_dest_.deep_copy(archive_dest))) {
     LOG_WARN("failed to deep copy archive dest", K(ret));
   } else {
-    LOG_INFO("succ get backup dest", K(path));
+
   }
   return ret;
 }
@@ -2005,7 +2005,7 @@ int ObBackupLSLogFileTask::transfer_clog_file_(const ObBackupPath &src_path, con
         dst_len += transfer_len;
       }
       if (0 == transfer_len) { //at this point, last part is still held in memory
-        LOG_INFO("transfer ended", K(ret), K(src_path), K(dst_path));
+
         break;
       }
     }
@@ -2151,7 +2151,7 @@ int ObBackupLSLogFileTask::report_progress_()
     } else if (OB_FAIL(ObBackupTaskOperator::update_stats(trans, task_id, tenant_id, new_backup_set_stats))) {
       LOG_WARN("failed to update stats", K(ret), K(task_id), K(tenant_id));
     } else {
-      LOG_INFO("make progress", K(new_backup_set_stats), K(new_ls_task_stat));
+
     }
     if (OB_SUCC(ret)) {
       if (OB_FAIL(trans.end(true /*commit*/))) {
@@ -2244,7 +2244,7 @@ int ObBackupLSLogFinishTask::get_copy_file_info(ObBackupPieceFile &piece_file)
   } else {
     piece_file = file_list_.at(idx_);
     idx_++;
-    LOG_INFO("succeed get backup piece file info", K_(idx), K(piece_file));
+
   }
   return ret;
 }
@@ -2308,7 +2308,7 @@ int ObBackupLSLogGroupFinishDag::create_first_task()
   } else if (OB_FAIL(add_task(*task))) {
     LOG_WARN("failed to add task", K(ret));
   } else {
-    LOG_INFO("success to add backup ls log group finish task", K(ret), KPC(this), KPC(task));
+
   }
   return ret;
 }

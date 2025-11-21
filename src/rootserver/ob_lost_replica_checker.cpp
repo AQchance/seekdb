@@ -61,7 +61,7 @@ int ObLostReplicaChecker::check_cancel_()
 
 void ObLostReplicaChecker::run3()
 {
-  LOG_INFO("lost replica checker start");
+
   int ret = OB_SUCCESS;
   if (!inited_) {
     ret = OB_NOT_INIT;
@@ -75,11 +75,11 @@ void ObLostReplicaChecker::run3()
         LOG_WARN("failed to check lost replica", KR(ret));
       }
       if (OB_SUCCESS != idle_wait(wait_time_ms)) {
-          LOG_DEBUG("wait timeout", K(wait_time_ms));
+
       }
     }
   }
-  LOG_INFO("lost replica checker stop");
+
 
 }
 
@@ -89,7 +89,7 @@ int ObLostReplicaChecker::check_lost_replicas()
   ObLSInfo ls_info;
   int tmp_ret = OB_SUCCESS;
   ObArray<uint64_t> tenant_id_array;
-  LOG_INFO("start checking lost replicas");
+
   if (!inited_) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", K(ret));
@@ -136,7 +136,7 @@ int ObLostReplicaChecker::check_lost_replica_by_ls_(const share::ObLSInfo &ls_in
   int ret = OB_SUCCESS;
   bool is_lost_replica = false;
   int64_t lost_count = 0;
-  LOG_DEBUG("start checking lost replicas by ls", K(ls_info));
+
   if (!inited_) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", KR(ret));
@@ -160,7 +160,7 @@ int ObLostReplicaChecker::check_lost_replica_by_ls_(const share::ObLSInfo &ls_in
                                           false/*inner_table_only*/))) {
           LOG_WARN("lst_operator remove replica failed", KR(ret), KPC(replica));
         } else {
-          LOG_INFO("lost replica checker remove lost replica finish", KR(ret), KPC(replica));
+
         }
 
         if (OB_SUCC(ret) && is_sys_tenant(replica->get_tenant_id())) {
@@ -216,7 +216,7 @@ int ObLostReplicaChecker::check_lost_replica_(const ObLSInfo &ls_info,
      */
     if (!replica.is_in_service()) {
       is_lost_replica = true;
-      LOG_INFO("replica not in service", K(replica));
+
     } else {
       // go on check ls_status
       ObLSStatusOperator status_op;
@@ -229,12 +229,12 @@ int ObLostReplicaChecker::check_lost_replica_(const ObLSInfo &ls_info,
         LOG_WARN("failed to get ls status info", KR(ret), K(ls_info));
         if (OB_ENTRY_NOT_EXIST == ret) {
           is_lost_replica = true;
-          LOG_INFO("replica not in __all_ls_status", K(replica));
+
           ret = OB_SUCCESS;
         }
       }
     }
-    LOG_INFO("finish check lost replica", KR(ret), K(is_lost_replica), K(replica));
+
   }
   return ret;
 }
@@ -266,10 +266,10 @@ int ObLostReplicaChecker::check_lost_server_(const ObAddr &server, bool &is_lost
     } else if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
       is_lost_server = true;
-      LOG_INFO("server not exist", K(server));
+
     } else if (server_info.is_permanent_offline()) {
       is_lost_server = true;
-      LOG_INFO("server is permanent offline", K(server));
+
     } else if (server_info.is_deleting() && server_info.is_temporary_offline()) {
       bool is_empty = false;
       if (OB_FAIL(ut_operator.check_server_empty(server, is_empty))) {
@@ -277,7 +277,7 @@ int ObLostReplicaChecker::check_lost_server_(const ObAddr &server, bool &is_lost
         LOG_WARN("fail to check server empty", KR(ret), K(server));
       } else if (is_empty) {
         is_lost_server = true;
-        LOG_INFO("Deleting server is temporary offline and empty", K(server));
+
       }
     }
   }

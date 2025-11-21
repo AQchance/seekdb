@@ -428,7 +428,7 @@ int ObZoneManagerBase::add_zone(
         ret = OB_SUCCESS == ret ? tmp_ret : ret;
       }
       if (OB_SUCC(ret)) {
-        LOG_INFO("succeed to add new zone", "zone_info", zone_infos_[zone_count_]);
+
         ++zone_count_;
         ROOTSERVICE_EVENT_ADD("zone", "add_zone", K(zone));
       }
@@ -462,7 +462,7 @@ int ObZoneManagerBase::delete_zone(const ObZone &zone)
       zone_infos_[i] = zone_infos_[i + 1];
     }
     --zone_count_;
-    LOG_INFO("succeed to delete zone", K(zone));
+
     ROOTSERVICE_EVENT_ADD("zone", "delete_zone", K(zone));
   }
   return ret;
@@ -493,7 +493,7 @@ int ObZoneManagerBase::start_zone(const ObZone &zone)
     LOG_WARN("failed to update zone status", K(zone), "status", ObZoneStatus::ACTIVE, K(ret));
   } else {
     //leader_coordinator_->signal();
-    LOG_INFO("succeed to start zone", K(zone));
+
     ROOTSERVICE_EVENT_ADD("zone", "start_zone", K(zone));
   }
   return ret;
@@ -536,7 +536,7 @@ int ObZoneManagerBase::stop_zone(const ObZone &zone)
       LOG_WARN("failed to update zone status", K(zone), "status", ObZoneStatus::INACTIVE, K(ret));
     } else {
       //leader_coordinator_->signal();
-      LOG_INFO("succeed to stop zone", K(zone));
+
       ROOTSERVICE_EVENT_ADD("zone", "stop_zone", K(zone));
     }
   }
@@ -626,7 +626,7 @@ int ObZoneManagerBase::alter_zone(
     }
     if (OB_SUCC(ret)) {
       //leader_coordinator_->signal();
-      LOG_INFO("succeed to alter zone", "zone_info", zone_infos_[index]);
+
       ROOTSERVICE_EVENT_ADD("zone", "alter_zone",
                             "zone", arg.zone_,
                             "region", arg.region_,
@@ -682,7 +682,7 @@ int ObZoneManagerBase::reload()
 
     if (OB_SUCC(ret)) {
       loaded_ = true;
-      LOG_INFO("succeed to reload zone manager", "zone_manager_info", this);
+
     } else {
       LOG_WARN("failed to reload zone manager", KR(ret));
     }
@@ -1241,7 +1241,7 @@ int ObZoneManagerBase::set_storage_format_version(const int64_t version)
       ret = OB_SUCCESS == ret ? tmp_ret : ret;
     }
     if (OB_SUCC(ret)) {
-      LOG_INFO("set format version succeed", K(ret), K(version), K(global_info_.storage_format_version_));
+
     }
   }
   return ret;

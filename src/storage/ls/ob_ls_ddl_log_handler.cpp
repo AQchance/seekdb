@@ -325,7 +325,7 @@ int ObLSDDLLogHandler::replay(const void *buffer,
       if (OB_FAIL(ret)) {
         if (OB_TABLET_NOT_EXIST == ret) {
           ret = OB_SUCCESS;
-          LOG_INFO("tablet not exist when replaying ddl log", "type", ddl_header.get_ddl_clog_type());
+
         } else if (OB_EAGAIN == ret) {
           // retry replay again
         } else {
@@ -381,7 +381,7 @@ int ObLSDDLLogHandler::flush(SCN &rec_scn)
   } else {
     TCRLockGuard guard(online_lock_);
     if (!is_online_) {
-      LOG_INFO("ddl log handler is offline, no need to flush", K(ret), "ls_meta", ls_->get_ls_meta());
+
     } else if (OB_ISNULL(tenant_direct_load_mgr)) {
       ret = OB_ERR_SYS;
       LOG_WARN("error sys", K(ret), K(MTL_ID()));
@@ -406,7 +406,7 @@ int ObLSDDLLogHandler::flush(SCN &rec_scn)
         } else if (OB_TMP_FAIL(ddl_kv_mgr_handle.get_obj()->get_ddl_kvs(false/*frozen_only*/, ddl_kvs_handle))) {
           LOG_WARN("get freezed ddl kv failed", K(tmp_ret), "tablet_id", ddl_kv_mgr_handle.get_obj()->get_tablet_id());
         } else if (ddl_kvs_handle.empty()) {
-          LOG_TRACE("empty ddl kv", "tablet_id", ddl_kv_mgr_handle.get_obj()->get_tablet_id());
+
       #ifdef OB_BUILD_SHARED_STORAGE
         } else if (GCTX.is_shared_storage_mode()) {
           DEBUG_SYNC(BEFORE_DDL_CHECKPOINT);
@@ -442,7 +442,7 @@ int ObLSDDLLogHandler::flush(SCN &rec_scn)
             param.is_commit_           = false;
             param.data_format_version_ = direct_load_mgr_hdl.get_full_obj()->get_tenant_data_version();
             param.snapshot_version_    = direct_load_mgr_hdl.get_full_obj()->get_table_key().get_snapshot_version();
-            LOG_INFO("schedule ddl merge dag", K(param));
+
             if (OB_TMP_FAIL(ObTabletDDLUtil::freeze_ddl_kv(param))) {
               LOG_WARN("try to freeze ddl kv failed", K(tmp_ret), K(param));
             } else if (OB_TMP_FAIL(compaction::ObScheduleDagFunc::schedule_ddl_table_merge_dag(param))) {
@@ -460,7 +460,7 @@ int ObLSDDLLogHandler::flush(SCN &rec_scn)
           } else if (OB_FAIL(tablet_handle.get_obj()->get_ddl_complete(share::SCN::max_scn(), arena, ddl_complete))) {
             if (OB_EMPTY_RESULT == ret) {
               ret = OB_SUCCESS;
-              LOG_INFO("no ddl complete", K(ret), K(ls_->get_ls_id()), K(ddl_kv_mgr_handle.get_obj()->get_tablet_id()));
+
             } else {
               LOG_WARN("failed to get ddl complete", K(ret));
             }

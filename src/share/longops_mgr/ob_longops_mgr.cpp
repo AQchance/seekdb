@@ -85,7 +85,7 @@ int ObLongopsMgr::register_longops(ObILongopsStat *stat)
         ret = OB_ENTRY_EXIST;
       }
     } else {
-      LOG_INFO("register longops finish", K(ret), K(*stat));
+
     }
   }
   return ret;
@@ -113,7 +113,7 @@ int ObLongopsMgr::unregister_longops(ObILongopsStat *stat)
     } else {
       free_longops(stat);
     }
-    LOG_INFO("unregister longops finish", K(ret), K(key));
+
   }
   return ret;
 }

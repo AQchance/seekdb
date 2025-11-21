@@ -536,7 +536,7 @@ int ObPLObjectValue::check_value_version(share::schema::ObSchemaGetterGuard *sch
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("got an unexpected null table schema", K(ret), K(schema_obj1));
         } else if (*schema_obj1 == schema_obj2) { // schema do match
-          LOG_DEBUG("matched schema objs", K(*schema_obj1), K(schema_obj2), K(i));
+
           // do nothing
         } else if (schema_obj1->schema_type_ == schema_obj2.schema_type_ &&
                    schema_obj1->schema_id_ == schema_obj2.schema_id_) {
@@ -581,7 +581,7 @@ int ObPLObjectValue::need_check_schema_version(ObPLCacheCtx &pc_ctx,
                   || contain_sys_pl_object_
                   || contain_sys_name_table_);
     if (need_check && REACH_TIME_INTERVAL(10000000)) {
-      LOG_INFO("need check schema", K(new_schema_version), K(cached_tenant_schema_version));
+
     }
     if (need_check && (pl_routine_obj_->is_prcr() || pl_routine_obj_->is_sfc())
       && static_cast<ObPLCompileUnit*>(pl_routine_obj_)->has_incomplete_rt_dep_error()) {
@@ -634,7 +634,7 @@ int ObPLObjectValue::get_all_dep_schema(ObSchemaGetterGuard &schema_guard,
   if (OB_FAIL(ret)) {
     schema_array.reset();
   } else {
-    LOG_DEBUG("get all dep schema", K(schema_array));
+
   }
   return ret;
 }
@@ -868,7 +868,7 @@ int ObPLObjectValue::set_stored_schema_objs(const DependenyTableStore &dep_table
         } else {
           // do nothing
         }
-        LOG_DEBUG("check sys table", K(table_schema->get_table_name()), K(contain_sys_name_table_));
+
       } else {
         // do nothing
       }
@@ -990,7 +990,7 @@ int ObPLObjectValue::match_param_info(const ObPlParamInfo &param_info,
       } else if (OB_FAIL(match_complex_type_info(param_info, param, is_same))) {
         LOG_WARN("fail to match complex type info", K(ret), K(param), K(param_info));
       }
-      LOG_DEBUG("ext match param info", K(data_type), K(param_info), K(is_same), K(ret));
+
     } else if (param_info.is_oracle_null_value_ && !param.is_null()) {
       is_same = false;
     } else if (ObSQLUtils::is_oracle_null_with_normal_type(param)
@@ -1027,7 +1027,7 @@ int ObPLObjectValue::match_params_info(const ParamStore *params,
   } else {
     //match original param info
     int64_t N = params->count();
-    LOG_DEBUG("params info", K(params_info_), K(*params), K(this));
+
     for (int64_t i = 0; OB_SUCC(ret) && is_same && i < N; ++i) {
       if (OB_FAIL(match_param_info(params_info_.at(i),
                                    params->at(i),

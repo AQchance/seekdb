@@ -58,12 +58,12 @@ struct ObTableLockBuffer
     int ret = OB_SUCCESS;
     if (OB_UNLIKELY(buf_len <= 0)) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "Invalid argument to reserve local buffer", K(buf_len));
+
     } else if (buf_len > buf_len_) {
       reset();
       if (OB_ISNULL(buf_ = reinterpret_cast<char *>(allocator_.alloc(buf_len)))) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "Failed to alloc memory", K(ret), K(buf_len));
+
       } else {
         buf_len_ = buf_len;
       }

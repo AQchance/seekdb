@@ -158,7 +158,7 @@ int ObRootMinorFreeze::do_minor_freeze(const ParamsContainer &params) const
   int tmp_ret = OB_SUCCESS;
   int64_t failure_cnt = 0;
   ObMinorFreezeProxy proxy(*rpc_proxy_, &ObSrvRpcProxy::minor_freeze);
-  LOG_INFO("do minor freeze", K(params));
+
 
   for (int64_t i = 0; OB_SUCC(ret) && i < params.get_params().count(); ++i) {
     const MinorFreezeParam &param = params.get_params().at(i);

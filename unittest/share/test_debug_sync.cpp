@@ -52,7 +52,7 @@ TEST(common, ObDebugSyncAction)
 
   int64_t len = a.get_serialize_size();
   char buf[len];
-  LOG_INFO("action serialize size", K(len));
+
   int64_t pos = 0;
   ASSERT_EQ(OB_SUCCESS, a.serialize(buf, len, pos));
   ASSERT_EQ(pos, len);
@@ -118,7 +118,7 @@ TEST(common, ObDSActionArray)
   const static int64_t BUF_SIZE = 1024;
   char buf[BUF_SIZE];
   int64_t len = aa.get_serialize_size();
-  LOG_INFO("empty debug sync array actions overhead", K(len));
+
   int64_t pos = 0;
   ASSERT_EQ(OB_SUCCESS, aa.serialize(buf, len, pos));
   ASSERT_EQ(pos, len);

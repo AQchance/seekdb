@@ -262,7 +262,7 @@ int ObRedisImporter::import_redis_info()
 {
   int ret = OB_SUCCESS;
   bool need_import = false;
-  LOG_DEBUG("0. check basic info", K(ret));
+
   int64_t start_time = ObTimeUtility::current_time();
   if (OB_FAIL(check_basic_info(need_import))) {
     LOG_WARN("fail to check basic info", K(ret));
@@ -289,7 +289,7 @@ int ObRedisImporter::import_redis_info()
     }
 
     // 2. create database
-    LOG_DEBUG("2. create database", K(ret), "cost_time", ObTimeUtility::current_time() - start_time);
+
     ObSqlString sql_str;
     ObMemAttr attr(MTL_ID(), "RedisImpt");
     sql_str.set_attr(attr);
@@ -306,7 +306,7 @@ int ObRedisImporter::import_redis_info()
     }
 
     // 3. create tables
-    LOG_DEBUG("3. create tables", K(ret), "cost_time", ObTimeUtility::current_time() - start_time);
+
     for (int i = 0; OB_SUCC(ret) && i < ObRedisInfoV1::REDIS_MODEL_NUM; ++i) {
       sql_str.reset();
       if (OB_FAIL(sql_str.assign_fmt("%s %lu", ObRedisInfoV1::TABLE_SQLS[i], partition_num))) {

@@ -272,7 +272,7 @@ int ObDDLIndependentDag::add_scan_chunk(ObDDLChunk &ddl_chunk, const int64_t tim
     }
     if (OB_SUCC(ret) && is_new_slice) {
       const ObIndexType index_type = tablet_context->tablet_param_.storage_schema_->get_index_type();
-      LOG_INFO("add pipeline", K(ret), K(index_type));
+
       if (OB_FAIL(add_pipeline(tablet_context, ddl_slice, index_type))) {
         LOG_WARN("fail to add pipeline", K(ret));
       }
@@ -413,7 +413,7 @@ int ObDDLIndependentDag::alloc_vector_index_write_and_build_pipeline(
       if (OB_FAIL(vector_index_task_array.push_back(vector_index_task))) {
         LOG_WARN("push back vector index task failed", K(ret));
       } else {
-        LOG_INFO("alloc vector index write and build pipeline", K(index_type), K(*vector_index_task));
+
       }
     }
   }
@@ -779,7 +779,7 @@ int ObDDLIndependentDag::generate_tablet_write_macro_block_tasks(
     bool wait_dump = true;
     if (OB_UNLIKELY(INC_MAJOR_DIRECT_LOAD_DISABLE_WAIT_DUMP)) {
       wait_dump = false;
-      LOG_INFO("inc major direct load disable wait dump", K(wait_dump));
+
     }
     // group_write_task
     if (OB_FAIL(alloc_task(group_write_task))) {

@@ -223,7 +223,7 @@ int ObTenantSnapshotMetaTable::acquire_tenant_snapshot_svr_info(const ObTenantSn
                                                          svr_info.get_tenant_snap_item()))) {
     LOG_WARN("fail to get snapshot item", KR(ret), K(tenant_snapshot_id));
   } else if (ObTenantSnapStatus::DELETING == svr_info.get_tenant_snap_item_const().get_status()) {
-    LOG_INFO("tenant snapshot is deleting", KR(ret), K(tenant_snapshot_id), K(svr_info));
+
   } else if (OB_FAIL(table_operator.get_tenant_snap_ls_replica_simple_items(tenant_snapshot_id,
                                                                             GCTX.self_addr(),
                                                                             svr_info.get_ls_snap_item_arr()))) {

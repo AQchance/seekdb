@@ -51,17 +51,17 @@ int ObAdminLogExecutor::execute(int argc, char *argv[])
     int new_argc = argc - 1;
     char **new_argv = argv + 1;
     if (OB_NEED_RETRY != (ret = CmdCallSimple(new_argc, new_argv, dump_log) : OB_NEED_RETRY)) {
-      LOG_INFO("finish dump_log", K(ret));
+
     } else if (OB_NEED_RETRY != (ret = CmdCallSimple(new_argc, new_argv, dump_meta) : OB_NEED_RETRY)) {
-      LOG_INFO("finsh dump_meta", K(ret));
+
     } else if (OB_NEED_RETRY != (ret = CmdCallSimple(new_argc, new_argv, dump_tx_format) : OB_NEED_RETRY)) {
-      LOG_INFO("finsh dump_tx_format ", K(ret));
+
     } else if (OB_NEED_RETRY != (ret = CmdCallSimple(new_argc, new_argv, dump_filter) : OB_NEED_RETRY)) {
-      LOG_INFO("finsh dump_filter", K(ret));
+
     } else if (OB_NEED_RETRY != (ret = CmdCallSimple(new_argc, new_argv, stat) : OB_NEED_RETRY)) {
-      LOG_INFO("finsh stat", K(ret));
+
     } else if (OB_NEED_RETRY != (ret = CmdCallSimple(new_argc, new_argv, decompress_log) : OB_NEED_RETRY)) {
-      LOG_INFO("finsh decompress", K(ret));
+
     } else {
       fprintf(stderr, "failed %d", ret);
       print_usage();
@@ -119,7 +119,7 @@ int ObAdminLogExecutor::dump_filter(int argc,char ** argv)
   if (OB_FAIL(filter_.parse(argv[0]))) {
     LOG_WARN("parse filter failed", K(ret), K(argv[0]));
   } else {
-    LOG_INFO("dump with filter", K_(filter), K(argv[0]));
+
     if (OB_FAIL(dump_all_blocks_(argc - 1 , argv + 1, LogFormatFlag::FILTER_FORMAT))) {
       LOG_WARN("failed to dump filter", K(ret), K(argv[0]));
     }
@@ -158,7 +158,7 @@ int ObAdminLogExecutor::dump_all_blocks_(int argc, char **argv, LogFormatFlag fl
         if (OB_FAIL(dump_single_block_(argv[i], str_arg))) {
           LOG_WARN("failed to dump block", K(argv[i]), K(ret));
         } else {
-          LOG_INFO("dump_single_block_ success", K(argv[i]));
+
         }
       }
     } else {
@@ -167,7 +167,7 @@ int ObAdminLogExecutor::dump_all_blocks_(int argc, char **argv, LogFormatFlag fl
       int fd = ::open(tmp_file, O_CREAT | O_RDWR | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
       if (-1 == fd) {
         ret = OB_IO_ERROR;
-        LOG_INFO("failed to create tmp_file", K(tmp_file));
+
       } else {
         ::close(fd);
         fd = -1;
@@ -178,14 +178,14 @@ int ObAdminLogExecutor::dump_all_blocks_(int argc, char **argv, LogFormatFlag fl
         if (OB_FAIL(concat_file_(tmp_file, argv[i]))) {
           LOG_WARN("failed to concat_file", K(argv[i]), K(ret));
         } else {
-          LOG_INFO("concat_file success", K(tmp_file), K(argv[i]));
+
         }
       }
       if (OB_SUCC(ret)) {
         if (OB_FAIL(dump_single_block_(tmp_file, str_arg))) {
           LOG_WARN("failed to dump block", K(tmp_file), K(ret));
         } else {
-          LOG_INFO("dump_single_block_ success", K(tmp_file));
+
         }
       }
     }
@@ -218,7 +218,7 @@ int ObAdminLogExecutor::concat_file_(const char *first_path, const char *second_
       //Close files
       first_file.close();
       second_file.close();
-      LOG_INFO("finish concat_file", KP(first_path), KP(second_path));
+
     }
   }
   return ret;

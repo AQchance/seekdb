@@ -120,7 +120,7 @@ void ObHashDistinctVecOp::reset()
   } else {
     get_next_batch_func_ = &ObHashDistinctVecOp::do_unblock_distinct_for_batch;
   }
-  LOG_TRACE("trace block mode", K(MY_SPEC.is_block_mode_), K(spec_.id_));
+
 }
 
 int ObHashDistinctVecOp::inner_rescan()
@@ -247,7 +247,7 @@ int ObHashDistinctVecOp::build_distinct_data_for_batch(const int64_t batch_size,
         LOG_WARN("failed to finish insert row", K(ret));
       } else if (!has_got_part_) {
         has_got_part_ = true;
-        LOG_DEBUG("start get dumped partition", K(group_cnt_));
+
       } else {
         if (OB_FAIL(hp_infras_.close_cur_part(InputSide::LEFT))) {
           LOG_WARN("failed to close curr part", K(ret));
@@ -257,7 +257,7 @@ int ObHashDistinctVecOp::build_distinct_data_for_batch(const int64_t batch_size,
       } else if (is_block) {
         //if true, means we have process a full partition, then break the loop and return rows
         break;
-        LOG_TRACE("trace block", K(is_block));
+
       } else if (OB_FAIL(hp_infras_.end_round())) {
         LOG_WARN("failed to end round", K(ret));
       } else if (OB_FAIL(hp_infras_.start_round())) {
@@ -389,7 +389,7 @@ int ObHashDistinctVecOp::build_distinct_data_for_batch_by_pass(const int64_t bat
 
 int ObHashDistinctVecOp::do_unblock_distinct_for_batch(const int64_t batch_size)
 {
-  LOG_DEBUG("calc unblock hash distinct batch mode", K(batch_size));
+
   int ret = OB_SUCCESS;
   if (first_got_row_) {
     if (OB_FAIL(init_hash_partition_infras_for_batch())) {
@@ -405,7 +405,7 @@ int ObHashDistinctVecOp::do_unblock_distinct_for_batch(const int64_t batch_size)
 }
 
 int ObHashDistinctVecOp::do_block_distinct_for_batch(const int64_t batch_size) {
-  LOG_DEBUG("calc block hash distinct batch mode", K(batch_size));
+
   int ret = OB_SUCCESS;
   if (first_got_row_) {
     if (OB_FAIL(init_hash_partition_infras_for_batch())) {

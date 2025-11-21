@@ -218,7 +218,7 @@ int ObBaseConfig::load_from_file(const char *config_file,
         LOG_ERROR("load config fail", KR(ret), K(config_file), K(version), K(check_name),
             K(read_len));
       } else {
-        LOG_INFO("load config from file succ", K(config_file));
+
       }
     }
   }
@@ -334,7 +334,7 @@ int ObCommonConfig::add_extra_config_unsafe(const char *config_str,
         ret = OB_INVALID_CONFIG;
         LOG_ERROR("Invalid config string", K(token), K(ret));
       } else if (OB_ISNULL(saveptr_one) || OB_UNLIKELY('\0' == *(value = saveptr_one))) {
-        LOG_INFO("Empty config string", K(token), K(name));
+
         // ret = OB_INVALID_CONFIG;
         name = "";
       }
@@ -367,7 +367,7 @@ int ObCommonConfig::add_extra_config_unsafe(const char *config_str,
           }
         } else {
           (*pp_item)->set_version(version);
-          LOG_INFO("Load config succ", K(name), K(value));
+
           if (0 == compatible_cfg.case_compare(name)) {
             const uint64_t tenant_id = get_tenant_id();
             uint64_t data_version = 0;

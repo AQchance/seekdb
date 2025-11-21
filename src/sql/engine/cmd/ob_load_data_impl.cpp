@@ -253,7 +253,7 @@ int ObLoadDataBase::memory_wait_local(ObExecContext &ctx,
         LOG_WARN("failed to get location", K(ret));
         ob_usleep(retry_us);
       } else {
-        LOG_DEBUG("get participants", K(tablet_id), K(leader_addr));
+
       }
 
       if (OB_FAIL(ret)) {
@@ -434,7 +434,7 @@ int ObInsertValueGenerator::gen_insert_values(ObIArray<ObString> &insert_values,
     OX (insert_values.at(i) = store_value);
     //OZ (insert_values.push_back(store_value));
   }
-  LOG_DEBUG("LOAD DATA insert values generated", K(insert_values));
+
   return ret;
 }
 
@@ -657,7 +657,7 @@ int ObLoadDataSPImpl::copy_exprs_for_shuffle_task(ObExecContext &ctx,
         insert_expr = field_exprs.at(desc.array_ref_idx_);
       }
       OZ (insert_exprs.push_back(insert_expr));
-      LOG_DEBUG("push final insert expr", KPC(insert_expr));
+
     }
   }
   return ret;
@@ -743,7 +743,7 @@ int ObLoadDataSPImpl::gen_load_table_column_desc(ObExecContext &ctx,
     }
   }
 
-  LOG_DEBUG("generate insert info", K(insert_infos));
+
 
   return ret;
 }
@@ -816,7 +816,7 @@ int ObShuffleTaskHandle::expand_buf(const int64_t max_size, const int64_t to_buf
             new_size - sizeof(ObLoadFileBuffer));
     }
   }
-  LOG_DEBUG("expand buf to", K(new_size));
+
   return ret;
 }
 
@@ -846,7 +846,7 @@ int ObLoadDataSPImpl::exec_shuffle(int64_t task_id, ObShuffleTaskHandle *handle)
       LOG_WARN("fail to push frag", K(ret));
     } else {
       ATOMIC_AAF(&(part_datafrag_mgr->total_row_proceduced_), frag->row_cnt);
-      LOG_DEBUG("saving frag", K(tablet_id), K(*frag));
+
     }
     return OB_SUCCESS == ret;
   };
@@ -1135,7 +1135,7 @@ int ObLoadDataSPImpl::exec_insert(ObInsertTask &task, ObInsertResult& result)
     LOG_WARN("fail to exec insert remote", K(ret), "task_id", task.task_id_);
   }
 
-  LOG_DEBUG("LOAD DATA remote process", K(affected_rows), K(task.task_id_), K(ret));
+
 
 #ifdef TEST_MODE
   delay_process_by_probability(INSERT_TASK_DROP_RATE);
@@ -1259,13 +1259,13 @@ int ObLoadDataSPImpl::next_file_buffer(ObExecContext &ctx,
         box.read_cursor.commit_read();
         int64_t processed_GBs = box.read_cursor.get_total_read_GBs();
         if (processed_GBs != last_proccessed_GBs) {
-          LOG_INFO("LOAD DATA file read progress: ", K(processed_GBs));
+
         }
 
         box.job_status->read_bytes_ += box.read_cursor.read_size_;
       } else if (box.file_reader->eof()) {
         box.read_cursor.is_end_file_ = true;
-        LOG_DEBUG("LOAD DATA reach file end", K(box.read_cursor));        
+        
       }
     }
     // Find complete lines from buffer, the remaining backup to data_trimer
@@ -1427,7 +1427,7 @@ int ObLoadDataSPImpl::log_failed_line(ToolBox &box,
                                                 false))) {
       LOG_WARN("fail to append file", K(ret), K(log_buf_pos));
     } else {
-      LOG_DEBUG("LOAD DATA log failed rows", K(task_id), K(line_num), K(task_type));
+
     }
 
   }
@@ -1445,7 +1445,7 @@ int ObLoadDataSPImpl::log_failed_insert_task(ToolBox &box, ObInsertTask &task)
     LOG_WARN("fail to create log file", K(ret));
   } else {
     log_err = task.result_.exec_ret_;
-    LOG_DEBUG("check task result", K(task.result_));
+
   }
 
   for (int64_t buf_i = 0; OB_SUCC(ret) && buf_i < task.insert_value_data_.count(); ++buf_i) {
@@ -1557,7 +1557,7 @@ int ObLoadDataSPImpl::handle_returned_insert_task(ObExecContext &ctx,
       task_status = can_retry ? TASK_NEED_RETRY : TASK_FAILED;
       task_status = is_schema_error_need_retry_for_load_data(err) ? TASK_NEED_RETRY : task_status;
       if (is_schema_error_need_retry_for_load_data(err) && insert_task.retry_times_ % 1000) {
-        LOG_INFO("load data retry for schema error", K(err));
+
       }
       if (OB_FAIL(part_mgr->update_part_location(ctx))) {
         LOG_WARN("fail to update location cache", K(ret));
@@ -1667,7 +1667,7 @@ int ObLoadDataSPImpl::insert_task_gen_and_dispatch(ObExecContext &ctx, ToolBox &
         LOG_WARN("fail to handle returned insert task", K(ret));
       } else if (OB_UNLIKELY(need_retry)) {
         //CASE1: for retry old insert task
-        LOG_DEBUG("LOAD DATA need retry", KPC(insert_task));
+
         if (OB_FAIL(insert_task_send(insert_task, box))) {
           LOG_WARN("fail to send insert task", K(ret));
         } else {
@@ -1699,7 +1699,7 @@ int ObLoadDataSPImpl::insert_task_gen_and_dispatch(ObExecContext &ctx, ToolBox &
         if (iter_end) {
           //CASE2: all task on this server are done
           task_send_out = false;
-          LOG_DEBUG("LOAD DATA all jobs are finish", K(server_info->addr), K(token_cnt));
+
         } else {
           //CASE3: for new insert task
           insert_task->part_mgr = part_datafrag_mgr;
@@ -1765,7 +1765,7 @@ int ObLoadDataSPImpl::execute(ObExecContext &ctx, ObLoadDataStmt &load_stmt)
     
     ObString filename;
     while (OB_SUCC(ret) && OB_SUCC(box.file_iter.get_next_file(filename))) {
-      LOG_TRACE("begin to load file", K(filename));
+
 
       OZ (box.open_file(filename, ctx));
 
@@ -1777,7 +1777,7 @@ int ObLoadDataSPImpl::execute(ObExecContext &ctx, ObLoadDataStmt &load_stmt)
         OZ (next_file_buffer(ctx, box, box.temp_handle,
                              box.ignore_rows - box.data_trimer.get_current_file_lines_count()));
         OZ (ObLoadDataUtils::check_session_status(*ctx.get_my_session()));
-        LOG_DEBUG("LOAD DATA ignore rows", K(box.ignore_rows), K(box.data_trimer.get_current_file_lines_count()));
+
       }
 
       //main while
@@ -1974,7 +1974,7 @@ int ObPartDataFragMgr::next_insert_task(int64_t batch_row_count, ObInsertTask &t
 
   task.row_count_ = batch_row_count;
 
-  LOG_DEBUG("next_insert_task", K(task));
+
 
   return ret;
 }
@@ -2046,7 +2046,7 @@ int ObDataFragMgr::init(ObExecContext &ctx, uint64_t table_id)
   } else if (OB_FAIL(table_schema->get_all_tablet_and_object_ids(tablet_ids_, part_ids))) {
     LOG_WARN("failed to get partition ids", K(ret));
   } else {
-    LOG_INFO("table partition ids", K(tablet_ids_));
+
     total_part_cnt_ = tablet_ids_.count();
   }
 
@@ -2145,7 +2145,7 @@ int ObPartDataFragMgr::update_part_location(ObExecContext &ctx)
           }
         }
       } else {
-        LOG_DEBUG("get participants", K(tablet_id_), K(leader_addr_));
+
       }
     } while (is_location_service_renew_error(ret) && force_renew);
   }
@@ -2382,7 +2382,7 @@ int ObLoadDataSPImpl::ToolBox::build_calc_partid_expr(ObExecContext &ctx,
           insert_expr = field_exprs.at(desc.array_ref_idx_);
         }
         OZ (insert_exprs.push_back(insert_expr));
-        LOG_DEBUG("push final insert expr", KPC(insert_expr));
+
       }
     }
 
@@ -2692,7 +2692,7 @@ int ObLoadDataSPImpl::ToolBox::init(ObExecContext &ctx, ObLoadDataStmt &load_stm
     if (OB_FAIL(hint.get_value(ObLoadDataHint::PARALLEL_THREADS, hint_parallel))) {
       LOG_WARN("fail to get value", K(ret));
     } else {
-      LOG_DEBUG("parallel calc", K(hint_parallel), K(max_cpus));
+
       parallel = hint_parallel > 0 ? hint_parallel : DEFAULT_PARALLEL_THREAD_COUNT;
       //parallel = std::min(parallel, max_cpus);
     }
@@ -2727,7 +2727,7 @@ int ObLoadDataSPImpl::ToolBox::init(ObExecContext &ctx, ObLoadDataStmt &load_stm
         batch_buffer_size = MAX(ObLoadFileBuffer::MAX_BUFFER_SIZE, hint_max_batch_buffer_size);
       }
     }
-    LOG_DEBUG("batch size", K(hint_batch_size), K(batch_row_count), K(batch_buffer_size));
+
   }
 
   if (OB_SUCC(ret)) {

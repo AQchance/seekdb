@@ -104,7 +104,7 @@ void ObTableApiSessPool::destroy()
   key_node_map_.destroy();
   allocator_.reset();
   is_inited_ = false;
-  LOG_INFO("ObTableApiSessPool destroy successfully", K(MTL_ID()));
+
 }
 
 /*
@@ -195,7 +195,7 @@ int ObTableApiSessPool::evict_retired_sess()
   }
 
   if (delete_count != 0) {
-    LOG_INFO("evict retired session node", K(delete_count), K(retired_nodes_.get_size()));
+
   }
 
   return ret;

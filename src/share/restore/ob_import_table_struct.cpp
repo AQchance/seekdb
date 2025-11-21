@@ -432,7 +432,7 @@ int ObImportTableTask::parse_from(common::sqlclient::ObMySQLResult &result)
   }
 
   if (OB_SUCC(ret)) {
-    LOG_INFO("succeed to parse ObImportTableTask", KPC(this));
+
   }
   return ret;
 }
@@ -768,7 +768,7 @@ int ObImportTableJob::parse_from(common::sqlclient::ObMySQLResult &result)
   }
 
   if (OB_SUCC(ret)) {
-    LOG_INFO("succeed parse import table job", KPC(this));
+
   }
 
   return ret;
@@ -1224,7 +1224,7 @@ int ObRecoverTableJob::parse_from(common::sqlclient::ObMySQLResult &result)
     } else if (OB_FAIL(import_database_array.hex_format_deserialize(str.ptr(), str.length(), pos))) {
       LOG_WARN("failed to deserialize database array", KR(ret), K(str));
     } else {
-      LOG_INFO("import database array hex format deserialize", K(str), K(import_database_array));
+
     }
   }
 
@@ -1237,7 +1237,7 @@ int ObRecoverTableJob::parse_from(common::sqlclient::ObMySQLResult &result)
     } else if (OB_FAIL(import_table_array.hex_format_deserialize(str.ptr(), str.length(), pos))) {
       LOG_WARN("failed to deserialize table array", KR(ret), K(str));
     } else {
-      LOG_INFO("import table array hex format deserialize", K(str), K(import_table_array));
+
     }
   }
 
@@ -1250,7 +1250,7 @@ int ObRecoverTableJob::parse_from(common::sqlclient::ObMySQLResult &result)
     } else if (OB_FAIL(import_part_array.hex_format_deserialize(str.ptr(), str.length(), pos))) {
       LOG_WARN("failed to deserialize partition array", KR(ret), K(str));
     } else {
-      LOG_INFO("import partition array hex format deserialize", K(str), K(import_part_array));
+
     }
   }
 
@@ -1263,7 +1263,7 @@ int ObRecoverTableJob::parse_from(common::sqlclient::ObMySQLResult &result)
     } else if (OB_FAIL(remap_database_array.hex_format_deserialize(str.ptr(), str.length(), pos))) {
       LOG_WARN("failed to deserialize remap database array", KR(ret), K(str));
     } else {
-      LOG_INFO("remap database array hex format deserialize", K(str), K(remap_database_array));
+
     }
   }
 
@@ -1276,7 +1276,7 @@ int ObRecoverTableJob::parse_from(common::sqlclient::ObMySQLResult &result)
     } else if (OB_FAIL(remap_table_array.hex_format_deserialize(str.ptr(), str.length(), pos))) {
       LOG_WARN("failed to deserialize remap table array", KR(ret), K(str));
     } else {
-      LOG_INFO("remap table array hex format deserialize", K(str), K(remap_table_array));
+
     }
   }
 
@@ -1289,7 +1289,7 @@ int ObRecoverTableJob::parse_from(common::sqlclient::ObMySQLResult &result)
     } else if (OB_FAIL(remap_part_array.hex_format_deserialize(str.ptr(), str.length(), pos))) {
       LOG_WARN("failed to deserialize remap partition array", KR(ret), K(str));
     } else {
-      LOG_INFO("remap partition array hex format deserialize", K(str), K(remap_part_array));
+
     }
   }
 
@@ -1302,7 +1302,7 @@ int ObRecoverTableJob::parse_from(common::sqlclient::ObMySQLResult &result)
     } else if (OB_FAIL(remap_tablegroup_array.hex_format_deserialize(str.ptr(), str.length(), pos))) {
       LOG_WARN("failed to deserialize remap tablegroup array", KR(ret), K(str));
     } else {
-      LOG_INFO("remap tablegroup array hex format deserialize", K(str), K(remap_tablegroup_array));
+
     }
   }
 
@@ -1315,12 +1315,12 @@ int ObRecoverTableJob::parse_from(common::sqlclient::ObMySQLResult &result)
     } else if (OB_FAIL(remap_tablespace_array.hex_format_deserialize(str.ptr(), str.length(), pos))) {
       LOG_WARN("failed to deserialize remap tablespace array", KR(ret), K(str));
     } else {
-      LOG_INFO("remap tablespace array hex format deserialize", K(str), K(remap_tablespace_array));
+
     }
   }
 
   if (OB_SUCC(ret)) {
-    LOG_INFO("parse recover table job succeed", KPC(this));
+
   }
 
   return ret;

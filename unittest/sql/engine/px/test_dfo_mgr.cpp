@@ -228,12 +228,12 @@ TEST_F(ObDFOMgrTest, px_coord)
     void run1()
     {
       int ret = OB_SUCCESS;
-      LOG_INFO("start thread", K(thread));
+
       ObPXCoord *coord = reinterpret_cast<ObPXCoord *>(arg);
       if (OB_FAIL(coord->open())) {
         LOG_WARN("fail open coord", K(ret));
       }
-      LOG_INFO("end thread", K(thread));
+
     }
   };
 

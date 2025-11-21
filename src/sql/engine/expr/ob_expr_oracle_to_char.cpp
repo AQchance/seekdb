@@ -304,7 +304,7 @@ int ObExprToCharCommon::eval_to_char(const ObExpr &expr,
 int ObExprToCharCommon::eval_oracle_to_char_batch(
     const ObExpr &expr, ObEvalCtx &ctx, const ObBitVector &skip, const int64_t batch_size)
 {
-  LOG_DEBUG("eval to_char in batch mode", K(batch_size));
+
   int ret = OB_SUCCESS;
   ObDatum *results = expr.locate_batch_datums(ctx);
 
@@ -431,7 +431,7 @@ int ObExprToCharCommon::eval_oracle_to_char_batch(
 }
 
 int ObExprToCharCommon::eval_to_char_vector(VECTOR_EVAL_FUNC_ARG_DECL) {
-  LOG_DEBUG("eval to_char in vector mode", K(bound.range_size()));
+
   int ret = OB_SUCCESS;
   if (OB_FAIL(expr.args_[0]->eval_vector(ctx, skip, bound))) {
     LOG_WARN("failed to eval vector param values", K(ret));
@@ -795,7 +795,7 @@ int ObExprToCharCommon::datetime_to_char(const ObExpr &expr,
                                                            false, ctx.exec_ctx_.get_allocator()))) {
             LOG_WARN("fail to parse format", K(ret), K(format_str));
           }
-          LOG_DEBUG("new dfm convert ctx", K(ret), KPC(dfm_convert_ctx));
+
         }
         if (OB_SUCC(ret)) {
           if (OB_FAIL(ObTimeConverter::ob_time_to_str_by_dfm_elems(ob_time, scale,
@@ -930,7 +930,7 @@ int ObExprToCharCommon::process_number_sci_value(
     }
     if (OB_SUCC(ret)) {
       res.assign_ptr(buf, static_cast<int32_t>(str_len));
-      LOG_DEBUG("process_number_sci_value", K(input), K(res));
+
     }
   }
   return ret;

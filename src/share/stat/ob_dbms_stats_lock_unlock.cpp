@@ -83,7 +83,7 @@ int ObDbmsStatsLockUnlock::set_table_stats_lock(ObExecContext &ctx,
                                            part_stattypes))) {
     LOG_WARN("failed to get stats history sql", K(ret));
   } else if (!need_update_lock) {
-    LOG_TRACE("no need update lock", K(need_update_lock), K(param), K(set_locked));
+
   } else if (OB_FAIL(gen_partition_list(param, partition_list, dummy_array))) {
     LOG_WARN("failed to append sql stmt", K(ret), K(raw_sql));
   } else if (OB_FAIL(raw_sql.append_fmt(UPDATE_STAT_STATTYPE_LOCKED,
@@ -103,7 +103,7 @@ int ObDbmsStatsLockUnlock::set_table_stats_lock(ObExecContext &ctx,
              OB_FAIL(trans.write(param.tenant_id_, insert_sql.ptr(), affected_rows))) {
     LOG_WARN("fail to exec sql", K(insert_sql), K(ret));
   } else {
-    LOG_TRACE("Succeed to lock table stats", K(raw_sql), K(insert_sql));
+
   }
   if (OB_SUCC(ret)) {
     if (OB_FAIL(trans.end(true))) {

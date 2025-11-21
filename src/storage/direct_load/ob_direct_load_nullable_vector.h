@@ -125,12 +125,12 @@ public:
         break;
       default:
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected vector format", KR(ret), KPC(this), KPC(src), K(format));
+
         break;
     }
     if (OB_SUCC(ret)) {
       if (OB_FAIL(data_vector_.append_batch(batch_idx, src, offset, size))) {
-        STORAGE_LOG(WARN, "fail to append batch", KR(ret));
+
       }
     }
     return ret;
@@ -181,12 +181,12 @@ public:
         break;
       default:
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected vector format", KR(ret), KPC(this), KPC(src), K(format));
+
         break;
     }
     if (OB_SUCC(ret)) {
       if (OB_FAIL(data_vector_.append_selective(batch_idx, src, selector, size))) {
-        STORAGE_LOG(WARN, "fail to append selective", KR(ret));
+
       }
     }
     return ret;
@@ -247,12 +247,12 @@ public:
         break;
       default:
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected vector format", KR(ret), KPC(this), KPC(src), K(format));
+
         break;
     }
     if (OB_SUCC(ret)) {
       if (OB_FAIL(data_vector_.shallow_copy(src, batch_size))) {
-        STORAGE_LOG(WARN, "fail to shallow copy", KR(ret));
+
       }
     }
     return ret;

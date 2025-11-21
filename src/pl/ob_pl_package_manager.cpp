@@ -71,7 +71,7 @@ public:
       ret = OB_ERR_NULL_VALUE;
       LOG_WARN("package sql data is null", K(ret), K(data_));
     } else if (0 == strlen(data_)) {
-      LOG_INFO("package sql file is empty or not exists", K(ret));
+
     } else {
       cursor_ = data_;
     }
@@ -332,7 +332,7 @@ int ObPLPackageManager::read_and_exec_package_sql(ObMySQLProxy &sql_proxy,
           } else {
             OZ (ObSPIService::force_refresh_schema(OB_SYS_TENANT_ID));
           }
-          LOG_INFO("package source data consumed", K(ret), K(stream));
+
         }
       }
       if (create_external_table && OB_SUCC(ret)) {
@@ -344,7 +344,7 @@ int ObPLPackageManager::read_and_exec_package_sql(ObMySQLProxy &sql_proxy,
                                     param_ptr))) {
           LOG_WARN("fail to alter auto_refresh flag of external table ", K(ret), K(alter_table_sql));
         } else {
-          LOG_INFO("seccess to alter auto_refresh flag", KR(ret), K(alter_table_sql));
+
         }
       }
     }
@@ -374,7 +374,7 @@ int ObPLPackageManager::get_syspack_source_file_content(const char *file_name, c
   OX (content = nullptr);
   if (OB_ISNULL(file_name)) {
     // return nullptr as `content`
-    LOG_INFO("file name c string is null", K(file_name));
+
   } else {
     for (int64_t i = 0; OB_SUCC(ret) && i < syspack_source_count; i++) {
       if (0 == ObString(file_name).case_compare(syspack_source_contents[i].first)) {
@@ -399,7 +399,7 @@ int ObPLPackageManager::load_sys_package(ObMySQLProxy &sql_proxy,
   const char *body_file = pack_file_info.package_body_file_name;
 
   const int64_t begin_time = ObTimeUtility::current_time();
-  LOG_INFO("load sys package", K(package_name), K(spec_file), K(body_file), K(begin_time));
+
 
   if (from_file) {
     const char *sys_package_dir = "admin";
@@ -431,7 +431,7 @@ int ObPLPackageManager::load_sys_package(ObMySQLProxy &sql_proxy,
   }
 
   const int64_t now = ObTimeUtility::current_time();
-  LOG_INFO("load sys package finish", K(ret), K(package_name), "total_time_used", now - begin_time);
+
   return ret;
 }
 
@@ -487,14 +487,14 @@ int ObPLPackageManager::load_sys_package_list(ObMySQLProxy &sql_proxy,
 {
   int ret = OB_SUCCESS;
   CK (OB_NOT_NULL(sys_package_list));
-  LOG_INFO("load sys package list begin", "sys package total count", sys_package_count);
+
   for (int i = 0; OB_SUCC(ret) && i < sys_package_count; ++i) {
     OZ (load_sys_package(sql_proxy, sys_package_list[i], compa_mode, from_file));
   }
   if (OB_FAIL(ret)) {
     LOG_WARN("load sys package list failed", K(ret), K(compa_mode));
   } else {
-    LOG_INFO("load sys package list success", K(ret), K(compa_mode));
+
   }
   return ret;
 }
@@ -520,7 +520,7 @@ int ObPLPackageManager::load_all_common_sys_package(
   }
 
   if (OB_SUCC(ret)) {
-    LOG_INFO("load all common sys package success!", K(ret), K(from_file));
+
   } else {
     LOG_WARN("load all common sys package failed!", K(ret), K(from_file));
   }
@@ -999,7 +999,7 @@ int ObPLPackageManager::set_package_var_val(const ObPLResolveCtx &resolve_ctx,
                                       var_val.get_hex_string().length(),
                                       new_var_val), K(package_id), K(var_idx), K(var_val));
     }
-    LOG_DEBUG("deserialize package var", K(package_id), K(var_idx), K(var_val), K(new_var_val));
+
   } else {
     new_var_val = var_val;
   }
@@ -1482,7 +1482,7 @@ int ObPLPackageManager::get_package_item_state(const ObPLResolveCtx &resolve_ctx
       }
     }
     if (OB_SUCC(ret)) {
-      LOG_INFO("PLPACKAGE:package state expired, try to reconstruct it", K(package_id), K(resolve_ctx.is_sync_package_var_));
+
       package_state->reset(&(resolve_ctx.session_info_));
       package_state->~ObPLPackageState();
       session_allocator.free(package_state);
@@ -1656,7 +1656,7 @@ int ObPLPackageManager::add_package_to_plan_cache(const ObPLResolveCtx &resolve_
         LOG_WARN("Failed to get sql_id for pl obj!", K(ret));
       } else if (OB_FAIL(ObPLCacheMgr::add_pl_cache(resolve_ctx.session_info_.get_plan_cache(), package, pc_ctx))) {
         if (OB_SQL_PC_PLAN_DUPLICATE == ret) {
-          LOG_INFO("package has been added by others, need not add again", K(package_id), K(ret));
+
           ret = OB_SUCCESS;
         } else if (OB_REACH_MEMORY_LIMIT == ret || OB_SQL_PC_PLAN_SIZE_LIMIT == ret) {
           if (REACH_TIME_INTERVAL(1000000)) { //1s, When memory reaches its limit, this log print will be relatively frequent, so it is printed at an interval of 1s
@@ -1722,7 +1722,7 @@ int ObPLPackageManager::get_package_from_plan_cache(const ObPLResolveCtx &resolv
       } else if (FALSE_IT(cacheobj_guard = new (buf)ObCacheObjGuard(GET_PKG_HANDLE))) {
         // do nothing
       } else if (OB_FAIL(ObPLCacheMgr::get_pl_cache(resolve_ctx.session_info_.get_plan_cache(), *cacheobj_guard, pc_ctx))) {
-        LOG_INFO("get pl package from plan cache failed", K(ret), K(package_id));
+
         HANDLE_PL_CACHE_RET_VALUE(ret);
       } else if (FALSE_IT(package = static_cast<ObPLPackage*>(cacheobj_guard->get_cache_obj()))) {
         // do nothing
@@ -1733,7 +1733,7 @@ int ObPLPackageManager::get_package_from_plan_cache(const ObPLResolveCtx &resolv
           cacheobj_guard->~ObCacheObjGuard();
           package = NULL;
         } else {
-          LOG_DEBUG("get package from plan cache success", K(ret), K(package_id));
+
         }
       } else {}
     //}

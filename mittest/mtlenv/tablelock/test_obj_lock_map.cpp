@@ -62,12 +62,12 @@ public:
     // mock sequence no
     ObClockGenerator::init();
     create_memtable();
-    LOG_INFO("set up success");
+
   }
   virtual void TearDown() override
   {
     ObClockGenerator::destroy();
-    LOG_INFO("tear down success");
+
   }
 public:
   void create_memtable()

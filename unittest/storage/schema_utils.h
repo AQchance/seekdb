@@ -88,10 +88,10 @@ void TestSchemaUtils::prepare_data_schema(share::schema::ObTableSchema &table_sc
     } else {
       column.set_rowkey_position(0);
     }
-    LOG_INFO("add column", K(i), K(column));
+
     ASSERT_EQ(common::OB_SUCCESS, table_schema.add_column(column));
   }
-  LOG_INFO("dump data table schema", LITERAL_K(TEST_ROWKEY_COLUMN_CNT), K(table_schema));
+
 }
 
 void TestSchemaUtils::prepare_index_schema(share::schema::ObTableSchema &index_schema)
@@ -141,10 +141,10 @@ void TestSchemaUtils::prepare_index_schema(share::schema::ObTableSchema &index_s
     column.set_collation_type(common::ObCollationType::CS_TYPE_UTF8MB4_GENERAL_CI);
     column.set_data_length(10);
     column.set_rowkey_position(i + 1);
-    LOG_INFO("add column", K(i), K(column));
+
     ASSERT_EQ(common::OB_SUCCESS, index_schema.add_column(column));
   }
-  LOG_INFO("dump index table schema", LITERAL_K(TEST_ROWKEY_COLUMN_CNT), K(index_schema));
+
 }
 } // namespace storage
 } // namespace oceanbase

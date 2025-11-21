@@ -456,7 +456,7 @@ int ObInnerConnectionLockUtil::replace_lock(
         LOG_WARN("set system tenant id failed", K(ret), K(tenant_id));
       }
     } else {
-      LOG_DEBUG("tenant not in server", K(ret), K(tenant_id));
+
     }
 
     if (OB_SUCC(ret)) {
@@ -512,7 +512,7 @@ int ObInnerConnectionLockUtil::replace_lock(const uint64_t tenant_id,
         LOG_WARN("set system tenant id failed", K(ret), K(tenant_id));
       }
     } else {
-      LOG_DEBUG("tenant not in server", K(ret), K(tenant_id));
+
     }
 
     if (OB_SUCC(ret)) {
@@ -635,7 +635,7 @@ int ObInnerConnectionLockUtil::create_inner_conn(sql::ObSQLSessionInfo *session_
     ret = OB_NOT_INIT;
     LOG_WARN("session or sql_proxy is NULL", KP(session_info), KP(sql_proxy));
   } else if (OB_NOT_NULL(inner_conn = static_cast<observer::ObInnerSQLConnection *>(session_info->get_inner_conn()))) {
-    LOG_INFO("session has had inner connection, no need to create again", KPC(session_info));
+
   } else if (OB_ISNULL(pool = static_cast<observer::ObInnerSQLConnectionPool *>(sql_proxy->get_pool()))) {
     ret = OB_NOT_INIT;
     LOG_WARN("connection pool is NULL", K(ret));
@@ -808,7 +808,7 @@ int ObInnerConnectionLockUtil::request_lock_(
         LOG_WARN("set system tenant id failed", K(ret), K(tenant_id));
       }
     } else {
-      LOG_DEBUG("tenant not in server", K(ret), K(tenant_id));
+
     }
 
     if (OB_SUCC(ret)) {
@@ -876,7 +876,7 @@ int ObInnerConnectionLockUtil::request_lock_(
         LOG_WARN("set system tenant id failed", K(ret), K(tenant_id));
       }
     } else {
-      LOG_DEBUG("tenant not in server", K(ret), K(tenant_id));
+
     }
 
     if (OB_SUCC(ret)) {

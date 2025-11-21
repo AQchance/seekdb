@@ -73,7 +73,7 @@ int ObSqlWorkareaHistogramIterator::get_next_batch_wa_histograms()
       }
     }
     ++cur_nth_tenant_;
-    LOG_TRACE("trace get histogram for next tenant", K(tenant_id), K(wa_histograms_.count()));
+
   }
   return ret;
 }

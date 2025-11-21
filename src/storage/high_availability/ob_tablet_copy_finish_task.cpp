@@ -106,10 +106,10 @@ int ObTabletCopyFinishTask::process()
     ret = OB_SUCCESS;
     if (param_.tablet_id_.is_inner_tablet() || param_.tablet_id_.is_ls_inner_tablet()) {
     } else if (GCONF.errsim_test_tablet_id.get_value() > 0 && param_.tablet_id_.id() == GCONF.errsim_test_tablet_id.get_value()) {
-      LOG_INFO("[ERRSIM] stuck before create table store", K(param_), KPC(this));
+
       DEBUG_SYNC(BEFORE_MIGRATION_CREATE_TABLE_STORE);
     } else {
-      LOG_INFO("start to process copy finish task", K(param_), KPC(this));
+
     }
   } else {
     ret = OB_SUCCESS; // other errsim errors of ddl split, ignored here.
@@ -536,7 +536,7 @@ int ObTabletCopyFinishTask::deal_with_major_sstables_()
     if (OB_SUCC(ret) && need_replace_remote_sstable && !param_.src_tablet_meta_->storage_schema_.is_row_store()) {
       ret = EN_COPY_COLUMN_STORE_MAJOR_FAILED ? : OB_SUCCESS;
       if (OB_FAIL(ret)) {
-        STORAGE_LOG(ERROR, "errsim EN_COPY_COLUMN_STORE_MAJOR_FAILED", K(ret));
+
       }
     }
 #endif
@@ -680,7 +680,7 @@ int ObTabletCopyFinishTask::deal_with_shared_majors_(ObTablesHandleArray &major_
       } else if (OB_FAIL(check_local_sstable_exist_(sstable->get_key(), table_store_wrapper, is_exist))) {
         LOG_WARN("failed to check local sstable exist", K(ret), KPC(sstable));
       } else if (is_exist) {
-        LOG_INFO("sstable is already exist in tablet, no need refresh", K(ret), KPC(sstable));
+
       } else {
         const ObITable::TableKey &table_key = sstable->get_key();
         const ObDownloadTabletMetaParam download_tablet_meta_param(table_key.get_snapshot_version()/*snapshot_version*/,
@@ -690,7 +690,7 @@ int ObTabletCopyFinishTask::deal_with_shared_majors_(ObTablesHandleArray &major_
         if (OB_FAIL(ObRefreshTabletUtil::download_major_compaction_tablet_meta(*param_.ls_, param_.tablet_id_, download_tablet_meta_param))) {
           LOG_WARN("failed to download major compaction tablet meta", K(ret), K(download_tablet_meta_param));
         } else {
-          LOG_INFO("succeed to download major compaction tablet meta", "tablet_id", param_.tablet_id_, KPC(sstable));
+
         }
       }
     }
@@ -734,7 +734,7 @@ int ObTabletCopyFinishTask::check_local_sstable_exist_(
           LOG_WARN("table should not be NULL", K(ret), KP(table));
         } else if (table->get_key() == table_key) {
           is_exist = true;
-          LOG_INFO("table is already exist", K(table_key));
+
           break;
         }
       }

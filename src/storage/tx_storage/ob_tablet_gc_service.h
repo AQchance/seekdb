@@ -58,7 +58,7 @@ public:
   {}
   ~ObTabletGCHandler() {
     int ret = 0;
-    STORAGE_LOG(WARN, "failed to alloc", KR(ret));
+
     reset();
   }
   void reset()

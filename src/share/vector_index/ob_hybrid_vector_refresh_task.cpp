@@ -59,7 +59,7 @@ int ObVecEmbeddingAsyncTaskExecutor::load_task(uint64_t &task_trace_base_num)
       } else if (OB_FAIL(ObVecIndexAsyncTaskUtil::get_table_id_from_adapter(adapter, tablet_id, index_table_id))) { // only get table 3 table_id to generate new task
         LOG_WARN("fail to get table id from adapter", K(ret), K(tablet_id));
       } else if (OB_INVALID_ID == index_table_id) {
-        LOG_DEBUG("index table id is invalid, skip", K(ret)); // skip to next
+ // skip to next
       } else if (adapter->is_hybrid_index() && adapter->check_need_embedding()) {
         int64_t new_task_id = OB_INVALID_ID;
         bool inc_new_task = false;
@@ -76,7 +76,7 @@ int ObVecEmbeddingAsyncTaskExecutor::load_task(uint64_t &task_trace_base_num)
         } else if (OB_FAIL(ObVecIndexAsyncTaskUtil::fetch_new_trace_id(++task_trace_base_num, allocator, new_trace_id))) {
           LOG_WARN("fail to fetch new trace id", K(ret), K(tablet_id));
         } else {
-          LOG_DEBUG("start load task", K(ret), K(tablet_id), K(tenant_id_), K(task_trace_base_num), K(ls_->get_ls_id()));
+
           // 1. update task_ctx to async task map
           task_ctx->tenant_id_ = tenant_id_;
           task_ctx->ls_ = ls_;
@@ -105,7 +105,7 @@ int ObVecEmbeddingAsyncTaskExecutor::load_task(uint64_t &task_trace_base_num)
         }
       }
     }
-    LOG_INFO("finish load async task", K(ret), K(ls_->get_ls_id()), K(task_ctx_array.count()), K(current_task_cnt));
+
   }
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(insert_new_task(task_ctx_array))) {
@@ -130,7 +130,7 @@ bool ObVecEmbeddingAsyncTaskExecutor::check_operation_allow()
     LOG_WARN("get tenant data version failed", K(ret));
   } else if (tenant_data_version < DATA_VERSION_1_0_0_0) {
     bret = false;
-    LOG_DEBUG("vector index async task can not work with data version less than 1_0_0_0", K(tenant_data_version));
+
   }
   return bret;
 }
@@ -182,7 +182,7 @@ int ObHybridVectorRefreshTask::do_work()
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected error", K(ret), KPC(task_ctx));
   } else {
-    LOG_INFO("start do_work", K(ret), K(task_ctx->task_status_), K(ls_id_));
+
   }
   while (OB_SUCC(ret) && !exec_finish) {
     switch (current_status()) {
@@ -230,7 +230,7 @@ int ObHybridVectorRefreshTask::do_work()
   if (OB_NOT_NULL(ctx_)) {
     common::ObSpinLockGuard ctx_guard(ctx_->lock_);
     ctx_->task_status_.ret_code_ = ret;
-    LOG_INFO("end do_work", K(ret), K(ctx_->task_status_));
+
   } else {
     ret = OB_ERR_UNEXPECTED;
     LOG_ERROR("unexpected error: null context pointer", K(ret), KPC(this));
@@ -252,7 +252,7 @@ int ObHybridVectorRefreshTask::prepare_for_task()
   } else if (OB_ISNULL(task_ctx->adp_guard_.get_adatper()) && OB_FAIL(vec_idx_mgr_->get_adapter_inst_guard(ctx_->task_status_.tablet_id_, task_ctx->adp_guard_))) {
     if (OB_HASH_NOT_EXIST == ret) {
       ret = OB_EAGAIN;
-      LOG_INFO("can not get adapter, need wait", K(ret), KPC(ctx_));
+
     } else {
       LOG_WARN("fail to get adapter instance", KR(ret), KPC(ctx_));
     }
@@ -261,10 +261,10 @@ int ObHybridVectorRefreshTask::prepare_for_task()
     LOG_WARN("fail to get vector index adapter", KR(ret), KPC(ctx_));
   } else if (task_ctx->adp_guard_.get_adatper()->has_doing_vector_index_task()) {
     ret = OB_EAGAIN;
-    LOG_INFO("there is other vector index task running", K(ret), KP(task_ctx->adp_guard_.get_adatper()));
+
   } else if (!task_ctx->adp_guard_.get_adatper()->is_complete()) {
     ret = OB_EAGAIN;
-    LOG_INFO("adapter not complete, need wait", K(ret), KP(task_ctx->adp_guard_.get_adatper()));
+
   } else if (FALSE_IT(task_ctx->task_started_ = true)) {
   } else {
     task_ctx->status_ = ObHybridVectorRefreshTaskStatus::PREPARE_EMBEDDING;

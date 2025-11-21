@@ -220,7 +220,7 @@ TEST_F(TestSkipIndexSortedness, sample)
       ASSERT_EQ(OB_SUCCESS, sortedness_calcer.sample_and_calc(sortedness));
 
       int64_t end_us = ObTimeUtility::current_time();
-      STORAGE_LOG(INFO, "Time Elapsed", K(i), K(sample_count), K((end_us - start_us) / 1000.0), K(sortedness));
+
       ASSERT_LE(sortedness, 0.4);
       ASSERT_GE(sortedness, 0);
     }

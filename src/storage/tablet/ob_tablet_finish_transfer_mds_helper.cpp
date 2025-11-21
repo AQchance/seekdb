@@ -90,7 +90,7 @@ int ObTabletFinishTransferUtil::can_skip_check_transfer_tablets(
     LOG_WARN("failed to get consistent_scn", K(ret), KPC(ls));
   } else if (scn <= consistent_scn) {
     can_skip_check = true;
-    LOG_INFO("transfer finish in scn <= consistent_scn, skip check local finish transfer in tablet ready", K(scn), K(consistent_scn));
+
   } else {
     // transfer finish in log scn is bigger than consistent_scn, cannot skip.
   }
@@ -102,7 +102,7 @@ int ObTabletFinishTransferUtil::can_skip_check_transfer_tablets(
     //overwrite ret
     ret = OB_SUCCESS;
   } else if (gts_scn <= scn) {
-    LOG_INFO("can not skip check transfer table replaced", K(gts_scn), K(scn));
+
   } else if (OB_FAIL(ls->get_migration_status(migration_status))) {
     LOG_WARN("failed to get migration status", K(ret), KPC(ls));
   } else if (ObMigrationStatus::OB_MIGRATION_STATUS_ADD == migration_status
@@ -227,7 +227,7 @@ int ObTabletFinishTransferOutReplayExecutor::do_replay_(ObTabletHandle &tablet_h
     if (OB_FAIL(replay_to_mds_table_(tablet_handle, user_data, user_ctx, scn_))) {
       LOG_WARN("failed to replay to tablet", K(ret));
     } else {
-      LOG_INFO("succeed replay finish transfer out to mds table", KP(tablet), K(user_data), K(scn_));
+
     }
 #ifdef ERRSIM
     ObTransferEventRecorder::record_tablet_transfer_event("tx_finish_transfer_out",
@@ -297,7 +297,7 @@ int ObTabletFinishTransferOutHelper::on_register(
   if (OB_SUCC(ret)) {
     ret = EN_TRANSFER_DIAGNOSE_FINISH_REPLAY_FAILED ? : OB_SUCCESS;
     if (OB_FAIL(ret)) {
-      STORAGE_LOG(WARN, "fake EN_TRANSFER_DIAGNOSE_FINISH_REPLAY_FAILED", K(ret));
+
     }
   }
 #endif
@@ -318,7 +318,7 @@ int ObTabletFinishTransferOutHelper::on_register_success_(
   const share::ObLSID &src_ls_id = tx_finish_transfer_out_info.src_ls_id_;
   const int64_t start_ts = ObTimeUtil::current_time();
 
-  LOG_INFO("[TRANSFER] start tx finish transfer out on_register_success_", K(tx_finish_transfer_out_info));
+
 #ifdef ERRSIM
   SERVER_EVENT_SYNC_ADD("transfer", "tx_finish_transfer_out",
                    "stage", "on_register_success",
@@ -443,7 +443,7 @@ int ObTabletFinishTransferOutHelper::update_transfer_tablet_deleted_(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("tablet tx data is unexpected", K(ret), KPC(tablet), K(tablet_info), K(user_data));
   } else {
-    LOG_INFO("[TRANSFER] inner update transfer tablet deleted", K(tablet_info), K(user_data));
+
     mds::MdsCtx &user_ctx = static_cast<mds::MdsCtx&>(ctx);
     user_data.tablet_status_ = ObTabletStatus::TRANSFER_OUT_DELETED;
     user_data.data_type_ = ObTabletMdsUserDataType::FINISH_TRANSFER_OUT;
@@ -489,7 +489,7 @@ int ObTabletFinishTransferOutHelper::on_replay(
   if (OB_SUCC(ret)) {
     ret = EN_TRANSFER_DIAGNOSE_FINISH_REPLAY_FAILED ? : OB_SUCCESS;
     if (OB_FAIL(ret)) {
-      STORAGE_LOG(WARN, "fake EN_TRANSFER_DIAGNOSE_FINISH_REPLAY_FAILED", K(ret));
+
     }
   }
 #endif
@@ -702,7 +702,7 @@ int ObTabletFinishTransferInReplayExecutor::do_replay_(ObTabletHandle &tablet_ha
     if (OB_FAIL(replay_to_mds_table_(tablet_handle, user_data, user_ctx, scn_))) {
       LOG_WARN("failed to replay to tablet", K(ret));
     } else {
-      LOG_INFO("succeed replay finish transfer in to mds table", KP(tablet), K(user_data), K(scn_));
+
     }
 #ifdef ERRSIM
     ObTransferEventRecorder::record_tablet_transfer_event("tx_finish_transfer_in",
@@ -771,7 +771,7 @@ int ObTabletFinishTransferInReplayExecutor::check_transfer_table_replaced_(
     if (OB_SUCC(ret)) {
       ret = EN_TRANSFER_NEED_REBUILD ? : OB_SUCCESS;
       if (OB_FAIL(ret)) {
-        STORAGE_LOG(ERROR, "fake EN_TRANSFER_NEED_REBUILD", K(ret));
+
         can_skip_check = false;
         all_replaced = false;
         ret = OB_SUCCESS;
@@ -839,7 +839,7 @@ int ObTabletFinishTransferInReplayExecutor::try_make_dest_ls_rebuild_()
     if (OB_SUCC(ret)) {
       ret = EN_TRANSFER_NEED_REBUILD ? : OB_SUCCESS;
       if (OB_FAIL(ret)) {
-        STORAGE_LOG(ERROR, "fake EN_TRANSFER_NEED_REBUILD", K(ret));
+
         need_rebuild = true;
         ret = OB_SUCCESS;
       }
@@ -890,7 +890,7 @@ int ObTabletFinishTransferInHelper::on_register(
   if (OB_SUCC(ret)) {
     ret = EN_TRANSFER_DIAGNOSE_FINISH_REPLAY_FAILED ? : OB_SUCCESS;
     if (OB_FAIL(ret)) {
-      STORAGE_LOG(WARN, "fake EN_TRANSFER_DIAGNOSE_FINISH_REPLAY_FAILED", K(ret));
+
     }
   }
 #endif
@@ -910,7 +910,7 @@ int ObTabletFinishTransferInHelper::on_register_success_(
   ObLS *ls = NULL;
   const share::ObLSID &dest_ls_id = tx_finish_transfer_in_info.dest_ls_id_;
   const int64_t start_ts = ObTimeUtil::current_time();
-  LOG_INFO("[TRANSFER] start tx finish transfer in on_register_success_", K(tx_finish_transfer_in_info));
+
 #ifdef ERRSIM
   SERVER_EVENT_SYNC_ADD("transfer", "tx_finish_transfer_in",
                    "stage", "on_register_success",
@@ -961,7 +961,7 @@ int ObTabletFinishTransferInHelper::check_ls_replay_scn_(
     LOG_WARN("failed to get max decided scn", K(ret), KPC(dest_ls));
   } else if (max_decided_scn < tx_finish_transfer_in_info.start_scn_) {
     ret = OB_EAGAIN;
-    LOG_INFO("ls replay scn do not greater than max decided scn", K(ret), K(tx_finish_transfer_in_info), KPC(dest_ls), K(max_decided_scn));
+
   }
   return ret;
 }
@@ -1069,7 +1069,7 @@ int ObTabletFinishTransferInHelper::update_transfer_tablet_normal_(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("tablet tx data is unexpected", K(ret), KPC(tablet), K(tablet_info));
   } else {
-    LOG_INFO("[TRANSFER] update transfer tablet normal", K(ret), K(tablet_info), K(data));
+
     data.tablet_status_ = ObTabletStatus::NORMAL;
     data.transfer_ls_id_.reset();
     data.data_type_ = ObTabletMdsUserDataType::FINISH_TRANSFER_IN;
@@ -1115,7 +1115,7 @@ int ObTabletFinishTransferInHelper::on_replay(
   if (OB_SUCC(ret)) {
     ret = EN_TRANSFER_DIAGNOSE_FINISH_REPLAY_FAILED ? : OB_SUCCESS;
     if (OB_FAIL(ret)) {
-      STORAGE_LOG(WARN, "fake EN_TRANSFER_DIAGNOSE_FINISH_REPLAY_FAILED", K(ret));
+
     }
   }
 #endif
@@ -1139,7 +1139,7 @@ int ObTabletFinishTransferInHelper::on_replay_success_(
   MDS_TG(1_s);
   int ret = OB_SUCCESS;
   const int64_t start_ts = ObTimeUtil::current_time();
-  LOG_INFO("[TRANSFER] start tx finish transfer in on_replay_success_", K(scn), K(tx_finish_transfer_in_info));
+
 #ifdef ERRSIM
   SERVER_EVENT_SYNC_ADD("transfer", "tx_finish_transfer_in",
                    "stage", "on_replay_success",
@@ -1194,7 +1194,7 @@ bool ObTabletFinishTransferInHelper::check_can_do_tx_end(
   int64_t pos = 0;
   ObTransferUtils::set_transfer_module();
 
-  LOG_INFO("check can do finish transfer in tx end", K(is_willing_to_commit), K(for_replay), K(log_scn));
+
   if (OB_ISNULL(buf) || buf_len < 0 || (for_replay && !log_scn.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("check can replay finish transfer in commit get invalid argument", K(ret), KP(buf), K(buf_len));

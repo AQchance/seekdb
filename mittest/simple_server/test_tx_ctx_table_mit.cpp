@@ -58,13 +58,13 @@ int ObTxCtxMemtableScanIterator::serialize_next_tx_ctx_(ObTxLocalBuffer &buffer,
   while (OB_SUCC(ret) && need_retry) {
     if (OB_FAIL(ls_tx_ctx_iter_.get_next_tx_ctx(tx_ctx))) {
       if (OB_ITER_END != ret) {
-        STORAGE_LOG(WARN, "ls_tx_ctx_iter_.get_next_tx_ctx failed", K(ret));
+
       }
     } else if (OB_FAIL(tx_ctx->serialize_tx_ctx_to_buffer(buffer, serialize_size))) {
       if (OB_TRANS_CTX_NOT_EXIST == ret) {
         ret = OB_SUCCESS;
       } else {
-        STORAGE_LOG(WARN, "tx_ctx->get_tx_ctx_table_info failed", K(ret));
+
       }
       ls_tx_ctx_iter_.revert_tx_ctx(tx_ctx);
     } else {
@@ -73,7 +73,7 @@ int ObTxCtxMemtableScanIterator::serialize_next_tx_ctx_(ObTxLocalBuffer &buffer,
   }
 
   if (OB_FAIL(ret)) {
-    STORAGE_LOG(INFO, "get next tx ctx table info failed", KR(ret), KPC(tx_ctx));
+
   } else if (SLEEP_BEFORE_DUMP_TX_CTX) {
     fprintf(stdout, "ready to dump tx ctx, undo status node ptr : %p\n", tx_ctx->ctx_tx_data_.tx_data_guard_.tx_data()->op_guard_->get_undo_status_list().head_);
     fprintf(stdout, "sleep 20 seconds before dump\n");

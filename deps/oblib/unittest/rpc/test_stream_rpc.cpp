@@ -53,7 +53,7 @@ protected:
     result_ = 0;
     while (++result_ < cnt) {
       if (OB_FAIL(flush())) {
-        LOG_INFO("flush fail", K(ret));
+
         break;
       }
     }
@@ -87,7 +87,7 @@ public:
   {
     const ObRpcPacket &pkt = reinterpret_cast<const ObRpcPacket&>(req->get_packet());
     if (!pkt.is_stream()) {
-      LOG_INFO("not stream");
+
       mp_.set_ob_request(*req);
       mp_.run();
     } else {
@@ -254,7 +254,7 @@ TEST_F(TestRpcServer, StreamRPC)
   proxy.test(MAX_NUM, num, handle);
   while (handle.has_more()) {
     int64_t oldnum = num;
-    LOG_INFO("get more", K(num));
+
     EXPECT_EQ(OB_SUCCESS, handle.get_more(num));
     EXPECT_EQ(num, oldnum + 1);
   }

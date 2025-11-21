@@ -45,7 +45,7 @@ public:
 
 void TestSharedBlockRWriter::SetUpTestCase()
 {
-  STORAGE_LOG(INFO, "SetUpTestCase");
+
 
   EXPECT_EQ(OB_SUCCESS, MockTenantModuleEnv::get_instance().init());
 }

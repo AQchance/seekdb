@@ -152,7 +152,7 @@ OB_INLINE static int get_skip_index_store_upper_size(
   upper_size = 0;
   if (OB_UNLIKELY(type >= OBJ_DATUM_MAPPING_MAX)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG_RET(ERROR, OB_ERR_UNEXPECTED, "invalid obj type", K(type));
+
   } else if (OBJ_DATUM_DECIMALINT == type) {
     if (OB_UNLIKELY(precision < 0 || precision > OB_MAX_DECIMAL_PRECISION)) {
       ret = OB_ERR_UNEXPECTED;
@@ -192,7 +192,7 @@ OB_INLINE static int get_sum_store_size(const ObObjType &obj_type, uint32_t &sum
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(ObNullType > obj_type || ObMaxType < obj_type || !can_agg_sum(obj_type))) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "invalid type from sum", K(obj_type));
+
   } else {
     switch(ob_obj_type_class(obj_type)) {
       case ObObjTypeClass::ObIntTC:
@@ -211,7 +211,7 @@ OB_INLINE static int get_sum_store_size(const ObObjType &obj_type, uint32_t &sum
       }
       default: {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG_RET(ERROR, common::OB_ERR_UNEXPECTED, "invalid type from sum", K(obj_type));
+
     }
     }
   }

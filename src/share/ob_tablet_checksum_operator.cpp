@@ -267,7 +267,7 @@ int ObTabletChecksumOperator::load_tablet_checksum_items(
                   if (OB_FAIL(ObTabletReplicaChecksumOperator::recover_mock_column_meta(item.column_meta_))) {
                     LOG_WARN("fail to recover mock large column meta", KR(ret));
                   } else {
-                    LOG_INFO("ERRSIM EN_MOCK_LARGE_COLUMN_META", K(ret));
+
                   }
                 }
               }
@@ -488,7 +488,7 @@ int ObTabletChecksumOperator::delete_tablet_checksum_items(
   } else if (OB_FAIL(sql_client.write(tenant_id, sql.ptr(), affected_rows))) {
     LOG_WARN("fail to execute sql", KR(ret), K(sql));
   } else {
-    LOG_INFO("succ to delete tablet checksum items", K(tenant_id), K(gc_compaction_scn), K(affected_rows), K(limit_cnt));
+
   }
   return ret;
 }
@@ -514,7 +514,7 @@ int ObTabletChecksumOperator::delete_special_tablet_checksum_items(
   } else if (OB_FAIL(sql_client.write(tenant_id, sql.ptr(), affected_rows))) {
     LOG_WARN("fail to execute sql", KR(ret), K(sql));
   } else {
-    LOG_INFO("succ to delete special tablet checksum items", K(tenant_id), K(gc_compaction_scn), K(affected_rows));
+
   }
   return ret;
 }

@@ -98,7 +98,7 @@ int ObTenantDutyTask::update_tenant_sql_throttle(uint64_t tenant_id)
     GCTX.omt_->update_tenant(tenant_id, [&metrics] (omt::ObTenant &tenant) {
       tenant.update_sql_throttle_metrics(metrics);
       if (metrics.priority_ > 0) {
-        LOG_INFO("SQL throttle start", "tenant_id", tenant.id(), K(metrics));
+
       }
       return OB_SUCCESS;
     });

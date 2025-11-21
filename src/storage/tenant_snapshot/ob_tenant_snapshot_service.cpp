@@ -84,7 +84,7 @@ void ObTenantSnapshotService::destroy()
 {
   int ret = OB_SUCCESS;
   if (IS_INIT) {
-    LOG_INFO("ObTenantSnapshotService::destroy start");
+
 
     if (is_running_) {
       ret = OB_ERR_UNEXPECTED;
@@ -103,7 +103,7 @@ void ObTenantSnapshotService::destroy()
       running_mode_ = RUNNING_MODE::INVALID;
       is_inited_ = false;
     }
-    LOG_INFO("ObTenantSnapshotService::destroy end", KR(ret));
+
   }
 }
 
@@ -125,7 +125,7 @@ void ObTenantSnapshotService::stop()
       ObThreadCondGuard guard(cond_);
       cond_.signal();
     }
-    LOG_INFO("ObTenantSnapshotService stopped", KR(ret), KPC(this));
+
   }
 }
 
@@ -142,7 +142,7 @@ int ObTenantSnapshotService::wait_()
   int ret = OB_SUCCESS;
 
   if (IS_NOT_INIT) {
-    LOG_INFO("ObTenantSnapshotService not inited", KPC(this));
+
   } else if (ATOMIC_LOAD(&is_running_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_ERROR("ObTenantSnapshotService is running when wait function is called", KR(ret), KPC(this));
@@ -167,7 +167,7 @@ int ObTenantSnapshotService::start()
     LOG_ERROR("fail to start ObTenantSnapshotService thread", KR(ret), KPC(this));
   } else {
     is_running_ = true;
-    LOG_INFO("ObTenantSnapshotService start successfully", KPC(this));
+
   }
   return ret;
 }
@@ -190,14 +190,14 @@ int ObTenantSnapshotService::load_()
         if (OB_FAIL(tenant_snapshot->load())) {
           LOG_WARN("fail to load tenant snapshot", KR(ret), K(tenant_snapshot_id));
         } else {
-          LOG_INFO("tenant snapshot load succ", K(tenant_snapshot_id), KPC(tenant_snapshot));
+
         }
         tenant_snapshot_mgr_.revert_tenant_snapshot(tenant_snapshot);
       }
     }
   }
 
-  LOG_INFO("all tenant snapshot load finished", KR(ret));
+
   return ret;
 }
 
@@ -265,9 +265,9 @@ int ObTenantSnapshotService::normal_running_env_check_()
 
   if (ATOMIC_LOAD(&running_mode_) != NORMAL) {
     ret = OB_STATE_NOT_MATCH;
-    LOG_INFO("the running mode is not NORMAL", KR(ret), KPC(this));
+
   } else {
-    LOG_INFO("normal_running_env_check_ succ", KPC(this));
+
   }
 
   return ret;
@@ -279,9 +279,9 @@ int ObTenantSnapshotService::clone_running_env_check_()
 
   if (ATOMIC_LOAD(&running_mode_) != CLONE) {
     ret = OB_STATE_NOT_MATCH;
-    LOG_INFO("the running mode is not CLONE", KR(ret), KPC(this));
+
   } else {
-    LOG_INFO("clone_running_env_check_ succ", KPC(this));
+
   }
   return ret;
 }
@@ -365,7 +365,7 @@ int ObTenantSnapshotService::create_tenant_snapshot(const obrpc::ObInnerCreateTe
     LOG_WARN("fail to try_create_tenant_snapshot_", KR(ret), K(tenant_snapshot_id));
   }
 
-  LOG_INFO("execute create_tenant_snapshot finished", KR(ret), K(arg));
+
   return ret;
 }
 
@@ -382,14 +382,14 @@ int ObTenantSnapshotService::try_create_tenant_snapshot_(const ObTenantSnapshotI
   } else if (OB_FAIL(tenant_snapshot_mgr_.acquire_tenant_snapshot(tenant_snapshot_id,
                                                                   tenant_snapshot))) {
     if (OB_ENTRY_EXIST == ret) {
-      LOG_INFO("some concurrent request is processed", KR(ret), K(tenant_snapshot_id));
+
     } else {
       LOG_WARN("fail to acquire tenant snapshot", KR(ret), K(tenant_snapshot_id));
     }
   } else if (OB_FAIL(tenant_snapshot->try_start_create_tenant_snapshot_dag(creating_ls_id_arr,
                                                                            trace_id))) {
     if (OB_NO_NEED_UPDATE == ret || OB_EAGAIN == ret) {
-      LOG_INFO("fail to start_create_tenant_snapshot_dag", KR(ret), KPC(tenant_snapshot));
+
       ret = OB_SUCCESS;
     } else {
       LOG_WARN("fail to start_create_tenant_snapshot_dag", KR(ret), KPC(tenant_snapshot));
@@ -402,7 +402,7 @@ int ObTenantSnapshotService::try_create_tenant_snapshot_(const ObTenantSnapshotI
       LOG_WARN("fail to schedule create tenant snapshot dag", KR(ret), K(tenant_snapshot_id));
       tenant_snapshot->finish_create_tenant_snapshot_dag();
     } else {
-      LOG_INFO("schedule create tenant snapshot dag success", K(tenant_snapshot_id));
+
     }
   }
 
@@ -434,7 +434,7 @@ int ObTenantSnapshotService::drop_tenant_snapshot(const obrpc::ObInnerDropTenant
         KR(ret), K(tenant_snapshot_id));
   } else if (OB_FAIL(tenant_snapshot_mgr_.get_tenant_snapshot(tenant_snapshot_id, tenant_snapshot))){
     if (OB_TENANT_SNAPSHOT_NOT_EXIST == ret) {
-      LOG_INFO("tenant snapshot already not existed", KR(ret), K(arg));
+
       ret = OB_SUCCESS;
     } else {
       LOG_WARN("fail to get tenant_snapshot", KR(ret), K(arg));
@@ -448,7 +448,7 @@ int ObTenantSnapshotService::drop_tenant_snapshot(const obrpc::ObInnerDropTenant
     tenant_snapshot_mgr_.revert_tenant_snapshot(tenant_snapshot);
   }
 
-  LOG_INFO("exec drop_tenant_snapshot finished", KR(ret), K(arg));
+
   return ret;
 }
 
@@ -477,7 +477,7 @@ int ObTenantSnapshotService::schedule_create_tenant_snapshot_dag_(const ObTenant
     if (OB_FAIL(dag_scheduler->create_and_add_dag<ObTenantSnapshotCreateDag>(&param))) {
       LOG_WARN("fail to create ObTenantSnapshotCreateDag", KR(ret), K(param));
     } else {
-      LOG_INFO("schedule ObTenantSnapshotCreateDag success", K(param));
+
     }
   }
   return ret;
@@ -505,7 +505,7 @@ int ObTenantSnapshotService::schedule_gc_tenant_snapshot_dag_(const ObTenantSnap
   } else if (OB_FAIL(dag_scheduler->create_and_add_dag<ObTenantSnapshotGCDag>(&param))) {
     LOG_WARN("fail to create ObTenantSnapshotGCDag", KR(ret), K(param));
   } else {
-    LOG_INFO("schedule ObTenantSnapshotGCDag success", K(param));
+
   }
   return ret;
 }
@@ -515,7 +515,7 @@ void ObTenantSnapshotService::run_in_clone_mode_()
   int ret = OB_SUCCESS;
 
   if (OB_FAIL(clone_running_env_check_())) {
-    LOG_INFO("fail to clone_running_env_check_", KR(ret), KPC(this));
+
   } else {
     clone_service_.run();
   }
@@ -525,7 +525,7 @@ void ObTenantSnapshotService::run_in_normal_mode_()
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(normal_running_env_check_())) {
-    LOG_INFO("fail to normal_running_env_check_", KR(ret));
+
   }
 
   if (OB_SUCC(ret) && meta_loaded_) {
@@ -545,7 +545,7 @@ void ObTenantSnapshotService::run_in_gc_mode_()
 
   if (ATOMIC_LOAD(&running_mode_) != GC) {
     ret = OB_STATE_NOT_MATCH;
-    LOG_INFO("the running mode is not GC", KR(ret), KPC(this));
+
   }
 
   if (OB_SUCC(ret) && meta_loaded_) {
@@ -581,7 +581,7 @@ int ObTenantSnapshotService::start_clone(const ObTenantSnapshotID &tenant_snapsh
       if (OB_FAIL(tenant_snapshot->get_ls_snapshot_tablet_meta_entry(ls_id, tablet_meta_entry))) {
         LOG_WARN("fail to get_ls_snapshot_tablet_meta_entry", KR(ret), KPC(tenant_snapshot), K(ls_id));
       } else {
-        LOG_INFO("start clone succ", KPC(tenant_snapshot), K(tablet_meta_entry));
+
       }
       if (OB_FAIL(ret)) {
         int tmp_ret = OB_SUCCESS;
@@ -611,7 +611,7 @@ int ObTenantSnapshotService::end_clone(const ObTenantSnapshotID &tenant_snapshot
     if (OB_FAIL(tenant_snapshot->dec_clone_ref())) {
       LOG_WARN("fail to dec_clone_ref", KR(ret), KPC(tenant_snapshot));
     } else {
-      LOG_INFO("end clone succ", KPC(tenant_snapshot));
+
     }
     tenant_snapshot_mgr_.revert_tenant_snapshot(tenant_snapshot);
   }
@@ -631,7 +631,7 @@ int ObTenantSnapshotService::try_gc_tenant_snapshot_()
   if (OB_FAIL(tenant_snapshot_mgr_.for_each(fn))) {
     LOG_WARN("fail to add all try_gc dag task", KR(ret));
   }
-  LOG_INFO("try_gc_tenant_snapshot finished", KR(ret), KPC(this));
+
   return ret;
 }
 
@@ -706,13 +706,13 @@ int ObTenantSnapshotService::try_load_meta_()
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(common_env_check_())) {
-    LOG_INFO("failed to common_env_check_", KR(ret));
+
   } else if (!meta_loaded_) {
     if (OB_FAIL(load_())) {
       LOG_ERROR("fail to load ckpt meta", KR(ret), KPC(this));
     } else {
       meta_loaded_ = true;
-      LOG_INFO("ObTenantSnapshotService load ckpt meta succ", KR(ret), KPC(this));
+
     }
   }
   return ret;
@@ -726,13 +726,13 @@ void ObTenantSnapshotService::run1()
 
   while (is_user_tenant(tenant_id) && !has_set_stop()) {
     if (OB_FAIL(common_env_check_())) {
-      LOG_INFO("failed to common_env_check_", KR(ret));
+
     }
 
     if (OB_SUCC(ret) && running_mode_ != GC) {
       RUNNING_MODE tmp_running_mode = RUNNING_MODE::INVALID;
       if (OB_FAIL(decide_running_mode_(tmp_running_mode))) {
-        LOG_INFO("fail to decide_running_mode_", KR(ret), KPC(this));
+
       } else {
         running_mode_ = tmp_running_mode;
       }
@@ -740,7 +740,7 @@ void ObTenantSnapshotService::run1()
 
     if (OB_SUCC(ret)) {
       if (OB_FAIL(try_load_meta_())) {
-        LOG_INFO("fail to try_load_meta_", KR(ret), KPC(this));
+
       }
     }
 
@@ -782,7 +782,7 @@ void ObTenantSnapshotService::run1()
     clone_service_.wait();
   }
 
-  LOG_INFO("ObTenantSnapshotService thread stop", K_(tg_id));
+
 }
 
 uint64_t ObTenantSnapshotService::calculate_idle_time_()
@@ -811,7 +811,7 @@ uint64_t ObTenantSnapshotService::calculate_idle_time_()
     idle_time = 60 * 1000;
   }
 
-  LOG_INFO("ObTenantSnapshotService thread idle time", K(tg_id_), K(idle_time), K(running_mode_));
+
   return idle_time;
 }
 
@@ -820,7 +820,7 @@ bool ObTenantSnapshotService::GetAllLSSnapshotMapKeyFunctor::operator()(
 {
   int ret = OB_SUCCESS;
   if (!ls_snap_map_key.is_valid()) {
-    LOG_DEBUG("invalid ObLSSnapshotMapKey, skip", K(ls_snap_map_key));
+
   } else if (OB_ISNULL(ls_snapshot_key_arr_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("ls_snapshot_key_arr_ is null", KR(ret));
@@ -872,7 +872,7 @@ int ObTenantSnapshotService::get_ls_snapshot_vt_info(const ObLSSnapshotMapKey &l
     if (OB_ENTRY_NOT_EXIST == ret) {
       // tenant snapshot info may be deleted while we are collecting ls snapshot info,
       // it's ok that we do not collect tenant snapshot info related to this ls snap
-      LOG_INFO("tenant snapshot entry not exist", KR(ret), K(ls_snapshot_key));
+
       ret = OB_SUCCESS;
     } else {
       LOG_WARN("fail to get tenant snapshot", KR(ret), K(ls_snapshot_key));
@@ -905,7 +905,7 @@ bool ObTenantSnapshotService::DumpTenantSnapInfoFunctor::operator()(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("tenant snapshot is unexpected null", KR(ret), K(tenant_snapshot_id));
   } else {
-    LOG_INFO("dump tenant snapshot info", KPC(tenant_snapshot));
+
   }
 
   return true;

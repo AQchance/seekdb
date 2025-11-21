@@ -219,7 +219,7 @@ inline int Ob20ProtocolProcessor::decode_ob20_header(const char*& origin_start, 
     ObMySQLUtil::get_uint2(start, header20.reserved_);
     ObMySQLUtil::get_uint2(start, header20.header_checksum_);
 
-    LOG_DEBUG("decode proto20 header succ", K(header20));
+
     // 3. crc16 for header checksum
     if (OB_FAIL(do_header_checksum((const char*)origin, header20, need_check_compress))) {
       LOG_ERROR("fail to do header checksum", K(header20), K(ret));
@@ -303,7 +303,7 @@ int Ob20ProtocolProcessor::decode_extra_info(const Ob20ProtocolHeader &hdr,
         } else if (OB_FAIL(value.deserialize(buf, len, pos))) {
           LOG_WARN("fail to deserialize extra info", K(ret));
         } else {
-          LOG_TRACE("extra info", K(key), K(value));
+
 
           if (0 == key.get_string().case_compare(ObString("sess_inf"))) {
             if (!value.is_varchar()) {
@@ -645,7 +645,7 @@ inline int Ob20ProtocolProcessor::decode_compressed_body(ObICSMemPool& pool, con
     cmdpkt = new (cmdpkt) ObMySQLCompressedPacket();
     cmdpkt->set_content(pkt_body, comp_pktlen, comp_pktseq, pktlen_before_compress);
     pkt = cmdpkt;
-    LOG_DEBUG("decompresse packet succ", KPC(cmdpkt));
+
   }
   return ret;
 }

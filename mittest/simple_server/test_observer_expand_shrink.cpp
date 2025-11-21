@@ -67,12 +67,12 @@ TEST_F(ObserverExpandShink, basic_func)
   int64_t new_server_in_use_size, new_server_log_total_size;
   EXPECT_EQ(OB_SUCCESS, GCTX.log_block_mgr_->get_disk_usage(new_server_in_use_size, new_server_log_total_size));
   EXPECT_EQ(new_server_log_total_size, 2 * origin_server_log_total_size);
-  LOG_INFO("first resize success");
+
   GCONF.log_disk_size = 0;
   sleep(3);
   EXPECT_EQ(OB_SUCCESS, GCTX.log_block_mgr_->get_disk_usage(new_server_in_use_size, new_server_log_total_size));
   EXPECT_NE(new_server_log_total_size, 0);
-  LOG_INFO("second resize success");
+
 
   int64_t affected_rows = 0;
   std::string succ_sql_str = "ALTER RESOURCE UNIT sys_unit_config LOG_DISK_SIZE='3G'";
@@ -139,26 +139,26 @@ TEST_F(ObserverExpandShink, resize_tenant_log_disk)
   int64_t log_disk_origin_assigned = GCTX.log_block_mgr_->min_log_disk_size_for_all_tenants_;
   bool bool_ret = true;
   EXPECT_EQ(bool_ret, true);
-  LOG_INFO("runlin trace, before create one default tenant", KPC(GCTX.log_block_mgr_), K(log_disk_origin_assigned));
+
   // The size of each tenant's log disk is 2G (default value)
   EXPECT_EQ(OB_SUCCESS, create_tenant("runlin1"));
-  LOG_INFO("runlin trace, after create one default tenant", KPC(GCTX.log_block_mgr_), K(log_disk_origin_assigned));
+
   EXPECT_EQ(OB_SUCCESS, create_tenant("runlin2"));
   EXPECT_EQ(GCTX.log_block_mgr_->min_log_disk_size_for_all_tenants_,
             log_disk_origin_assigned + 4*1024*1024*1024ul);
-  LOG_INFO("runlin trace, after create two default tenant", KPC(GCTX.log_block_mgr_), K(log_disk_origin_assigned));
+
   // Modify tenant specification
   int64_t affected_rows = 0;
   std::string sql_str = "ALTER RESOURCE UNIT %s%s LOG_DISK_SIZE='%s'";
   {
     std::string alter_resource_failed_sql = string_format(sql_str, UNIT_BASE, "runlin1", "100G");
     EXPECT_EQ(OB_MACHINE_RESOURCE_NOT_ENOUGH, exec_write_sql_sys(alter_resource_failed_sql.c_str(), affected_rows));
-    LOG_INFO("runlin trace, alter resource failed", KPC(GCTX.log_block_mgr_));
+
   }
   {
     std::string alter_resource_failed_sql = string_format(sql_str, UNIT_BASE, "runlin1", "1G");
     EXPECT_EQ(OB_RESOURCE_UNIT_VALUE_BELOW_LIMIT, exec_write_sql_sys(alter_resource_failed_sql.c_str(), affected_rows));
-    LOG_INFO("runlin trace, alter resource below limit", KPC(GCTX.log_block_mgr_));
+
   }
   {
     // Expansion validation
@@ -170,7 +170,7 @@ TEST_F(ObserverExpandShink, resize_tenant_log_disk)
     // Expansion operation executed successfully directly
     EXPECT_EQ(GCTX.log_block_mgr_->min_log_disk_size_for_all_tenants_,
               log_disk_origin_assigned + 12*1024*1024*1024ul);
-    LOG_INFO("runlin trace, alter resource to 6G success", KPC(GCTX.log_block_mgr_));
+
   }
   {
     // Shrink validation
@@ -192,7 +192,7 @@ TEST_F(ObserverExpandShink, resize_tenant_log_disk)
               log_disk_origin_assigned + 12*1024*1024*1024ul);
     omt::ObTenantNodeBalancer::get_instance().refresh_interval_ = 1 * 1000 * 1000;
     sleep(11);
-    LOG_INFO("runlin trace, alter resource to 2G success", KPC(GCTX.log_block_mgr_));
+
     EXPECT_EQ(GCTX.log_block_mgr_->min_log_disk_size_for_all_tenants_,
               log_disk_origin_assigned + 4*1024*1024*1024ul);
   }

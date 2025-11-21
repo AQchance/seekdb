@@ -69,7 +69,7 @@ TEST(TestObPluginLoadOption, test_load_option)
   for (size_t i = 0; i < sizeof(test_cases) / sizeof(test_cases[0]); i++) {
     auto &test_case = test_cases[i];
     ObPluginLoadOption load_option = ObPluginLoadOption::from_string(test_case.first);
-    LOG_INFO("compare load option", K(test_case.first), K(load_option), K(test_case.second));
+
     ASSERT_EQ(load_option.value(), test_case.second);
   }
 }

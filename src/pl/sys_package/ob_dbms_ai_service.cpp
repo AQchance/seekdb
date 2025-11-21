@@ -131,7 +131,7 @@ int ObDBMSAiService::create_ai_model_endpoint(ObPLExecCtx &ctx, sql::ParamStore 
     }
   }
 
-  LOG_DEBUG("finished to create ai service endpoint", K(ret), K(params));
+
   return ret;
 }
 
@@ -171,7 +171,7 @@ int ObDBMSAiService::alter_ai_model_endpoint(ObPLExecCtx &ctx, sql::ParamStore &
     }
   }
 
-  LOG_DEBUG("finished to alter ai service endpoint", K(ret), K(params));
+
   return ret;
 }
 
@@ -200,7 +200,7 @@ int ObDBMSAiService::drop_ai_model_endpoint(ObPLExecCtx &ctx, sql::ParamStore &p
     LOG_WARN("failed to drop ai service endpoint", K(ret), K(endpoint_name));
   }
 
-  LOG_DEBUG("finished to drop ai service endpoint", K(ret), K(endpoint_name));
+
 
   return ret;
 }
@@ -310,7 +310,7 @@ int ObDBMSAiService::create_ai_model(ObPLExecCtx &ctx, sql::ParamStore &params, 
       }
     }
 
-    LOG_DEBUG("finished to create ai model", K(ret), K(params), K(model_name));
+
   }
   return ret;
 }
@@ -373,7 +373,7 @@ int ObDBMSAiService::drop_ai_model(ObPLExecCtx &ctx, sql::ParamStore &params, co
       LOG_WARN("failed to drop ai model", K(ret), K(arg));
     }
 
-    LOG_INFO("finished to drop ai model", K(ret), K(params), K(model_name));
+
   }
 
   return ret;

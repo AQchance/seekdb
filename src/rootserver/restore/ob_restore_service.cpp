@@ -108,7 +108,7 @@ int ObRestoreService::check_stop() const
 
 void ObRestoreService::do_work()
 {
-  LOG_INFO("[RESTORE] restore service start");
+
   int ret = OB_SUCCESS;
   if (!inited_) {
     ret = OB_NOT_INIT;
@@ -148,6 +148,6 @@ void ObRestoreService::do_work()
       idle();
     }
   }
-  LOG_INFO("[RESTORE] restore service quit");
+
   return;
 }

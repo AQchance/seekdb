@@ -502,7 +502,7 @@ void TestOptEstSel::process_join(const char *sql_str, std::ofstream &of_result)
 
   ObString sql = ObString::make_string(sql_str);
   of_result << "SQL: " << sql_str << std::endl;
-  LOG_INFO("Case query", K_(case_id), K(sql_str));
+
 
   ObLogPlan *logical_plan = NULL;
   ObDMLStmt *dml_stmt = NULL;

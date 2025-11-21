@@ -343,16 +343,16 @@ int ObTruncatePartition::init_truncate_part(
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_valid_part_type(part_type))) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "input prev part is null", K(ret), K(part_type));
+
   } else if (is_range_part(part_type)) {
     if (OB_FAIL(init_range_part(
           allocator,
           part_type,
           nullptr == prev_part ? ObRowkey::MIN_ROWKEY : prev_part->get_high_bound_val(),
           found_part.get_high_bound_val()))) {
-      STORAGE_LOG(WARN, "failed to init truncate range part", K(ret), K(part_type), K(found_part));
+
     } else {
-      STORAGE_LOG(INFO, "success to init range part", K(ret), KPC(this), KPC(prev_part));
+
     }
   } else if (is_list_part(part_type)) {
     if (OB_FAIL(init_list_part(
@@ -360,13 +360,13 @@ int ObTruncatePartition::init_truncate_part(
         part_type,
         ObTruncatePartition::INCLUDE,
         found_part.get_list_row_values_struct()))) {
-      STORAGE_LOG(WARN, "failed to init truncate list part", K(ret), K(part_type), K(found_part));
+
     } else {
-      STORAGE_LOG(INFO, "success to init list part", K(ret), KPC(this), KPC(prev_part));
+
     }
   } else {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected part type", K(ret), K(part_type));
+
   }
   return ret;
 }

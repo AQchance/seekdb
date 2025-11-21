@@ -68,7 +68,7 @@ TEST_F(TestReserveArenaAllocator, test_reset)
   // alloc new page 1k < size < 8k
   sz = 2048;
   p = test_allocator_.alloc(sz);
-  STORAGE_LOG(INFO, "alloc 2K", K(test_allocator_.allocator_));
+
   ASSERT_NE(p, nullptr);
   ASSERT_EQ(test_allocator_.pos_, 0);
   ASSERT_GE(test_allocator_.used(), sz);
@@ -82,7 +82,7 @@ TEST_F(TestReserveArenaAllocator, test_reset)
   // alloc new page  size > 8k
   sz = 10240;
   p = test_allocator_.alloc(sz);
-  STORAGE_LOG(INFO, "alloc 10K", K(test_allocator_.allocator_));
+
   ASSERT_NE(p, nullptr);
   ASSERT_EQ(test_allocator_.pos_, 0);
   ASSERT_GE(test_allocator_.used(), sz);
@@ -109,12 +109,12 @@ TEST_F(TestReserveArenaAllocator, test_reuse)
   ASSERT_EQ(test_allocator_.pos_, 768);
 
   test_allocator_.reuse();
-  STORAGE_LOG(INFO, "after reuse", K(test_allocator_.allocator_));
+
   ASSERT_EQ(test_allocator_.pos_, 0);
   // alloc new page 1k < size < 8k
   sz = 2048;
   p = test_allocator_.alloc(sz);
-  STORAGE_LOG(INFO, "alloc 2K", K(test_allocator_.allocator_));
+
   ASSERT_NE(p, nullptr);
   ASSERT_EQ(test_allocator_.pos_, 0);
   ASSERT_GE(test_allocator_.used(), sz);
@@ -122,7 +122,7 @@ TEST_F(TestReserveArenaAllocator, test_reuse)
   int allocate_total = test_allocator_.total();
 
   test_allocator_.reuse();
-  STORAGE_LOG(INFO, "after reuse 2K", K(test_allocator_.allocator_));
+
   ASSERT_EQ(test_allocator_.pos_, 0);
   ASSERT_EQ(test_allocator_.used(), 0);
   ASSERT_LE(test_allocator_.total(), allocate_total);
@@ -130,7 +130,7 @@ TEST_F(TestReserveArenaAllocator, test_reuse)
   // alloc new page  size > 8k
   sz = 10240;
   p = test_allocator_.alloc(sz);
-  STORAGE_LOG(INFO, "alloc 10K", K(test_allocator_.allocator_));
+
   ASSERT_NE(p, nullptr);
   ASSERT_EQ(test_allocator_.pos_, 0);
   ASSERT_GE(test_allocator_.used(), sz);
@@ -138,7 +138,7 @@ TEST_F(TestReserveArenaAllocator, test_reuse)
   allocate_total = test_allocator_.total();
 
   test_allocator_.reuse();
-  STORAGE_LOG(INFO, "after reuse 10K", K(test_allocator_.allocator_));
+
   ASSERT_EQ(test_allocator_.pos_, 0);
   ASSERT_EQ(test_allocator_.used(), 0);
   ASSERT_LT(test_allocator_.total(), allocate_total);

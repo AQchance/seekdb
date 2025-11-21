@@ -45,7 +45,7 @@ int ObReqQHandler::init()
 int ObReqQHandler::onThreadCreated(obsys::CThread *th)
 {
   UNUSED(th);
-  LOG_INFO("new task thread create", K(&translator_));
+
   return translator_.th_init();
 }
 

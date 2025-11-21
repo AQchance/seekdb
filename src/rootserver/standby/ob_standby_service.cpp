@@ -58,13 +58,13 @@ int ObStandbyService::init(
 void ObStandbyService::destroy()
 {
   if (OB_UNLIKELY(!inited_)) {
-    LOG_INFO("ObStandbyService has been destroyed", K_(inited));
+
   } else {
-    LOG_INFO("ObStandbyService begin to destroy", K_(inited));
+
     sql_proxy_ = NULL;
     schema_service_ = NULL;
     inited_ = false;
-    LOG_INFO("ObStandbyService destroyed", K_(inited));
+
   }
 }
 
@@ -250,7 +250,7 @@ int ObStandbyService::failover_to_primary(
     LOG_WARN("fail to init role_transition_service", KR(ret), K(tenant_id), K(switch_optype),
         KP(sql_proxy_), KP(GCTX.srv_rpc_proxy_), K(cost_detail), K(all_ls));
   } else if (tenant_info.is_primary() && tenant_info.is_normal_status()) {
-    LOG_INFO("already is primary tenant, no need switch", K(tenant_info));
+
   } else if (tenant_info.get_restore_data_mode().is_remote_mode()) {
     ret = OB_OP_NOT_ALLOW;
     LOG_WARN("tenant restore data mode is remote, failover is not allowed", KR(ret), K(tenant_id), K(tenant_info));
@@ -541,7 +541,7 @@ int ObStandbyService::switch_to_standby(
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid switch_optype", KR(ret), K(switch_optype));
   } else if (tenant_info.is_standby() && tenant_info.is_normal_status()) {
-    LOG_INFO("already is standby tenant, no need switch", K(tenant_id), K(tenant_info));
+
   } else {
     switch(tenant_info.get_switchover_status().value()) {
       case share::ObTenantSwitchoverStatus::NORMAL_STATUS: {

@@ -68,7 +68,7 @@ int ObLogTopk::est_width()
     LOG_WARN("failed to estimate width for output topk exprs", K(ret));
   } else {
     set_width(width);
-    LOG_TRACE("est width for topk", K(output_exprs), K(width));
+
   }
   return ret;
 }

@@ -50,7 +50,7 @@ int ObTransformViewMerge::transform_one_stmt(common::ObIArray<ObParentDMLStmt> &
     LOG_WARN("failed to add transform hint", K(ret));
   } else {
     trans_happened = true;
-    LOG_TRACE("succeed to do view merge", K(is_from_item_happened), K(is_semi_info_happened));
+
   }
   return ret;
 }
@@ -71,11 +71,11 @@ int ObTransformViewMerge::transform_one_stmt_with_outline(ObIArray<ObParentDMLSt
     } else if (!is_happened && OB_FAIL(transform_in_semi_info(stmt, merged_stmts, is_happened))) {
       LOG_WARN("failed to do view merge in semi info", K(ret));
     } else if (!is_happened) {
-      LOG_TRACE("can not do view merge with outline", K(ctx_->src_qb_name_));
+
     } else {
       ++ctx_->trans_list_loc_;
       trans_happened = true;
-      LOG_TRACE("succeed to do view merge with outline", K(ctx_->src_qb_name_));
+
     }
   } while (OB_SUCC(ret) && is_happened);
   if (OB_SUCC(ret) && trans_happened) {

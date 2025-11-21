@@ -1610,7 +1610,7 @@ int ObSelectResolver::resolve_field_list(const ParseNode &node)
       }
 
       if (OB_SUCC(ret) && NULL == alias_node) {
-        LOG_DEBUG("select item info", K(select_item));
+
         if (sel_expr->is_column_ref_expr()) {
           // for t1.c1, extract the exact column name of c1 for searching in resolve_columns
           if (project_node->type_ == T_COLUMN_REF
@@ -1993,7 +1993,7 @@ int ObSelectResolver::expand_target_list(
     LOG_WARN("unexpected table type", K_(table_item.type), K(ret));
   }
 
-  LOG_DEBUG("do expand_target_list", KPC(table_item.ref_query_));
+
   for (int64_t i = 0; OB_SUCC(ret) && i < column_items.count(); ++i) {
     const ColumnItem &col_item = column_items.at(i);
     SelectItem tmp_select_item;
@@ -2348,7 +2348,7 @@ int ObSelectResolver::resolve_star(const ParseNode *node)
         ObString string_name(ptr_name);
         if (select_stmt->has_group_by() || has_group_by_clause()) {
           ret = OB_ERR_WRONG_FIELD_WITH_GROUP;
-          LOG_DEBUG("not a GROUP BY expression", K(ret));
+
         } else if (OB_FAIL(ObRawExprUtils::build_const_string_expr(*params_.expr_factory_,
                    ObCharType,ptr_value, session_info_->get_nls_collation(), c_expr))){
           LOG_WARN("fail to create const string c_expr", K(ret));
@@ -3351,7 +3351,7 @@ int ObSelectResolver::resolve_named_windows_clause(const ParseNode *node)
       // name_ob                  ->   name_node        ->   w1
       // new_generalized_window   ->   win_node         ->   w2 partition by c
       while (OB_SUCC(ret) && ref_list_cnt > 0) {
-        LOG_DEBUG("current window", K(ref_list[ref_list_cnt - 1]), K(ref_list_cnt));
+
         named_win_node = node->children_[ref_list[ref_list_cnt - 1]];
         if (OB_ISNULL(named_win_node)) {
           ret = OB_ERR_UNEXPECTED;
@@ -3409,7 +3409,7 @@ int ObSelectResolver::resolve_named_windows_clause(const ParseNode *node)
         }
       }
     }
-    LOG_DEBUG("resolve_named_windows_clause finish", K(ret));
+
   }
   return ret;
 }
@@ -4884,7 +4884,7 @@ int ObSelectResolver::check_correlated_column_ref(const ObSelectStmt &select_stm
       correalted_query = true;
       LOG_WARN("Column expr not in this stmt", K(ret));
     } else {
-      LOG_DEBUG("Find table item", K(*select_stmt.get_table_item_by_id(table_id)));
+
     }
   }
   if (!correalted_query) {
@@ -5338,7 +5338,7 @@ int ObSelectResolver::try_resolve_values_table_from_union(const ParseNode &parse
     }
     if (OB_SUCC(ret)) {
       resolve_happened = true;
-      LOG_TRACE("resolve union to values statement happened");
+
     }
   }
   return ret;
@@ -5366,7 +5366,7 @@ int ObSelectResolver::check_union_to_values_table_valid(const ParseNode &parse_n
              params_.is_from_create_view_ || params_.is_from_create_table_ ||
              in_pl_ || is_prepare_stage_) {
     is_valid = false;
-    LOG_TRACE("rewrite not happened");
+
   } else {
     for (int64_t i = 0; OB_SUCC(ret) && is_valid && i < set_node->num_child_; i++) {
       if (OB_FAIL(check_union_leaf_to_values_table_valid(*set_node->children_[i], is_valid))) {
@@ -5375,13 +5375,13 @@ int ObSelectResolver::check_union_to_values_table_valid(const ParseNode &parse_n
                  OB_FAIL(leaf_nodes.push_back(reinterpret_cast<int64_t>(set_node->children_[i])))) {
         LOG_WARN("failed to push back", K(ret));
       } else if (!is_valid) {
-        LOG_TRACE("leaf node is invalid", K(i));
+
       }
     }
   }
   if (OB_SUCC(ret) && is_valid && leaf_nodes.count() < UNION_TO_VALUES_THRESHOLD) {
     is_valid = false;
-    LOG_TRACE("set count is invalid", K(leaf_nodes.count()));
+
   }
   return ret;
 }

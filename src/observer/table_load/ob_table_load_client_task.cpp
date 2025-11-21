@@ -714,7 +714,7 @@ int ObTableLoadClientTask::commit()
     obsys::ObWLockGuard guard(rw_lock_);
     if (ObTableLoadClientStatus::COMMITTING == client_status_ ||
         ObTableLoadClientStatus::COMMIT == client_status_) {
-      LOG_INFO("client task already commit", K(client_status_));
+
     } else {
       ret = advance_status_nolock(ObTableLoadClientStatus::RUNNING,
                                   ObTableLoadClientStatus::COMMITTING);
@@ -746,7 +746,7 @@ int ObTableLoadClientTask::advance_status_nolock(const ObTableLoadClientStatus e
   int ret = OB_SUCCESS;
   if (OB_LIKELY(client_status_ == expected)) {
     client_status_ = updated;
-    LOG_INFO("LOAD DATA client status advance", K(client_status_));
+
   } else if (ObTableLoadClientStatus::ERROR == client_status_ ||
              ObTableLoadClientStatus::ABORT == client_status_) {
     ret = error_code_;

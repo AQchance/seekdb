@@ -541,7 +541,7 @@ int ObTempRowStoreBase<RA>::ReaderBase::next_block()
   } else if (OB_FAIL(get_block(cur_blk_id_, read_blk))) {
     LOG_WARN("fail to get block from store", K(ret), K(cur_blk_id_));
   } else {
-    LOG_DEBUG("next block", K(cur_blk_id_), KP(read_blk), K(*read_blk), K(read_blk->checksum()));
+
     cur_blk_ = static_cast<const RowBlock*>(read_blk);
     row_idx_ = 0;
     read_pos_ = 0;
@@ -893,7 +893,7 @@ int ObTempRowStoreBase<false>::try_add_batch(const common::ObIArray<ObExpr *> &e
       batch_added = true;
     }
   }
-  LOG_DEBUG("try add batch", K(batch_added), K(memory_limit), K(batch_size), K(rows_size));
+
 
   return ret;
 }

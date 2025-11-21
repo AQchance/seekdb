@@ -225,7 +225,7 @@ int ObTransformerImpl::transform_one_rule(ObDMLStmt *&stmt,
       }
     }
   } else {
-    LOG_TRACE("skip tranform a rewrite rule", "class", rule_name);
+
   }
   return ret;
 }

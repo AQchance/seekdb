@@ -202,7 +202,7 @@ struct ObIntegerStreamMeta
       break;
     default:
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "uint byte width size not invalid", K(ret), K(byte_size));
+
       break;
     }
     return ret;
@@ -243,7 +243,7 @@ struct ObIntegerStreamMeta
       break;
     default:
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "precision byte width size not invalid", K(ret), K(byte_size));
+
       break;
     }
     return ret;

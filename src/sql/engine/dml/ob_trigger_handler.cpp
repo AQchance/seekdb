@@ -131,7 +131,7 @@ int TriggerHandle::init_trigger_params(
       OZ (init_trigger_row(das_ctx.get_exec_ctx().get_allocator(), rowtype_col_count, old_record));
       OZ (init_trigger_row(das_ctx.get_exec_ctx().get_allocator(), rowtype_col_count, new_record));
     }
-    LOG_DEBUG("trigger init", K(rowtype_col_count), K(ret));
+
 
     if (OB_SUCC(ret) && trig_ctdef.all_tm_points_.has_when_condition()) {
       trig_rtdef.tg_when_point_params_->at(0).set_extend(reinterpret_cast<int64_t>(old_record),
@@ -267,7 +267,7 @@ int TriggerHandle::init_param_new_row(
   ObTrigDMLRtDef &trig_rtdef)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("debug init param new row", K(ret));
+
   if (trig_ctdef.all_tm_points_.has_when_condition() ||
       trig_ctdef.all_tm_points_.has_row_point()) {
     ObObj *cells = nullptr;
@@ -386,12 +386,12 @@ int TriggerHandle::set_rowid_into_row(
       } else if (OB_FAIL(deep_copy_obj(*record->get_allocator(), result, cells[i]))) {
         LOG_WARN("fail to deep copy obj", K(ret));
       } else {
-        LOG_DEBUG("set_rowid_into_row done", K(ret), K(ObToStringExpr(eval_ctx, *src_expr)));
+
       }
       break;
     }
   }
-  LOG_DEBUG("set_rowid_into_row done", K(ret));
+
   return ret;
 }
 
@@ -413,7 +413,7 @@ int TriggerHandle::do_handle_rowid_before_row(
                                           dml_op.get_eval_ctx(),
                                           trig_ctdef.rowid_old_expr_,
                                           trig_rtdef.new_record_));
-    LOG_DEBUG("handle rowid before delete success", K(tg_event));
+
   }
   return ret;
 }
@@ -435,7 +435,7 @@ int TriggerHandle::calc_when_condition(
     LOG_WARN("failed to cacl trigger routine", K(ret));
   } else {
     need_fire = result.is_true();
-    LOG_DEBUG("TRIGGER", K(result), K(need_fire));
+
   }
   return ret;
 }
@@ -541,11 +541,11 @@ int TriggerHandle::check_and_update_new_row(
         }
       }
     }
-    LOG_DEBUG("debug update row", K(updated), K(lbt()));
+
     // updated
     if (OB_SUCC(ret) && (updated || !check)) {
       self_op->clear_dml_evaluated_flag();
-      LOG_DEBUG("debug update row", K(updated), K(check));
+
     }
     // case: create table t11( c2 generated always as (c1 + 1), c1 int);
     // The generated column c2 is before normal column c1
@@ -614,7 +614,7 @@ int TriggerHandle::do_handle_before_row(
   UNUSED(das_base_ctdef);
   int ret = OB_SUCCESS;
   if (trig_ctdef.all_tm_points_.has_before_row()) {
-    LOG_DEBUG("debug handle before row");
+
     uint64_t tg_event = trig_ctdef.tg_event_;
     if (OB_FAIL(do_handle_rowid_before_row(dml_op, trig_ctdef, trig_rtdef, tg_event))) {
       LOG_WARN("do handle rowid before row failed", K(ret), K(tg_event));
@@ -638,7 +638,7 @@ int TriggerHandle::do_handle_before_row(
         } else {
           need_fire = true;
         }
-        LOG_DEBUG("TRIGGER handle before row", K(need_fire), K(i), K(lbt()));
+
         if (OB_SUCC(ret) && need_fire) {
           if (OB_ISNULL(trig_rtdef.tg_row_point_params_)) {
             ret = OB_NOT_INIT;
@@ -666,7 +666,7 @@ int TriggerHandle::do_handle_before_row(
                 GET_PHY_PLAN_CTX(dml_op.get_exec_ctx())->add_row_duplicated_count(1);
               }
             }
-            LOG_DEBUG("TRIGGER calc before row", K(need_fire), K(i));
+
           }
         }
       }
@@ -730,7 +730,7 @@ int TriggerHandle::do_handle_after_stmt(
 {
   int ret = OB_SUCCESS;
   if (trig_ctdef.all_tm_points_.has_after_stmt()) {
-    LOG_DEBUG("TRIGGER", K(trig_ctdef.tg_args_));
+
     for (int64_t i = 0; OB_SUCC(ret) && i < trig_ctdef.tg_args_.count(); i++) {
       const ObTriggerArg &tg_arg = trig_ctdef.tg_args_.at(i);
       if (tg_arg.has_after_stmt_point() && tg_arg.has_trigger_events(tg_event)) {
@@ -765,7 +765,7 @@ int TriggerHandle::do_handle_before_stmt(
 {
   int ret = OB_SUCCESS;
   if (trig_ctdef.all_tm_points_.has_before_stmt()) {
-    LOG_DEBUG("TRIGGER", K(trig_ctdef.tg_args_));
+
     for (int64_t i = 0; OB_SUCC(ret) && i < trig_ctdef.tg_args_.count(); i++) {
       const ObTriggerArg &tg_arg = trig_ctdef.tg_args_.at(i);
       if (tg_arg.has_before_stmt_point() && tg_arg.has_trigger_events(tg_event)) {
@@ -797,14 +797,14 @@ int TriggerHandle::do_handle_rowid_after_row(
                                           dml_op.get_eval_ctx(),
                                           trig_ctdef.rowid_new_expr_,
                                           trig_rtdef.new_record_));
-    LOG_DEBUG("handle rowid after insert success", K(tg_event));
+
   } else if (NULL != trig_ctdef.rowid_old_expr_ && ObTriggerEvents::is_delete_event(tg_event)) {
       // new.rowid should be same with old.rowid
     OZ (TriggerHandle::set_rowid_into_row(trig_ctdef.trig_col_info_,
                                           dml_op.get_eval_ctx(),
                                           trig_ctdef.rowid_old_expr_,
                                           trig_rtdef.new_record_));
-    LOG_DEBUG("handle rowid after delete success", K(tg_event));
+
   }
   return ret;
 }
@@ -821,7 +821,7 @@ int TriggerHandle::do_handle_after_row(
       LOG_WARN("do handle rowid after row failed", K(ret), K(tg_event));
     } else {
       bool need_fire = false;
-      LOG_DEBUG("TRIGGER", K(trig_ctdef.tg_args_));
+
       for (int64_t i = 0; OB_SUCC(ret) && i < trig_ctdef.tg_args_.count(); i++) {
         const ObTriggerArg &tg_arg = trig_ctdef.tg_args_.at(i);
         if (!tg_arg.has_after_row_point() || !tg_arg.has_trigger_events(tg_event)) {
@@ -831,7 +831,7 @@ int TriggerHandle::do_handle_after_row(
         } else {
           need_fire = true;
         }
-        LOG_DEBUG("TRIGGER", K(need_fire));
+
         if (need_fire) {
           OZ (calc_after_row(dml_op, trig_rtdef, tg_arg.get_trigger_id()));
         }
@@ -855,7 +855,7 @@ int TriggerHandle::destroy_compound_trigger_state(ObExecContext &exec_ctx, const
     if (OB_SUCC(ret) && trg_info->is_compound_dml_type()) {
       OZ (pl::ObPLPackageManager::destory_package_state(*session_info,
                                                         ObTriggerInfo::get_trigger_body_package_id(trg_id)));
-      LOG_DEBUG("destroy trigger state", K(trg_id), K(ret));
+
     }
   }
   return ret;

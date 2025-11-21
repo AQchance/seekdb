@@ -190,7 +190,7 @@ int ObMergeJoinOp::inner_open()
       }
     }
   }
-  LOG_TRACE("merge join left unique", K(MY_SPEC.id_), K(MY_SPEC.is_left_unique_));
+
   return ret;
 }
 
@@ -988,7 +988,7 @@ int ObMergeJoinOp::ChildBatchFetcher::init(
         LOG_WARN("push back failed", K(ret));
       }
     }
-    LOG_DEBUG("end init equal conds params idx", K(equal_param_idx_));
+
   }
   return ret;
 }
@@ -1041,7 +1041,7 @@ int ObMergeJoinOp::ChildBatchFetcher::get_next_batch(const int64_t max_row_cnt)
     }
   }
   cur_idx_ = 0;
-  LOG_DEBUG("end get next batch", K(this), K(brs_));
+
   return ret;
 }
 
@@ -1283,7 +1283,7 @@ int ObMergeJoinOp::calc_equal_conds_with_batch_idx(int64_t &cmp_res)
         cmp_res *= MY_SPEC.merge_directions_.at(i);
       }
     }
-    LOG_DEBUG("calc equal cond with batch idx", KPC(l_datum), KPC(r_datum));
+
 
   } // for end
   LOG_DEBUG("calc equal cond with batch idx", K(l_table_batch_idx), K(r_table_batch_idx),
@@ -1433,7 +1433,7 @@ int ObMergeJoinOp::batch_join_both()
   int ret = OB_SUCCESS;
   left_brs_fetcher_.datum_store_.reuse();
   right_brs_fetcher_.datum_store_.reuse();
-  LOG_DEBUG("start batch join both, restore both holders");
+
   if (OB_FAIL(left_brs_fetcher_.brs_holder_.restore())) {
     LOG_WARN("restore left holder failed", K(ret));
   } else if (OB_FAIL(right_brs_fetcher_.brs_holder_.restore())) {
@@ -1690,7 +1690,7 @@ int ObMergeJoinOp::output_cache_rows()
   ObEvalCtx::BatchInfoScopeGuard guard(eval_ctx_);
   ObRADatumStore::StoredRow *left_row = NULL;
   ObRADatumStore::StoredRow *right_row = NULL;
-  LOG_DEBUG("start output rows in cache", K(output_cache_.count()));
+
   const ExprFixedArray &left_output = left_->get_spec().output_;
   const ExprFixedArray &right_output = right_->get_spec().output_;
   brs_.size_ = output_cache_.count();

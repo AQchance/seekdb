@@ -169,13 +169,13 @@ void PxWorkerFunctor::operator ()(bool need_exec)
   //ensure PX worker skip updating timeout_ts_ by ntp offset
   THIS_WORKER.set_ntp_offset(0);
   if (!need_exec) {
-    LOG_INFO("px pool already stopped, do not execute the task.");
+
   } else if (OB_FAIL(px_int_guard.get_interrupt_reg_ret())) {
     LOG_WARN("px worker failed to SET_INTERRUPTABLE");
   } else if (OB_NOT_NULL(sqc_handler) && OB_LIKELY(!sqc_handler->has_interrupted())) {
     THIS_WORKER.set_worker_level(sqc_handler->get_rpc_level());
     THIS_WORKER.set_curr_request_level(sqc_handler->get_rpc_level());
-    LOG_TRACE("init flt ctx", K(sqc_handler->get_flt_ctx()));
+
     if (sqc_handler->get_flt_ctx().trace_id_.is_inited()) {
       OBTRACE->init(sqc_handler->get_flt_ctx());
     }
@@ -340,7 +340,7 @@ int ObPxThreadWorker::run_at(ObPxRpcInitTaskArgs &task_arg, omt::ObPxPool &px_po
     LOG_ERROR("Failed to submit px func to thread pool",
               K(retry_times), "px_pool_size", px_pool.get_pool_size(),  K(ret));
   }
-  LOG_DEBUG("submit px worker to poll", K(ret));
+
   return ret;
 }
 

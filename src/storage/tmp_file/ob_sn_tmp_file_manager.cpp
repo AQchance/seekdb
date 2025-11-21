@@ -46,7 +46,7 @@ int ObSNTenantTmpFileManager::init_sub_module_()
   } else if (OB_FAIL(page_cache_controller_.init())) {
     LOG_WARN("fail to init page cache controller", KR(ret));
   } else {
-    LOG_INFO("ObSNTenantTmpFileManager init successful", K(tenant_id_), KP(this));
+
   }
 
   return ret;
@@ -60,7 +60,7 @@ int ObSNTenantTmpFileManager::start_sub_module_()
     LOG_WARN("fail to start page cache controller background threads", KR(ret));
   } else {
     is_running_ = true;
-    LOG_INFO("ObSNTenantTmpFileManager start successful", K(tenant_id_), KP(this));
+
   }
   return ret;
 }
@@ -69,7 +69,7 @@ int ObSNTenantTmpFileManager::stop_sub_module_()
 {
   int ret = OB_SUCCESS;
   page_cache_controller_.stop();
-  LOG_INFO("ObSNTenantTmpFileManager stop successful", K(tenant_id_), KP(this));
+
   return ret;
 }
 
@@ -77,7 +77,7 @@ int ObSNTenantTmpFileManager::wait_sub_module_()
 {
   int ret = OB_SUCCESS;
   page_cache_controller_.wait();
-  LOG_INFO("ObSNTenantTmpFileManager wait successful", K(tenant_id_), KP(this));
+
   return ret;
 }
 
@@ -87,7 +87,7 @@ int ObSNTenantTmpFileManager::destroy_sub_module_()
   page_cache_controller_.destroy();
   tmp_file_block_manager_.destroy();
 
-  LOG_INFO("ObSNTenantTmpFileManager destroy", K(tenant_id_), KP(this));
+
   return ret;
 }
 
@@ -106,7 +106,7 @@ int ObSNTenantTmpFileManager::alloc_dir(int64_t &dir_id)
     dir_id = ATOMIC_AAF(&current_dir_id_, 1);
   }
 
-  LOG_DEBUG("alloc dir over", KR(ret), K(dir_id), K(lbt()));
+
   return ret;
 }
 
@@ -145,7 +145,7 @@ int ObSNTenantTmpFileManager::open(int64_t &fd, const int64_t &dir_id, const cha
     tmp_file = nullptr;
   }
 
-  LOG_INFO("open a tmp file over", KR(ret), K(fd), K(dir_id), KP(tmp_file), K(lbt()));
+
   return ret;
 }
 
@@ -188,7 +188,7 @@ int ObSNTenantTmpFileManager::get_macro_block_list(common::ObIArray<blocksstable
     LOG_WARN("fail to get macro block id list", KR(ret));
   }
 
-  LOG_INFO("get tmp file macro block list", KR(ret), K(macro_id_list.count()));
+
   return ret;
 }
 
@@ -214,7 +214,7 @@ int ObSNTenantTmpFileManager::get_tmp_file_disk_usage(int64_t &disk_data_size, i
     occupied_disk_size = macro_block_count * ObTmpFileGlobal::SN_BLOCK_SIZE;
   }
 
-  LOG_INFO("get tmp file macro block count", KR(ret), K(used_page_num), K(macro_block_count));
+
   return ret;
 }
 

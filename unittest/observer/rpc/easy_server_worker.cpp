@@ -62,7 +62,7 @@ void *MyReqHandler::decode(easy_message_t *m)
   }
   int len = m->input->last - m->input->pos;
   //std::string msg(m->input->pos, len);
-  LOG_INFO("decode", K(req), K(len), K(m->c->doing_request_count));
+
   req->data_ = m->input->pos;
   req->len_ = len;
   m->input->last = m->input->pos;
@@ -85,7 +85,7 @@ int MyReqHandler::process(easy_request_t *r)
 {
   MyReq *req = (MyReq*)r->ipacket;
   req->ez_r_ = r;
-  LOG_INFO("easy IO process", K(r));
+
   int eret = EASY_OK;
   int ret = OB_SUCCESS;
   easy_request_sleeping(r);
@@ -100,7 +100,7 @@ int MyReqHandler::process(easy_request_t *r)
 
 int MyReqHandler::encode(easy_request_t *r, void *packet)
 {
-  LOG_INFO("encode", K(r), K(packet), K(lbt()));
+
   int ret = OB_SUCCESS;
   easy_buf_t *buf = reinterpret_cast<easy_buf_t *>(packet);
   easy_request_addbuf(r, buf);
@@ -132,7 +132,7 @@ public:
       easy_eio_set_uthread_start(eio_, thread_start, nullptr);
       int eret = easy_eio_start(eio_);
       if (EASY_OK == eret) {
-        LOG_INFO("start mysql easy io");
+
       } else {
         ret = OB_LIBEASY_ERROR;
         LOG_ERROR("start mysql easy io fail", K(ret));
@@ -244,7 +244,7 @@ int main(int argc, char **argv)
         std::string resp, output;
         resp.reserve(1024);
         gen_http_resp(resp, output);
-        LOG_INFO("worker process", K(resp.size()));
+
         b->last = easy_memcpy(b->last, resp.c_str(), resp.size());
 
         r->opacket = b;

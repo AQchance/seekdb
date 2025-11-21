@@ -213,7 +213,7 @@ int ObPxMSReceiveVecOp::inner_close()
 
   release_channel_ret = erase_dtl_interm_result();
   if (release_channel_ret != common::OB_SUCCESS) {
-    LOG_TRACE("release interm result failed", KR(release_channel_ret));
+
   }
   sql_mem_processor_.unregister_profile();
   return ret;
@@ -488,7 +488,7 @@ int ObPxMSReceiveVecOp::GlobalOrderInput::get_row(
               K(add_row_reader_), K(add_row_reader_cnt), K(is_empty()), K(output_rows_));
     if (is_empty()) {
       ret = OB_ITER_END;
-      LOG_TRACE("finish to fetch all data from one input", K(ret));
+
       if (!finish_) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("fetch last row but merge input isn't finish", K(ret));
@@ -509,7 +509,7 @@ int ObPxMSReceiveVecOp::GlobalOrderInput::get_row(
       if (ret != OB_ITER_END) {
         LOG_WARN("fail get row", K(ret));
       } else {
-        LOG_TRACE("finish to fetch data from one global input", K(channel_idx), K(ret));
+
       }
     } else {
       output_rows_++;
@@ -630,7 +630,7 @@ int ObPxMSReceiveVecOp::GlobalOrderInput::add_batch(
       if (OB_FAIL(reset_add_row_store(reset))) {
         LOG_WARN("fail to switch add row store", K(ret));
       } else if (reset) {
-        LOG_TRACE("reset add row store", K(add_row_reader_), K(*add_row_store_));
+
         add_row_reader_->reset();
         add_row_store_->reset();
         if (OB_FAIL(add_row_reader_->init(add_row_store_))) {
@@ -884,7 +884,7 @@ int ObPxMSReceiveVecOp::get_all_rows_from_channels(ObPhysicalPlanCtx *phy_plan_c
             ret = OB_ERR_UNEXPECTED;
             LOG_WARN("invalid channel idx", K(got_channel_idx), K(ret));
           } else {
-            LOG_DEBUG("[VEC2.0 PX] get all rows from local channel", K(got_channel_idx), K(read_rows));
+
             processed_cnt_ += read_rows;
             cur_temp_store = temp_store_array.at(got_channel_idx);
             last_store_row = last_store_row_array.at(got_channel_idx);

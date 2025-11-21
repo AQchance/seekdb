@@ -89,7 +89,7 @@
         OB_SUCC(ret) && i < ARRAYSIZEOF(LOCATION_TABLES);
         ++i) {
      if (OB_FAIL(sql.assign_fmt("INSERT INTO %s(", LOCATION_TABLES[i]))) {
-       STORAGE_LOG(WARN, "append table name failed", K(ret));
+
      } else if (OB_FAIL(gen_sql(sql, values, schema))) {
        LOG_WARN("fail to gen sql", K(ret));
      } else if (i == THE_HISTORY_TABLE_IDX) {
@@ -131,7 +131,7 @@
      if (OB_FAIL(sql.assign_fmt("%s INTO %s(",
                                 (i == THE_HISTORY_TABLE_IDX) ? "INSERT" : "REPLACE",
                                 LOCATION_TABLES[i]))) {
-       STORAGE_LOG(WARN, "append table name failed", K(ret));
+
      } else if (OB_FAIL(gen_sql(sql, values, schema))) {
        LOG_WARN("fail to gen sql", K(ret));
      } else if (i == THE_HISTORY_TABLE_IDX) {
@@ -184,7 +184,7 @@
          OB_SUCC(ret) && i < ARRAYSIZEOF(LOCATION_TABLES);
          ++i) {
       if (OB_FAIL(sql.assign_fmt("INSERT INTO %s(", LOCATION_TABLES[i]))) {
-        STORAGE_LOG(WARN, "append table name failed", K(ret));
+
       } else if (OB_FAIL(gen_sql(sql, values, schema))) {
         LOG_WARN("fail to gen sql", K(ret));
       } else if (i == THE_HISTORY_TABLE_IDX) {

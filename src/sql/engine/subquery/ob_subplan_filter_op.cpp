@@ -108,7 +108,7 @@ int ObSubQueryIterator::get_next_row_vecrorizely()
 {
   int ret = OB_SUCCESS;
   const int64_t max_row_cnt = INT64_MAX;
-  LOG_DEBUG("debug batch to row transform ", K(batch_row_pos_));
+
   if (NULL == iter_brs_) {
     if (OB_FAIL(op_.get_next_batch(max_row_cnt, iter_brs_))) {
       LOG_WARN("get next batch failed", K(ret));
@@ -118,7 +118,7 @@ int ObSubQueryIterator::get_next_row_vecrorizely()
       LOG_WARN("backup datumss[0] failed", K(ret));
     }
     // backup datums[0]
-    LOG_DEBUG("batch to row transform ", K(batch_row_pos_), KPC(iter_brs_));
+
   }
 
   while(OB_SUCC(ret)) {
@@ -141,7 +141,7 @@ int ObSubQueryIterator::get_next_row_vecrorizely()
         } else {
           batch_row_pos_ = 0;
           if (0 == iter_brs_->size_ && iter_brs_->end_) {
-            LOG_DEBUG("get empty batch ", K(iter_brs_));
+
             ret = OB_ITER_END;
             break;
           } else if (OB_FAIL(brs_holder_.save(1))) {
@@ -182,7 +182,7 @@ int ObSubQueryIterator::cast_vector_format()
     LOG_WARN("invalid nullptr found", K(ret), K(iter_brs_), K(parent_));
   } else if (parent_->get_spec().use_rich_format_ && op_.get_spec().use_rich_format_) {
     FOREACH_CNT_X(e, op_.get_spec().output_, OB_SUCC(ret)) {
-      LOG_TRACE("cast to uniform", K(*e));
+
       if (OB_FAIL((*e)->cast_to_uniform(iter_brs_->size_, eval_ctx_))) {
         LOG_WARN("expr evaluate failed", K(ret), KPC(*e), K_(eval_ctx));
       }
@@ -724,7 +724,7 @@ int ObSubPlanFilterOp::inner_open()
   if (OB_SUCC(ret) && MY_SPEC.enable_das_group_rescan_) {
     int64_t simulate_group_size = - EVENT_CALL(EventTable::EN_DAS_SIMULATE_GROUP_SIZE);
     max_group_size_ = simulate_group_size > 0 ? simulate_group_size: OB_MAX_BULK_JOIN_ROWS;
-    LOG_TRACE("max group size of SPF is", K(max_group_size_));
+
     if(OB_FAIL(alloc_das_batch_params(max_group_size_+MY_SPEC.max_batch_size_))) {
       LOG_WARN("Fail to alloc das batch params.", K(ret));
     }
@@ -871,7 +871,7 @@ int ObSubPlanFilterOp::handle_next_row()
         }
 
         if (enable_left_px_batch_ && params_size >= MAX_PX_RESCAN_PARAMS_SIZE) {
-          LOG_TRACE("px rescan rpc package is too large", K(params_size), K(PX_RESCAN_BATCH_ROW_COUNT - batch_count));
+
           break;
         }
       }
@@ -974,7 +974,7 @@ int ObSubPlanFilterOp::handle_next_batch_with_px_rescan(const int64_t op_max_bat
       }
 
       if (params_size >= MAX_PX_RESCAN_PARAMS_SIZE) {
-        LOG_TRACE("px rescan rpc package is too large", K(params_size), K(left_rows_total_cnt));
+
         break;
       }
     }
@@ -1311,7 +1311,7 @@ int ObSubPlanFilterOp::prepare_rescan_params(bool need_save, int64_t& params_siz
     } else if (need_save) {
       ObObjParam copy_result;
       int64_t expr_idx = 0;
-      LOG_DEBUG("prepare_rescan_params", KPC(param), K(i));
+
       OZ(batch_rescan_ctl_.params_.deep_copy_param(*param, copy_result));
       params_size += copy_result.get_deep_copy_size();
       OZ(cur_params_.push_back(copy_result));

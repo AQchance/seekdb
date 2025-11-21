@@ -127,7 +127,7 @@ int ObPhysicalRestoreTableOperator::insert_job(const ObPhysicalRestoreJob &job_i
       LOG_WARN("invalid affected rows", KR(ret), K(affected_rows), K(sql));
     }
   }
-  LOG_INFO("[RESTORE] insert job", KR(ret), K(tenant_id_), K(job_info));
+
   return ret;
 }
 
@@ -381,7 +381,7 @@ int ObPhysicalRestoreTableOperator::get_jobs(
             } else if (OB_FAIL(jobs.push_back(current))) {
               LOG_WARN("push back job info failed", K(ret), K(current));
             } else {
-              LOG_DEBUG("retrieve restore job", K(ret), "job", current);
+
               current.reset();
             }
           } else {
@@ -393,7 +393,7 @@ int ObPhysicalRestoreTableOperator::get_jobs(
           } else if (OB_FAIL(retrieve_restore_option(*result, current))) {
             LOG_WARN("fail to retrieve restore option", K(ret), K(current));
           } else {
-            LOG_DEBUG("current job", K(ret), K(current));
+
           }
         } // end for
 
@@ -403,17 +403,17 @@ int ObPhysicalRestoreTableOperator::get_jobs(
             if (OB_FAIL(jobs.push_back(current))) {
               LOG_WARN("push back job info failed", K(ret), K(current));
             } else {
-              LOG_DEBUG("retrieve restore job", K(ret), "job", current);
+
             }
           } else {
-            LOG_DEBUG("restore job is invalid", K(ret), "job", current);
+
           }
         } else {
           LOG_WARN("get jobs fail", K(ret));
         }
       }
     }
-    LOG_INFO("[RESTORE] get restore jobs", K(ret), "job_cnt", jobs.count());
+
   }
   return ret;
 }
@@ -431,7 +431,7 @@ int ObPhysicalRestoreTableOperator::retrieve_restore_option(
     ObString debug_value;
     EXTRACT_VARCHAR_FIELD_MYSQL(result, "name", name);
     EXTRACT_VARCHAR_FIELD_MYSQL_SKIP_RET(result, "value", debug_value);
-    LOG_DEBUG("retrieve restore option", K(ret), "name", name, "value", debug_value);
+
 
 #define RETRIEVE_UINT_VALUE(COLUMN_NAME, OBJ)                        \
   if (OB_SUCC(ret)) {                                                \
@@ -908,7 +908,7 @@ int ObPhysicalRestoreTableOperator::update_job_error_info(
       LOG_WARN("update succeeded but affected_rows more than one", KR(ret), K(affected_rows));
     }
   }
-  LOG_INFO("[RESTORE] update job error info", KR(ret), K(job_id), K(return_ret), K(mod));
+
   return ret;
 }
 
@@ -943,7 +943,7 @@ int ObPhysicalRestoreTableOperator::update_job_status(
     LOG_WARN("update succeeded but affected_rows more than one", K(ret), K(affected_rows));
   }
 
-  LOG_INFO("[RESTORE] update job status", K(ret), K(job_id), K(status));
+
   return ret;
 }
 
@@ -971,7 +971,7 @@ int ObPhysicalRestoreTableOperator::remove_job(
       // no need to check affected_rows
     }
   }
-  LOG_INFO("[RESTORE] remove job", K(ret), K(job_id));
+
   return ret;
 }
 
@@ -1168,7 +1168,7 @@ int ObPhysicalRestoreTableOperator::check_finish_restore_to_target_status(
         }
 
         if (OB_SUCC(ret) && is_finished && !is_success) {
-          LOG_INFO("tenant restore failed", K(ls_id), K(ls_restore_status));
+
         }
       }
     }

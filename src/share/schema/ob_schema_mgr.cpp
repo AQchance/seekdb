@@ -661,7 +661,7 @@ int ObSchemaMgr::assign(const ObSchemaMgr &other)
       }
     }
   }
-  LOG_INFO("ObSchemaMgr assign cost", KR(ret), "cost", ObTimeUtility::current_time() - start_time);
+
   return ret;
 }
 
@@ -747,7 +747,7 @@ int ObSchemaMgr::deep_copy(const ObSchemaMgr &other)
       }
     }
   }
-  LOG_INFO("ObSchemaMgr deep_copy cost", KR(ret), "cost", ObTimeUtility::current_time() - start_time);
+
   return ret;
 }
 
@@ -957,7 +957,7 @@ int ObSchemaMgr::add_tenant(const ObSimpleTenantSchema &tenant_schema)
                                            replaced_tenant))) {
     LOG_WARN("failed to add tenant schema", K(ret));
   } else {
-    LOG_INFO("add tenant schema", K(ret), K_(tenant_id), K(tenant_schema));
+
   }
 
   return ret;
@@ -1009,7 +1009,7 @@ int ObSchemaMgr::add_drop_tenant_info(const ObDropTenantInfo &drop_tenant_info)
       LOG_WARN("drop tenant info not match", K(ret), K(tmp_info), K(drop_tenant_info));
     } else {
       // The incremental refresh process may fail and retry, it needs to be reentrant here
-      LOG_INFO("drop tenant info already exist", K(ret), K(tmp_info), K(drop_tenant_info));
+
     }
   } else {
     void *tmp_ptr = allocator_.alloc(sizeof(ObDropTenantInfo));
@@ -1025,7 +1025,7 @@ int ObSchemaMgr::add_drop_tenant_info(const ObDropTenantInfo &drop_tenant_info)
                                             compare_drop_tenant_info))) {
         LOG_WARN("fail to insert drop tenant info", K(ret), KPC(new_ptr));
       } else {
-        LOG_INFO("add drop tenant info", K(ret), KPC(new_ptr));
+
       }
     }
   }
@@ -1068,7 +1068,7 @@ int ObSchemaMgr::del_drop_tenant_info(const uint64_t tenant_id)
                                                   drop_tenant_info))) {
     LOG_WARN("fail to remove drop tenant info", K(ret), K(tenant_id));
   } else {
-    LOG_INFO("remove drop tenant info", K(ret), K(tenant_id), KPC(drop_tenant_info));
+
   }
   return ret;
 }
@@ -2835,7 +2835,7 @@ int ObSchemaMgr::get_constraint_info(const uint64_t tenant_id,
                                                 constraint_name.length());
       }
     } else {
-      LOG_INFO("get constraint info failed, entry not exist", K(constraint_name));
+
       // If the table id is not found based on the library name and table name, nothing will be done
     }
   }
@@ -4226,7 +4226,7 @@ int ObSchemaMgr::deal_with_db_rename(
     LOG_WARN("invalid argument", K(old_db_schema), K(new_db_schema));
   } else {
     if (old_db_schema.get_database_name_str() != new_db_schema.get_database_name_str()) {
-      LOG_INFO("db renamed", K(old_db_schema), K(new_db_schema));
+
       ObDatabaseSchemaHashWrapper db_name_wrapper(old_db_schema.get_tenant_id(),
                                                   old_db_schema.get_name_case_mode(),
                                                   old_db_schema.get_database_name_str());
@@ -4524,7 +4524,7 @@ int ObSchemaMgr::rebuild_table_hashmap(uint64_t &fk_cnt, uint64_t &cst_cnt)
         ++iter) {
       table_schema = *iter;
       exist_schema = NULL;
-      LOG_TRACE("table_info is", "table_id", table_schema->get_table_id());
+
 
       if (OB_ISNULL(table_schema) || !table_schema->is_valid()) {
         ret = OB_ERR_UNEXPECTED;
@@ -4752,9 +4752,9 @@ void ObSchemaMgr::dump() const
           iter != SCHEMA##_infos_.end(); iter++) {        \
         SCHEMA_TYPE *schema = *iter;                      \
         if (NULL == schema) {                             \
-          LOG_INFO("NULL ptr", KP(schema));                \
+                \
         } else {                                          \
-          LOG_INFO(#SCHEMA, K(*schema));                  \
+                  \
         }                                                 \
       }                                                   \
     }

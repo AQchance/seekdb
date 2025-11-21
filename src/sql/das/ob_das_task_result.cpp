@@ -214,7 +214,7 @@ int ObDASTCB::register_reading()
     LOG_WARN("das tcb is exiting", KR(ret), K(task_id_));
   } else if (OB_UNLIKELY(is_reading_)) {
     ret = OB_EAGAIN;
-    LOG_TRACE("someone else is reading tcb, try again later", KR(ret), K(task_id_));
+
   } else {
     is_reading_ = true;
   }
@@ -247,7 +247,7 @@ int ObDASTCB::register_exiting(bool &is_already_exiting)
     LOG_WARN("acquire tcb lock failed", KR(ret), K(task_id_));
   } else if (OB_UNLIKELY(is_reading_)) {
     ret = OB_EAGAIN;
-    LOG_TRACE("someone else is reading tcb, try again later", KR(ret), K(task_id_));
+
   } else if (OB_UNLIKELY(is_exiting_)) {
     is_already_exiting = true;
   } else {
@@ -292,7 +292,7 @@ int ObDASTaskResultMgr::init()
 void ObDASTaskResultMgr::destory()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("[DAS TASK RESULT MGR] begin destory", K(MTL_ID()), K(mem_profile_map_.size()), K(tcb_map_.size()));
+
   gc_.~ObDASTaskResultGC();
   ObDASTaskResultErase tcb_erase(this);
   while(OB_SUCC(ret) && tcb_map_.size() != 0) {
@@ -301,7 +301,7 @@ void ObDASTaskResultMgr::destory()
     } else if (tcb_erase.ret_ == OB_EAGAIN) {
       tcb_erase.ret_ = OB_SUCCESS;
       if (REACH_TIME_INTERVAL(5 * 1000 * 1000L)) {
-        LOG_INFO("[DAS TASK RESULT MGR] keep trying to clear the tcb map", K(tcb_map_.size()), K(mem_profile_map_.size()), K(MTL_ID()));
+
       }
     } else if (tcb_erase.ret_ != OB_SUCCESS) {
       // an unexpected error occurs, may never be able to fully delete the tcb properly
@@ -355,7 +355,7 @@ void ObDASTaskResultMgr::destory()
     }
   }
   mem_profile_map_.destroy();
-  LOG_INFO("[DAS TASK RESULT MGR] end destory", K(MTL_ID()));
+
 }
 
 int ObDASTaskResultMgr:: check_mem_profile_key(ObDASTCBMemProfileKey &key) {
@@ -366,7 +366,7 @@ int ObDASTaskResultMgr:: check_mem_profile_key(ObDASTCBMemProfileKey &key) {
   if (!key.is_valid()) {
     int64_t thread_id = GETTID();
     key.init(INT64_MAX, thread_id, INT64_MAX);
-    LOG_DEBUG("use a defalut key", K(key));
+
   }
   return ret;
 }
@@ -466,7 +466,7 @@ int ObDASTaskResultMgr::save_task_result(int64_t task_id,
       }
 
       if (OB_FAIL(ret) && NULL != tcb) {
-        LOG_TRACE("save_task_result: ", KPC(tcb), K(mem_profile_map_.size()), K(tcb_map_.size()));
+
 
         tcb->destory(mem_profile_info);
         tcb->~ObDASTCB();
@@ -768,7 +768,7 @@ int ObDASTaskResultMgr::erase_task_result(int64_t task_id, bool need_unreg_dm)
   if (OB_FAIL(tcb_map_.get(tcb_info, tcb))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
-      LOG_TRACE("das tcb was already removed", K(task_id));
+
     } else {
       LOG_WARN("get das tcb failed", KR(ret), K(task_id));
     }
@@ -779,7 +779,7 @@ int ObDASTaskResultMgr::erase_task_result(int64_t task_id, bool need_unreg_dm)
     // tcb is already erased, remove from map failed last time
   } else if (OB_UNLIKELY(tcb->is_reading_)) {
     ret = OB_EAGAIN;
-    LOG_TRACE("someone else is reading tcb, try again later", KR(ret), K(task_id));
+
   } else {
     bool is_already_exiting = false;
     if (OB_FAIL(tcb->register_exiting(is_already_exiting))) {
@@ -853,7 +853,7 @@ int ObDASTaskResultMgr::iterator_task_result(ObDASDataFetchRes &res,
     LOG_WARN("das tcb is exiting", KR(ret), K(task_id));
   } else if (tcb->is_reading_) {
     ret = OB_EAGAIN;
-    LOG_TRACE("someone else is reading tcb, try again later", KR(ret), K(task_id));
+
   } else {
     bool need_unset_interrupt = false;
     ObDASTCBMemProfileKey &mem_profile_key = tcb->mem_profile_key_;
@@ -1018,7 +1018,7 @@ int ObDASTaskResultMgr::fetch_result_by_normal(ObDASTCB *tcb,
     }
   }
 
-  LOG_DEBUG("fecth result by normal", K(has_more), K(res), K(ret));
+
   return ret;
 }
 
@@ -1090,7 +1090,7 @@ int ObDASTaskResultMgr::fetch_result_by_vector(ObDASTCB *tcb,
       ret = OB_SUCCESS;
     }
   }
-  LOG_DEBUG("fecth result by vector", K(has_more), K(res), K(ret));
+
 
   return ret;
 }

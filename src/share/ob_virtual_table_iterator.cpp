@@ -276,7 +276,7 @@ int ObVirtualTableIterator::init_convert_ctx()
       }
     }
   }
-  LOG_DEBUG("key ranges", K(ret), K(key_ranges_));
+
   return ret;
 }
 
@@ -460,7 +460,7 @@ int ObVirtualTableIterator::get_next_row(ObNewRow *&row)
   if (OB_SUCC(ret)) {
     row = cur_row;
   }
-  LOG_DEBUG("check result row", K(ret), KPC(row));
+
   return ret;
 }
 

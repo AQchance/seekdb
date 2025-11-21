@@ -33,7 +33,7 @@ int ObLockTableExecutor::execute(ObExecContext &ctx,
 {
   int ret = OB_SUCCESS;
   if (is_mysql_mode()) {
-    LOG_DEBUG("mysql mode do nothing");
+
     ret = execute_mysql_(ctx, stmt);
   } else if (OB_FAIL(execute_oracle_(ctx, stmt))) {
     LOG_WARN("execute oracle lock table failed", K(ret));
@@ -134,7 +134,7 @@ int ObLockTableExecutor::execute_mysql_(ObExecContext &ctx,
     }
     }
   }
-  LOG_DEBUG("execute mysql lock table", K(ctx), K(stmt));
+
   return ret;
 }
 

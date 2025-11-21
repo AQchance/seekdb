@@ -66,7 +66,7 @@ int ObExprFormatBytes::eval_format_bytes_batch(const ObExpr &expr,
                                       ObEvalCtx &ctx,
                                       const ObBitVector &skip,
                                       const int64_t batch_size) {
-  LOG_DEBUG("eval format bytes batch mode", K(batch_size));
+
   int ret = OB_SUCCESS;
   if (OB_FAIL(expr.args_[0]->eval_batch(ctx, skip, batch_size))) {
     LOG_WARN("eval arg0 failed", K(ret));

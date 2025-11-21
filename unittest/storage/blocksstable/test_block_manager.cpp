@@ -71,7 +71,7 @@ int TestBlockManager::init_multi_tenant()
   int ret = OB_SUCCESS;
   GCONF.cpu_count = 6;
   if (OB_SUCCESS != (ret = multi_tenant_.init(addr_))) {
-    STORAGE_LOG(WARN, "init multi_tenant failed", K(ret));
+
   } else {
     multi_tenant_.start();
     GCTX.omt_ = &multi_tenant_;
@@ -399,7 +399,7 @@ int TestMacroBlockSeqStress::init(const int64_t thread_cnt)
     LOG_WARN("init twice", K(ret));
   } else if (thread_cnt < 0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(thread_cnt));
+
   } else if (OB_FAIL(blk_seqs_.create(thread_cnt * GENERATE_SEQ_NUMBERS_PER_THREAD,
                                       "test_macro_seq",
                                       "test_macro_seq"))) {

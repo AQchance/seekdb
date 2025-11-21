@@ -152,7 +152,7 @@ void ObFinishTransferInMdsCtx::on_redo(const share::SCN &redo_scn)
 {
   redo_scn_ = redo_scn;
   MdsCtx::on_redo(redo_scn);
-  LOG_INFO("[TRANSFER] finish transfer in mds ctx on_redo", K(redo_scn));
+
 }
 
 }

@@ -124,7 +124,7 @@ int ObQueryHint::set_outline_data_hints(const ObGlobalHint &global_hint,
         LOG_WARN("faild to push back hint.", K(ret));
       }
     }
-    LOG_DEBUG("finish add outline data hints");
+
   }
   return ret;
 }
@@ -327,7 +327,7 @@ int ObQueryHint::init_query_hint(ObIAllocator *allocator,
   } else if (OB_FAIL(distribute_hint_to_orig_stmt(stmt))) {
     LOG_WARN("faild to distribute hint to orig stmt", K(ret));
   } else {
-    LOG_TRACE("finish init query hint", K(*this));
+
   }
   return ret;
 }
@@ -530,7 +530,7 @@ int ObQueryHint::try_add_new_qb_name(ObIAllocator &allocator,
   } else {
     ++cnt;
     if (cnt%50 == 0) {
-      LOG_TRACE("try generate qb_name by str too hard", K(cnt));
+
     }
     if (OB_UNLIKELY(cnt > 1000)) {
       ret = OB_ERR_UNEXPECTED;
@@ -904,7 +904,7 @@ int ObQueryHint::get_table_item_by_hint_table(const ObDMLStmt &stmt,
   if (OB_SUCC(ret)) {
     table_item = NULL != explicit_matched ? explicit_matched : implicit_matched;
     if (NULL == table_item) {
-      LOG_TRACE("no table item matched hint table", K(table), K(table_items));
+
     }
   }
   return ret;
@@ -1132,7 +1132,7 @@ int ObStmtHint::init_stmt_hint(const ObDMLStmt &stmt,
         LOG_WARN("failed to merge hint", K(ret));
       }
     }
-    LOG_TRACE("finish init stmt hint", K(stmt.get_stmt_id()), K(qb_name), K(*this));
+
   }
   return ret;
 }
@@ -1273,7 +1273,7 @@ int ObStmtHint::replace_name_for_single_table_view(ObIAllocator *allocator,
                                     target_table->get_object_name())) {
     /* need not replace name */
   } else {
-    LOG_DEBUG("replace name for single table view in hint", K(view_table), K(*target_table));
+
     const int64_t N = get_hint_count();
     ObHint *hint = NULL;
     ObHint *new_hint = NULL;
@@ -1381,7 +1381,7 @@ int ObLogPlanHint::init_log_plan_hint(ObSqlSchemaGuard &schema_guard,
                                           stmt_hint.other_opt_hints_))) {
     LOG_WARN("failed to init other opt hints", K(ret));
   } else {
-    LOG_TRACE("finish init log plan hint", K(stmt.get_stmt_id()), K(*this), K(stmt_hint.normal_hints_), K(stmt_hint.other_opt_hints_));
+
   }
   return ret;
 }
@@ -1629,9 +1629,9 @@ int ObLogPlanHint::add_join_hint(const ObDMLStmt &stmt,
   if (OB_FAIL(query_hint.get_relids_from_hint_tables(stmt, join_hint.get_tables(), join_tables))) {
     LOG_WARN("failed to get relids from hint tables", K(ret), K(join_hint.get_tables()));
   } else if (join_tables.is_empty()) {
-    LOG_TRACE("get invalid join hint", K(ret), K(join_tables), K(join_hint));
+
   } else {
-    LOG_TRACE("get valid join hint", K(join_hint));
+
     log_join_hint = NULL;
     for (int64_t i = 0; NULL == log_join_hint && i < join_hints_.count(); ++i) {
       if (join_tables.equal(join_hints_.at(i).join_tables_)) {
@@ -2120,15 +2120,15 @@ int LogLeadingHint::init_leading_info(const ObDMLStmt &stmt,
     hint_ = static_cast<const ObJoinOrderHint*>(hint);
     if (hint_->is_ordered_hint() &&
         OB_FAIL(init_leading_info_from_ordered_hint(stmt))) {
-      LOG_TRACE("failed to init leading info from ordered hint.", K(ret));
+
     } else if (!hint_->is_ordered_hint() &&
                OB_FAIL(init_leading_info_from_leading_hint(stmt, query_hint, hint_->get_table(), table_set))) {
-      LOG_TRACE("failed to init leading info from leading hint.", K(ret));
+
     } else if (NULL == hint_) {
       leading_tables_.reuse();
       leading_infos_.reuse();
     } else {
-      LOG_TRACE("succeed to get leading infos", K(*this));
+
     }
   }
   return ret;
@@ -2459,7 +2459,7 @@ int LogTableHint::init_index_hints(const ObDMLStmt &stmt, ObSqlSchemaGuard &sche
     int64_t table_index_count = data_table_schema->get_index_count();
     LOG_WARN("Table index or index aux count is invalid", K(ret), K(table_index_count), K(table_index_aux_count));
   } else {
-    LOG_TRACE("get readable index", K(table_index_aux_count));
+
     const share::schema::ObTableSchema *index_schema = NULL;
     ObSEArray<uint64_t, 4> index_list;
     ObSEArray<uint64_t, 4> no_index_list;
@@ -2671,7 +2671,7 @@ int LogTableHint::add_join_filter_hint(const ObDMLStmt &stmt,
              OB_FAIL(query_hint.get_relids_from_hint_tables(stmt, hint.get_left_tables(), left_tables))) {
     LOG_WARN("failed to get relids from hint tables", K(ret), K(hint.get_left_tables()));
   } else if (has_left_tables && left_tables.is_empty()) {
-    LOG_TRACE("get invalid join hint", K(ret), K(left_tables), K(hint));
+
   } else {
     bool added = false;
     for (int64_t i = 0; OB_SUCC(ret) && !added && i < left_tables_.count(); ++i) {
@@ -2691,9 +2691,9 @@ int LogTableHint::add_join_filter_hint(const ObDMLStmt &stmt,
     }
     if (OB_FAIL(ret) || added) {
     } else if (OB_FAIL(left_tables_.push_back(left_tables))) {
-      LOG_TRACE("failed to push back", K(ret), K(hint), K(left_tables));
+
     } else if (OB_FAIL(join_filter_hints_.push_back(&hint))) {
-      LOG_TRACE("failed to push back", K(ret), K(hint));
+
     }
   }
   return ret;

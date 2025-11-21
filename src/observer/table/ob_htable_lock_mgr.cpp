@@ -59,7 +59,7 @@ int ObHTableLockMgr::init()
 void ObHTableLockMgr::mtl_destroy(ObHTableLockMgr *&htable_lock_mgr)
 {
   if (nullptr != htable_lock_mgr) {
-    LOG_INFO("trace ObHTableLockMgr destroy", K(MTL_ID()));
+
     htable_lock_mgr->lock_map_.destroy();
     common::ob_delete(htable_lock_mgr);
     htable_lock_mgr = nullptr;

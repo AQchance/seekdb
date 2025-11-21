@@ -274,7 +274,7 @@ int ObDASMergeIter::do_table_scan()
         LOG_WARN("failed to push back das task ptr", K(ret));
       }
     } // for end
-    LOG_DEBUG("[DAS ITER] merge iter do table scan", K(ref_table_id_), K(das_tasks_arr_.count()));
+
   }
   return ret;
 }
@@ -427,7 +427,7 @@ int ObDASMergeIter::inner_get_next_rows(int64_t &count, int64_t capacity)
   if (OB_UNLIKELY(first_get_row_)) {
     first_get_row_ = false;
   }
-  LOG_DEBUG("[DAS ITER] merge iter get next rows end", K(count), K(merge_type_), K(merge_state_arr_), K(ret));
+
   const ObBitVector *skip = nullptr;
   PRINT_VECTORIZED_ROWS(SQL, DEBUG, *eval_ctx_, *output_, count, skip);
   return ret;
@@ -525,7 +525,7 @@ int ObDASMergeIter::update_output_tablet_id(ObIDASTaskOp *output_das_task)
         expr->locate_datum_for_write(*eval_ctx_).set_int(output_id);
       }
       expr->set_evaluated_projected(*eval_ctx_);
-      LOG_TRACE("find the partition id expr in pdml table scan", K(ret), K(output_id), K(expr), KPC(tablet_loc));
+
     }
   }
   return ret;
@@ -1149,7 +1149,7 @@ int ObDASMergeIter::compare(int64_t cur_idx, int64_t &output_idx)
       }
     }
   }
-  LOG_DEBUG("[DAS ITER] merge iter compare finished", K(cur_idx), K(output_idx), K(used_for_keep_order_));
+
   return ret;
 }
 

@@ -864,7 +864,7 @@ int ObCoreTableProxy::execute_delete_sql(const int64_t row_id)
     } else if (OB_FAIL(sql_client_->write(tenant_id_, sql.ptr(), affected_rows))) {
       LOG_WARN("execute sql failed", KR(ret), K_(tenant_id), K(sql));
     } else {
-      LOG_TRACE("execute sql", KR(ret), K_(tenant_id), K(sql));
+
     }
   }
   return ret;
@@ -1021,7 +1021,7 @@ int ObCoreTableProxy::execute_incremental_update_sql(const Row &row, const ObIAr
     } else if (OB_FAIL(sql_client_->write(tenant_id_, sql.ptr(), affected))) {
       LOG_WARN("execute sql failed", KR(ret), K_(tenant_id), K(sql));
     } else {
-      LOG_TRACE("execute sql", KR(ret), K_(tenant_id), K(sql), K(affected));
+
     }
 
     //batch update
@@ -1038,7 +1038,7 @@ int ObCoreTableProxy::execute_incremental_update_sql(const Row &row, const ObIAr
     } else if (OB_FAIL(sql_client_->write(tenant_id_, sql.ptr(), affected))) {
       LOG_WARN("execute sql failed", KR(ret), K_(tenant_id), K(sql));
     } else {
-      LOG_TRACE("execute sql", KR(ret), K_(tenant_id), K(sql), K(affected));
+
       if (is_zero_row(affected)) {
         LOG_WARN("core table update do nothing", K(sql));
       }
@@ -1081,7 +1081,7 @@ int ObCoreTableProxy::execute_update_sql(const Row &row, const ObIArray<UpdateCe
                  || (OB_NOT_NULL(c->value_.ptr()) && OB_ISNULL(uc->cell_.value_.ptr()))) {
         // NULL == ObString.ptr() means NULL, which is different with empty string(data_length is 0, but ptr is not null)
       } else if (c->value_ == uc->cell_.value_) {
-        LOG_INFO("value is same, just continue", KPC(c), KPC(uc));
+
         continue;
       }
       ObSqlString &value_sql = is_insert ? insert_sql : update_sql;
@@ -1124,7 +1124,7 @@ int ObCoreTableProxy::execute_update_sql(const Row &row, const ObIArray<UpdateCe
     } else if (OB_FAIL(sql_client_->write(tenant_id_, sql.ptr(), affected))) {
       LOG_WARN("execute sql failed", KR(ret), K_(tenant_id), K(sql));
     } else {
-      LOG_TRACE("execute sql", KR(ret), K_(tenant_id), K(sql), K(affected));
+
     }
 
     //batch update
@@ -1139,7 +1139,7 @@ int ObCoreTableProxy::execute_update_sql(const Row &row, const ObIArray<UpdateCe
     } else if (OB_FAIL(sql_client_->write(tenant_id_, sql.ptr(), affected))) {
       LOG_WARN("execute sql failed", KR(ret), K_(tenant_id), K(sql));
     } else {
-      LOG_TRACE("execute sql", KR(ret), K_(tenant_id), K(sql), K(affected));
+
     }
 
     if (OB_SUCC(ret)) {

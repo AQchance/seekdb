@@ -58,7 +58,7 @@ int ObTxTable::check_with_tx_data(ObReadTxDataArg &read_tx_data_arg, ObITxDataCh
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "tx table is not init.", KR(ret), K(read_tx_data_arg));
+
     return ret;
   }
   /**************************************************************************************************/
@@ -69,7 +69,7 @@ int ObTxTable::check_with_tx_data(ObReadTxDataArg &read_tx_data_arg, ObITxDataCh
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(check_tx_data_in_tables_(read_tx_data_arg, fn))) {
     if (OB_TRANS_CTX_NOT_EXIST != ret) {
-      STORAGE_LOG(WARN, "check tx data in tables failed", KR(ret), K(ls_id_), K(read_tx_data_arg));
+
     }
   }
 
@@ -94,10 +94,10 @@ int ObTxData::add_undo_action(ObTxTable *tx_table,
   ObUndoStatusNode *node = op_guard_->get_undo_status_list().head_;
   if (OB_ISNULL(tx_table)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "tx table is nullptr.", KR(ret));
+
   } else if (OB_ISNULL(tx_data_table = tx_table->get_tx_data_table())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "tx data table in tx table is nullptr.", KR(ret));
+
   } else {
 /**************************************************************************************************/
     // When testing big tx data, continuously attach many invalid undo actions and disable the merge logic
@@ -106,7 +106,7 @@ int ObTxData::add_undo_action(ObTxTable *tx_table,
     while (OB_SUCC(ret) && --loop_times) {
       ObUndoStatusNode *new_node = nullptr;
       if (OB_FAIL(tx_data_table->alloc_undo_status_node(new_node))) {
-        STORAGE_LOG(WARN, "alloc_undo_status_node() fail", KR(ret));
+
       } else {
         new_node->next_ = node;
         op_guard_->get_undo_status_list().head_ = new_node;
@@ -139,7 +139,7 @@ int ObTxDataMemtableScanIterator
     ret = OB_ITER_END;// all tx data datum row has been generated
   } else {
     if (generate_size_ >= 1) {
-      STORAGE_LOG(INFO, "meet big tx data", KR(ret), K(*this));
+
 /**************************************************************************************************/
       if (buffer_len_ > ATOMIC_LOAD(&BIGGEST_TX_DATA_SIZE)) {
         // not exactly accurate, but enough for unittest
@@ -155,7 +155,7 @@ int ObTxDataMemtableScanIterator
     new (&datum_row_) ObDatumRow();// CAUTIONS: this is needed, or will core dump
     if (OB_FAIL(datum_row_.init(DEFAULT_TX_DATA_ALLOCATOR,
                                 TX_DATA_MAX_COLUMN + SSTABLE_HIDDEN_COLUMN_CNT))) {
-      STORAGE_LOG(ERROR, "fail to init datum row", KR(ret), K(*this));
+
     } else {
       datum_row_.row_flag_.set_flag(blocksstable::ObDmlFlag::DF_INSERT);
       datum_row_.storage_datums_[TX_DATA_ID_COLUMN].set_int(tx_data_->tx_id_.get_id());
@@ -207,7 +207,7 @@ int ObTxDataSingleRowGetter::deserialize_tx_data_from_store_buffers_(ObTxData &t
   int64_t pos = 0;
   if (OB_ISNULL(merge_buffer)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(ERROR, "fail to alloc merge buffer", KR(ret), K(total_buffer_size));
+
   } else {
     char *p_dest = merge_buffer;
     for (int64_t idx = 0; idx < tx_data_buffers_.count(); ++idx) {
@@ -217,11 +217,11 @@ int ObTxDataSingleRowGetter::deserialize_tx_data_from_store_buffers_(ObTxData &t
     }
     tx_data.tx_id_ = tx_id_;
     if (OB_FAIL(tx_data.deserialize(merge_buffer, total_buffer_size, pos, tx_data_allocator_))) {
-      STORAGE_LOG(WARN, "deserialize tx data failed", KR(ret), KPHEX(merge_buffer, total_buffer_size));
+
       hex_dump(merge_buffer, total_buffer_size, true, OB_LOG_LEVEL_WARN);
     } else if (!tx_data.is_valid_in_tx_data_table()) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "the deserialized tx data is invalid.", KR(ret), K(tx_data));
+
     }
 /**************************************************************************************************/
     if (tx_data.tx_id_.get_id() == ATOMIC_LOAD(&TEST_TX_ID)) {

@@ -66,14 +66,14 @@ void ObLocalityInfo::destroy()
 {
   locality_region_array_.destroy();
   locality_zone_array_.destroy();
-  STORAGE_LOG(INFO, "ObLocalityInfo destroy finished");
+
 }
 
 int ObLocalityInfo::add_locality_zone(const ObLocalityZone &item)
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(locality_zone_array_.push_back(item))) {
-    STORAGE_LOG(WARN, "push to locality info failed", K(ret), K(item));
+
   } else {
     // do nothing
   }

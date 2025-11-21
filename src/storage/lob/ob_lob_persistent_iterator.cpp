@@ -111,7 +111,7 @@ int ObLobMetaBaseIterator::revert_scan_iter()
     LOG_ERROR("revert scan iterator failed", K(ret), KPC(row_iter_));
   } else {
     row_iter_ = nullptr;
-    LOG_DEBUG("release lob meta tablet scan iter success", K_(main_tablet_id), K_(lob_meta_tablet_id), K_(lob_piece_tablet_id));
+
   }
   return ret;
 }
@@ -160,7 +160,7 @@ int ObLobMetaBaseIterator::rescan(ObLobAccessParam &param)
   } else if (OB_FAIL(oas->table_rescan(scan_param_, row_iter_))) {
     LOG_WARN("do table rescan fail", K(ret), K(param), KPC(this));
   } else {
-    LOG_DEBUG("rescan lob meta table sucess", K(param), KPC(this));
+
   }
   return ret;
 }
@@ -304,7 +304,7 @@ int ObLobMetaSingleGetter::get_next_row(int idx, ObLobMetaInfo &info)
   } else if (OB_FAIL(get_next_row(seq_id, info))) {
     LOG_WARN("get_next_row fail", K(ret), K(seq_id), K_(seq_id_local_buf), KPC(this));
   } else {
-    LOG_TRACE("get success", K_(seq_id_local_buf), K(idx), K(info), K(seq_id));
+
   }
   return ret;
 }
@@ -316,7 +316,7 @@ int ObLobPersistWriteIter::update_seq_no()
     if (param_->used_seq_cnt_ < param_->total_seq_cnt_) {
       param_->dml_base_param_->spec_seq_no_ = param_->seq_no_st_ + param_->used_seq_cnt_;
       param_->used_seq_cnt_++;
-      LOG_DEBUG("dml lob meta with seq no", K(param_->dml_base_param_->spec_seq_no_));
+
     } else {
       ret = OB_INVALID_ARGUMENT;
       LOG_WARN("failed to get seq no from param.", K(ret), KPC(param_));
@@ -461,7 +461,7 @@ int ObLobPersistInsertIter::get_next_row(blocksstable::ObDatumRow *&row)
   } else {
     ObPersistentLobApator::set_lob_meta_row(new_row_, result_.info_);
     row = &new_row_;
-    LOG_TRACE("insert one lob meta row", K(new_row_), K(param_->dml_base_param_->spec_seq_no_));
+
   }
   return ret;
 }
@@ -499,7 +499,7 @@ int ObLobPersistDeleteIter::get_next_row(blocksstable::ObDatumRow *&row)
   } else {
     ObPersistentLobApator::set_lob_meta_row(new_row_, result_.info_);
     row = &new_row_;
-    LOG_TRACE("delete one lob meta row", K(new_row_), K(param_->dml_base_param_->spec_seq_no_));
+
   }
   return ret;
 }
@@ -535,7 +535,7 @@ int ObLobSimplePersistInsertIter::get_next_row(blocksstable::ObDatumRow *&row)
       ++pos_;
       ObPersistentLobApator::set_lob_meta_row(new_row_, info);
       row = &new_row_;
-      LOG_TRACE("row", K(info));
+
     }
   }
   return ret;

@@ -302,7 +302,7 @@ int ObVariableSetResolver::resolve_value_expr(ParseNode &val_node, ObRawExpr *&v
           LOG_WARN("failed to resolve subquery info", K(ret));
         }
       }
-      LOG_TRACE("set user variable with subquery", K(sub_query_info.count()), K(is_mysql_mode()));
+
     }
     if (OB_FAIL(ret)) {
     } else if (OB_FAIL(ObResolverUtils::resolve_columns_for_const_expr(value_expr, columns, params_))) {

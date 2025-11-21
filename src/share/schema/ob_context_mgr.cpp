@@ -192,7 +192,7 @@ int ObContextMgr::add_context(const ObContextSchema &context_schema)
     if (OB_FAIL(context_map_.set_refactored(hash_wrapper, new_context_schema, overwrite))) {
       LOG_WARN("build context hash map failed", K(ret));
     } else {
-      LOG_INFO("add new context to context map", K(*new_context_schema));
+
     }
   }
   if (context_infos_.count() != context_map_.item_count()) {
@@ -272,7 +272,7 @@ int ObContextMgr::del_context(const ObContextKey &context)
                                               schema_to_del))) {
      if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("failed to remove context schema, item may not exist", K(ret));
+
     } else {
       LOG_WARN("failed to remove context schema, ",
               K(context.tenant_id_),
@@ -291,7 +291,7 @@ int ObContextMgr::del_context(const ObContextKey &context)
     hash_ret = context_map_.erase_refactored(context_wrapper);
     if (OB_SUCCESS != hash_ret) {
       if (OB_HASH_NOT_EXIST == hash_ret) {
-        LOG_INFO("failed to remove context schema, item may not exist", K(ret));
+
       } else {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("failed delete context from context hashmap, ",

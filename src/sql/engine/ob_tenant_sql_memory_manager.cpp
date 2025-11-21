@@ -415,7 +415,7 @@ int ObTenantSqlMemoryManager::mtl_init(ObTenantSqlMemoryManager *&sql_mem_mgr)
         sql_mem_mgr->workarea_histograms_.reset();
       }
     }
-    LOG_INFO("init sql memory manager", K(work_area_interval_size), K(tenant_id), K(ret));
+
   }
   if (OB_FAIL(ret)) {
     if (nullptr != sql_mem_mgr) {
@@ -494,7 +494,7 @@ int ObTenantSqlMemoryManager::get_work_area_size(
     // disable sql memory manager
   } else if (enable_auto_memory_mgr_) {
     increase(profile.get_cache_size());
-    LOG_TRACE("trace drift size", K(drift_size_), K(global_bound_size_));
+
     if (need_manual_calc_bound()) {
       if (OB_SUCCESS == global_bound_update_lock_.try_wrlock(common::ObLatchIds::SQL_MEMORY_MGR_MUTEX_LOCK)) {
         ++manual_calc_cnt_;
@@ -800,7 +800,7 @@ int ObTenantSqlMemoryManager::unregister_work_area_profile(ObSqlWorkAreaProfile 
       } else if (OB_FAIL(fill_workarea_histogram(profile))) {
         LOG_WARN("failed to fill workarea histogram", K(ret));
       }
-      LOG_TRACE("unregister workarea profile", K(profile), K(ret));
+
     }
   }
   return ret;
@@ -985,7 +985,7 @@ int ObTenantSqlMemoryManager::find_interval_index(
       } else {
         found = true;
         idx = INTERVAL_NUM - 1;
-        LOG_TRACE("too big size", K(cache_size));
+
       }
     }
   }
@@ -1219,7 +1219,7 @@ int ObTenantSqlMemoryManager::calculate_global_bound_size(ObIAllocator *allocato
       // last set enable auto memory manager, so others read the variable to avoiding dirty read
       enable_auto_memory_mgr_ = true;
       if (auto_calc) {
-        LOG_INFO("work area memory zero", K(tenant_id_), K(global_bound_size_));
+
       }
     } else {
       if (OB_ISNULL(allocator)) {

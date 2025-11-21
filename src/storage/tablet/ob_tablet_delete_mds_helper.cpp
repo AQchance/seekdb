@@ -38,7 +38,7 @@ int ObTabletDeleteMdsHelper::register_process(
   } else if (CLICK_FAIL(ObTabletCreateDeleteMdsUserData::set_tablet_empty_shell_trigger(arg.id_))) {
     LOG_WARN("failed to set_tablet_empty_shell_trigger", K(ret), K(arg));
   } else {
-    LOG_INFO("delete tablet register", KR(ret), K(arg));
+
   }
 
   return ret;
@@ -92,7 +92,7 @@ int ObTabletDeleteMdsHelper::replay_process(
   } else if (CLICK_FAIL(ObTabletCreateDeleteMdsUserData::set_tablet_empty_shell_trigger(arg.id_))) {
     LOG_WARN("failed to set_tablet_empty_shell_trigger", K(ret), K(arg));
   } else {
-    LOG_INFO("delete tablet replay", KR(ret), K(scn), K(arg));
+
   }
 
   return ret;
@@ -116,7 +116,7 @@ int ObTabletDeleteMdsHelper::on_replay(
   } else if (CLICK_FAIL(arg.deserialize(buf, len, pos))) {
     LOG_WARN("failed to deserialize", K(ret));
   } else if (arg.is_old_mds_) {
-    LOG_INFO("skip replay delete tablet for old mds", K(arg), K(scn));
+
   } else if (CLICK_FAIL(replay_process(arg, scn, ctx))) {
     LOG_WARN("failed to replay_process", K(ret), K(arg));
   }

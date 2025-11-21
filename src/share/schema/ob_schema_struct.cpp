@@ -333,7 +333,7 @@ int ObSysTableChecker::init_sys_table_name_map()
           } else if (OB_FAIL(sys_table_name_map_.set_refactored(key, value))) {
             LOG_WARN("fail to set table name array", K(ret), K(key), K(table));
           } else {
-            LOG_INFO("set tenant space table name", K(key), K(table), "strlen", table_name.length());
+
           }
         } else if (OB_SUCCESS == ret) {
           if (OB_ISNULL(value)) {
@@ -345,7 +345,7 @@ int ObSysTableChecker::init_sys_table_name_map()
           } else if (OB_FAIL(value->push_back(table))) {
             LOG_WARN("fail to push back tables", K(ret), K(key), K(table));
           } else {
-            LOG_INFO("duplicate tenant space table name", K(key), K(table));
+
           }
         } else {
           LOG_WARN("fail to get table name array", K(ret), K(key), K(table));
@@ -437,7 +437,7 @@ int ObSysTableChecker::check_sys_table_name(
         is_system_table = (value->at(i) == table);
       }
     }
-    LOG_TRACE("check sys table name", K(ret), K(key), K(table), "strlen", table_name.length());
+
   }
   return ret;
 }
@@ -1089,13 +1089,13 @@ int ObSysVariableSchema::add_sysvar_schema(const ObSysVarSchema &sysvar_schema)
   int64_t var_idx = OB_INVALID_INDEX;
   if (OB_UNLIKELY(SYS_VAR_INVALID == var_id)) {
     ret = OB_ERR_SYS_VARIABLE_UNKNOWN;
-    LOG_TRACE("system variable is unknown", K(sysvar_schema));
+
   } else if (OB_FAIL(ObSysVarFactory::calc_sys_var_store_idx(var_id, var_idx))) {
     if (ret != OB_SYS_VARS_MAYBE_DIFF_VERSION) { // If the error is caused by a different version, just ignore it
       LOG_WARN("calc system variable store index failed", K(ret));
     } else {
       ret = OB_ERR_SYS_VARIABLE_UNKNOWN;
-      LOG_INFO("system variable maybe come from diff version", "name", sysvar_schema.get_name());
+
     }
   } else if (OB_UNLIKELY(var_idx < 0) || OB_UNLIKELY(var_idx >= get_sysvar_count())) {
     ret = OB_ERR_UNEXPECTED;
@@ -3491,7 +3491,7 @@ int ObPartitionSchema::add_partition(const ObPartition &partition)
   } else if (OB_FAIL(inner_add_partition(*new_part))) {
     LOG_WARN("add partition failed", KPC(new_part), K(ret));
   } else {
-    LOG_TRACE("add partition succ", K(ret), K(partition), KPC(new_part));
+
   }
   return ret;
 }
@@ -3901,7 +3901,7 @@ int ObPartitionSchema::get_partition_by_part_id(
                                                partition_index))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
-      LOG_TRACE("partition not exist", KR(ret), K(part_id), K(check_partition_mode));
+
     } else {
       LOG_WARN("failed to get partition index by id", K(ret), K(part_id));
     }
@@ -4596,7 +4596,7 @@ OB_DEF_SERIALIZE(ObTablegroupSchema)
     LST_DO_CODE(OB_UNIS_ENCODE,
                 sharding_);
   }
-  LOG_TRACE("serialize tablegroup schema", K(*this));
+
 
   return ret;
 }
@@ -6380,7 +6380,7 @@ int ObPartitionUtils::get_tablet_and_part_id(
     ret = OB_NOT_SUPPORTED;
     LOG_WARN("not supported part level", KR(ret), K(table_id), K(part_level));
   }
-  LOG_TRACE("table schema get tablet and part id", K(table_id), K(tablet_ids), K(part_ids), K(partition_indexes));
+
   return ret;
 }
 
@@ -6453,7 +6453,7 @@ int ObPartitionUtils::get_tablet_and_part_id(
     ret = OB_NOT_SUPPORTED;
     LOG_WARN("not supported part level", KR(ret), K(table_id), K(part_level));
   }
-  LOG_TRACE("table schema get tablet and part id", K(table_id), K(tablet_ids), K(part_ids), K(partition_indexes));
+
   return ret;
 }
 
@@ -6513,7 +6513,7 @@ int ObPartitionUtils::get_tablet_and_part_id(
     ret = OB_NOT_SUPPORTED;
     LOG_WARN("not supported part level", KR(ret), K(table_id), K(part_level));
   }
-  LOG_TRACE("table schema get tablet and part id", K(table_id), K(tablet_ids), K(part_ids), K(partition_indexes));
+
   return ret;
 }
 
@@ -7113,7 +7113,7 @@ int ObPartitionUtils::get_list_tablet_and_part_id_(
       part_idx = OB_INVALID_INDEX == part_idx ? default_value_idx : part_idx;
       if (OB_UNLIKELY(OB_INVALID_INDEX == part_idx)) {
         // return invalid part_id/tablet_id if partition not found.
-        LOG_TRACE("partition not found", KR(ret), K(row));
+
       } else if (OB_ISNULL(partition = partition_array[part_idx])) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("partition is null", KR(ret), K(part_idx));
@@ -7362,7 +7362,7 @@ int ObPartitionUtils::get_list_tablet_and_subpart_id_(
       subpart_idx = OB_INVALID_INDEX == subpart_idx ? default_value_idx : subpart_idx;
       if (OB_UNLIKELY(OB_INVALID_INDEX == subpart_idx)) {
         // return invalid subpart_id/tablet_id if subpartition not found.
-        LOG_TRACE("subpartition not found", KR(ret), K(row));
+
       } else if (OB_ISNULL(subpartition = subpartition_array[subpart_idx])) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("subpartition is null", KR(ret), K(subpart_idx));

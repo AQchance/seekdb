@@ -121,7 +121,7 @@ void ObCommonLSService::do_work()
       }
 
       user_tenant_schema.reset();
-      LOG_INFO("[COMMON_LS_SERVICE] finish one round", KR(ret), KR(tmp_ret), K(idle_time_us));
+
       idle(idle_time_us);
     }  // end while
   }
@@ -226,7 +226,7 @@ int ObCommonLSService::do_create_user_ls(
     const uint64_t source_tenant_id)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("[COMMON_LS_SERVICE] start to create ls", K(info), K(create_scn));
+
   const int64_t start_time = ObTimeUtility::fast_current_time();
   if (OB_UNLIKELY(!info.is_valid() || !info.ls_is_creating())) {
     ret = OB_INVALID_ARGUMENT;
@@ -257,7 +257,7 @@ int ObCommonLSService::do_create_user_ls(
     }
   }
   const int64_t cost = ObTimeUtility::fast_current_time() - start_time;
-  LOG_INFO("[COMMON_LS_SERVICE] end to create ls", KR(ret), K(info), K(cost));
+
   return ret;
 }   
 
@@ -344,14 +344,14 @@ void ObCommonLSService::try_update_primary_ip_list()
       if (OB_ENTRY_NOT_EXIST == ret) {
         log_restore_source_exist = false;
         if (REACH_THREAD_TIME_INTERVAL(60 * 1000 * 1000)) {
-          LOG_INFO("log restore source is empty, just skip", K(ret), K(user_tenant_id));
+
         } 
       } else {
         LOG_WARN("get source failed", K(user_tenant_id), K(ret));
       }
     } else if (! need_update_ip_list_(item)) {
       if (REACH_THREAD_TIME_INTERVAL(60 * 1000 * 1000)) {
-        LOG_INFO("log restore source not exists or the log restore source type is not service" , K(item));
+
       }
     } else if (OB_FAIL(get_restore_source_value_(item, standby_source_value))) {
       LOG_WARN("fail to get log_restore_source value", K(item));
@@ -418,7 +418,7 @@ void ObCommonLSService::try_update_primary_ip_list()
               LOG_WARN("fail to push back primary addr", K(primary_addrs.at(idx)));
             }
           }
-          LOG_INFO("primary ip list has changed", K(addr_is_same), K(primary_addrs), K_(service_attr.addr), K(user_tenant_id));
+
           if (OB_FAIL(ret)) {
             LOG_WARN("fail to update primary ip list", K(ret));
           } else if (OB_FAIL(do_update_restore_source_(service_attr, restore_source_mgr))) {
@@ -432,11 +432,11 @@ void ObCommonLSService::try_update_primary_ip_list()
             "old_primary_ip_list", tmp_addr);
         }
       } else {
-        LOG_TRACE("primary ip list has not changed", K(ret), K(user_and_tenant), K(addr_is_same));
+
       }
     }
     if (!log_restore_source_exist && OB_ENTRY_NOT_EXIST == ret) {
-      LOG_TRACE("log_restore_source not exist", K(ret), K(user_tenant_id));
+
     } else if (OB_FAIL(ret)) {
       bool cur_primary_state = false;
       if (cur_primary_state != primary_is_avaliable_) {

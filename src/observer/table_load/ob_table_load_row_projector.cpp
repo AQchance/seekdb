@@ -276,7 +276,7 @@ int ObTableLoadRowProjector::check_index_lob_inrow(storage::ObDirectLoadDatumRow
             (!main_table_rowkey_col_flag_.at(i) && datum.len_ - sizeof(ObLobCommon) > lob_inrow_threshold_)) {
           ret = OB_ERR_TOO_LONG_KEY_LENGTH;
           LOG_USER_ERROR(OB_ERR_TOO_LONG_KEY_LENGTH, lob_inrow_threshold_);
-          STORAGE_LOG(WARN, "outrow lob is not supported in index table", K(ret), K(locator), K(datum), K(data));
+
         }
       }
     }

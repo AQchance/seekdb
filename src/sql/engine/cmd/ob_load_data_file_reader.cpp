@@ -378,7 +378,7 @@ ObPacketStreamFileReader::~ObPacketStreamFileReader()
 {
   int ret = OB_SUCCESS;
 
-  LOG_INFO("load data local try to receive all packets from client if eof is false", K_(eof));
+
 
   // We read all data from client before close the file.
   // We will stop to handle the process while something error.
@@ -397,7 +397,7 @@ ObPacketStreamFileReader::~ObPacketStreamFileReader()
       timeout_ts_ = ObTimeUtility::current_time() + wait_timeout;
     }
   }
-  LOG_INFO("load data local file reader exit", K(ret), K(eof_), K(timeout_ts_), K(ObTimeUtility::current_time()));
+
   if (!eof_ && OB_NOT_NULL(session_) && OB_NOT_NULL(session_->get_cur_exec_ctx())) {
     session_->get_cur_exec_ctx()->set_need_disconnect(true);
     LOG_WARN("we'll close the connection as we can't read all of the file content", K(eof_));
@@ -419,11 +419,11 @@ int ObPacketStreamFileReader::open(const ObString &filename,
     obmysql::OMPKLocalInfile filename_packet;
     filename_packet.set_filename(filename);
     if (OB_FAIL(packet_handle.response_packet(filename_packet, session))) {
-      LOG_INFO("failed to send local infile packet to client", K(ret), K(filename));
+
     } else if (OB_FAIL(packet_handle.flush_buffer(false/*is_last*/))) {
-      LOG_INFO("failed to flush socket buffer while send local infile packet", K(ret), K(filename));
+
     } else {
-      LOG_INFO("[load data local]send filename to client success", K(filename));
+
 
       observer::ObSMConnection *sm_connection = session->get_sm_connection();
       if (OB_NOT_NULL(sm_connection) &&
@@ -439,7 +439,7 @@ int ObPacketStreamFileReader::open(const ObString &filename,
     received_size_ = 0;
     read_size_     = 0;
     eof_           = false;
-    LOG_INFO("[load data local] open socket file reader", K_(timeout_ts));
+
   }
   return ret;
 }
@@ -521,7 +521,7 @@ int ObPacketStreamFileReader::receive_packet()
         (void)release_packet();
       } else {
         received_size_ += pkt_len;
-        LOG_TRACE("got a packet", K(pkt_len));
+
       }
     }
   }
@@ -814,7 +814,7 @@ int ObZlibDecompressor::decompress(const char *src, int64_t src_size, int64_t &c
       decompressed_size = zstream_ptr->total_out  - last_total_out;
 
       if (Z_STREAM_END == zlib_ret) {
-        LOG_DEBUG("got Z_STREAM_END");
+
         zstream_need_reset_ = true;
       }
     } else {

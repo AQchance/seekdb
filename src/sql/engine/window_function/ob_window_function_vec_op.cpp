@@ -305,7 +305,7 @@ int ObWindowFunctionVecOp::inner_open()
   } else if (OB_FAIL(reset_for_scan(ctx_.get_my_session()->get_effective_tenant_id()))) {
     LOG_WARN("reset for scan failed", K(ret));
   }
-  LOG_TRACE("window function inner open", K(MY_SPEC), K(MY_SPEC.single_part_parallel_), K(MY_SPEC.range_dist_parallel_));
+
   return ret;
 }
 
@@ -707,7 +707,7 @@ int ObWindowFunctionVecOp::init()
       if (OB_FAIL(all_expr_vector_copy_.init(child_->get_spec().output_, eval_ctx_))) {
         LOG_WARN("init vector holder failed", K(ret));
       } else {
-        LOG_DEBUG("init expr vector holder", K(get_all_expr()));
+
       }
     }
     // init wf row meta & create stores
@@ -897,7 +897,7 @@ int ObWindowFunctionVecOp::init()
             ret = OB_ERR_UNEXPECTED;
             LOG_WARN("add window function col failed", K(ret));
           } else {
-            LOG_DEBUG("added wf", K(*win_col));
+
           }
         }
         if (OB_SUCC(ret) && MY_SPEC.is_participator()) {
@@ -1116,7 +1116,7 @@ int ObWindowFunctionVecOp::get_next_batch_from_child(int64_t batch_size,
         found = (child_brs->skip_->accumulate_bit_cnt(size) != size);
       }
     }
-    LOG_TRACE("get next batch from child", K(found), K(child_brs->size_));
+
     // max rows of overwrote is MY_SPEC.max_batch_size_
     if (OB_SUCC(ret) && found && OB_FAIL(backup_child_vectors(MY_SPEC.max_batch_size_))) {
       LOG_WARN("save expr data failed", K(ret));
@@ -1829,7 +1829,7 @@ int ObWindowFunctionVecOp::coordinate()
     if (OB_FAIL(rd_fetch_patch())) {
       LOG_WARN("fetch patch info from PX COORD failed", K(ret));
     } else {
-      LOG_DEBUG("fetch patch", K(*rd_patch_));
+
       last_output_row_idx_ = OB_INVALID_INDEX;
       SWAP_STORES(first, cur);
       patch_first_ = true;
@@ -2610,7 +2610,7 @@ int ObWindowFunctionVecOp::detect_and_report_aggr_status(const ObBatchRows &chil
     if (batch_idx >= end_idx) {
       // maybe got a new batch within different partition.
       // aggr status already detected in previous batch, do nothing
-      LOG_DEBUG("all rows are skipped", K(ret), K(start_idx), K(end_idx));
+
     } else {
       guard.set_batch_idx(batch_idx);
       last_aggr_status_ = 0;
@@ -3168,7 +3168,7 @@ int ObWindowFunctionVecOp::rd_apply_patches(const int64_t max_row_cnt)
   } else if (patch_last_ && OB_FAIL(rd_find_last_row_lower_bound(max_row_cnt, last_row_same_order_lower))) {
     LOG_WARN("find last row same order upper bound idx failed", K(ret));
   } else {
-    LOG_TRACE("rd apply patch", K(first_row_same_order_upper), K(last_row_same_order_lower));
+
   }
   for (int i = 0; OB_SUCC(ret) && i < MY_SPEC.rd_wfs_.count(); i++) {
     WinFuncInfo &info = const_cast<WinFuncInfo &>(MY_SPEC.wf_infos_.at(MY_SPEC.rd_wfs_.at(i)));
@@ -3729,7 +3729,7 @@ int ObWindowFunctionVecSpec::rd_generate_patch(RDWinFuncPXPieceMsgCtx &msg_ctx, 
     CompactRow2STR last_row(info->row_meta_, *info->last_row_, &rd_coord_exprs_);
     int64_t first_row_extra = *reinterpret_cast<int64_t *>(info->first_row_->get_extra_payload(info->row_meta_));
     int64_t last_row_extra = *reinterpret_cast<int64_t *>(info->last_row_->get_extra_payload(info->row_meta_));
-    LOG_INFO("generating patch", K(i), K(first_row), K(last_row), K(first_row_extra), K(last_row_extra));
+
   }
 #endif
   // first generate frame offset
@@ -3852,7 +3852,7 @@ int ObWindowFunctionVecSpec::rd_generate_patch(RDWinFuncPXPieceMsgCtx &msg_ctx, 
     CompactRow2STR last_row(info->row_meta_, *info->last_row_, &rd_coord_exprs_);
     int64_t first_row_extra = *reinterpret_cast<int64_t *>(info->first_row_->get_extra_payload(info->row_meta_));
     int64_t last_row_extra = *reinterpret_cast<int64_t *>(info->last_row_->get_extra_payload(info->row_meta_));
-    LOG_INFO("after generating patch", K(i), K(first_row), K(last_row), K(first_row_extra), K(last_row_extra));
+
   }
 #endif
   return ret;
@@ -4080,7 +4080,7 @@ int ObWindowFunctionVecOpInput::sync_wait(ObExecContext &ctx, ObReportingWFWhole
         synced_once = true;
         if (0 == ATOMIC_AAF(&sync_cnt, 1) % exit_cnt) {
           shared_info->cond_.signal();
-          LOG_DEBUG("debug sync_cnt", K(ret), K(sync_cnt), K(lbt()));
+
           break;
         }
       }
@@ -4094,7 +4094,7 @@ int ObWindowFunctionVecOpInput::sync_wait(ObExecContext &ctx, ObReportingWFWhole
       } else if (0 == loop % 16 && OB_FAIL(ctx.fast_check_status())) {
         LOG_WARN("failed to check status", K(ret));
       } else if (0 == ATOMIC_LOAD(&sync_cnt) % exit_cnt) {
-        LOG_DEBUG("debug sunc_cnt", K(ret), K(sync_cnt), K(loop), K(exit_cnt), K(lbt()));
+
         break;
       } else {
         uint32_t key = shared_info->cond_.get_key();

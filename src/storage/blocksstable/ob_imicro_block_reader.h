@@ -268,7 +268,7 @@ protected:
     int ret = OB_SUCCESS;
     hash_index.reset();
     if (header->is_contain_hash_index() && OB_FAIL(hash_index.init(block_data))) {
-      STORAGE_LOG(WARN, "failed to init micro block hash index", K(ret), K(block_data));
+
     }
     return ret;
   }

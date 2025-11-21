@@ -174,7 +174,7 @@ public:
       type = ObTabletPoolType::TP_LARGE;
     } else {
       ret = OB_NOT_SUPPORTED;
-      STORAGE_LOG(WARN, "tablet size is too large", K(ret), K(tablet_size));
+
     }
     return ret;
   }
@@ -686,10 +686,10 @@ int ObTenantMetaMemMgr::get_obj_pool_info(
   ObTenantMetaMemStatus mem_status;
   if (OB_ISNULL(name)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", K(ret), KP(name));
+
   } else if (OB_UNLIKELY(STRLEN(name) >= ObTenantMetaMemStatus::STRING_LEN)) {
     ret = OB_BUF_NOT_ENOUGH;
-    STORAGE_LOG(WARN, "string length exceeds max buffer length", K(ret), K(name));
+
   } else {
     STRNCPY(mem_status.name_, name, mem_status.STRING_LEN);
     mem_status.each_obj_size_ = obj_pool.get_obj_size();
@@ -698,7 +698,7 @@ int ObTenantMetaMemMgr::get_obj_pool_info(
     mem_status.total_size_ = obj_pool.total();
     mem_status.used_size_ = obj_pool.used();
     if (OB_FAIL(info.push_back(mem_status))) {
-      STORAGE_LOG(WARN, "fail to push mem status to info array", K(ret), K(mem_status));
+
     }
   }
 

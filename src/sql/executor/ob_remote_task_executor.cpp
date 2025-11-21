@@ -230,7 +230,7 @@ int ObRemoteTaskExecutor::handle_tx_after_rpc(ObScanner *scanner,
         } else if (OB_TMP_FAIL(session->get_trans_result().add_touched_ls(ls_ids))) {
           LOG_WARN("add touched ls to txn failed", K(tmp_ret));
         } else {
-         LOG_INFO("add touched ls succ", K(ls_ids));
+
         }
         if (OB_TMP_FAIL(tmp_ret)) {
           LOG_WARN("remote execute use plan fail with transfer_error and try add touched ls failed, tx will rollback", K(tmp_ret));

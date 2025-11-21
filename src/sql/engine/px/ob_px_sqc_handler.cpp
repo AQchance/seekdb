@@ -91,7 +91,7 @@ int ObPxSqcHandler::worker_end_hook() {
   bool all_finish = false;
   notifier_->worker_end(all_finish);
   if (all_finish) {
-    LOG_TRACE("all sqc finished, begin sqc end process");
+
     if (OB_FAIL(sub_coord_->end_process())) {
       LOG_WARN("failed to end sqc", K(ret));
     }
@@ -208,7 +208,7 @@ int ObPxSqcHandler::init()
   int errsim_code = EventTable::EN_PX_SQC_HANDLER_INIT_FAILED;
   if (OB_SUCC(ret) && errsim_code != OB_SUCCESS) {
     ret = errsim_code;
-    LOG_TRACE("Force sqc hanler init failed", K(ret));
+
   }
 #endif
 
@@ -298,7 +298,7 @@ void ObPxSqcHandler::init_flt_content()
     flt_ctx_.span_id_ = OBTRACE->get_root_span_id();
     flt_ctx_.policy_ = OBTRACE->get_policy();
   }
-  LOG_TRACE("init flt rpc content", K(flt_ctx_), K(OBTRACE->get_trace_id()));
+
 }
 
 
@@ -330,7 +330,7 @@ int ObPxSqcHandler::destroy_sqc(int &report_ret)
       report_ret = ret;
     }
     ObPxSqcMeta &sqc = sqc_init_args_->sqc_;
-    LOG_TRACE("sqc send report to qc", K(sqc));
+
   }
   if (has_flag(OB_SQC_HANDLER_QC_SQC_LINKED)) {
     get_sqc_ctx().sqc_proxy_.destroy();
@@ -414,7 +414,7 @@ int ObPxSqcHandler::thread_count_auto_scaling(int64_t &reserved_px_thread_count)
       reserved_px_thread_count = min(reserved_px_thread_count, range_cnt);
       reserved_px_thread_count_ = reserved_px_thread_count;
       if (temp_cnt > reserved_px_thread_count) {
-        LOG_TRACE("sqc px worker auto-scaling worked", K(temp_cnt), K(range_cnt), K(reserved_px_thread_count));
+
       }
       if (OB_FAIL(notifier_->set_expect_worker_count(reserved_px_thread_count))) {
         LOG_WARN("failed to set expect worker count", K(ret), K(reserved_px_thread_count_));

@@ -241,7 +241,7 @@ int ObDAGCGMacroBlockWriteOp::execute(const ObChunk &input_chunk,
         write_macro_param.start_sequence_ = start_seqences_.at(cg_idx);
         write_macro_param.row_offset_ = row_offsets_.at(cg_idx);
         if (input_chunk.is_end_chunk() && !have_flushed_macro_block) {
-          LOG_TRACE("remain small cg block for group write", K(tablet_id_), K(slice_idx_), K(cg_idx), "remain_size", cg_block_files_iter->get_total_data_size());
+
           break;
         } else if (OB_FAIL(ObDDLUtil::fill_writer_param(tablet_id_,
                                                  slice_idx_,
@@ -339,7 +339,7 @@ int ObDAGCGMacroBlockWriteOp::set_remain_block(ObDDLSlice *ddl_slice)
       // move ownership of cg block file to ddl slice
       ObArray<ObCGBlockFile *> remain_block_files;
       if (OB_UNLIKELY(cg_block_files_iter->get_total_data_size() <= 0)) {
-        LOG_INFO("the slice does not include the data", K(ret), K(cg_idx), KPC(cg_block_files_iter));
+
         if (OB_FAIL(ddl_slice->set_block_flushed(cg_idx))) {
           LOG_WARN("set block flushed failed", K(ret));
         }

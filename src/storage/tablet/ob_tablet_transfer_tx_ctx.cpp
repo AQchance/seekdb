@@ -175,7 +175,7 @@ int ObTransferOutTxCtx::record_transfer_block_op(const share::ObLSID src_ls_id,
 void ObTransferOutTxCtx::on_redo(const share::SCN &redo_scn)
 {
   transaction::ObTransID tx_id = writer_.writer_id_;
-  LOG_INFO("transfer_out_tx on_redo", K(redo_scn), K(tx_id), KP(this), KPC(this));
+
   mds::MdsCtx::on_redo(redo_scn);
   transfer_scn_ = redo_scn;
   ObLSHandle ls_handle;
@@ -220,7 +220,7 @@ void ObTransferOutTxCtx::on_redo(const share::SCN &redo_scn)
 void ObTransferOutTxCtx::on_commit(const share::SCN &commit_version, const share::SCN &commit_scn)
 {
   transaction::ObTransID tx_id = writer_.writer_id_;
-  LOG_INFO("transfer_out_tx on_commit", K(commit_version), K(commit_scn), K(tx_id), KP(this), KPC(this));
+
   int ret = OB_SUCCESS;
   mds::MdsCtx::on_commit(commit_version, commit_scn);
   ObTransferOutTxParam param;
@@ -273,7 +273,7 @@ void ObTransferOutTxCtx::on_commit(const share::SCN &commit_version, const share
 void ObTransferOutTxCtx::on_abort(const share::SCN &abort_scn)
 {
   transaction::ObTransID tx_id = writer_.writer_id_;
-  LOG_INFO("transfer_out_tx on_abort", K(abort_scn), K(tx_id), KP(this), KPC(this));
+
   mds::MdsCtx::on_abort(abort_scn);
   ObTransferOutTxParam param;
   param.except_tx_id_ = get_writer().writer_id_;
@@ -331,7 +331,7 @@ int ObStartTransferMoveTxHelper::on_register(const char* buf, const int64_t len,
   CollectTxCtxInfo &collect_tx_info = transfer_move_tx_ctx.get_collect_tx_info();
   transaction::ObTransID tx_id = transfer_move_tx_ctx.get_writer().writer_id_;
   bool start_modify = false;
-  LOG_INFO("TransferMoveTx on_register", K(tx_id));
+
 
   if (OB_ISNULL(buf) || len < 0) {
     ret = OB_INVALID_ARGUMENT;
@@ -431,7 +431,7 @@ int ObStartTransferMoveTxHelper::on_replay(const char* buf, const int64_t len, c
   ObTransferMoveTxCtx &transfer_move_tx_ctx = static_cast<ObTransferMoveTxCtx&>(ctx);
   CollectTxCtxInfo &collect_tx_info = transfer_move_tx_ctx.get_collect_tx_info();
   transaction::ObTransID tx_id = transfer_move_tx_ctx.get_writer().writer_id_;
-  LOG_INFO("TransferMoveTx on_replay", K(tx_id), KP(&collect_tx_info), K(collect_tx_info));
+
 
   if (OB_ISNULL(buf) || len < 0) {
     ret = OB_INVALID_ARGUMENT;
@@ -460,7 +460,7 @@ int ObStartTransferMoveTxHelper::on_replay(const char* buf, const int64_t len, c
     if (OB_FAIL(ls->move_tx_op(move_tx_param, collect_tx_info.args_))) {
       LOG_WARN("move tx ctx failed", KR(ret), K(collect_tx_info));
     } else {
-      LOG_INFO("[TRANSFER] TransferMoveTx on_replay", KR(ret), K(tx_id));
+
     }
   }
   return ret;
@@ -499,7 +499,7 @@ int ObTransferMoveTxCtx::assign(const ObTransferMoveTxCtx &other)
 void ObTransferMoveTxCtx::on_redo(const share::SCN &redo_scn)
 {
   transaction::ObTransID tx_id = writer_.writer_id_;
-  LOG_INFO("move_tx_ctx on_redo", K(redo_scn), K(tx_id), KP(this));
+
   while (true) {
     int ret = OB_SUCCESS;
     ObLSHandle ls_handle;
@@ -528,7 +528,7 @@ void ObTransferMoveTxCtx::on_redo(const share::SCN &redo_scn)
       if (OB_FAIL(ls->move_tx_op(move_tx_param, collect_tx_info.args_))) {
         LOG_WARN("move tx ctx failed", KR(ret), K(collect_tx_info), K(tx_id), KP(this), K(redo_scn));
       } else {
-        LOG_INFO("[TRANSFER] move_tx_ctx", KR(ret), K(redo_scn), K(tx_id), KP(this));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -545,7 +545,7 @@ void ObTransferMoveTxCtx::on_redo(const share::SCN &redo_scn)
 void ObTransferMoveTxCtx::on_commit(const share::SCN &commit_version, const share::SCN &commit_scn)
 {
   transaction::ObTransID tx_id = writer_.writer_id_;
-  LOG_INFO("move_tx_ctx on_commit", K(commit_version), K(commit_scn), K(tx_id), KP(this));
+
   while (true) {
     int ret = OB_SUCCESS;
     ObLSHandle ls_handle;
@@ -573,7 +573,7 @@ void ObTransferMoveTxCtx::on_commit(const share::SCN &commit_version, const shar
           NotifyType::ON_COMMIT, ObTxDataSourceType::TRANSFER_MOVE_TX_CTX))) {
         LOG_WARN("update transfer status failed", KR(ret), K(tx_id));
       } else {
-        LOG_INFO("[TRANSFER] move_tx_ctx", KR(ret), K(commit_version), K(commit_scn), K(writer_), KP(this));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -590,7 +590,7 @@ void ObTransferMoveTxCtx::on_commit(const share::SCN &commit_version, const shar
 void ObTransferMoveTxCtx::on_abort(const share::SCN &abort_scn)
 {
   transaction::ObTransID tx_id = writer_.writer_id_;
-  LOG_INFO("move_tx_ctx on_abort", K(abort_scn), K(writer_), KP(this));
+
   while (true) {
     int ret = OB_SUCCESS;
     ObLSHandle ls_handle;
@@ -618,7 +618,7 @@ void ObTransferMoveTxCtx::on_abort(const share::SCN &abort_scn)
           NotifyType::ON_ABORT, ObTxDataSourceType::TRANSFER_MOVE_TX_CTX))) {
         LOG_WARN("update transfer status failed", KR(ret), K(tx_id));
       } else {
-        LOG_INFO("[TRANSFER] move_tx_ctx", KR(ret), K(writer_), KP(this), K(abort_scn));
+
       }
     }
     if (OB_SUCC(ret)) {
@@ -644,7 +644,7 @@ int ObStartTransferDestPrepareHelper::on_register(
   ObTransferDestPrepareTxCtx &user_ctx = static_cast<ObTransferDestPrepareTxCtx&>(ctx);
   ObTransferDestPrepareInfo &info = user_ctx.get_info();
   transaction::ObTransID tx_id = user_ctx.get_writer().writer_id_;
-  LOG_INFO("transfer_dest_prepare register", K(tx_id));
+
 
   if (OB_FAIL(info.deserialize(buf, len, pos))) {
     LOG_WARN("failed to deserialize transfer dest prepare info", KR(ret), K(len), K(pos));
@@ -675,7 +675,7 @@ int ObStartTransferDestPrepareHelper::on_replay(
   ObTransferDestPrepareTxCtx &user_ctx = static_cast<ObTransferDestPrepareTxCtx&>(ctx);
   ObTransferDestPrepareInfo &info = user_ctx.get_info();
   transaction::ObTransID tx_id = user_ctx.get_writer().writer_id_;
-  LOG_INFO("transfer_dest_prepare on_replay", K(tx_id), K(scn));
+
 
   if (OB_FAIL(info.deserialize(buf, len, pos))) {
     LOG_WARN("failed to deserialize transfer dest prepare info", KR(ret), K(len), K(pos));
@@ -729,7 +729,7 @@ const mds::MdsWriter ObTransferDestPrepareTxCtx::get_writer() const { return wri
 void ObTransferDestPrepareTxCtx::on_redo(const share::SCN &redo_scn)
 {
   transaction::ObTransID tx_id = writer_.writer_id_;
-  LOG_INFO("transfer_dest_prepare on_redo", K(tx_id), K(this), K(redo_scn));
+
   while (true) {
     int ret = OB_SUCCESS;
     ObLSHandle ls_handle;
@@ -759,7 +759,7 @@ void ObTransferDestPrepareTxCtx::on_redo(const share::SCN &redo_scn)
 void ObTransferDestPrepareTxCtx::on_commit(const share::SCN &commit_version, const share::SCN &commit_scn)
 {
   transaction::ObTransID tx_id = writer_.writer_id_;
-  LOG_INFO("transfer_dest_prepare on_commit", K(tx_id), K(this), K(commit_scn));
+
   while (true) {
     int ret = OB_SUCCESS;
     ObLSHandle ls_handle;
@@ -787,7 +787,7 @@ void ObTransferDestPrepareTxCtx::on_commit(const share::SCN &commit_version, con
 void ObTransferDestPrepareTxCtx::on_abort(const share::SCN &abort_scn)
 {
   transaction::ObTransID tx_id = writer_.writer_id_;
-  LOG_INFO("transfer_dest_prepare on_abort", K(tx_id), K(this), K(abort_scn));
+
   while (true) {
     int ret = OB_SUCCESS;
     ObLSHandle ls_handle;

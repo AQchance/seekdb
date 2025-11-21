@@ -118,14 +118,14 @@ int ObAllVirtualProxyPartition::inner_open()
     } else if (OB_FAIL(tenant_schema_guard_.get_tenant_info(tenant_name, tenant_schema))) {
       LOG_WARN("fail to get tenant info", KR(ret), K(tenant_name));
     } else if (OB_ISNULL(tenant_schema)) {
-      LOG_TRACE("tenant not exist", K(tenant_name)); // skip
+ // skip
     } else {
       tenant_id = tenant_schema->get_tenant_id();
       if (OB_UNLIKELY(!is_valid_tenant_id(effective_tenant_id_))) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("invalid effective_tenant_id", KR(ret), K_(effective_tenant_id));
       } else if (!is_sys_tenant(effective_tenant_id_) && (tenant_id != effective_tenant_id_)) {
-        LOG_TRACE("unprivileged tenant", K(tenant_id), K_(effective_tenant_id)); // skip
+ // skip
       } else if (OB_FAIL(schema_service_->get_tenant_schema_guard(tenant_id, tenant_schema_guard_))) { // switch guard
         LOG_WARN("fail to get tenant schema guard", KR(ret), K(tenant_id));
       } else if (OB_FAIL(tenant_schema_guard_.get_simple_table_schema(
@@ -135,7 +135,7 @@ int ObAllVirtualProxyPartition::inner_open()
         if (OB_FAIL(check_schema_version(tenant_schema_guard_, tenant_id))) {
           LOG_WARN("fail to check schema version", KR(ret), K(tenant_id));
         } else {
-          LOG_TRACE("table not exist", K(tenant_id), K(table_id)); // skip
+ // skip
         }
       } else {
         iter_.init(*table_schema, CHECK_PARTITION_MODE_NORMAL);

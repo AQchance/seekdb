@@ -36,9 +36,9 @@ int ObMockScanMergeIterator::init(const ObVectorStore *vector_store,
   int ret = OB_SUCCESS;
   if (OB_ISNULL(vector_store)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected null vector store", K(ret));
+
   } else if (OB_FAIL(row_.init(alloc, read_info.get_request_count()))) {
-    STORAGE_LOG(WARN, "Failed to init row", K(ret));
+
   } else {
     int64_t column_cnt = read_info.get_request_count();
     vector_store_ = vector_store;

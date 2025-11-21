@@ -541,7 +541,7 @@ int ObPxResourceAnalyzer::recursive_walk_through_px_tree(PxInfo &px_tree)
       LOG_WARN("fail calc px thread group count", K(ret));
     } else {
       int64_t op_id = OB_ISNULL(px_tree.root_op_) ? OB_INVALID_ID : px_tree.root_op_->get_op_id();
-      LOG_TRACE("after walk_through_dfo_tree", K(op_id), K(px_tree));
+
     }
     if (OB_FAIL(ret)) {
     } else if (OB_ISNULL(px_tree.root_op_)) {
@@ -603,7 +603,7 @@ int ObPxResourceAnalyzer::walk_through_dfo_tree(
   }
 #ifndef NDEBUG
   for (int x = 0; x < edges.count(); ++x) {
-    LOG_DEBUG("dump dfo", K(x), K(*edges.at(x)));
+
   }
 #endif
 
@@ -664,7 +664,7 @@ int ObPxResourceAnalyzer::walk_through_dfo_tree(
   }
   max_parallel_thread_count = max_threads;
   max_parallel_group_count = max_groups;
-  LOG_TRACE("end walk_through_dfo_tree", K(max_parallel_thread_count), K(max_parallel_group_count));
+
   return ret;
 }
 

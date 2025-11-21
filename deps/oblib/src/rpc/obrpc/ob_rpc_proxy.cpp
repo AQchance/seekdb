@@ -179,7 +179,7 @@ void ObRpcProxy::set_handle_attr(Handle* handle, const ObRpcPacketCode& pcode, c
     handle->abs_timeout_ts_ = send_ts + timeout_;
     if (is_stream_next) {
       handle->first_pkt_id_ = pkt_id;
-      LOG_INFO("stream rpc register", K(pcode), K(pkt_id));
+
       stream_rpc_register(pkt_id, send_ts);
     }
     int64_t timeout = min(timeout_, INT64_MAX/2);

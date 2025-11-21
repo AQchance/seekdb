@@ -63,7 +63,7 @@ int ObRestoreCommonUtil::create_all_ls(
         if (ls_info.get_ls_id().is_sys_ls()) {
         } else if (OB_SUCC(status_op.get_ls_status_info(tenant_id, ls_info.get_ls_id(),
                 status_info, trans))) {
-          LOG_INFO("[RESTORE] ls already exist", K(ls_info), K(tenant_id));
+
         } else if (OB_ENTRY_NOT_EXIST != ret) {
           LOG_WARN("failed to get ls status info", KR(ret), K(tenant_id), K(ls_info));
         } else if (OB_FAIL(ObLSServiceHelper::create_new_ls_in_trans(
@@ -71,7 +71,7 @@ int ObRestoreCommonUtil::create_all_ls(
                    share::NORMAL_SWITCHOVER_STATUS, tenant_stat, trans, ls_flag, source_tenant_id))) {
           LOG_WARN("failed to add new ls status info", KR(ret), K(ls_info), K(source_tenant_id));
         }
-        LOG_INFO("create init ls", KR(ret), K(ls_info), K(source_tenant_id));
+
       }
     }
     int tmp_ret = OB_SUCCESS;
@@ -130,7 +130,7 @@ int ObRestoreCommonUtil::finish_create_ls(
                   ls_info, share::NORMAL_SWITCHOVER_STATUS, trans))) {
             LOG_WARN("failed to update status", KR(ret), K(tenant_id), K(status_info), K(ls_info));
           } else {
-            LOG_INFO("[RESTORE] update ls status", K(tenant_id), K(status_info), K(ls_info));
+
           }
         }
       }
@@ -251,7 +251,7 @@ int ObRestoreCommonUtil::check_tenant_is_existed(ObMultiVersionSchemaService *sc
   if (OB_INVALID_TENANT_ID == tenant_id) {
     //maybe failed to create tenant
     is_existed = false;
-    LOG_INFO("tenant maybe failed to create", KR(ret));
+
   } else if (OB_ISNULL(schema_service)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("schema service is null", KR(ret), KP(schema_service));
@@ -264,7 +264,7 @@ int ObRestoreCommonUtil::check_tenant_is_existed(ObMultiVersionSchemaService *sc
     LOG_WARN("failed to check tenant is beed dropped", KR(ret), K(tenant_id));
   } else if (tenant_dropped) {
     is_existed = false;
-    LOG_INFO("restore tenant has been dropped", KR(ret), K(tenant_id));
+
   } else {
     //check restore tenant's meta tenant is valid to read
     const share::schema::ObTenantSchema *tenant_schema = NULL;

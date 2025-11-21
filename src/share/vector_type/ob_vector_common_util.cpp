@@ -281,7 +281,7 @@ int ObVectorClusterHelper::set_pq_center_id_to_string(
 void ObVectorClusterHelper::release_inner_session(sql::ObFreeSessionCtx &free_session_ctx, sql::ObSQLSessionInfo *&session)
 {
   if (nullptr != session) {
-    LOG_INFO("[VECTOR INDEX]: Release inner session", KP(session));
+
     session->get_ddl_info().set_is_dummy_ddl_for_inner_visibility(false);
     session->set_session_sleep();
     GCTX.session_mgr_->revert_session(session);

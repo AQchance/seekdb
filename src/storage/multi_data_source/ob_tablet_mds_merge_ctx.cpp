@@ -106,7 +106,7 @@ int ObTabletMdsMinorMergeCtx::update_tablet(ObTabletHandle &new_tablet_handle)
       LOG_WARN("failed to update tablet table store", K(ret), K(mds_param), K(new_tablet_handle));
       CTX_SET_DIAGNOSE_LOCATION(*this);
     } else {
-      LOG_INFO("success to update tablet table store with mds table", K(sstable), K(new_tablet_handle));
+
       time_guard_click(ObStorageCompactionTimeGuard::UPDATE_TABLET);
     }
   }

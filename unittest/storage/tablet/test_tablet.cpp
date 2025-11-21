@@ -557,7 +557,7 @@ public:
     ret = ddl_kvs_.init(allocator, ddl_kvs);
     const int64_t count = ddl_kvs_.count();
     std::cout<< "init table store:" << ddl_kvs.count() << ", " << count <<std::endl;
-    STORAGE_LOG(ERROR, "ddl kvs", K(ddl_kvs), K(ddl_kvs_));
+
     return ret;
   }
   void reproducing_bug(ObArenaAllocator &allocator)

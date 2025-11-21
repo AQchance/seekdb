@@ -71,7 +71,7 @@ int ObSRSImporter::get_srs_cnt(ObCommonSqlProxy *sql_proxy, uint64_t tenant_id, 
         if (OB_FAIL(ret)) {
           LOG_WARN("failed to srs cnt", KR(ret), K(sql));
         } else {
-          LOG_INFO("old srs rows", K(srs_cnt));
+
         }
       }
     }
@@ -130,7 +130,7 @@ int ObSRSImporter::import_srs_info(const ObString &file_path)
         LOG_WARN("failed to commit trans", KR(ret), KR(tmp_ret));
         ret = OB_SUCC(ret) ? tmp_ret : ret;
       } else {
-        LOG_INFO("new srs rows", K(affected_rows_));
+
       }
     }
   }

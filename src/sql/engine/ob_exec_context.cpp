@@ -42,7 +42,7 @@ int ObOpKitStore::init(ObIAllocator &alloc, const int64_t size)
     memset(kits_, 0, size * sizeof(kits_[0]));
     size_ = size;
   }
-  LOG_DEBUG("trace init kit store", K(ret), K(size));
+
   return ret;
 }
 
@@ -972,11 +972,11 @@ int ObExecContext::fill_px_batch_info(ObBatchRescanParams &params,
           if (OB_FAIL(ret)) {
           } else if (OB_UNLIKELY(idx > array.count())) {
             // do nothing.
-            LOG_TRACE("param idx out of array count", K(idx), K(array.count()));
+
           } else if (FALSE_IT(expr = &array.at(idx - 1))) {
           } else if (T_INVALID == expr->type_) {
             // do nothing.
-            LOG_TRACE("empty expr", KPC(expr));
+
           } else {
             expr->get_eval_info(eval_ctx).clear_evaluated_flag();
             ObDynamicParamSetter::clear_parent_evaluated_flag(eval_ctx, *expr);

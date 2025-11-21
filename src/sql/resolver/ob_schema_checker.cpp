@@ -59,7 +59,7 @@ int ObSchemaChecker::init(ObSchemaGetterGuard &schema_mgr, uint64_t session_id)
     flag_ = 0;
     schema_mgr.set_session_id(session_id);
     if (OB_INVALID_ID != session_id) {
-      LOG_DEBUG("ObSchemaChecker init with valid session id", K(session_id));
+
     }
   }
   return ret;
@@ -543,11 +543,11 @@ int ObSchemaChecker::get_column_schema(
         LOG_WARN("column is not exist", K(table_id), K(column_name), K(ret));
       } else {
         column_schema = column;
-        LOG_DEBUG("find a cte fake column", K(column_name));
+
       }
     } else if (!get_hidden && column->is_hidden()) {
       ret = OB_ERR_BAD_FIELD_ERROR;
-      LOG_INFO("do not get hidden column", K(table_id), K(column_name), K(ret));
+
     } else {
       column_schema = column;
     }
@@ -581,7 +581,7 @@ int ObSchemaChecker::get_column_schema(
     LOG_WARN("column is not exist", K(table_id), K(column_id), K(ret));
   } else if (!get_hidden && column->is_hidden()) {
     ret = OB_ERR_BAD_FIELD_ERROR;
-    LOG_INFO("do not get hidden column", K(table_id), K(column_id), K(ret));
+
   } else {
     column_schema = column;
   }
@@ -1693,7 +1693,7 @@ bool ObSchemaChecker::enable_mysql_pl_priv_check(int64_t tenant_id, ObSchemaGett
       enable = val.get_bool();
     }
   }
-  LOG_DEBUG("show enabale mysql routine priv enable", K(enable));
+
   return enable;
 }
 

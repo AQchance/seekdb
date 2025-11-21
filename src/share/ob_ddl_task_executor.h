@@ -167,13 +167,13 @@ int ObDDLTaskExecutor::push_task(const T &task)
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObDDLTaskExecutor has not been inited", K(ret));
+
   } else if (OB_FAIL(task_queue_.push_task(task))) {
     if (common::OB_ENTRY_EXIST != ret) {
-      STORAGE_LOG(WARN, "fail to push back task", K(ret));
+
     }
   } else if (OB_FAIL(cond_.broadcast())) {
-    STORAGE_LOG(WARN, "fail to broadcase siginal", K(ret));
+
   }
   return ret;
 }

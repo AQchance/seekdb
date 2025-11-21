@@ -63,7 +63,7 @@ int ObMViewMdsOpHelper::on_register(
       if (OB_TMP_FAIL(MTL(ObMViewMaintenanceService*)->get_mview_mds_op().set_refactored(tx_id, arg, 1))) {
         LOG_WARN("fail to set refactored mview mds op map", K(ret), K(tx_id), K(arg));
       }
-      LOG_INFO("register nested mview mds op", K(tx_id), K(arg));
+
     }
   }
   return ret;
@@ -143,7 +143,7 @@ void ObMViewMdsOpCtx::on_redo(const share::SCN &redo_scn)
   transaction::ObTransID tx_id = writer_.writer_id_;
   int64_t ts = ObTimeUtil::current_time();
   MTL(ObMViewMaintenanceService*)->update_mview_mds_ts(ts);
-  LOG_INFO("mview mds on_redo", K(tx_id), KPC(this), K(redo_scn));
+
 }
 
 void ObMViewMdsOpCtx::on_commit(const share::SCN &commit_version, const share::SCN &commit_scn)
@@ -155,7 +155,7 @@ void ObMViewMdsOpCtx::on_commit(const share::SCN &commit_version, const share::S
     LOG_WARN("fail to erase mview mds op map", K(ret), K(tx_id), K(arg_));
   }
   MTL(ObMViewMaintenanceService*)->update_mview_mds_ts(ts);
-  LOG_INFO("mview mds on_commit", K(tx_id), KPC(this), K(commit_scn), K(commit_version));
+
 }
 
 void ObMViewMdsOpCtx::on_abort(const share::SCN &abort_scn)
@@ -167,7 +167,7 @@ void ObMViewMdsOpCtx::on_abort(const share::SCN &abort_scn)
     LOG_WARN("fail to erase mview mds op map", K(ret), K(tx_id), K(arg_));
   }
   MTL(ObMViewMaintenanceService*)->update_mview_mds_ts(ts);
-  LOG_INFO("mview mds on_abort", K(tx_id), KPC(this), K(abort_scn));
+
 }
 
 int ObMViewMdsOpHelper::register_mview_mds(const uint64_t tenant_id, const ObMViewOpArg &arg, ObISQLClient &sql_client)
@@ -201,7 +201,7 @@ int ObMViewMdsOpHelper::register_mview_mds(const uint64_t tenant_id, const ObMVi
                                                       flag))) {
     LOG_WARN("register mview mds failed", KR(ret));
   } else {
-    LOG_INFO("register mview mds succ", K(tenant_id), K(arg));
+
   }
   return ret;
 }

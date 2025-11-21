@@ -95,7 +95,7 @@ void TestLogSQLServerProvider::SetUp()
   } else if (-1 == pid) {
     LOG_ERROR("fork failed", K(errno));
   } else {
-    LOG_INFO("create child", K(pid));
+
     service_pid_ = pid;
 
     // wait child process execute.
@@ -151,7 +151,7 @@ void TestLogSQLServerProvider::TearDown()
   kill(-service_pid_, SIGINT);
 
   pid_t pid = wait(&status);
-  LOG_INFO("child exit", K(pid));
+
 
   // Refresh error if Configure Server does not exist
   EXPECT_NE(OB_SUCCESS, server_provider_.refresh_server_list());
@@ -170,7 +170,7 @@ void TestLogSQLServerProvider::set_rs_list(const ObRootAddrList &rs_list)
   const int64_t cluster_id = 100;
   ret = ObWebServiceRootAddr::to_json(rs_list, appname_, cluster_id, json);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("to_json", K(json));
+
 
   ret = cmd.assign_fmt("echo -n 'POST / HTTP/1.1\r\nContent-Length: %ld\r\n%s' | nc %s %d &> /dev/null",
       json.length(), json.ptr(), CONFIG_SERVER_IP, CONFIG_SERVER_PORT);

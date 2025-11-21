@@ -440,7 +440,7 @@ int ObTableApiTTLExecutor::process_expire()
         } else if (OB_FAIL(check_expired(is_expired_))) {
           LOG_WARN("fail to check expired", K(ret));
         } else if (is_expired_) { // expired, delete the old row, write the new row
-          LOG_DEBUG("row is expired", K(ret));
+
           // Notice: here need to clear the evaluated flag, cause the new_row used in try_insert is the same as old_row in do_delete
           //  and if we don't clear the evaluated flag, the generated columns in old_row won't refresh and will use the new_row result 
           //  which will cause 4377 when do_delete
@@ -463,9 +463,9 @@ int ObTableApiTTLExecutor::process_expire()
             LOG_WARN("unexpect execution of increment or append", K(ret), K(tb_ctx_.get_opertion_type()));
           } else if (tb_ctx_.is_insert()) {
             ret = OB_ERR_PRIMARY_KEY_DUPLICATE;
-            LOG_INFO("current insert is primary key duplicate", K(ret));
+
           } else { // insertUp
-            LOG_DEBUG("row not expired, do update", K(ret));
+
             if (OB_FAIL(do_update())) {
               LOG_WARN("fail to do update", K(ret));
             } else if (OB_FAIL(execute_das_task(upd_rtctx_, true/* del_task_ahead */))) {
@@ -533,7 +533,7 @@ int ObTableApiTTLExecutor::get_next_row()
     LOG_WARN("fail to do first insert", K(ret));
   } else if (!is_duplicated()) {
     insert_rows_ = 1;
-    LOG_DEBUG("no duplicated, insert successfully");
+
   } else if (OB_FAIL(fetch_conflict_rowkey(conflict_checker_))) {// fetch all conflict rowkeys
     LOG_WARN("fail to fetch conflict rowkey", K(ret));
   } else if (OB_FAIL(reset_das_env())) { // reuse das related information

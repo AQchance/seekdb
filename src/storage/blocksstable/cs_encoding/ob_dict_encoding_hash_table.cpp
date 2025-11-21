@@ -161,10 +161,10 @@ int ObDictEncodingHashTableBuilder::build(const ObColDatums &col_datums, const O
   int ret = common::OB_SUCCESS;
   if (OB_UNLIKELY(!is_created_)) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (OB_UNLIKELY(col_datums.empty() || node_num_ < col_datums.count())) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K_(node_num), "row_count", col_datums.count());
+
   } else {
     row_count_ = col_datums.count();
     const uint64_t mask = (bucket_num_ - 1);

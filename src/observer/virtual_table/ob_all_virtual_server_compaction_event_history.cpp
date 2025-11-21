@@ -57,10 +57,10 @@ int ObAllVirtualServerCompactionEventHistory::inner_get_next_row(common::ObNewRo
     SERVER_LOG(WARN, "ObAllVirtualServerCompactionEventHistory has been inited", K(ret));
   } else if (OB_FAIL(event_iter_.get_next_info(event_))) {
     if (OB_ITER_END != ret) {
-      STORAGE_LOG(WARN, "Fail to get next suggestion info", K(ret));
+
     }
   } else if (OB_FAIL(fill_cells())) {
-    STORAGE_LOG(WARN, "Fail to fill cells", K(ret), K(event_));
+
   } else {
     row = &cur_row_;
   }

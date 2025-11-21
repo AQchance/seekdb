@@ -182,7 +182,7 @@ int ObTableLockOp::inner_get_next_row()
 {
   int ret = OB_SUCCESS;
   if (iter_end_) {
-    LOG_DEBUG("can't get gi task, iter end", K(MY_SPEC.id_), K(iter_end_));
+
     ret = OB_ITER_END;
   } else {
     need_return_row_ = false;
@@ -252,7 +252,7 @@ int ObTableLockOp::inner_get_next_batch(const int64_t max_row_cnt)
 {
   int ret = OB_SUCCESS;
   if (iter_end_) {
-    LOG_DEBUG("can't get gi task, iter end", K(MY_SPEC.id_), K(iter_end_));
+
     brs_.end_ = true;
     brs_.size_ = 0;
   } else {

@@ -81,7 +81,7 @@ int ObSessInfoVerify::sync_sess_info_veri(sql::ObSQLSessionInfo &sess,
                                                               sess_info_verification))) {
         LOG_WARN("failed to resolve value", K(extra_id), KP(buf), K(len), K(pos), K(info_len));
       } else {
-        LOG_DEBUG("success to resolve value", K(extra_id), K(len), K(pos), K(info_len));
+
       }
     }
     LOG_DEBUG("success to get sess info verification requied by proxy",
@@ -120,7 +120,7 @@ int ObSessInfoVerify::verify_session_info(sql::ObSQLSessionInfo &sess,
     } else if (OB_FAIL(GCTX.srv_rpc_proxy_->to(addr).by(MTL_ID()).
                           session_info_verification(arg, result))) {
       // rpc fail not self-verification.
-      LOG_TRACE("fail to rpc", K(ret));
+
       ret = OB_SUCCESS;
     } else {
       // self-verification
@@ -137,7 +137,7 @@ int ObSessInfoVerify::verify_session_info(sql::ObSQLSessionInfo &sess,
         value_buffer.assign_buffer(ptr, result.verify_info_buf_.length());
         value_buffer.write(result.verify_info_buf_.ptr(), result.verify_info_buf_.length());
       }
-      LOG_DEBUG("need verify", K(&result), K(result.need_verify_), K(result.verify_info_buf_));
+
       if (OB_FAIL(ret)) {
       } else if (result.need_verify_) {
         // verification error injection.
@@ -151,10 +151,10 @@ int ObSessInfoVerify::verify_session_info(sql::ObSQLSessionInfo &sess,
           LOG_ERROR("session info self-verification failed", K(ret), K(sess.get_server_sid()),
                   K(sess.get_proxy_sessid()), K(sess_info_verification));
         } else {
-          LOG_DEBUG("session info self-verification success", K(ret));
+
         }
       } else {
-        LOG_DEBUG("session info no need self-verification", K(ret));
+
       }
       LOG_DEBUG("verify end", K(sess.get_server_sid()),
           K(sess.get_proxy_sessid()), K(sess_info_verification));
@@ -230,7 +230,7 @@ int ObSessInfoVerify::compare_verify_session_info(sql::ObSQLSessionInfo &sess,
           ret = temp_ret;
         }
       } else {
-        LOG_TRACE("session info type and len is consistent", K(ret), K(info_type1));
+
       }
 
       if (OB_FAIL(ret)) {
@@ -260,7 +260,7 @@ int ObSessInfoVerify::fetch_verify_session_info(sql::ObSQLSessionInfo &sess,
       LOG_WARN("failed to get session encoder", K(ret));
     } else {
       sess_size[i] = encoder->get_fetch_sess_info_size(sess);
-      LOG_TRACE("sess info size", K(sess_size[i]), K(info_type));
+
       size += ObProtoTransUtil::get_serialize_size(sess_size[i]);
     }
   }
@@ -295,7 +295,7 @@ int ObSessInfoVerify::fetch_verify_session_info(sql::ObSQLSessionInfo &sess,
         } else if (OB_FAIL(encoder->fetch_sess_info(sess, buf, size, pos))) {
           LOG_WARN("failed to serialize", K(sess), K(ret), K(size), K(pos));
         } else {
-          LOG_TRACE("success to fetch", K(sess_size[i]), K(info_type));
+
         }
       }
     }
@@ -304,7 +304,7 @@ int ObSessInfoVerify::fetch_verify_session_info(sql::ObSQLSessionInfo &sess,
     // do nothing
   } else {
     result.assign_ptr(buf, size);
-    LOG_TRACE("fetch serialize buf", KPHEX(buf, size), K(pos), K(size), K(result));
+
   }
   return ret;
 }
@@ -404,7 +404,7 @@ int ObSessInfoVerify::sql_port_to_rpc_port(sql::ObSQLSessionInfo &sess,
   int ret = OB_SUCCESS;
   int64_t rpc_port = 0;
   bool exist = false;
-  LOG_TRACE("sql port", K(sess_info_verification.get_verify_info_addr()));
+
   if (OB_FAIL(share::ObAllServerTracer::get_instance().get_server_rpc_port(
       sess_info_verification.get_verify_info_addr(),
       sess_info_verification.get_verify_info_addr().get_port(), rpc_port, exist))) {
@@ -481,7 +481,7 @@ int ObSessInfoVerify::sql_port_to_rpc_port(sql::ObSQLSessionInfo &sess,
     }
   } else {
     sess_info_verification.get_verify_info_addr().set_port(rpc_port);
-    LOG_TRACE("not use inner sql to find rpc port", K(rpc_port));
+
   }
 
 

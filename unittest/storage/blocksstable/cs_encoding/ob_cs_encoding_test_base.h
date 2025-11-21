@@ -270,7 +270,7 @@ int ObCSEncodingTestBase::full_transform_check_row(const ObMicroBlockHeader *hea
       for (int64_t j = 0; OB_SUCC(ret) && j < ctx_.column_cnt_; ++j) {
         if (!ObDatum::binary_equal(row_arr[i].storage_datums_[j], row.storage_datums_[j])) {
           ret = OB_ERR_UNEXPECTED;
-          LOG_INFO("not equal row: ", K(ret), K(i), K(j), K(row_arr[i].storage_datums_[j]), K(row.storage_datums_[j]));
+
         }
       }
     }
@@ -296,7 +296,7 @@ int ObCSEncodingTestBase::full_transform_check_row(const ObMicroBlockHeader *hea
         for (int64_t j = 0; OB_SUCC(ret) && j < ctx_.column_cnt_; ++j) {
           if (!ObDatum::binary_equal(row_arr[i].storage_datums_[j], row.storage_datums_[j])) {
             ret = OB_ERR_UNEXPECTED;
-            LOG_INFO("not equal row: ", K(ret), K(i), K(j), K(row_arr[i].storage_datums_[j]), K(row.storage_datums_[j]));
+
           }
         }
       }
@@ -368,7 +368,7 @@ int ObCSEncodingTestBase::check_decode_vector(ObMicroBlockCSDecoder &decoder,
       if (!need_test_column) {
         continue;
       }
-      LOG_INFO("Current col: ", K(col_idx), K(col_meta), K(vector_format), K(precision), K(vec_tc));
+
       if (OB_FAIL(VectorDecodeTestUtil::generate_column_output_expr(
           row_cnt, col_meta, vector_format, eval_ctx, col_expr, frame_allocator))) {
         LOG_WARN("fail to generate_column_output_expr", K(ret), K(vec_tc), K(col_meta), K(vector_format));
@@ -432,7 +432,7 @@ int ObCSEncodingTestBase::part_transform_check_row(const ObMicroBlockHeader *hea
       LOG_WARN("fail to init row", K(ret), K(col_descs.count()));
     }
 
-    LOG_INFO("part read", K(project_step), K(storage_cols_index), K(col_descs), K(read_info));
+
 
     for (int32_t i = 0; OB_SUCC(ret) && i < row_cnt; ++i) {
       if (OB_FAIL(decoder.get_row(i, row))) {
@@ -441,7 +441,7 @@ int ObCSEncodingTestBase::part_transform_check_row(const ObMicroBlockHeader *hea
       for (int64_t j = 0; OB_SUCC(ret) && j < storage_cols_index.count(); ++j) {
         if (!ObDatum::binary_equal(row_arr[i].storage_datums_[storage_cols_index.at(j)], row.storage_datums_[j])) {
           ret = OB_ERR_UNEXPECTED;
-          LOG_INFO("not equal row: ", K(ret), K(i), K(j), K(row_arr[i].storage_datums_[j]), K(row.storage_datums_[j]));
+
         }
       }
     }

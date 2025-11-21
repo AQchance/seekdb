@@ -97,7 +97,7 @@ int ObRecursiveInnerDataOp::get_all_data_from_left_batch()
         all_skiped &= child_brs->skip_->is_all_true(child_brs->size_);
         ObEvalCtx::BatchInfoScopeGuard guard(eval_ctx_);
         guard.set_batch_size(child_brs->size_);
-        LOG_DEBUG("child batch_size is", KPC(child_brs));
+
         for (auto i = 0; OB_SUCC(ret) && i < child_brs->size_; i++) {
           if (child_brs->skip_->at(i)) {
             continue;
@@ -161,7 +161,7 @@ int ObRecursiveInnerDataOp::get_all_data_from_right_batch()
            OB_SUCC(right_op_->get_next_batch(batch_size_, child_brs))) {
       ObEvalCtx::BatchInfoScopeGuard guard(eval_ctx_);
       guard.set_batch_size(child_brs->size_);
-      LOG_DEBUG("child batch_size info", KPC(child_brs));
+
       for (auto i = 0; OB_SUCC(ret) && i < child_brs->size_; i++) {
         if (child_brs->skip_->at(i)) {
           continue;
@@ -173,7 +173,7 @@ int ObRecursiveInnerDataOp::get_all_data_from_right_batch()
       }
 
       if (child_brs->end_ == true) {
-        LOG_INFO("Reach iterating end for right batch");
+
         break;
       }
     }
@@ -204,7 +204,7 @@ int ObRecursiveInnerDataOp::try_format_output_row(int64_t &read_rows)
       read_rows = 1;
     }
   }
-  LOG_DEBUG("try_format_output_row: output info", K(result_node), K(ret));
+
   return ret;
 }
 
@@ -235,7 +235,7 @@ int ObRecursiveInnerDataOp::try_format_output_batch(int64_t batch_size, int64_t 
         read_rows++;
       }
     }
-    LOG_DEBUG("try_format_output_batch: output info", K(result_node), K(ret));
+
   }
   if (OB_ITER_END == ret && read_rows > 0) {
     ret = OB_SUCCESS;
@@ -505,7 +505,7 @@ int ObRecursiveInnerDataOp::get_next_batch(const int64_t batch_size,
 {
   int ret = OB_SUCCESS;
   int64_t read_rows = 0;
-  LOG_DEBUG("Entrance of get_next_batch", K(result_output_.empty()), K(state_));
+
   if (!result_output_.empty()) {
     if (is_bulk_search()) {
       if (OB_FAIL(try_format_output_batch(batch_size, read_rows))) {
@@ -541,7 +541,7 @@ int ObRecursiveInnerDataOp::get_next_batch(const int64_t batch_size,
   } else if (RecursiveUnionState::R_UNION_END == state_) {
     brs.size_ = 0;
     brs.end_ = true;
-    LOG_DEBUG("reach iterator end", K(ret), K(brs));
+
   } else {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("Unexpected state", K(ret), K(state_));
@@ -561,7 +561,7 @@ int ObRecursiveInnerDataOp::get_next_batch(const int64_t batch_size,
              K(result_output_.empty()), K(ret), K(brs));
     ret = OB_SUCCESS;
   }
-  LOG_DEBUG("end of get_next_batch", K(result_output_.empty()), K(ret), K(brs));
+
   return ret;
 }
 

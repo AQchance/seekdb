@@ -87,12 +87,12 @@ int ObMacroBlocksWriteCtx::deep_copy(ObMacroBlocksWriteCtx *&dst, ObIAllocator &
   void *buf = nullptr;
   if (OB_ISNULL(buf = allocator.alloc(sizeof(ObMacroBlocksWriteCtx)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to alloc memory", K(ret));
+
   } else if (OB_ISNULL(dst = new (buf) ObMacroBlocksWriteCtx())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "fail to new a ObMacroBlocksWriteCtx", K(ret));
+
   } else if (OB_FAIL(dst->set(src))) {
-    STORAGE_LOG(WARN, "fail to set macro block write ctx", K(ret), K(src));
+
   }
 
   if (OB_FAIL(ret) && OB_UNLIKELY(dst != nullptr)) {

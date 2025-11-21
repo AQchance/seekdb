@@ -281,10 +281,10 @@ int ObMergeGroupByOp::init()
       } else {
         // is_const
         distinct_col_idx_in_output_.push_back(-1);
-        LOG_DEBUG("distinct expr is const and is not in the output of child", K(i), K(ret));
+
       }
     }
-    LOG_DEBUG("debug distinct exprs", K(ret), K(MY_SPEC.distinct_exprs_.count()));
+
   }
   if (OB_SUCC(ret) && aggr_processor_.has_extra()) {
     // set group_batch_factor_ to 1 avoid out of memory error
@@ -393,7 +393,7 @@ int ObMergeGroupByOp::rewrite_rollup_column(ObExpr *&diff_expr)
   diff_expr = const_cast<ObExpr *>(cur_output_group_id_ < MY_SPEC.group_exprs_.count()
       ? MY_SPEC.group_exprs_[cur_output_group_id_]
       : MY_SPEC.rollup_exprs_[cur_output_group_id_ - MY_SPEC.group_exprs_.count()]);
-  LOG_DEBUG("debug write rollup column 1", KP(diff_expr), K(cur_output_group_id_));
+
   //for SELECT GROUPING(z0_test0) FROM Z0CASE GROUP BY z0_test0, ROLLUP(z0_test0);
   //issue:
   if (cur_output_group_id_ >= MY_SPEC.group_exprs_.count()) {
@@ -410,7 +410,7 @@ int ObMergeGroupByOp::rewrite_rollup_column(ObExpr *&diff_expr)
       diff_expr = nullptr;
     }
   }
-  LOG_DEBUG("debug write rollup column", KP(diff_expr), K(cur_output_group_id_));
+
   return ret;
 }
 
@@ -423,7 +423,7 @@ int ObMergeGroupByOp::get_child_next_row()
         LOG_WARN("failed to get sorted row", K(ret));
       }
     } else {
-      LOG_DEBUG("debug get sort row", K(ROWEXPR2STR(eval_ctx_, child_->get_spec().output_)));
+
     }
   } else {
     if (OB_FAIL(child_->get_next_row())) {
@@ -539,7 +539,7 @@ int ObMergeGroupByOp::process_parallel_rollup_key(ObRollupNDVInfo &ndv_info)
       }
       aggr_processor_.set_partial_rollup_idx(MY_SPEC.group_exprs_.count(), partial_rollup_idx_);
     }
-    LOG_DEBUG("debug partial rollup keys", K(partial_rollup_idx_));
+
   }
   return ret;
 }
@@ -872,7 +872,7 @@ int ObMergeGroupByOp::batch_collect_local_ndvs(const ObBatchRows *child_brs)
       }
     }
   }
-  LOG_DEBUG("debug batch collect local ndvs", K(ret));
+
   return ret;
 }
 
@@ -892,7 +892,7 @@ int ObMergeGroupByOp::batch_process_rollup_distributor(const int64_t max_row_cnt
         }
         LOG_WARN("failed to get child batch", K(ret));
       } else if (child_brs->end_ && child_brs->size_ == 0) {
-        LOG_DEBUG("reach iterating end with empty result, do nothing");
+
         break;
       } else if (OB_FAIL(try_check_status())) {
         LOG_WARN("check status failed", K(ret));
@@ -915,7 +915,7 @@ int ObMergeGroupByOp::batch_process_rollup_distributor(const int64_t max_row_cnt
       LOG_WARN("failed to process parallel", K(ret));
     } else {
       clear_evaluated_flag();
-      LOG_DEBUG("debug batch process distributor", K(ret));
+
     }
   }
   return ret;
@@ -950,7 +950,7 @@ int ObMergeGroupByOp::inner_get_next_batch(const int64_t max_row_cnt)
       LOG_WARN("failed to calc output results", K(ret));
     }
   } else {
-    LOG_DEBUG("begin to get_next_batch rows from child", K(child_batch_cnt));
+
     set_output_queue_cnt(0);
     if (curr_group_rowid_ > common::OB_INVALID_INDEX &&
         OB_FAIL(brs_holder_.restore())) {
@@ -967,7 +967,7 @@ int ObMergeGroupByOp::inner_get_next_batch(const int64_t max_row_cnt)
       while (OB_SUCC(ret) &&
              OB_SUCC(get_child_next_batch_row(child_batch_cnt, child_brs))) {
         if (child_brs->end_ && child_brs->size_ == 0) {
-          LOG_DEBUG("reach iterating end with empty result, do nothing");
+
           break;
         }
         clear_evaluated_flag();
@@ -1020,7 +1020,7 @@ int ObMergeGroupByOp::inner_get_next_batch(const int64_t max_row_cnt)
               max_group_idx = start_rollup_id;
             }
           }
-          LOG_DEBUG("debug grouping_id", K(end_rollup_id), K(start_rollup_id), K(max_group_idx));
+
           if (end_rollup_id >= start_rollup_id && OB_FAIL(gen_rollup_group_rows(
                 start_rollup_id,
                 end_rollup_id,
@@ -1054,7 +1054,7 @@ int ObMergeGroupByOp::set_null(int64_t idx, ObChunkDatumStore::StoredRow *rollup
   if (0 > idx) {
   } else {
     OZ(rollup_store_row->set_null(idx));
-    LOG_DEBUG("set null", K(idx), K(MY_SPEC.rollup_exprs_.count()));
+
     if (has_dup_group_expr_) {
       int64_t start_idx = idx - MY_SPEC.group_exprs_.count();
       ObExpr *base_expr = MY_SPEC.rollup_exprs_.at(start_idx);
@@ -1189,7 +1189,7 @@ int ObMergeGroupByOp::get_grouping_id()
       LOG_WARN("failed to eval aggr_code_expr", K(ret));
     } else {
       cur_grouping_id_ = datum->get_int();
-      LOG_DEBUG("debug partial rollup idx", K(cur_grouping_id_));
+
     }
   }
   return ret;
@@ -1436,7 +1436,7 @@ int ObMergeGroupByOp::process_batch(const ObBatchRows &brs)
                 max_group_idx = max(start_rollup_id - 1, partial_rollup_idx_);
               }
             }
-            LOG_DEBUG("debug grouping_id", K(end_rollup_id), K(start_rollup_id), K(max_group_idx));
+
             if (end_rollup_id >= start_rollup_id && OB_FAIL(gen_rollup_group_rows(
                   start_rollup_id,
                   end_rollup_id,
@@ -1646,7 +1646,7 @@ int ObMergeGroupByOp::check_unique_distinct_columns_for_batch(
   int cmp_ret = 0;
   if (is_first_calc_) {
     is_same_before_row = false;
-    LOG_DEBUG("debug is_first_calc", K(ret), K(is_same_before_row));
+
   } else {
     is_same_before_row = true;
     ObDatum &aggr_code_datum = cur_group_row_->groupby_store_row_->cells()[MY_SPEC.aggr_code_idx_];
@@ -1721,9 +1721,9 @@ int ObMergeGroupByOp::restore_groupby_datum(
     ObDatum &result = expr->locate_expr_datum(eval_ctx_);
     result.set_datum(last_datum);
     expr->set_evaluated_projected(eval_ctx_);
-    LOG_DEBUG("succ to restore", K(i), KPC(expr), K(result), K(last_datum));
+
   }
-  LOG_DEBUG("finish restore groupby datum", K(diff_pos), K(ret));
+
   return ret;
 }
 
@@ -1742,12 +1742,12 @@ int ObMergeGroupByOp::fill_groupby_id_expr(const int64_t group_id)
       // fill the negitive n_keys as base row
       datum.set_int(-partial_rollup_idx_);
       grouping_expr->set_evaluated_projected(eval_ctx_);
-      LOG_DEBUG("debug grouping_id expr", K(ret), K(group_id));
+
     } else {
       ObDatum &datum = grouping_expr->locate_datum_for_write(eval_ctx_);
       datum.set_int(group_id);
       grouping_expr->set_evaluated_projected(eval_ctx_);
-      LOG_DEBUG("debug grouping_id expr", K(ret), K(group_id));
+
     }
   }
   return ret;
@@ -1818,7 +1818,7 @@ int ObMergeGroupByOp::calc_batch_results(const bool is_iter_end,
     // get empty result from child, just return empty
     brs_.size_ = 0;
     brs_.end_ = is_iter_end;
-    LOG_DEBUG("debug cur_group_row_ is null", K(ret));
+
   } else {
     if (is_iter_end) {
       is_end_ = true;
@@ -1921,7 +1921,7 @@ int ObMergeGroupByOp::get_n_shuffle_keys_for_exchange(int64_t &shuffle_n_keys)
       } else {
         shuffle_n_keys = partial_rollup_idx_ + 1;
       }
-      LOG_TRACE("debug merge groupby shuffle keys", K(shuffle_n_keys));
+
     }
   }
   return ret;

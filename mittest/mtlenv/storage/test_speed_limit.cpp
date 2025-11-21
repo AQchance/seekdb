@@ -53,9 +53,9 @@ public:
   {
     int ret = OB_SUCCESS;
     if (OB_FAIL(timer_.init("Flush"))) {
-      LOG_INFO("fail to init timer", K(ret));
+
     } else if (OB_FAIL(timer_.schedule(task_, FLUSH_INTERVAL, true))) {
-      LOG_INFO("fail to schedule checkpoint task", K(ret));
+
     }
   }
 
@@ -265,7 +265,7 @@ void TestSpeedLimit::write(int64_t size)
   }
 
   if (need_speed_limit && TC_REACH_TIME_INTERVAL(100L * 1000L)) {
-    LOG_INFO("throttle situation", K(has_sleep_time), K(time), K(seq));
+
   }
 }
 

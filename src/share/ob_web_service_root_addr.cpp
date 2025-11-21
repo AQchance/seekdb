@@ -584,7 +584,7 @@ int ObWebServiceRootAddr::to_json(
       if (OB_FAIL(json.append_fmt("]}"))) {
         LOG_WARN("append string failed", K(ret));
       } else {
-        LOG_INFO("to json success", K(json));
+
       }
     }
   }
@@ -629,7 +629,7 @@ int ObWebServiceRootAddr::call_service(const char *post_data,
                    && CURLE_OK != (cc = curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE"))) {
           LOG_WARN("fail to set option", KR(ret));
         } else {
-          LOG_INFO("post data success", K(post_data));
+
         }
       }
     }

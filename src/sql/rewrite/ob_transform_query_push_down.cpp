@@ -136,7 +136,7 @@ int ObTransformQueryPushDown::transform_one_stmt(common::ObIArray<ObParentDMLStm
     /*do nothing*/
     OPT_TRACE("not simple stmt, can not transform");
   }
-  LOG_TRACE("succeed to push query down", K(trans_happened));
+
   return ret;
 }
 

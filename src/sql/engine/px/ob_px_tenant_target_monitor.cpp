@@ -103,7 +103,7 @@ int ObPxTenantTargetMonitor::refresh_statistics(bool need_refresh_all)
               K(dummy_cache_leader_), K(role_), K(version_));
     // In a single-machine scenario, do not go through global queuing
     if (role_ == LEADER) {
-      LOG_INFO("leader switch to follower", K(tenant_id_), K(server_), K(leader), K(version_));
+
       role_ = FOLLOWER;
       // from leader to follower, refresh all the statistics
       if (OB_FAIL(reset_follower_statistics(-1))) {
@@ -126,7 +126,7 @@ int ObPxTenantTargetMonitor::refresh_statistics(bool need_refresh_all)
       if (OB_FAIL(reset_leader_statistics())) {
         LOG_WARN("reset statistics failed", K(ret));
       }
-      LOG_INFO("refresh global_target_usage_", K(tenant_id_), K(version_), K(server_), K(need_refresh_all));
+
     }
   }
   if (!print_debug_log_ && OB_SUCCESS != OB_E(EventTable::EN_PX_PRINT_TARGET_MONITOR_LOG) OB_SUCCESS) {
@@ -228,13 +228,13 @@ int ObPxTenantTargetMonitor::refresh_dummy_location()
       } else if (OB_FAIL(location_adapter->nonblock_renew(cluster_id_, tenant_id_, SYS_LS))) {
         LOG_WARN("nonblock renew failed", K(ret));
       } else {
-        LOG_INFO("refresh location cache for target_monitor", K(tenant_id_), K(refresh_ctrl));
+
       }
     } else {
       LOG_WARN("switch to tenant failed", K(tenant_id_));
     }
   } else {
-    LOG_INFO("waiting for refresh location cache for target_monitor", K(tenant_id_), K(refresh_ctrl));
+
   }
   return ret;
 }
@@ -290,10 +290,10 @@ int ObPxTenantTargetMonitor::query_statistics(ObAddr &leader)
     } else if (result.get_status() == MONITOR_NOT_MASTER) {
       refresh_dummy_location();
       need_send_refresh_all_ = true;
-      LOG_INFO("report to not master, need send refresh all", K(tenant_id_), K(leader), K(version_));
+
     } else if (result.get_status() == MONITOR_VERSION_NOT_MATCH) {
       uint64_t leader_version = result.get_version();
-      LOG_INFO("monitor version not match", K(tenant_id_), K(leader_version), K(version_));
+
       if (OB_FAIL(reset_follower_statistics(leader_version))) {
         LOG_WARN("reset statistics failed", K(ret));
       }
@@ -317,7 +317,7 @@ int ObPxTenantTargetMonitor::update_peer_target_used(const ObAddr &server, int64
   int ret = OB_SUCCESS;
   ServerTargetUsage target_usage;
   if (print_debug_log_) {
-    LOG_INFO("update_peer_target_used", K(tenant_id_), K(is_leader()), K(version_), K(server), K(peer_used));
+
   }
   auto update_peer_used = [=](hash::HashMapPair<ObAddr, ServerTargetUsage> &entry) -> void {
     if (is_leader()) {
@@ -368,7 +368,7 @@ int ObPxTenantTargetMonitor::reset_follower_statistics(uint64_t version)
   } else {
     version_ = version;
   }
-  LOG_INFO("reset follower statistics", K(tenant_id_), K(ret), K(version));
+
   return ret;
 }
 
@@ -384,7 +384,7 @@ int ObPxTenantTargetMonitor::reset_leader_statistics()
   } else {
     version_ = get_new_version();
   }
-  LOG_INFO("reset leader statistics", K(tenant_id_), K(ret), K(version_), K(server_index));
+
   return ret;
 }
 
@@ -477,10 +477,10 @@ int ObPxTenantTargetMonitor::apply_target(hash::ObHashMap<ObAddr, int64_t> &work
     // NOTE: when any resource returned , ALL waiting threads are waken up
     //       this is because the returned resource maybe a very big chunk,
     //       which can feed many waiting threads
-    LOG_DEBUG("wait begin", K(wait_time_us), K(session_target), K(req_cnt));
+
     int64_t wait_us = min(wait_time_us, 1000000L);
     target_cond_.wait(wait_us); // sleep at most 1sec, in order to check interrupt
-    LOG_DEBUG("wait finish");
+
   }
   return ret;
 }
@@ -527,7 +527,7 @@ int ObPxTenantTargetMonitor::release_target(hash::ObHashMap<ObAddr, int64_t> &wo
       }
     }
   } else {
-    LOG_INFO("version changed", K(tenant_id_), K(version_), K(version));
+
   }
   parallel_session_count_--;
   return ret;

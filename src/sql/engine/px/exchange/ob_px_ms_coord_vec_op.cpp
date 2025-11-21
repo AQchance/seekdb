@@ -50,7 +50,7 @@ int ObPxMSCoordVecOp::ObPxMSCoordVecOpEventListener::on_root_data_channel_setup(
   if (OB_FAIL(px_coord_op_.init_row_heap(cnt))) {
     LOG_WARN("failed to init row heap", K(ret), K(cnt));
   } else {
-    LOG_TRACE("px coord setup", K(cnt), K(px_coord_op_.msg_loop_.get_channel_count()));
+
   }
   return ret;
 }
@@ -336,7 +336,7 @@ int ObPxMSCoordVecOp::inner_close()
     LOG_WARN("failed to free allcator", K(ret), K(tmp_ret), K(ret));
     ret = tmp_ret;
   }
-  LOG_TRACE("byebye. exit MergeSort QC Coord");
+
   return ret;
 }
 
@@ -438,7 +438,7 @@ int ObPxMSCoordVecOp::next_row(const bool need_store_output)
       if (all_rows_finish_ && coord_info_.all_threads_finish_) {
         (void) msg_proc_.on_process_end(ctx_);
         ret = OB_ITER_END;
-        LOG_TRACE("all rows received, all sqcs reported, qc says: byebye!", K(ret));
+
         LOG_TRACE("TIMERECORD ",
                  "reserve:=1 name:=RQC dfoid:=-1 sqcid:=-1 taskid:=-1 end:",
                  ObTimeUtility::current_time());
@@ -450,7 +450,7 @@ int ObPxMSCoordVecOp::next_row(const bool need_store_output)
       LOG_WARN("fail check status, maybe px query timeout", K(ret));
     } else if (OB_FAIL(msg_loop_.process_one_if(&receive_order_, nth_channel))) {
       if (OB_DTL_WAIT_EAGAIN == ret) {
-        LOG_TRACE("no message, try again", K(ret));
+
         ret = OB_SUCCESS;
         // if no data, then unblock blocked data channel, if not, dtl maybe hang
         // bug#28253162
@@ -459,7 +459,7 @@ int ObPxMSCoordVecOp::next_row(const bool need_store_output)
                                                 row_heap_.writable_channel_idx()))) {
             LOG_WARN("failed to unblock channels", K(ret));
           } else {
-            LOG_DEBUG("debug old unblock_channel", K(ret));
+
           }
         }
       } else if (OB_ITER_END != ret) {
@@ -496,7 +496,7 @@ int ObPxMSCoordVecOp::next_row(const bool need_store_output)
   if (ret == OB_ITER_END) {
     if (!iter_end_ && all_rows_finish_) {
       iter_end_ = true;
-      LOG_TRACE("RECORDTIME", K(time_recorder_));
+
     }
   } else if (OB_UNLIKELY(OB_SUCCESS != ret)) {
     int ret_terminate = terminate_running_dfos(coord_info_.dfo_mgr_);
@@ -515,7 +515,7 @@ int ObPxMSCoordVecOp::next_row_from_heap(ObReceiveRowReader &reader, bool &wait_
 {
   int ret = OB_SUCCESS;
   wait_next_msg = true;
-  LOG_TRACE("Begin next_row_from_heap");
+
   metric_.mark_interval_start();
   const int64_t max_rows = 1;
   int64_t read_rows = 0;
@@ -544,7 +544,7 @@ int ObPxMSCoordVecOp::next_row_from_heap(ObReceiveRowReader &reader, bool &wait_
                "total_task_chan_cnt", task_channels_.count(),
                K(ret));
     } else {
-      LOG_TRACE("All channel finish", "finish_ch_cnt", finish_ch_cnt_, K(ret));
+
       all_rows_finish_ = true;
       ret = OB_SUCCESS;
       // Here ret = OB_ITER_END, represents all channels have received, but do not exit the msg_loop loop yet

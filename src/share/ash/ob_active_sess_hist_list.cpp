@@ -71,7 +71,7 @@ int ObActiveSessHistList::init()
       LOG_WARN("failed to allocate ash buffer", KR(ret));
     } else {
       ash_buffer_ = tmp;
-      LOG_INFO("ash buffer init OK", K_(ash_buffer));
+
     }
     mutex_.unlock();
   }
@@ -105,7 +105,7 @@ int ObActiveSessHistList::resize_ash_size()
         }
       }
       // swap old with new (with mutex protection)
-      LOG_INFO("successfully resize ash buffer", K(ash_size), "prev_ash_buffer", ash_buffer_.get_ptr(), "prev_size", ash_size_);
+
       ash_buffer_ = tmp;
       ash_size_ = ash_size;
     }
@@ -128,7 +128,7 @@ int ObActiveSessHistList::allocate_ash_buffer(int64_t ash_size, common::ObShared
     if (OB_FAIL(ash_buffer->prepare_allocate(ash_size / sizeof(ObActiveSessionStatItem)))) {
       LOG_WARN("fail init ASH circular buffer", K(ret));
     } else {
-      LOG_INFO("init ASH circular buffer OK", "size", ash_buffer->size());
+
     }
   }
   return ret;

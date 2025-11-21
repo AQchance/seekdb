@@ -113,7 +113,7 @@ int ObUpgradeUtils::check_upgrade_job_passed(ObRsJobType job_type)
     ret = OB_RUN_JOB_NOT_SUCCESS;
     LOG_WARN("run job not success yet", K(ret));
   } else {
-    LOG_INFO("run job success", K(ret), K(job_type));
+
   }
   return ret;
 }
@@ -328,7 +328,7 @@ int ObUpgradeUtils::calc_diff_sys_var_(
           } else if (SYS_VAR_INVALID == (sys_var_id =
                      ObSysVarFactory::find_sys_var_id_by_name(name))) {
             // maybe has unused sys variable in table, just ignore
-            LOG_INFO("sys variable exist in table, but not hard code", KR(ret), K(tenant_id), K(name));
+
           } else if (OB_FAIL(ObSysVarFactory::calc_sys_var_store_idx(sys_var_id, var_store_idx))) {
             LOG_WARN("fail to calc sys var store idx", KR(ret), K(sys_var_id), K(name));
           } else if (false == ObSysVarFactory::is_valid_sys_var_store_idx(var_store_idx)) {
@@ -383,7 +383,7 @@ int ObUpgradeUtils::calc_diff_sys_var_(
         } else if (OB_FAIL(add_list.push_back(i))) {
           LOG_WARN("fail to push back var_store_idx", KR(ret), K(tenant_id), K(name));
         } else {
-          LOG_INFO("[UPGRADE] sys var miss, need add", K(tenant_id), K(name), K(i));
+
         }
       }
     }
@@ -797,11 +797,11 @@ int ObUpgradeForAllVersionProcessor::flush_ncomp_dll_job()
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected error", KR(ret), KP(sql_proxy_), KP(schema_service_), K(tenant_id_));
   } else if (!is_user_tenant(tenant_id_)) {
-    LOG_INFO("not user tenant, ignore", K(tenant_id_));
+
   } else if (OB_FAIL(ObAllTenantInfoProxy::is_primary_tenant(sql_proxy_, tenant_id_, is_primary_tenant))) {
     LOG_WARN("check is standby tenant failed", KR(ret), K(tenant_id_));
   } else if (!is_primary_tenant) {
-    LOG_INFO("not primary tenant, ignore", K(tenant_id_));
+
   } else if (OB_FAIL(schema_service_->get_tenant_schema_guard(tenant_id_, schema_guard))) {
     LOG_WARN("failed to get tenant schema guard", KR(ret), K(tenant_id_));
   } else if (OB_FAIL(schema_guard.get_sys_variable_schema(tenant_id_, sys_variable_schema))) {
@@ -819,7 +819,7 @@ int ObUpgradeForAllVersionProcessor::flush_ncomp_dll_job()
       LOG_WARN("create flush ncomp dll job failed", KR(ret), K(tenant_id_));
     }
     END_TRANSACTION(trans);
-    LOG_INFO("post upgrade for create flush ncomp dll finished", KR(ret), K(tenant_id_));
+
   }
 
   return ret;

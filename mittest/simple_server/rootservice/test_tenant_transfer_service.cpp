@@ -101,7 +101,7 @@ int TestTenantTransferService::read_sql(
       } else {
         LOG_WARN("fail to generate data", K(sql));
       }
-      LOG_INFO("finish read sql", K(sql), K(part_list), K(table_id), K(part_id));
+
     }
   }
   return ret;
@@ -192,7 +192,7 @@ TEST_F(TestTenantTransferService, test_service)
     ASSERT_TRUE(is_contain(task.get_part_list(), g_part_list.at(idx)));
   }
   ASSERT_TRUE(task.get_data_version() > 0);
-  LOG_INFO("generate transfer task", K(task));
+
 
   // generate tablet_list
   int64_t create_time = OB_INVALID_TIMESTAMP;
@@ -202,12 +202,12 @@ TEST_F(TestTenantTransferService, test_service)
   ObArenaAllocator allocator;
   ObString tablet_list_str;
   ASSERT_EQ(OB_SUCCESS, ObTransferTaskOperator::get(inner_sql_proxy, g_tenant_id, task_id, false, task, 0/*group_id*/));
-  LOG_INFO("generate tablet list", K(task));
+
   ASSERT_TRUE(task.is_valid());
   const ObTransferTabletList &tablet_list = task.get_tablet_list();
   ASSERT_TRUE(10 == tablet_list.count()); // 2 * (primary + local_index + lob_meta + lob_piece) + 2 * global_index
   ASSERT_EQ(OB_SUCCESS, tablet_list.to_display_str(allocator, tablet_list_str));
-  LOG_INFO("tablet list string", K(tablet_list_str));
+
   ASSERT_TRUE(0 == tablet_list_str.case_compare("200001:0,200002:0,1152921504606846977:0,1152921504606846978:0,"
       "1152921504606846979:0,1152921504606846980:0,1152921504606846981:0,1152921504606846982:0,1152921504606846983:0,1152921504606846984:0"));
 
@@ -297,7 +297,7 @@ TEST_F(TestTenantTransferService, test_service)
   // test wait tenant major compaction
 #ifdef OB_BUILD_SHARED_STORAGE
   GCTX.startup_mode_ = observer::ObServerMode::SHARED_STORAGE_MODE;
-  LOG_INFO("test wait major compaction begin", K(GCTX.is_shared_storage_mode()));
+
   INNER_EXE_SQL(g_tenant_id, "update __all_freeze_info set frozen_scn = now()");
   ObTransferTask conflict_compaction_task;
   ObTransferTaskID conflict_task_id(4444);
@@ -308,7 +308,7 @@ TEST_F(TestTenantTransferService, test_service)
   ASSERT_EQ(OB_SUCCESS, ObTransferTaskOperator::get(inner_sql_proxy, g_tenant_id, conflict_task_id, false, conflict_task_after_process, 0/*group_id*/));
   ASSERT_TRUE(WAIT_FOR_MAJOR_COMPACTION == conflict_task_after_process.get_comment() && conflict_task_after_process.get_status().is_init_status());
   INNER_EXE_SQL(g_tenant_id, "update __all_freeze_info set frozen_scn = 1");
-  LOG_INFO("test wait major compaction finished");
+
 #endif
 }
 
@@ -392,7 +392,7 @@ void TestTenantTransferService::create_hidden_table()
   usleep(100000);
   EXE_SQL("create table t_hidden_1(c1 int); ");
   EXE_SQL("alter table t_hidden_1 modify c1 char(10);");
-  LOG_INFO("finish create hidden table", K(sql), K(affected_rows));
+
 }
 
 TEST_F(TestTenantTransferService, test_offline_ddl_hidden_table)
@@ -413,12 +413,12 @@ TEST_F(TestTenantTransferService, test_offline_ddl_hidden_table)
   sql.reset();
   ObTransferPartList primary_table_part_list;
   GEN_PART_LIST(inner_sql_proxy, primary_table_part_list, "select object_id from oceanbase.CDB_OBJECTS where CON_ID = %lu and OBJECT_NAME = 't_hidden_1'", g_tenant_id);
-  LOG_INFO("read hidden table primary table", K(primary_table_part_list));
+
   ASSERT_TRUE(1 == primary_table_part_list.count());
   ASSERT_TRUE(500119 == primary_table_part_list.at(0).table_id());
   ObTransferPartList hidden_part_list;
   GEN_PART_LIST(inner_sql_proxy, hidden_part_list, "select association_table_id as object_id from oceanbase.__all_virtual_table where tenant_id = %lu and table_name = 't_hidden_1'", g_tenant_id);
-  LOG_INFO("read hidden table", K(hidden_part_list));
+
   ASSERT_TRUE(500120 == hidden_part_list.at(0).table_id());
 
   ObMySQLTransaction trans;
@@ -433,13 +433,13 @@ TEST_F(TestTenantTransferService, test_offline_ddl_hidden_table)
   ASSERT_EQ(OB_SUCCESS, trans.start(&inner_sql_proxy, g_tenant_id));
   ASSERT_EQ(OB_SUCCESS, tenant_transfer->lock_table_and_part_(trans, ObLSID(1001), offline_ddl_table_part_list,
       not_exist_part_list, lock_conflict_part_list, table_lock_tablet_list, tablet_ids, lock_owner_id));
-  LOG_INFO("lock_table_and_part", K(offline_ddl_table_part_list), K(not_exist_part_list), K(lock_conflict_part_list), K(table_lock_tablet_list), K(tablet_ids), K(lock_owner_id));
+
   ASSERT_TRUE(not_exist_part_list.empty() && table_lock_tablet_list.empty() && tablet_ids.empty());
   ASSERT_TRUE(2 == lock_conflict_part_list.count());
   ObArenaAllocator allocator;
   ObString lock_conflict_part_list_str;
   ASSERT_EQ(OB_SUCCESS, lock_conflict_part_list.to_display_str(allocator, lock_conflict_part_list_str));
-  LOG_INFO("lock conflict hidden table", K(lock_conflict_part_list_str));
+
   ASSERT_TRUE(0 == lock_conflict_part_list_str.compare("500119:0,500120:0"));
 
   if (trans.is_started()) {

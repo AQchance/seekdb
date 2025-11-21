@@ -218,7 +218,7 @@ int ObResourceLimit::load_json(const char *c_str)
 #undef RL_DEF
   }
 
-  LOG_INFO("json loaded", K(ret), K(*this));
+
   return ret;
 }
 

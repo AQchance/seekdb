@@ -305,7 +305,7 @@ int ObSQLUtils::calc_const_or_calculable_expr(
         }
       }
       if (ignore_failure && !IS_SPATIAL_EXPR(raw_expr->get_expr_type())) {
-        LOG_TRACE("failed to calc const expr, ignore the failure", K(ret));
+
         ret = OB_SUCCESS;
       }
     } else {
@@ -1693,7 +1693,7 @@ int ObSQLUtils::get_cs_level_from_cast_mode(const ObCastMode cast_mode,
     } else {
       cs_level = tmp_cs_level;
     }
-    LOG_TRACE(" get_cs_level_from_cast_mode debug",K(default_level),K(cs_level));
+
   }
   return ret;
 }
@@ -1860,7 +1860,7 @@ int ObSQLUtils::get_outline_key(ObIAllocator &allocator,
       LOG_WARN("invalid args", K(type_node));
     } else if (!IS_DML_STMT(type_node->type_)) {
       ret = OB_SQL_DML_ONLY;
-      LOG_TRACE("statement not dml sql", K(type_node));
+
     } else if (check_param && OB_FAIL(ObSqlParameterization::transform_syntax_tree(allocator,
                                                                     *session,
                                                                     NULL,
@@ -2035,7 +2035,7 @@ int ObSQLUtils::reconstruct_sql(ObIAllocator &allocator, const ObStmt *stmt, ObS
   } else if (OB_FAIL(sql_printer.do_print(allocator, sql))) {
     LOG_WARN("failed to print sql", K(ret));
   }
-  LOG_TRACE("succeed to reconstruct sql", K(sql), KPC(stmt));
+
   return ret;
 }
 
@@ -2503,7 +2503,7 @@ int ObSQLUtils::get_partition_range(ObObj *start_row_key,
                                     part_range))) {
         LOG_WARN("get partition range in opt failed", K(ret));
       }
-      LOG_DEBUG("opt logic", K(part_range), KPC(part_expr));
+
     } else {
       // part expr only have one column.
       if (OB_FAIL(get_range_for_scalar(
@@ -2618,7 +2618,7 @@ int ObSQLUtils::get_range_for_scalar(ObObj *start_row_key,
     part_range.border_flag_.set_inclusive_start();
     part_range.border_flag_.set_inclusive_end();
   }
-  LOG_DEBUG("get partition range", K(ret), K(part_range), KPC(part_expr), K(count));
+
   return ret;
 }
 
@@ -2660,7 +2660,7 @@ int ObSQLUtils::get_partition_range_common(
       OB_FAIL(ObSQLUtils::revise_hash_part_object(*function_obj, dummy_row, false, part_type))) {
     LOG_WARN("failed to revise hash partition object", K(ret));
   }
-  LOG_DEBUG("get_partition_range_common", K(ret), KPC(part_expr));
+
   return ret;
 }
 
@@ -2808,19 +2808,19 @@ int ObSQLUtils::choose_best_partition_replica_addr(const ObAddr &local_addr,
     if (OB_SUCC(ret)) {
       if (selected_addr.is_valid()) {
         // do noting, find local addr
-        LOG_TRACE("has local replica", K(selected_addr));
+
       } else if (!same_idc_addr.empty()) {
         int64_t selected_idx = rand() % same_idc_addr.count();
         selected_addr = same_idc_addr.at(selected_idx);
-        LOG_TRACE("has same idc replica", K(selected_addr));
+
       } else if (!same_region_addr.empty()) {
         int64_t selected_idx = rand() % same_region_addr.count();
         selected_addr = same_region_addr.at(selected_idx);
-        LOG_TRACE("has same region replica", K(selected_addr));
+
       } else if (!other_region_addr.empty()) {
         int64_t selected_idx = rand() % other_region_addr.count();
         selected_addr = other_region_addr.at(selected_idx);
-        LOG_TRACE("has other region replica", K(selected_addr));
+
       } else {
         ret = OB_NO_READABLE_REPLICA;
         LOG_WARN("No useful replica found", K(ret), K(local_addr), K(candi_replicas), 
@@ -3304,7 +3304,7 @@ bool ObSQLUtils::is_same_type_for_compare(const ObObjMeta &meta1, const ObObjMet
       is_same = meta1.get_scale() == meta2.get_scale();
     }
   }
-  LOG_DEBUG("is same type for compare", K(meta1), K(meta2), K(is_same), K(lbt()));
+
   return is_same;
 }
 
@@ -3441,7 +3441,7 @@ int ObVirtualTableResultConverter::get_all_columns_schema()
       }
       tenant_id_col_id_ = column_id;
     } else {
-      LOG_TRACE("trace column type", K(col_schema->get_data_type()), K(col_schema->get_collation_type()));
+
     }
   }
   return ret;
@@ -3469,7 +3469,7 @@ int ObVirtualTableResultConverter::init_output_row(int64_t cell_cnt)
     convert_row_.cells_ = cells;
     convert_row_.count_ = cell_cnt;
     inited_row_ = true;
-    LOG_DEBUG("debug output row", K(cell_cnt), K(max_col_cnt_));
+
   }
   return ret;
 }
@@ -3578,7 +3578,7 @@ int ObVirtualTableResultConverter::convert_key(const ObRowkey &src, ObRowkey &ds
       }
     }//end for
     if (OB_SUCC(ret)) {
-      LOG_TRACE("trace range key", K(ret), K(new_key_obj[0]), K(tenant_id_col_id_));
+
       dst.assign(new_key_obj, src.get_obj_cnt());
     }
   }
@@ -3854,7 +3854,7 @@ int ObSQLUtils::handle_audit_record(bool need_retry,
                                               session.get_tenant_query_record_size_limit(),
                                               is_sensitive))) {
         if (OB_SIZE_OVERFLOW == ret || OB_ALLOCATE_MEMORY_FAILED == ret) {
-          LOG_DEBUG("cannot allocate mem for record", K(ret));
+
           ret = OB_SUCCESS;
         }
       }
@@ -3971,7 +3971,7 @@ int ObSQLUtils::create_encode_sortkey_expr(
     }  else {
       encode_sortkey.expr_ = encode_expr;
       encode_sortkey.order_type_ = NULLS_FIRST_ASC;
-      LOG_DEBUG("debug encode sortkey", K(*encode_expr));
+
     }
   }
   return ret;
@@ -4225,7 +4225,7 @@ bool ObSQLUtils::is_in_autonomous_block(ObExecContext *cur_ctx)
 //in order to access exec_ctx of the current statement through the session
 void LinkExecCtxGuard::link_current_context()
 {
-  LOG_DEBUG("link current context", K(session_.get_cur_exec_ctx()), K(&exec_ctx_), K(&session_));
+
   if (session_.get_cur_exec_ctx() != &exec_ctx_) {
     //current execute context in session is not itself
     //it means that the execution of this SQL is in nested sql
@@ -4561,7 +4561,7 @@ int ObSQLUtils::split_remote_object_storage_url(ObString &url, common::ObObjectS
     ret = OB_URI_ERROR;
     LOG_WARN("incorrect uri", K(ret));
   }
-  LOG_DEBUG("check access info", K(access_id), K(access_key), K(host_name), K(url));
+
   
   //fill storage_info
   if (OB_SUCC(ret) && OB_NOT_NULL(storage_info)) {
@@ -4716,7 +4716,7 @@ int ObSQLUtils::check_column_with_res_mapping_rule(const ObResolverParams *resol
   const ObObj &value = const_expr->get_value();
   ObNameCaseMode case_mode = OB_NAME_CASE_INVALID;
   const TableItem *table_item = NULL;
-  LOG_TRACE("check_column_with_res_mapping_rule", K(value), KPC(col_expr));
+
   if (!value.is_unknown()) {
     // do nothing.
   } else if (!col_expr->get_database_name().empty() && OB_FAIL(schema_checker->get_database_id(
@@ -4727,7 +4727,7 @@ int ObSQLUtils::check_column_with_res_mapping_rule(const ObResolverParams *resol
   } else if (FALSE_IT(table_item = static_cast<const ObDMLStmt*>(stmt)->get_table_item_by_id(col_expr->get_table_id()))) {
   } else if (OB_NOT_NULL(table_item)) {
     uint64_t rule_id = 0;
-    LOG_TRACE("get_column_mapping_rule_id", K(rule_id));
+
     if (OB_INVALID_ID == resource_map_rule.get_res_map_rule_id() && OB_INVALID_ID != rule_id) {
       if (OB_NOT_NULL(param_store) && OB_LIKELY(value.get_unknown() < param_store->count())) {
         const ObObjParam &param = param_store->at(value.get_unknown());
@@ -4752,12 +4752,12 @@ int ObSQLUtils::check_column_with_res_mapping_rule(const ObResolverParams *resol
           // This logic works because c1 = '2020-01-01', and c1 = date '2020-01-01' match different plans.
           resource_map_rule.set_column_map_rule(rule_id, value.get_unknown());
           group_id = 0;
-          LOG_TRACE("choose use column resource map:", K(group_id), K(THIS_WORKER.get_group_id()), K(rule_id));
+
         }
       }
     }
   } else {
-    LOG_TRACE("table item is null", KPC(stmt));
+
   }
   return ret;
 }

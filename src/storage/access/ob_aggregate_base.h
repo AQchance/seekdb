@@ -294,7 +294,7 @@ public:
     int ret = OB_SUCCESS;
     if (IS_NOT_INIT) {
       ret = OB_NOT_INIT;
-      STORAGE_LOG(WARN, "ObGroupByCellVec is not inited", K(ret), K_(is_inited));
+
     } else {
       const bool is_valid_bitmap = nullptr != bitmap && !bitmap->is_all_true();
       use_group_by = row_capacity_ == batch_size_ &&
@@ -305,9 +305,9 @@ public:
                       bitmap->popcnt() * USE_GROUP_BY_FILTER_FACTOR > bitmap->size());
       if (use_group_by) {
         if ((is_valid_bitmap || read_cnt < row_cnt) && OB_FAIL(prepare_tmp_group_by_buf(distinct_cnt + 1))) {
-          STORAGE_LOG(WARN, "Failed to init extra info", K(ret));
+
         } else if (OB_FAIL(reserve_group_by_buf(distinct_cnt + 1))) {
-          STORAGE_LOG(WARN, "Failed to prepare group by datum buf", K(ret));
+
         }
       }
       STORAGE_LOG(TRACE, "[GROUP BY PUSHDOWN]", K(ret), K(row_cnt), K(read_cnt), K(distinct_cnt), K(is_valid_bitmap), K(use_group_by),
@@ -499,7 +499,7 @@ int ObGroupByExtendableBuf<T>::reserve(const int32_t size)
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(size <= 0 || size > USE_GROUP_BY_MAX_DISTINCT_CNT)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Unexpected size", K(ret), K(size));
+
   } else {
     capacity_ = MAX(basic_count_, size);
     int32_t cur_capacity = basic_count_ + extra_block_count_ * USE_GROUP_BY_BUF_BLOCK_SIZE;
@@ -507,7 +507,7 @@ int ObGroupByExtendableBuf<T>::reserve(const int32_t size)
       int32_t required_block_cnt = ceil((double)(size - cur_capacity) / USE_GROUP_BY_BUF_BLOCK_SIZE);
       for (int64_t i = 0; OB_SUCC(ret) && i < required_block_cnt; ++i) {
         if (OB_FAIL(alloc_bufblock(extra_blocks_[extra_block_count_]))) {
-          STORAGE_LOG(WARN, "Failed to allock buf block", K(ret));
+
         } else {
           extra_block_count_++;
         }
@@ -566,11 +566,11 @@ int ObGroupByExtendableBuf<T>::alloc_bufblock(BufBlock *&block)
   void *buf = nullptr;
   if (OB_ISNULL(buf = allocator_.alloc(sizeof(BufBlock)))) {
     ret = common::OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "Failed to alloc memory", K(ret));
+
   } else if(FALSE_IT(block = new (buf) BufBlock())) {
   } else if (OB_ISNULL(buf = allocator_.alloc(item_size_ * USE_GROUP_BY_BUF_BLOCK_SIZE))) {
     ret = common::OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "Failed to alloc memory", K(ret));
+
   } else {
     block->data_ =reinterpret_cast<T*>(buf);
   }
@@ -584,11 +584,11 @@ OB_INLINE int ObGroupByExtendableBuf<ObDatum>::alloc_bufblock(BufBlock *&block)
   void *buf = nullptr;
   if (OB_ISNULL(buf = allocator_.alloc(sizeof(BufBlock)))) {
     ret = common::OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "Failed to alloc memory", K(ret));
+
   } else if(FALSE_IT(block = new (buf) BufBlock())) {
   } else if (OB_FAIL(ObAggDatumBuf::new_agg_datum_buf(
       USE_GROUP_BY_BUF_BLOCK_SIZE, false, allocator_, block->datum_buf_, item_size_))) {
-    STORAGE_LOG(WARN, "Failed to alloc agg datum buf", K(ret));
+
   }
   return ret;
 }
@@ -638,7 +638,7 @@ int ObGroupByExtendableBuf<T>::get_item(const int32_t pos, T *&item)
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(pos >= get_capacity())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument", K(ret), K(pos), KPC(this));
+
   } else {
     item = &at(pos);
   }
@@ -684,12 +684,12 @@ int new_group_by_buf(
       (nullptr != basic_data && basic_size <= 0) ||
       nullptr == basic_data && basic_size > 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument", K(ret), KP(basic_data), K(basic_size));
+
   } else {
     void *buf = nullptr;
     if (OB_ISNULL(buf = allocator.alloc(sizeof(BUF_TYPE)))) {
       ret = common::OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "Failed to alloc memory", K(ret));
+
     } else {
       group_by_buf = new (buf) BUF_TYPE(basic_data, basic_size, item_size, allocator);
     }

@@ -93,7 +93,7 @@ int ObRpcCompressProtocolProcessor::encode(easy_request_t *req, ObRpcPacket *pkt
         if (OB_FAIL(cmd_packet.encode(cmd_buf, cmd_packet_encode_size, pos))) {
           LOG_WARN("failed to encode cmd packet", "pkt", *pkt, K(cmd_packet), K(cmd_packet_encode_size), K(ret));
         } else {
-          LOG_INFO("succ to encode cmd_packet", K(cmd_packet), K(compress_mode), K(ret));
+
         }
       }
     } else {
@@ -218,7 +218,7 @@ int ObRpcCompressProtocolProcessor::reset_compress_ctx_mode(easy_connection_t *e
       if (OB_FAIL(compress_ctx.reset_mode(mode))) {
         LOG_WARN("failed to reset compress mode", K(compress_ctx), K(mode), K(ret));
       } else {
-        LOG_INFO("compress ctx reset mode", KP(easy_conn), K(mode), K(compress_ctx), K(ret));
+
       }
     } else {
       ObStreamCompressor *compressor = compress_ctx.get_stream_compressor();
@@ -261,13 +261,13 @@ int ObRpcCompressProtocolProcessor::reset_decompress_ctx_mode(easy_connection_t 
   } else {
     ObRpcCompressCtxSet *ctx_set = static_cast<ObRpcCompressCtxSet *>(easy_conn->user_data);
     ObRpcCompressDCtx &decompress_ctx = ctx_set->decompress_ctx_;
-    LOG_INFO("begin to reset decompress ctx", KP(easy_conn), K(mode), K(decompress_ctx), "ctx_set", *ctx_set, K(ret));
+
     bool is_compress_mode_changed = decompress_ctx.is_compress_mode_changed(mode);
     if (is_compress_mode_changed) {
       if (OB_FAIL(decompress_ctx.reset_mode(mode))) {
         LOG_WARN("failed to reset decompress mode", K(mode), K(ret));
       } else {
-        LOG_INFO("decompress ctx reset mode", KP(easy_conn), KP(mode), K(decompress_ctx), K(ret));
+
       }
     }
   }

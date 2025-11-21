@@ -508,7 +508,7 @@ int ObCGBitmap::get_next_valid_idx_directly(
   OB_ASSERT(row_id >= start_row_id_);
   const int64_t start_offset = row_id - start_row_id_;
   if (OB_FAIL(bitmap_.next_valid_idx(start_offset, bitmap_.size() - start_offset, is_reverse_scan_, offset))) {
-    STORAGE_LOG(WARN, "fail to get next valid idx", K(ret), K_(start_row_id), K_(bitmap));
+
   } else if (OB_UNLIKELY(-1 == offset)) {
     ret = OB_ITER_END;
   } else {
@@ -530,7 +530,7 @@ int ObCGBitmap::bit_and(const ObBitmap &right)
     } else {
       filter_constant_type_.set_uncertain();
       if (OB_FAIL(bitmap_.copy_from(right, 0, right.size()))) {
-        STORAGE_LOG(WARN, "Fail to copy bitmap", K(ret), K(right.size()));
+
       }
     }
   } else if (filter_constant_type_.is_always_false()) {
@@ -540,7 +540,7 @@ int ObCGBitmap::bit_and(const ObBitmap &right)
     } else if (right.is_all_false()) {
       reuse(start_row_id_, false);
     } else if (OB_FAIL(bitmap_.bit_and(right))) {
-      STORAGE_LOG(WARN, "fail to do bit and", K_(bitmap), K(right));
+
     }
   }
   return ret;

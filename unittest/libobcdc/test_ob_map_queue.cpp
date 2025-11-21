@@ -79,7 +79,7 @@ public:
 	{
 		int64_t start = thread_idx_ * interval_;
 		int64_t end = (thread_count_ - 1 != thread_idx_) ? start + interval_ - 1 : END_VALUE;
-		LOG_INFO("TestPushWorker", K(start), K(end));
+
 
 		int64_t val = start;
 		while (val <= end) {
@@ -195,7 +195,7 @@ TEST_F(TestObMapQueue, push_pop_test)
 			default:
 				break;
 		}
-		LOG_INFO("push_pop_test", K(test_type), K(PUSH_THREAD_NUM), K(POP_THREAD_NUM));
+
 
 		// push thread
 		TestPushWorker push_workers[PUSH_THREAD_NUM];
@@ -211,7 +211,7 @@ TEST_F(TestObMapQueue, push_pop_test)
 			w.interval_ = INTERVAL;
 			// create threads
 			w.create();
-			LOG_INFO("push_pop_test", "push thread", "create OB_SUCCESS");
+
 		}
 
 		// pop thread
@@ -225,7 +225,7 @@ TEST_F(TestObMapQueue, push_pop_test)
 			w.end_pop_count_ = &end_pop_count;
 			// create threads
 			w.create();
-			LOG_INFO("push_pop_test", "pop thread", "create OB_SUCCESS");
+
 		}
 
 		// Verify the correctness of the push: verify the total number of pushes into the ObMapQueue-Type
@@ -258,7 +258,7 @@ TEST_F(TestObMapQueue, push_pop_test)
 
 				end_pop_count += pop_cnt;
 				//LOG_DEBUG("pop verify", K(idx), K(pop_cnt), K(end_pop_count));
-				LOG_INFO("pop verify", K(idx), K(pop_cnt), K(end_pop_count));
+
 			}
 		}
 		EXPECT_EQ(VALUE_COUNT, end_pop_count);
@@ -275,14 +275,14 @@ TEST_F(TestObMapQueue, push_pop_test)
 		for (int64_t idx = 0, cnt = PUSH_THREAD_NUM; idx < cnt; ++idx) {
 			TestPushWorker &w = push_workers[idx];
 			w.join();
-			LOG_INFO("push_pop_test", "push thread", "join OB_SUCCESS");
+
 		}
 
 		// pop thread join
 		for (int64_t idx = 0, cnt = POP_THREAD_NUM; idx < cnt; ++idx) {
 			TestPopWorker &w = pop_workers[idx];
 			w.join();
-			LOG_INFO("push_pop_test", "pop thread", "join OB_SUCCESS");
+
 		}
 
 		EXPECT_EQ(OB_SUCCESS, map_queue.reset());
@@ -320,7 +320,7 @@ TEST_F(TestObMapQueue, DISABLED_performance)
 		w.push_count_ = 0;
 		w.interval_ = INTERVAL;
 		w.create();
-		LOG_INFO("push_performance", "push thread", "create OB_SUCCESS");
+
 	}
 	// Detect the end of push in all threads
   while (((get_timestamp() - start_test_tstamp) < TEST_TIME_LIMIT)
@@ -338,7 +338,7 @@ TEST_F(TestObMapQueue, DISABLED_performance)
 
 	double push_time = static_cast<double>(end_test_tstamp - start_test_tstamp) * 1.0 / 1000000;
 	double push_cnt_per_second = static_cast<double>(VALUE_COUNT) * 1.0 / (push_time);
-	LOG_INFO("push_performance", K(end_push_count), K(push_time), "push count/s", push_cnt_per_second);
+
 
 	// pop
 	int64_t POP_THREAD_NUM = 10;
@@ -358,7 +358,7 @@ TEST_F(TestObMapQueue, DISABLED_performance)
 		w.pop_count_ = 0;
 		w.end_pop_count_ = &end_pop_count;
 		w.create();
-		LOG_INFO("pop_performance", "pop thread", "create OB_SUCCESS");
+
 	}
 
 	while (((get_timestamp() - start_test_tstamp) < TEST_TIME_LIMIT)
@@ -372,7 +372,7 @@ TEST_F(TestObMapQueue, DISABLED_performance)
 			}
 
 			end_pop_count += pop_cnt;
-			LOG_DEBUG("pop verify", K(idx), K(pop_cnt), K(end_pop_count));
+
 		}
 	}
 	EXPECT_EQ(VALUE_COUNT, end_pop_count);
@@ -380,20 +380,20 @@ TEST_F(TestObMapQueue, DISABLED_performance)
 
 	double pop_time = static_cast<double>(end_test_tstamp - start_test_tstamp) * 1.0 / 1000000;
 	double pop_cnt_per_second = static_cast<double>(VALUE_COUNT) * 1.0 / (pop_time);
-	LOG_INFO("pop_performance", K(end_pop_count), K(pop_time), "pop count/s", pop_cnt_per_second);
+
 
 	// push thread join
 	for (int64_t idx = 0, cnt = PUSH_THREAD_NUM; idx < cnt; ++idx) {
 		TestPushWorker &w = push_workers[idx];
 		w.join();
-		LOG_INFO("performance", "push thread", "join OB_SUCCESS");
+
 	}
 
 	// pop thread join
 	for (int64_t idx = 0, cnt = POP_THREAD_NUM; idx < cnt; ++idx) {
 		TestPopWorker &w = pop_workers[idx];
 		w.join();
-		LOG_INFO("performance", "pop thread", "join OB_SUCCESS");
+
 	}
 
 	ob_free(array);

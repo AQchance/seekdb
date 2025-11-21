@@ -56,7 +56,7 @@ int ObLoadSysPackageTask::load_package()
   if (OB_FAIL(ret)) {
     if (ret == OB_ENTRY_NOT_EXIST) {
       // success rs job cannot be found by RS_JOB_FIND
-      LOG_INFO("[LOAD_SYS_PACKAGE] rs job is not INPROGRESS, no need to load package", KR(ret));
+
       ret = OB_SUCCESS;
     } else {
       LOG_WARN("[LOAD_SYS_PACKAGE] failed to get INPROGRESS rs job", KR(ret));
@@ -132,7 +132,7 @@ int ObLoadSysPackageTask::wait_sys_package_ready(
       if (inprogress_job_count == 0) {
         // RS_JOB_FIND will only find INPROGRESS job
         finish = true;
-        LOG_INFO("sys_package is ready", KR(ret), K(mode));
+
       } else {
         LOG_WARN("sys_package is not ready", KR(ret), KR(tmp_ret), K(mode));
         ob_usleep(retry_interval_us);

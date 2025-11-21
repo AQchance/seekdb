@@ -143,7 +143,7 @@ int ObSSTableRowWholeScanner::init_micro_scanner(const ObDatumRange *range)
         if (is_multi_version_range(*range, rowkey_cnt)) {
           query_range_ = *range;
         } else if (OB_FAIL(range->to_multi_version_range(allocator_, query_range_))) {
-          STORAGE_LOG(WARN, "Failed to transfer multi version range", K(ret), KPC(range));
+
         }
       }
     } else if (nullptr != range && sstable_->is_multi_version_minor_sstable()) {
@@ -156,7 +156,7 @@ int ObSSTableRowWholeScanner::init_micro_scanner(const ObDatumRange *range)
         if (is_multi_version_range(*range, rowkey_cnt)) {
           query_range_ = *range;
         } else if (OB_FAIL(range->to_multi_version_range(allocator_, query_range_))) {
-          STORAGE_LOG(WARN, "Failed to transfer multi version range", K(ret), KPC(range));
+
         }
       }
     } else {
@@ -209,7 +209,7 @@ int ObSSTableRowWholeScanner::inner_open(
 
     if (table->is_normal_cg_sstable()) {
       if (OB_FAIL(MTL(ObTenantCGReadInfoMgr *)->get_index_read_info(rowkey_read_info))) {
-        STORAGE_LOG(WARN, "unexpected null index read info", K(ret));
+
       }
     } else {
       rowkey_read_info = iter_param.read_info_;
@@ -334,9 +334,9 @@ int ObSSTableRowWholeScanner::set_ignore_shadow_row()
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(micro_scanner_ == nullptr)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected null micro scanner", K(ret));
+
   } else if (OB_FAIL(micro_scanner_->set_ignore_shadow_row())) {
-    STORAGE_LOG(WARN, "fail to set ignore shadow row", K(ret));
+
   }
   return ret;
 }
@@ -408,7 +408,7 @@ int ObSSTableRowWholeScanner::switch_query_range(const blocksstable::ObDatumRang
   } else if (OB_FAIL(micro_scanner_->set_range(query_range_))) {
     LOG_WARN("failed to set range", K(ret), K(query_range_));
   } else if (OB_FAIL(open_macro_block())) {
-    STORAGE_LOG(WARN, "fail to open macro block", K(ret));
+
   } else if (OB_FAIL(open_next_valid_micro_block())) {
     LOG_WARN("Fail to open next valid micro block", K(ret));
   }
@@ -497,7 +497,7 @@ int ObSSTableRowWholeScanner::open_macro_block()
       micro_block_iter_.reset();
 
       if (OB_FAIL(iter_param_->get_index_read_info(sstable_->is_normal_cg_sstable(), rowkey_read_info))) {
-        STORAGE_LOG(WARN, "unexpected null index read info", K(ret), K(sstable_->is_normal_cg_sstable()));
+
       } else if (is_need_trans_range && OB_FAIL(rowkey_helper_.trans_to_cg_range(scan_handle.start_row_offset_, query_range_))) {
         LOG_WARN("failed to trans cg range", K(ret), K(query_range_), K(scan_handle.start_row_offset_));
       } else if (FALSE_IT(range = is_need_trans_range ? rowkey_helper_.get_result_range() : query_range_)) {
@@ -520,7 +520,7 @@ int ObSSTableRowWholeScanner::open_macro_block()
         LOG_WARN("failed to open micro block iter", K(ret), K(scan_handle.macro_io_handle_));
       } else {
         if (iter_macro_cnt_ < 10) {
-          LOG_TRACE("iter macro block id", K(scan_handle.macro_block_desc_.macro_block_id_), K(iter_macro_cnt_++), K(sstable_));
+
         }
         break;
       }
@@ -552,7 +552,7 @@ int ObSSTableRowWholeScanner::open_micro_block()
 
   if (sstable_->is_normal_cg_sstable()) {
     if (OB_FAIL(open_cg_micro_block()) && OB_ITER_END != ret) {
-      STORAGE_LOG(WARN, "failed to open cg micro block", K(ret));
+
     }
   } else {
     ObMicroBlockData block_data;
@@ -648,7 +648,7 @@ int ObSSTableRowWholeScanner::open_cg_micro_block()
 
   if (!query_range_.is_whole_range() && OB_FAIL(micro_block_iter_.get_curr_start_row_offset(micro_block_start_row_offset))) {
     if (OB_UNLIKELY(OB_ITER_END != ret)) {
-      STORAGE_LOG(WARN, "failed to get prev row offset", K(ret), K(micro_block_iter_));
+
     }
   } else if (OB_FAIL(micro_block_iter_.get_next_micro_block_data(block_data))) {
     if (OB_UNLIKELY(OB_ITER_END != ret)) {
@@ -658,12 +658,12 @@ int ObSSTableRowWholeScanner::open_cg_micro_block()
     ObCSRange range;
     if (OB_FAIL(get_cs_range(is_left_border, is_right_border,
                               scan_handle.start_row_offset_, micro_block_start_row_offset, range))) {
-      STORAGE_LOG(WARN, "failed to get cs range", K(ret), K(scan_handle), K(micro_block_start_row_offset));
+
     } else if (OB_UNLIKELY(!range.is_valid())) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "invalid range", K(ret), K(range), K(is_left_border), K(is_right_border), K(scan_handle.start_row_offset_), K(micro_block_start_row_offset));
+
     } else if (OB_FAIL(micro_scanner_->open_column_block(scan_handle.macro_io_handle_.get_macro_id(), block_data, range))) {
-      STORAGE_LOG(WARN, "failed to open column block", K(ret), K(scan_handle), K(block_data), K(range));
+
     }
   }
 
@@ -684,7 +684,7 @@ int ObSSTableRowWholeScanner::get_cs_range(
   if (is_left_border && !query_range_.start_key_.is_min_rowkey()) {
     if (OB_UNLIKELY(query_range_.start_key_.is_static_rowkey() || query_range_.start_key_.datum_cnt_ != 1)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "unexpcted query range", K(ret), K(query_range_));
+
     } else {
       const int64_t range_start_row_offset = query_range_.is_left_closed() ?
                                            query_range_.start_key_.datums_[0].get_int() : query_range_.start_key_.datums_[0].get_int() + 1;
@@ -695,7 +695,7 @@ int ObSSTableRowWholeScanner::get_cs_range(
   if (OB_SUCC(ret) && is_right_border && !query_range_.end_key_.is_max_rowkey()) {
     if (OB_UNLIKELY(query_range_.end_key_.is_static_rowkey() || query_range_.end_key_.datum_cnt_ != 1)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "unexpcted query range", K(ret), K(query_range_));
+
     } else {
       const int64_t range_end_row_offset = query_range_.is_right_closed() ?
                                            query_range_.end_key_.datums_[0].get_int() : query_range_.end_key_.datums_[0].get_int() - 1;

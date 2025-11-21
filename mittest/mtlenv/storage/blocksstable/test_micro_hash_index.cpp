@@ -262,7 +262,7 @@ TEST_F(TestMicroHashIndex, hash_index_get_all_row)
         ASSERT_TRUE(found);
         ASSERT_TRUE(exist);
         ASSERT_EQ(OB_SUCCESS, row_key.assign(row.storage_datums_, rowkey_read_info.datum_utils_.get_rowkey_count() - 2));
-        STORAGE_LOG(INFO, "DebugTest", K(row_key), K(find_rowkey));
+
         ASSERT_EQ(OB_SUCCESS, row_key.equal(find_rowkey, rowkey_read_info.datum_utils_, is_equal));
         ASSERT_TRUE(is_equal);
 
@@ -284,7 +284,7 @@ TEST_F(TestMicroHashIndex, hash_index_get_all_row)
   ASSERT_EQ(OB_ITER_END, ret);
   ASSERT_GE(number_of_hash_index, number_of_micro_block * 0.8);
   ASSERT_GE(number_of_find_use_hash_index, max_row_cnt_ * 0.4);
-  STORAGE_LOG(INFO, "use_hash_index", K(number_of_find_use_hash_index));
+
 }
 
 TEST_F(TestMicroHashIndex, hash_index_get_not_exist_row)

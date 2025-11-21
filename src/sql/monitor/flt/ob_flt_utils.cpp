@@ -220,11 +220,11 @@ namespace sql
   {
     int ret = OB_SUCCESS;
     int64_t pos = 0;
-    LOG_TRACE("recieve flt extra info", KP(buf), K(len), KPHEX(buf, len));
+
     while (OB_SUCC(ret) && pos < len) {
       FullLinkTraceExtraInfoType extra_type;
       int32_t v_len = 0;
-      LOG_TRACE("process single flt extra info", KP(buf), K(pos), K(len), KPHEX(buf+pos, len-pos));
+
       if (OB_FAIL(FLTExtraInfo::resolve_type_and_len(buf, len, pos, extra_type, v_len))) {
         LOG_WARN("failed to resolve type and len", K(len), K(pos));
       } else if (pos+v_len > len) {
@@ -571,7 +571,7 @@ namespace sql
     if (OB_SUCC(ret)) {
       if (OB_FAIL(get_flt_span_manager()->record_span(data, true))) {
         if (OB_SIZE_OVERFLOW == ret || OB_ALLOCATE_MEMORY_FAILED == ret) {
-          LOG_TRACE("cannot allocate mem for record", K(ret));
+
           ret = OB_SUCCESS;
         } else {
           if (REACH_TIME_INTERVAL(100 * 1000)) { // in case logging is too frequent
@@ -749,7 +749,7 @@ namespace sql
         // do nothing
       } else if (OB_FAIL(flt_span_manager->record_span(data, false))) {
         if (OB_SIZE_OVERFLOW == ret || OB_ALLOCATE_MEMORY_FAILED == ret) {
-          LOG_TRACE("cannot allocate mem for record", K(ret));
+
           ret = OB_SUCCESS;
         } else {
           if (REACH_TIME_INTERVAL(100 * 1000)) { // in case logging is too frequent

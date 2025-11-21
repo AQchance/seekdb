@@ -137,7 +137,7 @@ int ObDCLResolver::mask_password_for_single_user(ObIAllocator *allocator,
         LOG_WARN("failed to generated masked_sql", K(src), K(ret));
   }
   
-  LOG_DEBUG("finish mask_password_for_users", K(src), K(masked_sql));
+
   return ret;
 }
 
@@ -172,7 +172,7 @@ int ObDCLResolver::mask_password_for_users(ObIAllocator *allocator,
     }
   }
 
-  LOG_DEBUG("finish mask_password_for_users", K(src), K(masked_sql));
+
   return ret;
 }
 
@@ -212,7 +212,7 @@ int ObDCLResolver::mask_password_for_passwd_node(
   if (OB_SUCC(ret)) {
     masked_sql = tmp_sql;
   }
-  LOG_DEBUG("finish mask_password_for_passwd_node", K(src), K(masked_sql));
+
   return ret;
 }
 
@@ -252,7 +252,7 @@ int ObDCLResolver::check_dcl_on_inner_user(const ObItemType &type,
         if (OB_USER_NOT_EXIST == ret) {
           // do not check user exists here
           ret = OB_SUCCESS;
-          LOG_TRACE("user is not exists", K(user_name), K(host_name));
+
         } else {
           LOG_WARN("failed to get user id", K(ret), K(user_name));
         }

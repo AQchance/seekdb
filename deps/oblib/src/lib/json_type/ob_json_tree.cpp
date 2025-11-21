@@ -457,7 +457,7 @@ int ObJsonNode::get_object_value(uint64_t index, ObIJsonBase *&value) const
     const ObJsonObject *j_obj = static_cast<const ObJsonObject *>(this);
     if (OB_ISNULL(value = j_obj->get_value(index))) { // maybe not found.
       ret = OB_SEARCH_NOT_FOUND;
-      LOG_INFO("not found value by index", K(ret), K(index));
+
     }
   }
 
@@ -497,7 +497,7 @@ int ObJsonNode::get_object_value(const ObString &key, ObIJsonBase *&value) const
     const ObJsonObject *j_obj = static_cast<const ObJsonObject *>(this);
     if (OB_ISNULL(value = j_obj->get_value(key))) { // maybe not found.
       ret = OB_SEARCH_NOT_FOUND;
-      LOG_DEBUG("not found value by key", K(ret), K(key));
+
     }
   }
 

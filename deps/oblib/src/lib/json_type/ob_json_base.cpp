@@ -5142,7 +5142,7 @@ int ObIJsonBase::to_uint(uint64_t &value, bool fail_on_negative, bool check_rang
             endptr += ObCharset::scan_str(endptr, data + length, OB_SEQ_SPACES);
             if (endptr < data + length) {
               ret = OB_ERR_DATA_TRUNCATED; //1265
-              LOG_DEBUG("check_convert_str_err", K(length), K(data - endptr));
+
             }
           }
         }
@@ -5273,7 +5273,7 @@ int ObIJsonBase::to_double(double &value) const
               endptr += ObCharset::scan_str(endptr, data + length, OB_SEQ_SPACES);
               if (endptr < data + length) {
                 ret = OB_ERR_DATA_TRUNCATED; //1265
-                LOG_DEBUG("check_convert_str_err", K(length), K(data - endptr));
+
               }
             }
             value = val;

@@ -66,7 +66,7 @@ void ObDeviceCredentialTask::runTimerTask()
 {
   int ret = OB_SUCCESS;
   const int64_t start_us = common::ObTimeUtility::fast_current_time();
-  LOG_INFO("device credential task start", K(start_us));
+
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
     LOG_WARN("device credential task not init", K(ret));
@@ -74,7 +74,7 @@ void ObDeviceCredentialTask::runTimerTask()
     LOG_WARN("fail to do work", K(ret));
   }
   const int64_t cost_us = common::ObTimeUtility::fast_current_time() - start_us;
-  LOG_INFO("device credential task finish", K(cost_us));
+
 }
 
 int ObDeviceCredentialTask::do_work_()

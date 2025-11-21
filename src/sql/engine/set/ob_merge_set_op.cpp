@@ -137,7 +137,7 @@ int ObMergeSetOp::convert_row(const common::ObIArray<ObExpr*> &src_exprs,
       }
     }
     if (OB_SUCC(ret)) {
-      LOG_DEBUG("trace convert row", K(ret), K(ROWEXPR2STR(eval_ctx_, src_exprs)));
+
     }
   }
   return ret;

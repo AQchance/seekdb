@@ -254,10 +254,10 @@ TEST_F(TestDefaultFTParser, test_space_ft_parser_segment)
   ft_parser_param_.fulltext_ = fulltext;
   ft_parser_param_.ft_length_ = ft_len;
 
-  LOG_INFO("before space segment", KCSTRING(fulltext), K(ft_len), K(ft_parser_param_));
+
   ASSERT_EQ(OB_SUCCESS, parser.init(&ft_parser_param_));
   ASSERT_EQ(OB_SUCCESS, add_word_.check_words(&parser));
-  LOG_INFO("after space segment", KCSTRING(fulltext), K(ft_len), K(ft_parser_param_));
+
 }
 
 TEST_F(TestDefaultFTParser, test_space_ft_parser_segment_bug_56324268)
@@ -270,7 +270,7 @@ TEST_F(TestDefaultFTParser, test_space_ft_parser_segment_bug_56324268)
   ft_parser_param_.ft_length_ = ft_len;
   ft_parser_param_.cs_ = common::ObCharset::get_charset(ObCollationType::CS_TYPE_LATIN1_SWEDISH_CI);
 
-  LOG_INFO("before space segment", KCSTRING(fulltext), K(ft_len), K(ft_parser_param_));
+
   ASSERT_EQ(OB_SUCCESS, parser.init(&ft_parser_param_));
   const char *word = nullptr;
   int64_t word_len = 0;
@@ -281,10 +281,10 @@ TEST_F(TestDefaultFTParser, test_space_ft_parser_segment_bug_56324268)
     if (OB_FAIL(parser.get_next_token(word, word_len, char_len, word_freq))) {
       LOG_WARN("fail to get next token", K(ret), K(parser));
     } else {
-      LOG_INFO("succeed to get next token", K(ret), K(ObString(word_len, word)), K(char_len));
+
     }
   }
-  LOG_INFO("after space segment", KCSTRING(fulltext), K(ft_len), K(ft_parser_param_));
+
 }
 
 TEST_F(TestDefaultFTParser, test_default_ft_parser_desc)

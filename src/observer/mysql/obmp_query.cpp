@@ -168,7 +168,7 @@ int ObMPQuery::process()
         LOG_WARN("failed to update flt extra info", K(ret));
       } else if (OB_FAIL(session.check_tenant_status())) {
         need_disconnect = false;
-        LOG_INFO("unit has been migrated, need deny new request", K(ret), K(MTL_ID()), K(sql_));
+
       } else if (OB_FAIL(session.gen_configs_in_pc_str())) {
         LOG_WARN("fail to generate configuration strings that can influence execution plan",
                  K(ret));
@@ -676,7 +676,7 @@ void ObMPQuery::check_is_trans_ctrl_cmd(const ObString &sql,
       }
     }
   }
-  LOG_DEBUG("check is trans ctrl cmd ", K(sql), K(is_trans_ctrl_cmd), K(stmt_type));
+
 }
 
 OB_INLINE int ObMPQuery::do_process_trans_ctrl(ObSQLSessionInfo &session,
@@ -1178,7 +1178,7 @@ OB_INLINE int ObMPQuery::do_process(ObSQLSessionInfo &session,
         if (OB_FAIL(ret) && !async_resp_used && need_response_error && is_conn_valid() && !THIS_WORKER.need_retry() &&
               !ctx_.multi_stmt_item_.is_batched_multi_stmt()) {
           if (OB_ERR_PROXY_REROUTE == ret) {
-            LOG_DEBUG("query should be rerouted", K(ret), K(async_resp_used));
+
           } else {
             LOG_WARN("query failed", K(ret), K(session),
                      "sql", ctx_.is_sensitive_ ? ObString(OB_MASKED_STR) : sql,

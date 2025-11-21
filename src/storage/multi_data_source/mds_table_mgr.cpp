@@ -310,7 +310,7 @@ int MdsTableMgrHandle::set_mds_table_mgr(ObMdsTableMgr *mds_table_mgr)
   int ret = OB_SUCCESS;
   if (OB_ISNULL(mds_table_mgr)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(mds_table_mgr), K(lbt()));
+
   } else {
     reset();
     mgr_ = mds_table_mgr;

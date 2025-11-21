@@ -120,7 +120,7 @@ int ObDirectLoadMemChunk<T, Compare>::sort(Compare &compare, const ObArray<share
       lib::ob_sort(item_list_.begin(), item_list_.end(), compare);
       if (OB_FAIL(compare.get_error_code())) {
         ret = compare.get_error_code();
-        STORAGE_LOG(WARN, "fail to sort memory item list", KR(ret));
+
       }
     } else {
       common::ObArenaAllocator sort_allocator("TLD_Sort"); // sort memory
@@ -131,18 +131,18 @@ int ObDirectLoadMemChunk<T, Compare>::sort(Compare &compare, const ObArray<share
       common::ObArray<sql::ObChunkDatumStore::StoredRow *> sort_item_list;
       for (int i = 0; OB_SUCC(ret) && i < enc_params.count(); i++) {
         if (OB_FAIL(enc_params_copy.push_back(enc_params[i]))) {
-          STORAGE_LOG(WARN, "fail to push back enc param", KR(ret));
+
         }
       }
       // allocator encode buf
       unsigned char *encode_buf = nullptr;
       if (OB_FAIL(ret)) {
       } else if (OB_FAIL(sort_item_list.prepare_allocate(item_list_.count()))) {
-        STORAGE_LOG(WARN, "fail to prepare allocate", KR(ret));
+
       } else if (OB_ISNULL(encode_buf = static_cast<unsigned char *>(
                              encode_buffer_allocator.alloc(ADS_ENCODE_BUFFER_LIMIT)))) {
         ret = common::OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "fail to allocate memory", KR(ret));
+
       }
       // encode
       bool has_invalid_uni = false;
@@ -150,7 +150,7 @@ int ObDirectLoadMemChunk<T, Compare>::sort(Compare &compare, const ObArray<share
         if (OB_FAIL(item_list_[i]->generate_aqs_store_row(encode_buf, ADS_ENCODE_BUFFER_LIMIT,
                                                           enc_params_copy, sort_allocator,
                                                           sort_item_list[i], has_invalid_uni))) {
-          STORAGE_LOG(WARN, "fail to generate aqs store row", KR(ret));
+
         }
       }
       if (OB_FAIL(ret)) {
@@ -158,7 +158,7 @@ int ObDirectLoadMemChunk<T, Compare>::sort(Compare &compare, const ObArray<share
         lib::ob_sort(item_list_.begin(), item_list_.end(), compare);
         if (OB_FAIL(compare.get_error_code())) {
           ret = compare.get_error_code();
-          STORAGE_LOG(WARN, "fail to sort memory item list", KR(ret));
+
         }
       } else {
         // sort
@@ -167,10 +167,10 @@ int ObDirectLoadMemChunk<T, Compare>::sort(Compare &compare, const ObArray<share
         if (OB_FAIL(ret)) {
         } else if (OB_FAIL(aqs.init(sort_item_list, sort_allocator, 0, sort_item_list.count(),
                                     can_encode))) {
-          STORAGE_LOG(WARN, "fail to init aqs", KR(ret));
+
         } else if (!can_encode) {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(WARN, "unexpected can_encode", KR(ret));
+
         } else {
           aqs.sort(0, sort_item_list.count());
           for (int i = 0; OB_SUCC(ret) && i < sort_item_list.count(); i++) {
@@ -200,10 +200,10 @@ int ObDirectLoadMemChunk<T, Compare>::init(uint64_t tenant_id, int64_t mem_limit
   int ret = common::OB_SUCCESS;
   if (IS_INIT) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObDirectLoadMemChunk init twice", KR(ret), KP(this));
+
   } else if (OB_UNLIKELY(mem_limit < MIN_MEMORY_LIMIT)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K(mem_limit));
+
   } else {
     buf_mem_limit_ = mem_limit;
     is_inited_ = true;
@@ -217,7 +217,7 @@ int ObDirectLoadMemChunk<T, Compare>::add_item(const T &item)
   int ret = common::OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = common::OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObDirectLoadMemChunk not init", KR(ret), KP(this));
+
   } else {
     int64_t item_size = sizeof(T) + item.get_deep_copy_size();
     if (!item_list_.empty() && allocator_.used() + item_size > buf_mem_limit_) {
@@ -228,14 +228,14 @@ int ObDirectLoadMemChunk<T, Compare>::add_item(const T &item)
       T *new_item = nullptr;
       if (OB_ISNULL(buf = static_cast<char *>(allocator_.alloc(item_size)))) {
         ret = common::OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "fail to allocate memory", KR(ret), K(item_size));
+
       } else {
         new_item = new (buf) T();
         int64_t buf_pos = sizeof(T);
         if (OB_FAIL(new_item->deep_copy(item, buf, item_size, buf_pos))) {
-          STORAGE_LOG(WARN, "fail to deep copy item", KR(ret));
+
         } else if (OB_FAIL(item_list_.push_back(new_item))) {
-          STORAGE_LOG(WARN, "fail to push back new item", KR(ret));
+
         }
       }
     }

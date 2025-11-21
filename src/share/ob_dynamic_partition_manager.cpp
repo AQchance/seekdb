@@ -305,7 +305,7 @@ int ObDynamicPartitionManager::build_precreate_partition_definition_list_(
           part_cnt++;
           if (part_cnt > MAX_PRECREATE_PART_NUM) {
             // too much precreate partition at a time, cut off
-            LOG_INFO("too much precreate partitition", KR(ret), K(part_cnt));
+
             break;
           } else if (OB_FAIL(part_def_list.append_fmt("%sPARTITION %.*s VALUES LESS THAN (%.*s)",
                                                       1 == part_cnt ? "" : ", ",
@@ -1154,25 +1154,25 @@ int ObDynamicPartitionManager::check_tenant_is_valid_for_dynamic_partition(
     LOG_WARN("schema service is null", KR(ret));
   } else if (OB_UNLIKELY(OB_INVALID_ID == tenant_id)) {
     is_valid = false;
-    LOG_INFO("tenant id is invalid", KR(ret));
+
   } else if (OB_FAIL(ObShareUtil::mtl_check_if_tenant_role_is_primary(tenant_id, is_primary))) {
     LOG_WARN("fail to check if tenant role is primary", KR(ret), K(tenant_id));
   } else if (OB_UNLIKELY(!is_primary)) {
     is_valid = false;
-    LOG_INFO("not primary tenant", KR(ret));
+
   } else if (OB_FAIL(GCTX.schema_service_->get_tenant_schema_guard(OB_SYS_TENANT_ID, schema_guard))) {
     LOG_WARN("fail to get sys tenant schema guard", KR(ret));
   } else if (OB_FAIL(schema_guard.get_tenant_info(tenant_id, tenant_schema))) {
     LOG_WARN("fail to get tenant info", KR(ret), K(tenant_id));
   } else if (OB_ISNULL(tenant_schema)) {
     is_valid = false;
-    LOG_INFO("tenant schema is null", KR(ret));
+
   } else if (OB_UNLIKELY(!tenant_schema->is_normal())) {
     is_valid = false;
-    LOG_INFO("tenant status is not normal", KR(ret));
+
   } else if (OB_UNLIKELY(tenant_schema->is_in_recyclebin())) {
     is_valid = false;
-    LOG_INFO("tenant is in recylebin", KR(ret));
+
   }
 
   return ret;
@@ -1499,7 +1499,7 @@ int64_t ObDynamicPartitionManager::get_current_timestamp_()
   int64_t current_timestamp = ObTimeUtility::current_time();
   if (OB_UNLIKELY(ERRSIM_DYNAMIC_PARTITION_MOCK_TIME)) {
     current_timestamp = -ERRSIM_DYNAMIC_PARTITION_MOCK_TIME.item_.error_code_;
-    LOG_INFO("dynamic partition use mock time", K(current_timestamp));
+
   }
   return current_timestamp;
 }

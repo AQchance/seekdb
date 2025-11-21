@@ -33,7 +33,7 @@ int ObIStorageClogRecorder::ObStorageCLogCb::on_success()
   int64_t update_version = ATOMIC_LOAD(&update_version_);
   bool finish_flag = false;
 
-  LOG_DEBUG("clog succ callback", KPC(this));
+
 
   if (OB_UNLIKELY(OB_INVALID_VERSION == update_version)) {
     LOG_ERROR("table version is invalid", K(update_version));
@@ -53,7 +53,7 @@ int ObIStorageClogRecorder::ObStorageCLogCb::on_success()
 int ObIStorageClogRecorder::ObStorageCLogCb::on_failure()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("clog failure callback", KPC(this));
+
   ATOMIC_SET(&update_version_, OB_INVALID_VERSION);
   WEAK_BARRIER();
   recorder_.clog_update_fail();
@@ -115,7 +115,7 @@ OB_INLINE void ObIStorageClogRecorder::wait_to_lock(const int64_t update_version
       usleep(100);
       if (ObTimeUtility::fast_current_time() + 100 * 1000 > last_time) {
         last_time = ObTimeUtility::fast_current_time();
-        LOG_DEBUG("waiting to lock", K(update_version), K(max_saved_version_), KPC(this));
+
       }
       WEAK_BARRIER();
     }
@@ -132,7 +132,7 @@ OB_INLINE void ObIStorageClogRecorder::wait_for_logcb(const int64_t update_versi
   while (false == ATOMIC_LOAD(&logcb_finish_flag_)) {
     if (ObTimeUtility::fast_current_time() + 100 * 1000 > last_time) {
       last_time = ObTimeUtility::fast_current_time();
-      LOG_DEBUG("waiting for clog callback", K(update_version), K(max_saved_version_), KPC(this));
+
     }
     usleep(100);
     WEAK_BARRIER();
@@ -197,7 +197,7 @@ int ObIStorageClogRecorder::try_update_for_leader(
       } else if (OB_FAIL(try_update_with_lock(cur_update_version, clog_buf, clog_len, expire_ts))) {
         LOG_WARN("retry failed", K(ret), KPC(this), K(cur_update_version));
       } else { // sync clog success
-        LOG_DEBUG("sync clog success", KPC(this), K(cur_update_version), K(max_saved_version_));
+
       }
     }
 
@@ -224,7 +224,7 @@ int ObIStorageClogRecorder::replay_clog(
   int ret = OB_SUCCESS;
   ObLatchWGuard guard(concurrent_lock_, ObLatchIds::STORAGE_CLOG_RECORDER_LOCK);
   if (update_version <= ATOMIC_LOAD(&max_saved_version_)) {
-    LOG_INFO("skip clog with smaller version", K(update_version), K(max_saved_version_), KPC(this));
+
   } else {
     if (OB_FAIL(inner_replay_clog(update_version, scn, buf, size, pos))) {
       if (OB_NO_NEED_UPDATE == ret) { // not update max_saved_version_
@@ -234,7 +234,7 @@ int ObIStorageClogRecorder::replay_clog(
       }
     } else {
       ATOMIC_STORE(&max_saved_version_, update_version);
-      LOG_DEBUG("success to replay clog", K(ret), KPC(this), K(max_saved_version_));
+
     }
   }
 
@@ -267,7 +267,7 @@ void ObIStorageClogRecorder::clog_update_succ(
     } else {
       finish_flag = true;
       ATOMIC_STORE(&max_saved_version_, update_version);
-      LOG_DEBUG("update success", K(ret), KPC(this));
+
     }
   }
   ATOMIC_STORE(&logcb_finish_flag_, true);
@@ -323,11 +323,11 @@ int ObIStorageClogRecorder::replay_get_tablet_handle(
     LOG_WARN("failed to get log stream", K(ret), K(ls_id));
   } else if (OB_FAIL(ls_handle.get_ls()->replay_get_tablet(tablet_id, scn, is_update_mds_table, tablet_handle))) {
     if (OB_OBSOLETE_CLOG_NEED_SKIP == ret) {
-      LOG_INFO("clog is obsolete, should skip replay", K(ret), K(ls_id), K(tablet_id), K(scn));
+
       ret = OB_SUCCESS;
     } else if (OB_TIMEOUT == ret) {
       ret = OB_EAGAIN;
-      LOG_INFO("retry get tablet for timeout error", K(ret), K(ls_id), K(tablet_id), K(scn));
+
     } else {
       LOG_WARN("failed to get tablet", K(ret), K(ls_id), K(tablet_id), K(scn));
     }

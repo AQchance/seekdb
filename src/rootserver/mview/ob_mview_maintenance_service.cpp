@@ -451,7 +451,7 @@ int ObMViewMaintenanceService::get_mview_last_refresh_info_sql_(
                      (int)mview_id_array.length(), mview_id_array.ptr()))) {
     LOG_WARN("fail to append sql", K(ret));
   }
-  LOG_INFO("get last refresh info sql", K(ret), K(sql));
+
   return ret;
 }
 
@@ -508,7 +508,7 @@ int ObMViewMaintenanceService::get_mview_refresh_info(const ObIArray<uint64_t> &
       if (mview_refresh_scns.at(idx) > two_day_ns) {
         mview_refresh_scns.at(idx) -= two_day_ns;
       }
-      LOG_INFO("reduce mview refresh scn", K(idx), K(mview_refresh_scns.at(idx)));
+
     }
     ret = OB_SUCCESS;
   }
@@ -589,7 +589,7 @@ int ObMViewMaintenanceService::get_all_mview_deps()
       } else if (OB_ISNULL(table_schema)) {
         // A dep on B and B complete refreshed, container table changed, ignore this null
         // if can not refresh success, it would return error when refreshing
-        LOG_INFO("table schema is null, maybe dep is deleted", K(ret), K(tenant_id), K(curr_dep_info.p_obj_));
+
       } else if (table_schema->is_materialized_view()) {
         dep_ids.push_back(curr_dep_info.p_obj_);
       }
@@ -674,7 +674,7 @@ int ObMViewMaintenanceService::get_target_nested_mview_deps(
     LOG_WARN("unexpected tenant id or sql porxy", KR(ret), K(tenant_id), KP(GCTX.sql_proxy_));
   } else if (curr_ts - mview_deps_timestamp_ > CacheValidInterval ||
              OB_ISNULL(mview_deps_.get(mview_id))) {
-    LOG_INFO("no cached mview deps or cache expired", K(mview_id));
+
     if (OB_FAIL(get_all_mview_deps())) {
       LOG_WARN("fail to get all mview deps", K(ret));
     }
@@ -703,11 +703,11 @@ int ObMViewMaintenanceService::get_target_nested_mview_deps(
         } else {
           EXTRACT_BOOL_FIELD_MYSQL(*result, "RES", check_res);
         }
-        LOG_INFO("recehck cache", K(ret), K(check_res), K(check_sql)); 
+ 
       }
     }
     if (OB_SUCC(ret) && !check_res) {
-      LOG_INFO("target nested mview deps not correct, maybe cache is stale", K(ret), K(check_res));
+
       // refresh cache and get new targe_mview_deps;
       if (OB_FAIL(get_all_mview_deps())) {
         LOG_WARN("fail to get all mview deps", K(ret));
@@ -822,7 +822,7 @@ int ObMViewMaintenanceService::gen_target_nested_mview_topo_order(
     if (OB_SUCC(ret)) {
       for (MViewDegrees::iterator it = mview_degrees.begin();
            OB_SUCC(ret) && it != mview_degrees.end(); it++) {
-        LOG_INFO("get nested mview degrees", K(it->first), K(it->second));
+
         ObSEArray<uint64_t, 2> reverse_dep_ids;
         if (OB_ISNULL(mview_reverse_deps.get(it->first)))  {
           if (OB_FAIL(mview_reverse_deps.set_refactored(it->first, reverse_dep_ids, 1/*overwrite*/))) {
@@ -950,7 +950,7 @@ int ObMViewMaintenanceService::get_min_target_data_sync_scn(
       LOG_WARN("fail to foreach mview mds map", K(ret));
     }
   }
-  LOG_DEBUG("get min target scn", K(ret), K(mview_id), K(target_data_sync_scn));
+
   return ret;
 }
 
@@ -979,7 +979,7 @@ int ObMViewMaintenanceService::CheckMVMdsExistFunctor::
   int ret = OB_SUCCESS;
   exist_ = false;
   if (mv_mds_kv.second.mview_op_type_ == storage::MVIEW_OP_TYPE::NESTED_SYNC_REFRESH) {
-    LOG_DEBUG("check nested mview mds exists", K(ret), K(mv_mds_kv.second)); 
+ 
     if (mv_mds_kv.second.refresh_id_ == refresh_id_) {
       if (!target_data_sync_scn_.is_valid()) {
         exist_ = true;

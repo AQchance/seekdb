@@ -126,7 +126,7 @@ int ObColumnIndexArray::init_and_assign(const ObIArray<int32_t> &other, ObIAlloc
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(array_.init_and_assign(other, allocator))) {
-    STORAGE_LOG(WARN, "failed to assign from other array", K(ret), K(other));
+
   }
   return ret;
 }
@@ -261,16 +261,16 @@ int ObReadInfoStruct::generate_for_column_store(ObIAllocator &allocator,
   int ret = OB_SUCCESS;
   common::ObSEArray<ObColDesc, 1> tmp_cols_desc;
   if (OB_FAIL(tmp_cols_desc.push_back(desc))) {
-    STORAGE_LOG(WARN, "Failed to push back col desc", K(ret), K(desc));
+
   } else if (OB_FAIL(prepare_arrays(allocator, tmp_cols_desc, 1/*col_cnt*/))) {
-    STORAGE_LOG(WARN, "failed to prepare arrays", K(ret));
+
   } else if (OB_UNLIKELY(cols_index_.rowkey_mode_ || memtable_cols_index_.rowkey_mode_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("cols index is unexpected rowkey_mode", K(ret), K(cols_index_), K(memtable_cols_index_));
   } else if (FALSE_IT(cols_index_.array_.at(0) = 0)) {
   } else if (FALSE_IT(memtable_cols_index_.array_.at(0) = 0)) {
   } else if (OB_FAIL(datum_utils_.init(cols_desc_, ObCGReadInfo::CG_ROWKEY_COL_CNT, is_oracle_mode, allocator, true/*is_column_store*/))) {
-    STORAGE_LOG(WARN, "Fail to init datum utils", K(ret));
+
   }
   if (OB_SUCC(ret)) {
     is_inited_ = true;
@@ -531,7 +531,7 @@ int ObTableReadInfo::init_datum_utils(common::ObIAllocator &allocator, const boo
     }
   }
   if (OB_FAIL(datum_utils_.init(cols_desc_, schema_rowkey_cnt_, is_oracle_mode_, allocator, is_cg_sstable))) {
-    STORAGE_LOG(WARN, "Failed to init datum utils", K(ret), K_(schema_rowkey_cnt), K_(is_oracle_mode));
+
   }
   return ret;
 }
@@ -695,7 +695,7 @@ int ObTableReadInfo::deserialize(
       }
     }
     if (OB_FAIL(datum_utils_.init(cols_desc_, schema_rowkey_cnt_, is_oracle_mode_, allocator, is_cg_sstable))) {
-      STORAGE_LOG(WARN, "Failed to init datum utils", K(ret), K_(schema_rowkey_cnt));
+
     } else {
       is_inited_ = true;
     }
@@ -826,7 +826,7 @@ int ObRowkeyReadInfo::init(
     } else if (OB_FAIL(datum_utils_.init(cols_desc_, schema_rowkey_cnt_,
                                          is_oracle_mode_, allocator,
                                          is_cg_sstable))) {
-      STORAGE_LOG(WARN, "Failed to init datum utils", K(ret), K_(schema_rowkey_cnt), K_(is_oracle_mode));
+
     } else {
       is_inited_ = true;
     }
@@ -928,7 +928,7 @@ int ObRowkeyReadInfo::deserialize(
   if (OB_SUCC(ret) && cols_desc_.count() > 0) {
     const bool is_cg_sstable = ObCGReadInfo::is_cg_sstable(schema_rowkey_cnt_, schema_column_count_);
     if (OB_FAIL(datum_utils_.init(cols_desc_, schema_rowkey_cnt_, is_oracle_mode_, allocator, is_cg_sstable))) {
-      STORAGE_LOG(WARN, "Failed to init datum utils", K(ret), K_(schema_rowkey_cnt));
+
     } else {
       is_inited_ = true;
     }
@@ -1018,9 +1018,9 @@ int ObTenantCGReadInfoMgr::init()
       lib::ObMemAttr(MTL_ID(), "CGReadInfoMgr")))) {
     COMMON_LOG(WARN, "failed to init allocator", K(ret));
   } else if (OB_FAIL(construct_index_read_info(allocator_, index_read_info_))) {
-    STORAGE_LOG(WARN, "Fail to construct index read info", K(ret));
+
   } else if (OB_FAIL(construct_normal_cg_read_infos())) {
-    STORAGE_LOG(WARN, "Fail to constuct normal cg read infos", K(ret));
+
   } else {
     release_cg_read_info_array_.set_attr(ObMemAttr(MTL_ID(), "RSCompCkmPair"));
     is_inited_ = true;
@@ -1039,14 +1039,14 @@ int ObTenantCGReadInfoMgr::init()
     while (ATOMIC_LOAD(&cnt) > 0) { \
       usleep(1000L); \
       if (REACH_THREAD_TIME_INTERVAL(PRINT_LOG_INVERVAL)) { \
-        LOG_INFO("ObTenantCGReadInfoMgr wait release", cnt_str, ATOMIC_LOAD(&cnt)); \
+ \
       } \
     } // end of while
 
 void ObTenantCGReadInfoMgr::destroy()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("ObTenantCGReadInfoMgr start to destroy");
+
   if (IS_INIT) {
     is_inited_ = false;
     WEAK_BARRIER();
@@ -1070,7 +1070,7 @@ void ObTenantCGReadInfoMgr::destroy()
     }
     index_read_info_.reset();
     allocator_.reset();
-    LOG_INFO("ObTenantCGReadInfoMgr destroyed");
+
   }
 }
 
@@ -1079,7 +1079,7 @@ int ObTenantCGReadInfoMgr::get_index_read_info(const ObITableReadInfo *&index_re
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObTenantCGReadInfoMgr not inited", K(ret));
+
   } else {
     index_read_info = &index_read_info_;
   }
@@ -1097,14 +1097,14 @@ int ObTenantCGReadInfoMgr::get_cg_read_info(const ObColDesc &col_desc,
   const ObObjType col_type = col_desc.col_type_.get_type();
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObTenantCGReadInfoMgr not inited", K(ret));
+
   } else if (tablet_id.is_inner_tablet()) {
     ret = OB_NOT_SUPPORTED;
-    STORAGE_LOG(WARN, "Inner tablet is not supported", K(ret), K(tablet_id));
+
   } else if (OB_UNLIKELY(col_desc.col_order_ != ObOrderType::ASC  // TODO : @lvling support desc order
                          || col_type >= ObObjType::ObMaxType || skip_type(col_type))) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument", K(ret), K(col_desc));
+
   } else {
     ATOMIC_INC(&in_progress_cnt_);
     if (not_in_normal_cg_array(col_type)) {
@@ -1116,7 +1116,7 @@ int ObTenantCGReadInfoMgr::get_cg_read_info(const ObColDesc &col_desc,
       // normal cg read info
       if (OB_ISNULL(normal_cg_read_infos_.at(col_type))) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "Unexpected null read info", K(ret), K(col_desc), K(normal_cg_read_infos_.at(col_type)));
+
       } else {
         cg_read_info_handle.set_read_info(normal_cg_read_infos_.at(col_type));
       }
@@ -1136,7 +1136,7 @@ int ObTenantCGReadInfoMgr::release_cg_read_info(ObCGReadInfo *&cg_read_info)
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(nullptr == cg_read_info)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KPC(cg_read_info));
+
   } else if (cg_read_info->need_release_) {
     lib::ObMutexGuard guard(lock_);
     if (OB_FAIL(release_cg_read_info_array_.push_back(cg_read_info))) {
@@ -1159,7 +1159,7 @@ int ObTenantCGReadInfoMgr::mtl_init(ObTenantCGReadInfoMgr *&read_info_mgr)
   int ret = OB_SUCCESS;
 
   if (OB_FAIL(read_info_mgr->init())) {
-    STORAGE_LOG(WARN, "Fail to init tenant read info mgr", K(ret));
+
   }
 
   return ret;
@@ -1180,9 +1180,9 @@ int ObTenantCGReadInfoMgr::construct_index_read_info(ObIAllocator &allocator, Ob
   var_col_desc.col_id_ = OB_APP_MIN_COLUMN_ID + 1;
   var_col_desc.col_order_ = common::ObOrderType::ASC;
   if (OB_FAIL(idx_cols_desc.push_back(row_id_col_desc))) {
-    STORAGE_LOG(WARN, "Fail to push back row id col desc", K(ret));
+
   } else if (OB_FAIL(idx_cols_desc.push_back(var_col_desc))) {
-    STORAGE_LOG(WARN, "Fail to push back var col desc", K(ret));
+
   } else if (OB_FAIL(index_read_info.init(allocator,
                                           2, /* schema_column_count */
                                           1, /* schema_rowkey_count */
@@ -1192,7 +1192,7 @@ int ObTenantCGReadInfoMgr::construct_index_read_info(ObIAllocator &allocator, Ob
                                           true /* use_default_compat_version */,
                                           false /* is_cs_replica_compat */,
                                           false /* is_delete_insert_table */))) {
-    STORAGE_LOG(WARN, "Fail to init mtl index read info", K(ret));
+
   }
 
   return ret;
@@ -1204,7 +1204,7 @@ int ObTenantCGReadInfoMgr::construct_normal_cg_read_infos()
 
   normal_cg_read_infos_.set_allocator(&allocator_);
   if (OB_FAIL(normal_cg_read_infos_.prepare_allocate(ObObjType::ObMaxType))) {
-    STORAGE_LOG(WARN, "Fail to prepare allocate normal cg read info", K(ret));
+
   } else {
     int64_t array_cnt = 0;
     for (int64_t i = 0 ; i < ObObjType::ObMaxType ; ++i) {
@@ -1238,11 +1238,11 @@ int ObTenantCGReadInfoMgr::construct_normal_cg_read_infos()
         } else if (FALSE_IT(set_col_desc(type, tmp_desc))) {
         } else if (FALSE_IT(tmp_read_info.cg_basic_info_ = &basic_info_array[idx])) {
         } else if (OB_FAIL(tmp_read_info.cg_basic_info_->generate_for_column_store(allocator_, tmp_desc, index_read_info_.is_oracle_mode()))) {
-          STORAGE_LOG(WARN, "Fail to generate column group read info", K(ret));
+
         } else if (OB_FAIL(tmp_read_info.cols_extend_.init(1, allocator_))) {
-          STORAGE_LOG(WARN, "Fail to init columns extend", K(ret));
+
         } else if (OB_FAIL(tmp_read_info.cols_extend_.push_back(tmp_col_extend))) {
-          STORAGE_LOG(WARN, "Fail to push col extend", K(ret));
+
         } else {
           tmp_read_info.need_release_ = false;
           idx++;
@@ -1306,7 +1306,7 @@ int ObTenantCGReadInfoMgr::alloc_spec_cg_read_info(
   const int64_t alloc_size = basic_info_alloc_size + (nullptr != col_param ? (sizeof(Columns) + sizeof(ObColumnParam)) : 0);
   if (OB_ISNULL(buf = allocator_.alloc(alloc_size))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "Fail to allocate memory for cg read info", K(ret), K(alloc_size));
+
   } else {
     cg_info = new (buf) ObCGReadInfo();
     cg_info->need_release_ = true;
@@ -1314,11 +1314,11 @@ int ObTenantCGReadInfoMgr::alloc_spec_cg_read_info(
     ObColExtend tmp_col_extend;
     tmp_col_extend.skip_index_attr_.set_min_max();
     if (OB_FAIL(cg_info->cg_basic_info_->generate_for_column_store(allocator_, col_desc, index_read_info_.is_oracle_mode()))) {
-      STORAGE_LOG(WARN, "Fail to generate column group read info", K(ret));
+
     } else if (OB_FAIL(cg_info->cols_extend_.init(1, allocator_))) {
-      STORAGE_LOG(WARN, "Fail to init columns extend", K(ret));
+
     } else if (OB_FAIL(cg_info->cols_extend_.push_back(tmp_col_extend))) {
-      STORAGE_LOG(WARN, "Fail to push col extend", K(ret));
+
     } else if (nullptr != col_param) { // assign col param
       Columns *cols_param_array = new((char *)buf + basic_info_alloc_size) Columns();
       ObColumnParam *tmp_col_param = new ((char *)buf + basic_info_alloc_size + sizeof(Columns)) ObColumnParam(allocator_);

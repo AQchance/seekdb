@@ -225,7 +225,7 @@ int ObSysTaskStatMgr::task_exist(const ObTaskId &task_id, bool &is_exist)
 
   if (task_id.is_invalid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid task id", K(ret));
+
   } else {
     SpinRLockGuard guard(lock_);
     for (int64_t i = 0; OB_SUCC(ret) && i < task_array_.count(); ++i) {

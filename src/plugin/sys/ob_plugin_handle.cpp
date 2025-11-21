@@ -64,7 +64,7 @@ int ObPluginHandle::init(ObPluginMgr *plugin_mgr, const ObString &dl_dir, const 
     ret = OB_SUCCESS;
   }
 
-  LOG_INFO("init plugin suite handle done", K(*this), K(ret));
+
 
   return ret;
 }

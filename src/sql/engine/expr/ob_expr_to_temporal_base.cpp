@@ -113,7 +113,7 @@ int calc_to_temporal_expr(const ObExpr &expr,
                                                            true, ctx.exec_ctx_.get_allocator()))) {
             LOG_WARN("fail to parse format", K(ret), K(format_str));
           }
-          LOG_DEBUG("new dfm convert ctx", K(ret), KPC(dfm_convert_ctx));
+
         }
         OZ (ObTimeConverter::str_to_ob_time_by_dfm_elems(input_char->get_string(),
                                                          dfm_convert_ctx->get_dfm_elems(),

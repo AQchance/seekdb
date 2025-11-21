@@ -150,7 +150,7 @@ int ObDASFuncDataIter::set_scan_rowkey(ObEvalCtx *eval_ctx,
     } else if (OB_FAIL(add_doc_id(doc_id))) {
       LOG_WARN("failed to add doc id", K(ret));
     }
-    LOG_DEBUG("set func data iter scan rowkey", K(doc_id), K(ret));
+
   }
   if (OB_SUCC(ret) && has_main_lookup_iter() && nullptr != lookup_ctdef
       && OB_FAIL(main_lookup_iter_->set_scan_rowkey(eval_ctx, rowkey_exprs, lookup_ctdef, alloc, group_id))) {
@@ -460,7 +460,7 @@ int ObDASFuncDataIter::init_main_lookup_scan_param(
     }
   }
 
-  LOG_DEBUG("init rowkey doc table scan param finished", K(param), K(ret));
+
   return ret;
 }
 

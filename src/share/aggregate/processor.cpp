@@ -30,7 +30,7 @@ int Processor::init()
 {
   int ret = OB_SUCCESS;
   if (inited_) {
-    LOG_DEBUG("already inited, do nothing");
+
   } else {
     if (OB_ISNULL(row_selector_ = (uint16_t *)allocator_.alloc(
                     sizeof(uint16_t) * agg_ctx_.eval_ctx_.max_batch_size_))) {
@@ -415,7 +415,7 @@ int Processor::collect_group_results(const RowMeta &row_meta,
     if (OB_SUCC(ret)) { clear_op_evaluated_flag(); }
 
     for (int i = 0; OB_SUCC(ret) && i < batch_size; i++) {
-      LOG_DEBUG("stored group rows", "input", CompactRow2STR(row_meta, *rows[i], &groupby_exprs));
+
     }
 
     if (OB_SUCC(ret)) {
@@ -441,7 +441,7 @@ int Processor::collect_group_results(const RowMeta &row_meta,
         }
       }
     }
-    LOG_DEBUG("collect group results", K(ret), K(batch_size), K(output_brs));
+
     if (OB_SUCC(ret)) {
       output_brs.size_ += batch_size;
     }
@@ -739,7 +739,7 @@ int Processor::single_row_agg_batch(AggrRowPtr *agg_rows, const int64_t batch_si
   int ret = OB_SUCCESS;
   ObEvalCtx::BatchInfoScopeGuard batch_info_guard(eval_ctx);
   batch_info_guard.set_batch_size(batch_size);
-  LOG_DEBUG("by pass single row aggregate", K(batch_size), K(support_fast_single_row_agg_));
+
   if (OB_UNLIKELY(!inited_)) {
     ret = OB_NOT_INIT;
     SQL_LOG(WARN, "not inited", K(ret));

@@ -100,7 +100,7 @@ int ObColumnChecksumErrorOperator::delete_column_checksum_err_info(
   } else if (OB_FAIL(sql_client.write(meta_tenant_id, sql.ptr(), affected_rows))) {
     LOG_WARN("fail to execute sql", KR(ret), K(meta_tenant_id), K(sql));
   } else {
-    LOG_INFO("succ to delete column checksum error info", K(tenant_id), K(min_frozen_scn), K(affected_rows));
+
   }
   return ret;
 }
@@ -123,7 +123,7 @@ int ObColumnChecksumErrorOperator::delete_column_checksum_err_info_by_scn(
   } else if (OB_FAIL(sql_client.write(meta_tenant_id, sql.ptr(), affected_rows))) {
     LOG_WARN("fail to execute sql", KR(ret), K(meta_tenant_id), K(sql));
   } else {
-    LOG_INFO("succ to delete column checksum error info", K(tenant_id), K(compaction_scn), K(affected_rows));
+
   }
   return ret;
 }
@@ -156,7 +156,7 @@ int ObColumnChecksumErrorOperator::check_exist_ckm_error_table(const uint64_t te
       } else if (OB_FAIL(result->get_int("c", exist_cnt))) {
         LOG_WARN("failed to get int", KR(ret), K(compaction_scn));
       } else if (exist_cnt > 0) {
-        LOG_INFO("exist ckm error info", KR(ret), K(exist_cnt));
+
         exist = true;
       }
     }

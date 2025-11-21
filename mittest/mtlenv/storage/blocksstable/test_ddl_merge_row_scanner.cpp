@@ -159,7 +159,7 @@ void TestDDLMergeRowScanner::test_one_rowkey(const int64_t seed)
   row_generate_.get_next_row(seed, query_row);
   ObDatumRowkey query_rowkey;
   query_rowkey.assign(query_row.storage_datums_, TEST_ROWKEY_COLUMN_CNT);
-  STORAGE_LOG(INFO, "Query rowkey", K(query_row));
+
   ASSERT_EQ(OB_SUCCESS, getter.init(iter_param_, context_, &sstable_, &query_rowkey));
   ASSERT_EQ(OB_SUCCESS, merge_ddl_getter.init(iter_param_, context_, &partial_sstable_, &query_rowkey));
 
@@ -167,14 +167,14 @@ void TestDDLMergeRowScanner::test_one_rowkey(const int64_t seed)
   const ObDatumRow *kv_prow = nullptr;
   ASSERT_EQ(OB_SUCCESS, getter.inner_get_next_row(prow));
   ASSERT_EQ(OB_SUCCESS, merge_ddl_getter.inner_get_next_row(kv_prow));
-  STORAGE_LOG(INFO, "debug datum row1", KPC(prow), KPC(kv_prow));
+
   if (seed >= row_cnt_) {
     ASSERT_TRUE(prow->row_flag_.is_not_exist());
     ASSERT_TRUE(kv_prow->row_flag_.is_not_exist());
   } else {
     ASSERT_TRUE(*prow == query_row);
     if (!(*kv_prow == query_row)) {
-      STORAGE_LOG(INFO, "CHECK UNEUQAL", K(query_row), K(*kv_prow));
+
     }
     ASSERT_TRUE(*kv_prow == query_row);
   }
@@ -501,7 +501,7 @@ TEST_F(TestDDLMergeRowScanner, test_basic_scan)
   test_basic(is_reverse_scan);
   is_reverse_scan = true;
   test_basic(is_reverse_scan);
-  STORAGE_LOG(INFO, "memory usage", K(lib::get_memory_hold()), K(lib::get_memory_limit()));
+
   ObMallocAllocator::get_instance()->print_tenant_ctx_memory_usage(500);
   ObMallocAllocator::get_instance()->print_tenant_memory_usage(500);
   ObMallocAllocator::get_instance()->print_tenant_memory_usage(1);
@@ -513,7 +513,7 @@ TEST_F(TestDDLMergeRowScanner, test_border_scan)
   test_border(is_reverse_scan);
   is_reverse_scan = true;
   test_border(is_reverse_scan);
-  STORAGE_LOG(INFO, "memory usage", K(lib::get_memory_hold()), K(lib::get_memory_limit()));
+
   ObMallocAllocator::get_instance()->print_tenant_ctx_memory_usage(500);
   ObMallocAllocator::get_instance()->print_tenant_memory_usage(500);
   ObMallocAllocator::get_instance()->print_tenant_memory_usage(1);

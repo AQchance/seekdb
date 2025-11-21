@@ -170,7 +170,7 @@ int ObIndexSSTableBuildTask::process()
         common::ObAddr *sql_exec_addr = nullptr;
         if (inner_sql_exec_addr_.is_valid()) {
           sql_exec_addr = &inner_sql_exec_addr_;
-          LOG_INFO("inner sql execute addr" , K(*sql_exec_addr));
+
         }
         int tmp_ret = OB_SUCCESS;
         if (oracle_mode) {
@@ -183,7 +183,7 @@ int ObIndexSSTableBuildTask::process()
         const int64_t DDL_INNER_SQL_EXECUTE_TIMEOUT = ObDDLUtil::calc_inner_sql_execute_timeout();
         ObASHSetInnerSqlWaitGuard ash_inner_sql_guard(ObInnerSqlWaitTypeId::RS_CREATE_INDEX_BUILD_REPLICA);
         add_event_info(ret, "index sstable build task send innersql");
-        LOG_INFO("execute sql" , K(sql_string), K(data_table_id_), K(tenant_id_), K(DDL_INNER_SQL_EXECUTE_TIMEOUT), "ddl_event_info", ObDDLEventInfo());
+
         if (OB_FAIL(timeout_ctx.set_trx_timeout_us(DDL_INNER_SQL_EXECUTE_TIMEOUT))) {
           LOG_WARN("set trx timeout failed", K(ret));
         } else if (OB_FAIL(timeout_ctx.set_timeout(DDL_INNER_SQL_EXECUTE_TIMEOUT))) {
@@ -221,7 +221,7 @@ int ObIndexSSTableBuildTask::process()
     ret = OB_SUCCESS == ret ? tmp_ret : ret;
   }
   add_event_info(ret, "index sstable build task finish");
-  LOG_INFO("build index sstable finish", K(ret), "ddl_event_info", ObDDLEventInfo(), K(*this), K(sql_string));
+
   return ret;
 }
 
@@ -360,7 +360,7 @@ int ObIndexBuildTask::process()
     ddl_tracing_.release_span_hierarchy();
     if (OB_FAIL(ret)) {
       add_event_info("index build task process fail");
-      LOG_INFO("index build task process fail", "ddl_event_info", ObDDLEventInfo());
+
     }
   }
   return ret;
@@ -654,7 +654,7 @@ int ObIndexBuildTask::prepare()
 
   if (state_finished) {
     (void)switch_status(ObDDLTaskStatus::WAIT_TRANS_END, true, ret);
-    LOG_INFO("prepare finished", K(ret), K(*this));
+
   }
   return ret;
 }
@@ -709,7 +709,7 @@ int ObIndexBuildTask::wait_trans_end()
           K(persisted_snapshot), K(new_fetched_snapshot));
     } else if (OB_FAIL(hold_snapshot(trans, new_fetched_snapshot))) {
       if (OB_SNAPSHOT_DISCARDED == ret) {
-        LOG_INFO("snapshot discarded, need retry waiting trans", K(ret), K(task_id_), K(new_fetched_snapshot));
+
       } else {
         LOG_WARN("hold snapshot failed", K(ret), K(task_id_), K(new_fetched_snapshot));
       }
@@ -733,7 +733,7 @@ int ObIndexBuildTask::wait_trans_end()
     ObDDLTaskStatus next_status = (ObIndexArg::ADD_MLOG == create_index_arg_.index_action_type_) ?
                                       ObDDLTaskStatus::TAKE_EFFECT : ObDDLTaskStatus::REDEFINITION;
     (void)switch_status(next_status, true, ret);
-    LOG_INFO("wait_trans_end finished", K(ret), K(*this));
+
   }
   return ret;
 }
@@ -793,7 +793,7 @@ int ObIndexBuildTask::hold_snapshot(
       LOG_WARN("batch acquire snapshot failed", K(ret), K(tablet_ids));
     }
   }
-  LOG_INFO("hold snapshot finished", K(ret), K(snapshot), K(object_id_), K(index_table_id_), K(schema_version_));
+
   return ret;
 }
 
@@ -831,7 +831,7 @@ int ObIndexBuildTask::release_snapshot(const int64_t snapshot)
       LOG_WARN("get table schema failed", K(ret), K(object_id_));
     } else if (OB_ISNULL(data_table_schema)) {
       // ignore ret
-      LOG_INFO("table not exist", K(ret), K(object_id_), K(target_object_id_), KP(data_table_schema));
+
     } else if (data_table_schema->get_aux_lob_meta_tid() != OB_INVALID_ID &&
                 OB_FAIL(ObDDLUtil::get_tablets(tenant_id_, data_table_schema->get_aux_lob_meta_tid(), tablet_ids))) {
       if (OB_TABLE_NOT_EXIST == ret) {
@@ -852,7 +852,7 @@ int ObIndexBuildTask::release_snapshot(const int64_t snapshot)
       LOG_WARN("batch relase snapshot failed", K(ret), K(tablet_ids));
     }
   }
-  LOG_INFO("release snapshot finished", K(ret), K(snapshot), K(object_id_), K(index_table_id_), K(schema_version_));
+
   return ret;
 }
 
@@ -891,7 +891,7 @@ int ObIndexBuildTask::reap_old_replica_build_task(bool &need_exec_new_inner_sql)
     } else if (!need_exec_new_inner_sql) {
       ObAddr unused_addr;
       if (OB_FAIL(update_complete_sstable_job_status(unused_tablet_id, unused_addr, snapshot_version_, old_execution_id, old_ret_code, unused_addition_info))) {
-        LOG_INFO("succ to wait and complete old task finished!", K(ret));
+
       }
     }
   }
@@ -1013,7 +1013,7 @@ int ObIndexBuildTask::check_build_single_replica(bool &is_end)
       is_sstable_complete_task_submitted_ = false;
       complete_sstable_job_ret_code_ = INT64_MAX;
       ret_code_ = OB_SUCCESS;
-      LOG_INFO("retry complete sstable job", K(ret_code_), K(object_id_), K(index_table_id_));
+
     } else {
       is_end = true;
     }
@@ -1043,7 +1043,7 @@ int ObIndexBuildTask::check_build_local_index_single_replica(bool &is_end)
       // retry sql job by re-submit
       complete_sstable_job_ret_code_ = INT64_MAX;
       ret_code_ = OB_SUCCESS;
-      LOG_INFO("retry complete sstable job", K(ret_code_), K(object_id_), K(index_table_id_));
+
     } else {
       is_end = true;
     }
@@ -1149,7 +1149,7 @@ int ObIndexBuildTask::wait_data_complement()
         LOG_WARN("fail to check column checksum", K(ret), K(index_table_id_), K(src_table_id), K(task_id_));
         state_finished = true;
       } else if (REACH_TIME_INTERVAL(1000L * 1000L)) {
-        LOG_INFO("index checksum has not been reported", K(ret), K(index_table_id_), K(src_table_id), K(task_id_));
+
       }
     }
   }
@@ -1163,7 +1163,7 @@ int ObIndexBuildTask::wait_data_complement()
 #endif
   if (state_finished || OB_FAIL(ret)) {
     (void)switch_status(ObDDLTaskStatus::VALIDATE_CHECKSUM, true, ret);
-    LOG_INFO("wait data complement finished", K(ret), K(*this));
+
   }
   return ret;
 }
@@ -1244,13 +1244,13 @@ int ObIndexBuildTask::wait_local_index_data_complement()
       if (OB_ITER_END != ret) {
         LOG_WARN("fail to check column checksum", K(ret), K(tenant_id_), K(object_id_), K(index_table_id_), K(task_id_));
       } else if (REACH_TIME_INTERVAL(1000L * 1000L)) {
-        LOG_INFO("index checksum has not been reported", K(ret), K(tenant_id_), K(object_id_), K(index_table_id_), K(task_id_));
+
       }
     }
   }
   if (state_finished || OB_FAIL(ret)) {
     (void)switch_status(ObDDLTaskStatus::VALIDATE_CHECKSUM, true, ret);
-    LOG_INFO("wait data complement finished", K(ret), K(*this));
+
   }
   return ret;
 }
@@ -1283,7 +1283,7 @@ int ObIndexBuildTask::create_schedule_queue()
     LOG_WARN("failed to init tablet scheduler", K(ret), K(tenant_id_), K(index_table_id_), K(index_tablet_ids));
   } else {
     is_sstable_complete_task_submitted_ = true;
-    LOG_INFO("create partitioned local index schedule queue", K(ret));
+
   }
   return ret;
 }
@@ -1418,7 +1418,7 @@ int ObIndexBuildTask::verify_checksum()
 
   if (state_finished || OB_FAIL(ret)) {
     (void)switch_status(ObDDLTaskStatus::TAKE_EFFECT, true, ret);
-    LOG_INFO("verify checksum finished", K(ret), K(*this));
+
   }
   return ret;
 }
@@ -1466,7 +1466,7 @@ int ObIndexBuildTask::update_complete_sstable_job_status(
     LOG_WARN("ddl sim failure", K(tenant_id_), K(task_id_));
   } else if (ObDDLTaskStatus::REDEFINITION != task_status_) {
     // by pass, may be network delay
-    LOG_INFO("not waiting data complete, may finished", K(task_status_));
+
   } else if (snapshot_version != snapshot_version_) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("snapshot version not match", K(ret), K(addr), K(snapshot_version), K(snapshot_version_));
@@ -1490,7 +1490,7 @@ int ObIndexBuildTask::update_complete_sstable_job_status(
       execution_id_ = execution_id;
     }
   }
-  LOG_INFO("update complete sstable job return code", K(ret), K(addr), K(target_object_id_), K(tablet_id), K(snapshot_version), K(ret_code), K(execution_id_));
+
   return ret;
 }
 
@@ -1567,7 +1567,7 @@ int ObIndexBuildTask::enable_index()
   }
   if (state_finished) {
     (void)switch_status(next_status, true, ret);
-    LOG_INFO("enable index finished", K(ret), K(*this));
+
   }
   return ret;
 }
@@ -1642,7 +1642,7 @@ int ObIndexBuildTask::update_index_status_in_schema(const ObTableSchema &index_s
         }
       }
       if (OB_SUCC(ret)) {
-        LOG_INFO("notify index status changed finish", K(new_status), K(index_table_id_), K(ddl_rpc_timeout), "ddl_stmt_str", arg.ddl_stmt_str_);
+
       }
     }
   }
@@ -1690,7 +1690,7 @@ int ObIndexBuildTask::clean_on_failed()
       bool is_trans_end = false;
       int64_t tmp_snapshot_version = 0;
       if (ObIndexStatus::INDEX_STATUS_AVAILABLE == index_schema->get_index_status()) {
-        LOG_INFO("index take effect but ddl task failed", K(ret), K(ret_code_), K(index_table_id_));
+
         index_status_is_available = true;
         state_finished = true;
       } else if (ObIndexStatus::INDEX_STATUS_INDEX_ERROR != index_schema->get_index_status()) {
@@ -1782,7 +1782,7 @@ int ObIndexBuildTask::clean_on_failed()
           } else if (OB_FAIL(GCTX.rs_rpc_proxy_->timeout(ddl_rpc_timeout).drop_index(drop_index_arg, drop_index_res))) {
             LOG_WARN("drop index failed", K(ret));
           }
-          LOG_INFO("drop index when build failed", K(ret), K(drop_index_arg));
+
           wait_trans_ctx_.reset();
         }
       } else {
@@ -1836,7 +1836,7 @@ int ObIndexBuildTask::cleanup_impl()
     const ObDDLTaskID parent_task_id(tenant_id_, parent_task_id_);
     ObSysDDLSchedulerUtil::on_ddl_task_finish(parent_task_id, get_task_key(), ret_code_, trace_id_);
   }
-  LOG_INFO("clean task finished", K(ret), K(*this));
+
   return ret;
 }
 

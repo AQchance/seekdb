@@ -159,7 +159,7 @@ int64_t ObSemiStructColumnEncoder::estimate_store_size() const
       sub_col_store_size += semistruct_ctx_->sub_encoders_.at(i)->estimate_store_size();
     }
     size += sub_col_store_size;
-    LOG_TRACE("store size info", K(sub_col_count), K(size), K(sub_col_store_size));
+
   }
   return size;
 }
@@ -278,7 +278,7 @@ int ObSemiStructColumnEncoder::serialize_sub_schema_(ObMicroBufferWriter &buf_wr
     LOG_WARN("serialize sub schema fail", K(ret));
   } else {
     semistruct_header_->schema_len_ = buf_writer.length() - start_offset;
-    LOG_TRACE("serialize sub column succese", KPC(semistruct_header_), K(semistruct_ctx_->sub_schema_));
+
   }
   return ret;
 }

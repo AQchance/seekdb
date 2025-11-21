@@ -292,7 +292,7 @@ int ObLSLocation::init_fake_location()
   } else if (OB_FAIL(replica_locations_.push_back(replica_location))) {
     LOG_WARN("fail to add replica location", KR(ret), K(replica_location));
   } else {
-    LOG_INFO("success to init fake location", KPC(this));
+
   }
   return ret;
 }
@@ -875,7 +875,7 @@ void ObLocationSem::set_max_count(const int64_t max_count)
   cond_.lock();
   max_count_ = max_count;
   cond_.unlock();
-  LOG_INFO("location cache fetch location concurrent max count changed", K(max_count));
+
 }
 
 int ObLocationSem::acquire(const int64_t abs_timeout_us)
@@ -904,7 +904,7 @@ int ObLocationSem::acquire(const int64_t abs_timeout_us)
         if (wait_time_ms > INT32_MAX) {
           wait_time_ms = INT32_MAX;
           const bool force_print = true;
-          LOG_DEBUG("wait time is longer than INT32_MAX", K(wait_time_ms), K(abs_timeout_us));
+
         }
         has_wait = true;
         cond_.wait(static_cast<int32_t>(wait_time_ms));

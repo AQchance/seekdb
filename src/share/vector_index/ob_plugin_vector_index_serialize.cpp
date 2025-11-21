@@ -222,7 +222,7 @@ int ObVectorIndexSerializer::deserialize(void *&index, ObIStreamBuf::CbParam &cb
   std::istream in(&streambuf);
   if (OB_FAIL(streambuf.init())) {
     if (ret == OB_ITER_END) {
-      LOG_INFO("[vec index deserialize] read table is empty, just return");
+
       ret = OB_SUCCESS;
     } else {
       LOG_WARN("failed to init istreambuf", K(ret));
@@ -241,7 +241,7 @@ int ObVectorIndexSerializer::deserialize(void *&index, ObIStreamBuf::CbParam &cb
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(streambuf.get_error_code())) {
     if (ret == OB_ITER_END) {
-      LOG_INFO("[vec index deserialize] read table finish, just return");
+
       ret = OB_SUCCESS;
     } else {
       LOG_WARN("failed to deserialize", K(ret));
@@ -305,7 +305,7 @@ int ObHNSWDeserializeCallback::operator()(char*& data, const int64_t data_size, 
         } else {
           key_datum = row->storage_datums_[0];
           data_datum = row->storage_datums_[1];
-          LOG_INFO("[vec index debug] show key and data for vsag deserialize", K(key_datum), K(data_datum));
+
           if (OB_ISNULL(str_iter = OB_NEWx(ObTextStringIter, allocator, ObLongTextType, CS_TYPE_BINARY, data_datum.get_string(), true))) {
             ret = OB_ALLOCATE_MEMORY_FAILED;
             LOG_WARN("fail to new ObTextStringIter", KR(ret));
@@ -351,7 +351,7 @@ int ObHNSWDeserializeCallback::operator()(char*& data, const int64_t data_size, 
                 LOG_WARN("failed to init snap data", K(ret), K(index_type_));
               }
             }
-            LOG_INFO("HgraphIndex vector index get key data from snap_index_table", K(ret), K(index_type_), K(key_datum.get_string()));
+
           }
         }
       }

@@ -121,7 +121,7 @@ int ObGlobalHint::merge_dop_hint(uint64_t dfo, uint64_t dop)
       LOG_WARN("Failed to push back dop", K(ret));
     }
   }
-  LOG_DEBUG("add dop hint", K(dops_));
+
   return ret;
 }
 
@@ -992,7 +992,7 @@ bool ObOptParamHint::is_param_val_valid(const OptParamType param_type, const ObO
       break;
     }
     default:
-      LOG_TRACE("invalid opt param val", K(param_type), K(val));
+
       break;
   }
   return is_valid;
@@ -1595,7 +1595,7 @@ bool ObHint::is_expr_match_str(const ObRawExpr &expr, const ObString &str)
   }
   ObString tmp_str(pos, buf);
   bret = 0 == str.case_compare(tmp_str);
-  LOG_DEBUG("check is expr match str", K(bret), K(tmp_str), K(str));
+
   return bret;
 }
 

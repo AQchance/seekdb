@@ -81,7 +81,7 @@ int build_list(
     LOG_ERROR("list node count not match", KR(ret), K(node_cnt), K(list));
   }
 
-  LOG_INFO("build_list finish", KR(ret), K(list));
+
 
   return ret;
 }
@@ -149,7 +149,7 @@ TEST(SortedLinkedList, init_list_and_free)
   ObArenaAllocator allocator;
   ObSEArray<LSN, local_cnt> lsn_array;
   SortedLinkedList<LSN, LSNComparator> linked_list(allocator);
-  LOG_INFO("========== test SortedLinkedList begin ==========");
+
   ObTimeGuard time_guard("init sorted linked_list");
   ASSERT_SUCC(build_lsn_list(lsn_array, node_cnt));
   time_guard.click("build_lsn_list");
@@ -168,7 +168,7 @@ TEST(SortedLinkedList, init_list_and_free)
   linked_list.reset();
   ASSERT_TRUE(linked_list.empty());
   ASSERT_TRUE(linked_list.is_list_empty());
-  LOG_INFO("init_list_and_free finish", K(node_cnt), K(time_guard));
+
 }
 
 TEST(SortedTreeifyList, init_list_and_free)
@@ -178,7 +178,7 @@ TEST(SortedTreeifyList, init_list_and_free)
   ObArenaAllocator allocator;
   ObSEArray<LSN, local_cnt> lsn_array;
   SortedTreeifyList<LSN, LSNComparator> treeify_list(allocator);
-  LOG_INFO("========== test SortedLinkedList begin ==========");
+
   ObTimeGuard time_guard("init sorted linked_list");
   ASSERT_SUCC(build_lsn_list(lsn_array, node_cnt));
   time_guard.click("build_lsn_list");
@@ -196,7 +196,7 @@ TEST(SortedTreeifyList, init_list_and_free)
   treeify_list.reset();
   treeify_list.reset();
   ASSERT_TRUE(treeify_list.empty());
-  LOG_INFO("init_list_and_free finish", K(node_cnt), K(time_guard));
+
 }
 
 TEST(SortedTreeifyList, init_treeify_list_and_free_manual_treeify_mode)
@@ -206,7 +206,7 @@ TEST(SortedTreeifyList, init_treeify_list_and_free_manual_treeify_mode)
   ObArenaAllocator allocator;
   ObSEArray<LSN, local_cnt> lsn_array;
   SortedTreeifyList<LSN, LSNComparator> treeify_list(allocator, false/* manual_treeify_mode */);
-  LOG_INFO("========== test SortedTreeifyList manual_treeify_mode begin ==========");
+
   ObTimeGuard time_guard("init sorted treeify_list");
   ASSERT_SUCC(build_lsn_list(lsn_array, node_cnt));
   time_guard.click("build_lsn_list");
@@ -251,7 +251,7 @@ TEST(SortedTreeifyList, init_treeify_list_and_free_manual_treeify_mode)
   treeify_list.reset();
   treeify_list.reset();
   ASSERT_TRUE(treeify_list.empty());
-  LOG_INFO("init_treeify_list_and_free_manual_treeify_mode finish", K(node_cnt), K(time_guard));
+
 }
 
 
@@ -264,7 +264,7 @@ TEST(SortedTreeifyList, manual_treeify)
   ObArenaAllocator allocator;
   ObSEArray<LSN, local_cnt> lsn_array;
   SortedTreeifyList<LSN, LSNComparator> treeify_list(allocator, false/* manual_treeify_mode */);
-  LOG_INFO("========== test SortedTreeifyList manual_treeify_mode begin ==========", "sizeof", sizeof(SortedTreeifyList<LSN, LSNComparator>::NodeType));
+
   ObTimeGuard time_guard("init sorted treeify_list");
   ASSERT_SUCC(build_lsn_list(lsn_array, node_cnt));
   time_guard.click("build_lsn_list");
@@ -299,7 +299,7 @@ TEST(SortedTreeifyList, manual_treeify)
   ASSERT_SUCC(iter_list_and_verify(lsn_array, node_cnt, treeify_list));
   time_guard.click("iter_list finish");
 
-  LOG_INFO("manual_treeify finish", K(node_cnt), K(reverse_cnt), K(allocator), K(time_guard));
+
 }
 
 TEST(SortedTreeifyList, manual_treeify_from_middle)
@@ -312,7 +312,7 @@ TEST(SortedTreeifyList, manual_treeify_from_middle)
   ObArenaAllocator allocator;
   ObSEArray<LSN, local_cnt> lsn_array;
   SortedTreeifyList<LSN, LSNComparator> treeify_list(allocator, false/* manual_treeify_mode */);
-  LOG_INFO("========== test SortedTreeifyList manual_treeify_mode from middle begin ==========", "sizeof", sizeof(SortedTreeifyList<LSN, LSNComparator>::NodeType));
+
   ObTimeGuard time_guard("init sorted treeify_list");
   ASSERT_SUCC(build_lsn_list(lsn_array, node_cnt));
   time_guard.click("build_lsn_list");
@@ -356,7 +356,7 @@ TEST(SortedTreeifyList, manual_treeify_from_middle)
   ASSERT_SUCC(iter_list_and_verify(lsn_array, node_cnt, treeify_list));
   time_guard.click("iter_list finish");
 
-  LOG_INFO("manual_treeify finish", K(node_cnt), K(reverse_cnt), K(allocator), K(time_guard));
+
 }
 
 TEST(SortedTreeifyList, init_treeify_list_and_free_auto_treeify_mode)
@@ -366,7 +366,7 @@ TEST(SortedTreeifyList, init_treeify_list_and_free_auto_treeify_mode)
   ObArenaAllocator allocator;
   ObSEArray<LSN, local_cnt> lsn_array;
   SortedTreeifyList<LSN, LSNComparator> treeify_list(allocator, true/*auto_treeify_mode*/);
-  LOG_INFO("========== test SortedTreeifyList auto_treeify_mode begin ==========");
+
   ObTimeGuard time_guard("init sorted treeify_list");
   ASSERT_SUCC(build_lsn_list(lsn_array, node_cnt));
   time_guard.click("build_lsn_list");
@@ -379,7 +379,7 @@ TEST(SortedTreeifyList, init_treeify_list_and_free_auto_treeify_mode)
   treeify_list.reset();
   treeify_list.reset();
   ASSERT_TRUE(treeify_list.empty());
-  LOG_INFO("init_treeify_list_and_free_auto_treeify_mode finish", K(node_cnt), K(time_guard));
+
 }
 
 TEST(SortedLinkedList, sequential_verify)
@@ -391,7 +391,7 @@ TEST(SortedLinkedList, sequential_verify)
   SortedLinkedList<LSN, LSNComparator> linked_list(allocator);
   SortedTreeifyList<LSN, LSNComparator> treeify_list_1(allocator, false/*manual_treeify_mode*/);
   SortedTreeifyList<LSN, LSNComparator> treeify_list_2(allocator, true/*auto_treeify_mode*/);
-  LOG_INFO("========== test SortedLinkedList begin sequential_verify ==========");
+
   ObTimeGuard time_guard("sequential_verify linked_list");
   ASSERT_SUCC(build_lsn_list(lsn_array, node_cnt));
   time_guard.click("build_lsn_list");
@@ -413,7 +413,7 @@ TEST(SortedLinkedList, sequential_verify)
   time_guard.click("reset_manual_treeify_list");
   treeify_list_2.reset();
   time_guard.click("reset_auto_treeify_list");
-  LOG_INFO("init_treeify_list_and_free_auto_treeify_mode sequential_verify finish", K(node_cnt), K(time_guard));
+
 }
 
 TEST(SortedLinkedList, part_reverse_verify)
@@ -426,7 +426,7 @@ TEST(SortedLinkedList, part_reverse_verify)
   SortedLinkedList<LSN, LSNComparator> linked_list(allocator);
   SortedTreeifyList<LSN, LSNComparator> treeify_list_1(allocator, false/*manual_treeify_mode*/);
   SortedTreeifyList<LSN, LSNComparator> treeify_list_2(allocator, true/*auto_treeify_mode*/);
-  LOG_INFO("========== test SortedLinkedList part_reverse_verify begin ==========");
+
   ObTimeGuard time_guard("sequential_verify linked_list");
   ASSERT_SUCC(build_lsn_list(lsn_array, node_cnt));
   time_guard.click("build_lsn_list");
@@ -448,7 +448,7 @@ TEST(SortedLinkedList, part_reverse_verify)
   time_guard.click("reset_manual_treeify_list");
   treeify_list_2.reset();
   time_guard.click("reset_auto_treeify_list");
-  LOG_INFO("init_treeify_list_and_free_auto_treeify_mode part_reverse_verify finish", K(node_cnt), K(reverse_cnt), K(time_guard));
+
 }
 
 }

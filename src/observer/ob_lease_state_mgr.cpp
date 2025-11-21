@@ -41,7 +41,7 @@ void ObRefreshSchemaStatusTimerTask::runTimerTask()
   } else if (OB_FAIL(schema_status_proxy->load_refresh_schema_status())) {
     LOG_WARN("fail to load refresh schema status", KR(ret));
   } else {
-    LOG_INFO("refresh schema status success");
+
   }
 }
 
@@ -120,7 +120,7 @@ int ObLeaseStateMgr::register_self_busy_wait()
   int ret = OB_SUCCESS;
 
   ObCurTraceId::init(GCONF.self_addr_);
-  LOG_INFO("begin register_self_busy_wait");
+
   if (!inited_) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", K(ret));
@@ -143,10 +143,10 @@ int ObLeaseStateMgr::register_self_busy_wait()
             LOG_WARN("fail to refresh core partition", K(tmp_ret));
           }
         } else {
-          LOG_INFO("renew_master_rootserver successfully, try register again");
+
         }
       } else {
-        LOG_INFO("register self successfully!");
+
         if (OB_FAIL(start_heartbeat())) {
           LOG_ERROR("start_heartbeat failed", K(ret));
         }
@@ -158,7 +158,7 @@ int ObLeaseStateMgr::register_self_busy_wait()
     ret = OB_CANCELED;
     LOG_WARN("fail to register_self_busy_wait", KR(ret));
   }
-  LOG_INFO("end register_self_busy_wait");
+
   return ret;
 }
 
@@ -200,7 +200,7 @@ int ObLeaseStateMgr::try_report_sys_ls()
         } else if (OB_FAIL(ob_service_->submit_ls_update_task(tenant_id, ls_id))) {
           LOG_WARN("fail to add async update task", KR(ret), K(tenant_id), K(ls_id));
         } else {
-          LOG_INFO("try report sys log stream succeed");
+
         }
       }
     } else {
@@ -240,7 +240,7 @@ int ObLeaseStateMgr::renew_lease()
         }
       } else {
         NG_TRACE(renew_lease_end);
-        LOG_INFO("renew_master_rootserver successfully, try renew lease again");
+
         if (OB_FAIL(try_report_sys_ls())) {
           LOG_WARN("fail to try report all core table partition");
         } else if (OB_FAIL(do_renew_lease())) {
@@ -250,7 +250,7 @@ int ObLeaseStateMgr::renew_lease()
    }
 
     if (OB_SUCC(ret)) {
-      LOG_DEBUG("renew_lease successfully!");
+
     }
     NG_TRACE_EXT(renew_lease_end, OB_ID(ret), ret);
     const int64_t cost = ObTimeUtility::fast_current_time() - start;
@@ -325,7 +325,7 @@ int ObLeaseStateMgr::do_renew_lease()
       }
       const int64_t now = ObTimeUtility::current_time();
       if (OB_SUCC(ret) && lease_response.heartbeat_expire_time_ > now) {
-        LOG_DEBUG("renew_lease from  master_rs successfully", K(rs_addr));
+
         if (OB_FAIL(set_lease_response(lease_response))) {
           LOG_WARN("fail to set lease response", K(ret));
         } else if (OB_FAIL(heartbeat_process_->do_heartbeat_event(lease_response_))) {

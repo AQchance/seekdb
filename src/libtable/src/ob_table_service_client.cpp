@@ -147,7 +147,7 @@ int ObTableServiceClientEnv::init_sql_client(const ObString &host, int32_t port,
   } else if (OB_FAIL(sql_client.init(&conn_pool))) {
     LOG_ERROR("failed to init sql client", K(ret));
   } else {
-    LOG_DEBUG("connection pool init succ", K(addr));
+
   }
   return ret;
 }
@@ -166,7 +166,7 @@ int ObTableServiceClientEnv::init_net_client(int64_t net_io_thread_num, const Ob
   } else if (OB_FAIL(net_client_.get_proxy(table_rpc_proxy_))) {
     LOG_ERROR("net client get proxy fail", K(ret));
   } else {
-    LOG_INFO("init rpc succ", K(net_io_thread_num));
+
   }
   return ret;
 }
@@ -195,7 +195,7 @@ int ObTableServiceClientEnv::init_schema_service()
       LOG_WARN("fail to refresh tenant schema", K(ret));
     }
 
-    LOG_INFO("init schema service", K(ret), K(max_version_count), K(cluster_version));
+
   }
   return ret;
 }
@@ -235,7 +235,7 @@ int ObTableServiceClientEnv::init(const ObString &host,
       LOG_WARN("failed to init location cache", K(ret));
     } else {
       inited_ = true;
-      LOG_INFO("client env inited", K(host), K(mysql_port), K(rpc_port), K(net_io_thread_num));
+
     }
   }
   return ret;
@@ -280,7 +280,7 @@ int ObTableServiceClientEnvFactory::open_client_env(
   static ObTableServiceClientEnv CLIENT_ENV;
   int ret = OB_SUCCESS;
   if (CLIENT_ENV.inited()) {
-    LOG_INFO("client env already inited", K(ret));
+
     ObAddr host_addr;
     host_addr.set_ip_addr(host, rpc_port);
     if (CLIENT_ENV.addr_ != host_addr) {
@@ -399,7 +399,7 @@ ObTableServiceClientImpl::ObTableServiceClientImpl()
 ObTableServiceClientImpl::~ObTableServiceClientImpl()
 {
   destroy();
-  LOG_INFO("destruct ObTableServiceClientImpl");
+
 }
 
 int ObTableServiceClientImpl::init(const ObString &host,
@@ -450,7 +450,7 @@ int ObTableServiceClientImpl::init(const ObString &host,
     } else {
       client_ = client;
       inited_ = true;
-      LOG_INFO("table service client inited", K(tenant), K(user), K(db));
+
     }
   }
   return ret;
@@ -479,7 +479,7 @@ int ObTableServiceClientImpl::check_set_tenant_db(const ObString &tenant_name, c
              K_(tenant_id), K_(database_id));
   } else
   {
-    LOG_INFO("check tenant and database", K(tenant_name), K_(tenant_id), K(database_name), K_(database_id));
+
   }
   return ret;
 }
@@ -528,7 +528,7 @@ int ObTableServiceClientImpl::verify_user(const ObString &tenant, const ObString
       user_id_ = login_result.user_id_;
       database_id_ = login_result.database_id_;
 
-      LOG_INFO("login succ", K(login_result));
+
     }
   }
   return ret;
@@ -556,7 +556,7 @@ void ObTableServiceClientImpl::destroy()
     client_env_ = NULL;
   }
   inited_ = false;
-  LOG_INFO("table service client destroyed", K_(tenant_name), K_(user_name), K_(database_name));
+
 }
 
 int ObTableServiceClientImpl::alloc_table(const ObString &table_name, ObTable *&table)
@@ -811,7 +811,7 @@ int ObTableServiceClientImpl::get_tablet_location(const ObString &table_name, co
                                                                        tablet_location))) {
       LOG_WARN("failed to get location", K(ret), K(table_name), K(table_id));
     } else {
-      LOG_DEBUG("[yzfdebug] get tablet id", K(ret), K(tablet_id), K(tablet_location));
+
     }
   }
 
@@ -910,7 +910,7 @@ int ObTableServiceClientImpl::get_tablets_locations(const ObString &table_name, 
       } else if (OB_FAIL(tablets_locations.push_back(tablet_location))) {
         LOG_WARN("failed to push back", K(ret));
       } else {
-        LOG_DEBUG("[yzfdebug] get tablet id", K(ret), K(i), "tablet_id", tablet_ids.at(i), K(tablet_location));
+
       }
     } // end for
   }

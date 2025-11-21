@@ -519,7 +519,7 @@ int ObJsonBinSerializer::serialize_json_object(ObJsonNode *object, ObJsonBuffer 
     } else if (OB_FAIL(try_update_inline(meta, buf_ptr, i, value, is_update_inline))) {
       LOG_WARN("try_update_inline fail", K(ret), K(i));
     } else if (is_update_inline) {
-      LOG_DEBUG("try_update_inline success", K(i));
+
     } else if (OB_FALSE_IT(value_type = ObJsonVerType::get_json_vertype(value->json_type()))) {
     } else if (OB_FAIL(set_value_entry(meta, buf_ptr, i, value_offset, value_type, !enable_reserialize/*check*/))) {
       LOG_WARN("set_value_entry fail", K(ret), K(value_offset), K(value_type));
@@ -1184,7 +1184,7 @@ int ObJsonBin::deserialize_json_value(ObJsonNode *&json_tree)
           } else {
             uint64_t str_length = static_cast<uint64_t>(val);
             if (str_length == 0) {
-              LOG_DEBUG("empty string in json binary", K(str_length), K(pos));
+
               ObJsonString *empty_str_node = new(buf)ObJsonString(NULL, 0);
               json_tree = static_cast<ObJsonNode*>(empty_str_node);
             } else if (OB_FAIL(cursor_->get(pos, str_length, str_data))) {
@@ -1395,7 +1395,7 @@ int ObJsonBin::deserialize_json_value(ObJsonNode *&json_tree)
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("read_i64 fail", K(ret), K(pos), K(need_len), K(val_length));
         } else if (val_length == 0) {
-          LOG_DEBUG("empty opaque in json binary", K(val_length), K(field_type), K(pos));
+
           ObString empty_value(0, NULL);
           ObJsonOpaque *empy_opa_node = new(buf)ObJsonOpaque(empty_value, field_type);
           json_tree = static_cast<ObJsonNode*>(empy_opa_node);
@@ -1442,7 +1442,7 @@ int ObJsonBin::deserialize_json_value(ObJsonNode *&json_tree)
         } else {
           uint64_t str_length = static_cast<uint64_t>(val);
           if (str_length == 0) {
-            LOG_DEBUG("empty string in json binary", K(str_length), K(pos));
+
             ObJsonString *empty_str_node = new(buf)ObJsonString(NULL, 0);
             json_tree = static_cast<ObJsonNode*>(empty_str_node);
           } else {
@@ -2691,7 +2691,7 @@ int ObJsonBin::rebuild_child(
   if (OB_FAIL(try_update_inline(index, &child_value, is_update_inline))) {
     LOG_WARN("try_update_inline fail", K(ret), K(index));
   } else if (is_update_inline) {
-    LOG_DEBUG("try_update_inline success", K(index));
+
   } else if (OB_FALSE_IT(value_type = OB_JSON_TYPE_GET_INLINE(child_value.get_type()))) {
   } else if (OB_FAIL(set_value_entry(index, value_offset, value_type))) {
     LOG_WARN("set_value_entry fail", K(ret), K(value_offset), K(value_type));
@@ -3349,18 +3349,18 @@ int ObJsonBin::update_v0(int index, ObJsonBin *new_value)
   } else if (OB_FAIL(try_update_inline(index, new_value, is_update_inline))) {
     LOG_WARN("try_update_inline fail", K(ret), K(index));
   } else if (is_update_inline) {
-    LOG_DEBUG("try_update_inline success", K(index));
+
     if (OB_FAIL(record_inline_update_offset(index))) {
       LOG_WARN("record_inline_update_offset fail", K(ret), K(index));
     }
   } else if (OB_FAIL(try_update_inplace(index, new_value, is_update_inplace))) {
     LOG_WARN("try_update_inplace fail", K(ret), K(index));
   } else if (is_update_inplace) {
-    LOG_DEBUG("try_update_inplace success", K(index));
+
   } else if (OB_FAIL(update_append_v0(index, new_value, is_update_append))) {
-    LOG_DEBUG("update_append_v0 fail", K(ret), K(index));
+
   } else if (is_update_append) {
-    LOG_DEBUG("is_update_append success", K(index));
+
   } else if (OB_FAIL(update_recursion(index, new_value))) {
     LOG_WARN("fail", K(ret));
   }

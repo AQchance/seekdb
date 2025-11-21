@@ -61,7 +61,7 @@ int ObActiveSessHistTask::start()
   } else if (OB_FAIL(ObAshRefreshTask::get_instance().start())) {
     LOG_WARN("failed to start ash refresh task", K(ret));
   } else {
-    LOG_INFO("ASH init OK");
+
   }
   return ret;
 }

@@ -83,7 +83,7 @@ int ObLogCompressor::init()
       log_compress_cond_.destroy();
     }
   }
-  LOG_INFO("syslog compressor init finish ", K(ret));
+
 
   return ret;
 }
@@ -131,7 +131,7 @@ void ObLogCompressor::destroy()
     regfree(&regex_uncompressed_);
 
     is_inited_ = false;
-    LOG_INFO("syslog compressor destroyed");
+
   }
 }
 
@@ -168,7 +168,7 @@ int ObLogCompressor::set_compress_func(const char *compress_func_ptr)
              || new_compress_func == ZSTD_1_3_8_COMPRESSOR) {
     // to do: support ZLIB_COMPRESSOR
     if (new_compress_func != compress_func_) {
-      LOG_INFO("modify log compress func", K(compress_func_), K(new_compress_func));
+
       if (OB_FAIL(set_next_compressor_(new_compress_func))) {
         LOG_ERROR("fail to modify log compress func", K(ret), K(compress_func_), K(new_compress_func));
       } else if (compress_func_ == NONE_COMPRESSOR && new_compress_func != NONE_COMPRESSOR) {
@@ -363,7 +363,7 @@ void ObLogCompressor::run_timer_task()
             delete_file = syslog_ptr->file_name_;
             int64_t delete_file_size = get_file_size_(delete_file);
             if (delete_file_size >= 0) {
-              LOG_DEBUG("log compressor unlink file", K(delete_file), K(need_delete_size), K(delete_file_size));
+
               unlink(delete_file);
               need_delete_size = need_delete_size - delete_file_size;
               disk_remaining_size += delete_file_size;
@@ -457,7 +457,7 @@ int ObLogCompressor::compress_single_file_(const char *file_name, char *src_buf,
       fclose(input_file);
       LOG_ERROR("failed to open file", K(ret), K(errno), K(compressed_file_name));
     } else {
-      LOG_DEBUG("log compressor compress file ", K(file_name), K(compressed_file_name));
+
       size_t read_size = 0;
       size_t write_size = 0;
       while (OB_SUCC(ret) && !feof(input_file)) {

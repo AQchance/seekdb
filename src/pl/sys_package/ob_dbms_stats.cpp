@@ -136,7 +136,7 @@ int ObDbmsStats::gather_table_stats(ObExecContext &ctx, ParamStore &params, ObOb
                OB_FAIL(gather_table_index_stats(ctx, stat_param, no_gather_index_ids))) {
       LOG_WARN("failed to gather table index stats", K(ret));
     } else {
-      LOG_TRACE("Succeed to gather table stats", K(stat_param));
+
     }
     if (ret == OB_SUCCESS || ret == OB_TIMEOUT) {
       int tmp_ret = ret;
@@ -255,7 +255,7 @@ int ObDbmsStats::gather_schema_stats(ObExecContext &ctx, ParamStore &params, ObO
         if (OB_ERR_DBMS_STATS_PL == ret) {
           // all table/partition locked, just skip
           ret = OB_SUCCESS;
-          LOG_TRACE("table locked, just skip", K(stat_param));
+
         } else {
           LOG_WARN("failed check stat locked", K(ret));
         }
@@ -279,7 +279,7 @@ int ObDbmsStats::gather_schema_stats(ObExecContext &ctx, ParamStore &params, ObO
                 OB_FAIL(gather_table_index_stats(ctx, stat_param, no_gather_index_ids))) {
         LOG_WARN("failed to gather table index stats", K(ret));
       } else {
-        LOG_TRACE("Succeed to gather table stats", K(stat_param), K(running_monitor));
+
       }
       if (ret == OB_SUCCESS || ret == OB_TIMEOUT) {
         int tmp_ret = ret;
@@ -386,7 +386,7 @@ int ObDbmsStats::gather_index_stats(ObExecContext &ctx, ParamStore &params, ObOb
   } else if (OB_FAIL(update_stat_cache(ctx.get_my_session()->get_rpc_tenant_id(), ind_stat_param))) {
     LOG_WARN("failed to update stat cache", K(ret));
   } else {
-    LOG_TRACE("succeed to gather index stats", K(ind_stat_param));
+
   }
   return ret;
 }
@@ -449,7 +449,7 @@ int ObDbmsStats::gather_table_index_stats(ObExecContext &ctx,
       } else if (OB_FAIL(update_stat_cache(ctx.get_my_session()->get_rpc_tenant_id(), index_param))) {
         LOG_WARN("failed to update stat cache", K(ret));
       } else {
-        LOG_TRACE("Succeed to gather index stats", K(data_param), K(index_param));
+
       }
     }
   }
@@ -527,7 +527,7 @@ int ObDbmsStats::fast_gather_index_stats(ObExecContext &ctx,
             LOG_WARN("failed to push back table id", K(ret));
           } else {
             is_all_fast_gather &= is_fast_gather;
-            LOG_TRACE("can't fast gather index stats", K(data_param), K(index_param));
+
           }
         } else if (OB_FAIL(update_stat_cache(ctx.get_my_session()->get_rpc_tenant_id(), index_param))) {
           LOG_WARN("failed to update stat cache", K(ret));
@@ -607,7 +607,7 @@ int ObDbmsStats::set_table_stats(ObExecContext &ctx, ParamStore &params, ObObj &
   } else if (OB_FAIL(update_stat_cache(ctx.get_my_session()->get_rpc_tenant_id(), param.table_param_))) {
     LOG_WARN("failed to update stat cache", K(ret));
   } else {
-    LOG_TRACE("succeed to set table stat", K(param));
+
   }
   return ret;
 }
@@ -701,7 +701,7 @@ int ObDbmsStats::set_column_stats(sql::ObExecContext &ctx,
   } else if (OB_FAIL(update_stat_cache(ctx.get_my_session()->get_rpc_tenant_id(), param.table_param_))) {
     LOG_WARN("failed to update stat cache", K(ret));
   } else {
-    LOG_TRACE("succeed to set column stats", K(param));
+
   }
   return ret;
 }
@@ -803,7 +803,7 @@ int ObDbmsStats::set_index_stats(ObExecContext &ctx, ParamStore &params, ObObj &
                                        set_index_param.table_param_))) {
     LOG_WARN("failed to update stat cache", K(ret));
   } else {
-    LOG_TRACE("succeed to set index stat", K(set_index_param));
+
   }
   return ret;
 }
@@ -1036,7 +1036,7 @@ int ObDbmsStats::delete_schema_stats(ObExecContext &ctx, ParamStore &params, ObO
             if (OB_ERR_DBMS_STATS_PL == ret) {
               // all table/partition locked, just skip
               ret = OB_SUCCESS;
-              LOG_TRACE("table locked, just skip", K(stat_param));
+
             } else {
               LOG_WARN("failed to check stat locked", K(ret));
             }
@@ -1267,7 +1267,7 @@ int ObDbmsStats::create_stat_table(ObExecContext &ctx, ParamStore &params, ObObj
       if (OB_FAIL(ObDbmsStatsExportImport::create_stat_table(ctx, param))) {
         LOG_WARN("failed to create table stats", K(ret));
       } else {
-        LOG_TRACE("succeed to create table stat", K(param));
+
       }
     }
   }
@@ -1322,7 +1322,7 @@ int ObDbmsStats::drop_stat_table(ObExecContext &ctx, ParamStore &params, ObObj &
       if (OB_FAIL(ObDbmsStatsExportImport::drop_stat_table(ctx, param))) {
         LOG_WARN("failed to drop table stats", K(ret));
       } else {
-        LOG_TRACE("succeed to drop table stat", K(param));
+
       }
     }
   }
@@ -1402,7 +1402,7 @@ int ObDbmsStats::export_table_stats(ObExecContext &ctx, ParamStore &params, ObOb
               OB_FAIL(export_table_index_stats(ctx, stat_param))) {
       LOG_WARN("failed to export table index stats", K(ret));
     } else {
-      LOG_TRACE("succeed to export table stats", K(stat_param));
+
     }
   }
   return ret;
@@ -1469,7 +1469,7 @@ int ObDbmsStats::export_column_stats(sql::ObExecContext &ctx,
   } else if (OB_FAIL(ObDbmsStatsExportImport::export_column_stats(ctx, stat_param))) {
     LOG_WARN("failed to export column stats", K(ret));
   } else {
-    LOG_TRACE("succeed to export column stats", K(stat_param));
+
   }
   return ret;
 }
@@ -1620,7 +1620,7 @@ int ObDbmsStats::export_index_stats(ObExecContext &ctx, ParamStore &params, ObOb
                                                                  index_stat_param.data_table_name_))) {
     LOG_WARN("failed to export table stats", K(ret));
   } else {
-    LOG_TRACE("succeed to export table stats", K(index_stat_param));
+
   }
   return ret;
 }
@@ -1754,7 +1754,7 @@ int ObDbmsStats::import_table_stats(ObExecContext &ctx, ParamStore &params, ObOb
               OB_FAIL(import_table_index_stats(ctx, stat_param))) {
       LOG_WARN("failed to import table index stats", K(ret));
     } else {
-      LOG_TRACE("succeed to import table stats", K(stat_param));
+
     }
   }
   return ret;
@@ -1833,7 +1833,7 @@ int ObDbmsStats::import_column_stats(sql::ObExecContext &ctx,
   } else if (OB_FAIL(update_stat_cache(ctx.get_my_session()->get_rpc_tenant_id(), stat_param))) {
     LOG_WARN("failed to update stat cache", K(ret));
   } else {
-    LOG_TRACE("succeed to import column stats", K(stat_param));
+
   }
   return ret;
 }
@@ -1918,7 +1918,7 @@ int ObDbmsStats::import_schema_stats(ObExecContext &ctx, ParamStore &params, ObO
             if (OB_ERR_DBMS_STATS_PL == ret) {
               // all table/partition locked, just skip
               ret = OB_SUCCESS;
-              LOG_TRACE("table locked, just skip", K(stat_param));
+
             } else {
               LOG_WARN("failed to check stat locked", K(ret));
             }
@@ -2020,7 +2020,7 @@ int ObDbmsStats::import_index_stats(ObExecContext &ctx, ParamStore &params, ObOb
   } else if (OB_FAIL(update_stat_cache(ctx.get_my_session()->get_rpc_tenant_id(), index_stat_param))) {
     LOG_WARN("failed to update stat cache", K(ret));
   } else {
-    LOG_TRACE("succeed to import index stats", K(index_stat_param));
+
   }
   return ret;
 }
@@ -2062,7 +2062,7 @@ int ObDbmsStats::import_table_index_stats(sql::ObExecContext &ctx,
         } else if (OB_FAIL(update_stat_cache(ctx.get_my_session()->get_rpc_tenant_id(), index_param))) {
           LOG_WARN("failed to update stat cache", K(ret));
         } else {
-          LOG_TRACE("succeed to import table index stats", K(index_param));
+
         }
       }
     }
@@ -2652,7 +2652,7 @@ int ObDbmsStats::restore_schema_stats(sql::ObExecContext &ctx,
         if (OB_ERR_DBMS_STATS_PL == ret) {
           // all table/partition locked, just skip
           ret = OB_SUCCESS;
-          LOG_TRACE("table locked, just skip", K(stat_param));
+
         } else {
           LOG_WARN("failed to check stat locked", K(ret));
         }
@@ -3256,12 +3256,12 @@ int ObDbmsStats::async_gather_stats_job_proc(sql::ObExecContext &ctx,
   ObSQLSessionInfo::LockGuard query_lock_guard(session->get_query_lock());
   if (OB_FAIL(check_statistic_table_writeable(ctx))) {
     ret = OB_SUCCESS;
-    LOG_INFO("async gather stats abort because of statistic table is unwriteable");
+
   } else if (OB_FAIL(ObDbmsStatsUtils::implicit_commit_before_gather_stats(ctx))) {
     LOG_WARN("failed to implicit commit before gather stats", K(ret));
   } else if (!session->is_user_session() && no_async_gather) {
     //do nothing
-    LOG_INFO("async gather stats abort because of the trace point and not user seesion", K(session->is_user_session()), K(no_async_gather));
+
   } else if (is_virtual_tenant_id(tenant_id)) {
     // do nothing
   } else if (GCONF.in_upgrade_mode()) {
@@ -3354,7 +3354,7 @@ int ObDbmsStats::update_stat_cache(const uint64_t tenant_id,
                                    ObOptStatRunningMonitor *running_monitor/*default null*/)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("update stat cache", K(stat_arg));
+
   bool evict_plan_failed = false;
   int64_t timeout = -1;
   ObSEArray<ObServerLocality, 4> all_server_arr;
@@ -3388,7 +3388,7 @@ int ObDbmsStats::update_stat_cache(const uint64_t tenant_id,
         }
       }
     }
-    LOG_TRACE("update stat cache", K(stat_arg), K(failed_server_arr), K(all_server_arr));
+
     if (OB_SUCC(ret) && !failed_server_arr.empty() && running_monitor != NULL) {
       ObSqlString tmp_str;
       char *buf = NULL;
@@ -3598,7 +3598,7 @@ int ObDbmsStats::parse_index_part_info(ObExecContext &ctx,
                                         param.column_params_))) {
       LOG_WARN("failed to init column stat params", K(ret));
     } else {
-      LOG_TRACE("Succed to parse index part info", K(param));
+
     }
   }
   return ret;
@@ -4500,7 +4500,7 @@ int ObDbmsStats::get_default_stat_options(ObExecContext &ctx,
     if (OB_FAIL(ObDbmsStatsPreferences::get_sys_default_stat_options(ctx, stat_prefs, param))) {
       LOG_WARN("failed to get sys default stat options", K(ret));
     } else {
-      LOG_TRACE("Succeed get default stat options", K(param));
+
     }
   }
   return ret;
@@ -5039,7 +5039,7 @@ int ObDbmsStats::get_table_part_infos(const share::schema::ObTableSchema *table_
     LOG_WARN("get unexpected null", K(ret), K(table_schema));
   } else if (!table_schema->is_partitioned_table()) {
     /*do notthing*/
-    LOG_TRACE("table is not part table", K(table_schema->get_part_level()));
+
   } else if (OB_FAIL(ObDbmsStatsUtils::get_part_infos(*table_schema,
                                                       allocator,
                                                       part_infos,
@@ -5075,7 +5075,7 @@ int ObDbmsStats::get_part_ids_from_schema(const ObTableSchema *table_schema,
         LOG_WARN("get unexpected null", K(ret), K(table_schema));
       } else if (!table_schema->is_partitioned_table()) {
         /*do notthing*/
-        LOG_TRACE("table is not part table", K(table_schema->get_part_level()));
+
       } else if (OB_FAIL(ObDbmsStatsUtils::get_part_infos(*table_schema,
                                                           tmp_alloc,
                                                           dummy_part_infos,
@@ -5522,7 +5522,7 @@ int ObDbmsStats::parse_column_info(sql::ObExecContext &ctx,
       } else if (OB_FAIL(param.column_params_.assign(new_col_params))) {
         LOG_WARN("failed to assign column params", K(ret));
       } else {
-        LOG_TRACE("succeed to parse export column info", K(col_name));
+
       }
     }
   }
@@ -5536,7 +5536,7 @@ int ObDbmsStats::parse_stat_category(const ObString &stat_category)
   if (stat_category.empty()) {
     /*do nothing*/
   } else {
-    LOG_TRACE("begin parse stat category", K(stat_category));
+
     const char *ptr = stat_category.ptr();
     const char *tmp_ptr = ptr;
     int64_t str_len = 0;
@@ -5678,7 +5678,7 @@ int ObDbmsStats::get_all_table_ids_in_database(ObExecContext &ctx,
             LOG_WARN("failed to push back id", K(ret));
           } else {/*do nothing*/}
         }
-        LOG_TRACE("succeed to get all table ids", K(table_ids), K(table_schemas));
+
       }
     }
   }
@@ -5700,7 +5700,7 @@ int ObDbmsStats::gather_database_stats_job_proc(sql::ObExecContext &ctx,
   ObSQLSessionInfo::LockGuard query_lock_guard(ctx.get_my_session()->get_query_lock());
   if (OB_FAIL(check_statistic_table_writeable(ctx))) {
     ret = OB_SUCCESS;
-    LOG_INFO("auto gather database statistics abort because of statistic table is unwriteable");
+
   } else if (OB_FAIL(ObDbmsStatsUtils::implicit_commit_before_gather_stats(ctx))) {
     LOG_WARN("failed to implicit commit before gather stats", K(ret));
   } else if (!ctx.get_my_session()->is_user_session() && no_auto_gather) {
@@ -6016,7 +6016,7 @@ int ObDbmsStats::get_non_partitioned_table_stale_percent(sql::ObExecContext &ctx
   } else {
     stat_table.stale_percent_ = row_cnt <= 0 ? 1.0 : 1.0 * (inc_modified_count) / row_cnt;
   }
-  LOG_TRACE("succeed to get common table stale percent", K(stat_table));
+
   return ret;
 }
 
@@ -6070,7 +6070,7 @@ int ObDbmsStats::get_partition_table_stale_percent(sql::ObExecContext &ctx,
       stat_table.stale_percent_ = no_regather_part_cnt < total_part_cnt ? -1.0 : 0;
     }
   }
-  LOG_TRACE("succeed to get user partition table stale percent", K(stat_table));
+
   return ret;
 }
 
@@ -6145,7 +6145,7 @@ int ObDbmsStats::gather_table_stats_with_default_param(ObExecContext &ctx,
                                                                 stat_param.duration_time_))) {
     LOG_WARN("failed to get valid duration time", K(ret));
   } else if (!need_gather_index_stats(stat_param)) {
-    LOG_TRACE("Succeed to gather table stats", K(stat_param));
+
   } else if (stat_param.cascade_ &&
               OB_FAIL(fast_gather_index_stats(ctx, stat_param,
                                               is_all_fast_gather, no_gather_index_ids))) {
@@ -6161,7 +6161,7 @@ int ObDbmsStats::gather_table_stats_with_default_param(ObExecContext &ctx,
               OB_FAIL(gather_table_index_stats(ctx, stat_param, no_gather_index_ids))) {
     LOG_WARN("failed to gather table index stats", K(ret));
   } else {
-    LOG_TRACE("Succeed to gather table stats", K(stat_param));
+
   }
   if (ret == OB_SUCCESS || ret == OB_TIMEOUT) {
     int tmp_ret = ret;
@@ -6406,7 +6406,7 @@ int ObDbmsStats::get_table_stale_percent_threshold(ObMySQLProxy *mysql_proxy,
       LOG_WARN("failed to get double", K(ret));
     } else {
       stale_percent_threshold = stale_percent_threshold / 100.0;
-      LOG_TRACE("Succeed to get table stale percent threshold", K(stale_percent_threshold));
+
     }
   }
   return ret;
@@ -6728,7 +6728,7 @@ int ObDbmsStats::init_gather_task_info(ObExecContext &ctx,
                                       task_table_count))) {
       LOG_WARN("failed to init", K(ret));
     } else {
-      LOG_TRACE("Succeed to init gather task info", K(task_info));
+
     }
   }
   return ret;
@@ -6770,7 +6770,7 @@ int ObDbmsStats::init_column_group_stat_param(const share::schema::ObTableSchema
       }
     }
   }
-  LOG_TRACE("init column group stat param", K(column_group_params));
+
   return ret;
 }
 
@@ -6930,7 +6930,7 @@ int ObDbmsStats::update_system_stats_cache(const uint64_t rpc_tenant_id,
   bool has_read_only_zone = false; // UNUSED;
   ObSEArray<ObServerLocality, 4> all_server_arr;
   ObSEArray<ObServerLocality, 4> failed_server_arr;
-  LOG_TRACE("update system stat cache", K(stat_arg));
+
   if (OB_ISNULL(GCTX.srv_rpc_proxy_) || OB_ISNULL(GCTX.locality_manager_)) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("rpc_proxy or session is null", K(ret), K(GCTX.srv_rpc_proxy_), K(GCTX.locality_manager_));
@@ -6958,7 +6958,7 @@ int ObDbmsStats::update_system_stats_cache(const uint64_t rpc_tenant_id,
       }
     }
   }
-  LOG_TRACE("update stat cache", K(stat_arg), K(failed_server_arr), K(all_server_arr));
+
   return ret;
 }
 
@@ -7058,7 +7058,7 @@ int ObDbmsStats::copy_table_stats(sql::ObExecContext &ctx,
     LOG_WARN("failed check stat locked", K(ret));
   } else if (ObCharset::case_insensitive_equal(copy_stat_helper.srcpart_name_,
                                                copy_stat_helper.dstpart_name_)) {
-    LOG_TRACE("src part and dst part is the same, no need to copy");
+
   } else if (OB_FAIL(parse_partition_name(ctx,
                                           table_schema,
                                           params.at(2),
@@ -7070,7 +7070,7 @@ int ObDbmsStats::copy_table_stats(sql::ObExecContext &ctx,
                                       table_stat_param))) {
     LOG_WARN("failed to update stat cache", K(ret));
   }
-  LOG_TRACE("succeed to copy table stat", K(copy_stat_helper));
+
   return ret;
 }
 
@@ -7204,7 +7204,7 @@ int ObDbmsStats::adjust_auto_gather_stat_option(const ObIArray<ObPartitionStatIn
       param.global_stat_param_.need_modify_ = false;
     }
   }
-  LOG_TRACE("succeed to adjust auto gather stat option", K(partition_stat_infos), K(param));
+
   return ret;
 }
 
@@ -7519,7 +7519,7 @@ int ObDbmsStats::adjust_async_gather_stat_option(ObExecContext &ctx,
       }
     }
   }
-  LOG_TRACE("succeed to adjust auto gather stat option", K(async_partition_ids), K(param));
+
   return ret;
 }
 

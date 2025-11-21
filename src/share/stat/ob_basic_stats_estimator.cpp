@@ -136,7 +136,7 @@ int ObBasicStatsEstimator::estimate(const ObOptStatGatherParam &param,
     } else if (OB_FAIL(refine_basic_stats(param, dst_opt_stats))) {
       LOG_WARN("failed to refine basic stats", K(ret));
     } else {
-      LOG_TRACE("basic stats is collected", K(dst_opt_stats.count()));
+
     }
   }
   return ret;
@@ -468,7 +468,7 @@ int ObBasicStatsEstimator::stroage_estimate_block_count_and_row_count(ObExecCont
     if (OB_FAIL(ObStorageEstimator::estimate_block_count_and_row_count(arg, result))) {
       LOG_WARN("failed to estimate partition rows", K(ret));
     } else {
-      LOG_TRACE("succeed to stroage estimate block count and row count", K(addr), K(arg), K(result));
+
     }
   } else {
     obrpc::ObSrvRpcProxy *rpc_proxy = NULL;
@@ -487,7 +487,7 @@ int ObBasicStatsEstimator::stroage_estimate_block_count_and_row_count(ObExecCont
                        .estimate_tablet_block_count(arg, result))) {
       LOG_WARN("failed to remote storage est failed", K(ret));
     } else {
-      LOG_TRACE("succeed to stroage estimate block count", K(addr), K(arg), K(result));
+
     }
   }
   return ret;
@@ -825,7 +825,7 @@ int ObBasicStatsEstimator::update_last_modified_count(sqlclient::ObISQLConnectio
   } else if (OB_FAIL(conn->execute_write(param.tenant_id_, udpate_sql.ptr(), affected_rows))) {
     LOG_WARN("failed to execute sql", K(ret), K(udpate_sql));
   } else {
-    LOG_TRACE("succeed to update last modified count", K(udpate_sql), K(affected_rows));
+
   }
 
   return ret;
@@ -915,7 +915,7 @@ int ObBasicStatsEstimator::check_table_statistics_state(ObExecContext &ctx,
         }
       }
     }
-    LOG_TRACE("Succeed check table has any statistics", K(is_locked), K(partition_stat_infos));
+
   }
   return ret;
 }
@@ -1143,7 +1143,7 @@ int ObBasicStatsEstimator::refine_basic_stats(const ObOptStatGatherParam &param,
       } else if (OB_FAIL(basic_re_est.estimate(new_param, tmp_opt_stats))) {
         LOG_WARN("failed to estimate basic statistics", K(ret));
       } else {
-        LOG_TRACE("Suceed to re-estimate stats", K(new_param), K(param));
+
       }
     }
   }
@@ -1242,7 +1242,7 @@ int ObBasicStatsEstimator::fill_hints(common::ObIAllocator &alloc,
   } else if (OB_FAIL(add_hint(default_hints.string(), alloc))) {
     LOG_WARN("failed to add hint", K(ret));
   } else {
-    LOG_TRACE("succeed to fill index info", K(default_hints));
+
   }
   return ret;
 }
@@ -1271,7 +1271,7 @@ int ObBasicStatsEstimator::prepare_skip_params(const ObTableStatParam &param,
       LOG_WARN("failed to push back", K(ret));
     }
   }
-  LOG_TRACE("OPT:prepare_skip_params", K(sample_counts), K(column_ids));
+
   return ret;
 }
 
@@ -1398,7 +1398,7 @@ int ObBasicStatsEstimator::get_async_gather_stats_tables(ObExecContext &ctx,
       }
     }
     
-    LOG_TRACE("succeed to get async gather stats tables", K(ret), K(stat_tables));
+
   }
   return ret;
 }
@@ -1439,7 +1439,7 @@ int ObBasicStatsEstimator::fill_partition_info(ObIAllocator &allocator,
                                               4, "PART", part_info.part_id_))) {
       LOG_WARN("failed to append fmt", K(ret));
     } 
-    LOG_TRACE("Succeed to fill partition condition info", K(raw_sql_str));
+
   } else if (param.stat_level_ == SUBPARTITION_LEVEL) {
     if (OB_FAIL(raw_sql_str.append("WHERE "))) {
       LOG_WARN("failed to append fmt", K(ret));
@@ -1452,7 +1452,7 @@ int ObBasicStatsEstimator::fill_partition_info(ObIAllocator &allocator,
                                               7, "SUBPART", part_info.part_id_))) {
       LOG_WARN("failed to append fmt", K(ret));
     }
-    LOG_TRACE("Succeed to fill partition condition info", K(raw_sql_str));
+
   }
 
   if (OB_SUCC(ret)) {
@@ -1585,7 +1585,7 @@ int ObBasicStatsEstimator::estimate_skip_rate(ObExecContext &ctx,
             }
           }
         }
-        LOG_TRACE("OPT:basic id_skip_rate_map", K(partition_id), K(skip_rate_stat->cg_skip_rate_arr_));
+
       }
     }
     
@@ -1611,7 +1611,7 @@ int ObBasicStatsEstimator::estimate_skip_rate(ObExecContext &ctx,
           } else if (OB_FAIL(id_skip_rate_map.set_refactored(partition_id, skip_rate_stat))) {
             LOG_WARN("failed to set refactored", K(ret));
           }
-          LOG_TRACE("OPT:total id_skip_rate_map", K(partition_id), K(skip_rate_stat->cg_skip_rate_arr_));
+
         }
       }
     }
@@ -1640,7 +1640,7 @@ int ObBasicStatsEstimator::estimate_skip_rate(ObExecContext &ctx,
             } else if (OB_FAIL(id_skip_rate_map.set_refactored(partition_id, skip_rate_stat))) {
               LOG_WARN("failed to set refactored", K(ret));
             }
-            LOG_TRACE("OPT:first level id_skip_rate_map", K(partition_id), K(skip_rate_stat->cg_skip_rate_arr_));
+
           }
         }
       }
@@ -1679,7 +1679,7 @@ int ObBasicStatsEstimator::request_estimate_skip_rate(ObExecContext &ctx,
       }
     }
   } while (OB_FAIL(ret) && retry_cnt < MAX_RETRY_CNT);
-  LOG_INFO("request_estimate_skip_rate total cost", K(ObTimeUtility::current_time_ms()-start_time), K(retry_cnt));
+
   return ret;
 }
 
@@ -1805,7 +1805,7 @@ int ObBasicStatsEstimator::storage_estimate_skip_rate(ObExecContext &ctx,
     if (OB_FAIL(ObStorageEstimator::estimate_skip_rate(arg, result))) {
       LOG_WARN("failed to estimate skip rate", K(ret));
     } else {
-      LOG_TRACE("succeed to do estimate skip rate", K(addr), K(arg), K(result));
+
     }
   } else {
     obrpc::ObSrvRpcProxy *rpc_proxy = NULL;
@@ -1824,7 +1824,7 @@ int ObBasicStatsEstimator::storage_estimate_skip_rate(ObExecContext &ctx,
                        .estimate_skip_rate(arg, result))) {
       LOG_WARN("failed to remote storage est failed", K(ret));
     } else {
-      LOG_TRACE("succeed to do estimate skip rate", K(addr), K(arg), K(result));
+
     }
   }
   return ret;

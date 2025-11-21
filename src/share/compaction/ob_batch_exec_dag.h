@@ -204,7 +204,7 @@ int ObBatchExecParam<ITEM>::assign(
   if (this == &other) {
     // do nothing
   } else if (OB_FAIL(tablet_info_array_.assign(other.tablet_info_array_))) {
-    STORAGE_LOG(WARN, "failed to copy tablet ids", KR(ret));
+
   } else {
     ls_id_ = other.ls_id_;
     compaction_scn_ = other.compaction_scn_;
@@ -243,17 +243,17 @@ int ObBatchExecDag<TASK, PARAM>::init_by_param(
 
   if (IS_INIT) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObBatchExecDag has been inited", KR(ret), KPC(this));
+
   } else if (FALSE_IT(init_param = static_cast<const PARAM *>(param))) {
   } else if (OB_UNLIKELY(nullptr == init_param || !init_param->is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "get invalid arguments", KR(ret), KPC(init_param));
+
   } else if (OB_FAIL(param_.assign(*init_param))) {
-    STORAGE_LOG(WARN, "failed to init param", KR(ret), KPC(init_param));
+
   } else if (OB_FAIL(init_merge_history())) {
-    STORAGE_LOG(WARN, "failed to init merge history", KR(ret), KPC(init_param));
+
   } else if (OB_FAIL(inner_init())) {
-    STORAGE_LOG(WARN, "failed to inner init", KR(ret), KPC(init_param));
+
   } else {
     is_inited_ = true;
   }
@@ -268,9 +268,9 @@ int ObBatchExecDag<TASK, PARAM>::create_first_task()
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObBatchExecDag has not inited", KR(ret));
+
   } else if (OB_FAIL(create_task(nullptr/*parent*/, task, 0/*idx*/))) {
-    STORAGE_LOG(WARN, "failed to create task", KR(ret));
+
   }
   return ret;
 }
@@ -299,13 +299,13 @@ int ObBatchExecDag<TASK, PARAM>::fill_info_param(
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObBatchExecDag not inited", KR(ret));
+
   } else if (OB_FAIL(ADD_DAG_WARN_INFO_PARAM(out_param,
                                              allocator,
                                              get_type(),
                                              param_.ls_id_.id(),
                                              param_.tablet_info_array_.count()))) {
-    STORAGE_LOG(WARN, "failed to fill info param", KR(ret), K(param_));
+
   }
   return ret;
 }
@@ -316,7 +316,7 @@ int ObBatchExecDag<TASK, PARAM>::fill_dag_key(char *buf, const int64_t buf_len) 
   int ret = OB_SUCCESS;
   if (OB_FAIL(databuff_printf(buf, buf_len, "ls_id=%ld tablet_cnt=%ld",
       param_.ls_id_.id(), param_.tablet_info_array_.count()))) {
-    STORAGE_LOG(WARN, "failed to fill dag key", K(param_));
+
   }
   return ret;
 }
@@ -333,7 +333,7 @@ int ObBatchExecDag<TASK, PARAM>::init_merge_history()
   static_history.concurrent_cnt_ = param_.get_task_cnt();
   static_history.exec_mode_ = EXEC_MODE_LOCAL;
   collector_.remain_task_cnt_ = static_history.concurrent_cnt_;
-  STORAGE_LOG(INFO, "success to init merge history", KR(ret), K(static_history), K_(param));
+
   return ret;
 }
 
@@ -347,19 +347,19 @@ int ObBatchExecTask<TASK, PARAM>::init(const int64_t input_idx)
 
   if (IS_INIT) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObBatchExecTask init twice", KR(ret));
+
   } else if (OB_ISNULL(dag_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "get unexpected null dag", KR(ret));
+
   } else if (OB_UNLIKELY(!is_batch_exec_dag(dag_->get_type()))) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "get unexpected dag type", KR(ret), K(dag_->get_type()));
+
   } else {
     base_dag_ = static_cast<ObBatchExecDag<TASK, PARAM> *>(dag_);
     if (OB_UNLIKELY(!base_dag_->get_param().is_valid()
         || input_idx * get_batch_size() > base_dag_->get_param().tablet_info_array_.count())) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "get unexpected not valid param or idx", KR(ret), K(base_dag_->get_param()), K(input_idx));
+
     } else {
       idx_ = input_idx;
       is_inited_ = true;
@@ -375,15 +375,15 @@ int ObBatchExecTask<TASK, PARAM>::generate_next_task(ObITask *&next_task)
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", KR(ret));
+
   } else if ((idx_ + 1) * get_batch_size() >= base_dag_->get_param().tablet_info_array_.count()) {
     ret = OB_ITER_END;
   } else {
     TASK *task = NULL;
     if (OB_FAIL(base_dag_->alloc_task(task))) {
-      STORAGE_LOG(WARN, "fail to alloc task", K(ret));
+
     } else if (OB_FAIL(task->init(idx_ + 1))) {
-      STORAGE_LOG(WARN, "fail to init task", K(ret));
+
     } else {
       next_task = task;
     }

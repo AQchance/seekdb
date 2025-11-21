@@ -274,11 +274,11 @@ int TestSemiStructEncoding::check_full_transform(
     if (OB_FAIL(decoder.get_row(i, row))) {
       LOG_WARN("decode fail", K(ret), K(i));
     } else {
-      LOG_TRACE("result row", K(i), K(row));
+
     }
     if (OB_FAIL(ret)) {
     } else if (row.storage_datums_[1].is_null()) {
-      LOG_TRACE("compare info", K(datums.at(i)), K(row.storage_datums_[1]));
+
       if (! datums.at(i).is_null()) ob_abort();
     } else {
       const ObLobCommon& lob_common = row.storage_datums_[1].get_lob_data();
@@ -290,11 +290,11 @@ int TestSemiStructEncoding::check_full_transform(
       } else if (OB_FAIL(j_bin.print(j_buf, true))) {
         LOG_WARN("print json fail", K(ret));
       } else {
-        LOG_TRACE("result json", K(i), K(j_buf.string()));
+
       }      
       ObString src = datums.at(i).get_string();
       ObString output = row.storage_datums_[1].get_string();
-      LOG_TRACE("compare info", K(datums.at(i)), K(row.storage_datums_[1]));
+
       if (src.compare(output) != 0) ob_abort();
     }
   }
@@ -336,11 +336,11 @@ int TestSemiStructEncoding::check_part_transform(
     if (OB_FAIL(decoder.get_row(i, row))) {
       LOG_WARN("decode fail", K(ret), K(i));
     } else {
-      LOG_TRACE("result row", K(i), K(row));
+
     }
     if (OB_FAIL(ret)) {
     } else if (row.storage_datums_[1].is_null()) {
-      LOG_TRACE("compare info", K(datums.at(i)), K(row.storage_datums_[1]));
+
       if (! datums.at(i).is_null()) ob_abort();
     } else {
       const ObLobCommon& lob_common = row.storage_datums_[1].get_lob_data();
@@ -352,11 +352,11 @@ int TestSemiStructEncoding::check_part_transform(
       } else if (OB_FAIL(j_bin.print(j_buf, true))) {
         LOG_WARN("print json fail", K(ret));
       } else {
-        LOG_TRACE("result json", K(i), K(j_buf.string()));
+
       }      
       ObString src = datums.at(i).get_string();
       ObString output = row.storage_datums_[1].get_string();
-      LOG_TRACE("compare info", K(datums.at(i)), K(row.storage_datums_[1]));
+
       if (src.compare(output) != 0) ob_abort();
     }
   }
@@ -1056,19 +1056,19 @@ TEST_F(TestSemiStructEncoding, test_sub_schema)
   const int64_t row_cnt = 1;
   ASSERT_EQ(OB_SUCCESS, simple_schema.build_sub_schema(sub_schema, row_cnt));
   int64_t serialize_size = sub_schema.get_encode_size();
-  LOG_INFO("sub_schema", K(serialize_size), K(sub_schema));
+
   const ObIArray<ObSemiStructSubColumn>& freq_columns = sub_schema.get_freq_columns();
   const ObIArray<ObSemiStructSubColumn>& spare_columns = sub_schema.get_spare_columns();
   for (int i = 0; i < freq_columns.count(); ++i) {
     const ObSemiStructSubColumn& sub_col = freq_columns.at(i);
-    LOG_INFO("freq column", K(i), "encode_size", sub_col.get_encode_size());
+
   }
   for (int i = 0; i < spare_columns.count(); ++i) {
     const ObSemiStructSubColumn& sub_col = spare_columns.at(i);
-    LOG_INFO("spare column", K(i), "encode_size", sub_col.get_encode_size());
+
   }
   const ObSubSchemaKeyDict& key_dict = sub_schema.get_key_dict();
-  LOG_INFO("key_dict", K(key_dict.get_serialize_size()), K(key_dict));
+
 }
 
 TEST_F(TestSemiStructEncoding, test_sub_schema2)
@@ -1116,17 +1116,17 @@ TEST_F(TestSemiStructEncoding, test_sub_schema2)
   const int64_t row_cnt = 1;
   ASSERT_EQ(OB_SUCCESS, simple_schema.build_sub_schema(sub_schema, row_cnt));
   int64_t serialize_size = sub_schema.get_encode_size();
-  LOG_INFO("sub_schema", K(serialize_size), K(sub_schema));
+
 
   const ObIArray<ObSemiStructSubColumn>& freq_columns = sub_schema.get_freq_columns();
   const ObIArray<ObSemiStructSubColumn>& spare_columns = sub_schema.get_spare_columns();
   for (int i = 0; i < freq_columns.count(); ++i) {
     const ObSemiStructSubColumn& sub_col = freq_columns.at(i);
-    LOG_INFO("freq column", K(i), "encode_size", sub_col.get_encode_size());
+
   }
   for (int i = 0; i < spare_columns.count(); ++i) {
     const ObSemiStructSubColumn& sub_col = spare_columns.at(i);
-    LOG_INFO("spare column", K(i), "encode_size", sub_col.get_encode_size());
+
   }
 }
 
@@ -1261,7 +1261,7 @@ TEST_F(TestSemiStructEncoding, test_bug1)
   ObMicroBlockDesc micro_block_desc;
   ObMicroBlockHeader *header = nullptr;
   ASSERT_EQ(OB_SUCCESS, build_micro_block_desc(encoder, micro_block_desc, header));
-  LOG_TRACE("micro block", K(micro_block_desc), KPC(header));
+
   ASSERT_EQ(encoder.encoders_[1]->get_type(), ObCSColumnHeader::Type::SEMISTRUCT);
 
   ASSERT_EQ(OB_SUCCESS, check_full_transform(allocator, row_cnt, row, header, micro_block_desc, datums));
@@ -1307,7 +1307,7 @@ TEST_F(TestSemiStructEncoding, test_bug2)
   ObMicroBlockDesc micro_block_desc;
   ObMicroBlockHeader *header = nullptr;
   ASSERT_EQ(OB_SUCCESS, build_micro_block_desc(encoder, micro_block_desc, header));
-  LOG_TRACE("micro block", K(micro_block_desc), KPC(header));
+
   ASSERT_EQ(encoder.encoders_[1]->get_type(), ObCSColumnHeader::Type::SEMISTRUCT);
 
   ASSERT_EQ(OB_SUCCESS, check_full_transform(allocator, row_cnt, row, header, micro_block_desc, datums));
@@ -1607,7 +1607,7 @@ TEST_F(TestSemiStructEncoding, test_complex_situation)
   ObMicroBlockDesc micro_block_desc;
   ObMicroBlockHeader *header = nullptr;
   ASSERT_EQ(OB_SUCCESS, build_micro_block_desc(encoder, micro_block_desc, header));
-  LOG_TRACE("micro block", K(micro_block_desc), KPC(header));
+
   ASSERT_EQ(encoder.encoders_[3]->get_type(), ObCSColumnHeader::Type::SEMISTRUCT);
   ASSERT_EQ(encoder.encoders_[4]->get_type(), ObCSColumnHeader::Type::SEMISTRUCT);
   // ASSERT_EQ(encoder.encoders_[5]->get_type(), ObCSColumnHeader::Type::SEMISTRUCT);
@@ -1618,11 +1618,11 @@ TEST_F(TestSemiStructEncoding, test_complex_situation)
     ASSERT_EQ(OB_SUCCESS, init_cs_decoder(header, micro_block_desc, full_transformed_data, decoder));
     for (int32_t i = 0; i < row_cnt; ++i) {
       ASSERT_EQ(OB_SUCCESS, decoder.get_row(i, row));
-      LOG_TRACE("result row", K(i), K(row));
+
       for (int j = 3; j < 6; ++j) {
         int src_idx = i * 3 + j - 3;
         if (row.storage_datums_[j].is_null()) {
-          LOG_TRACE("compare info", K(i), K(j), K(src_idx), K(datums.at(src_idx)), K(row.storage_datums_[j]));
+
           ASSERT_TRUE(datums.at(src_idx).is_null());
         } else {
           const ObLobCommon& lob_common = row.storage_datums_[j].get_lob_data();
@@ -1631,10 +1631,10 @@ TEST_F(TestSemiStructEncoding, test_complex_situation)
           ObJsonBin j_bin(json_data.ptr(), json_data.length(), &allocator);
           ASSERT_EQ(OB_SUCCESS, j_bin.reset_iter());
           ASSERT_EQ(OB_SUCCESS, j_bin.print(j_buf, true));
-          LOG_TRACE("result json", K(i), K(j), K(src_idx), K(j_buf.string()));
+
           ObString src = datums.at(src_idx).get_string();
           ObString output = row.storage_datums_[j].get_string();
-          LOG_TRACE("compare info", K(i), K(j), K(src_idx), K(datums.at(src_idx)), K(row.storage_datums_[j]));
+
           ASSERT_EQ(0, src.compare(output)) << "i: " << i << " j: " << j << " src_idx: " << src_idx << " src : " << src << " output :" << output;
         }
       }
@@ -1657,11 +1657,11 @@ TEST_F(TestSemiStructEncoding, test_complex_situation)
     ASSERT_EQ(OB_SUCCESS, decoder.init(part_transformed_data, read_info));
     for (int32_t i = 0; i < row_cnt; ++i) {
       ASSERT_EQ(OB_SUCCESS, decoder.get_row(i, row));
-      LOG_TRACE("result row", K(i), K(row));
+
       for (int j = 3; j < 6; ++j) {
         int src_idx = i * 3 + j - 3;
         if (row.storage_datums_[j].is_null()) {
-          LOG_TRACE("compare info", K(i), K(j), K(src_idx), K(datums.at(src_idx)), K(row.storage_datums_[j]));
+
           ASSERT_TRUE(datums.at(src_idx).is_null());
         } else {
           const ObLobCommon& lob_common = row.storage_datums_[j].get_lob_data();
@@ -1670,10 +1670,10 @@ TEST_F(TestSemiStructEncoding, test_complex_situation)
           ObJsonBin j_bin(json_data.ptr(), json_data.length(), &allocator);
           ASSERT_EQ(OB_SUCCESS, j_bin.reset_iter());
           ASSERT_EQ(OB_SUCCESS, j_bin.print(j_buf, true));
-          LOG_TRACE("result json", K(i), K(j), K(src_idx), K(j_buf.string()));
+
           ObString src = datums.at(src_idx).get_string();
           ObString output = row.storage_datums_[j].get_string();
-          LOG_TRACE("compare info", K(i), K(j), K(src_idx), K(datums.at(src_idx)), K(row.storage_datums_[j]));
+
           ASSERT_EQ(0, src.compare(output)) << "i: " << i << " j: " << j << " src_idx: " << src_idx << " src : " << src << " output :" << output;
         }
       }
@@ -3264,7 +3264,7 @@ int check_json_datum(ObIAllocator& allocator, const ObDatum& src_datum, const Ob
 {
   int ret = OB_SUCCESS;
   if (decode.is_null()) {
-    LOG_TRACE("compare info", K(src_datum), K(decode));
+
     if (! src_datum.is_null()) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("src is not null", K(src_datum), K(decode));
@@ -3274,7 +3274,7 @@ int check_json_datum(ObIAllocator& allocator, const ObDatum& src_datum, const Ob
     const ObLobCommon& lob_common = decode.get_lob_data();
     ObString src = src_datum.get_string();
     ObString output = decode.get_string();
-    LOG_TRACE("compare info", K(src_datum), K(decode));
+
     if (src.compare(output) != 0) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("src and decode is not binary equal",  K(src_datum), K(decode));
@@ -3379,7 +3379,7 @@ TEST_F(TestSemiStructEncoding, test_zero_stream)
     ObMicroBlockDesc micro_block_desc;
     ObMicroBlockHeader *header = nullptr;
     ASSERT_EQ(OB_SUCCESS, build_micro_block_desc(encoder, micro_block_desc, header));
-    LOG_TRACE("micro block", K(micro_block_desc), KPC(header));
+
     ASSERT_EQ(encoder.encoders_[1]->get_type(), ObCSColumnHeader::Type::SEMISTRUCT);
     ASSERT_EQ(encoder.encoders_[2]->get_type(), ObCSColumnHeader::Type::SEMISTRUCT);
     ObMicroBlockData full_transformed_data;
@@ -3464,7 +3464,7 @@ TEST_F(TestSemiStructEncoding, test_zero_stream)
     ObMicroBlockDesc micro_block_desc;
     ObMicroBlockHeader *header = nullptr;
     ASSERT_EQ(OB_SUCCESS, build_micro_block_desc(encoder, micro_block_desc, header));
-    LOG_TRACE("micro block", K(micro_block_desc), KPC(header));
+
     ASSERT_EQ(encoder.encoders_[1]->get_type(), ObCSColumnHeader::Type::SEMISTRUCT);
     ASSERT_EQ(encoder.encoders_[2]->get_type(), ObCSColumnHeader::Type::SEMISTRUCT);
     { // full transform
@@ -4372,7 +4372,7 @@ TEST_F(TestSemiStructEncoding, test_read_file)
   ASSERT_EQ(OB_SUCCESS, j_bin.reset_iter());
   ObJsonBuffer j_buf(&allocator);
   ASSERT_EQ(OB_SUCCESS, j_bin.print(j_buf, true));
-  LOG_INFO("result json", K(j_buf.string()));
+
 }
 
 TEST_F(TestSemiStructEncoding, test_bug_var_size)
@@ -4415,7 +4415,7 @@ TEST_F(TestSemiStructEncoding, test_bug_var_size)
   ObMicroBlockDesc micro_block_desc;
   ObMicroBlockHeader *header = nullptr;
   ASSERT_EQ(OB_SUCCESS, build_micro_block_desc(encoder, micro_block_desc, header));
-  LOG_TRACE("micro block", K(micro_block_desc), KPC(header));
+
   ASSERT_EQ(encoder.encoders_[1]->get_type(), ObCSColumnHeader::Type::SEMISTRUCT);
 
   ASSERT_EQ(OB_SUCCESS, check_full_transform(allocator, row_cnt, row, header, micro_block_desc, datums));
@@ -4462,7 +4462,7 @@ TEST_F(TestSemiStructEncoding, test_empty_array)
   ObMicroBlockDesc micro_block_desc;
   ObMicroBlockHeader *header = nullptr;
   ASSERT_EQ(OB_SUCCESS, build_micro_block_desc(encoder, micro_block_desc, header));
-  LOG_TRACE("micro block", K(micro_block_desc), KPC(header));
+
   ASSERT_EQ(encoder.encoders_[1]->get_type(), ObCSColumnHeader::Type::SEMISTRUCT);
 
   ASSERT_EQ(OB_SUCCESS, check_full_transform(allocator, row_cnt, row, header, micro_block_desc, datums));
@@ -4509,7 +4509,7 @@ TEST_F(TestSemiStructEncoding, test_empty_array_v2)
   ObMicroBlockDesc micro_block_desc;
   ObMicroBlockHeader *header = nullptr;
   ASSERT_EQ(OB_SUCCESS, build_micro_block_desc(encoder, micro_block_desc, header));
-  LOG_TRACE("micro block", K(micro_block_desc), KPC(header));
+
   ASSERT_EQ(encoder.encoders_[1]->get_type(), ObCSColumnHeader::Type::STRING);
 
   ASSERT_EQ(OB_SUCCESS, check_full_transform(allocator, row_cnt, row, header, micro_block_desc, datums));
@@ -4667,7 +4667,7 @@ TEST_F(TestSemiStructEncoding, test_decimal)
       {
           ObJsonBuffer j_buf(&allocator);
           ASSERT_EQ(OB_SUCCESS, obj.print(j_buf, true));
-          LOG_INFO("result json", K(i), K(j_buf.string()));
+
       }
       add_json_datum(allocator, datums, &obj);
     }

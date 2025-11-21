@@ -131,7 +131,7 @@ int ObSQLMockSchemaUtils::mock_partid_column(share::schema::ObTableSchema &table
     is_rowid_exists = true;
   }
   if (is_rowid_exists) {
-    LOG_TRACE("do not mock rowid column", K(is_rowid_exists));
+
   } else {
     ObColumnSchemaV2 partid_schema;
     const uint64_t tenant_id = table_schema.get_tenant_id();
@@ -203,7 +203,7 @@ int ObSQLMockSchemaUtils::try_mock_partid(const share::schema::ObTableSchema *or
       LOG_WARN("failed to mock rowid column", K(ret));
     } else {
       final_table = tmp_table;
-      LOG_TRACE("mocked rowid column", K(*final_table));
+
     }
   }
   return ret;

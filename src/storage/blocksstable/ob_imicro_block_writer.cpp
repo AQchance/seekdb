@@ -91,24 +91,24 @@ int ObMicroBlockDesc::deep_copy(
 
     if (OB_ISNULL(header_) || OB_ISNULL(buf_)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "can't copy invalid desc", K(ret), K(*this));
+
     } else if (OB_FAIL(last_rowkey_.deep_copy(dst.last_rowkey_, allocator))) {
-      STORAGE_LOG(WARN, "failed to copy last key", K(ret));
+
     } else {
       const int64_t block_size = header_->header_size_ + buf_size_;
       int64_t pos = 0;
       if (block_size == 0) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "empty micro block desc", K(ret), K(*this));
+
       } else if (OB_ISNULL(block_buffer = (char *)allocator.alloc(block_size))) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "failed to alloc micro block buf", K(ret));
+
       } else if (FALSE_IT(micro_header = reinterpret_cast<ObMicroBlockHeader *>(block_buffer))) {
       } else if (OB_FAIL(header_->deep_copy(block_buffer, block_size, pos, micro_header))) {
-        STORAGE_LOG(WARN, "failed to deep copy header", K(ret));
+
       } else if (OB_UNLIKELY(pos != micro_header->header_size_)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "header deep copy size mismatch", K(ret), K(*micro_header), K(pos));
+
       } else {
         MEMCPY(block_buffer + pos, buf_, buf_size_);
         dst.buf_ = block_buffer + pos;
@@ -132,12 +132,12 @@ int ObMicroBlockDesc::deep_copy(
         if (nullptr != aggregated_row_) {
           if (OB_ISNULL(row_buffer = allocator.alloc(sizeof(ObSkipIndexAggResult)))) {
             ret = OB_ALLOCATE_MEMORY_FAILED;
-            STORAGE_LOG(WARN, "failed to alloc row buf", K(ret));
+
           } else if (FALSE_IT(agg_row = new (row_buffer) ObSkipIndexAggResult())) {
           } else if (OB_FAIL(agg_row->init(aggregated_row_->get_agg_col_cnt(), allocator))) {
-            STORAGE_LOG(WARN, "failed to init datum row", K(ret));
+
           } else if (OB_FAIL(agg_row->deep_copy(*aggregated_row_, allocator))) {
-            STORAGE_LOG(WARN, "failed to copy datum row", K(ret));
+
           } else {
             dst.aggregated_row_ = agg_row;
           }
@@ -171,7 +171,7 @@ int ObMicroBufferWriter::write_row(const ObDatumRow &row, const int64_t rowkey_c
   ObRowWriter row_writer;
 
   if (remain_buffer_size() <= 0 && OB_FAIL(expand(ObCompactionBuffer::size()))) {
-    STORAGE_LOG(WARN, "failed to reserve", K(ret));
+
   }
 
   while (OB_SUCC(ret)) {
@@ -179,10 +179,10 @@ int ObMicroBufferWriter::write_row(const ObDatumRow &row, const int64_t rowkey_c
       break;
     } else {
       if (OB_UNLIKELY(ret != OB_BUF_NOT_ENOUGH)) {
-        STORAGE_LOG(WARN, "failed to write row", K(ret), KPC(this));
+
       } else if (!check_could_expand()) { //break
       } else if (OB_FAIL(expand(ObCompactionBuffer::size()))) {
-        STORAGE_LOG(WARN, "failed to reserve", K(ret));
+
       }
     }
   }
@@ -204,7 +204,7 @@ int ObIMicroBlockWriter::build_micro_block_desc(ObMicroBlockDesc &micro_block_de
   char *block_buffer = NULL;
   int64_t block_size = 0;
   if (OB_FAIL(build_block(block_buffer, block_size))) {
-    STORAGE_LOG(WARN, "failed to build micro block", K(ret));
+
   } else {
     ObMicroBlockHeader *micro_header = reinterpret_cast<ObMicroBlockHeader *>(block_buffer);
     micro_block_desc.header_ = micro_header;
@@ -236,7 +236,7 @@ int ObIMicroBlockWriter::build_micro_block_desc(ObMicroBlockDesc &micro_block_de
 int ObIMicroBlockWriter::get_pre_agg_param(const int64_t col_idx, ObMicroDataPreAggParam &pre_agg_param) const
 {
   int ret = OB_NOT_SUPPORTED;
-  STORAGE_LOG(WARN, "unsupported get data from micro writer", K(ret));
+
   return ret;
 }
 

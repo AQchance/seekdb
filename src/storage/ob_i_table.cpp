@@ -137,10 +137,10 @@ int ObITable::init(const TableKey &table_key)
 
   if (ObITable::MAX_TABLE_TYPE != key_.table_type_) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "cannot init twice", K(ret), K(key_), K(table_key));
+
   } else if (!table_key.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid args", K(ret), K(table_key));
+
   } else {
     key_ = table_key;
   }
@@ -200,7 +200,7 @@ void ObTableHandleV2::reset()
 {
   if (nullptr != table_) {
     if (OB_UNLIKELY(!is_valid())) {
-      STORAGE_LOG_RET(ERROR, OB_INVALID_ERROR, "t3m or allocator is nullptr", KP_(table), KP_(t3m), KP_(allocator));
+
       ob_abort();
     } else {
       const int64_t ref_cnt = table_->dec_ref();
@@ -233,10 +233,10 @@ int ObTableHandleV2::get_sstable(blocksstable::ObSSTable *&sstable)
 
   if (OB_ISNULL(table_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (!table_->is_sstable()) {
     ret = OB_ENTRY_NOT_EXIST;
-    STORAGE_LOG(WARN, "not sstable", K(ret), K(table_->get_key()));
+
   } else {
     sstable = static_cast<blocksstable::ObSSTable *>(table_);
   }
@@ -250,10 +250,10 @@ int ObTableHandleV2::get_sstable(const blocksstable::ObSSTable *&sstable) const
 
   if (OB_ISNULL(table_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (!table_->is_sstable()) {
     ret = OB_ENTRY_NOT_EXIST;
-    STORAGE_LOG(WARN, "not sstable", K(ret), K(table_->get_key()));
+
   } else {
     sstable = static_cast<const blocksstable::ObSSTable *>(table_);
   }
@@ -267,10 +267,10 @@ int ObTableHandleV2::get_memtable(ObIMemtable *&memtable)
 
   if (OB_ISNULL(table_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
    } else if (!table_->is_memtable()) {
      ret = OB_ENTRY_NOT_EXIST;
-     STORAGE_LOG(WARN, "not memtable", K(ret), K(table_->get_key()));
+
   } else {
     memtable = static_cast<ObIMemtable*>(table_);
   }
@@ -284,10 +284,10 @@ int ObTableHandleV2::get_tablet_memtable(ObITabletMemtable *&memtable)
   memtable = NULL;
   if (OB_ISNULL(table_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (!table_->is_tablet_memtable()) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "not tablet memtable", K(ret), K(table_->get_key()));
+
   } else {
     memtable = static_cast<ObITabletMemtable *>(table_);
   }
@@ -300,10 +300,10 @@ int ObTableHandleV2::get_tablet_memtable(const ObITabletMemtable *&memtable) con
   memtable = NULL;
   if (OB_ISNULL(table_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
    } else if (!table_->is_tablet_memtable()) {
      ret = OB_ERR_UNEXPECTED;
-     STORAGE_LOG(WARN, "not data memtable", K(ret), K(table_->get_key()));
+
   } else {
     memtable = static_cast<ObITabletMemtable *>(table_);
   }
@@ -317,10 +317,10 @@ int ObTableHandleV2::get_data_memtable(memtable::ObMemtable *&memtable)
 
   if (OB_ISNULL(table_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
    } else if (!table_->is_data_memtable()) {
      ret = OB_ERR_UNEXPECTED;
-     STORAGE_LOG(WARN, "not data memtable", K(ret), K(table_->get_key()));
+
   } else {
     memtable = static_cast<memtable::ObMemtable*>(table_);
   }
@@ -335,10 +335,10 @@ int ObTableHandleV2::get_tx_data_memtable(ObTxDataMemtable *&memtable)
 
   if (OB_ISNULL(table_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (!table_->is_tx_data_memtable()) {
     ret = OB_ENTRY_NOT_EXIST;
-    STORAGE_LOG(WARN, "not tx data memtable", K(ret), K(table_->get_key()));
+
   } else {
     memtable = static_cast<ObTxDataMemtable*>(table_);
   }
@@ -353,10 +353,10 @@ int ObTableHandleV2::get_tx_ctx_memtable(ObTxCtxMemtable *&memtable)
 
   if (OB_ISNULL(table_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (!table_->is_tx_ctx_memtable()) {
     ret = OB_ENTRY_NOT_EXIST;
-    STORAGE_LOG(WARN, "not tx ctx memtable", K(ret), K(table_->get_key()));
+
   } else {
     memtable = static_cast<ObTxCtxMemtable*>(table_);
   }
@@ -371,10 +371,10 @@ int ObTableHandleV2::get_lock_memtable(ObLockMemtable *&memtable)
 
   if (OB_ISNULL(table_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (!table_->is_lock_memtable()) {
     ret = OB_ENTRY_NOT_EXIST;
-    STORAGE_LOG(WARN, "not lock memtable", K(ret), K(table_->get_key()));
+
   } else {
     memtable = static_cast<ObLockMemtable*>(table_);
   }
@@ -389,10 +389,10 @@ int ObTableHandleV2::get_direct_load_memtable(ObDDLKV *&memtable)
 
   if (OB_ISNULL(table_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not inited", K(ret));
+
   } else if (!table_->is_direct_load_memtable()) {
     ret = OB_ENTRY_NOT_EXIST;
-    STORAGE_LOG(WARN, "not direct load memtable", K(ret), K(table_->get_key()));
+
   } else {
     memtable = static_cast<ObDDLKV*>(table_);
   }
@@ -417,7 +417,7 @@ ObTableHandleV2 &ObTableHandleV2::operator= (const ObTableHandleV2 &other)
     reset();
     if (nullptr != other.table_) {
       if (OB_UNLIKELY(!other.is_valid())) {
-        STORAGE_LOG_RET(ERROR, OB_INVALID_ERROR, "t3m_ is nullptr", K(other));
+
         ob_abort();
       } else {
         table_ = other.table_;
@@ -448,10 +448,10 @@ int ObTableHandleV2::set_table(
   if (OB_ISNULL(table) || OB_ISNULL(t3m) ||
       OB_UNLIKELY(!ObITable::is_table_type_valid(table_type))) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(table), KP(t3m), K(table_type));
+
   } else if (OB_UNLIKELY(ObITable::is_sstable(table_type))) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(ERROR, "sstable should not use this interface", K(ret), KP(table), K(table_type));
+
   } else {
     table_ = table;
     table_->inc_ref();
@@ -470,7 +470,7 @@ int ObTableHandleV2::set_sstable(
   reset();
   if (OB_ISNULL(table) || OB_ISNULL(allocator)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(table), KP(allocator));
+
   } else {
     table_ = table;
     table_->inc_ref();
@@ -570,7 +570,7 @@ int ObTablesHandleArray::add_table(const ObTableHandleV2 &handle)
   if (OB_FAIL(tablet_id_check(handle.get_table()->get_key().get_tablet_id()))) {
     LOG_WARN("failed  to add table handle to array", K(ret));
   } else if (OB_FAIL(handles_array_.push_back(handle))) {
-    STORAGE_LOG(WARN, "failed to add sstable", K(ret), K(handle));
+
   }
   return ret;
 }
@@ -582,7 +582,7 @@ int ObTablesHandleArray::add_sstable(ObITable *table, const ObStorageMetaHandle 
   ObTableHandleV2 table_handle;
   if (OB_UNLIKELY(!table->is_sstable())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid table type", K(ret), KPC(table));
+
   } else if (OB_FAIL(tablet_id_check(table->get_key().get_tablet_id()))) {
     LOG_WARN("failed to check tablet id", K(ret), KPC(table));
   } else if (static_cast<ObSSTable *>(table)->is_loaded()) {
@@ -619,7 +619,7 @@ int ObTablesHandleArray::add_sstable(ObITable *table, const ObStorageMetaHandle 
   }
 
   if (FAILEDx(handles_array_.push_back(table_handle))) {
-    STORAGE_LOG(WARN, "failed to push back table", K(ret), KPC(table), K(table_handle));
+
   }
   return ret;
 }
@@ -663,11 +663,11 @@ int ObTablesHandleArray::get_table(const ObITable::TableKey &table_key, ObTableH
     const ObITable *table = nullptr;
     if (OB_ISNULL(table = handles_array_.at(i).get_table())) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "unexpected null table pointer");
+
     } else if (table->get_key() == table_key) {
       found = true;
       if (OB_FAIL(get_table(i, table_handle))) {
-        STORAGE_LOG(WARN, "failed to get table by index", K(ret));
+
       }
     }
   }
@@ -684,9 +684,9 @@ int ObTablesHandleArray::get_tables(common::ObIArray<ObITable *> &tables) const
   for (int64_t i = 0; OB_SUCC(ret) && i < handles_array_.count(); ++i) {
     if (OB_UNLIKELY(!handles_array_.at(i).is_valid())) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "invalid table handle", K(ret), K(i), K_(handles_array));
+
     } else if (OB_FAIL(tables.push_back(handles_array_.at(i).table_))) {
-      STORAGE_LOG(WARN, "failed to add table", K(ret));
+
     }
   }
   return ret;
@@ -713,7 +713,7 @@ int ObTablesHandleArray::get_all_minor_sstables(common::ObIArray<ObITable *> &ta
   int ret = OB_SUCCESS;
   tables.reset();
   if (OB_FAIL(get_sstable_with_type_(ObITable::is_minor_sstable, tables))) {
-    STORAGE_LOG(WARN, "failed to get minor sstable", K(ret));
+
   }
   return ret;
 }
@@ -724,7 +724,7 @@ int ObTablesHandleArray::get_all_mds_sstables(common::ObIArray<ObITable *> &tabl
   int ret = OB_SUCCESS;
   tables.reset();
   if (OB_FAIL(get_sstable_with_type_(ObITable::is_mds_sstable, tables))) {
-    STORAGE_LOG(WARN, "failed to get mds sstable", K(ret));
+
   }
   return ret;
 }
@@ -740,7 +740,7 @@ int ObTablesHandleArray::get_sstable_with_type_(
     if (!is_right_sstable_type(table->get_key().table_type_)) {
       //do nothing
     } else if (OB_FAIL(tables.push_back(table))) {
-      STORAGE_LOG(WARN, "failed to add sstable", K(ret), K(i));
+
     }
   }
   return ret;

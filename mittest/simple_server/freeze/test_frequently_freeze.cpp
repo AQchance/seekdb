@@ -109,7 +109,7 @@ void TestFrequentlyFreeze::fill_data(const int64_t idx)
   WRITE_SQL_BY_CONN(connection, "set ob_trx_idle_timeout = 3000000000");
   WRITE_SQL_BY_CONN(connection, "set ob_query_timeout = 3000000000");
   WRITE_SQL_FMT_BY_CONN(connection, "create sequence seq_%ld cache 1000000 noorder;", idx);
-  STORAGE_LOG(INFO, "start fill data", K(idx));
+
   for (int i = 0; i < 5; i++) {
     fprintf(stdout, "start fill data. thread_idx = %ld, round = %d\n", idx, i);
     WRITE_SQL_FMT_BY_CONN(
@@ -129,23 +129,23 @@ void TestFrequentlyFreeze::async_tablet_freeze(const int64_t idx)
 
   int64_t int_tablet_id_to_freeze = FIRST_TABLET_ID + idx;
   fprintf(stdout, "async tablet freeze start. thread = %ld\n", idx);
-  STORAGE_LOG(INFO, "start async tablet freeze", K(idx));
+
   while (int_tablet_id_to_freeze <= LAST_TABLET_ID) {
     const bool is_sync = false;
     ObTabletID tablet_to_freeze(int_tablet_id_to_freeze);
-    STORAGE_LOG(INFO, "start tablet freeze", K(tablet_to_freeze), K(is_sync), K(idx));
+
     ASSERT_EQ(OB_SUCCESS, ls->tablet_freeze(tablet_to_freeze,
                                             is_sync,
                                             0,
                                             false,
                                             ObFreezeSourceFlag::TEST_MODE));
     usleep(100 * 1000);
-    STORAGE_LOG(INFO, "finish tablet freeze", K(tablet_to_freeze), K(is_sync), K(idx));
+
     
     int_tablet_id_to_freeze += TABLET_FREEZE_THREAD_COUNT;
   }
   fprintf(stdout, "async tablet freeze finish. thread = %ld\n", idx);
-  STORAGE_LOG(INFO, "one async tablet freeze task finish", K(idx));
+
 }
 
 void TestFrequentlyFreeze::sync_tablet_freeze(const int64_t idx)
@@ -155,11 +155,11 @@ void TestFrequentlyFreeze::sync_tablet_freeze(const int64_t idx)
 
   ObTabletID tablet_to_freeze(FIRST_TABLET_ID + idx);
   fprintf(stdout, "sync tablet freeze start. thread = %ld\n", idx);
-  STORAGE_LOG(INFO, "start sync tablet freeze", K(idx));
+
   while (tablet_to_freeze.id() <= LAST_TABLET_ID) {
     const bool is_sync = true;
     const int64_t abs_timeout_ts = ObClockGenerator::getClock() + 600LL * 1000LL * 1000LL;
-    STORAGE_LOG(INFO, "start tablet freeze", K(tablet_to_freeze), K(is_sync), K(idx));
+
     ASSERT_EQ(OB_SUCCESS, ls->tablet_freeze(tablet_to_freeze,
                                             is_sync,
                                             abs_timeout_ts,
@@ -167,11 +167,11 @@ void TestFrequentlyFreeze::sync_tablet_freeze(const int64_t idx)
                                             ObFreezeSourceFlag::TEST_MODE));
     ::sleep(2);
     tablet_to_freeze = ObTabletID(tablet_to_freeze.id() + TABLET_FREEZE_THREAD_COUNT);
-    STORAGE_LOG(INFO, "finish tablet freeze", K(tablet_to_freeze), K(is_sync), K(idx));
+
   }
   fprintf(stdout, "sync tablet freeze finish. thread = %ld\n", idx);
 
-  STORAGE_LOG(INFO, "one async tablet freeze task finish", K(idx));
+
 }
 
 void TestFrequentlyFreeze::ls_freeze(const bool is_sync)
@@ -180,7 +180,7 @@ void TestFrequentlyFreeze::ls_freeze(const bool is_sync)
   (void)get_ls(share::ObLSID(1001), ls);
 
   fprintf(stdout, "ls freeze start. is_sync = %d\n", is_sync);
-  STORAGE_LOG(INFO, "start ls freeze", K(is_sync));
+
   const int64_t abs_timeout_ts = ObClockGenerator::getClock() + 600LL * 1000LL * 1000LL;
   for (int i = 0; i < 4; i++) {
     ASSERT_EQ(OB_SUCCESS, ls->logstream_freeze(-1,
@@ -344,7 +344,7 @@ int main(int argc, char **argv)
   oceanbase::unittest::init_log_and_gtest(argc, argv);
   OB_LOGGER.set_log_level(log_level);
 
-  LOG_INFO("main>>>");
+
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

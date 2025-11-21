@@ -78,7 +78,7 @@ int ObTenantInfoLoader::init()
 
 void ObTenantInfoLoader::destroy()
 {
-  LOG_INFO("tenant info loader destory", KPC(this));
+
   stop();
   wait();
   is_inited_ = false;
@@ -101,11 +101,11 @@ int ObTenantInfoLoader::start()
   } else if (!is_user_tenant(tenant_id_)) {
     //meta and sys tenant is primary
     MTL_SET_TENANT_ROLE_CACHE(ObTenantRole::PRIMARY_TENANT);
-    LOG_INFO("not user tenant no need load", K(tenant_id_));
+
   } else if (OB_FAIL(logical_start())) {
     LOG_WARN("failed to start", KR(ret));
   } else {
-    LOG_INFO("tenant info loader start", KPC(this));
+
   }
   return ret;
 }
@@ -124,7 +124,7 @@ void ObTenantInfoLoader::wakeup()
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    LOG_TRACE("not init", KR(ret));
+
   } else {
     ObThreadCondGuard guard(get_cond());
     get_cond().broadcast();
@@ -134,7 +134,7 @@ void ObTenantInfoLoader::wakeup()
 void ObTenantInfoLoader::run2()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("tenant info loader run", KPC(this));
+
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", KR(ret));
@@ -390,7 +390,7 @@ void ObTenantInfoLoader::broadcast_tenant_info_content_()
         if (OB_FAIL(ret)) {
           LOG_WARN("send rpc is failed", KR(ret), K(i), K(dest));
         } else {
-          LOG_INFO("refresh tenant info content success", KR(ret), K(i), K(dest));
+
         }
       }
     }
@@ -420,24 +420,24 @@ int ObTenantInfoLoader::get_valid_sts_after(const int64_t specified_time_us, sha
     LOG_WARN("invalid argument", KR(ret), K(specified_time_us));
   } else if (OB_FAIL(tenant_info_cache_.get_tenant_info(tenant_info, last_sql_update_time, ora_rowscn))) {
     if (OB_NEED_WAIT == ret) {
-      LOG_TRACE("tenant info cache is not refreshed, need wait", KR(ret));
+
     } else {
       LOG_WARN("failed to get tenant info", KR(ret));
     }
   } else if (last_sql_update_time <= specified_time_us) {
     ret = OB_NEED_WAIT;
-    LOG_TRACE("tenant info cache is old, need wait", KR(ret), K(last_sql_update_time), K(specified_time_us), K(tenant_info));
+
     wakeup();
   } else if (!tenant_info.is_sts_ready()) {
     ret = OB_NEED_WAIT;
-    LOG_TRACE("sts can not work for current tenant status", KR(ret), K(tenant_info));
+
   } else {
     standby_scn = tenant_info.get_readable_scn();
   }
 
   const int64_t PRINT_INTERVAL = 3 * 1000 * 1000L;
   if (REACH_TIME_INTERVAL(PRINT_INTERVAL)) {
-    LOG_INFO("get_valid_sts_after", KR(ret), K(specified_time_us), K(last_sql_update_time), K(tenant_info));
+
   }
 
   return ret;
@@ -964,7 +964,7 @@ int ObAllServiceNamesCache::refresh_service_name()
   } else {
     if (!ATOMIC_LOAD(&is_service_name_enabled_)) {
       ATOMIC_SET(&is_service_name_enabled_, true);
-      LOG_INFO("service_name is enabled now", KR(ret), K(is_service_name_enabled_));
+
     }
     if (OB_SUCC(ret)) {
       if (OB_FAIL(ObServiceNameProxy::select_all_service_names_with_epoch(tenant_id_, epoch, all_service_names))) {
@@ -973,7 +973,7 @@ int ObAllServiceNamesCache::refresh_service_name()
         LOG_WARN("fail to update service_name", KR(ret), K(all_service_names));
       }
       if (dump_service_names_interval_.reach()) {
-        LOG_INFO("refresh service_names", KR(ret), K(tenant_id_), K(epoch_), K(all_service_names_));
+
       }
     }
   }

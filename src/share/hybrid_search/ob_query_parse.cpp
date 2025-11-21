@@ -62,7 +62,7 @@ int ObESQueryParser::parse(const common::ObString &req_str, ObQueryReqFromJson *
     if (OB_FAIL(j_node->get_object_value(es_mode_key, es_mode_node))) {
       if (ret == OB_SEARCH_NOT_FOUND) {
         ret = OB_SUCCESS;
-        LOG_DEBUG("es_mode field not found, use default value", K(enable_es_mode_));
+
       } else {
         LOG_WARN("fail to get type field", K(ret));
       }
@@ -2073,7 +2073,7 @@ int ObESQueryParser::parse_query_string_type(ObIJsonBase &req_node, ObEsQueryInf
   ObString type_key("type");
   if (OB_FAIL(req_node.get_object_value(type_key, type_node))) {
     if (ret == OB_SEARCH_NOT_FOUND) {
-      LOG_DEBUG("type field not found in query_string, use default value", K(query_info.score_type_));
+
     } else {
       LOG_WARN("fail to get type field", K(ret));
     }
@@ -2148,7 +2148,7 @@ int ObESQueryParser::parse_query_string_operator(ObIJsonBase &req_node, ObEsQuer
   ObString operator_key(query_info.query_item_ == QUERY_ITEM_MULTI_MATCH ? "operator" : "default_operator");
   if (OB_FAIL(req_node.get_object_value(operator_key, operator_node))) {
     if (ret == OB_SEARCH_NOT_FOUND) {
-      LOG_DEBUG("default_operator field not found in query_string, use default value OR", K(query_info.opr_));
+
     } else {
       LOG_WARN("fail to get default_operator field", K(ret));
     }
@@ -2203,7 +2203,7 @@ int ObESQueryParser::parse_query_string_boost(ObIJsonBase &req_node, ObEsQueryIn
   ObString boost_key("boost");
   if (OB_FAIL(req_node.get_object_value(boost_key, boost_node))) {
     if (ret == OB_SEARCH_NOT_FOUND) {
-      LOG_DEBUG("boost field not found in query_string, use default value");
+
     } else {
       LOG_WARN("fail to get boost field", K(ret));
     }
@@ -3032,7 +3032,7 @@ int ObESQueryParser::construct_sub_query_with_minimum_should_match(ObQueryReqFro
 {
   int ret = OB_SUCCESS;
   if (!query_info.need_construct_sub_query_with_minimum_should_match()) {
-    LOG_DEBUG("no need to construct sub query with minimum should match", K(ret));
+
   } else {
     ObReqOpExpr *score_expr = nullptr;
     ObReqOpExpr *condition_expr = nullptr;
@@ -3152,14 +3152,14 @@ int ObESQueryParser::parse_minimum_should_match(ObIJsonBase &req_node, ObEsQuery
     ret = OB_ERR_INVALID_TYPE_FOR_ARGUMENT;
     LOG_WARN("minimum_should_match should be object", K(ret), K(req_node.json_type()));
   } else if (query_info.opr_ == T_OP_AND) {
-    LOG_DEBUG("minimum_should_match is not supported for AND operator, ignore it", K(ret));
+
   } else if (OB_FAIL(req_node.get_object_value(MSM_KEY, msm_node))) {
     if (ret == OB_SEARCH_NOT_FOUND) {
       raw_msm_val = 0;
       if (query_info.query_item_ == QUERY_ITEM_BOOL) {
         ret = OB_SUCCESS;
       }
-      LOG_DEBUG("minimum_should_match is not found", K(ret));
+
     } else {
       LOG_WARN("fail to get minimum should match node", K(ret));
     }
@@ -3683,10 +3683,10 @@ int ObESQueryParser::handle_msm_for_sub_score(ObEsQueryInfo &query_info, ObEsQue
       (inner_query_info.total_depth_ > 2 ||
        (inner_query_info.outer_query_item_ != QUERY_ITEM_MUST &&
         inner_query_info.outer_query_item_ != QUERY_ITEM_SHOULD))) {
-    LOG_DEBUG("no need to handle msm for sub score", K(query_info.msm_info_.apply_type_), K(inner_query_info.outer_query_item_));
+
   } else if (query_info.total_depth_ == 2 && query_info.get_upward_depth() == 0 &&
              (inner_query_info.query_item_ == QUERY_ITEM_MULTI_MATCH || inner_query_info.query_item_ == QUERY_ITEM_QUERY_STRING)) {
-    LOG_DEBUG("no need to handle msm for sub score", K(ret));
+
   } else if (OB_ISNULL(score_expr)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("score expr is null", K(ret));
@@ -3720,7 +3720,7 @@ int ObESQueryParser::handle_msm_for_sub_condition(ObEsQueryInfo &query_info)
         query_info.get_upward_depth() == 1 &&
         query_info.outer_query_item_ == QUERY_ITEM_SHOULD &&
         query_info.parent_query_info_->msm_info_.apply_type_ == MSM_APPLY_WITH_SUB)) {
-    LOG_DEBUG("no need to handle msm for sub condition", K(ret));
+
   } else if (msm_info.msm_items_.empty()) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("msm items is empty", K(ret));

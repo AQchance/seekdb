@@ -670,11 +670,11 @@ int ObVecIVFIndexBuildTask::prepare()
       LOG_WARN("failed to get next status", K(ret));
     } else {
       (void)switch_status(next_status, true, ret);
-      LOG_INFO("prepare finished", K(ret), K(parent_task_id_), K(task_id_), K(*this));
+
     }
   } else if (OB_FAIL(ret) && !ObIDDLTask::in_ddl_retry_white_list(ret)) {
     (void)switch_status(ObDDLTaskStatus::FAIL, false, ret);  // allow clean up
-    LOG_INFO("prepare failed", K(ret), K(parent_task_id_), K(task_id_), K(*this));
+
     ret = OB_SUCCESS;
   }
   return ret;
@@ -825,7 +825,7 @@ int ObVecIVFIndexBuildTask::prepare_aux_index_tables()
     }
   } else if (OB_FAIL(ret) && !ObIDDLTask::in_ddl_retry_white_list(ret)) {
     (void)switch_status(ObDDLTaskStatus::FAIL, false, ret);  // allow clean up
-    LOG_INFO("prepare failed", K(ret), K(parent_task_id_), K(task_id_), K(*this));
+
     ret = OB_SUCCESS;
   }
   return ret;
@@ -884,7 +884,7 @@ int ObVecIVFIndexBuildTask::prepare_sq_meta_table()
     }
   } else if (OB_FAIL(ret) && !ObIDDLTask::in_ddl_retry_white_list(ret)) {
     (void)switch_status(ObDDLTaskStatus::FAIL, false, ret);  // allow clean up
-    LOG_INFO("prepare failed", K(ret), K(parent_task_id_), K(task_id_), K(*this));
+
     ret = OB_SUCCESS;
   }
   return ret;
@@ -925,7 +925,7 @@ int ObVecIVFIndexBuildTask::prepare_pq_centroid_table()
     }
   } else if (OB_FAIL(ret) && !ObIDDLTask::in_ddl_retry_white_list(ret)) {
     (void)switch_status(ObDDLTaskStatus::FAIL, false, ret);  // allow clean up
-    LOG_INFO("prepare failed", K(ret), K(parent_task_id_), K(task_id_), K(*this));
+
     ret = OB_SUCCESS;
   }
   return ret;
@@ -982,7 +982,7 @@ int ObVecIVFIndexBuildTask::prepare_centroid_table()
     }
   } else if (OB_FAIL(ret) && !ObIDDLTask::in_ddl_retry_white_list(ret)) {
     (void)switch_status(ObDDLTaskStatus::FAIL, false, ret);  // allow clean up
-    LOG_INFO("prepare failed", K(ret), K(parent_task_id_), K(task_id_), K(*this));
+
     ret = OB_SUCCESS;
   }
   return ret;
@@ -1133,7 +1133,7 @@ int ObVecIVFIndexBuildTask::on_child_task_finish(
                                                                  true/*overwrite*/))) {
       LOG_WARN("set dependent_task_result_map failed", K(ret), K(child_task_key));
     } else {
-      LOG_INFO("child task finish successfully", K(child_task_key));
+
     }
   }
   return ret;
@@ -1746,7 +1746,7 @@ int ObVecIVFIndexBuildTask::clean_on_failed()
     // 2. drop already built index
     if (OB_FAIL(ret)) {
     } else if (not_finished_cnt > 0) {
-      LOG_INFO("child task not finished, not submit drop vec ivf index task.", K(not_finished_cnt));
+
     } else if (!drop_index_task_submitted_) {
       if (OB_FAIL(submit_drop_vec_index_task())) {
         LOG_WARN("failed to drop vec index", K(ret));
@@ -1810,7 +1810,7 @@ int ObVecIVFIndexBuildTask::submit_drop_vec_index_task()
              OB_FAIL(drop_index_arg.index_ids_.push_back(pq_rowkey_cid_table_id_))) {
     LOG_WARN("fail to push back pq_rowkey_cid_table_id_", K(ret), K(pq_rowkey_cid_table_id_));
   } else if (drop_index_arg.index_ids_.count() <= 0) {
-    LOG_INFO("no table need to be drop, skip", K(ret)); // no table exist, skip drop
+ // no table exist, skip drop
   } else if (schema_guard.get_table_schema(tenant_id_, object_id_, data_table_schema)) {
     LOG_WARN("fail to get table schema", K(ret), K(object_id_));
   } else if (OB_ISNULL(data_table_schema)) {
@@ -1848,7 +1848,7 @@ int ObVecIVFIndexBuildTask::submit_drop_vec_index_task()
     } else {
       drop_index_task_submitted_ = true;
       drop_index_task_id_ = drop_index_res.task_id_;
-      LOG_INFO("success submit drop vec index task", K(ret), K(drop_index_task_id_));
+
     }
   }
   return ret;
@@ -1881,7 +1881,7 @@ int ObVecIVFIndexBuildTask::wait_drop_index_finish(bool &is_finish)
                                                   unused_user_msg_len))) {
         if (OB_ENTRY_NOT_EXIST == ret) {
           ret = OB_SUCCESS;
-          LOG_INFO("ddl task not finish", K(dst_tenant_id_), K(drop_index_task_id_));
+
         } else {
           LOG_WARN("fail to get ddl error message", K(ret), K(drop_index_task_id_));
         }
@@ -1930,7 +1930,7 @@ int ObVecIVFIndexBuildTask::validate_checksum()
     }
   } else if (OB_FAIL(ret) && !ObIDDLTask::in_ddl_retry_white_list(ret)) {
     (void)switch_status(ObDDLTaskStatus::FAIL, false, ret);  // allow clean up
-    LOG_INFO("prepare failed", K(ret), K(parent_task_id_), K(task_id_), K(*this));
+
     ret = OB_SUCCESS;
   }
   return ret;
@@ -2002,7 +2002,7 @@ int ObVecIVFIndexBuildTask::cleanup_impl()
                                               get_task_key(),
                                               ret_code_, trace_id_);
   }
-  LOG_INFO("clean task finished", K(ret), K(*this));
+
   return ret;
 }
 

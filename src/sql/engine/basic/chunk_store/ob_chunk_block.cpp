@@ -74,7 +74,7 @@ int ChunkRowMeta::init(const ObExprPtrIArray &exprs, const int32_t extra_size)
       extra_off_ = var_offsets_off_ + get_var_col_cnt() * sizeof(int32_t);
       fix_data_off_ = extra_off_ + extra_size_;
     }
-    LOG_INFO("successfully init row meta", K(fixed_cnt_), K(col_cnt_), K(var_data_off_), K(column_offset_), K(fix_data_off_));
+
   }
 
   return ret;
@@ -130,7 +130,7 @@ int ChunkRowMeta::init(const ObIArray<storage::ObColumnSchemaItem> &col_array,  
       extra_off_ = var_offsets_off_ + get_var_col_cnt() * sizeof(int32_t);
       fix_data_off_ = extra_off_ + extra_size_;
     }
-    LOG_INFO("successfully init row meta", K(fixed_cnt_), K(col_cnt_), K(var_data_off_), K(column_offset_), K(fix_data_off_));
+
   }
 
   return ret;

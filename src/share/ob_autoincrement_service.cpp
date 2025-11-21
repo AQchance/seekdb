@@ -102,7 +102,7 @@ int TableNode::alloc_handle(ObSmallAllocator &allocator,
     needed_interval = max_value;
   } else if (min_value > node.cache_end_) {
     ret = OB_SIZE_OVERFLOW;
-    LOG_TRACE("fail to alloc handle; cache is not enough", K(min_value), K(max_value), K(node), K(*this), K(ret));
+
   } else {
     ret = ObAutoincrementService::calc_next_value(min_value,
                                                   offset,
@@ -166,7 +166,7 @@ int TableNode::alloc_handle(ObSmallAllocator &allocator,
         handle->prefetch_end_ = needed_interval;
         handle->max_value_ = max_value;
         next_value_ = needed_interval + increment;
-        LOG_TRACE("succ to allocate cache handle", K(*handle), K(ret));
+
       }
     }
   } else if (OB_SIZE_OVERFLOW == ret) {
@@ -205,7 +205,7 @@ int CacheHandle::next_value(uint64_t &next_value)
     } else {
       if (next_value_ > prefetch_end_) {
         ret = OB_ERR_UNEXPECTED;
-        LOG_DEBUG("no available value in CacheHandle", K_(next_value), K(ret));
+
       } else {
         next_value = next_value_;
         // for insert...on duplicate key update
@@ -289,7 +289,7 @@ int ObAutoincrementService::get_handle(const ObSequenceSchema &schema, ObSequenc
         schema, nextval))) {
     LOG_WARN("fail get value", K(ret));
   } else {
-    LOG_TRACE("succ to allocate cache handle", K(nextval), K(ret));
+
   }
   return ret;
 }
@@ -401,7 +401,7 @@ int ObAutoincrementService::get_handle_order(AutoincParam &param, CacheHandle *&
         handle->prefetch_start_ = new_next_value;
         handle->prefetch_end_ = needed_interval;
         handle->max_value_ = max_value;
-        LOG_TRACE("succ to allocate cache handle", K(*handle), K(ret));
+
       }
     }
   }
@@ -440,7 +440,7 @@ int ObAutoincrementService::get_handle_noorder(AutoincParam &param, CacheHandle 
   desired_count = param.autoinc_desired_count_;
 
   TableNode *table_node = NULL;
-  LOG_DEBUG("begin to get cache handle", K(param));
+
   if (OB_FAIL(get_table_node(param, table_node))) {
     LOG_WARN("failed to get table node", K(param), K(ret));
   }
@@ -451,7 +451,7 @@ int ObAutoincrementService::get_handle_noorder(AutoincParam &param, CacheHandle 
                                                             column_id,
                                                             *table_node);
     if (OB_SUCCESS != ignore_ret) {
-      LOG_INFO("fail refresh global sync value. ignore this failure.", K(ignore_ret));
+
     }
   }
 
@@ -473,7 +473,7 @@ int ObAutoincrementService::get_handle_noorder(AutoincParam &param, CacheHandle 
         } else if (OB_FAIL(fetch_table_node(param, &mock_node))) {
           LOG_WARN("failed to fetch table node", K(param), K(ret));
         } else {
-          LOG_TRACE("fetch table node success", K(param), K(mock_node), K(*table_node));
+
           atomic_update(table_node->local_sync_, mock_node.local_sync_);
           atomic_update(table_node->last_refresh_ts_, mock_node.last_refresh_ts_);
           table_node->prefetch_node_.reset();
@@ -497,7 +497,7 @@ int ObAutoincrementService::get_handle_noorder(AutoincParam &param, CacheHandle 
                                                 desired_count, max_value, handle))) {
             LOG_WARN("failed to alloc cache handle", K(param), K(ret));
           } else {
-            LOG_DEBUG("succ to get cache handle", K(param), K(*handle), K(ret));
+
           }
         }
       }
@@ -508,7 +508,7 @@ int ObAutoincrementService::get_handle_noorder(AutoincParam &param, CacheHandle 
       table_node->prefetching_ = true;
     }
     if (OB_SUCC(ret) && OB_UNLIKELY(need_prefetch)) {
-      LOG_DEBUG("begin to prefetch table node", K(param), K(ret));
+
       // ensure single thread to prefetch
       TableNode mock_node;
       if (OB_FAIL(fetch_table_node(param, &mock_node, true))) {
@@ -516,10 +516,10 @@ int ObAutoincrementService::get_handle_noorder(AutoincParam &param, CacheHandle 
       } else if (OB_FAIL(alloc_autoinc_try_lock(table_node->alloc_mutex_))) {
         LOG_WARN("failed to get alloc mutex lock", K(ret));
       } else {
-        LOG_INFO("fetch table node success", K(param), K(mock_node), K(*table_node));
+
         if (table_node->prefetch_node_.cache_start_ != 0 ||
             mock_node.prefetch_node_.cache_start_ <= table_node->curr_node_.cache_end_) {
-          LOG_TRACE("new table_node has been fetched by other, ignore");
+
         } else {
           atomic_update(table_node->local_sync_, mock_node.local_sync_);
           atomic_update(table_node->last_refresh_ts_, mock_node.last_refresh_ts_);
@@ -592,14 +592,14 @@ void ObAutoincrementService::release_handle(CacheHandle *&handle)
 int ObAutoincrementService::refresh_sync_value(const obrpc::ObAutoincSyncArg &arg)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("begin to get global sync", K(arg));
+
   TableNode *table_node = NULL;
   AutoincKey key;
   key.tenant_id_ = arg.tenant_id_;
   key.table_id_  = arg.table_id_;
   key.column_id_ = arg.column_id_;
   if (OB_ENTRY_NOT_EXIST == (ret = node_map_.get(key, table_node))) {
-    LOG_TRACE("there is no cache here", K(arg));
+
     ret = OB_SUCCESS;
   } else if (OB_SUCC(ret)) {
     const uint64_t sync_value = arg.sync_value_;
@@ -731,7 +731,7 @@ int ObAutoincrementService::try_lock_autoinc_row(const uint64_t &tenant_id,
     } else if (OB_FAIL(result->next())) {
       if (OB_ITER_END == ret) {
         ret = OB_SUCCESS;
-        LOG_INFO("autoinc row not exist", K(tenant_id), K(table_id), K(column_id));
+
       } else {
         LOG_WARN("iterate next result fail", KR(ret), K(lock_sql));
       }
@@ -824,7 +824,7 @@ int ObAutoincrementService::clear_autoinc_cache_all(const uint64_t tenant_id,
       const int64_t sync_timeout = SYNC_OP_TIMEOUT + TIME_SKEW;
       ObHashSet<ObAddr>::iterator iter;
       for(iter = server_set.begin(); OB_SUCC(ret) && iter != server_set.end(); ++iter) {
-        LOG_INFO("send rpc call to other observers", "server", iter->first, K(tenant_id), K(table_id));
+
         if (OB_FAIL(srv_proxy_->to(iter->first)
                               .by(tenant_id)
                               .timeout(sync_timeout)
@@ -847,7 +847,7 @@ int ObAutoincrementService::clear_autoinc_cache_all(const uint64_t tenant_id,
 int ObAutoincrementService::clear_autoinc_cache(const obrpc::ObAutoincSyncArg &arg)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("begin to clear local auto-increment cache", K(arg));
+
   // auto-increment key
   AutoincKey key;
   key.tenant_id_ = arg.tenant_id_;
@@ -937,7 +937,7 @@ int ObAutoincrementService::get_table_node(const AutoincParam &param, TableNode 
         LOG_WARN("failed to get lock", K(ret));
       } else {
         if (OB_ENTRY_NOT_EXIST == (ret = node_map_.get(key, table_node))) {
-          LOG_INFO("alloc table node for auto increment key", K(key));
+
           if (OB_FAIL(node_map_.alloc_value(table_node))) {
             LOG_ERROR("failed to alloc table node", K(param), K(ret));
           } else if (OB_FAIL(table_node->init(param.autoinc_table_part_num_))) {
@@ -964,7 +964,7 @@ int ObAutoincrementService::get_table_node(const AutoincParam &param, TableNode 
     } else {
       //  local cache is expired
        if (OB_UNLIKELY(autoinc_version > table_node->autoinc_version_)) {
-        LOG_INFO("start to reset table node", K(*table_node), K(param));
+
         table_node->next_value_ = 0;
         table_node->local_sync_ = 0;
         table_node->curr_node_.reset();
@@ -981,7 +981,7 @@ int ObAutoincrementService::get_table_node(const AutoincParam &param, TableNode 
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_DEBUG("succ to get table node", K(param), KPC(table_node), K(ret));
+
   } else {
     LOG_WARN("failed to get table node", K(param), K(ret));
   }
@@ -1171,7 +1171,7 @@ int ObAutoincrementService::get_server_set(const uint64_t tenant_id,
   }
 
   if (OB_SUCC(ret)) {
-    LOG_TRACE("get partition locations", K(ls_locations), K(ret));
+
     ObLSReplicaLocation location;
     for(int64_t i = 0; OB_SUCC(ret) && i < ls_locations.count(); ++i) {
       if (!get_follower) {
@@ -1200,7 +1200,7 @@ int ObAutoincrementService::get_server_set(const uint64_t tenant_id,
       }
     }
   }
-  LOG_DEBUG("sync server_set", K(server_set), K(ret));
+
   return ret;
 }
 
@@ -1238,7 +1238,7 @@ int ObAutoincrementService::sync_insert_value_order(AutoincParam &param,
                                     cache_handle->next_value_))) {
           LOG_WARN("failed to calc next value", K(cache_handle), K(param), K(ret));
         }
-        LOG_DEBUG("generate next value when sync_insert_value", K(insert_value), K(cache_handle->next_value_));
+
       }
     } else {
       // release handle No.
@@ -1270,7 +1270,7 @@ int ObAutoincrementService::sync_insert_value_noorder(AutoincParam &param,
   const uint64_t part_num      = param.autoinc_table_part_num_;
   const int64_t autoinc_version = param.autoinc_version_;
   TableNode *table_node = NULL;
-  LOG_DEBUG("begin to sync insert value globally", K(param), K(insert_value));
+
   if (OB_FAIL(get_table_node(param, table_node))) {
     LOG_WARN("table node should exist", K(param), K(ret));
   } else {
@@ -1333,7 +1333,7 @@ int ObAutoincrementService::sync_insert_value_noorder(AutoincParam &param,
                                         cache_handle->next_value_))) {
               LOG_WARN("failed to calc next value", K(cache_handle), K(param), K(ret));
             }
-            LOG_DEBUG("generate next value when sync_insert_value", K(insert_value), K(cache_handle->next_value_));
+
           }
         } else {
           // release handle No.
@@ -1367,7 +1367,7 @@ int ObAutoincrementService::sync_insert_value_noorder(AutoincParam &param,
               table_node->curr_node_.cache_start_ = mock_node.curr_node_.cache_start_;
               table_node->curr_node_.cache_end_ = mock_node.curr_node_.cache_end_;
             }
-            LOG_INFO("fetch table node success", K(param), K(*table_node));
+
           }
         }
         table_node->alloc_mutex_.unlock();
@@ -1387,7 +1387,7 @@ int ObAutoincrementService::sync_value_to_other_servers(
 {
   int ret = OB_SUCCESS;
   // sync observer where table partitions exist
-  LOG_DEBUG("begin to sync other servers", K(param));
+
   ObAutoincSyncArg arg;
   arg.tenant_id_ = param.tenant_id_;
   arg.table_id_  = param.autoinc_table_id_;
@@ -1402,7 +1402,7 @@ int ObAutoincrementService::sync_value_to_other_servers(
     }
 
     if (OB_SUCC(ret)) {
-      LOG_DEBUG("server_set after remove self", K(server_set), K(ret));
+
       ObHashSet<ObAddr>::iterator iter;
       // this operation succeeds in two case:
       //   1. sync to all servers (without timeout)
@@ -1414,7 +1414,7 @@ int ObAutoincrementService::sync_value_to_other_servers(
       const int64_t start_us = ObTimeUtility::current_time();
       const int64_t sync_timeout = SYNC_OP_TIMEOUT + TIME_SKEW;
       for(iter = server_set.begin(); OB_SUCC(ret) && iter != server_set.end(); ++iter) {
-        LOG_INFO("send rpc call to other observers", "server", iter->first);
+
         sync_us = THIS_WORKER.get_timeout_remain();
         if (sync_us > sync_timeout) {
           sync_us = sync_timeout;
@@ -1436,7 +1436,7 @@ int ObAutoincrementService::sync_value_to_other_servers(
           }
         } else if (ObTimeUtility::current_time() - start_us >= sync_timeout) {
           // reach SYNC_TIMEOUT, go on
-          LOG_INFO("reach SYNC_TIMEOUT, go on", "server", iter->first, K(param), K(ret));
+
           break;
         } else if (THIS_WORKER.is_timeout()) {
           ret = OB_TIMEOUT;
@@ -1494,7 +1494,7 @@ int ObAutoincrementService::sync_auto_increment_all(const uint64_t tenant_id,
                                                     const uint64_t sync_value)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("begin to sync auto_increment value", K(sync_value), K(tenant_id), K(table_id));
+
 
   // if (OB_SUCC(ret)) {
   //   AutoincKey key(tenant_id, table_id, column_id);
@@ -1517,12 +1517,12 @@ int ObAutoincrementService::sync_auto_increment_all(const uint64_t tenant_id,
       if (OB_FAIL(get_server_set(tenant_id, table_id, server_set, true))) {
         SHARE_LOG(WARN, "failed to get table partitions server set", K(ret));
       }
-      LOG_DEBUG("sync server_set", K(server_set), K(ret));
+
       if (OB_SUCC(ret)) {
         const int64_t sync_timeout = SYNC_OP_TIMEOUT + TIME_SKEW;
         ObHashSet<ObAddr>::iterator iter;
         for(iter = server_set.begin(); OB_SUCC(ret) && iter != server_set.end(); ++iter) {
-          LOG_DEBUG("send rpc call to other observers", "server", iter->first);
+
           if (OB_FAIL(srv_proxy_->to(iter->first)
                                 .timeout(sync_timeout)
                                 .refresh_sync_value(arg))) {
@@ -1631,7 +1631,7 @@ int ObAutoincrementService::calc_next_value(const uint64_t last_next_value,
       new_next_value = UINT64_MAX;
     }
   }
-  LOG_DEBUG("calc next value", K(new_next_value), K(ret));
+
   return ret;
 }
 
@@ -2057,7 +2057,7 @@ int ObAutoIncInnerTableProxy::next_autoinc_value(const AutoincKey &key,
       }
     }
   }
-  LOG_DEBUG("get_value done", K(max_value), K(sync_value), K(start_inclusive), K(end_inclusive));
+
   return ret;
 }
 
@@ -2339,7 +2339,7 @@ int ObAutoIncInnerTableProxy::sync_autoinc_value(const AutoincKey &key,
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("unexpected error", K(affected_rows), K(ret));
         } else {
-          LOG_TRACE("sync insert value", K(key), K(insert_value));
+
         }
 
         // commit transaction or rollback

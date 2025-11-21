@@ -68,7 +68,7 @@ int ObExprMakeTime::eval_batch_maketime(const ObExpr &expr, ObEvalCtx &ctx,
                           const ObBitVector &skip, const int64_t batch_size)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("eval_batch_maketime start: batch mode", K(batch_size));
+
   ObDatumVector results  = expr.locate_expr_datumvector(ctx);
   ObBitVector &eval_flags = expr.get_evaluated_flags(ctx);
   ObDatumVector input_hours;
@@ -135,7 +135,7 @@ int ObExprMakeTime::eval_batch_maketime(const ObExpr &expr, ObEvalCtx &ctx,
       eval_flags.set(i);
     }
   }
-  LOG_DEBUG("eval_batch_maketime finished: batch mode", K(batch_size));
+
   return ret;
 }
 

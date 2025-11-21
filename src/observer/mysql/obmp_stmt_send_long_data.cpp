@@ -83,7 +83,7 @@ int ObMPStmtSendLongData::before_process()
       buffer_.assign_ptr(pos, static_cast<ObString::obstr_size_t>(buffer_len_));
       LOG_INFO("resolve send_long_data protocol packet successfully",
                K(stmt_id_), K(param_id_), K(buffer_len_));
-      LOG_DEBUG("send_long_data packet content", K(buffer_));
+
     }
     LOG_INFO("resolve send_long_data protocol packet",
              K(ret), K(stmt_id_), K(param_id_), K(buffer_len_), K(buffer_.length()));
@@ -162,7 +162,7 @@ int ObMPStmtSendLongData::process()
       need_disconnect_ = true;
     } else if (OB_FAIL(session.check_tenant_status())) {
       need_disconnect_ = false;
-      LOG_INFO("unit has been migrated, need deny new request", K(ret), K(MTL_ID()));
+
     } else {
       THIS_WORKER.set_timeout_ts(get_receive_timestamp() + query_timeout);
       session.partition_hit().reset();

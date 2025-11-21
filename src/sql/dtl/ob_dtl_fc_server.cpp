@@ -63,7 +63,7 @@ int ObTenantDfc::mtl_init(ObTenantDfc *&tenant_dfc)
       LOG_WARN("failed to init tenant memory manager", K(ret));
     }
     // tenant_dfc->calc_max_buffer(10);
-    LOG_INFO("init tenant dfc", K(ret), K(tenant_dfc->tenant_id_));
+
   }
   return ret;
 }
@@ -71,7 +71,7 @@ int ObTenantDfc::mtl_init(ObTenantDfc *&tenant_dfc)
 void ObTenantDfc::mtl_destroy(ObTenantDfc *&tenant_dfc)
 {
   if (nullptr != tenant_dfc) {
-    LOG_INFO("trace tenant dfc destroy", K(tenant_dfc->tenant_id_));
+
     tenant_dfc->tenant_mem_mgr_.destroy();
     common::ob_delete(tenant_dfc);
     tenant_dfc = nullptr;
@@ -148,7 +148,7 @@ void ObTenantDfc::calc_max_buffer(int64_t max_parallel_cnt)
     max_blocked_buffer_size_ *= factor;
     ret = OB_SUCCESS;
   }
-  LOG_INFO("trace tenant dfc parameters", K(max_parallel_cnt_), K(max_blocked_buffer_size_), K(max_buffer_size_));
+
 }
 
 int ObTenantDfc::register_dfc_channel(ObDtlFlowControl &dfc, ObDtlChannel* ch)
@@ -207,7 +207,7 @@ int ObTenantDfc::enforce_block(ObDtlFlowControl *dfc, int64_t ch_idx)
   if (!dfc->is_block(ch_idx)) {
     increase_blocked_channel_cnt();
     dfc->set_block(ch_idx);
-    LOG_TRACE("receive set channel block trace", K(dfc), K(ret), K(ch_idx));
+
   }
   return ret;
 }
@@ -224,7 +224,7 @@ int ObTenantDfc::try_unblock_tenant_dfc(ObDtlFlowControl *dfc, int64_t ch_idx)
       if (0 < unblock_cnt) {
         decrease_blocked_channel_cnt(unblock_cnt);
       }
-      LOG_TRACE("unblock channel on decrease size", K(dfc), K(ret), K(unblock_cnt), K(ch_idx));
+
     } else if (dfc->is_block(ch_idx)) {
       ObDtlChannel *dtl_ch = nullptr;
       if (OB_FAIL(dfc->get_channel(ch_idx, dtl_ch))) {
@@ -246,7 +246,7 @@ int ObTenantDfc::try_unblock_tenant_dfc(ObDtlFlowControl *dfc, int64_t ch_idx)
         }
       }
     }
-    LOG_TRACE("unblock channel on decrease size", K(dfc), K(ret), K(dfc->is_block()));
+
   }
   return ret;
 }
@@ -282,7 +282,7 @@ int ObTenantDfc::unblock_channels(ObDtlFlowControl *dfc)
     if (0 < unblock_cnt) {
       decrease_blocked_channel_cnt(unblock_cnt);
     }
-    LOG_TRACE("unblock channel on decrease size", K(dfc), K(ret), K(unblock_cnt));
+
   }
   return ret;
 }

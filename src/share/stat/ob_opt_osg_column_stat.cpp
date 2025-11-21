@@ -124,7 +124,7 @@ int ObOptOSGColumnStat::set_min_max_datum_to_obj()
   } else {
     const ObObj &min_val = col_stat_->get_min_value();
     const ObObj &max_val = col_stat_->get_max_value();
-    LOG_TRACE("set min/max val", KPC(min_obj), KPC(max_obj), K(min_val), K(max_val));
+
     if (min_val.is_null() || (!min_obj->is_null() && *min_obj < min_val)) {
       col_stat_->set_min_value(*min_obj);
     }
@@ -292,7 +292,7 @@ int ObOptOSGColumnStat::inner_merge_max(const ObDatum &datum, const ObObjMeta &m
         LOG_WARN("failed to deep copy datum");
       }
     }
-    LOG_TRACE("succeed to merge max datum", K(cmp_ret), K(*max_val_.datum_), K(datum), K(meta));
+
   }
   return ret;
 }

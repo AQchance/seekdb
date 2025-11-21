@@ -94,7 +94,7 @@ int ObAnalyzeExecutor::execute(ObExecContext &ctx, ObAnalyzeStmt &stmt)
             } else {/*do nothing*/}
           }
         }
-        LOG_TRACE("succeed to drop table stats", K(params));
+
       } else {
         int64_t task_cnt = params.count();
         int64_t start_time = ObTimeUtility::current_time();
@@ -128,7 +128,7 @@ int ObAnalyzeExecutor::execute(ObExecContext &ctx, ObAnalyzeStmt &stmt)
             } else if (OB_FAIL(pl::ObDbmsStats::update_stat_cache(session->get_rpc_tenant_id(), param))) {
               LOG_WARN("failed to update stat cache", K(ret));
             } else {
-              LOG_TRACE("succeed to gather table stats", K(param));
+
             }
             if (ret == OB_SUCCESS || ret == OB_TIMEOUT) {
               int tmp_ret = ret;

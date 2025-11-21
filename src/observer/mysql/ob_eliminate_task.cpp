@@ -79,7 +79,7 @@ int ObEliminateTask::check_config_mem_limit(bool &is_change)
     ret = OB_SUCCESS;
   } else {
     if (config_mem_limit_ != mem_limit) {
-      LOG_INFO("change config mem limit", K(config_mem_limit_), K(mem_limit), K(tenant_id));
+
       bool use_mini_mem = lib::is_mini_mode() || MTL_IS_MINI_MODE() || is_meta_tenant(tenant_id);                 
       config_mem_limit_ = mem_limit;
       if (mem_limit < MINIMUM_LIMIT && !use_mini_mem) {
@@ -192,7 +192,7 @@ void ObEliminateTask::runTimerTask()
       code = OB_E(EventTable::EN_SQL_AUDIT_RELEASE_BACK_THREAD_STUCK) OB_SUCCESS;
       if (OB_UNLIKELY(OB_SUCCESS != code && is_tp_trigger_)) {
         sleep(abs(code));
-        LOG_INFO("eliminate sleep", K(abs(code)));
+
         is_tp_trigger_ = false;
       } else if (OB_SUCCESS == code) {
         is_tp_trigger_ = true;
@@ -205,7 +205,7 @@ void ObEliminateTask::runTimerTask()
         }
         evict_batch_count++;
         if ((evict_low_mem_level < allocator->allocated()) && (last_time_allocated == allocator->allocated())) {
-          LOG_INFO("release old cannot free more memory");
+
           break;
         }
         last_time_allocated = allocator->allocated();

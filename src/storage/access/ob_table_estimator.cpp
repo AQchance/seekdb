@@ -125,7 +125,7 @@ int ObTableEstimator::estimate_row_count_for_scan(
     if (part_estimate.logical_row_count_ > part_estimate.physical_row_count_) {
       part_estimate.logical_row_count_ = part_estimate.physical_row_count_;
     }
-    LOG_DEBUG("final estimate", K(ret), K(part_estimate));
+
   }
   return ret;
 }
@@ -143,7 +143,7 @@ int ObTableEstimator::estimate_multi_scan_row_count(
     const ObDatumRange &range = ranges.at(i);
     bool is_single_rowkey = false;
     if (OB_FAIL(range.is_single_rowkey(rowkey_read_info.get_datum_utils(), is_single_rowkey))) {
-      STORAGE_LOG(WARN, "Failed to check range is single rowkey", K(ret), K(range));
+
     } else if (is_single_rowkey) {
       // Back off to get mode if range contains single row key.
       tmp_cost.logical_row_count_ = tmp_cost.physical_row_count_ = 1;
@@ -169,7 +169,7 @@ int ObTableEstimator::estimate_multi_scan_row_count(
                         ->get_split_ranges(input_range, sub_range_cnt, store_ranges))) {
           LOG_WARN("Failed to split ranges", K(ret), K(tmp_cost));
         } else if (store_ranges.count() > 1) {
-          LOG_TRACE("estimated logical row count may be not right, split range and do estimating again", K(tmp_cost), K(store_ranges));
+
           common::ObArenaAllocator allocator("OB_STORAGE_EST", OB_MALLOC_NORMAL_BLOCK_SIZE, MTL_ID());
           for (int64_t i = 0; OB_SUCC(ret) && i < store_ranges.count(); ++i) {
             ObPartitionEst sub_cost;
@@ -197,7 +197,7 @@ int ObTableEstimator::estimate_multi_scan_row_count(
       ObDirectLoadMemtableScanRowCountEstimator estimator(base_input, range, tmp_cost);
       if (OB_FAIL(ddl_kv->access_first_ddl_memtable(estimator))) {
         if (OB_UNLIKELY(OB_ENTRY_NOT_EXIST != ret)) {
-          STORAGE_LOG(WARN, "fail to access first ddl memtable", K(ret), KPC(current_table));
+
         } else {
           ret = OB_SUCCESS;
         }
@@ -282,10 +282,10 @@ void ObTableEstimator::fix_invalid_logic_row(
 {
   if (table_est.logical_row_count_ < 0) {
     if (part_estimate.logical_row_count_ <= 0) {
-      LOG_TRACE("[STORAGE ESTIMATE ROW] the result logical row count is already 0", K(part_estimate), K(table_est));
+
       table_est.logical_row_count_ = 0;
     } else if (table_est.logical_row_count_ < -part_estimate.logical_row_count_) {
-      LOG_TRACE("[STORAGE ESTIMATE ROW] the deleted row count is greater than result logical row count", K(part_estimate), K(table_est));
+
       table_est.logical_row_count_ = -0.5 * part_estimate.logical_row_count_;
     }
   }

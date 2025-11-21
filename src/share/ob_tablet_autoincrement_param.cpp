@@ -111,7 +111,7 @@ int ObTabletAutoincSeq::assign(common::ObIAllocator &allocator, const ObTabletAu
 
     void *buf = nullptr;
     if (0 == other.intervals_count_) {
-      LOG_DEBUG("intervals count equals 0", K(ret));
+
     } else if (OB_ISNULL(buf = allocator.alloc(other.intervals_count_ * sizeof(ObTabletAutoincInterval)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
       LOG_WARN("alloc memory failed", K(ret));
@@ -179,7 +179,7 @@ int ObTabletAutoincSeq::deep_copy(const ObIMultiSourceDataUnit *src, ObIAllocato
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("invalid type", K(ret), K(src->type()), K(type()));
     } else if (0 == other->intervals_count_) {
-      LOG_DEBUG("intervals count equals 0");
+
     } else if (OB_ISNULL(buf = allocator->alloc(other->intervals_count_ * sizeof(ObTabletAutoincInterval)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
       LOG_WARN("alloc memory failed", K(ret));
@@ -327,7 +327,7 @@ int ObTabletAutoincSeq::deserialize_(common::ObIAllocator &allocator, const char
   if (OB_FAIL(serialization::decode_vi64(buf, data_len, pos, &intervals_count_))) {
     LOG_WARN("fail to decode ob array count", K(ret));
   } else if (0 == intervals_count_) {
-    LOG_DEBUG("intervals count equals 0", K(ret), K_(intervals_count));
+
   } else if (OB_ISNULL(ptr = allocator.alloc(intervals_count_ * sizeof(ObTabletAutoincInterval)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     LOG_WARN("alloc memory failed", K(ret), K(intervals_count_));

@@ -393,7 +393,7 @@ OB_INLINE int ObDictDecoder::init(
   // performance critical, don't check params, already checked upper layer
   if (OB_UNLIKELY(is_inited())) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init twice", K(ret));
+
   } else {
     const common::ObObjTypeClass type_class = ob_obj_type_class(column_header.get_store_obj_type());
     store_class_ = get_store_class_map()[type_class];

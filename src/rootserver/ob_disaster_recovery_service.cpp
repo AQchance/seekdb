@@ -50,7 +50,7 @@ int ObDRService::init()
   } else {
     tenant_id_ = tenant_id;
     inited_ = true;
-    LOG_INFO("[DRTASK_NOTICE] ObDRService init", K_(tenant_id), KP(this));
+
   }
   return ret;
 }
@@ -59,7 +59,7 @@ void ObDRService::destroy()
 {
   ObTenantThreadHelper::destroy();
   inited_ = false;
-  LOG_INFO("[DRTASK_NOTICE] ObDRService destroy", K_(tenant_id), KP(this));
+
 }
 
 int ObDRService::check_inner_stat_() const
@@ -134,7 +134,7 @@ int ObDRService::do_dr_service_work_()
     LOG_INFO("[DRTASK_NOTICE] disaster recovery service finish one round",
               KR(ret), K(idle_time_us), K_(tenant_id), K(thread_idx));
   }
-  LOG_INFO("[DRTASK_NOTICE] disaster recovery service stop", K_(tenant_id));
+
   return ret;
 }
 
@@ -150,7 +150,7 @@ int ObDRService::adjust_idle_time_(
   } else if (0 == task_count) {
     // if no task in table, idle time of mgr is extended to 30s.
     idle_time_us = 30L * 1000000L;
-    LOG_TRACE("idle time of mgr is extended to 30s", K(idle_time_us), K_(tenant_id), K(thread_idx));
+
   }
   return ret;
 }
@@ -166,7 +166,7 @@ int ObDRService::try_tenant_disaster_recovery_(
   const int64_t start_time = ObTimeUtility::fast_current_time();
   if (OB_UNLIKELY(ERRSIM_DISASTER_RECOVERY_WORKER_START)) {
     // for test, return success, skip try disaster recovery
-    LOG_INFO("errsim disaster recovery worker start", KR(ret));
+
   } else if (OB_FAIL(check_inner_stat_())) {
     LOG_WARN("fail to check inner stat", KR(ret));
   } else if (OB_UNLIKELY(!is_valid_tenant_id(tenant_id))) {
@@ -182,7 +182,7 @@ int ObDRService::try_tenant_disaster_recovery_(
     LOG_WARN("fail to wake up", KR(ret), K(tenant_id), K(acc_dr_task));
   }
   const int64_t cost = ObTimeUtility::fast_current_time() - start_time;
-  LOG_INFO("try check dr tasks over", KR(ret), K(cost), K(tenant_id), K(acc_dr_task));
+
   return ret;
 }
 
@@ -210,7 +210,7 @@ int ObDRService::manage_dr_tasks_(
     }
   }
   const int64_t cost = ObTimeUtility::fast_current_time() - start_time;
-  LOG_INFO("try manage dr tasks over", KR(ret), K(cost), K(tenant_id), K(need_clean_task), K(service_epoch_to_check));
+
   return ret;
 }
 
@@ -225,7 +225,7 @@ int ObDRService::check_need_clean_task_(
     last_check_ts = now;
     need_clean_task = true;
   } else {
-    LOG_TRACE("no need to check task", K(last_check_ts), K(now));
+
   }
   return ret;
 }
@@ -284,7 +284,7 @@ int ObDRService::get_tenant_ids_(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected tenant_id", KR(ret), K_(tenant_id));
   }
-  LOG_TRACE("get tenant id over", KR(ret), K_(tenant_id), K(tenant_ids));
+
   return ret;
 }
 
@@ -355,7 +355,7 @@ int ObDRService::check_and_update_service_epoch_(
         LOG_WARN("failed to check service epoch", KR(ret), K_(tenant_id));
       } else if (is_match) {
         // skip, optimization, no need to open transactions
-        LOG_TRACE("proposal_id and service epoch is match", K_(tenant_id), K(proposal_id));
+
       } else if (OB_FAIL(trans.start(GCTX.sql_proxy_, tenant_id_))) {
         LOG_WARN("failed to start trans", KR(ret), K_(tenant_id));
       } else if (OB_FAIL(share::ObServiceEpochProxy::select_service_epoch_for_update(
@@ -419,7 +419,7 @@ int ObDRService::update_tenant_service_epoch_(
 {
   // upgrade service epoch of user tenant and meta tenant at the same time
   // make sure they have the same value
-  LOG_INFO("update tenant service_epoch ", K(proposal_id), K_(tenant_id));
+
   int ret = OB_SUCCESS;
   int64_t affected_rows = 0;
   if (OB_FAIL(check_inner_stat_())) {

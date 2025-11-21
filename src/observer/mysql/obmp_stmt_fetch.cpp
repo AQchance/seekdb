@@ -726,7 +726,7 @@ int ObMPStmtFetch::process()
       LOG_WARN("fail get process extra info", K(ret));
     } else if (OB_FAIL(session.check_tenant_status())) {
       need_disconnect = false;
-      LOG_INFO("unit has been migrated, need deny new request", K(ret), K(MTL_ID()));
+
     } else {
       need_disconnect = false;
       ObPLCursorInfo *cursor = NULL;
@@ -902,7 +902,7 @@ int ObMPStmtFetch::response_row(ObSQLSessionInfo &session,
   } else if (OB_FAIL(response_row(session, row, fields, is_packed, NULL, schema_guard))) {
     LOG_WARN("response row fail.", K(ret), K(stmt_id));
   } else {
-    LOG_DEBUG("response row success.", K(stmt_id));
+
   }
   return ret;
 }

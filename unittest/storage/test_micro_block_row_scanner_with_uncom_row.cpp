@@ -153,7 +153,7 @@ int TestMicroBlockRowScanner::build_macro_and_scan(
     ret = OB_SUCCESS;
     micro_iter.reset();
     if(OB_FAIL(micro_iter.from(micro_data[i]))) {
-      STORAGE_LOG(WARN, "failed to get row from micro data", K(i));
+
     } else {
       build_micro_block_data(micro_iter, block_data, payload_data, end_key);
       if (0 == i) {
@@ -171,9 +171,9 @@ int TestMicroBlockRowScanner::build_macro_and_scan(
       MacroBlockId macro_id(ObLocalDevice::RESERVED_BLOCK_INDEX, 0);
       ObFullMacroBlockMeta full_meta;
       if(OB_FAIL(sstable_.get_meta(macro_id, full_meta))) {
-        STORAGE_LOG(WARN, "failed to get meta", K(i));
+
       } else if(OB_FAIL(m_scanner.open(macro_id, full_meta, payload_data, is_left_border, is_right_border))) {
-        STORAGE_LOG(WARN, "failed to open scanner", K(i));
+
       }
     }
     while (OB_SUCCESS == ret) {
@@ -181,9 +181,9 @@ int TestMicroBlockRowScanner::build_macro_and_scan(
       if (OB_SUCCESS == ret) {
         scanner_iter.add_row(const_cast<ObStoreRow *>(row));
         ObCStringHelper helper;
-        STORAGE_LOG(WARN, "test", "this row", helper.convert(*row));
+
       } else if (OB_ITER_END == ret) {
-        STORAGE_LOG(ERROR, "error", K(ret), KPC(row));
+
       }
     }
   }
@@ -232,7 +232,7 @@ TEST_F(TestMicroBlockRowScanner, uncommitted_row_commit)
   // make all trans commit
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::COMMIT, 12))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   // minor
@@ -264,7 +264,7 @@ TEST_F(TestMicroBlockRowScanner, uncommitted_row_commit)
   // make all trans commit
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::COMMIT, 12))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   // minor
@@ -295,7 +295,7 @@ TEST_F(TestMicroBlockRowScanner, uncommitted_row_commit)
   // make all trans commit
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::COMMIT, 12))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
   // minor
   trans_version_range.base_version_ = 0;
@@ -370,7 +370,7 @@ TEST_F(TestMicroBlockRowScanner, test_row_not_in_range)
   // make all trans commit
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::RUNNING, INT64_MAX))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
   // minor
   trans_version_range.base_version_ = 4;
@@ -423,7 +423,7 @@ TEST_F(TestMicroBlockRowScanner, test_row_not_in_range)
   test_trans_part_ctx_.clear_all();
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::COMMIT, 12))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   ASSERT_EQ(OB_SUCCESS, build_macro_and_scan(micro_cnt, micro_data, m_scanner, scanner_iter));
@@ -473,7 +473,7 @@ TEST_F(TestMicroBlockRowScanner, test_committed_row_across_macro_block)
   // make all trans commit
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::COMMIT, 29))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   // minor
@@ -500,7 +500,7 @@ TEST_F(TestMicroBlockRowScanner, test_committed_row_across_macro_block)
   // make all trans commit
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::ABORT, INT64_MAX))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   // minor
@@ -553,7 +553,7 @@ TEST_F(TestMicroBlockRowScanner, test_committed_row_across_macro_block2)
   // make all trans commit
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::COMMIT, 29))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   // minor
@@ -618,7 +618,7 @@ TEST_F(TestMicroBlockRowScanner, all_uncommitted_row)
   // make all trans running
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::RUNNING))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   // minor
@@ -726,7 +726,7 @@ TEST_F(TestMicroBlockRowScanner, all_uncommitted_row_with_rollback_sql_sequence)
   test_trans_part_ctx_.clear_all();
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::RUNNING))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   // minor
@@ -757,7 +757,7 @@ TEST_F(TestMicroBlockRowScanner, all_uncommitted_row_with_rollback_sql_sequence)
   scanner_iter.reset();
 
 
-  STORAGE_LOG(ERROR, "result two", K(ret));
+
   // minor
   trans_version_range.base_version_ = 0;
   trans_version_range.snapshot_version_ = 100;
@@ -781,7 +781,7 @@ TEST_F(TestMicroBlockRowScanner, all_uncommitted_row_with_rollback_sql_sequence)
   test_trans_part_ctx_.clear_all();
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::COMMIT, 19))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   ret = OB_SUCCESS;
@@ -834,7 +834,7 @@ TEST_F(TestMicroBlockRowScanner, uncommitted_row_in_multi_micro_block)
   test_trans_part_ctx_.clear_all();
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::RUNNING))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   // minor
@@ -887,7 +887,7 @@ TEST_F(TestMicroBlockRowScanner, uncommitted_row_in_multi_micro_block)
   test_trans_part_ctx_.clear_all();
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::COMMIT, 37))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   ret = OB_SUCCESS;
@@ -963,7 +963,7 @@ TEST_F(TestMicroBlockRowScanner, uncommitted_row_in_multi_micro_block2)
   // make all trans running
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::RUNNING))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   // minor
@@ -1015,7 +1015,7 @@ TEST_F(TestMicroBlockRowScanner, uncommitted_row_in_multi_micro_block2)
   // make all trans commit
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::COMMIT, 37))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   ret = OB_SUCCESS;
@@ -1081,7 +1081,7 @@ TEST_F(TestMicroBlockRowScanner, uncommitted_row_in_single_micro_block)
   // make all trans running
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::RUNNING))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   // minor
@@ -1137,7 +1137,7 @@ TEST_F(TestMicroBlockRowScanner, uncommitted_row_in_single_micro_block)
   test_trans_part_ctx_.clear_all();
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::COMMIT, 37))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   ret = OB_SUCCESS;
@@ -1205,7 +1205,7 @@ TEST_F(TestMicroBlockRowScanner, abort_row_in_single_micro_block)
   // make all trans abort
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::ABORT))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   // minor
@@ -1274,7 +1274,7 @@ TEST_F(TestMicroBlockRowScanner, abort_row_in_multi_micro_block)
   // make all trans abort
   if (OB_FAIL(test_trans_part_ctx_.set_all_transaction_status(
       transaction::ObTransTableStatusType::ABORT))) {
-    STORAGE_LOG(ERROR, "add transaction status failed", K(ret));
+
   }
 
   // minor
@@ -1359,7 +1359,7 @@ TEST_F(TestMicroBlockRowScanner, mix_trans_row_in_single_micro_block)
   for (int i = 0; OB_SUCC(ret) && i < 3; ++i) {
     if (OB_FAIL(test_trans_part_ctx_.add_transaction_status(
         status1[i], commit_trans_version1[i]))) {
-      STORAGE_LOG(ERROR, "add transaction status failed", K(ret), K(i));
+
     }
   }
 
@@ -1399,9 +1399,9 @@ TEST_F(TestMicroBlockRowScanner, mix_trans_row_in_single_micro_block)
   for (int i = 0; OB_SUCC(ret) && i < 3; ++i) {
     if (OB_FAIL(test_trans_part_ctx_.add_transaction_status(
         status2[i], commit_trans_version2[i]))) {
-      STORAGE_LOG(ERROR, "add transaction status failed", K(ret), K(i));
+
     }
-    STORAGE_LOG(DEBUG, "add transaction status success", K(ret), K(i));
+
   }
 
   ASSERT_EQ(OB_SUCCESS, build_macro_and_scan(micro_cnt, micro_data, m_scanner, scanner_iter));
@@ -1471,7 +1471,7 @@ TEST_F(TestMicroBlockRowScanner, mix_trans_row_in_single_micro_block2)
   for (int i = 0; OB_SUCC(ret) && i < 3; ++i) {
     if (OB_FAIL(test_trans_part_ctx_.add_transaction_status(
         status1[i], commit_trans_version1[i]))) {
-      STORAGE_LOG(ERROR, "add transaction status failed", K(ret), K(i));
+
     }
   }
 
@@ -1509,7 +1509,7 @@ TEST_F(TestMicroBlockRowScanner, mix_trans_row_in_single_micro_block2)
   for (int i = 0; OB_SUCC(ret) && i < 3; ++i) {
     if (OB_FAIL(test_trans_part_ctx_.add_transaction_status(
         status2[i], commit_trans_version2[i]))) {
-      STORAGE_LOG(ERROR, "add transaction status failed", K(ret), K(i));
+
     }
   }
 
@@ -1590,7 +1590,7 @@ TEST_F(TestMicroBlockRowScanner, mix_trans_row_in_multi_micro_block)
   for (int i = 0; OB_SUCC(ret) && i < 3; ++i) {
     if (OB_FAIL(test_trans_part_ctx_.add_transaction_status(
         status1[i], commit_trans_version1[i]))) {
-      STORAGE_LOG(ERROR, "add transaction status failed", K(ret), K(i));
+
     }
   }
 
@@ -1632,7 +1632,7 @@ TEST_F(TestMicroBlockRowScanner, mix_trans_row_in_multi_micro_block)
   for (int i = 0; OB_SUCC(ret) && i < 3; ++i) {
     if (OB_FAIL(test_trans_part_ctx_.add_transaction_status(
         status2[i], commit_trans_version2[i]))) {
-      STORAGE_LOG(ERROR, "add transaction status failed", K(ret), K(i));
+
     }
   }
 
@@ -1671,9 +1671,9 @@ TEST_F(TestMicroBlockRowScanner, mix_trans_row_in_multi_micro_block)
   for (int i = 0; OB_SUCC(ret) && i < 3; ++i) {
     if (OB_FAIL(test_trans_part_ctx_.add_transaction_status(
         status3[i], commit_trans_version3[i]))) {
-      STORAGE_LOG(ERROR, "add transaction status failed", K(ret), K(i));
+
     }
-    STORAGE_LOG(INFO, "add transaction status success", K(ret), K(i));
+
   }
 
   ASSERT_EQ(OB_SUCCESS, build_macro_and_scan(micro_cnt, micro_data, m_scanner, scanner_iter));
@@ -1760,7 +1760,7 @@ TEST_F(TestMicroBlockRowScanner, mix_trans_row_in_multi_micro_block2)
   for (int i = 0; OB_SUCC(ret) && i < 3; ++i) {
     if (OB_FAIL(test_trans_part_ctx_.add_transaction_status(
         status1[i], commit_trans_version1[i]))) {
-      STORAGE_LOG(ERROR, "add transaction status failed", K(ret), K(i));
+
     }
   }
 
@@ -1802,7 +1802,7 @@ TEST_F(TestMicroBlockRowScanner, mix_trans_row_in_multi_micro_block2)
   for (int i = 0; OB_SUCC(ret) && i < 3; ++i) {
     if (OB_FAIL(test_trans_part_ctx_.add_transaction_status(
         status2[i], commit_trans_version2[i]))) {
-      STORAGE_LOG(ERROR, "add transaction status failed", K(ret), K(i));
+
     }
   }
   ASSERT_EQ(OB_SUCCESS, build_macro_and_scan(index, micro_data, m_scanner, scanner_iter));
@@ -1840,7 +1840,7 @@ TEST_F(TestMicroBlockRowScanner, mix_trans_row_in_multi_micro_block2)
   for (int i = 0; OB_SUCC(ret) && i < 3; ++i) {
     if (OB_FAIL(test_trans_part_ctx_.add_transaction_status(
         status3[i], commit_trans_version3[i]))) {
-      STORAGE_LOG(ERROR, "add transaction status failed", K(ret), K(i));
+
     }
   }
 
@@ -1950,7 +1950,7 @@ TEST_F(TestMicroBlockRowScanner, mix_trans_row_in_multi_micro_block3)
   for (int i = 0; OB_SUCC(ret) && i < 5; ++i) {
     if (OB_FAIL(test_trans_part_ctx_.add_transaction_status(
         status1[i], commit_trans_version1[i]))) {
-      STORAGE_LOG(ERROR, "add transaction status failed", K(ret), K(i));
+
     }
   }
 
@@ -1996,7 +1996,7 @@ TEST_F(TestMicroBlockRowScanner, mix_trans_row_in_multi_micro_block3)
   for (int i = 0; OB_SUCC(ret) && i < 5; ++i) {
     if (OB_FAIL(test_trans_part_ctx_.add_transaction_status(
         status2[i], commit_trans_version2[i]))) {
-      STORAGE_LOG(ERROR, "add transaction status failed", K(ret), K(i));
+
     }
   }
 
@@ -2039,7 +2039,7 @@ TEST_F(TestMicroBlockRowScanner, mix_trans_row_in_multi_micro_block3)
   for (int i = 0; OB_SUCC(ret) && i < 5; ++i) {
     if (OB_FAIL(test_trans_part_ctx_.add_transaction_status(
         status3[i], commit_trans_version3[i]))) {
-      STORAGE_LOG(ERROR, "add transaction status failed", K(ret), K(i));
+
     }
   }
 
@@ -2131,7 +2131,7 @@ TEST_F(TestMicroBlockRowScanner, mix_trans_row_without_last_row)
   for (int i = 0; OB_SUCC(ret) && i < 4; ++i) {
     if (OB_FAIL(test_trans_part_ctx_.add_transaction_status(
         status1[i], commit_trans_version1[i]))) {
-      STORAGE_LOG(ERROR, "add transaction status failed", K(ret), K(i));
+
     }
   }
 
@@ -2172,7 +2172,7 @@ TEST_F(TestMicroBlockRowScanner, mix_trans_row_without_last_row)
   for (int i = 0; OB_SUCC(ret) && i < 4; ++i) {
     if (OB_FAIL(test_trans_part_ctx_.add_transaction_status(
         status2[i], commit_trans_version2[i]))) {
-      STORAGE_LOG(ERROR, "add transaction status failed", K(ret), K(i));
+
     }
   }
 
@@ -2212,7 +2212,7 @@ TEST_F(TestMicroBlockRowScanner, mix_trans_row_without_last_row)
   for (int i = 0; OB_SUCC(ret) && i < 4; ++i) {
     if (OB_FAIL(test_trans_part_ctx_.add_transaction_status(
         status3[i], commit_trans_version3[i]))) {
-      STORAGE_LOG(ERROR, "add transaction status failed", K(ret), K(i));
+
     }
   }
 
@@ -2232,7 +2232,7 @@ int main(int argc, char **argv)
   GCONF._enable_sparse_row = false;
   system("rm -f test_micro_block_row_scanner_with_uncom_row.log*");
   OB_LOGGER.set_file_name("test_micro_block_row_scanner_with_uncom_row.log");
-  STORAGE_LOG(INFO, "begin unittest: test_micro_block_row_scanner_with_uncom_row");
+
   oceanbase::common::ObLogger::get_logger().set_log_level("DEBUG");
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

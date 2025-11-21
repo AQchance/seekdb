@@ -51,7 +51,7 @@ int ObMVMergeSCNInfoCache::get_ls_info(
         LOG_WARN("failed to push_back", KR(ret), K(ls_id));
       } else {
         ls_info = &arr_.at(arr_.count() - 1);
-        LOG_INFO("add ls_info", KR(ret), K(ls_id), KPC(ls_info), KPC(this));
+
       }
     }
   }
@@ -76,7 +76,7 @@ int ObMVMergeSCNInfoCache::clear_deleted_ls_info(
         LOG_WARN("info.major_mv_merge_scn_publish_ is more than merge_scn", KR(ret), K(merge_scn), K(info), KPC(this));
       } else if (info.major_mv_merge_scn_publish_ < merge_scn) {
         arr_.remove(i);
-        LOG_INFO("delete ls info", K(i), K(info), K(merge_scn), KPC(this));
+
       }
     }
   }
@@ -119,7 +119,7 @@ int ObReplicaSafeCheckTask::start()
       LOG_WARN("fail to schedule mlog maintenance task", KR(ret));
     } else {
       in_sched_ = true;
-      LOG_INFO("ObReplicaSafeCheckTask started", KR(ret), KPC(this));
+
     }
   }
   return ret;
@@ -130,7 +130,7 @@ void ObReplicaSafeCheckTask::stop()
   is_stop_ = true;
   in_sched_ = false;
   cancel_task();
-  LOG_INFO("ObReplicaSafeCheckTask stopped", KPC(this));
+
 }
 
 void ObReplicaSafeCheckTask::wait() { wait_task(); }
@@ -174,7 +174,7 @@ void ObReplicaSafeCheckTask::runTimerTask()
         LOG_WARN("unexpected status", KR(ret), KPC(this));
         break;
     }
-    LOG_INFO("timer task finish", KR(ret), KPC(this));
+
   }
 }
 
@@ -194,7 +194,7 @@ void ObReplicaSafeCheckTask::switch_status(StatusType new_status, int64_t delay)
         LOG_WARN("fail to schedule replica safe check task", KR(ret), KPC(this));
       }
     }
-    LOG_INFO("replica safe check task switch_status", KR(ret), K(new_status), K(delay), KPC(this));
+
   } else {
     ret = OB_ERR_UNEXPECTED;
     LOG_ERROR("status error", KR(ret), K(new_status), K(delay), KPC(this));
@@ -320,13 +320,13 @@ int ObReplicaSafeCheckTask::publish_scn()
     }
     if (OB_SUCC(ret)) {
       if (0 == publish_cnt) {
-        LOG_INFO("there no log publish", KR(ret), KPC(this));
+
       } else if (OB_FAIL(ls_cache_.clear_deleted_ls_info(merge_scn_))) {
         LOG_WARN("failed to clear_deleted_ls_info", KR(ret), K(publish_cnt), K(this));
       }
     }
   }
-  LOG_INFO("publish_scn finish", KR(ret), K(need_publish), K(major_mv_merge_scn), K(lastest_merge_scn), KPC(this), K(ls_attr_array));
+
 
   if (OB_LS_LOCATION_LEADER_NOT_EXIST == ret || OB_NOT_MASTER == ret) {
     switch_status(StatusType::PUBLISH_SCN, LOCATION_RETRY_INTERVAL);
@@ -435,7 +435,7 @@ int ObReplicaSafeCheckTask::check_end()
     LOG_WARN("failed to check_row_empty", KR(ret), K(check_transfer_in_sql), KPC(this));
   } else if (!no_transfer_in) {
   }
-  LOG_INFO("check_end finish", KR(ret), K(no_new_create), K(no_transfer_in), KPC(this));
+
   if (OB_FAIL(ret)) {
     switch_status(StatusType::PUBLISH_SCN, ERROR_RETRY_INTERVAL);
   } else if (!no_new_create || !no_transfer_in) {
@@ -476,7 +476,7 @@ int ObReplicaSafeCheckTask::notice_safe()
       }
     }
   }
-  LOG_INFO("notice_safe finish", KR(ret), KPC(this));
+
 
   if (OB_LS_LOCATION_LEADER_NOT_EXIST == ret || OB_NOT_MASTER == ret) {
     switch_status(StatusType::NOTICE_SAFE, LOCATION_RETRY_INTERVAL);
@@ -525,7 +525,7 @@ int ObReplicaSafeCheckTask::create_ls_with_tenant_mv_merge_scn(const uint64_t te
       }
     }
   }
-  LOG_INFO("create ls with tenant mv merge scn", K(ret), K(merge_scn), K(tenant_id), K(ls_id));
+
   return ret;
 }
 // void ObReplicaSafeCheckTask::finish()

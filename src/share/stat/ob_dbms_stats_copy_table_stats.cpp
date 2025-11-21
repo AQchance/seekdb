@@ -59,7 +59,7 @@ int CopyTableStatHelper::copy_part_stat(ObIArray<ObOptTableStat *> &table_stats)
     } else if (OB_FAIL(table_stats.push_back(dst_part_stat))) {
       LOG_WARN("failed to push back table stats", K(ret));
     } else {
-      LOG_TRACE("succeed to copy part stat", KPC(dst_part_stat), K(scale_factor_));
+
     }
   }
   return ret;
@@ -153,7 +153,7 @@ int CopyTableStatHelper::copy_col_stat(bool is_subpart,
             && dst_col_stat->get_num_distinct() <= 1) {
           dst_col_stat->set_num_distinct(2);
         }
-        LOG_TRACE("succeed to copy col stat", KPC(dst_col_stat), KPC(dst_part_info));
+
         if (OB_SUCC(ret) && OB_FAIL(column_stats.push_back(dst_col_stat))) {
           LOG_WARN("failed to push back column stat", K(ret));
         }
@@ -474,7 +474,7 @@ int ObDbmsStatsCopyTableStats::find_src_tab_stat(const ObTableStatParam &table_s
         LOG_WARN("get unexpected null", K(ret), K(cur_tab_stat), K(table_stat_param.part_infos_));
       } else if (src_part_id == cur_tab_stat->get_partition_id()) {
         src_tab_stat = cur_tab_stat;
-        LOG_TRACE("succeed to find src part stat", KPC(src_tab_stat));
+
       }
     }
   }
@@ -661,7 +661,7 @@ int ObDbmsStatsCopyTableStats::get_hash_or_default_part_info(const ObTableSchema
         dst_part_info->max_res_type_ = CopySrcPartMaxVal;
         dst_part_info->is_hash_part_ = is_hash;
       }
-      LOG_TRACE("succeed to get hash or default list part info", KPC(dst_part_info), K(copy_level), K(i));
+
     }
   }
   return ret;
@@ -807,7 +807,7 @@ int ObDbmsStatsCopyTableStats::get_copy_part_info(const ObTableSchema *table_sch
       } else if (OB_FAIL(helper.dst_part_map_.set_refactored(column.column_id_, dst_part_info))) {
         LOG_WARN("failed to set part info", K(ret));
       } else {
-        LOG_DEBUG("add dist part info", K(copy_level), K(column.column_id_));
+
       }
     }
   }

@@ -763,7 +763,7 @@ int ObExternalTableUtils::split_odps_to_sqcs_storage_api(int64_t split_task_coun
   if (odps_api_mode == sql::ObODPSGeneralFormat::ApiMode::BYTE) {
     int64_t start = 0;
     if (split_task_count == 0) {
-      LOG_INFO("no task for reader", K(lbt()));
+
     } else {
     
       int64_t sqc_idx = 0;
@@ -1269,7 +1269,7 @@ int ObExternalTableUtils::collect_local_files_on_servers(
       context.get_cb_list().at(i)->~ObRpcAsyncLoadExternalTableFileCallBack();
     }
   }
-  LOG_TRACE("update external table file list", K(ret), K(file_urls), K(location), K(pattern), K(all_servers));
+
   return ret;
 }
 
@@ -1315,7 +1315,7 @@ int ObExternalTableUtils::sort_external_files(ObIArray<ObString> &file_urls,
       }
     }
   }
-  LOG_TRACE("after filter external table files", K(ret), K(file_urls));
+
   return ret;
 }
 

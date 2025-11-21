@@ -237,7 +237,7 @@ int ObRpcSessionHandler::wait_for_next_request(int64_t sessid,
             LOG_ERROR("wait object has been released", K(sessid), K(ret));
             break;
           } else if (OB_ISNULL(wait_object.req_)) {
-            LOG_DEBUG("the stream request hasn't come");
+
             // when waiting for OB_REMOTE_EXECUTE/OB_REMOTE_SYNC_EXECUTE/OB_INNER_SQL_SYNC_TRANSMIT request more than 30s,
             // try to send reverse keepalive request.
             if (current_time_us >= keepalive_timeout_us && reverse_keepalive_arg.is_valid()) {
@@ -253,7 +253,7 @@ int ObRpcSessionHandler::wait_for_next_request(int64_t sessid,
                   ret = tmp_ret;
                 } else {
                   req = wait_object.req_;
-                  LOG_INFO("got the next request though keepalive failed, break and return success", K(sessid), K(tmp_ret), K(ret));
+
                 }
                 break;
               }

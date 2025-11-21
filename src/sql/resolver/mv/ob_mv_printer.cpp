@@ -71,7 +71,7 @@ int ObMVPrinter::print_mv_operators(ObIAllocator &str_alloc,
                                               obj_print_params))) {
         LOG_WARN("fail to reconstruct sql", K(ret));
       } else {
-        LOG_TRACE("generate one mv operator", K(i), K(operators.at(i)));
+
       }
     }
   }
@@ -1227,7 +1227,7 @@ int ObMVPrinter::print_complete_refresh_mview_operator(ObRawExprFactory &expr_fa
                                                  obj_print_params))) {
     LOG_WARN("fail to reconstruct sql", K(ret));
   } else {
-    LOG_TRACE("generate complete refresh mview operator", K(mview_str));
+
   }
   return ret;
 }

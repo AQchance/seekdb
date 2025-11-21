@@ -140,9 +140,9 @@ static const int64_t TRANS_REDO_LOG_COUNT = 100;
 
 void call_sort_and_unique_missing_log_ids(IObCDCPartTransResolver::MissingLogInfo &missing_info)
 {
-  LOG_DEBUG("MISSING LOG [BEGIN]", K(missing_info));
+
   EXPECT_EQ(OB_SUCCESS, missing_info.sort_and_unique_missing_log_lsn());
-  LOG_DEBUG("MISSING LOG [END]", K(missing_info));
+
 }
 
 TEST(ObCDCPartTransResolver, test_misslog_info_basic)
@@ -287,17 +287,17 @@ TEST(ObCDCPartTransResolver, test_ls_fetch_ctx)
 
   log_generator.gen_redo_log();
   EXPECT_EQ(OB_SUCCESS, log_generator.gen_log_entry(log_entry, lsn));
-  LOG_DEBUG("redo-0", K(log_entry), K(lsn));
+
   EXPECT_EQ(OB_SUCCESS, ls_fetch_ctx->read_log(log_entry, lsn, missing_info, tsi, stop_flag));
   log_generator.gen_redo_log();
   EXPECT_EQ(OB_SUCCESS, log_generator.gen_log_entry(log_entry, lsn));
-  LOG_DEBUG("redo-1", K(log_entry), K(lsn));
+
   EXPECT_EQ(OB_SUCCESS, ls_fetch_ctx->read_log(log_entry, lsn, missing_info, tsi, stop_flag));
   log_generator.gen_redo_log();
   log_generator.gen_commit_info_log();
   log_generator.gen_commit_log();
   EXPECT_EQ(OB_SUCCESS, log_generator.gen_log_entry(log_entry, lsn));
-  LOG_DEBUG("redo-2", K(log_entry), K(lsn));
+
   LogEntry offline_ls_entry;
   LSN offline_lsn;
   EXPECT_EQ(OB_SUCCESS, log_generator.gen_ls_offline_log_entry(offline_ls_entry, offline_lsn));
@@ -360,7 +360,7 @@ TEST(ObCDCPartTransResolver, test_sp_tx_seq2_miss)
   log_generator.gen_commit_log();
   EXPECT_EQ(OB_SUCCESS, log_generator.gen_log_entry(log_entry2, lsn2));
   EXPECT_EQ(OB_ITEM_NOT_SETTED, ls_fetch_ctx->read_log(log_entry2, lsn2, missing_info, tsi, stop_flag));
-  LOG_DEBUG("read log2", K(lsn), K(lsn2), K(missing_info));
+
   EXPECT_TRUE(missing_info.need_reconsume_commit_log_entry());
   EXPECT_EQ(1, missing_info.get_total_misslog_cnt());
   EXPECT_EQ(lsn, missing_info.get_miss_redo_lsn_arr().at(0));
@@ -413,7 +413,7 @@ TEST(ObCDCPartTransResolver, test_sp_tx_seq3_miss)
   palf::LSN lsn2;
   log_generator.gen_commit_log();
   EXPECT_EQ(OB_SUCCESS, log_generator.gen_log_entry(log_entry2, lsn2));
-  LOG_DEBUG("test_sp_tx_seq3_miss", K(lsn), K(log_entry), K(lsn2), K(log_entry2));
+
   EXPECT_EQ(OB_ITEM_NOT_SETTED, ls_fetch_ctx->read_log(log_entry2, lsn2, missing_info, tsi, stop_flag));
   missing_info.set_resolving_miss_log();
   IObCDCPartTransResolver::MissingLogInfo new_miss_log;
@@ -447,7 +447,7 @@ TEST(ObCDCPartTransResolver, test_sp_tx_seq4)
   palf::LSN lsn3;
   log_generator.gen_commit_log();
   log_generator.gen_log_entry(log_entry3, lsn3);
-  LOG_DEBUG("test_sp_tx_seq4");
+
 
   EXPECT_EQ(OB_SUCCESS, ls_fetch_ctx->read_log(log_entry, lsn, missing_info, tsi, stop_flag));
   EXPECT_EQ(OB_SUCCESS, ls_fetch_ctx->read_log(log_entry2, lsn2, missing_info, tsi, stop_flag));
@@ -872,7 +872,7 @@ TEST(ObCDCPartTransResolver, test_sp_tx_record_miss)
   EXPECT_EQ(OB_ITEM_NOT_SETTED, ls_fetch_ctx->read_log(log_entry_rc1, lsn_rc1, missing_info, tsi, stop_flag));
   EXPECT_TRUE(missing_info.miss_record_or_state_log_lsn_.is_valid());
   EXPECT_EQ(1, missing_info.get_total_misslog_cnt());
-  LOG_INFO("", K(lsn), K(lsn_rc0), K(lsn1), K(lsn_rc1), K(lsn2), K(lsn_rc2), K(missing_info));
+
 //  EXPECT_EQ(lsn, missing_info.miss_redo_or_state_lsn_arr_.at(0));
   IObCDCPartTransResolver::MissingLogInfo missing_info1;
   missing_info1.set_resolving_miss_log();
@@ -884,7 +884,7 @@ TEST(ObCDCPartTransResolver, test_sp_tx_record_miss)
   IObCDCPartTransResolver::MissingLogInfo missing_info3;
   EXPECT_EQ(OB_SUCCESS, ls_fetch_ctx->read_log(log_entry2, lsn2, missing_info3, tsi, stop_flag));
   EXPECT_EQ(OB_SUCCESS, ls_fetch_ctx->read_log(log_entry_rc2, lsn_rc2, missing_info3, tsi, stop_flag));
-  LOG_INFO("missing_infos", K(missing_info), K(missing_info1), K(missing_info2), K(missing_info3));
+
 
   DESTROY_OBLOG_INSTANCE();
 }

@@ -34,7 +34,7 @@ ObIvfCacheMgrGuard::~ObIvfCacheMgrGuard()
   if (is_valid()) {
     if (cache_mgr_->dec_ref_and_check_release()) {
       ObIAllocator &allocator = cache_mgr_->get_self_allocator();
-      LOG_INFO("ivf cache mgr released", KPC(cache_mgr_), K(lbt()));
+
       cache_mgr_->~ObIvfCacheMgr();
       allocator.free(cache_mgr_);
     }

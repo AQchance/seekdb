@@ -1648,7 +1648,7 @@ int ObGeoTypeUtil::geo_to_ewkt(const ObString &swkb,
       LOG_WARN("failed to transform geo to wkt", K(ret));
     } else {
       wkt_visitor.get_wkt(ewkt);
-      LOG_DEBUG("eval ob geometry type to ewkt", K(ewkt));
+
     }
   }
   return ret;
@@ -1889,23 +1889,23 @@ int ObGeoTypeUtil::get_cellid_mbr_from_geom(const ObString &wkb_str,
   char *mbr = mbr_val.ptr();
   int64_t mbr_len = 0;
   if (OB_FAIL(s2object.init(wkb_str, srs_bound))) {
-    STORAGE_LOG(WARN, "Init s2object failed", K(ret));
+
   } else if (OB_FAIL(s2object.get_cellids(cellids, false))) {
-    STORAGE_LOG(WARN, "Get cellids from s2object failed", K(ret));
+
   } else if (OB_FAIL(s2object.get_mbr(spa_mbr))) {
-    STORAGE_LOG(WARN, "Get mbr from s2object failed", K(ret));
+
   } else if (spa_mbr.is_empty()) {
     if (cellids.size() == 0) {
-      LOG_DEBUG("it's might be empty geometry collection", K(wkb_str));
+
     } else {
       ret = OB_ERR_GIS_INVALID_DATA;
       LOG_WARN("invalid geometry", K(ret), K(wkb_str));
     }
   } else if (OB_ISNULL(mbr)) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "failed to alloc memory for spatial index row mbr", K(ret), K(mbr));
+
   } else if (OB_FAIL(spa_mbr.to_char(mbr, mbr_len))) {
-    STORAGE_LOG(WARN, "failed transfrom ObSpatialMBR to string", K(ret));
+
   } else {
     mbr_val.assign_ptr(mbr, mbr_len);
   }

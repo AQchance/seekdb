@@ -228,7 +228,7 @@ int ObExprArgCase::calc_with_cast(ObObj &result,
     if (OB_SUCC(ret)) {
       if (!match_when) {
         if (param_num % 2 == 0) {
-          LOG_DEBUG("match else wrong", K(param_num));
+
           tmp_result = objs_stack[param_num - 1]; // match else (default value)
         } else {
           tmp_result.set_null();

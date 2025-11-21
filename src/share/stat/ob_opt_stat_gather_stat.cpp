@@ -299,7 +299,7 @@ int ObOptStatRunningMonitor::flush_gather_audit()
     } else {
       ObOptStatGatherStatList::instance().update_gather_stat_audit(gather_audit, opt_stat_gather_stat_);
       if (pos >= buf_len - 1) {
-        LOG_INFO("gather stats audit", K(gather_audit));
+
       }
     }
   }

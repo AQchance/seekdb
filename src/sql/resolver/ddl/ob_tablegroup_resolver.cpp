@@ -124,7 +124,7 @@ int ObTableGroupResolver::resolve_partition_hash_or_key(ObTablegroupStmt *stmt,
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("resolve partition hash node success", K(ret), K(*stmt), K(tablegroup_schema));
+
   }
   return ret;
 }

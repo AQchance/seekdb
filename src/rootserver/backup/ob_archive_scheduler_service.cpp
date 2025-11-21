@@ -235,7 +235,7 @@ int ObArchiveSchedulerService::start_tenant_archive_(const uint64_t tenant_id)
   } else if (OB_FAIL(archive_handler.enable_archive(dest_no))) {
     LOG_WARN("failed to enable archive tenant", K(ret), K(tenant_id), K(dest_no));
   } else {
-    LOG_INFO("enable archive", K(tenant_id), K(dest_no));
+
   }
 
   return ret;
@@ -252,7 +252,7 @@ int ObArchiveSchedulerService::stop_tenant_archive_(const uint64_t tenant_id)
   } else if (OB_FAIL(archive_handler.disable_archive(dest_no))) {
     LOG_WARN("failed to disable tenant archive", K(ret), K(tenant_id), K(dest_no));
   } else {
-    LOG_INFO("disable tenant archive", K(tenant_id), K(dest_no));
+
   }
 
   return ret;
@@ -361,16 +361,16 @@ int ObArchiveSchedulerService::get_all_tenant_ids_(common::ObIArray<uint64_t> &t
     } else if (OB_FAIL(schema_guard.get_tenant_info(tenant_id, tenant_info))) {
       LOG_WARN("failed to get tenant info", K(ret), K(tenant_id));
     } else if (OB_ISNULL(tenant_info)) { //skip
-      LOG_INFO("tenant schema is null, skip tenant which may has been dropped", K(tenant_id));
+
     } else if (tenant_info->is_restore()) {
       // skip restoring tenant
-      LOG_INFO("skip tenant which is doing restore", K(tenant_id));
+
     } else if (tenant_info->is_creating()) {
-      LOG_INFO("skip tenant which is creating", K(tenant_id));
+
     } else if (tenant_info->is_dropping()) {
-      LOG_INFO("skip tenant which is dropping", K(tenant_id));
+
     } else if (tenant_info->is_in_recyclebin()) {
-      LOG_INFO("skip tenant which is recyclebin", K(tenant_id));
+
     } else if (OB_FAIL(tenantid_array.push_back(tenant_id))) {
       LOG_WARN("failed to push back tenant id", K(ret), K(tenant_id));
     }

@@ -1845,7 +1845,7 @@ int ObSelectIntoOp::set_odps_column_value_mysql(apsara::odps::sdk::ODPSTableReco
             ret = OB_DATA_OUT_OF_RANGE;
             LOG_WARN("data out of range", K(odps_type), K(jbuf.length()), K(ret));
           } else {
-            LOG_DEBUG("set json value", K(datum_meta.cs_type_), K(ObString(jbuf.length(), jbuf.ptr())));
+
             table_record.SetJsonValue(col_idx, jbuf.ptr(), static_cast<uint32_t>(jbuf.length()));
           } 
           break;
@@ -2392,7 +2392,7 @@ int ObSelectIntoOp::set_odps_column_value_mysql_jni(arrow::ArrayBuilder *builder
           ret = OB_DATA_OUT_OF_RANGE;
           LOG_WARN("data out of range", K(odps_type), K(jbuf.length()), K(ret));
         } else {
-          LOG_DEBUG("debug select into json", K(datum_meta.cs_type_), K(ObString(jbuf.length(), jbuf.ptr())));
+
           arrow::StringBuilder* builder_ref = dynamic_cast<arrow::StringBuilder *>(builder);
           if (OB_ISNULL(builder_ref)) {
             ret = OB_ODPS_ERROR;

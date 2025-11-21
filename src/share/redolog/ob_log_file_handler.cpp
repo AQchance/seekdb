@@ -84,7 +84,7 @@ void ObLogFileHandler::destroy()
   file_group_.destroy();
   file_size_ = 0;
   is_inited_ = false;
-  LOG_DEBUG("log file handler destroyed");
+
 }
 
 int ObLogFileHandler::open(const int64_t file_id, const int flag)

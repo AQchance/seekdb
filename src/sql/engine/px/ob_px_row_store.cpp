@@ -183,7 +183,7 @@ void ObReceiveRowReader::free(dtl::ObDtlLinkedBuffer *buf)
 {
   // free buffer to DFC memory manager, see: ObDtlBasicChannel::free_buf()
   if (NULL != buf) {
-    LOG_DEBUG("free dtl linked buffer", KP(buf), K(buf->tenant_id()));
+
     int ret = OB_SUCCESS;
     auto mgr = DTL.get_dfc_server().get_tenant_mem_manager(buf->tenant_id());
     CK(NULL != mgr);
@@ -620,7 +620,7 @@ int ObReceiveRowReader::get_next_batch(const ObIArray<ObExpr*> &exprs,
     if (0 == read_rows) {
       ret = OB_ITER_END;
     } else {
-      LOG_DEBUG("read rows", K(read_rows), KP(this));
+
       OZ(attach_rows(exprs, dynamic_const_exprs, eval_ctx, srows, read_rows));
     }
   }

@@ -664,7 +664,7 @@ int ObTenantTabletStatMgr::mtl_init(ObTenantTabletStatMgr* &tablet_stat_mgr)
   if (OB_FAIL(tablet_stat_mgr->init(MTL_ID()))) {
     LOG_WARN("failed to init tablet stat mgr", K(ret), K(MTL_ID()));
   } else {
-    LOG_INFO("success to init ObTenantTabletStatMgr", K(MTL_ID()));
+
   }
   return ret;
 }
@@ -725,12 +725,12 @@ int ObTenantTabletStatMgr::report_stat(
     uint64_t pending_cur = pending_cursor_;
     if (pending_cur - report_cursor_ >= DEFAULT_MAX_PENDING_CNT) { // first check full queue with dirty read
       if (REACH_THREAD_TIME_INTERVAL(10 * 1000L * 1000L/*10s*/)) {
-        LOG_INFO("report_queue is full, wait to process", K(report_cursor_), K(pending_cur), K(stat));
+
       }
     } else if (FALSE_IT(pending_cur = ATOMIC_FAA(&pending_cursor_, 1))) {
     } else if (pending_cur - report_cursor_ >= DEFAULT_MAX_PENDING_CNT) { // double check
         if (REACH_THREAD_TIME_INTERVAL(10 * 1000L * 1000L/*10s*/)) {
-        LOG_INFO("report_queue is full, wait to process", K(report_cursor_), K(pending_cur), K(stat));
+
       }
     } else {
       report_queue_[pending_cur % DEFAULT_MAX_PENDING_CNT] = stat;
@@ -875,7 +875,7 @@ int ObTenantTabletStatMgr::batch_clear_tablet_stat(
     ret = OB_NOT_INIT;
     LOG_WARN("ObTenantTabletStatMgr not inited", K(ret));
   } else if (OB_UNLIKELY(tablet_ids.empty())) {
-    LOG_TRACE("tablet_ids empty, no need to clear");
+
   } else {
     ObTabletStatKey key;
     key.ls_id_ = ls_id;
@@ -1107,7 +1107,7 @@ void ObTenantTabletStatMgr::refresh_queuing_mode()
     extreme_tablet_cnt_ = cur_extreme_table_cnt; // replace udpate, prevent merge schedule thread see 0
   }
   cost_time = common::ObTimeUtility::current_time() - cost_time;
-  LOG_INFO("refresh queuing mode", K(ret), K(tenant_id), K(stream_cnt), K(update_schema_cnt), K_(extreme_tablet_cnt), K(cost_time));
+
 }
 
 int ObTenantTabletStatMgr::get_queuing_cfg(
@@ -1134,7 +1134,7 @@ int ObTenantTabletStatMgr::get_queuing_cfg(
       }
     } else {
       queuing_cfg = ObTableQueuingModeCfg::get_basic_config(stream_node->mode_);
-      LOG_DEBUG("success get queuing cfg", K(ret), K(ls_id), K(tablet_id), K(queuing_cfg));
+
     }
   }
   return ret;

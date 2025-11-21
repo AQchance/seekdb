@@ -584,7 +584,7 @@ int ObPartitionSplitTask::prepare(const share::ObDDLTaskStatus next_task_status)
     if (OB_FAIL(switch_status(next_task_status, true, ret))) {
       LOG_WARN("failed to switch task status", K(ret));
     }
-    LOG_INFO("prepare finished", K(ret), K(*this));
+
   }
   return ret;
 }
@@ -619,7 +619,7 @@ int ObPartitionSplitTask::wait_freeze_end(
     if (OB_FAIL(switch_status(next_task_status, true, ret))) {
       LOG_WARN("failed to switch task status", K(ret));
     }
-    LOG_INFO("wait freeze end finished", K(ret), K(*this));
+
   }
   return ret;
 }
@@ -774,18 +774,18 @@ int ObPartitionSplitTask::wait_compaction_end(
       LOG_WARN("get split replica addrs failed", K(ret), K(tenant_id_), K(ls_id));
     } else if (double_check_replica_addrs.count() != split_replica_addrs.count()) {
       ret = OB_EAGAIN;
-      LOG_INFO("need retry when double check failed", K(ret), K(split_replica_addrs), K(double_check_replica_addrs));
+
     } else if OB_FAIL(get_difference(split_replica_addrs, double_check_replica_addrs, different_replica_addrs)) {
       LOG_WARN("get difference failed", K(ret));
     } else if (!different_replica_addrs.empty()) {
       ret = OB_EAGAIN;
-      LOG_INFO("different replica addrs occur, need retry", K(ret), K(split_replica_addrs), K(double_check_replica_addrs));
+
     } else if (OB_FAIL(serialize_compaction_scn_to_task_record())) {
       LOG_WARN("failed to serialize compaction scn to ddl task record", K(ret));
     } else if (OB_FAIL(switch_status(next_task_status, true, ret))) {
       LOG_WARN("failed to switch task status", K(ret));
     }
-    LOG_INFO("wait compaction end finished", K(ret), K(*this));
+
   }
   return ret;
 }
@@ -922,7 +922,7 @@ int ObPartitionSplitTask::write_split_start_log(const share::ObDDLTaskStatus nex
           LOG_WARN("fail to switch task status", K(ret));
         }
       } else {
-        LOG_INFO("dump not finished tablets", K(ret), K(not_finished_tablets));
+
       }
     }
   }
@@ -961,7 +961,7 @@ int ObPartitionSplitTask::wait_data_tablet_split_end(
     if (OB_FAIL(switch_status(next_task_status, true, ret))) {
       LOG_WARN("fail to switch task status", K(ret));
     }
-    LOG_INFO("wait data tablet split end finished", K(ret), KPC(this));
+
   }
   return ret;
 }
@@ -1083,7 +1083,7 @@ int ObPartitionSplitTask::send_split_request(
     } else if (OB_FAIL(replica_builder_.build(param))) {
       LOG_WARN("fail to send build single replica", K(ret));
     } else {
-      LOG_INFO("start to build single replica", K(param));
+
       TCWLockGuard guard(lock_);
       replica_build_task_submit_ = true;
       replica_build_request_time_ = ObTimeUtility::current_time();
@@ -1180,7 +1180,7 @@ int ObPartitionSplitTask::wait_local_index_tablet_split_end(
     if (OB_FAIL(switch_status(next_task_status, true, ret))) {
       LOG_WARN("failed to switch task status", K(ret));
     }
-    LOG_INFO("wait local index split end finished", K(ret), K(*this));
+
   }
   return ret;
 }
@@ -1256,7 +1256,7 @@ int ObPartitionSplitTask::wait_lob_tablet_split_end(
     if (OB_FAIL(switch_status(next_task_status, true, ret))) {
       LOG_WARN("failed to switch task status", K(ret));
     }
-    LOG_INFO("wait lob split end finished", K(ret), K(*this));
+
   }
   return ret;
 }
@@ -1336,7 +1336,7 @@ int ObPartitionSplitTask::take_effect(
     if (OB_FAIL(switch_status(next_task_status, true, ret))) {
       LOG_WARN("failed to switch task status", K(ret));
     }
-    LOG_INFO("take effect finished", K(ret), K(*this));
+
   }
   return ret;
 }
@@ -1463,7 +1463,7 @@ int ObPartitionSplitTask::send_split_rpc(
   if (OB_FAIL(setup_split_finish_items(leader_addr, target_split_info_array))) {
     LOG_WARN("failed to setup split finish items", K(ret));
   } else if (target_split_info_array.empty()) { // already all sent.
-    LOG_TRACE("already all sent", K(ret)); // do nothing.
+ // do nothing.
   } else if (OB_ISNULL(rpc_proxy)) {
     ret = OB_ERR_SYS;
     LOG_WARN("srv_rpc_proxy is null", K(ret));
@@ -2027,7 +2027,7 @@ int ObPartitionSplitTask::deserialize_params_from_message(
           LOG_WARN("deserialize parallel info failed", K(ret));
         } 
       }
-      LOG_TRACE("parallel datum rowkey info", K(ret), K(data_tablet_parallel_rowkey_list_), K(index_tablet_parallel_rowkey_list_));
+
     }
     if (OB_SUCC(ret)) {
       LST_DO_CODE(OB_UNIS_DECODE, min_split_start_scn_);
@@ -2078,7 +2078,7 @@ int ObPartitionSplitTask::check_src_tablet_exist(
     if (OB_FAIL(table_schema->get_hidden_part_id_by_tablet_id(src_tablet_id, src_part_id))) {
       if (OB_TABLET_NOT_EXIST == ret) {
         ret = OB_SUCCESS;
-        LOG_INFO("src tablet deleted", K(ret), K(tenant_id), K(table_id), K(src_tablet_id), K(task_id_));
+
       } else {
         LOG_WARN("failed to get hidden part id", K(ret));
       }
@@ -2086,7 +2086,7 @@ int ObPartitionSplitTask::check_src_tablet_exist(
       is_src_tablet_exist = true;
     }
   } else {
-    LOG_INFO("table deleted", K(ret), K(tenant_id), K(table_id), K(task_id_));
+
   }
   return ret;
 }
@@ -2112,7 +2112,7 @@ int ObPartitionSplitTask::cleanup_impl()
       LOG_WARN("fail to clean splitted tablet", K(ret));
     }
   } else {
-    LOG_INFO("already clean splitted tablet, skip", K(ret), K(tenant_id_), K(task_id_), K(object_id_), K(partition_split_arg_.src_tablet_id_));
+
   }
   DEBUG_SYNC(PARTITION_SPLIT_SUCCESS);
   if (OB_FAIL(ret)) {
@@ -2123,7 +2123,7 @@ int ObPartitionSplitTask::cleanup_impl()
   } else {
     need_retry_ = false;   // clean succ, stop the task
   }
-  LOG_INFO("clean task finished", K(ret), K(*this));
+
   return ret;
 }
 

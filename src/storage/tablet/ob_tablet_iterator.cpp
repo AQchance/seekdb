@@ -156,7 +156,7 @@ int ObHALSTabletIDIterator::sort_tablet_ids_if_need()
     LOG_WARN("get next tablet id before sort", K(ret), K_(idx));
   } else {
     lib::ob_sort(tablet_ids_.begin(), tablet_ids_.end());
-    LOG_INFO("sort tablet ids if need");
+
   }
   return ret;
 }
@@ -183,7 +183,7 @@ int ObHALSTabletIDIterator::get_next_tablet_id(common::ObTabletID &tablet_id)
           LOG_WARN("failed to get tablet status from tablet pointer", K(ret), K(key));
         }
       } else if (initial_state && !need_initial_state_) {
-        LOG_INFO("tablet is in initial state, should skip", K(ret), K(key));
+
         ++idx_;
       } else {
         ++idx_;

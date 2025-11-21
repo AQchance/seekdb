@@ -58,7 +58,7 @@ int ObTableDirectLoadBeginExecutor::set_result_header()
 int ObTableDirectLoadBeginExecutor::process()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("table direct load begin", K_(arg));
+
   ObTableLoadClientTaskParam param;
   ObTableLoadClientTask *client_task = nullptr;
   if (OB_FAIL(ObTableLoadService::check_tenant())) {
@@ -155,7 +155,7 @@ int ObTableDirectLoadCommitExecutor::check_args()
 int ObTableDirectLoadCommitExecutor::process()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("table direct load commit", K_(arg));
+
   ObTableLoadClientTask *client_task = nullptr;
   ObTableLoadClientTaskBrief *client_task_brief = nullptr;
   ObTableLoadUniqueKey key(arg_.table_id_, arg_.task_id_);
@@ -168,7 +168,7 @@ int ObTableDirectLoadCommitExecutor::process()
       if (OB_FAIL(ObTableLoadClientService::get_task_brief(key, client_task_brief))) {
         LOG_WARN("fail to get client task brief", KR(ret), K(key));
       } else if (ObTableLoadClientStatus::COMMIT == client_task_brief->client_status_) {
-        LOG_INFO("client task is commit", KR(ret));
+
       } else {
         ret = client_task_brief->error_code_;
         LOG_WARN("client task is failed", KR(ret), KPC(client_task_brief));
@@ -203,7 +203,7 @@ int ObTableDirectLoadAbortExecutor::check_args()
 int ObTableDirectLoadAbortExecutor::process()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("table direct load abort", K_(arg));
+
   ObTableLoadClientTask *client_task = nullptr;
   ObTableLoadUniqueKey key(arg_.table_id_, arg_.task_id_);
   if (OB_FAIL(ObTableLoadClientService::get_task(key, client_task))) {
@@ -233,7 +233,7 @@ int ObTableDirectLoadGetStatusExecutor::check_args()
 int ObTableDirectLoadGetStatusExecutor::process()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("table direct load get status", K_(arg));
+
   ObTableLoadUniqueKey key(arg_.table_id_, arg_.task_id_);
   ObTableLoadClientTask *client_task = nullptr;
   ObTableLoadClientTaskBrief *client_task_brief = nullptr;
@@ -278,7 +278,7 @@ int ObTableDirectLoadInsertExecutor::check_args()
 int ObTableDirectLoadInsertExecutor::process()
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("table direct load insert", K_(arg));
+
   ObTableLoadUniqueKey key(arg_.table_id_, arg_.task_id_);
   ObTableLoadClientTask *client_task = nullptr;
   if (OB_FAIL(ObTableLoadClientService::get_task(key, client_task))) {
@@ -346,7 +346,7 @@ int ObTableDirectLoadHeartBeatExecutor::check_args()
 int ObTableDirectLoadHeartBeatExecutor::process()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("table direct load heart beat", K_(arg));
+
   ObTableLoadClientTask *client_task = nullptr;
   ObTableLoadUniqueKey key(arg_.table_id_, arg_.task_id_);
   if (OB_FAIL(ObTableLoadClientService::get_task(key, client_task))) {

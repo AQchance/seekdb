@@ -147,7 +147,7 @@ int ObPhysicalRestoreBackupDestList::get_backup_set_list_format_str(
     LOG_WARN("unexpected format str", KR(ret), K(str_buf), K(str_buf_len));
   } else {
     str.assign_ptr(str_buf, static_cast<int32_t>(str_buf_len - 1));
-    LOG_DEBUG("get format backup set path list str", KR(ret), K(str));
+
   }
   return ret;
 }
@@ -183,7 +183,7 @@ int ObPhysicalRestoreBackupDestList::get_backup_set_desc_list_format_str(
     LOG_WARN("unexpected format str", KR(ret), K(str_buf), K(str_buf_len));
   } else {
     str.assign_ptr(str_buf, static_cast<int32_t>(STRLEN(str_buf)));
-    LOG_DEBUG("get format backup set path list str", KR(ret), K(str));
+
   }
   return ret;
 }
@@ -218,7 +218,7 @@ int ObPhysicalRestoreBackupDestList::get_backup_piece_list_format_str(
     LOG_WARN("unexpected format str", KR(ret), K(str_buf), K(str_buf_len));
   } else {
     str.assign_ptr(str_buf, static_cast<int32_t>(str_buf_len - 1));
-    LOG_DEBUG("get format backup piece path list str", KR(ret), K(str));
+
   }
   return ret;
 }
@@ -253,7 +253,7 @@ int ObPhysicalRestoreBackupDestList::get_log_path_list_format_str(
     LOG_WARN("unexpected format str", KR(ret), K(str_buf), K(str_buf_len));
   } else {
     str.assign_ptr(str_buf, static_cast<int32_t>(str_buf_len - 1));
-    LOG_DEBUG("get log path list str", KR(ret), K(str));
+
   }
   return ret;
 }
@@ -414,7 +414,7 @@ int ObPhysicalRestoreBackupDestList::backup_set_list_assign_with_hex_str(const c
     ret = OB_SIZE_OVERFLOW;
     LOG_WARN("deserialize error", KR(ret), K(deserialize_pos), K(deserialize_size));
   } else {
-    LOG_DEBUG("assign with hex str", KR(ret), K(str));
+
   }
   return ret;
 }
@@ -441,7 +441,7 @@ int ObPhysicalRestoreBackupDestList::backup_piece_list_assign_with_hex_str(
     ret = OB_SIZE_OVERFLOW;
     LOG_WARN("deserialize error", KR(ret), K(deserialize_pos), K(deserialize_size));
   } else {
-    LOG_DEBUG("assign with hex str", KR(ret), K(str));
+
   }
   return ret;
 }
@@ -468,7 +468,7 @@ int ObPhysicalRestoreBackupDestList::log_path_list_assign_with_hex_str(
     ret = OB_SIZE_OVERFLOW;
     LOG_WARN("deserialize error", KR(ret), K(deserialize_pos), K(deserialize_size));
   } else {
-    LOG_DEBUG("assign with hex str", KR(ret), K(str));
+
   }
   return ret;
 }
@@ -505,7 +505,7 @@ int ObPhysicalRestoreBackupDestList::get_backup_set_list_hex_str(
     LOG_WARN("encode error", KR(ret), K(hex_pos), K(hex_size));
   } else {
     str.assign_ptr(hex_buf, static_cast<int32_t>(hex_size));
-    LOG_DEBUG("get hex backup set list str", KR(ret), K(str));
+
   }
   return ret;
 }
@@ -542,7 +542,7 @@ int ObPhysicalRestoreBackupDestList::get_backup_piece_list_hex_str(
     LOG_WARN("encode error", KR(ret), K(hex_pos), K(hex_size));
   } else {
     str.assign_ptr(hex_buf, static_cast<int32_t>(hex_size));
-    LOG_DEBUG("get hex backup piece list str", KR(ret), K(str));
+
   }
   return ret;
 }
@@ -579,7 +579,7 @@ int ObPhysicalRestoreBackupDestList::get_log_path_list_hex_str(
     LOG_WARN("encode error", KR(ret), K(hex_pos), K(hex_size));
   } else {
     str.assign_ptr(hex_buf, static_cast<int32_t>(hex_size));
-    LOG_DEBUG("get hex log path list str", KR(ret), K(str));
+
   }
   return ret;
 }
@@ -921,7 +921,7 @@ int ObTenantLogArchiveStatus::update_stop_(const ObTenantLogArchiveStatus &new_s
     ret = OB_LOG_ARCHIVE_STAT_NOT_MATCH;
     LOG_ERROR("stop status can only update with stop", K(ret), K(*this), K(new_status));
   } else {
-    LOG_INFO("no need update stop status", K(*this), K(new_status));
+
   }
   return ret;
 }
@@ -936,7 +936,7 @@ int ObTenantLogArchiveStatus::update_beginning_(const ObTenantLogArchiveStatus &
       LOG_WARN("[LOG_ARCHIVE] checkpoint_ts or start_ts must not less than 0",
           K(ret), K(*this), K(new_status));
     } else {
-      LOG_INFO("[LOG_ARCHIVE] update beginning to doing", K(*this), K(new_status));
+
       status_ = new_status.status_;
       start_ts_ = new_status.start_ts_;
       checkpoint_ts_ = new_status.checkpoint_ts_;
@@ -946,7 +946,7 @@ int ObTenantLogArchiveStatus::update_beginning_(const ObTenantLogArchiveStatus &
   } else if (ObLogArchiveStatus::STOPPING == new_status.status_
       || ObLogArchiveStatus::STOP == new_status.status_
       || ObLogArchiveStatus::INTERRUPTED == new_status.status_) {
-    LOG_INFO("[LOG_ARCHIVE] update beginning to new stat", K(*this), K(new_status));
+
     status_ = new_status.status_;
   } else {
     ret = OB_LOG_ARCHIVE_STAT_NOT_MATCH;
@@ -969,7 +969,7 @@ int ObTenantLogArchiveStatus::update_doing_(const ObTenantLogArchiveStatus &new_
       LOG_WARN("new checkpoint_ts must not less than the prev one",
           K(ret), K(*this), K(new_status));
     } else {
-      LOG_INFO("update doing stat", K(*this), K(new_status));
+
       checkpoint_ts_ = new_status.checkpoint_ts_;
     }
   } else if (ObLogArchiveStatus::STOPPING == new_status.status_
@@ -1551,7 +1551,7 @@ int ObBackupDest::reset_access_id_and_access_key(
   } else if (OB_FAIL(storage_info_->reset_access_id_and_access_key(access_id, access_key))) {
     LOG_WARN("failed to reset access id and access key", K(ret), KCSTRING(access_id));
   } else {
-    LOG_INFO("reset access id and access key", KCSTRING(access_id));
+
   }
   return ret;
 }
@@ -2066,7 +2066,7 @@ int ObBackupUtils::convert_timestamp_to_date(
 
   if (snapshot_version <=0) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "get snapshot to time str get invalid argument", K(ret), K(snapshot_version));
+
   } else {
     const time_t rawtime = snapshot_version / (1000 * 1000); //second
     struct tm time_info;
@@ -2077,9 +2077,9 @@ int ObBackupUtils::convert_timestamp_to_date(
       LOG_WARN("get localtime failed", K(ret));
     } else if (0 == strftime(buf, MAX_BUF_LENGTH, "%Y%m%d", time_info_ptr)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "failed to strftime", K(ret), K(buf), K(snapshot_version));
+
     } else if (OB_FAIL(ob_atoll(buf, tmp_date))) {
-      STORAGE_LOG(WARN, "failed to atoll", K(ret), K(buf));
+
     } else {
       date = tmp_date;
     }
@@ -2114,7 +2114,7 @@ int ObBackupUtils::get_backup_scn(const uint64_t &tenant_id, share::SCN &scn)
       }
     }
   }
-  LOG_INFO("get tenant gts", KR(ret), K(tenant_id), K(scn));
+
   return ret;
 }
 
@@ -4382,7 +4382,7 @@ int ObRestoreBackupSetBriefInfo::get_restore_backup_set_brief_info_str(
     LOG_WARN("unexpected format str", KR(ret), K(str_buf), K(str_buf_len));
   } else {
     str.assign_ptr(str_buf, STRLEN(str_buf));
-    LOG_DEBUG("get log path list str", KR(ret), K(str));
+
   }
   return ret;
 }
@@ -4478,7 +4478,7 @@ int ObRestoreLogPieceBriefInfo::get_restore_log_piece_brief_info_str(
   } else {
 
     str.assign_ptr(str_buf, STRLEN(str_buf));
-    LOG_DEBUG("get log path list str", KR(ret), K(str));
+
   }
   return ret;
 }
@@ -4667,7 +4667,7 @@ int ObBackupDestAttributeParser::ExtraArgsCb::set_access_id_(const char *val, Ob
   } else {
     STRNCPY(option.access_id_, val, STRLEN(val));
     option.access_id_[STRLEN(val)] = '\0';
-    LOG_INFO("set access id", "val_len", STRLEN(val), KCSTRING(val));
+
   }
   return ret;
 }
@@ -4682,7 +4682,7 @@ int ObBackupDestAttributeParser::ExtraArgsCb::set_access_key_(const char *val, O
   } else {
     STRNCPY(option.access_key_, val, STRLEN(val));
     option.access_key_[STRLEN(val)] = '\0';
-    LOG_INFO("set access key", K(STRLEN(val)), KCSTRING(val));
+
   }
   return ret;
 }
@@ -4697,7 +4697,7 @@ int ObBackupDestAttributeParser::ExtraArgsCb::set_max_iops_(const char *val, ObB
   } else if (OB_FAIL(ob_atoll(val, option.max_iops_))) {
     LOG_WARN("failed to atoll", K(ret), KCSTRING(val));
   } else {
-    LOG_INFO("set max iops", "max_iops", option.max_iops_);
+
   }
   return ret;
 }
@@ -4717,7 +4717,7 @@ int ObBackupDestAttributeParser::ExtraArgsCb::set_max_bandwidth_(const char *val
       LOG_WARN("convert failed", K(ret), K(val));
     } else {
       option.max_bandwidth_ = value;
-      LOG_INFO("set max bandwidth", "max_bandwidth", option.max_bandwidth_);
+
     }
   }
   return ret;

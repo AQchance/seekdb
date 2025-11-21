@@ -118,7 +118,7 @@ int ObTableLoadParallelCompactTabletCtx::apply_merged_sstable(
     LOG_WARN("unexpected tablet ctx", KR(ret), KPC(this));
   } else {
     ObDirectLoadTableHandleArray result_sstables;
-    LOG_INFO("parallel merge apply merged", K(merge_sstable_count_), K(sstables_.count()));
+
     if (OB_FAIL(result_sstables.add(merged_sstable))) {
       LOG_WARN("fail to push back sstable", KR(ret));
     }
@@ -815,7 +815,7 @@ int ObTableLoadParallelTableCompactor::handle_tablet_split_range_finish(
 int ObTableLoadParallelTableCompactor::handle_tablet_range_merge_finish(
   ObTableLoadParallelCompactTabletCtx *tablet_ctx)
 {
-  LOG_INFO("parallel merge all merge finish");
+
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(nullptr == tablet_ctx)) {
     ret = OB_INVALID_ARGUMENT;
@@ -881,7 +881,7 @@ int ObTableLoadParallelTableCompactor::handle_task_finish(int64_t thread_idx, in
 int ObTableLoadParallelTableCompactor::handle_parallel_compact_success()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("LOAD PARALLEL COMPACT TABLE COMPLETED");
+
   ObDirectLoadTableStore *table_store = op_->merge_table_ctx_->table_store_;
   table_store->clear();
   table_store->set_table_data_desc(table_data_desc_);

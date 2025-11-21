@@ -165,7 +165,7 @@ protected:
         if (OB_SUCCESS != tmp_ret) {
           LOG_WARN("drain exchange data failed", K(tmp_ret));
         }
-        LOG_TRACE("all channel has been drained");
+
         break;
       }
       const ObPxTransmitSpec &spec = static_cast<const ObPxTransmitSpec &>(get_spec());
@@ -207,7 +207,7 @@ protected:
                     && OB_FAIL(slice_calc.get_previous_row_tablet_id(tablet_id))) {
             LOG_WARN("failed to get previous row tablet_id", K(ret));
           }
-          LOG_DEBUG("[VEC2.0 PX] send rows vec without prefetch", K(i), K(slice_idx_array), K(tablet_id.get_int()));
+
           FOREACH_CNT_X(slice_idx, slice_idx_array, OB_SUCC(ret)) {
             if (OB_FAIL(send_row(*slice_idx, send_row_time_recorder, tablet_id.get_int(), i))) {
               LOG_WARN("fail emit row to interm result", K(ret), K(slice_idx_array));
@@ -374,7 +374,7 @@ protected:
       }
       // for those break out ops
     }
-    LOG_TRACE("Transmit time record, send rows in vector", K(ret));
+
     return ret;
   }
   template <bool USE_VEC>
@@ -618,7 +618,7 @@ int ObPxTransmitOp::send_rows_one_by_one(ObSliceIdxCalc &slice_calc)
         LOG_WARN("drain exchange data failed", K(tmp_ret));
       }
       ret = OB_ITER_END;
-      LOG_DEBUG("all channel has been drained");
+
     } else if (NULL != spec.tablet_id_expr_
                && OB_FAIL(slice_calc.get_previous_row_tablet_id(tablet_id))) {
       LOG_WARN("failed to get previous row tablet_id", K(ret));
@@ -633,9 +633,9 @@ int ObPxTransmitOp::send_rows_one_by_one(ObSliceIdxCalc &slice_calc)
   }
   if (OB_ITER_END == ret) {
     ret = OB_SUCCESS;
-    LOG_TRACE("transmit meet a iter end");
+
   }
-  LOG_TRACE("Transmit time record", K(row_count), K(ret));
+
   return ret;
 }
 
@@ -658,7 +658,7 @@ int ObPxTransmitOp::send_rows_in_batch(ObSliceIdxCalc &slice_calc)
       if (OB_SUCCESS != tmp_ret) {
         LOG_WARN("drain exchange data failed", K(tmp_ret));
       }
-      LOG_TRACE("all channel has been drained");
+
       break;
     }
     const ObPxTransmitSpec &spec = static_cast<const ObPxTransmitSpec &>(get_spec());
@@ -682,7 +682,7 @@ int ObPxTransmitOp::send_rows_in_batch(ObSliceIdxCalc &slice_calc)
                    && OB_FAIL(slice_calc.get_previous_row_tablet_id(tablet_id))) {
           LOG_WARN("failed to get previous row tablet_id", K(ret));
         }
-        LOG_DEBUG("[VEC2.0 PX] send rows batch without prefetch", K(i), K(slice_idx_array), K(tablet_id.get_int()));
+
         FOREACH_CNT_X(slice_idx, slice_idx_array, OB_SUCC(ret)) {
           if (OB_FAIL(send_row(*slice_idx, send_row_time_recorder, tablet_id.get_int()))) {
             LOG_WARN("fail emit row to interm result", K(ret), K(slice_idx_array));
@@ -752,7 +752,7 @@ int ObPxTransmitOp::send_rows_in_batch(ObSliceIdxCalc &slice_calc)
     }
     // for those break out ops
   }
-  LOG_TRACE("Transmit time record", K(row_count), K(ret));
+
   return ret;
 }
 
@@ -788,7 +788,7 @@ int ObPxTransmitOp::broadcast_rows(ObSliceIdxCalc &slice_calc)
     if (OB_FAIL(ret)) {
       LOG_WARN("fail to get next row", K(ret));
     } else if (dfc_.all_ch_drained()) {
-      LOG_DEBUG("all channel has been drained");
+
       break;
     } else if (OB_FAIL(try_wait_channel())) {		
       LOG_WARN("failed to wait channel", K(ret));
@@ -830,7 +830,7 @@ int ObPxTransmitOp::broadcast_rows(ObSliceIdxCalc &slice_calc)
       break;
     }
   }
-  LOG_TRACE("Transmit time record", K(row_count), K(ret));
+
   return ret;
 }
 

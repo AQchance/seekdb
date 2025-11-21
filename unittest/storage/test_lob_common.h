@@ -74,7 +74,7 @@ int TestLobCommon::create_data_tablet(
   obrpc::ObBatchCreateTabletArg arg;
 
   if (OB_FAIL(TestDmlCommon::create_ls(tenant_id, ls_id, ls_handle))) {
-    STORAGE_LOG(WARN, "failed to create ls", K(ret), K(tenant_id), K(ls_id));
+
   } else if (OB_FAIL(build_lob_tablet_arg(tenant_id, ls_id, tablet_id, lob_meta_tablet_id, lob_piece_tablet_id, arg))) {
     STORAGE_LOG(WARN, "failed to build lob tablets arg", K(ret),
         K(tenant_id), K(ls_id), K(tablet_id));
@@ -86,16 +86,16 @@ int TestLobCommon::create_data_tablet(
 
     ObLS *ls = ls_handle.get_ls();
     if (OB_FAIL(ls->get_tablet_svr()->on_prepare_create_tablets(arg, trans_flags))) {
-      STORAGE_LOG(WARN, "failed to prepare create tablets", K(ret), K(arg));
+
     } else if (FALSE_IT(trans_flags.scn_ = share::SCN::minus(share::SCN::max_scn(), 100))) {
     } else if (OB_FAIL(ls->get_tablet_svr()->on_redo_create_tablets(arg, trans_flags))) {
-      STORAGE_LOG(WARN, "failed to redo create tablets", K(ret), K(arg));
+
     } else if (FALSE_IT(trans_flags.scn_ = share::SCN::plus(trans_flags.scn_, 1))) {
     } else if (OB_FAIL(ls->get_tablet_svr()->on_tx_end_create_tablets(arg, trans_flags))) {
-      STORAGE_LOG(WARN, "failed to tx end create tablets", K(ret), K(arg));
+
     } else if (FALSE_IT(trans_flags.scn_ = share::SCN::plus(trans_flags.scn_, 1))) {
     } else if (OB_FAIL(ls->get_tablet_svr()->on_commit_create_tablets(arg, trans_flags))) {
-      STORAGE_LOG(WARN, "failed to commit create tablets", K(ret), K(arg));
+
     }
   }
 
@@ -328,31 +328,31 @@ int TestLobCommon::build_lob_tablet_arg(
 
   arg.reset();
   if (OB_FAIL(tablet_id_array.push_back(data_tablet_id))) {
-    STORAGE_LOG(WARN, "failed to push tablet id into array", K(ret), K(data_tablet_id));
+
   } else if (OB_FAIL(tablet_id_array.push_back(lob_meta_tablet_id))) {
-    STORAGE_LOG(WARN, "failed to push lob meta tablet id into array", K(ret), K(lob_meta_tablet_id));
+
   } else if (OB_FAIL(tablet_id_array.push_back(lob_piece_tablet_id))) {
-    STORAGE_LOG(WARN, "failed to push lob meta tablet id into array", K(ret), K(lob_meta_tablet_id));
+
   } else if (OB_FAIL(tablet_schema_index_array.push_back(0))) {
-    STORAGE_LOG(WARN, "failed to push index into array", K(ret));
+
   } else if (OB_FAIL(tablet_schema_index_array.push_back(1))) {
-    STORAGE_LOG(WARN, "failed to push index into array", K(ret));
+
   } else if (OB_FAIL(tablet_schema_index_array.push_back(2))) {
-    STORAGE_LOG(WARN, "failed to push index into array", K(ret));
+
   } else if (OB_FAIL(tablet_info.init(tablet_id_array, data_tablet_id, tablet_schema_index_array,
       lib::get_compat_mode(), false/*is_create_bind_hidden_tablets*/, create_commit_versions))) {
     STORAGE_LOG(WARN, "failed to init tablet info", K(ret), K(tablet_id_array),
         K(data_tablet_id), K(tablet_schema_index_array));
   } else if (OB_FAIL(arg.init_create_tablet(ls_id, share::SCN::min_scn(), false/*need_check_tablet_cnt*/))) {
-    STORAGE_LOG(WARN, "failed to init create tablet", K(ret), K(tenant_id), K(ls_id));
+
   } else if (OB_FAIL(arg.table_schemas_.push_back(table_schema))) {
-    STORAGE_LOG(WARN, "failed to push back table schema", K(ret), K(table_schema));
+
   } else if (OB_FAIL(arg.table_schemas_.push_back(lob_meta_schema))) {
-    STORAGE_LOG(WARN, "failed to push back lob meta table schema", K(ret), K(lob_meta_schema));
+
   } else if (OB_FAIL(arg.table_schemas_.push_back(lob_piece_schema))) {
-    STORAGE_LOG(WARN, "failed to push back lob meta table schema", K(ret), K(lob_piece_schema));
+
   } else if (OB_FAIL(arg.tablets_.push_back(tablet_info))) {
-    STORAGE_LOG(WARN, "failed to push back tablet info", K(ret), K(tablet_info));
+
   }
 
   if (OB_FAIL(ret)) {

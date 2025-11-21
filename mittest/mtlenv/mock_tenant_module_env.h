@@ -322,7 +322,7 @@ common::ObIODevice* get_device_inner(const common::ObString &storage_type_prefix
   common::ObIODevice* device = NULL;
   const ObStorageIdMod storage_id_mod(0, ObStorageUsedMod::STORAGE_USED_DATA);
   if(OB_FAIL(common::ObDeviceManager::get_local_device(storage_type_prefix, storage_id_mod, device))) {
-    STORAGE_LOG(WARN, "get_device_inner", K(ret));
+
   }
   return device;
 }
@@ -476,7 +476,7 @@ int MockTenantModuleEnv::construct_default_tenant_meta(const uint64_t tenant_id,
   }
 #endif
   if (OB_FAIL(unit_config.init(unit_config_id, name, ur))) {
-    STORAGE_LOG(WARN, "fail to init unit config unit", KR(ret), K(unit_config_id), K(name), K(ur));
+
   } else if (OB_FAIL(unit.init(tenant_id,
                         unit_id,
                         share::ObUnitInfoGetter::ObUnitStatus::UNIT_NORMAL,
@@ -487,9 +487,9 @@ int MockTenantModuleEnv::construct_default_tenant_meta(const uint64_t tenant_id,
                         false /*is_removed*/,
                         hidden_sys_data_disk_config_size,
                         0 /*actual_data_disk_size*/))) {
-    STORAGE_LOG(WARN, "fail to init tenant unit", K(ret), K(tenant_id));
+
   } else if (OB_FAIL(meta.build(unit, super_block))) {
-    STORAGE_LOG(WARN, "fail to build tenant meta", K(ret), K(tenant_id));
+
   }
 
   return ret;
@@ -544,13 +544,13 @@ int MockTenantModuleEnv::prepare_io()
   char clog_dir[OB_MAX_FILE_NAME_LENGTH];
   char slog_dir[OB_MAX_FILE_NAME_LENGTH];
   if (OB_FAIL(databuff_printf(file_dir, OB_MAX_FILE_NAME_LENGTH, "%s/sstable/", data_dir))) {
-    STORAGE_LOG(WARN, "failed to databuff printf", K(ret));
+
   } else if (OB_FAIL(databuff_printf(clog_dir, OB_MAX_FILE_NAME_LENGTH, "%s/clog/", data_dir))) {
-    STORAGE_LOG(WARN, "failed to gen clog dir", K(ret));
+
   } else if (OB_FAIL(databuff_printf(slog_dir, OB_MAX_FILE_NAME_LENGTH, "%s/slog/", data_dir))) {
-    STORAGE_LOG(WARN, "failed to gen slog dir", K(ret));
+
   } else if (OB_FAIL(ObDeviceManager::get_instance().init_devices_env())) {
-    STORAGE_LOG(WARN, "init device manager failed", KR(ret));
+
   }
 
   storage_env_.data_dir_ = data_dir;
@@ -592,25 +592,25 @@ int MockTenantModuleEnv::prepare_io()
   if (OB_FAIL(ret)) {
     // do nothing
   } else if (OB_FAIL(ObIOManager::get_instance().init())) {
-    STORAGE_LOG(WARN, "fail to init io manager", K(ret));
+
   } else if (OB_FAIL(LOCAL_DEVICE_INSTANCE.init(iod_opts))) {
-    STORAGE_LOG(WARN, "fail to init io device", K(ret), K_(storage_env));
+
   } else if (OB_FAIL(ObIOManager::get_instance().add_device_channel(&LOCAL_DEVICE_INSTANCE,
                                                                     async_io_thread_count,
                                                                     sync_io_thread_count,
                                                                     max_io_depth))) {
-    STORAGE_LOG(WARN, "add device channel failed", K(ret));
+
   } else if (OB_FAIL(log_block_mgr_.init(storage_env_.clog_dir_))) {
     SERVER_LOG(ERROR, "init log pool fail", K(ret));
   } else if (OB_FAIL(ObIOManager::get_instance().start())) {
-    STORAGE_LOG(WARN, "fail to start io manager", K(ret));
+
   } else if (OB_FAIL(ObKVGlobalCache::get_instance().init(&getter_,
       bucket_num,
       max_cache_size,
       block_size))) {
-    STORAGE_LOG(WARN, "fail to init kv global cache ", K(ret));
+
   } else if (OB_FAIL(OB_STORE_CACHE.init(10, 1, 1, 1, 1, 10000, 10))) {
-    STORAGE_LOG(WARN, "fail to init OB_STORE_CACHE, ", K(ret));
+
   } else {
   }
   return ret;
@@ -658,31 +658,31 @@ int MockTenantModuleEnv::init_device_config()
   char object_storage_root_path[common::MAX_PATH_SIZE] = { 0 };
   if (OB_FAIL(databuff_printf(access_key_buf, sizeof(access_key_buf),
       "%s%s", ACCESS_KEY, unittest::S3_SK))) {
-    STORAGE_LOG(WARN, "fail to databuff printf", K(ret));
+
   } else if (OB_FAIL(databuff_printf(object_storage_root_path, sizeof(object_storage_root_path),
                      "%s/%lu", unittest::S3_BUCKET, cur_time_ns))) {
-    STORAGE_LOG(WARN, "fail to databuff printf", K(ret));
+
   } else if (OB_FAIL(OB_DIR_MGR.set_object_storage_root_dir(object_storage_root_path))) {
-    STORAGE_LOG(WARN, "fail to set object storage root dir", K(ret), K(object_storage_root_path));
+
   } else if (OB_FAIL(OB_DEVICE_CONF_MGR.init(sstable_dir_.c_str()))) {
-    STORAGE_LOG(WARN, "fail to init device config", K(ret));
+
   } else if (OB_FAIL(OB_DEVICE_CONF_MGR.load_configs())) {
-    STORAGE_LOG(WARN, "fail to load device configs", KR(ret));
+
   } else {
     ObDeviceConfig device_config;
     STRCPY(device_config.used_for_, ObStorageUsedType::get_str(ObStorageUsedType::USED_TYPE_ALL));
     if (OB_FAIL(databuff_printf(device_config.path_, sizeof(device_config.path_),
                 "%s/%lu", unittest::S3_BUCKET, cur_time_ns))) {
-      STORAGE_LOG(WARN, "fail to databuff printf", KR(ret));
+
     } else if (OB_FAIL(databuff_printf(device_config.endpoint_, sizeof(device_config.endpoint_),
                 "%s%s", HOST, unittest::S3_ENDPOINT))) {
-      STORAGE_LOG(WARN, "fail to databuff printf", KR(ret));
+
     } else if (OB_FAIL(databuff_printf(device_config.access_info_, sizeof(device_config.access_info_),
                 "%s%s&%s", ACCESS_ID, unittest::S3_AK, access_key_buf))) {
-      STORAGE_LOG(WARN, "fail to databuff printf", KR(ret));
+
     } else if (OB_FAIL(databuff_printf(device_config.extension_,
                sizeof(device_config.extension_), "%s%s", REGION, unittest::S3_REGION))) {
-      STORAGE_LOG(WARN, "fail to databuff printf", KR(ret));
+
     } else {
       STRCPY(device_config.state_, ObZoneStorageState::get_str(ObZoneStorageState::ADDED));
       device_config.create_timestamp_ = common::ObTimeUtility::fast_current_time();
@@ -693,7 +693,7 @@ int MockTenantModuleEnv::init_device_config()
       device_config.max_iops_ = 0;
       device_config.max_bandwidth_ = 0;
       if (OB_FAIL(OB_DEVICE_CONF_MGR.add_device_config(device_config))) {
-        STORAGE_LOG(WARN, "fail to add device config", KR(ret));
+
       }
     }
   }
@@ -711,64 +711,64 @@ int MockTenantModuleEnv::init_before_start_mtl()
   uint64_t start_time = 10000000;
   scramble_rand_.init(static_cast<uint64_t>(start_time), static_cast<uint64_t>(start_time / 2));
   if (OB_FAIL(init_dir())) {
-    STORAGE_LOG(WARN, "fail to init env", K(ret));
+
   } else if (OB_FAIL(locality_manager_.init(self_addr_, &sql_proxy_))) {
-    STORAGE_LOG(WARN, "fail to init env", K(ret));
+
   } else if (OB_FAIL(prepare_io())) {
-    STORAGE_LOG(WARN, "fail to init env", K(ret));
+
   } else if (OB_FAIL(session_mgr_.init())) {
-    STORAGE_LOG(WARN, "fail to init env", K(ret));
+
   } else if (OB_FAIL(ObVirtualTenantManager::get_instance().init())) {
-    STORAGE_LOG(WARN, "fail to init env", K(ret));
+
   } else if (OB_FAIL(TMA_MGR_INSTANCE.init())) {
-    STORAGE_LOG(WARN, "fail to init env", K(ret));
+
   } else if (OB_FAIL(OB_FILE_SYSTEM_ROUTER.get_instance().init(env_dir_.c_str(), clog_dir_.c_str()))) {
-    STORAGE_LOG(WARN, "fail to init env", K(ret));
+
 #ifdef OB_BUILD_SHARED_STORAGE
   } else if (GCTX.is_shared_storage_mode() && OB_FAIL(init_device_config())) {
-    STORAGE_LOG(WARN, "fail to init device config", K(ret));
+
 #endif
   } else if (OB_FAIL(OB_STORAGE_OBJECT_MGR.init(GCTX.is_shared_storage_mode(), 2*1024*1024UL))) {
-    STORAGE_LOG(WARN, "fail to init server object manager", K(ret));
+
   } else if (OB_FAIL(net_frame_.init())) {
-    STORAGE_LOG(WARN, "net", "ss", _executeShellCommand("ss -antlp").c_str());
-    STORAGE_LOG(WARN, "fail to init env", K(ret));
+
+
   } else if (OB_FAIL(net_frame_.start())) {
-    STORAGE_LOG(WARN, "fail to init env", K(ret));
+
   } else if (OB_FAIL(batch_rpc_.init(net_frame_.get_batch_rpc_req_transport(),
                                    self_addr_))) {
-    STORAGE_LOG(WARN, "fail to init env", K(ret));
+
   } else if (OB_FAIL(TG_SET_RUNNABLE_AND_START(lib::TGDefIDs::BRPC, batch_rpc_))) {
-    STORAGE_LOG(WARN, "fail to init env", K(ret));
+
   } else if (OB_FAIL(startup_accel_handler_.init(observer::SERVER_ACCEL))) {
-    STORAGE_LOG(WARN, "init server startup task handler failed", KR(ret));
+
   } else if (OB_FAIL(SERVER_STORAGE_META_SERVICE.init(GCTX.is_shared_storage_mode()))) {
-    STORAGE_LOG(ERROR, "init server checkpoint slog handler fail", K(ret));
+
   } else if (OB_FAIL(multi_tenant_.init(self_addr_, &sql_proxy_, false))) {
-    STORAGE_LOG(WARN, "fail to init env", K(ret));
+
   } else if (OB_FAIL(weak_read_service_.init(net_frame_.get_req_transport()))) {
-    STORAGE_LOG(WARN, "init weak_read_service failed", KR(ret));
+
   } else if (FAILEDx(weak_read_service_.start())) {
-    STORAGE_LOG(WARN, "fail to start weak read service", KR(ret));
+
   } else if (OB_FAIL(ObTsMgr::get_instance().init(self_addr_,
                          schema_service_, location_service_, net_frame_.get_req_transport()))) {
-    STORAGE_LOG(WARN, "fail to init env", K(ret));
+
   } else if (OB_FAIL(ObTsMgr::get_instance().start())) {
-    STORAGE_LOG(WARN, "fail to init env", K(ret));
+
   } else if (OB_FAIL(oceanbase::palf::election::GLOBAL_INIT_ELECTION_MODULE())) {
-    STORAGE_LOG(WARN, "fail to init env", K(ret));
+
   } else if (!GCTX.is_shared_storage_mode() && OB_FAIL(tmp_file::ObTmpBlockCache::get_instance().init("tmp_block_cache", 1))) {
-    STORAGE_LOG(WARN, "init tmp block cache failed", KR(ret));
+
   } else if (OB_FAIL(tmp_file::ObTmpPageCache::get_instance().init("tmp_page_cache", 1))) {
-    STORAGE_LOG(WARN, "init sn tmp page cache failed", KR(ret));
+
   } else if (OB_SUCCESS != (ret = bandwidth_throttle_.init(1024 * 1024 * 60))) {
-    STORAGE_LOG(ERROR, "failed to init bandwidth_throttle_", K(ret));
+
   } else if (OB_FAIL(TG_START(lib::TGDefIDs::ServerGTimer))) {
-    STORAGE_LOG(ERROR, "init timer fail", KR(ret));
+
   } else if (OB_FAIL(ObMdsSchemaHelper::get_instance().init())) {
-    STORAGE_LOG(ERROR, "fail to init mds schema helper", K(ret));
+
   } else if (OB_FAIL(LOG_IO_DEVICE_WRAPPER.init(clog_dir_.c_str(), 8, 128, &OB_IO_MANAGER, &ObDeviceManager::get_instance()))) {
-    STORAGE_LOG(ERROR, "init log_io_device_wrapper fail", KR(ret));
+
   } else {
     oceanbase::palf::election::INIT_TS = 1;
     // Ignore cgroup error
@@ -782,17 +782,17 @@ int MockTenantModuleEnv::init_before_start_mtl()
 
 int MockTenantModuleEnv::init()
 {
-    STORAGE_LOG(INFO, "mock env init begin", K(this));
+
     int ret = OB_SUCCESS;
 
     if (inited_) {
       ret = OB_INIT_TWICE;
-      STORAGE_LOG(ERROR, "init twice", K(ret));
+
     } else if (OB_FAIL(ObClockGenerator::init())) {
-      STORAGE_LOG(ERROR, "init ClockGenerator failed", K(ret));
+
     } else if (FALSE_IT(init_gctx_gconf())) {
     } else if (OB_FAIL(init_before_start_mtl())) {
-      STORAGE_LOG(ERROR, "init_before_start_mtl failed", K(ret));
+
     } else {
       oceanbase::ObClusterVersion::get_instance().update_data_version(DATA_CURRENT_VERSION);
       MTL_BIND2(ObTenantIOManager::mtl_new, ObTenantIOManager::mtl_init, mtl_start_default, mtl_stop_default, nullptr, ObTenantIOManager::mtl_destroy);
@@ -865,19 +865,19 @@ int MockTenantModuleEnv::init()
     }
     if (OB_FAIL(ret)) {
     } else if (OB_FAIL(GMEMCONF.reload_config(config_))) {
-      STORAGE_LOG(ERROR, "reload memory config failed", K(ret));
+
     } else if (OB_FAIL(start_())) {
-      STORAGE_LOG(ERROR, "mock env start failed", K(ret));
+
 #ifdef OB_BUILD_SHARED_STORAGE
     } else if (GCTX.is_shared_storage_mode() &&
                OB_FAIL(OB_SERVER_DISK_SPACE_MGR.reload_hidden_sys_data_disk_config(config_))) {
-      STORAGE_LOG(ERROR, "reload data disk size config failed", K(ret));
+
 #endif
     } else {
       inited_ = true;
     }
 
-    STORAGE_LOG(INFO, "mock env init finish", K(ret));
+
 
     return ret;
 }
@@ -894,17 +894,17 @@ int MockTenantModuleEnv::start_()
   if (OB_FAIL(log_block_mgr_.start(storage_env_.log_disk_size_))) {
     SERVER_LOG(ERROR, "log pool start failed", KR(ret));
   } else if (OB_FAIL(OB_STORAGE_OBJECT_MGR.start(0/*reserved_size*/))) {
-    STORAGE_LOG(WARN, "fail to start object manager", K(ret));
+
   } else if (OB_FAIL(startup_accel_handler_.start())) {
-    STORAGE_LOG(WARN, "fail to start server startup task handler", KR(ret));
+
   } else if (OB_FAIL(SERVER_STORAGE_META_SERVICE.start())) {
-    STORAGE_LOG(ERROR, "server storage meta service fail", K(ret));
+
   } else if (OB_FAIL(multi_tenant_.create_hidden_sys_tenant())) {
-    STORAGE_LOG(WARN, "fail to create hidden sys tenant", K(ret));
+
   } else if (OB_FAIL(construct_default_tenant_meta(tenant_id, meta))) {
-    STORAGE_LOG(WARN, "fail to construct_default_tenant_meta", K(ret));
+
   } else if (OB_FAIL(multi_tenant_.convert_hidden_to_real_sys_tenant(meta.unit_))) {
-    STORAGE_LOG(WARN, "fail to create_real_sys_tenant", K(ret));
+
   }
 #ifdef OB_BUILD_SHARED_STORAGE
   if (OB_FAIL(ret)) {
@@ -914,21 +914,21 @@ int MockTenantModuleEnv::start_()
       data_disk_size += OB_SERVER_DISK_SPACE_MGR.get_hidden_sys_data_disk_config_size();
     }
     if (OB_FAIL(multi_tenant_.update_tenant_data_disk_size(tenant_id, data_disk_size))) {
-      STORAGE_LOG(WARN, "fail to update tenant data disk size", K(ret), K(tenant_id), K(data_disk_size));
+
     }
   }
 #endif
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(multi_tenant_.get_tenant(tenant_id, tenant))) {
-    STORAGE_LOG(WARN, "fail to get tenant", K(ret), K(tenant_id));
+
   } else if (OB_FAIL(tenant->acquire_more_worker(TENANT_WORKER_COUNT, succ_num))) {
   } else if (OB_FAIL(guard_.switch_to(tenant_id))) { // switch mtl context
-    STORAGE_LOG(ERROR, "fail to switch to sys tenant", K(ret));
+
   } else {
     ObLogService *log_service = MTL(logservice::ObLogService*);
     if (OB_ISNULL(log_service) || OB_ISNULL(log_service->palf_env_)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(ERROR, "fail to switch to sys tenant", KP(log_service));
+
     } else {
       palf::PalfEnvImpl *palf_env_impl = &log_service->palf_env_->palf_env_impl_;
       palf::LogIOWorkerWrapper &log_iow_wrapper = palf_env_impl->log_io_worker_wrapper_;
@@ -939,11 +939,11 @@ int MockTenantModuleEnv::start_()
       log_iow_wrapper.destory_and_free_log_io_workers_();
       if (OB_FAIL(log_iow_wrapper.create_and_init_log_io_workers_(
         new_config, mock_tenant_id, palf_env_impl->cb_thread_pool_.get_tg_id(), palf_env_impl->log_alloc_mgr_, palf_env_impl))) {
-        STORAGE_LOG(WARN, "failed to create_and_init_log_io_workers_", K(new_config));
+
       } else if (FALSE_IT(log_iow_wrapper.log_writer_parallelism_ = new_config.io_worker_num_)) {
       } else if (FALSE_IT(log_iow_wrapper.is_user_tenant_ = true)) {
       } else if (OB_FAIL(log_iow_wrapper.start_()))  {
-        STORAGE_LOG(WARN, "failed to start_ log_iow_wrapper", K(new_config));
+
       } else {
       }
     }
@@ -953,7 +953,7 @@ int MockTenantModuleEnv::start_()
 
 void MockTenantModuleEnv::destroy()
 {
-  STORAGE_LOG(INFO, "destroy", K(destroyed_));
+
 
   if (server_fd_ > 0) {
     close(server_fd_);

@@ -49,7 +49,7 @@ uint64_t ObExprUuidShort::generate_uuid_short()
                                                                ((static_cast<uint64_t>(common::ObTimeUtility::current_time() / 1000000) << 24) &
                                                                ((static_cast<uint64_t>(1) << 56) - 1));
   uint64_t uuid_short = ATOMIC_AAF(&server_id_and_server_startup_time, 1);
-  LOG_DEBUG("uuid_short generated.", K(uuid_short));
+
   return uuid_short;
 }
 

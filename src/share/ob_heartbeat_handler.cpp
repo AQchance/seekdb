@@ -103,7 +103,7 @@ int ObHeartbeatHandler::handle_heartbeat(
   } else {
     const int64_t epoch_id = hb_request.get_epoch_id();
     if (rs_epoch_id < epoch_id || palf::INVALID_PROPOSAL_ID == rs_epoch_id) {
-      LOG_INFO("receive new rs epoch", "old rs_epoch_id", rs_epoch_id, "new rs_epoch_id", epoch_id);
+
       int64_t current_epoch_id = ATOMIC_CAS(&rs_epoch_id_, rs_epoch_id, epoch_id);
       if (rs_epoch_id != current_epoch_id) {
         ret = OB_NEED_RETRY;

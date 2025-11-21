@@ -672,7 +672,7 @@ int ObTabletSplitMdsHelper::get_split_info_with_cache(const ObTablet &tablet, Ob
       } else if (OB_TMP_FAIL(ObStorageCacheSuite::get_instance().get_tablet_split_cache().put_split_cache(cache_key, cache_value))) {
         LOG_WARN("fail to put cache", K(tmp_ret));
       } else {
-        LOG_INFO("put cache", K(cache_key), K(cache_value));
+
       }
     }
   } else {
@@ -708,7 +708,7 @@ int ObTabletSplitMdsHelper::get_split_info(const ObTablet &tablet, ObIAllocator 
       LOG_WARN("failed to get split info", K(ret));
     }
   } else {
-    LOG_INFO("not split dst", K(ret), K(tablet_meta), K(data));
+
   }
   return ret;
 }
@@ -1116,7 +1116,7 @@ int ObTabletSplitMdsHelper::modify(
       }
     }
   }
-  LOG_INFO("modify tablet split data", K(ret), K(scn), K(ctx.get_writer()), K(arg));
+
   return ret;
 }
 
@@ -1182,7 +1182,7 @@ int ObTabletSplitMdsHelper::set_freeze_flag(
         ObMemtable *memtable = static_cast<ObMemtable *>(table);
         if (memtable->is_active_memtable()) {
           memtable->set_transfer_freeze(replay_scn);
-          LOG_INFO("succ set transfer freeze", K(ls_id), K(tablet_id), KP(memtable), K(replay_scn));
+
         }
       }
     }

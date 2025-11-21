@@ -62,7 +62,7 @@ int ObDASCtx::init(const ObPhysicalPlan &plan, ObExecContext &ctx)
       }
     }
   }
-  LOG_DEBUG("init das context finish", K(ret), K(normal_locations), K(das_locations), K(table_locs_));
+
   return ret;
 }
 
@@ -189,7 +189,7 @@ int ObDASCtx::build_external_table_location(
       }
     }
     OZ (external_table_locs_.push_back(table_loc));
-    LOG_DEBUG("external table distribution", K(locations), KPC(table_loc));
+
   }
   return ret;
 }
@@ -205,7 +205,7 @@ int ObDASCtx::extended_tablet_loc(ObDASTableLoc &table_loc,
     LOG_WARN("get tablet loc failed", KR(ret));
   }
   if (OB_SUCC(ret) && tablet_loc == nullptr) {
-    LOG_DEBUG("tablet location is not exists, begin to construct it", K(table_loc), K(tablet_id));
+
     void *loc_buf = allocator_.alloc(sizeof(ObDASTabletLoc));
     if (OB_ISNULL(loc_buf)) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
@@ -390,7 +390,7 @@ int ObDASCtx::extended_table_loc(const ObDASTableLocMeta &loc_meta, ObDASTableLo
       LOG_WARN("extended table location failed", K(ret));
     } else {
       table_loc->loc_meta_ = &loc_meta;
-      LOG_DEBUG("extended table loc", K(loc_meta));
+
     }
     //to extended related table location
     for (int64_t i = 0; OB_SUCC(ret) && i < loc_meta.related_table_ids_.count(); ++i) {
@@ -424,7 +424,7 @@ int ObDASCtx::add_candi_table_loc(const ObDASTableLocMeta &loc_meta,
   int ret = OB_SUCCESS;
   ObDASTableLoc *table_loc = nullptr;
   ObDASTableLocMeta *final_meta = nullptr;
-  LOG_DEBUG("das table loc assign begin", K(loc_meta));
+
   const ObCandiTabletLocIArray &candi_tablet_locs = candi_table_loc.get_phy_part_loc_info_list();
   if (OB_FAIL(ObDASUtils::build_table_loc_meta(allocator_, loc_meta, final_meta))) {
     LOG_WARN("build table loc meta failed", K(ret));
@@ -438,7 +438,7 @@ int ObDASCtx::add_candi_table_loc(const ObDASTableLocMeta &loc_meta,
       LOG_WARN("extended tablet loc failed", K(ret));
     }
   }
-  LOG_DEBUG("das table loc assign finish", K(candi_table_loc), K(loc_meta), K(table_loc->get_tablet_locs()));
+
   return ret;
 }
 
@@ -450,7 +450,7 @@ int ObDASCtx::add_final_table_loc(const ObDASTableLocMeta &loc_meta,
   int ret = OB_SUCCESS;
   ObDASTableLoc *table_loc = nullptr;
   ObDASTableLocMeta *final_meta = nullptr;
-  LOG_DEBUG("das table loc assign begin", K(loc_meta));
+
   if (OB_FAIL(ObDASUtils::build_table_loc_meta(allocator_, loc_meta, final_meta))) {
     LOG_WARN("build table loc meta failed", K(ret));
   } else if (OB_FAIL(extended_table_loc(*final_meta, table_loc))) {
@@ -468,7 +468,7 @@ int ObDASCtx::add_final_table_loc(const ObDASTableLocMeta &loc_meta,
       LOG_WARN("extended tablet loc failed", K(ret));
     }
   }
-  LOG_DEBUG("das table loc assign finish", K(loc_meta), K(table_loc->get_tablet_locs()));
+
 
   if (OB_FAIL(ret)) {
     clear_all_location_info();
@@ -644,7 +644,7 @@ OB_DEF_SERIALIZE(ObDASCtx)
   FOREACH_X(tmp_node, table_locs_, OB_SUCC(ret)) {
     ObDASTableLoc *table_loc = *tmp_node;
     OB_UNIS_ENCODE(*table_loc);
-    LOG_DEBUG("serialize das table location", K(ret), KPC(table_loc));
+
   }
   OB_UNIS_ENCODE(flags_);
   OB_UNIS_ENCODE(snapshot_);
@@ -672,7 +672,7 @@ OB_DEF_DESERIALIZE(ObDASCtx)
     }
     OB_UNIS_DECODE(*table_loc);
     OX(table_loc->rebuild_reference_ = 0);
-    LOG_DEBUG("deserialized das table location", K(ret), KPC(table_loc));
+
   }
   OB_UNIS_DECODE(flags_);
   OB_UNIS_DECODE(snapshot_);

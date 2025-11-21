@@ -30,19 +30,19 @@ void ObVsagLogger::SetLevel(Level Log_level)
 void ObVsagLogger::Trace(const std::string& msg)
 {
     ObString Log = ObString(msg.size(), msg.c_str());
-    LOG_TRACE("[Vsag]",K(Log));
+
 }
 
 void ObVsagLogger::Debug(const std::string& msg)
 {
     ObString Log = ObString(msg.size(), msg.c_str());
-    LOG_TRACE("[Vsag]",K(Log));
+
 }
 
 void ObVsagLogger::Info(const std::string& msg)
 {
     ObString Log = ObString(msg.size(), msg.c_str());
-    LOG_TRACE("[Vsag]",K(Log));
+
 }
 
 void ObVsagLogger::Warn(const std::string& msg)
@@ -127,7 +127,7 @@ int create_index(obvsag::VectorIndexPtr &index_handler, int index_type, const ch
   return ret;
 #else
   obvsag::set_block_size_limit(2*1024*1024);
-  LOG_INFO("vector index create params: ", K(index_type), KCSTRING(dtype), KCSTRING(metric), K(use_reorder), K(doc_prune_ratio), K(window_size), KP(allocator), K(extra_info_size));
+
   return obvsag::create_index(index_handler, static_cast<obvsag::IndexType>(index_type),
                                    dtype, metric, use_reorder, doc_prune_ratio, window_size,
                                    allocator, extra_info_size);

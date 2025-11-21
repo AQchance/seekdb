@@ -144,7 +144,7 @@ void ObTableLoadCoordinatorCtx::stop()
     task_scheduler_->stop();
     task_scheduler_->wait();
   }
-  LOG_INFO("coordinator ctx stop succ");
+
 }
 
 void ObTableLoadCoordinatorCtx::destroy()
@@ -248,7 +248,7 @@ int ObTableLoadCoordinatorCtx::set_status_abort(int error_code)
   int ret = OB_SUCCESS;
   obsys::ObWLockGuard guard(status_lock_);
   if (ObTableLoadStatusType::ABORT == status_) {
-    LOG_INFO("LOAD DATA COORDINATOR already abort");
+
   } else {
     status_ = ObTableLoadStatusType::ABORT;
     if (OB_SUCCESS == error_code_) {

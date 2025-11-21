@@ -552,7 +552,7 @@ int ObDatumObjParam::construct_array_param_datum(const ObObjParam &obj_param, Ob
         if (OB_FAIL(datum_array->data_[i].from_obj(array_obj->data_[i]))) {
           LOG_WARN("fail to convert obj param", K(ret), K(array_obj->data_[i]));
         } else {
-          LOG_DEBUG("construct datum array", K(array_obj->data_[i]), K(datum_array->data_[i]));
+
         }
       }
     }
@@ -896,7 +896,7 @@ int ObExpr::cast_to_uniform(const int64_t size, ObEvalCtx &ctx, const ObBitVecto
 {
   int ret = OB_SUCCESS;
   VectorHeader &vec_header = get_vector_header(ctx);
-  LOG_DEBUG("cast to uniform", K(this), K(*this), K(vec_header.format_), K(size), K(ctx), K(lbt()));
+
   if (VEC_INVALID == vec_header.format_) {
     // do nothing
   } else {
@@ -1281,7 +1281,7 @@ int ObExpr::eval_vector(ObEvalCtx &ctx,
         *rt_skip, evaluated_vec, BATCH_SIZE(),
         [](const uint64_t l, const uint64_t r) { return ~(l | r); });
   }
-  LOG_DEBUG("need evaluate", K(need_evaluate));
+
   if (OB_SUCC(ret) && need_evaluate) {
     if (OB_UNLIKELY(need_stack_check_) && OB_FAIL(check_stack_overflow())) {
       SQL_LOG(WARN, "failed to check stack overflow", K(ret));

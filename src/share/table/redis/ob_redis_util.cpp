@@ -342,7 +342,7 @@ int ObRedisHelper::gen_meta_scan_range(ObIAllocator &allocator,
     // copy first range and replace is_data with false
     if (start_obj_cnt == 1 || end_obj_cnt == 1) {
       // do nothing, full scan may have one obj
-      LOG_INFO("full scan redis ttl table", K(ret), K(start_obj_cnt), K(end_obj_cnt));
+
     } else if (start_obj_cnt != expected_cnt || end_obj_cnt != expected_cnt) {
       ret = OB_INVALID_ARGUMENT;
       LOG_WARN("redis rowkey should have 4 ObObj", K(ret), K(start_obj_cnt), K(end_obj_cnt), K(src_key_ranges));

@@ -88,7 +88,7 @@ TEST_F(TestTransferPartition, TransferPartitionTask)
         task_array, trans));
   ASSERT_EQ(OB_SUCCESS, trans.end(true));
   ASSERT_EQ(1, task_array.count());
-  LOG_INFO("[MITTEST]new task", K(task_array));
+
   ASSERT_EQ(status, task_array.at(0).get_task_status());
   // case 3: validate different transactions, another transaction cannot write before the first transaction is committed
   ASSERT_EQ(OB_SUCCESS, trans.start(&sql_proxy, tenant_id_));
@@ -110,7 +110,7 @@ TEST_F(TestTransferPartition, TransferPartitionTask)
   ASSERT_EQ(OB_SUCCESS, ObTransferPartitionTaskTableOperator::load_all_task(tenant_id_,
         task_array, trans1));
   ASSERT_EQ(3, task_array.count());
-  LOG_INFO("[MITTEST]new task", K(task_array));
+
   ASSERT_EQ(OB_SUCCESS, trans1.end(true));
   // case 4: validate that table_id, object_id cannot be duplicated
   ASSERT_EQ(OB_SUCCESS, trans.start(&sql_proxy, tenant_id_));
@@ -129,7 +129,7 @@ TEST_F(TestTransferPartition, TransferPartitionTask)
         task_array, trans));
   ASSERT_EQ(OB_SUCCESS, trans.end(true));
   ASSERT_EQ(3, task_array.count());
-  LOG_INFO("[MITTEST]new task", K(task_array));
+
   ASSERT_EQ(1, task_array.at(0).get_balance_job_id().id());
   ASSERT_EQ(1, task_array.at(1).get_balance_job_id().id());
   ASSERT_EQ(-1, task_array.at(2).get_balance_job_id().id());
@@ -153,7 +153,7 @@ TEST_F(TestTransferPartition, TransferPartitionTask)
         task_array, trans));
   ASSERT_EQ(OB_SUCCESS, trans.end(true));
   ASSERT_EQ(3, task_array.count());
-  LOG_INFO("[MITTEST]new task", K(task_array));
+
   ASSERT_EQ(-1, task_array.at(0).get_transfer_task_id().id());
   ASSERT_EQ(-1, task_array.at(1).get_transfer_task_id().id());
   ASSERT_EQ(-1, task_array.at(2).get_transfer_task_id().id());
@@ -164,7 +164,7 @@ TEST_F(TestTransferPartition, TransferPartitionTask)
         task_array, trans));
   ASSERT_EQ(OB_SUCCESS, trans.end(true));
   ASSERT_EQ(3, task_array.count());
-  LOG_INFO("[MITTEST]new task", K(task_array));
+
   ASSERT_EQ(100, task_array.at(0).get_transfer_task_id().id());
   ASSERT_EQ(100, task_array.at(1).get_transfer_task_id().id());
   ASSERT_EQ(-1, task_array.at(2).get_transfer_task_id().id());
@@ -180,7 +180,7 @@ TEST_F(TestTransferPartition, TransferPartitionTask)
         task_array, trans));
   ASSERT_EQ(OB_SUCCESS, trans.end(true));
   ASSERT_EQ(1, task_array.count());
-  LOG_INFO("[MITTEST]new task", K(task_array));
+
   ObSqlString sql;
   ASSERT_EQ(OB_SUCCESS, sql.assign_fmt("select *, time_to_usec(create_time) as create_1, time_to_usec(finish_time) as finish from __all_transfer_partition_task_history"));
   SMART_VAR(ObMySQLProxy::MySQLResult, res) {
@@ -195,12 +195,12 @@ TEST_F(TestTransferPartition, TransferPartitionTask)
     ASSERT_EQ(OB_SUCCESS, result->get_int("create_1", start_time));
     ASSERT_EQ(OB_SUCCESS, result->get_int("finish", finish_time));
 
-    LOG_INFO("[MITTEST]balance_task", K(start_time), K(finish_time), K(new_task3));
+
     ASSERT_EQ(OB_SUCCESS, result->next());
     ASSERT_EQ(OB_SUCCESS, ObTransferPartitionTaskTableOperator::fill_cell_(tenant_id_, result, new_task3));
     ASSERT_EQ(OB_SUCCESS, result->get_int("create_1", start_time));
     ASSERT_EQ(OB_SUCCESS, result->get_int("finish", finish_time));
-    LOG_INFO("[MITTEST]balance_task", K(start_time), K(finish_time), K(new_task3));
+
 
   }
   //case 8: validate rollback
@@ -213,7 +213,7 @@ TEST_F(TestTransferPartition, TransferPartitionTask)
         task_array, trans));
   ASSERT_EQ(OB_SUCCESS, trans.end(true));
   ASSERT_EQ(1, task_array.count());
-  LOG_INFO("[MITTEST]new task", K(task_array));
+
   ASSERT_EQ(-1, task_array.at(0).get_balance_job_id().id());
   ASSERT_EQ(-1, task_array.at(0).get_transfer_task_id().id());
   ASSERT_EQ(status, task_array.at(0).get_task_status());

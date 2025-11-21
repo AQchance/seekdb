@@ -77,11 +77,11 @@ public:
     ObTxTableGuard tx_table_guard;
     if (IS_INIT) {
       ret = OB_INIT_TWICE;
-      STORAGE_LOG(WARN, "ObTxDataMemtableMgr has been initialized.", KR(ret));
+
     } else if (OB_UNLIKELY(!tablet_id.is_valid()) || OB_ISNULL(freezer) || OB_ISNULL(t3m)
                || OB_ISNULL(tx_data_table)) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "invalid arguments", K(ret), K(tablet_id), KP(freezer), KP(t3m));
+
     } else {
       tablet_id_ = tablet_id;
       t3m_ = t3m;
@@ -90,7 +90,7 @@ public:
       ls_tablet_svr_ = ls_handle.get_ls()->get_tablet_svr();
       if (OB_ISNULL(tx_data_table_) || OB_ISNULL(ls_tablet_svr_)) {
         ret = OB_ERR_NULL_VALUE;
-        STORAGE_LOG(WARN, "Init tx data memtable mgr failed.", KR(ret));
+
       } else {
         is_inited_ = true;
       }
@@ -587,20 +587,20 @@ void TestTxDataTable::test_commit_versions_serialize_()
   share::SCN recycle_scn = share::SCN::plus(start_scn, 1000LL * MOD);
 
   int64_t array_cnt = 50000;
-  STORAGE_LOG(INFO, "start generate past array");
+
   for (int64_t i = 0; i < array_cnt; i++) {
     start_scn = share::SCN::plus(start_scn, (rand64(ObTimeUtil::current_time_ns()) % MOD));
     ObCommitVersionsArray::Node node(start_scn, share::SCN::plus(start_scn, (rand64(ObTimeUtil::current_time_ns()) % MOD)));
-    STORAGE_LOG(INFO, "", K(node));
+
     ASSERT_EQ(OB_SUCCESS, past_array.array_.push_back(node));
   }
   ASSERT_EQ(true, past_array.is_valid());
 
-  STORAGE_LOG(INFO, "start generate cur array");
+
   for (int i = 0; i < array_cnt; i++) {
     start_scn = share::SCN::plus(start_scn, (rand64(ObTimeUtil::current_time_ns()) % MOD));
     ObCommitVersionsArray::Node node(start_scn, share::SCN::plus(start_scn, (rand64(ObTimeUtil::current_time_ns()) % MOD)));
-    STORAGE_LOG(DEBUG, "", K(node));
+
     ASSERT_EQ(OB_SUCCESS, cur_array.array_.push_back(node));
   }
   ASSERT_EQ(true, cur_array.is_valid());
@@ -703,12 +703,12 @@ void TestTxDataTable::do_repeat_insert_test() {
   ObSEArray<common::ObStoreRange, 7> range_array;
   ASSERT_EQ(OB_SUCCESS, frozen_memtable->get_split_ranges(input_range, 7, range_array));
   ASSERT_EQ(1, range_array.count());
-  STORAGE_LOG(INFO, "output range", K(range_array));
+
   // If you try to slice into 6 intervals, it can smoothly slice out 6 ranges
   range_array.reuse();
   ASSERT_EQ(OB_SUCCESS, frozen_memtable->get_split_ranges(input_range, 6, range_array));
   ASSERT_EQ(6, range_array.count());
-  STORAGE_LOG(INFO, "output range", K(range_array));
+
   
   memtable_mgr->destroy();
 }
@@ -745,7 +745,7 @@ void TestTxDataTable::do_print_leak_slice_test()
         }
       }
 
-      STORAGE_LOG(INFO, "unfreed slice", KP(allocated_mem_ptr[0]));
+
       for (int k = 1; k < allocated_mem_ptr.size(); k++) {
         slice_allocator.free(allocated_mem_ptr[k]);
       }

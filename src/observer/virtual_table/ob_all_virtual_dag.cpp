@@ -36,17 +36,17 @@ int ObDagInfoIterator<T>::open(const int64_t tenant_id)
   all_tenants.set_label(ObModIds::OB_TENANT_ID_LIST);
   if (is_opened_) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "The ObDagInfoIterator has been opened", K(ret));
+
   } else if (typeid(T) != typeid(share::ObDagInfo) && typeid(T) != typeid(share::ObDagSchedulerInfo)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "invalid typeid", K(ret));
+
   } else if (!::is_valid_tenant_id(tenant_id)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(tenant_id));
+
   } else if (OB_SYS_TENANT_ID == tenant_id) { // sys tenant can get all tenants' info
     GCTX.omt_->get_tenant_ids(all_tenants);
   } else if (OB_FAIL(all_tenants.push_back(tenant_id))) { // non-sys tenant
-    STORAGE_LOG(WARN, "failed to push back", K(ret), K(tenant_id));
+
   }
   for (int64_t i = 0; OB_SUCC(ret) && i < all_tenants.size(); ++i) {
     uint64_t tenant_id = all_tenants[i];
@@ -54,14 +54,14 @@ int ObDagInfoIterator<T>::open(const int64_t tenant_id)
       MTL_SWITCH(tenant_id) {
         if (typeid(T) == typeid(share::ObDagInfo)) {
           if (OB_FAIL(MTL(ObTenantDagScheduler *)->get_all_dag_info(allocator_, all_tenants_dag_infos_))) {
-            STORAGE_LOG(WARN, "failed to get all dag info", K(ret));
+
           }
         } else if (OB_FAIL(MTL(ObTenantDagScheduler *)->get_all_dag_scheduler_info(allocator_, all_tenants_dag_infos_))) {
-          STORAGE_LOG(WARN, "failed to get all dag info", K(ret));
+
         }
       } else {
         if (OB_TENANT_NOT_IN_SERVER != ret) {
-          STORAGE_LOG(WARN, "switch tenant failed", K(ret), K(tenant_id));
+
         } else {
           ret = OB_SUCCESS;
           continue;
@@ -82,7 +82,7 @@ int ObDagInfoIterator<T>::get_next_info(T &info)
   int ret = OB_SUCCESS;
   if (!is_opened_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else if (cur_idx_ >= all_tenants_dag_infos_.count()) {
     ret = OB_ITER_END;
   } else {
@@ -135,10 +135,10 @@ int ObAllVirtualDag::inner_get_next_row(common::ObNewRow *&row)
     SERVER_LOG(WARN, "ObAllVirtualDag has been inited, ", K(ret));
   } else if (OB_FAIL(dag_info_iter_.get_next_info(dag_info_))) {
     if (OB_ITER_END != ret) {
-      STORAGE_LOG(WARN, "Fail to get next merge info, ", K(ret));
+
     }
   } else if (OB_FAIL(fill_cells(dag_info_))) {
-    STORAGE_LOG(WARN, "Fail to fill cells, ", K(ret), K(dag_info_));
+
   } else {
     row = &cur_row_;
   }
@@ -287,10 +287,10 @@ int ObAllVirtualDagScheduler::inner_get_next_row(common::ObNewRow *&row)
     SERVER_LOG(WARN, "ObAllVirtualDagScheduler has been inited, ", K(ret));
   } else if (OB_FAIL(dag_scheduler_info_iter_.get_next_info(dag_scheduler_info_))) {
     if (OB_ITER_END != ret) {
-      STORAGE_LOG(WARN, "Fail to get next merge info, ", K(ret));
+
     }
   } else if (OB_FAIL(fill_cells(dag_scheduler_info_))) {
-    STORAGE_LOG(WARN, "Fail to fill cells, ", K(ret), K(dag_scheduler_info_));
+
   } else {
     row = &cur_row_;
   }

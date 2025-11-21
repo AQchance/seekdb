@@ -710,7 +710,7 @@ int ObPreRangeGraph::get_ss_tablet_ranges(common::ObIAllocator &allocator,
     if (OB_FAIL(range_generator.generate_ss_ranges())) {
       LOG_WARN("failed to generate ranges");
     } else {
-      LOG_DEBUG("get skip range success", K(ss_ranges));
+
     }
   }
   return ret;

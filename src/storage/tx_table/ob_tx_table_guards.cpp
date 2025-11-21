@@ -345,7 +345,7 @@ int ObTxTableGuards::check_with_tx_data(
       if (OB_TRANS_CTX_NOT_EXIST == ret && has_dest) {
         use_dst = true;
         ret = OB_SUCCESS;
-        LOG_DEBUG("use dest tx table guard as src has no ctx", KPC(this), K(src_arg));
+
       } else {
         LOG_WARN("check with src tx data failed", K(ret), KPC(this), K(src_arg));
       }
@@ -355,7 +355,7 @@ int ObTxTableGuards::check_with_tx_data(
       use_dst = true;
     }
 
-    LOG_INFO("need read src", KPC(this), K(use_dst), K(functor), K(src_functor));
+
   } else {
     use_dst = true;
   }

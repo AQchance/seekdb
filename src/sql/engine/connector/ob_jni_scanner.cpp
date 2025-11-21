@@ -63,7 +63,7 @@ JniScanner::JniScanner(ObString factory_class, ObString scanner_type, const bool
 int JniScanner::do_init(common::hash::ObHashMap<ObString, ObString> &params) {
   int ret = OB_SUCCESS;
   if (inited_) {
-    LOG_INFO("jni scanner is already inited, skip to re-init", K(ret));
+
   } else if (OB_FAIL(detect_java_runtime())) {
     LOG_WARN("failed to detect java runtime", K(ret));
   } else if (params.empty()) {
@@ -79,7 +79,7 @@ int JniScanner::do_init(common::hash::ObHashMap<ObString, ObString> &params) {
     common::hash::ObHashMap<ObString, ObString>::iterator params_iter;
     for (params_iter = params.begin();
          OB_SUCC(ret) && params_iter != params.end(); ++params_iter) {
-      LOG_TRACE("scanner params", K(ret), K(params_iter->first), K(params_iter->second));
+
       // init scanner params
       if (OB_FAIL(scanner_params_.set_refactored(params_iter->first,
                                                  params_iter->second))) {
@@ -340,7 +340,7 @@ int JniScanner::init_jni_table_scanner_(JNIEnv *env) {
           env->DeleteLocalRef(key);
           env->DeleteLocalRef(value);
         }
-        LOG_TRACE("Initialized with parameters", K(ret), K(message));
+
 
         jni_scanner_obj_ =
           env->NewObject(jni_scanner_cls_, scanner_constructor, hashmap_object);
@@ -363,7 +363,7 @@ int JniScanner::do_open() {
   int ret = OB_SUCCESS;
   JNIEnv *env = nullptr;
   if (is_opened_) {
-    LOG_INFO("jni scanner is already opened, skip to re-open", K(ret));
+
   } else {
     if (OB_FAIL(get_jni_env(env))) {
       LOG_WARN("failed to get jni env", K(ret));
@@ -384,7 +384,7 @@ int JniScanner::do_open() {
       LOG_WARN("failed init table scanner", K(ret));
     } else if (is_schema_scanner_) {
       // If is schema scanner, then skip executing the init methods
-      LOG_INFO("skip to init more methods for schema scanner", K(ret));
+
     } else if (OB_FAIL(init_jni_method_(env))) {
       LOG_WARN("failed to init jni method", K(ret));
     } else if (OB_ISNULL(jni_scanner_obj_)) {
@@ -474,7 +474,7 @@ int JniScanner::do_close() {
       is_schema_scanner_ = false;
     }
 
-    LOG_TRACE("end of scanner close", K(ret));
+
   }
   return ret;
 }
@@ -534,7 +534,7 @@ int JniScanner::do_get_next_split_by_ob(int64_t *read_rows, bool *eof, int capac
       *eof = false;
     }
   }
-  LOG_DEBUG("get one odps size batch", K(remain_total_rows_), K(start_offset_), K(*eof), K(*read_rows));
+
   return ret;
 }
 
@@ -636,7 +636,7 @@ int JniScanner::do_get_next_split_by_odps(int64_t *read_rows, bool *eof, int cap
     }
   }
   
-  LOG_DEBUG("get one odps size batch", K(remain_total_rows_), K(start_offset_), K(*eof), K(*read_rows));
+
   return ret;
 }
 
@@ -707,14 +707,14 @@ int JniScanner::release_table(const int64_t num_rows) {
       if (OB_FAIL(check_jni_exception_(env))) {
         LOG_WARN("check jni with exception", K(ret));
       } else {
-        LOG_TRACE("release table with num rows", K(ret), K(num_rows));
+
       }
     } else {
       env->CallVoidMethod(jni_scanner_obj_, jni_scanner_release_table_);
       if (OB_FAIL(check_jni_exception_(env))) {
         LOG_WARN("check jni with exception", K(ret));
       } else {
-        LOG_TRACE("release table with num rows", K(ret), K(num_rows));
+
       }
     }
   }
@@ -887,7 +887,7 @@ int JniScanner::get_file_total_row_count(int64_t& count) {
       if (OB_FAIL(check_jni_exception_(env))) {
         LOG_WARN("check jni with exception", K(ret));
       } else {
-        LOG_TRACE("get file total row count", K(ret));
+
       }
       count = size;
     }
@@ -919,7 +919,7 @@ int JniScanner::get_file_total_size(int64_t& size) {
       if (OB_FAIL(check_jni_exception_(env))) {
         LOG_WARN("check jni with exception", K(ret));
       } else {
-        LOG_TRACE("get file total row count", K(ret));
+
       }
       size = jsize;
     }
@@ -951,7 +951,7 @@ int JniScanner::get_split_count(int64_t& size) {
       if (OB_FAIL(check_jni_exception_(env))) {
         LOG_WARN("check jni with exception", K(ret));
       } else {
-        LOG_TRACE("get file total row count", K(ret));
+
       }
       size = count;
     }

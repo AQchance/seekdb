@@ -462,7 +462,7 @@ int ObMultiTenant::init(ObAddr myaddr,
 
   if (OB_SUCC(ret)) {
     is_inited_ = true;
-    LOG_INFO("succ to init multi tenant");
+
   }
   return ret;
 }
@@ -484,7 +484,7 @@ int ObMultiTenant::start()
   } else if (OB_FAIL(printer.register_timer_task(lib::TGDefIDs::ServerGTimer))) {
     LOG_ERROR("Fail to register timer task", K(ret));
   } else {
-    LOG_INFO("succ to start multi tenant");
+
   }
 
 
@@ -740,7 +740,7 @@ int ObMultiTenant::create_tenant(const ObTenantMeta &meta, bool write_slog, cons
       } else if (OB_FAIL(set_ctx_limit(tenant_id, ctx_id, limit))) {
         LOG_ERROR("set tenant ctx limit failed", K(ret), K(limit));
       }
-      LOG_INFO("init ctx memory finish", K(ret), K(tenant_id), K(i), K(configs.at(i)));
+
     }
     if (OB_SUCC(ret)) {
       create_step = ObTenantCreateStep::STEP_CTX_MEM_CONFIG_SETTED; // step1
@@ -936,7 +936,7 @@ int ObMultiTenant::update_tenant_unit_no_lock(const ObUnitInfoGetter::ObTenantCo
       tenant->set_unit_max_cpu(max_cpu);
     }
     tenant->set_tenant_unit(allowed_new_unit);
-    LOG_INFO("succecc to set tenant unit config", K(allowed_new_unit));
+
   }
 
   return ret;
@@ -1026,7 +1026,7 @@ int ObMultiTenant::update_tenant_unit(const ObUnitInfoGetter::ObTenantConfig &un
     bucket_lock_.unlock(bucket_lock_idx);
   }
 
-  LOG_INFO("OMT finish update tenant unit config", K(ret), K(unit), K(bucket_lock_idx));
+
 
   return ret;
 }
@@ -1054,7 +1054,7 @@ int ObMultiTenant::update_tenant_memory(const uint64_t tenant_id, const int64_t 
         allowed_mem_limit = target_mem_limit;
       }
       if (allowed_mem_limit < pre_mem_limit) {
-        LOG_INFO("reduce memory quota", K(mem_limit), K(pre_mem_limit), K(target_mem_limit), K(mem_hold));
+
       } else {
         allowed_mem_limit = pre_mem_limit;
         LOG_WARN("try to reduce memory quota, but free memory not enough",
@@ -1140,7 +1140,7 @@ int ObMultiTenant::update_tenant_config(uint64_t tenant_id)
       }
     }
   }
-  LOG_INFO("update_tenant_config success", K(tenant_id));
+
   return ret;
 }
 
@@ -1256,14 +1256,14 @@ int ObMultiTenant::update_tenant_query_response_time_flush_config()
         LOG_WARN("read config from all_virtual_tenant_parameter_tname failed",
                 KR(ret), K(tenant_id), K(OB_SYS_TENANT_ID), K(sql));
       } else if (NULL == result.get_result()) {
-        LOG_DEBUG("config result is null", K(tenant_id), K(ret));
+
       } else if (OB_FAIL(result.get_result()->next())) {
         LOG_WARN("get result next failed", K(tenant_id), K(ret));
       } else if (OB_FAIL(result.get_result()->get_int(0L, flush_version))) {
         if (OB_ERR_NULL_VALUE != ret) {
           LOG_WARN("get config_version failed", K(tenant_id), K(ret));
         } else {
-          LOG_INFO("tenant has no config", K(tenant_id));
+
           ret = OB_SUCCESS;
         }
       }
@@ -1500,7 +1500,7 @@ int ObMultiTenant::mark_del_tenant(const uint64_t tenant_id)
   } else if (OB_FAIL(get_tenant_unsafe(tenant))) {
     if (OB_TENANT_NOT_IN_SERVER == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("tenant has already been removed, no need to mark_del", KR(ret), K(tenant_id));
+
     } else {
       LOG_WARN("fail to get tenant", K(ret), K(tenant_id));
     }
@@ -1530,7 +1530,7 @@ void ObMultiTenant::remove_tenant()
     ret = OB_ERR_UNEXPECTED;
     LOG_ERROR("unexpected condition", K(ret));
   } else {
-    LOG_INFO("removed_tenant begin to stop", K(tenant_id));
+
     bool need_force_kill_session = false;
     bool is_prepare_unit_gc = false;
     int64_t prepare_unit_gc_ts = false;
@@ -1575,7 +1575,7 @@ void ObMultiTenant::remove_tenant()
       GCTX.log_block_mgr_->remove_tenant(log_disk_size);
       tenant_->destroy();
       ob_delete(tenant_);
-      LOG_INFO("remove tenant success", K(tenant_id));
+
     }
   }
 
@@ -1676,7 +1676,7 @@ int ObMultiTenant::convert_real_to_hidden_sys_tenant()
   if (lock_succ) {
     bucket_lock_.unlock(bucket_lock_idx);
   }
-  LOG_INFO("[DELETE_TENANT] OMT finish convert_real_to_hidden_sys_tenant", K(ret), K(bucket_lock_idx));
+
 
   return ret;
 }
@@ -1960,14 +1960,14 @@ void ObMultiTenant::run1()
       SpinRLockGuard guard(lock_);
       if (!OB_ISNULL(tenant_)) {
         ObTaskController::get().allow_next_syslog();
-        LOG_INFO("dump tenant info", "tenant", *tenant_);
+
         if (OB_NOT_NULL(GCTX.cgroup_ctrl_) && GCTX.cgroup_ctrl_->is_valid()) {
           tenant_->print_throttled_time();
         }
       }
     }
   }
-  LOG_INFO("OMT quit");
+
 }
 
 uint32_t ObMultiTenant::get_tenant_lock_bucket_idx(const uint64_t tenant_id)
@@ -2172,7 +2172,7 @@ int ObMultiTenant::dec_tenant_ddl_count(const uint64_t tenant_id)
     if (tenant->cur_ddl_thread_count() < 0) {
       LOG_ERROR("tenant ddl count is less than 0, please check", K(tenant_id), K(tenant->cur_ddl_thread_count()));
     } else {
-      LOG_TRACE("tenant ddl count", K(tenant_id), K(tenant->cur_ddl_thread_count()));
+
     }
   }
   return ret;

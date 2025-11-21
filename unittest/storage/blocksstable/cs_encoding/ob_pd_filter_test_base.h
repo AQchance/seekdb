@@ -223,7 +223,7 @@ int ObPdFilterTestBase::build_decimal_filter_ref(
     for (int64_t i = 0; OB_SUCC(ret) && (i < ref_cnt); ++i) {
       if (OB_ISNULL(buf = (char *)allocator_.alloc(int_bytes))) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "fail to alloc memory");
+
       } else {
         ObObj ref_obj;
         MEMCPY(buf, &ref_arr[i], int_bytes);
@@ -578,8 +578,8 @@ int ObPdFilterTestBase::check_column_store_white_filter(
   ASSERT_EQ(OB_SUCCESS, build_micro_block_desc(encoder, micro_block_desc, header)); \
   ASSERT_EQ(OB_SUCCESS, full_transform_check_row(header, micro_block_desc, row_arr, row_cnt, true)); \
   ASSERT_EQ(OB_SUCCESS, part_transform_check_row(header, micro_block_desc, row_arr, row_cnt, true)); \
-  LOG_INFO(">>>>>>>>>>FINISH DECODER<<<<<<<<<<<"); \
-  LOG_INFO(">>>>>>>>>>START PD FILTER<<<<<<<<<<<"); \
+ \
+ \
   ObMicroBlockData full_transformed_data; \
   ObMicroBlockCSDecoder decoder; \
   ASSERT_EQ(OB_SUCCESS, init_cs_decoder(header, micro_block_desc, full_transformed_data, decoder));

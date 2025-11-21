@@ -57,7 +57,7 @@ static bool global_is_sswriter = true;
 void mock_switch_sswriter()
 {
   ATOMIC_INC(&lease_epoch);
-  LOG_INFO("mock switch sswriter", K(lease_epoch));
+
 }
 
 int ObSSWriterService::check_lease(
@@ -238,7 +238,7 @@ int TestSSMetaService::build_update_table_store_param_(ObArenaAllocator &allocat
                       false /*need_report*/)))) {
       LOG_WARN("failed to init with compaction info", KR(ret));
     } else {
-      LOG_INFO("success to init ObUpdateTableStoreParam", KR(ret), K(param), KPC(param.sstable_));
+
     }
   }
   return ret;
@@ -318,14 +318,14 @@ TEST_F(TestSSMetaService, test_create_ls)
                                                       allocator,
                                                       tablet));
   ASSERT_EQ(tablet_id, tablet->get_tablet_id());
-  LOG_INFO("test_create_ls finish");
+
 }
 
 TEST_F(TestSSMetaService, test_update_ls_meta)
 {
   int ret = OB_SUCCESS;
 
-  LOG_INFO("test_update_ls_meta");
+
   uint64_t tenant_id = MTL_ID();
   ObLSService *ls_svr = MTL(ObLSService*);
   ObSSMetaService *meta_svr = MTL(ObSSMetaService *);
@@ -346,7 +346,7 @@ TEST_F(TestSSMetaService, test_update_ls_meta)
   ASSERT_EQ(OB_SUCCESS, meta_svr->get_ls_meta_cache_(ls_id, cache_ls_meta));
   ASSERT_NE(nullptr, cache_ls_meta);
   ASSERT_EQ(ls_id, cache_ls_meta->ls_id_);
-  LOG_INFO("get ls meta", K(orig_ls_meta), KPC(cache_ls_meta));
+
 
   // 3. update ls gc state
   SCN offline_scn = SCN::base_scn();
@@ -418,7 +418,7 @@ TEST_F(TestSSMetaService, test_create_tablet)
 {
   int ret = OB_SUCCESS;
 
-  LOG_INFO("test_create_tablet");
+
   ObLSID ls_id = ls_id_;
   ObTabletID tablet_id = get_next_tablet_id();
   ObTablet *tablet =NULL;
@@ -547,7 +547,7 @@ TEST_F(TestSSMetaService, test_update_tablet_table_store_update)
                                                 cur_tablet_id,
                                                 transfer_scn));
 
-  LOG_INFO("test_meta_service debug : create tablet success", K(ret), K(ls_id_), K(cur_tablet_id));
+
 
   ObTabletHandle orig_tablet_handle;
   ret = ls->get_tablet(cur_tablet_id, orig_tablet_handle);
@@ -564,13 +564,13 @@ TEST_F(TestSSMetaService, test_update_tablet_table_store_update)
     table_handle,
     update_param);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("test_meta_service debug : ", K(orig_tablet_handle.get_obj()->get_pointer_handle()));
+
   ret = meta_svr->update_tablet_table_store(
       ls_id_,
       cur_tablet_id,
       update_param);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("test_meta_service debug : reg ss tablet success", K(ret), K(ls_id_), K(cur_tablet_id));
+
 
   ret = build_update_table_store_param_(
     allocator,
@@ -603,7 +603,7 @@ TEST_F(TestSSMetaService, test_update_tablet_table_store_update)
       cur_tablet_id,
       update_param);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("test_meta_service debug : update ss tablet success", K(ret), K(ls_id_), K(cur_tablet_id));
+
 }
 
 

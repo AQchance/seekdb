@@ -116,7 +116,7 @@ int ObScheduledManageDynamicPartition::set_attribute(
       LOG_WARN("failed to add column", KR(ret));
     } else {
       is_scheduled_manage_dynamic_partition_daily_attr = true;
-      LOG_INFO("succeed to set next date", K(attr_val_str), K(next_date_ts));
+
     }
   } else {
     ret = OB_INVALID_ARGUMENT;
@@ -248,12 +248,12 @@ int ObScheduledManageDynamicPartition::create_job_(
       if (OB_FAIL(dbms_scheduler::ObDBMSSchedJobUtils::create_dbms_sched_job(trans, tenant_id, job_id, job_info))) {
         if (OB_ERR_PRIMARY_KEY_DUPLICATE == ret) {
           ret = OB_SUCCESS;
-          LOG_INFO("finish create manage dynamic partition job, job duplicated", K(job_info));
+
         } else {
           LOG_WARN("failed to create manage dynamic partition job", KR(ret), K(job_info));
         }
       } else {
-        LOG_INFO("finish create manage dynamic partition job", K(job_info));
+
       }
     } else {
       LOG_WARN("alloc dbms_schduled_job_info for manage dynamic partition failed", KR(ret));

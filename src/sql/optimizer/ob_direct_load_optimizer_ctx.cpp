@@ -112,7 +112,7 @@ int ObDirectLoadOptimizerCtx::init_direct_load_ctx(ObExecContext *exec_ctx, ObLo
           if (OB_TMP_FAIL(check_direct_load_allow_fallback(*this, exec_ctx, allow_fallback))) {
             LOG_WARN("fail to check support direct load allow fallback", K(tmp_ret));
           } else if (allow_fallback) {
-            LOG_INFO("direct load has been allowed fallback");
+
             ret = OB_SUCCESS;
             ObWarningBuffer *buf = common::ob_get_tsi_warning_buffer();
             if (NULL != buf) {
@@ -199,7 +199,7 @@ int ObDirectLoadOptimizerCtx::init_direct_load_ctx(
               if (OB_TMP_FAIL(check_direct_load_allow_fallback(*this, exec_ctx, allow_fallback))) {
                 LOG_WARN("fail to check support direct load allow fallback", K(tmp_ret));
               } else if (allow_fallback) {
-                LOG_INFO("direct load has been allowed fallback");
+
                 ret = OB_SUCCESS;
                 ObWarningBuffer *buf = common::ob_get_tsi_warning_buffer();
                 if (NULL != buf) {

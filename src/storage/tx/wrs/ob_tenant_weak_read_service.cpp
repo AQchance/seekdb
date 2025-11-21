@@ -109,7 +109,7 @@ int ObTenantWeakReadService::init(const uint64_t tenant_id,
     } else {
       inited_ = true;
 
-      LOG_INFO("tenant weak read service init succ", K(tenant_id), K(lbt()));
+
     }
   }
   return ret;
@@ -144,7 +144,7 @@ void ObTenantWeakReadService::wait()
 void ObTenantWeakReadService::destroy()
 {
   if (inited_) {
-    LOG_INFO("tenant weak read service destroy", K_(tenant_id));
+
 
     cluster_service_.destroy();
 
@@ -194,7 +194,7 @@ int ObTenantWeakReadService::get_cluster_version(SCN &cur_version)
     } else {
       SCN last_local_cluster_version = local_cluster_version_.atomic_get();
       local_cluster_version_.atomic_set(cur_version);
-      LOG_TRACE("get cluster version", K(cur_version), K(last_local_cluster_version));
+
     }
   }
   return ret;
@@ -226,7 +226,7 @@ int ObTenantWeakReadService::get_cluster_version_internal_(SCN &version,
       LOG_WARN("get weak read cluster version fail", KR(ret), K(tenant_id_));
     }
   } else {
-    LOG_TRACE("get weak read cluster version succ", K(version), K(tenant_id_));
+
   }
   return ret;
 }

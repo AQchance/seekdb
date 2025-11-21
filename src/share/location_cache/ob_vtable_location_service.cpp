@@ -101,7 +101,7 @@ int ObVTableLocationService::vtable_get(
   } else if (OB_FAIL(get_from_vtable_cache_(tenant_id, table_id, locations, renew_time))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
       need_renew = true;
-      LOG_INFO("location not exist, need renew", K(tenant_id), K(table_id));
+
       ret = OB_SUCCESS;
     } else {
       LOG_WARN("get location failed", KR(ret), K(tenant_id), K(table_id));
@@ -192,7 +192,7 @@ int ObVTableLocationService::get_from_vtable_cache_(
   if (OB_FAIL(ret)) {
   } else if (locations.empty()) {
     ret = OB_ENTRY_NOT_EXIST;
-    LOG_INFO("location needs to be refreshed", K(tenant_id), K(table_id));
+
   } else {
     LOG_TRACE("location hit in vtable cache", K(vtable_type), 
         K(table_id), K(locations), K(renew_time));
@@ -361,7 +361,7 @@ int ObVTableLocationService::batch_process_tasks(
         locations))) {
       LOG_WARN("fail to renew location", KR(ret), "task", tasks.at(0));
     } else {
-      LOG_INFO("success to process renew task", "task", tasks.at(0), K(locations));
+
     }
   }
   return ret;
@@ -406,7 +406,7 @@ int ObVTableLocationService::vtable_nonblock_renew(
     if (OB_FAIL(add_update_task(task))) {
       LOG_WARN("add location update task failed", KR(ret), K(task));
     } else {
-      LOG_INFO("add_update_task succeed", KR(ret), K(task));
+
     }
   }
   return ret;

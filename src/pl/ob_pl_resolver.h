@@ -28,7 +28,7 @@
 #define LOG_IN_CHECK_MODE(fmt, args...) \
   do {\
     if (resolve_ctx_.is_check_mode_) {\
-      LOG_INFO(fmt, ##args);\
+\
     } else {\
       LOG_WARN(fmt, ##args);\
     }\

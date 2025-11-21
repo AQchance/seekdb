@@ -275,7 +275,7 @@ static int simd_eval_vector(const ObExpr &expr, ObEvalCtx &ctx, const ObBitVecto
   int32_t res_off_perf_unit = unit / val_size * sizeof(int64_t) , batch_cnt = (unit / val_size) * 8;
   int64_t output_idx = bound.start();
   int32_t offset = 0;
-  LOG_DEBUG("simd cmp", K(vec_tc), K(val_size), K(cmp_op), K(bound), K(unit_cnt));
+
   if (remain > 0) {
     int cmp_ret = 0;
     ObObjMeta obj_meta = expr.args_[0]->obj_meta_;

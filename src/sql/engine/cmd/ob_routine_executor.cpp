@@ -93,7 +93,7 @@ int ObCallProcedureExecutor::execute(ObExecContext &ctx, ObCallProcedureStmt &st
   uint64_t package_id = OB_INVALID_ID;
   uint64_t routine_id = OB_INVALID_ID;
   ObCallProcedureInfo *call_proc_info = NULL;
-  LOG_DEBUG("call procedure execute", K(stmt));
+
   if (OB_ISNULL(ctx.get_pl_engine()) || OB_ISNULL(ctx.get_output_row())) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("pl engine is NULL", K(ctx.get_pl_engine()), K(ret));
@@ -183,14 +183,14 @@ int ObCallProcedureExecutor::execute(ObExecContext &ctx, ObCallProcedureStmt &st
       }
       exec_ctx_bak.restore(ctx);
     } else {
-      LOG_DEBUG("direct use params", K(ret), K(stmt));
+
       int64_t param_cnt = ctx.get_physical_plan_ctx()->get_param_store().count();
       if (call_proc_info->get_param_cnt() != param_cnt) {
         ret = OB_ERR_SP_WRONG_ARG_NUM;
         LOG_WARN("argument number not equal", K(call_proc_info->get_param_cnt()), K(param_cnt), K(ret));
       }
       for (int64_t i = 0; OB_SUCC(ret) && i < param_cnt; ++i) {
-        LOG_DEBUG("params", "param", ctx.get_physical_plan_ctx()->get_param_store().at(i), K(i));
+
         ObObjParam param = ctx.get_physical_plan_ctx()->get_param_store().at(i);
         if (OB_FAIL(params.push_back(param))) {
           LOG_WARN("push back error", K(i), K(ret));

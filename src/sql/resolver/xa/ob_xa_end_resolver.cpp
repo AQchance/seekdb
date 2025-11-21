@@ -62,7 +62,7 @@ int ObXaEndResolver::resolve(const ParseNode &parse_node)
         if(format_id >= 0) {
           xa_end_stmt->set_format_id(format_id);
         }
-      LOG_DEBUG("xa end resolver", K(gtrid_string), K(bqual_string), K(format_id), K(flag));
+
       }
     }
   }

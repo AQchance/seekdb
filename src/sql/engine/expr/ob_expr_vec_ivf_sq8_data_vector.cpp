@@ -123,7 +123,7 @@ int ObExprVecIVFSQ8DataVector::generate_data_vector(
   int ret = OB_SUCCESS;
   if (expr.arg_cnt_ == 1) {
     expr_datum.set_null();
-    LOG_DEBUG("[vec index debug] sq8 data vector with single argument", KP(&expr), K(expr), K(expr_datum), K(eval_ctx), K(lbt()));
+
   } else if (OB_UNLIKELY(3 != expr.arg_cnt_) || OB_ISNULL(expr.args_)) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid arguments", K(ret), K(expr), KP(expr.args_));

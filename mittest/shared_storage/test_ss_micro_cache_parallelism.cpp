@@ -222,7 +222,7 @@ TEST_F(TestSSMicroCacheParallelism, test_parallel_add_same_data)
   ctx.interval_us_ = 50;
   ctx.arc_limit_ = micro_meta_mgr.arc_info_.limit_;
   int64_t start_us = ObTimeUtility::current_time();
-  LOG_INFO("TEST: start case", K(ctx));
+
 
   TestSSMicroCacheParallelism::TestSSMicroCacheParallellismThread threads(ObTenantEnv::get_tenant(), ctx);
   threads.set_thread_count(thread_num);

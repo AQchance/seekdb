@@ -229,7 +229,7 @@ void ObSNIODeviceWrapper::destroy()
     }
 
     is_inited_ = false;
-    LOG_INFO("io device wrapper destroy");
+
   }
 }
 

@@ -72,7 +72,7 @@ int ObShrinkExpandResourcePoolChecker::init(
 int ObShrinkExpandResourcePoolChecker::check()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start check shrink resource pool");
+
   ObArray<uint64_t> tenant_ids;
   if (OB_UNLIKELY(!is_inited_)) {
     ret = OB_NOT_INIT;
@@ -93,14 +93,14 @@ int ObShrinkExpandResourcePoolChecker::check()
         //nothing TODO
       } else {
         ObCurTraceId::init(GCONF.self_addr_);
-        LOG_INFO("start check shrink resource pool", K(tenant_id));
+
         if (OB_TMP_FAIL(check_shrink_resource_pool_finished_by_tenant_(tenant_id))) {
           LOG_WARN("fail to check shrink resource pool finish", KR(ret), KR(tmp_ret), K(tenant_id));
         } else {} // no more to do
       }
     }
   }
-  LOG_INFO("finish check shrink resource pool", KR(ret));
+
   return ret;
 }
 
@@ -245,7 +245,7 @@ int ObShrinkExpandResourcePoolChecker::check_shrink_resource_pool_finished_by_ls
         LOG_WARN("ObShrinkExpandResourcePoolChecker stopped", KR(ret));
       } else if (has_exist_in_array(unit_group_ids, ls_status_info.unit_group_id_)) {
         is_finished = false;
-        LOG_INFO("has ls in the unit group", KR(ret), K(ls_status_info));
+
       } else if (OB_FAIL(lst_operator_->get(
                 GCONF.cluster_id,
                 ls_status_info.tenant_id_,
@@ -258,10 +258,10 @@ int ObShrinkExpandResourcePoolChecker::check_shrink_resource_pool_finished_by_ls
           const share::ObLSReplica &ls_replica = ls_info.get_replicas().at(j);
           if (has_exist_in_array(servers, ls_replica.get_server())) {
             is_finished = false;
-            LOG_INFO("has ls in the server", KR(ret), K(ls_replica));
+
           } else if (has_exist_in_array(unit_ids, ls_replica.get_unit_id())) {
             is_finished = false;
-            LOG_INFO("has ls in the unit", KR(ret), K(ls_replica));
+
           }
         }//end for each ls replica
       }

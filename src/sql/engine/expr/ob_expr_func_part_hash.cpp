@@ -76,7 +76,7 @@ int ObExprFuncPartHashBase::calc_value_for_mysql(const T &input, T &output,
       LOG_WARN("Failed to get value", K(ret));
     }
   }
-  LOG_TRACE("calc hash value with mysql mode", K(ret));
+
   return ret;
 }
 

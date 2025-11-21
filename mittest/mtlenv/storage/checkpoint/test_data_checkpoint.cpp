@@ -61,7 +61,7 @@ void ObTableHandleV2::reset()
       if (0 == table_->dec_ref()) {
         // just for debug
         if (ObITable::TX_DATA_MEMTABLE == table_type_ || ObITable::TX_CTX_MEMTABLE == table_type_) {
-          STORAGE_LOG(INFO, "push memtable into gc queue", K(table_type_), K(lbt()), KPC(this));
+
         }
         t3m_->push_table_into_gc_queue(table_, table_type_);
       }
@@ -76,7 +76,7 @@ int ObFreezer::get_ls_weak_read_scn(share::SCN &weak_read_scn)
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(weak_read_scn.convert_for_logservice(100))) {
-    STORAGE_LOG(WARN, "fail to convert_for_logservice", K(ret));
+
   }
   return ret;
 }

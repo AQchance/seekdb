@@ -112,7 +112,7 @@ int ObBloomFilterBuildTask::process()
   } else if (OB_FAIL(build_bloom_filter())) {
     LOG_WARN("Fail to build bloom filter, ", K(ret));
   } else {
-    LOG_INFO("Success to build bloom filter, ", K_(tenant_id), K_(table_id), K_(macro_id), K_(prefix_len));
+
   }
 
   return ret;
@@ -142,7 +142,7 @@ int ObBloomFilterBuildTask::build_bloom_filter()
     if (OB_FAIL(ret)) {
     } else if (OB_FAIL(OB_STORE_CACHE.get_bf_cache().check_need_build(ObBloomFilterCacheKey(
         tenant_id_, macro_id_, prefix_len_), need_build))) {
-      STORAGE_LOG(WARN, "Fail to check need build, ", K(ret));
+
     } else if (!need_build) {
       //already in cache,do nothing
     } else if (OB_ISNULL(buf = ob_malloc(sizeof(ObMacroBlockRowBareIterator), ObModIds::OB_BLOOM_FILTER))) {
@@ -164,7 +164,7 @@ int ObBloomFilterBuildTask::build_bloom_filter()
       if (OB_ISNULL(io_buf_) && OB_ISNULL(io_buf_ =
           reinterpret_cast<char*>(allocator_.alloc(OB_DEFAULT_MACRO_BLOCK_SIZE)))) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "failed to alloc macro read info buffer", K(ret), K(OB_DEFAULT_MACRO_BLOCK_SIZE));
+
       } else {
         read_info.buf_ = io_buf_;
       }
@@ -188,14 +188,14 @@ int ObBloomFilterBuildTask::build_bloom_filter()
                                      macro_header.fixed_header_.rowkey_column_count_,
                                      compat_mode == lib::Worker::CompatMode::ORACLE,
                                      allocator_))) {
-          STORAGE_LOG(WARN, "Failed to init datum utils", K(ret), K(macro_header));
+
         }
         while (OB_SUCC(ret) && OB_SUCC(macro_bare_iter->get_next_row(row))) {
           uint64_t key_hash = 0;
           if (OB_FAIL(rowkey.assign(row->storage_datums_, prefix_len_))) {
-            STORAGE_LOG(WARN, "Failed to assign rowkey", K(ret), KPC(row), K(prefix_len_));
+
           } else if (OB_FAIL(rowkey.murmurhash(0, datum_utils, key_hash))) {
-            STORAGE_LOG(WARN, "Failed to calc rowkey hash", K(ret), K(rowkey), K(datum_utils));
+
           } else if (OB_FAIL(bfcache_value.insert(static_cast<uint32_t>(key_hash)))) {
             LOG_WARN("Fail to insert rowkey to bfcache", K(ret));
           }

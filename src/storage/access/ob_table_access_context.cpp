@@ -29,10 +29,10 @@ int ObTableAccessContext::init_column_scale_info(ObTableScanParam &scan_param)
   int ret = OB_SUCCESS;
   if (!lib::is_oracle_mode()) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected tenant mode", K(ret));
+
   } else if (OB_ISNULL(scan_param.table_param_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected table parameter to init column scale info", K(ret), KPC(scan_param.table_param_));
+
   } else {
     const ObIArray<share::schema::ObColumnParam *> *out_col_param = scan_param.table_param_->get_read_info().get_columns();
     const ObIArray<int32_t> *out_col_project = &scan_param.table_param_->get_output_projector();
@@ -41,13 +41,13 @@ int ObTableAccessContext::init_column_scale_info(ObTableScanParam &scan_param)
       int32_t idx = out_col_project->at(i);
       if (OB_UNLIKELY(idx < 0 || idx >= out_col_param->count())) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "invalid project idx", K(ret), K(idx), K(out_col_param->count()));
+
       } else if (OB_ISNULL(col_param = out_col_param->at(idx))) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "column param is null", K(ret), K(idx));
+
       }
     }
-    STORAGE_LOG(DEBUG, "check need fill scale", K(ret), KPC(out_col_project), KPC(out_col_param));
+
   }
   return ret;
 }
@@ -137,16 +137,16 @@ int ObTableAccessContext::build_lob_locator_helper(ObTableScanParam &scan_param,
   // locator is used for all types of lobs
   if (OB_UNLIKELY(nullptr == scan_param.table_param_ || nullptr == stmt_allocator_)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to build lob locator helper", K(ret), K(scan_param), KP_(stmt_allocator));
+
   } else if (!scan_param.table_param_->use_lob_locator()) {
     lob_locator_helper_ = nullptr;
   } else if (!scan_param.table_param_->enable_lob_locator_v2() && !lib::is_oracle_mode()) {
     // if lob locator v2 is enabled, locator will be used for all types of lobs, including mysql mode
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected tenant mode", K(ret), K(lib::is_oracle_mode()));
+
   } else if (OB_ISNULL(buf = lob_allocator_.alloc(sizeof(ObLobLocatorHelper)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "Failed to alloc memory for ObLobLocatorHelper", K(ret));
+
   } else if (FALSE_IT(lob_locator_helper_ = new (buf) ObLobLocatorHelper())) {
   } else if (OB_FAIL(lob_locator_helper_->init(scan_param,
                                                ctx,
@@ -156,7 +156,7 @@ int ObTableAccessContext::build_lob_locator_helper(ObTableScanParam &scan_param,
       K(ret), KPC(scan_param.table_param_), K(scan_param.ls_id_), K(trans_version_range));
     reset_lob_locator_helper();
   } else {
-    STORAGE_LOG(DEBUG, "succ to init lob locator helper", KPC(lob_locator_helper_));
+
   }
 
   return ret;
@@ -173,17 +173,17 @@ int ObTableAccessContext::build_lob_locator_helper(const ObStoreCtx &ctx,
   // locator is used for all types of lobs
   if (OB_ISNULL(buf = lob_allocator_.alloc(sizeof(ObLobLocatorHelper)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "Failed to alloc memory for ObLobLocatorHelper", K(ret));
+
   } else if (FALSE_IT(lob_locator_helper_ = new (buf) ObLobLocatorHelper())) {
   } else if (OB_FAIL(lob_locator_helper_->init(tablet_id_.id(),
                                                tablet_id_.id(),
                                                ctx,
                                                ls_id_,
                                                trans_version_range.snapshot_version_))) {
-    STORAGE_LOG(WARN, "Failed to init lob locator helper limit", K(ret), K(ls_id_), K(trans_version_range));
+
     reset_lob_locator_helper();
   } else {
-    STORAGE_LOG(DEBUG, "succ to init lob locator helper", KPC(lob_locator_helper_));
+
   }
 
   return ret;
@@ -224,7 +224,7 @@ int ObTableAccessContext::init(ObTableScanParam &scan_param,
     mds_collector_ = scan_param.mds_collector_;
     row_scan_cnt_ = scan_param.row_scan_cnt_;
     if(OB_FAIL(build_lob_locator_helper(scan_param, ctx, trans_version_range))) {
-      STORAGE_LOG(WARN, "Failed to build lob locator helper", K(ret));
+
       // new static engine do not need fill scale
     } else if (lib::is_oracle_mode() && OB_ISNULL(scan_param.output_exprs_)
         && OB_FAIL(init_column_scale_info(scan_param))) {
@@ -282,7 +282,7 @@ int ObTableAccessContext::init(const common::ObQueryFlag &query_flag,
     // 4. only init lob locator helper when nessary?
     // exist do not need lob locator
     if (!for_exist && OB_FAIL(build_lob_locator_helper(ctx, trans_version_range))) {
-      STORAGE_LOG(WARN, "Failed to build lob locator helper", K(ret));
+
     } else if (!micro_block_handle_mgr_.is_valid()
                && OB_FAIL(micro_block_handle_mgr_.init(enable_limit, table_store_stat_,
                   table_scan_stat_,query_flag_))) {
@@ -549,7 +549,7 @@ int ObTableAccessContext::alloc_iter_pool(const bool use_column_store)
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObTableAccessContext not inited", K(ret), KPC(this));
+
   } else if (nullptr == stmt_iter_pool_ && nullptr == cached_iter_node_) {
     void *buf = nullptr;
     if (OB_ISNULL(buf = stmt_allocator_->alloc(sizeof(ObStoreRowIterPool<ObStoreRowIterator>)))) {

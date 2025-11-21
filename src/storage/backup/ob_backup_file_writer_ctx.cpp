@@ -75,7 +75,7 @@ int ObBackupFileWriteCtx::append_buffer(const blocksstable::ObBufferReader &buff
   } else if (OB_FAIL(write_buffer_(buffer.data(), buffer.length(), is_last_part))) {
     LOG_WARN("failed to write buffer", K(ret), K(buffer), K(is_last_part));
   } else {
-    LOG_DEBUG("append buffer to file write ctx", K(buffer));
+
   }
   return ret;
 }
@@ -120,7 +120,7 @@ int ObBackupFileWriteCtx::flush_buffer_(const bool is_last_part)
   const int64_t offset = file_size_;
   common::ObBackupIoAdapter io_adapter;
   if (!check_can_flush_(is_last_part)) {
-    LOG_DEBUG("can not flush now", K(is_last_part), K(data_buffer_));
+
   } else if (OB_ISNULL(dev_handle_) || OB_ISNULL(bandwidth_throttle_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("dev handle should not be null", K(ret));
@@ -136,7 +136,7 @@ int ObBackupFileWriteCtx::flush_buffer_(const bool is_last_part)
     if (OB_SUCC(ret)) {
       ret = EN_BACKUP_TRIGGER_BANDWIDTH_THROTTLE ? : OB_SUCCESS;
       if (OB_FAIL(ret)) {
-        STORAGE_LOG(ERROR, "fake EN_BACKUP_TRIGGER_BANDWIDTH_THROTTLE", K(ret));
+
         // in case of errsim, that the bytes be larger to trigger bandwidth throttle
         bytes = write_size * 100;
         ret = OB_SUCCESS;
@@ -163,7 +163,7 @@ int ObBackupFileWriteCtx::commit_file_()
   } else if (OB_FAIL(flush_buffer_(true /*is_last_part*/))) {
     LOG_WARN("failed to flush buffer", K(ret));
   } else {
-    LOG_INFO("backup file write ctx commit file");
+
   }
   return ret;
 }

@@ -196,7 +196,7 @@ In common scenarios, we can add logs in the code and print the variable, then re
 ## How to add logs
 You can prefer the logging code in the source code, such as
 ```cpp
-LOG_DEBUG("insert sql generated", K(insert_sql));
+
 ```
 
 Here `LOG_DEBUG` is a macro to print log in debug level.
@@ -245,7 +245,7 @@ alter system set enable_async_syslog='False';
 
 You can print the call stack information in the log, such as:
 ```cpp
-LOG_DEBUG("insert sql generated", K(insert_sql), K(lbt()));
+
 ```
 You may got this:
 ```txt

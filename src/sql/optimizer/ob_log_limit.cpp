@@ -54,7 +54,7 @@ int ObLogLimit::est_cost()
   if (OB_FAIL(do_re_est_cost(param, card_, op_cost_, cost_))) {
     LOG_WARN("failed to est cost", K(ret));
   } else {
-    LOG_TRACE("succeed to estimate limit-k cost", K(card_), K(op_cost_), K(cost_));
+
   }
   return ret;
 }

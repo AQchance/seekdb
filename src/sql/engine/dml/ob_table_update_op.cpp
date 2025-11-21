@@ -481,7 +481,7 @@ int ObTableUpdateOp::write_rows_post_proc(int last_errno)
         //insert new row to das after old row has been deleted in storage
         //reference to: 
       }
-      LOG_DEBUG("update rows post proc", K(ret), K(found_rows), K(changed_rows), K(upd_rtdef));
+
     }
     if (OB_SUCC(ret)) {
       plan_ctx->add_row_matched_count(found_rows);

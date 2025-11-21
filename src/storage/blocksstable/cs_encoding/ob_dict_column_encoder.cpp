@@ -203,7 +203,7 @@ int ObDictColumnEncoder::store_dict_encoding_meta_(ObMicroBufferWriter &buf_writ
     LOG_WARN("buffer advance failed", K(ret), K(sizeof(ObDictEncodingMeta)));
   } else {
     *dict_encoding_meta = dict_encoding_meta_;
-    LOG_DEBUG("store dict meta", KPC(dict_encoding_meta), K(buf_writer.length()), K(sizeof(ObDictEncodingMeta)));
+
   }
 
   return ret;
@@ -215,7 +215,7 @@ int ObDictColumnEncoder::store_dict_ref_(ObMicroBufferWriter &buf_writer)
   const int64_t row_cnt = ctx_->ht_->get_row_count();
   if (OB_UNLIKELY(row_cnt != row_count_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "row_count mismatch", K(ret), K(row_cnt), K_(row_count));
+
   } else if (0 == dict_encoding_meta_.distinct_val_cnt_) {
     // has no dict value, means all datums are null, so don't need to store ref
   } else {
@@ -247,7 +247,7 @@ int ObDictColumnEncoder::store_dict_ref_(ObMicroBufferWriter &buf_writer)
     }
     default:
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "uint byte width size not invalid", K(ret), K(width_size));
+
       break;
     }
   }

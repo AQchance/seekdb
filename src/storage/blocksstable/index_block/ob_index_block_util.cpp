@@ -35,14 +35,14 @@ int ObSkipIndexColMeta::append_skip_index_meta(
   bool has_min_max_column = false;
   if (OB_UNLIKELY(!skip_idx_attr.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid skip index attribute", K(ret), K(skip_idx_attr));
+
   } else if (skip_idx_attr.has_min_max() && is_major) {
     if (OB_FAIL(skip_idx_metas.push_back(ObSkipIndexColMeta(col_idx, ObSkipIndexColType::SK_IDX_MIN)))) {
-      STORAGE_LOG(WARN, "failed to push min skip idx meta", K(ret));
+
     } else if (OB_FAIL(skip_idx_metas.push_back(ObSkipIndexColMeta(col_idx, ObSkipIndexColType::SK_IDX_MAX)))) {
-      STORAGE_LOG(WARN, "failed to push max skip idx meta", K(ret));
+
     } else if (OB_FAIL(skip_idx_metas.push_back(ObSkipIndexColMeta(col_idx, ObSkipIndexColType::SK_IDX_NULL_COUNT)))) {
-      STORAGE_LOG(WARN, "failed to push null count skip index meta", K(ret));
+
     } else {
       has_null_count_column = true;
       has_min_max_column = true;
@@ -51,9 +51,9 @@ int ObSkipIndexColMeta::append_skip_index_meta(
 
   if (OB_SUCC(ret) && skip_idx_attr.has_loose_min_max() && !has_min_max_column) {
     if (OB_FAIL(skip_idx_metas.push_back(ObSkipIndexColMeta(col_idx, ObSkipIndexColType::SK_IDX_MIN)))) {
-      STORAGE_LOG(WARN, "failed to push min skip idx meta for loose min", K(ret));
+
     } else if (OB_FAIL(skip_idx_metas.push_back(ObSkipIndexColMeta(col_idx, ObSkipIndexColType::SK_IDX_MAX)))) {
-      STORAGE_LOG(WARN, "failed to push max skip idx meta for loose max", K(ret));
+
     } else {
       has_min_max_column = true;
     }
@@ -62,21 +62,21 @@ int ObSkipIndexColMeta::append_skip_index_meta(
   if (OB_SUCC(ret) && skip_idx_attr.has_sum() && is_major) {
     if (!has_null_count_column
         && OB_FAIL(skip_idx_metas.push_back(ObSkipIndexColMeta(col_idx, ObSkipIndexColType::SK_IDX_NULL_COUNT)))) {
-      STORAGE_LOG(WARN, "failed to push null count skip index meta", K(ret));
+
     } else if (OB_FAIL(skip_idx_metas.push_back(ObSkipIndexColMeta(col_idx, ObSkipIndexColType::SK_IDX_SUM)))) {
-      STORAGE_LOG(WARN, "failed to push sum skip index meta", K(ret));
+
     }
   }
 
   if (OB_SUCC(ret) && skip_idx_attr.has_bm25_token_freq_param()) {
     if (OB_FAIL(skip_idx_metas.push_back(ObSkipIndexColMeta(col_idx, ObSkipIndexColType::SK_IDX_BM25_MAX_SCORE_TOKEN_FREQ)))) {
-      STORAGE_LOG(WARN, "failed to push bm25 token freq skip index meta", K(ret));
+
     }
   }
 
   if (OB_SUCC(ret) && skip_idx_attr.has_bm25_doc_len_param()) {
     if (OB_FAIL(skip_idx_metas.push_back(ObSkipIndexColMeta(col_idx, ObSkipIndexColType::SK_IDX_BM25_MAX_SCORE_DOC_LEN)))) {
-      STORAGE_LOG(WARN, "failed to push bm25 doc len skip index meta", K(ret));
+
     }
   }
 

@@ -135,7 +135,7 @@ void* ObMemstoreAllocator::alloc(AllocHandle& handle, int64_t size, const int64_
   void *res = nullptr;
   if (OB_FAIL(ret) || is_out_of_mem) {
     if (REACH_TIME_INTERVAL(1 * 1000 * 1000)) {
-      STORAGE_LOG(WARN, "this tenant is already out of memstore limit or some thing wrong.", K(tenant_id));
+
     }
     res = nullptr;
   } else {

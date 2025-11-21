@@ -319,7 +319,7 @@ int ObDirectReceiveOp::get_next_row_from_cur_scanner()
         }
       }
     }
-    LOG_DEBUG("direct receive next row", "row", ROWEXPR2STR(eval_ctx_, MY_SPEC.output_));
+
   }
   return ret;
 }

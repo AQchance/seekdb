@@ -111,7 +111,7 @@ TEST_F(TestIntegerPdFilter, test_integer_decoder_filter)
       int64_t res_arr[5] = {0, 4, 9, 3, 0};
       integer_type_filter_normal_check(true, ObWhiteFilterOperatorType::WHITE_OP_BT, 5, 2, res_arr);
     }
-    LOG_INFO(">>>>>>>>>>FINISH PD FILTER<<<<<<<<<<<");
+
   }
 }
 
@@ -247,7 +247,7 @@ TEST_F(TestIntegerPdFilter, test_integer_decoder_nullbitmap_type)
     integer_type_filter_normal_check(true, ObWhiteFilterOperatorType::WHITE_OP_NE, 6, 1, res_arr_ne);
   }
 
-  LOG_INFO(">>>>>>>>>>FINISH PD FILTER<<<<<<<<<<<");
+
 }
 
 TEST_F(TestIntegerPdFilter, test_integer_decoder_float_type)
@@ -335,7 +335,7 @@ TEST_F(TestIntegerPdFilter, test_integer_decoder_float_type)
       int64_t res_arr[5] = {0, 40, 12, 31, 0};
       raw_type_filter_normal_check(true, ObWhiteFilterOperatorType::WHITE_OP_BT, 5, 2, res_arr);
     }
-    LOG_INFO(">>>>>>>>>>FINISH PD FILTER<<<<<<<<<<<");
+
 
     encoder.reuse();
   }
@@ -421,7 +421,7 @@ TEST_F(TestIntegerPdFilter, test_integer_abnormal_filter)
     integer_type_filter_normal_check(true, ObWhiteFilterOperatorType::WHITE_OP_BT, 5, 2, res_arr);
   }
 
-  LOG_INFO(">>>>>>>>>>FINISH PD FILTER<<<<<<<<<<<");
+
 }
 
 TEST_F(TestIntegerPdFilter, test_all_null_integer_decoder)
@@ -498,7 +498,7 @@ TEST_F(TestIntegerPdFilter, test_all_null_integer_decoder)
     integer_type_filter_normal_check(true, ObWhiteFilterOperatorType::WHITE_OP_BT, 1, 2, res_arr);
   }
 
-  LOG_INFO(">>>>>>>>>>FINISH PD FILTER<<<<<<<<<<<");
+
 }
 
 //
@@ -555,7 +555,7 @@ TEST_F(TestIntegerPdFilter, test_exceed_range_compare_filter)
     int64_t res_arr_ge[4] = {1, 1, 0, 0};
     integer_type_filter_normal_check(true, ObWhiteFilterOperatorType::WHITE_OP_GE, 4, 1, res_arr_ge);
   }
-  LOG_INFO(">>>>>>>>>>FINISH PD FILTER<<<<<<<<<<<");
+
 }
 
 //
@@ -616,7 +616,7 @@ TEST_F(TestIntegerPdFilter, test_singed_and_unsigned_compare_filter)
     int64_t res_arr_ge[4] = {2, 2, 1, 0};
     integer_type_filter_normal_check(true, ObWhiteFilterOperatorType::WHITE_OP_GE, 4, 1, res_arr_ge);
   }
-  LOG_INFO(">>>>>>>>>>FINISH PD FILTER<<<<<<<<<<<");
+
 
   col_offset = 2;
   // check LT/LE/GT/GE
@@ -635,7 +635,7 @@ TEST_F(TestIntegerPdFilter, test_singed_and_unsigned_compare_filter)
     integer_type_filter_normal_check(true, ObWhiteFilterOperatorType::WHITE_OP_GE, 4, 1, res_arr_ge);
   }
 
-  LOG_INFO(">>>>>>>>>>FINISH PD FILTER<<<<<<<<<<<");
+
 }
 
 }

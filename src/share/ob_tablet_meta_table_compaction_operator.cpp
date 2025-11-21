@@ -129,7 +129,7 @@ int ObTabletMetaTableCompactionOperator::execute_select_sql(
         LOG_WARN("fail to get medium snapshot info", KR(ret), KP(result), K(sql));
       }
     } else {
-      LOG_TRACE("success to get medium snapshot info", K(ret_info));
+
     }
   }
   return ret;
@@ -177,7 +177,7 @@ int ObTabletMetaTableCompactionOperator::batch_update_unequal_report_scn_tablet(
         } else if (OB_FAIL(construct_tablet_id_array(*result.get_result(), unequal_tablet_id_array))) {
           LOG_WARN("fail to construct tablet id array", KR(ret), "sql", sql.ptr());
         } else if (unequal_tablet_id_array.count() > 0) {
-          LOG_TRACE("success to get uneuqal tablet_id array", K(ret), K(unequal_tablet_id_array));
+
         }
       }
       if (OB_FAIL(ret) || unequal_tablet_id_array.empty()) {
@@ -311,7 +311,7 @@ int ObTabletMetaTableCompactionOperator::inner_batch_update_unequal_report_scn_t
 #ifdef ERRSIM
   ret = OB_E(EventTable::EN_COMPACTION_UPDATE_REPORT_SCN) ret;
   if (OB_FAIL(ret)) {
-    LOG_INFO("ERRSIM EN_COMPACTION_UPDATE_REPORT_SCN", K(ret));
+
   }
 #endif
   if (FAILEDx(sql.append_fmt(
@@ -330,7 +330,7 @@ int ObTabletMetaTableCompactionOperator::inner_batch_update_unequal_report_scn_t
                                             affected_rows))) {
     LOG_WARN("fail to execute sql", KR(ret), K(tenant_id), K(meta_tenant_id), K(sql));
   } else if (affected_rows > 0) {
-    LOG_INFO("success to update unequal report_scn", K(ret), K(sql), K(tenant_id), K(ls_id), K(unequal_tablet_id_array.count()));
+
   }
   return ret;
 }
@@ -374,7 +374,7 @@ int ObTabletMetaTableCompactionOperator::batch_update_report_scn(
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", KR(ret), K(tenant_id));
   } else {
-    LOG_INFO("start to batch update report scn", KR(ret), K(tenant_id), K(global_broadcast_scn_val), K(expected_epoch));
+
     const uint64_t meta_tenant_id = gen_meta_tenant_id(tenant_id);
     bool update_done = false;
     SMART_VAR(ObArray<ObTabletID>, tablet_ids) {
@@ -427,7 +427,7 @@ int ObTabletMetaTableCompactionOperator::batch_update_status(
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", KR(ret), K(tenant_id));
   } else {
-    LOG_INFO("start to batch update status", KR(ret), K(tenant_id), K(expected_epoch));
+
     const uint64_t meta_tenant_id = gen_meta_tenant_id(tenant_id);
     bool update_done = false;
     SMART_VAR(ObArray<ObTabletID>, tablet_ids) {
@@ -459,7 +459,7 @@ int ObTabletMetaTableCompactionOperator::batch_update_status(
           LOG_WARN("freeze_service_epoch mismatch, do not update status on this server", KR(ret), K(tenant_id));
         }
         ret = trans.handle_trans_in_the_end(ret);
-        LOG_INFO("finish one round of batch update status", KR(ret), K(tenant_id), K(affected_rows), K(BATCH_UPDATE_CNT));
+
       }
     }
   }
@@ -489,7 +489,7 @@ int ObTabletMetaTableCompactionOperator::batch_get_tablet_ids(
         LOG_WARN("fail to push_back tablet_id", KR(ret));
       }
     }
-    LOG_INFO("finish to batch get tablet_ids", KR(ret), K(tenant_id), K(sql));
+
   }
   return ret;
 }
@@ -648,7 +648,7 @@ int ObTabletMetaTableCompactionOperator::batch_update_report_scn(
           if (OB_FAIL(trans.write(meta_tenant_id, sql.ptr(), affected_rows))) {
             LOG_WARN("fail to execute sql", KR(ret), K(tenant_id), K(meta_tenant_id), K(sql));
           } else {
-            LOG_TRACE("success to update report_scn", KR(ret), K(tenant_id), K(meta_tenant_id), K(tablet_pairs), K(sql));
+
           }
         } else { // !is_match
           ret = OB_FREEZE_SERVICE_EPOCH_MISMATCH;
@@ -773,7 +773,7 @@ int ObTabletMetaTableCompactionOperator::inner_range_scan_for_compaction(
         LOG_WARN("construct tablet info failed", KR(ret), K(sql), K(tablet_infos));
       } else {
         end_tablet_id = max_tablet_id;
-        LOG_INFO("success to get tablet info", KR(ret), K(batch_size), K(tablet_infos), K(end_tablet_id), K(add_report_scn_filter));
+
       }
     }
   }

@@ -248,7 +248,7 @@ int ObPLRecompileTaskHelper::collect_delta_error_data(common::ObMySQLProxy* sql_
           if (OB_SUCC(ret) && i == dep_objs.count()) {
             OZ (dep_objs.push_back(tmp_tuple));
           }
-          LOG_TRACE("[PLRECOMPILE]: collect delta error data", K(ret), K(tmp_tuple));
+
         }
       SET_ITERATE_END_RET;     
     }
@@ -553,7 +553,7 @@ int ObPLRecompileTaskHelper::recompile_single_obj(ObPLRecompileInfo& obj_info,
   OZ (sql.assign_fmt("begin dbms_utility.VALIDATE(%ld, true); end ", obj_info.recompile_obj_id_)); 
   if (OB_SUCC(ret)) {
     int tmp_ret = connection->execute_write(tenant_id, sql.string(), affected_rows);
-    LOG_TRACE("[PLRECOMPILE] recompile single obj using inner sql!", K(tmp_ret), K(sql), K(obj_info.recompile_obj_id_));
+
   }
   return ret;
 }

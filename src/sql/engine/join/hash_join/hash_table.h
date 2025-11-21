@@ -330,7 +330,7 @@ struct GenericProber final : public ProberBase<Bucket> {
                           build_sr->is_null(build_col_idx),
                           r_v, r_len, cmp_ret);
       is_equal = (cmp_ret == 0);
-      LOG_DEBUG("generic probe equal", K(cmp_ret), K(is_equal));
+
     }
 
     return ret;

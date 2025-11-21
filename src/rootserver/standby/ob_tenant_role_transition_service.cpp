@@ -264,7 +264,7 @@ int ObTenantRoleTransitionService::check_inner_stat()
 int ObTenantRoleTransitionService::failover_to_primary()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("[ROLE_TRANSITION] start to failover to primary", KR(ret), K(is_verify_), K(tenant_id_));
+
   const int64_t start_service_time = ObTimeUtility::current_time();
   ObAllTenantInfo tenant_info;
   if (OB_FAIL(check_inner_stat())) {
@@ -275,7 +275,7 @@ int ObTenantRoleTransitionService::failover_to_primary()
                                                     false, tenant_info))) {
     LOG_WARN("failed to load tenant info", KR(ret), K(tenant_id_));
   } else if (tenant_info.is_primary()) {
-    LOG_INFO("is primary tenant, no need failover");
+
   } else if (OB_UNLIKELY(!tenant_info.get_recovery_until_scn().is_valid_and_not_min())) {
     ret = OB_OP_NOT_ALLOW;
     LOG_WARN("invalid recovery_until_scn", KR(ret), K(tenant_info));
@@ -320,7 +320,7 @@ int ObTenantRoleTransitionService::failover_to_primary()
   }
 
   const int64_t cost = ObTimeUtility::current_time() - start_service_time;
-  LOG_INFO("[ROLE_TRANSITION] finish failover to primary", KR(ret), K(tenant_info), K(is_verify_), K(cost));
+
   return ret;
 }
 ERRSIM_POINT_DEF(ERRSIM_TENANT_ROLE_TRANS_WAIT_SYNC_ERROR);
@@ -429,7 +429,7 @@ int ObTenantRoleTransitionService::do_prepare_flashback_for_switch_to_primary_(
   int ret = OB_SUCCESS;
   ObLSStatusOperator status_op;
   DEBUG_SYNC(PREPARE_FLASHBACK_FOR_SWITCH_TO_PRIMARY);
-  LOG_INFO("start to do_prepare_flashback_for_switch_to_primary_", KR(ret), K_(tenant_id));
+
 
   if (OB_FAIL(check_inner_stat())) {
     LOG_WARN("error unexpected", KR(ret), K(tenant_id_), KP(sql_proxy_), KP(rpc_proxy_));
@@ -665,7 +665,7 @@ int ObTenantRoleTransitionService::do_switch_access_mode_to_append(
         share::NORMAL_SWITCHOVER_STATUS, switchover_epoch_))) {
       LOG_WARN("failed to update tenant switchover status", KR(ret), K(tenant_id_), K(tenant_info), K(cur_tenant_info));
     } else if (cur_tenant_info.get_recovery_until_scn().is_max()) {
-      LOG_INFO("recovery_until_scn already is max_scn", KR(ret), K_(tenant_id), K(cur_tenant_info));
+
     } else if (OB_FAIL(ObAllTenantInfoProxy::update_tenant_recovery_until_scn(
                   tenant_id_, trans, switchover_epoch_, SCN::max_scn()))) {
       LOG_WARN("failed to update_tenant_recovery_until_scn", KR(ret), K_(tenant_id), K(tenant_info), K(cur_tenant_info));
@@ -839,7 +839,7 @@ int ObTenantRoleTransitionService::check_ls_balance_task_finish_(
       LOG_WARN("fail to assign old_balance_task_array", KR(ret), K(tmp_balance_task_array));
     } else if (0 == balance_task_array.count()) {
       is_finish = true;
-      LOG_INFO("balance task finish", K(tenant_id_));
+
     } else if (OB_FAIL(ObAllTenantInfoProxy::load_tenant_info(tenant_id_, sql_proxy_, false, tmp_tenant_info))) {
       LOG_WARN("failed to load tenant info", KR(ret), K(tenant_id_));
     } else if (FALSE_IT(cur_tenant_info.assign(tmp_tenant_info))) {
@@ -855,11 +855,11 @@ int ObTenantRoleTransitionService::check_ls_balance_task_finish_(
           is_finish = false;
         } else if (!task_finish) {
           is_finish = task_finish;
-          LOG_INFO("has transfer task, and not replay to newest", K(task));
+
         }
       }//end for
       if (OB_SUCC(ret) && is_finish) {
-        LOG_INFO("has transfer task, and replay to newest", KR(ret), K(cur_tenant_info));
+
       }
     }
   }
@@ -867,7 +867,7 @@ int ObTenantRoleTransitionService::check_ls_balance_task_finish_(
     if (OB_FAIL(notify_recovery_ls_service_())) {
       LOG_WARN("failed to notify recovery ls service", KR(ret));
     }
-    LOG_INFO("has balance task not finish", K(ls_balance_tasks), K(balance_task_array), K(cur_tenant_info));
+
   }
   return ret;
 }
@@ -1244,7 +1244,7 @@ int ObTenantRoleTransitionService::get_ls_access_mode_(
               LOG_WARN("fail to push back", KR(ret), KR(tmp_ret), K(success_ls_ids), KPC(result));
             }
           }
-          LOG_INFO("[ROLE_TRANSITION] get ls access mode", KR(ret), K(arg));
+
         }
 
         if (OB_FAIL(ret)) {
@@ -1339,7 +1339,7 @@ int ObTenantRoleTransitionService::do_change_ls_access_mode_(
           ls_wait_sync_scn_max =
               ls_wait_sync_scn_max > wait_scn_t ? ls_wait_sync_scn_max : wait_scn_t;
         }
-        LOG_INFO("[ROLE_TRANSITION] change ls access mode", KR(ret), K(info), KPC(result), K(proxy.get_dests()));
+
       }// end for
       if (OB_LIKELY(NULL != cost_detail_)) {
         (void) cost_detail_->add_cost(ObTenantRoleTransCostDetail::WAIT_LOG_END, ls_wait_sync_scn_max);
@@ -1563,7 +1563,7 @@ int ObTenantRoleTransitionService::wait_sys_ls_sync_to_latest_until_timeout_(
   } else if (OB_FAIL(check_restore_source_for_switchover_to_primary_(tenant_id_))) {
     LOG_WARN("fail to check restore source", KR(ret), K_(tenant_id));
   } else if (!has_restore_source_) {
-    LOG_INFO("no restore source", K(tenant_id), K(tenant_info));
+
   } else if (OB_FAIL(check_sync_to_latest_do_while_(tenant_info, only_check_sys_ls))) {
     LOG_WARN("fail to check whether sys ls is synced", KR(ret), K(tenant_info));
   }
@@ -1588,12 +1588,12 @@ int ObTenantRoleTransitionService::wait_tenant_sync_to_latest_until_timeout_(
   } else if (OB_FAIL(check_restore_source_for_switchover_to_primary_(tenant_id_))) {
     LOG_WARN("fail to check restore source", KR(ret), K_(tenant_id));
   } else if (!has_restore_source_) {
-    LOG_INFO("no restore source", K(tenant_id), K(tenant_info));
+
   } else if (OB_FAIL(check_sync_to_latest_do_while_(tenant_info, only_check_sys_ls))) {
     LOG_WARN("fail to check whether all ls are synced", KR(ret), K(tenant_id), K(tenant_info));
   }
   int64_t wait_log_sync = ObTimeUtility::current_time() - begin_time;
-  LOG_INFO("wait tenant sync to latest", KR(ret), K(has_restore_source_), K(wait_log_sync));
+
   if (OB_LIKELY(NULL != cost_detail_)) {
     (void) cost_detail_->add_cost(ObTenantRoleTransCostDetail::WAIT_LOG_SYNC, wait_log_sync);
   }
@@ -1623,7 +1623,7 @@ int ObTenantRoleTransitionService::check_restore_source_for_switchover_to_primar
     if (OB_ENTRY_NOT_EXIST == ret) {
       // When restore_source fails, in order to proceed switchover. If no restore_source is set,
       // do not check sync with restore_source
-      LOG_INFO("failed to get_source", KR(ret), K(tenant_id), K(tenant_id));
+
       has_restore_source_ = false;
       ret = OB_SUCCESS;
     }
@@ -1683,7 +1683,7 @@ int ObTenantRoleTransitionService::get_checkpoints_by_rpc(const uint64_t tenant_
   int ret = OB_SUCCESS;
   checkpoints.reset();
 
-  LOG_INFO("start to get_checkpoints_by_rpc", KR(ret), K(tenant_id), K(check_sync_to_latest), K(status_info_array));
+
   if (!is_user_tenant(tenant_id) || 0 >= status_info_array.count()) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", KR(ret), K(tenant_id), K(status_info_array));
@@ -1914,7 +1914,7 @@ void ObTenantRoleTransitionService::broadcast_tenant_info(const char* const log_
         if (OB_FAIL(ret)) {
           LOG_WARN("send rpc is failed", KR(ret), K(i), K(proxy.get_dests()));
         } else {
-          LOG_INFO("refresh_tenant_info success", KR(ret), K(i), K(proxy.get_dests()));
+
         }
       }
     }
@@ -2002,7 +2002,7 @@ int ObTenantRoleTransitionService::construct_offline_servers_(
     }
   }
   if (0 != temporary_offline_servers.count() || 0 != permanent_offline_servers.count()) {
-    LOG_INFO("the tenant has offline_servers", KR(ret), K(temporary_offline_servers), K(permanent_offline_servers));
+
   }
   return ret;
 }

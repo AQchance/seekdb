@@ -100,7 +100,7 @@ int TestHashMapPerformance::prepare_hash_map(const int64_t count, const double l
     hash_map_.destroy();
   }
   if (OB_FAIL(hash_map_.create(bucket_num, "TestService", "TestService"))) {
-    STORAGE_LOG(WARN, "fail to create hash map", K(ret));
+
   }
   return ret;
 }
@@ -110,9 +110,9 @@ int TestHashMapPerformance::prepare_array_hash_map(const int64_t count, const do
   int ret = OB_SUCCESS;
   const double bucket_num_tmp = load_factor * static_cast<double>(count);
   const int64_t bucket_num = static_cast<int64_t>(bucket_num_tmp);
-  STORAGE_LOG(INFO, "array hash map bucket num", K(bucket_num));
+
   if (OB_FAIL(array_hash_map_.init("TicketQueue", bucket_num))) {
-    STORAGE_LOG(WARN, "fail to create hash map", K(ret));
+
   }
   return ret;
 }
@@ -122,10 +122,10 @@ int TestHashMapPerformance::prepare_array(const int64_t count)
   int ret = OB_SUCCESS;
   if (OB_ISNULL(block_ids_ = static_cast<blocksstable::MacroBlockId *>(allocator_.alloc(sizeof(blocksstable::MacroBlockId) * count)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to allocate memory for block ids", K(ret));
+
   } else if (OB_ISNULL(sstable_block_idx_ = static_cast<int64_t *>(allocator_.alloc(count * sizeof(int64_t))))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to allocate memory for block ids", K(ret));
+
   } else {
     block_count_ = count;
   }
@@ -139,7 +139,7 @@ int TestHashMapPerformance::prepare_cuckoo_hash_map(const int64_t count, const d
   const int64_t bucket_num = static_cast<int64_t>(bucket_num_tmp);
   cuckoo_hash_map_.destroy();
   if (OB_FAIL(cuckoo_hash_map_.create(bucket_num, &cuckoo_allocator_))) {
-    STORAGE_LOG(WARN, "fail to create cuckoo hashmap", K(ret));
+
   }
   return ret;
 }
@@ -154,9 +154,9 @@ int TestHashMapPerformance::generate_data(const int64_t count,
   for (int64_t i = 1; OB_SUCC(ret) && i <= count; ++i) {
     blocksstable::MacroBlockId block_id(0, i, 0);
     if (OB_FAIL(block_ids.push_back(block_id))) {
-      STORAGE_LOG(WARN, "fail to push back block id", K(ret));
+
     } else if (OB_FAIL(sstable_block_idx.push_back(i))) {
-      STORAGE_LOG(WARN, "fail to push back sstable block idx", K(ret));
+
     }
   }
   std::random_shuffle(block_ids.begin(), block_ids.end());
@@ -170,7 +170,7 @@ int TestHashMapPerformance::load_hash_data(const common::ObIArray<blocksstable::
   int ret = OB_SUCCESS;
   for (int64_t i = 0; OB_SUCC(ret) && i < block_ids.count(); ++i) {
     if (OB_FAIL(hash_map_.set_refactored(block_ids.at(i), sstable_block_idx.at(i)))) {
-      STORAGE_LOG(WARN, "fail to set hashmap", K(ret));
+
     }
   }
   return ret;
@@ -182,7 +182,7 @@ int TestHashMapPerformance::load_array_hash_data(const common::ObIArray<blocksst
   int ret = OB_SUCCESS;
   for (int64_t i = 0; OB_SUCC(ret) && i < block_ids.count(); ++i) {
     if (OB_FAIL(array_hash_map_.insert(block_ids.at(i), sstable_block_idx.at(i)))) {
-      STORAGE_LOG(WARN, "fail to set hashmap", K(ret));
+
     }
   }
   return ret;
@@ -195,7 +195,7 @@ int TestHashMapPerformance::load_array_data(const common::ObIArray<blocksstable:
   common::ObArray<int64_t> indices;
   for (int64_t i = 0; OB_SUCC(ret) && i < block_ids.count(); ++i) {
     if (OB_FAIL(indices.push_back(i))) {
-      STORAGE_LOG(WARN, "fail to push back indice", K(ret));
+
     }
   }
   std::sort(indices.begin(), indices.end(), SortIndices(block_ids));
@@ -215,7 +215,7 @@ int TestHashMapPerformance::load_cuckoo_hash_data(const common::ObIArray<blockss
   int ret = OB_SUCCESS;
   for (int64_t i = 0; OB_SUCC(ret) && i < block_ids.count(); ++i) {
     if (OB_FAIL(cuckoo_hash_map_.set(block_ids.at(i), sstable_block_idx.at(i)))) {
-      STORAGE_LOG(WARN, "fail to set hashmap", K(ret));
+
     }
   }
   return ret;
@@ -230,7 +230,7 @@ int TestHashMapPerformance::generate_query_data(const int64_t count,
   for (int64_t i = 0; OB_SUCC(ret) && i < count; ++i) {
     const int64_t block_idx = random.get(1, max_block_id);
     if (OB_FAIL(block_ids.push_back(blocksstable::MacroBlockId(0, block_idx, 0)))) {
-      STORAGE_LOG(WARN, "fail to push back block idx", K(ret));
+
     }
   }
   return ret;
@@ -244,11 +244,11 @@ int TestHashMapPerformance::test_hash_performance(const common::ObIArray<blockss
   int64_t sstable_idx;
   for (int64_t i = 0; OB_SUCC(ret) && i < count; ++i) {
     if (OB_FAIL(hash_map_.get_refactored(block_ids.at(i), sstable_idx))) {
-      STORAGE_LOG(WARN, "fail to get from hashmap", K(ret));
+
     }
   }
   const int64_t end_time = ObTimeUtility::current_time();
-  STORAGE_LOG(INFO, "hash query total time", "cost_time", end_time - start_time);
+
   return ret;
 }
 
@@ -260,11 +260,11 @@ int TestHashMapPerformance::test_array_hash_performance(const common::ObIArray<b
   int64_t sstable_idx;
   for (int64_t i = 0; OB_SUCC(ret) && i < count; ++i) {
     if (OB_FAIL(array_hash_map_.get(block_ids.at(i), sstable_idx))) {
-      STORAGE_LOG(WARN, "fail to get from hashmap", K(ret));
+
     }
   }
   const int64_t end_time = ObTimeUtility::current_time();
-  STORAGE_LOG(INFO, "array hash query total time", "cost_time", end_time - start_time);
+
   return ret;
 }
 
@@ -279,7 +279,7 @@ int TestHashMapPerformance::test_array_performance(const common::ObIArray<blocks
     sstable_idx = iter - block_ids_;
   }
   const int64_t end_time = ObTimeUtility::current_time();
-  STORAGE_LOG(INFO, "array query total time", "cost_time", end_time - start_time, K(sstable_idx));
+
   return ret;
 }
 
@@ -291,11 +291,11 @@ int TestHashMapPerformance::test_cuckoo_hash_performance(const common::ObIArray<
   int64_t sstable_idx;
   for (int64_t i = 0; OB_SUCC(ret) && i < count; ++i) {
     if (OB_FAIL(cuckoo_hash_map_.get(block_ids.at(i), sstable_idx))) {
-      STORAGE_LOG(WARN, "fail to get from hashmap", K(ret));
+
     }
   }
   const int64_t end_time = ObTimeUtility::current_time();
-  STORAGE_LOG(INFO, "cuckoo hashmap query total time", "cost_time", end_time - start_time);
+
   return ret;
 }
 
@@ -332,7 +332,7 @@ int main(int argc, char **argv)
   system("rm -f test_hash_performance.log*");
   OB_LOGGER.set_file_name("test_hash_performance.log", true, true);
   OB_LOGGER.set_log_level("INFO");
-  STORAGE_LOG(INFO, "begin unittest: test_hash_performance");
+
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

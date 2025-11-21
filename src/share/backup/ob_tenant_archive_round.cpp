@@ -218,7 +218,7 @@ int ObArchiveRoundHandler::enable_archive(const int64_t dest_no, ObTenantArchive
       LOG_WARN("failed to commit trans", K(ret), K(dest_no), K(round));
     } else {
       round.switch_state_to(next_state);
-      LOG_INFO("continue archive", K(round));
+
     }
   } else if (OB_FAIL(prepare_new_dest_round_(dest_no, trans, round))) {
     LOG_WARN("failed to prepare new archive round", K(ret), K(dest_no));
@@ -266,7 +266,7 @@ int ObArchiveRoundHandler::disable_archive(const int64_t dest_no, ObTenantArchiv
     LOG_WARN("failed to commit trans", K(ret), K(round));
   } else {
     round.switch_state_to(next_state);
-    LOG_INFO("stop archive", K(round));
+
   }
 
   if (OB_FAIL(ret) && trans.is_started()) {
@@ -304,7 +304,7 @@ int ObArchiveRoundHandler::defer_archive(const int64_t dest_no, ObTenantArchiveR
     LOG_WARN("failed to commit trans", K(ret), K(round));
   } else {
     round.switch_state_to(next_state);
-    LOG_INFO("defer archive", K(round));
+
   }
 
   if (OB_FAIL(ret) && trans.is_started()) {

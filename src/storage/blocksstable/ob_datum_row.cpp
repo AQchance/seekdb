@@ -53,7 +53,7 @@ int ObConstDatumRow::set_datums_ptr(char *datums_ptr)
     for (int64_t i = 0; OB_SUCC(ret) && i < count_; i++) {
       if (OB_UNLIKELY(datums_[i].ptr_ <= ptr)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "unexpected datum ptr", K(ret), K(ptr), K(i), K(datums_[i]));
+
       } else {
         datums_[i].ptr_ = datums_[i].ptr_ - ptr + reinterpret_cast<char *>(datums_);
       }
@@ -95,11 +95,11 @@ int ObDatumRow::init(ObIAllocator &allocator, const int64_t capacity, char *tran
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(is_valid())) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObDatumRow init twice", K(ret), K(*this));
+
   } else if (OB_FAIL(datum_buffer_.init(allocator))) {
-    STORAGE_LOG(WARN, "Failed to init datum buffer", K(ret));
+
   } else if (OB_FAIL(datum_buffer_.reserve(capacity))) {
-    STORAGE_LOG(WARN, "Failed to reserve datum buffer", K(ret), K(capacity));
+
   } else {
     storage_datums_ = datum_buffer_.get_datums();
     count_ = capacity;
@@ -107,7 +107,7 @@ int ObDatumRow::init(ObIAllocator &allocator, const int64_t capacity, char *tran
     // ObDatumRow does not care about the free of trans_info_ptr's memory
     trans_info_ = trans_info_ptr;
 
-    STORAGE_LOG(DEBUG, "succeed to init datum row", K(ret), K_(count));
+
   }
 
   return ret;
@@ -120,10 +120,10 @@ int ObDatumRow::init(const int64_t capacity)
 
   if (OB_UNLIKELY(is_valid())) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "ObDatumRow init twice", K(ret), K(*this));
+
   } else if (OB_UNLIKELY(capacity <= 0 || capacity > 2 * OB_USER_ROW_MAX_COLUMNS_COUNT)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to init datumrow", K(ret), K(capacity));
+
   } else {
     ret = init(local_allocator_, capacity);
   }
@@ -159,14 +159,14 @@ int ObDatumRow::reserve(const int64_t capacity, const bool keep_data)
 
   if (OB_UNLIKELY(!is_valid())) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "ObDatumRow is not inited", K(ret), K(*this));
+
   } else if (OB_UNLIKELY(capacity <= 0 || capacity > 2 * OB_USER_ROW_MAX_COLUMNS_COUNT)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to reserve datum row", K(ret), K(capacity));
+
   } else if (capacity <= get_capacity()) {
     // skip
   } else if (OB_FAIL(datum_buffer_.reserve(capacity, keep_data))) {
-    STORAGE_LOG(WARN, "Failed to reserve datum buffer", K(ret), K(capacity));
+
   } else {
     storage_datums_ = datum_buffer_.get_datums();
   }
@@ -229,16 +229,16 @@ int ObDatumRow::deep_copy(const ObDatumRow &src, ObIAllocator &allocator)
 
   if (OB_UNLIKELY(!src.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to deep copy datum row", K(ret), K(src));
+
   } else if (OB_UNLIKELY(get_capacity() < src.count_ || nullptr == storage_datums_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected local datum row to deep copy", K(ret), KPC(this), K(src));
+
   } else if (OB_FAIL(copy_attributes_except_datums(src))) {
-    STORAGE_LOG(WARN, "copy attribute from other failed", K(ret), K(src));
+
   } else {
     for(int64_t i = 0; OB_SUCC(ret) && i < count_; i++) {
       if (OB_FAIL(storage_datums_[i].deep_copy(src.storage_datums_[i], allocator))) {
-        STORAGE_LOG(WARN, "Failed to deep copy storage datum", K(ret), K(src.storage_datums_[i]));
+
       }
     }
   }
@@ -251,9 +251,9 @@ int ObDatumRow::from_store_row(const storage::ObStoreRow &store_row)
   int ret = OB_SUCCESS;
 
   if (OB_UNLIKELY(!is_valid())) {
-    STORAGE_LOG(WARN, "ObDatumRow is not inited", K(ret), K(*this));
+
   } else if (OB_FAIL(reserve(store_row.row_val_.count_))) {
-    STORAGE_LOG(WARN, "Failed to reserve datums", K(ret), K(store_row));
+
   } else {
     read_flag_ = 0;
     count_ = store_row.row_val_.count_;
@@ -268,7 +268,7 @@ int ObDatumRow::from_store_row(const storage::ObStoreRow &store_row)
     delete_version_ = 0;
     for (int64_t i = 0; OB_SUCC(ret) && i < count_; i++) {
       if (OB_FAIL(storage_datums_[i].from_obj_enhance(store_row.row_val_.cells_[i]))) {
-        STORAGE_LOG(WARN, "Failed to transfer obj to datum", K(ret), K(i), K(store_row.row_val_.cells_[i]));
+
       }
     }
   }
@@ -282,7 +282,7 @@ int ObDatumRow::is_datums_changed(const ObDatumRow &other, bool &is_changed) con
   is_changed = false;
   if (OB_UNLIKELY(count_ == 0)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected count", K(ret));
+
   } else if (count_ != other.count_) {
     is_changed = true;
   } else {
@@ -303,10 +303,10 @@ int ObDatumRow::copy_attributes_except_datums(const ObDatumRow &other)
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!other.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to deep copy datum row", K(ret), K(other));
+
   } else if (OB_UNLIKELY(get_capacity() < other.count_ || nullptr == storage_datums_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected local datum row to deep copy", K(ret), KPC(this));
+
   } else {
     count_ = other.count_;
     row_flag_ = other.row_flag_;
@@ -327,7 +327,7 @@ int ObDatumRow::shallow_copy(const ObDatumRow &other)
   int ret = OB_SUCCESS;
   if (!other.is_valid()) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Unexpected error for shallow copy invalid datum row", K(ret), K(*this), K(other));
+
   } else {
     trans_info_ = nullptr;
     storage_datums_ = other.storage_datums_;
@@ -437,12 +437,12 @@ bool ObDatumRow::operator==(const ObDatumRow &other) const
   bool is_equal = true;
   if (count_ != other.count_) {
     is_equal = false;
-    STORAGE_LOG_RET(WARN, OB_INVALID_ARGUMENT, "datum row count no equal", K(other), K(*this));
+
   } else {
     for (int64_t i = 0; is_equal && i < count_; i++) {
       is_equal = storage_datums_[i] == other.storage_datums_[i];
       if (!is_equal) {
-        STORAGE_LOG_RET(WARN, OB_ERR_UNEXPECTED, "obj and datum no equal", K(i), K(other), K(*this));
+
       }
     }
   }
@@ -498,9 +498,9 @@ int ObNewRowBuilder::build(
   const int64_t col_cnt = datum_row.get_column_count();
   if (OB_UNLIKELY(nullptr == cols_descs_ || cols_descs_->count() < col_cnt)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to build new row", K(ret), K(datum_row), KP_(cols_descs));
+
   } else if (OB_FAIL(obj_buf_.reserve(col_cnt))) {
-    STORAGE_LOG(WARN, "Failed to reserve objs", K(ret), K(col_cnt));
+
   } else {
     new_row_.cells_ = obj_buf_.get_data();
     new_row_.count_ = col_cnt;
@@ -508,7 +508,7 @@ int ObNewRowBuilder::build(
     new_row_.projector_size_ = 0;
     for (int64_t i = 0; OB_SUCC(ret) && i < col_cnt; i++) {
       if (OB_FAIL(datum_row.storage_datums_[i].to_obj_enhance(new_row_.cells_[i], cols_descs_->at(i).col_type_))) {
-        STORAGE_LOG(WARN, "Failed to transform datum to obj", K(ret), K(i), K(datum_row.storage_datums_[i]));
+
       }
     }
     new_row = &new_row_;
@@ -523,7 +523,7 @@ int ObNewRowBuilder::build_store_row(
   int ret = OB_SUCCESS;
   common::ObNewRow *new_row = nullptr;
   if (OB_FAIL(build(datum_row, new_row))) {
-    STORAGE_LOG(WARN, "Failed to build new row", K(ret), K(datum_row));
+
   } else {
     store_row.reset();
     store_row.row_val_ = *new_row;
@@ -564,7 +564,7 @@ int ObGhostRowUtil::make_ghost_row(
                   || !row.mvcc_row_flag_.is_last_multi_version_row()
                   || row.get_column_count() < sql_sequence_col_idx)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(row), K(sql_sequence_col_idx));
+
   } else {
     row.row_flag_.set_flag(ObDmlFlag::DF_UPDATE);
     row.mvcc_row_flag_.reset();
@@ -587,7 +587,7 @@ int ObShadowRowUtil::make_shadow_row(const int64_t sql_sequence_col_idx,
   if (OB_UNLIKELY(((row.mvcc_row_flag_.is_uncommitted_row() || row.trans_id_.is_valid()))
                   || row.get_column_count() < sql_sequence_col_idx)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(row), K(sql_sequence_col_idx));
+
   } else {
     row.storage_datums_[sql_sequence_col_idx].reuse();
     row.storage_datums_[sql_sequence_col_idx].set_int(-INT64_MAX);

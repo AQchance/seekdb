@@ -69,7 +69,7 @@ int ObTxLockPartOnDetectOp::operator() (
       LOG_ERROR("revert tx ctx failed, there may be ref leak", K(tmp_ret), KPC(ctx));
     }
   }
-  LOG_INFO("tx lock part killed.", K(ret), K(lock_part_id_));
+
   return ret;
 }
 
@@ -256,7 +256,7 @@ int ObTransLockPartBlockCallBack::operator()(
                 KPC(ctx));
     }
   }
-  LOG_DEBUG("ObTransLockPartBlockCallBack", K(ret));
+
   return ret;
 }
 
@@ -304,7 +304,7 @@ int ObTableLockDeadlockDetectorHelper::register_trans_lock_part(
       LOG_WARN("register to deadlock detector failed.",
               K(ret), K(tx_lock_part_id), K(priority));
     }
-    LOG_DEBUG("ObTableLockDeadlockDetectorHelper::register_trans_lock_part", K(ret), K(tx_lock_part_id), K(ls_id));
+
   }
   return ret;
 }
@@ -320,7 +320,7 @@ int ObTableLockDeadlockDetectorHelper::unregister_trans_lock_part(
     } else if (OB_FAIL(MTL(ObDeadLockDetectorMgr*)->unregister_key(tx_lock_part_id))) {
       LOG_WARN("unregister from deadlock detector failed", K(tx_lock_part_id));
     }
-    LOG_DEBUG("ObTableLockDeadlockDetectorHelper::unregister_trans_lock_part", K(ret), K(tx_lock_part_id));
+
   }
   return ret;
 }

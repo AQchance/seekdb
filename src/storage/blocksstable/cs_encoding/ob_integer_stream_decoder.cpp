@@ -373,7 +373,7 @@ int ObIntegerStreamDecoder::decode_stream_meta(
     LOG_WARN("fail to deserializ stream meta", K(ret), K(data));
   } else {
     stream_meta_len = static_cast<uint16_t>(pos);
-    LOG_DEBUG("after decode interger stream header", K(ctx), K(stream_meta_len));
+
   }
 
   return ret;
@@ -397,26 +397,26 @@ int ObIntegerStreamDecoder::transform_to_raw_array(
   int ret = OB_SUCCESS;
   if (OB_ISNULL(raw_arr_buf)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "buf not enough", K(ret), K(ctx));
+
   } else if (ctx.meta_.is_8_byte_width()) {
     if (OB_FAIL(decode_all_except_base(data, ctx, (uint64_t*)raw_arr_buf, alloc))) {
-      STORAGE_LOG(WARN, "fail to decode all", KR(ret), K(data), K(ctx));
+
     }
   } else if (ctx.meta_.is_4_byte_width()) {
     if (OB_FAIL(decode_all_except_base(data, ctx, (uint32_t*)raw_arr_buf, alloc))) {
-      STORAGE_LOG(WARN, "fail to decode all", KR(ret), K(data), K(ctx));
+
     }
   } else if (ctx.meta_.is_2_byte_width()) {
     if (OB_FAIL(decode_all_except_base(data, ctx, (uint16_t*)raw_arr_buf, alloc))) {
-      STORAGE_LOG(WARN, "fail to decode all", KR(ret), K(data), K(ctx));
+
     }
   } else if (ctx.meta_.is_1_byte_width()) {
     if (OB_FAIL(decode_all_except_base(data, ctx, (uint8_t*)raw_arr_buf, alloc))) {
-      STORAGE_LOG(WARN, "fail to decode all", KR(ret), K(data), K(ctx));
+
     }
   } else {
     ret = OB_INNER_STAT_ERROR;
-    STORAGE_LOG(WARN, "invalid width size", K(ret), K(ctx));
+
   }
 
   return ret;

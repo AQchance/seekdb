@@ -60,7 +60,7 @@ TEST_F(ObRandomAffiTaskSplitTest, split_task_test) {
     affinitize_rule.do_random(true, tenant_id);
     const common::ObIArray<ObPxAffinityByRandom::TabletHashValue>& result = affinitize_rule.get_result();
     for (int i = 0; i < result.count(); ++i) {
-      LOG_INFO("result", K(result.at(i).tablet_id_), K(result.at(i).worker_id_), K(result.at(i).partition_info_.physical_row_count_));
+
     }
     ASSERT_EQ(1, result.at(0).worker_id_);
     ASSERT_EQ(0, result.at(1).worker_id_);
@@ -90,7 +90,7 @@ TEST_F(ObRandomAffiTaskSplitTest, split_task_test) {
 
     const common::ObIArray<ObPxAffinityByRandom::TabletHashValue>& result = affinitize_rule.get_result();
     for (int i = 0; i < 5; ++i) {
-      LOG_INFO("result", K(result.at(i).tablet_id_), K(result.at(i).worker_id_), K(result.at(i).partition_info_.physical_row_count_));
+
     }
     ASSERT_EQ(4, result.at(0).worker_id_);
     ASSERT_EQ(2, result.at(1).worker_id_);
@@ -120,7 +120,7 @@ TEST_F(ObRandomAffiTaskSplitTest, split_task_test) {
 
     const common::ObIArray<ObPxAffinityByRandom::TabletHashValue>& result = affinitize_rule.get_result();
     for (int i = 0; i < 5; ++i) {
-      LOG_INFO("result", K(result.at(i).tablet_id_), K(result.at(i).worker_id_), K(result.at(i).partition_info_.physical_row_count_));
+
     }
 
     ASSERT_EQ(1, result.at(0).worker_id_);

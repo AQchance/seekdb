@@ -216,9 +216,9 @@ int ObMicroBlockRowLockChecker::check_truncate_part_filter(const int64_t current
     if (FAILEDx(context_->truncate_part_filter_->filter(row_, fitered, true/*check_filter*/, !sstable_->is_major_sstable()))) {
       LOG_WARN("failed to filter truncated part", K(ret));
     } else if (OB_UNLIKELY(fitered)) {
-      LOG_DEBUG("[TRUNCATE INFO] filtered by truncated main table partition", K(ret), K(current), K(trans_version), K_(row));
+
     } else {
-      LOG_DEBUG("[TRUNCATE INFO] not filtered row", KR(ret), K(row_), KPC(context_->truncate_part_filter_), K(rowkey_cnt));
+
     }
   }
   return ret;

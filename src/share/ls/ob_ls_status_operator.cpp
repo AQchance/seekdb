@@ -202,7 +202,7 @@ int ObLSStatusOperator::create_new_ls(const ObLSStatusInfo &ls_info,
     } else if (OB_FAIL(exec_write(ls_info.tenant_id_, sql, this, trans))) {
       LOG_WARN("failed to exec write", KR(ret), K(ls_info), K(sql));
     } else if (ls_info.ls_id_.is_sys_ls()) {
-      LOG_INFO("sys ls no need update max ls id", KR(ret), K(ls_info));
+
     } else if (OB_FAIL(ObAllTenantInfoProxy::update_tenant_max_ls_id(
                    ls_info.tenant_id_, ls_info.ls_id_, trans, false))) {
       LOG_WARN("failed to update tenant max ls id", KR(ret), K(ls_info));
@@ -551,13 +551,13 @@ int ObLSStatusOperator::get_all_ls_status_by_order_for_switch_tenant(
         LOG_WARN("tenant has been dropped", KR(ret), K(info));
       } else if (ls_need_create_abort_status(info.get_status())) {
         if (ignore_need_create_abort) {
-          LOG_INFO("ignore ls", KR(ret), K(info));
+
         } else {
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("unexpected ls status", KR(ret), K(info));
         }
       } else if (ls_is_create_abort_status(info.get_status())) {
-        LOG_INFO("ignore ls", KR(ret), K(info));
+
       } else if (OB_FAIL(ls_array.push_back(info))) {
         LOG_WARN("failed to push_back", KR(ret), K(info), K(ls_array));
       }
@@ -637,7 +637,7 @@ int ObLSStatusOperator::get_duplicate_ls_status_info(
   } else if (OB_FAIL(inner_get_ls_status_(sql, get_exec_tenant_id(tenant_id), need_member_list,
                                           client, member_list, status_info, arb_member, learner_list, group_id))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
-      LOG_INFO("tenant does not have duplicate ls", KR(ret), K(tenant_id));
+
     } else {
       LOG_WARN("fail to inner get ls status info", KR(ret), K(sql), K(tenant_id), "exec_tenant_id",
           get_exec_tenant_id(tenant_id), K(need_member_list));
@@ -1356,7 +1356,7 @@ int ObLSStatusOperator::generate_valid_servers_(
       if (OB_FAIL(ObRootUtils::check_server_alive(servers_info, server, is_alive))) {
         LOG_WARN("fail to check is server alive", KR(ret), K(servers_info), K(server));
       } else if (!is_alive) {
-        LOG_INFO("find not alive server in member_list", K(servers_info), K(server), K(member_list));
+
       } else if (!common::has_exist_in_array(invalid_servers, server)
           && !common::has_exist_in_array(to_stop_servers, server)) {
         if (OB_FAIL(valid_servers.push_back(server))) {
@@ -1366,7 +1366,7 @@ int ObLSStatusOperator::generate_valid_servers_(
       }
     }
   }
-  LOG_INFO("generate valid servers", KR(ret), K(member_list), K(to_stop_servers), K(valid_servers));
+
   return ret;
 }
 
@@ -1574,7 +1574,7 @@ int ObLSStatusOperator::create_abort_ls_in_switch_tenant(
       }
     }
   }
-  LOG_INFO("finish create abort ls", KR(ret), K(tenant_id), K(sql));
+
   ALL_LS_EVENT_ADD(tenant_id, SYS_LS, "create abort ls for switchover", ret, sql);
   return ret;
 }

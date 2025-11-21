@@ -402,7 +402,7 @@ int ObTransferUtils::get_gts(const uint64_t tenant_id, SCN &gts)
       }
     }
   }
-  LOG_INFO("get tenant gts", KR(ret), K(tenant_id), K(gts));
+
   return ret;
 }
 
@@ -539,7 +539,7 @@ int ObStorageHAUtils::build_major_sstable_reuse_info(
   } else if (FALSE_IT(tablet = tablet_handle.get_obj())) {
   } else {
     if (macro_block_reuse_mgr.is_inited()) {
-      LOG_INFO("reuse info mgr has been inited before (maybe retry), won't init again", K(macro_block_reuse_mgr.is_inited()));
+
     } else if (OB_FAIL(macro_block_reuse_mgr.init())) {
       LOG_WARN("failed to init reuse info mgr", K(ret));
     }
@@ -562,13 +562,13 @@ int ObStorageHAUtils::build_major_sstable_reuse_info(
       } else if (OB_FAIL(wrapper.get_member()->get_major_sstables(major_sstable_iter, false /*unpack_co_table*/))) {
         LOG_WARN("failed to get major sstables", K(ret), K(wrapper), KPC(tablet));
       } else if (0 == major_sstable_iter.count()) {
-        LOG_INFO("no major sstable, skip build reuse info", K(ret), KPC(tablet));
+
       } else if (OB_FAIL(get_latest_available_major_(major_sstable_iter, latest_major))) {
         // get_major_sstables return major sstables ordered by snapshot version in ascending order
         LOG_WARN("failed to get latest available major sstable", K(ret), K(wrapper), KPC(tablet));
       } else if (!latest_major.is_valid()) {
         // skip, first major sstable has backup data, no need to build reuse info
-        LOG_INFO("first major sstable has backup data, no need to build reuse info", K(ret), K(wrapper), KPC(tablet));
+
       } else if (OB_FAIL(get_latest_major_sstable_array_(latest_major, major_sstables))){
         LOG_WARN("failed to get latest major sstable array", K(ret), K(latest_major));
       } else {
@@ -577,7 +577,7 @@ int ObStorageHAUtils::build_major_sstable_reuse_info(
         } else if (OB_FAIL(macro_block_reuse_mgr.count(reuse_info_count))) {
           LOG_WARN("failed to count reuse info", K(ret), K(major_sstables), KPC(tablet), K(latest_major));
         } else {
-          LOG_INFO("succeed to build reuse info", K(ret), K(major_sstables), KPC(tablet), K(latest_major), K(reuse_info_count));
+
         }
 
         // if build reuse info failed, reset reuse mgr

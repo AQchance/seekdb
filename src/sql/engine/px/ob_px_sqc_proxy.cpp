@@ -123,7 +123,7 @@ int ObPxSQCProxy::link_sqc_qc_channel(ObPxRpcInitSqcArgs &sqc_arg)
     sqc_ctx_.msg_loop_.set_tenant_id(basic_channel->get_tenant_id());
     sqc_ctx_.msg_loop_.set_process_query_time(get_process_query_time());
     sqc_ctx_.msg_loop_.set_query_timeout_ts(get_query_timeout_ts());
-    LOG_TRACE("register sqc-qc channel", K(sqc));
+
   }
   return ret;
 }
@@ -194,7 +194,7 @@ int ObPxSQCProxy::do_process_dtl_msg(int64_t timeout_ts)
   while (OB_SUCC(ret)) {
     if (OB_FAIL(sqc_ctx_.msg_loop_.process_any(10))) {
       if (OB_DTL_WAIT_EAGAIN == ret) {
-        LOG_TRACE("no message for sqc, exit", K(ret), K(timeout_ts));
+
       } else {
         LOG_WARN("fail proccess dtl msg", K(timeout_ts), K(ret));
       }
@@ -255,7 +255,7 @@ int ObPxSQCProxy::get_receive_data_ch(int64_t child_dfo_id,
   int ret = OB_SUCCESS;
   bool need_process_dtl = need_receive_channel_map_via_dtl(child_dfo_id);
 
-  LOG_TRACE("get_receive_data_ch", K(need_process_dtl), K(child_dfo_id));
+
   do {
     ObSqcLeaderTokenGuard guard(leader_token_lock_, msg_ready_cond_);
     if (guard.hold_token()) {
@@ -264,7 +264,7 @@ int ObPxSQCProxy::get_receive_data_ch(int64_t child_dfo_id,
           ret = process_dtl_msg(timeout_ts);
         }
 
-        LOG_TRACE("process dtl msg done", K(ret));
+
         // When all messages are received, then focus on doing your own task
         // Check if the expected receive channel map has already been received
         if (OB_SUCC(ret)) {
@@ -281,7 +281,7 @@ int ObPxSQCProxy::get_receive_data_ch(int64_t child_dfo_id,
               LOG_WARN("fail peek data channel from ch_provider", K(ret));
             }
           } else {
-            LOG_TRACE("SUCC got nonblock receive channel", K(task_ch_set), K(child_dfo_id));
+
           }
         }
       } while (OB_DTL_WAIT_EAGAIN == ret);

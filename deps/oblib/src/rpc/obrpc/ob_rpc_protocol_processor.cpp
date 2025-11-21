@@ -308,7 +308,7 @@ int ObRpcProtocolProcessor::init_ctx(easy_connection_t *easy_conn,
           } else if (OB_FAIL(ctx->init(mode, block_size, ring_buffer, ring_buffer_size))) {
             LOG_ERROR("failed to init compress ctx", K(mode), K(ret));
           } else {
-            LOG_INFO("succ to init compress ctx", K(mode), "ctx", *ctx, K(ret));
+
           }
         }
       }

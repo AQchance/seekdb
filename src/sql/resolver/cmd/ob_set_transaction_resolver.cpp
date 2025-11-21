@@ -113,7 +113,7 @@ int ObSetTransactionResolver::resolve(const ParseNode &parse_tree)
       } else if (OB_FAIL(stmt->add_variable_node(access_var_node))) {
         LOG_WARN("fail to add variable node", K(ret));
       } else {
-        LOG_DEBUG("add variable node", K(is_read_only));
+
       }
     }
     if (OB_SUCC(ret)) {

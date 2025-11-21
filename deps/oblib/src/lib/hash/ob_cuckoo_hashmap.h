@@ -771,7 +771,7 @@ int ObCuckooHashMap<_key_type, _value_type, _hashfunc, _equal>::set_impl(
       bool occupied = b.occupied_[i];
       if (occupied) {
         pair_type &pair = b.slots_[i];
-        STORAGE_LOG(DEBUG, "check key is equal", K(pair.first), K(*pkey));
+
         bool is_equal = equal_(pair.first, *pkey);
         if (is_equal) {
           if (is_overwrite) {

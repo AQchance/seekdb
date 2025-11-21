@@ -182,20 +182,20 @@ int FakeObTableScanRange::do_split_datum_range(int64_t split_start_val, int64_t 
   int64_t key_cnt = 1;
   if (need_set_split_start_key_) {
     if (OB_FAIL(gen_datum_rowkey(split_start_val, key_cnt, split_info_.start_partkey_))) {
-      STORAGE_LOG(WARN, "fail to gen start rowkey", K(ret));
+
     } 
   }
 
   if (OB_SUCC(ret) && need_set_split_end_key_) {
     if (OB_FAIL(gen_datum_rowkey(split_end_val, key_cnt, split_info_.end_partkey_))) {
-      STORAGE_LOG(WARN, "fail to gen end rowkey", K(ret));
+
     } 
   }
 
   if (OB_SUCC(ret)) {
     bool is_empty_range = false;
     if (OB_FAIL(split_query_.get_tablet_split_range(*tablet_handle_.get_obj(), datum_utils_, split_info_, allocator_, datum_range_, is_empty_range))) {
-      STORAGE_LOG(WARN, "fail to do split range", K(ret));
+
     }
   }
 
@@ -212,7 +212,7 @@ int FakeObTableScanRange::init_table_col_descs()
     col_desc.col_id_ = OB_APP_MIN_COLUMN_ID + i;
     // col_desc.col_type_.set_collation_type(CS_TYPE_UTF8MB4_BIN);
     if (OB_FAIL(col_descs_.push_back(col_desc))) {
-      STORAGE_LOG(WARN, "fail to push back col_descs_", K(ret));
+
     }
   }
   return ret;
@@ -229,12 +229,12 @@ int FakeObTableScanRange::init_table_datum_desc()
     col_desc.col_type_.set_int32();
     col_desc.col_id_ = OB_APP_MIN_COLUMN_ID + i;
     if (OB_FAIL(col_descs.push_back(col_desc))) {
-      STORAGE_LOG(WARN, "fail to push back col_desc", K(ret));
+
     }
   }
   if (OB_SUCC(ret)) {
     if (OB_FAIL(datum_utils_.init(col_descs, 2, is_oracle_mode, allocator_))) {
-      STORAGE_LOG(WARN, "fail to init datum_utils", K(ret));
+
     }
   }
   return ret;
@@ -247,7 +247,7 @@ int FakeObTableScanRange::gen_datum_rowkey(const int64_t key_val, const int64_t 
   ObRowkey rowkey;
   if (NULL == (key_val_obj = static_cast<ObObj*>(allocator_.alloc(sizeof(ObObj) * key_cnt)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "out of memory", K(ret));
+
   } else {
     for (int64_t i = 0; i < key_cnt; ++i) {
       key_val_obj[i].set_int(key_val);
@@ -255,7 +255,7 @@ int FakeObTableScanRange::gen_datum_rowkey(const int64_t key_val, const int64_t 
     }
     rowkey.assign(key_val_obj, key_cnt);
     if (OB_FAIL(datum_rowkey.from_rowkey(rowkey, allocator_))) {
-      STORAGE_LOG(WARN, "fail to from rowkey", K(ret));
+
     }
   }
   return ret;
@@ -271,16 +271,16 @@ int FakeObTableScanRange::gen_datum_range(const int64_t start_val, const int64_t
     blocksstable::ObDatumRowkey start_key;
     blocksstable::ObDatumRowkey end_key;
     if (OB_FAIL(gen_datum_rowkey(start_val, key_cnt, start_key))) {
-      STORAGE_LOG(WARN, "Failed to gen start rowkey", K(ret));
+
     } else if (OB_FAIL(gen_datum_rowkey(end_val, key_cnt, end_key))) {
-      STORAGE_LOG(WARN, "Failed to gen end rowkey", K(ret));
+
     } else {
       datum_range_.set_start_key(start_key);
       datum_range_.set_end_key(end_key);
     }
   } else {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument", K(ret), K(start_val), K(end_val), K(need_set_src_range_));
+
   }
   return ret;
 }
@@ -291,10 +291,10 @@ int FakeObTableScanRange::set_datum_key(const bool is_left, const bool is_right,
   int64_t key_cnt = 1;
   blocksstable::ObDatumRowkey datum_key;
   if (OB_FAIL(gen_datum_rowkey(value, key_cnt, datum_key))) {
-    STORAGE_LOG(WARN, "Failed to gen rowkey", K(ret));
+
   } else if (!datum_range_.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid range", K(ret));
+
   } else if (is_left) {
     datum_range_.set_start_key(datum_key);
   } else if (is_right) {
@@ -316,22 +316,22 @@ int FakeObTableScanRange::check_datum_range_result(
   blocksstable::ObDatumRowkey datum_end_key;
 
   if (OB_FAIL(gen_datum_rowkey(expected_left_val, key_cnt, datum_start_key))) {
-    STORAGE_LOG(WARN, "Failed to gen start rowkey", K(ret));
+
   } else if (OB_FAIL(gen_datum_rowkey(expected_right_val, key_cnt, datum_end_key))) {
-    STORAGE_LOG(WARN, "Failed to gen end rowkey", K(ret));
+
   } else if (!datum_range_.is_valid()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid range", K(ret));
+
   } else {
     const blocksstable::ObDatumRowkey &range_start_rowkey = datum_range_.get_start_key();
     const blocksstable::ObDatumRowkey &range_end_rowkey = datum_range_.get_end_key();
     
     if (OB_FAIL(range_start_rowkey.equal(datum_start_key, datum_utils_, is_equal))) {
-      STORAGE_LOG(WARN, "Failed to compare start key", K(ret));
+
     } else if (is_left_closed != datum_range_.is_left_closed()) {
       is_equal = false;
     } else if (is_equal && OB_FAIL(range_end_rowkey.equal(datum_end_key, datum_utils_, is_equal))) {
-      STORAGE_LOG(WARN, "Failed to compare end rowkey", K(ret));
+
     } else if (is_right_closed != datum_range_.is_right_closed()) {
       is_equal = false;
     }
@@ -349,16 +349,16 @@ int FakeObTableScanRange::check_datum_min_column(
   int ret = OB_SUCCESS;
   if (split_datum_cnt > src_datum_cnt) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "split datum cnt should not large than src datum cnt", K(ret));
+
   } else if (datum_range_.is_valid()) {
     const blocksstable::ObDatumRowkey &range_start_rowkey = datum_range_.get_start_key();
     const blocksstable::ObDatumRowkey &range_end_rowkey = datum_range_.get_end_key();
     if (src_datum_cnt != range_start_rowkey.get_datum_cnt()) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "datum cnt after split not equal to src datum", K(ret));
+
     } else if (src_datum_cnt != range_end_rowkey.get_datum_cnt()) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "datum cnt after split not equal to src datum", K(ret));
+
     }
     // start key
     if (check_type == CHECK_DATUM_MIN_TYPE::BOTH || check_type == CHECK_DATUM_MIN_TYPE::LEFT) {
@@ -367,11 +367,11 @@ int FakeObTableScanRange::check_datum_min_column(
           int64_t datum_left = range_start_rowkey.get_datum(i).get_int();
           if (datum_left != expected_left_val) {
             ret = OB_ERR_UNEXPECTED;
-            STORAGE_LOG(WARN, "datum left value not as expected", K(ret), K(expected_left_val), K(datum_left));
+
           }
         } else if (!range_start_rowkey.get_datum(i).is_min()) {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(WARN, "ext datum column not equal to min value.", K(ret), K(range_start_rowkey.get_datum(i).get_int()));
+
         }
       }
     }
@@ -382,11 +382,11 @@ int FakeObTableScanRange::check_datum_min_column(
           int64_t datum_right = range_end_rowkey.get_datum(i).get_int();
           if (datum_right != expected_right_val) {
             ret = OB_ERR_UNEXPECTED;
-            STORAGE_LOG(WARN, "datum right value not as expected", K(ret), K(expected_right_val), K(datum_right));
+
           }
         } else if (!range_end_rowkey.get_datum(i).is_min()) {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(WARN, "ext datum column not equal to min value.", K(ret));
+
         }
       }
     }

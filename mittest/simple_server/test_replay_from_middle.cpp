@@ -529,7 +529,7 @@ void ObReplayRestartTest::restart_test()
 
 
       ::sleep(10);
-      STORAGE_LOG(INFO, "finish restart test", K(upper_trans_version), K(SSTABLE_END_SCN), K(tx_table->ctx_min_start_scn_info_));
+
       ASSERT_LT(upper_trans_version, SCN::max_scn());
     }
   }

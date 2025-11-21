@@ -166,7 +166,7 @@ int ObUDFSqlService::add_udf(common::ObISQLClient &sql_client,
     if (only_history && 0 == STRCMP(tname[i], OB_ALL_FUNC_TNAME)) {
       continue;
     } else if (OB_FAIL(sql.assign_fmt("INSERT INTO %s (", tname[i]))) {
-      STORAGE_LOG(WARN, "append table name failed, ", K(ret));
+
     } else {
       SQL_COL_APPEND_VALUE(sql, values, ObSchemaUtils::get_extract_tenant_id(
                                         exec_tenant_id, udf_info.get_tenant_id()), "tenant_id", "%lu");

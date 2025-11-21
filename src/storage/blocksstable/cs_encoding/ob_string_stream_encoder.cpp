@@ -89,7 +89,7 @@ int ObStringStreamEncoder::convert_datum_to_stream_(ObIDatumIter &iter)
   }
   default:
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "uint byte width size not invalid", K(ret), K(byte_size));
+
     break;
   }
 
@@ -143,7 +143,7 @@ int ObStringStreamEncoder::encode_offset_stream_(ObIArray<uint32_t> &stream_offs
   }
   default:
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "uint byte width size not invalid", K(ret), K(byte_size));
+
     break;
   }
   return ret;

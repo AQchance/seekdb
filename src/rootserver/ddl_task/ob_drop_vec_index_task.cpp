@@ -211,12 +211,12 @@ int ObDropVecIndexTask::obtain_snapshot(const share::ObDDLTaskStatus next_task_s
   }
 #endif
   if (state_finished && OB_SUCC(ret)) {
-    LOG_INFO("success to obtain_snapshot", K(ret));
+
   } else if (next_task_status == task_status_) {  // resume old task status and retry
     if (OB_FAIL(switch_status(old_status, true, ret))) {
       LOG_WARN("fail to switch status", K(ret), K(old_status), K(task_status_));
     } else {
-      LOG_INFO("resume obtain_snapshot success", K(ret), K(old_status), K(task_status_), K(task_id_));
+
     }
   }
   return ret;
@@ -260,7 +260,7 @@ int ObDropVecIndexTask::drop_lob_meta_row(const ObDDLTaskStatus next_task_status
     } else if (OB_FAIL(switch_status(next_task_status, true/*enable_flt*/, ret))) {
       LOG_WARN("fail to switch task status", K(ret), K(next_task_status));
     } else {
-      LOG_INFO("drop_lob_meta_row success", K(ret));
+
     }
   }
   return ret;
@@ -291,12 +291,12 @@ int ObDropVecIndexTask::wait_trans_end(ObDDLTaskStatus next_task_status)
   }
 #endif
   if (state_finished && OB_SUCC(ret)) {
-    LOG_INFO("success to wait trans end", K(ret));
+
   } else if (next_task_status == task_status_) {  // resume old task status and retry
     if (OB_FAIL(switch_status(old_status, true, ret))) {
       LOG_WARN("fail to switch status", K(ret), K(old_status), K(task_status_));
     } else {
-      LOG_INFO("resume wait_trans_end old status success", K(ret), K(old_status), K(task_status_), K(task_id_));
+
     }
   }
   return ret;
@@ -589,7 +589,7 @@ int ObDropVecIndexTask::prepare(const share::ObDDLTaskStatus &new_status)
     if (OB_FAIL(switch_status(new_status, true, ret))) {
       LOG_WARN("switch status failed", K(ret), K(new_status), K(task_status_));
     } else {
-      LOG_INFO("prepare success", K(ret), K(parent_task_id_), K(task_id_), K(*this));
+
     }
   }
   return ret;
@@ -640,7 +640,7 @@ int ObDropVecIndexTask::drop_aux_index_table(const share::ObDDLTaskStatus &new_s
       LOG_WARN("fail to switch status", K(ret), K(new_status));
     } else {
       vec_index_snapshot_data_.table_id_ = OB_INVALID_ID;
-      LOG_INFO("drop_aux_index_table success", K(ret));
+
     }
   }
   return ret;
@@ -673,7 +673,7 @@ int ObDropVecIndexTask::check_and_wait_finish(const share::ObDDLTaskStatus &new_
     if (OB_FAIL(switch_status(new_status, true/*enable_flt*/, ret))) {
       LOG_WARN("fail to switch status", K(ret), K(new_status));
     } else {
-      LOG_INFO("check_and_wait_finish success", K(ret));
+
     }
   }
   return ret;
@@ -703,7 +703,7 @@ int ObDropVecIndexTask::check_drop_index_finish(
                                                        unused_user_msg_len))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("ddl task not finish", K(ret), K(tenant_id),  K(task_id), K(table_id));
+
     } else {
       LOG_WARN("fail to get ddl error message", K(ret), K(tenant_id), K(task_id), K(table_id));
     }
@@ -711,7 +711,7 @@ int ObDropVecIndexTask::check_drop_index_finish(
     ret = error_message.ret_code_;
     has_finished = true;
   }
-  LOG_INFO("wait build index finish", K(ret), K(tenant_id), K(task_id), K(table_id), K(has_finished));
+
   return ret;
 }
 
@@ -732,7 +732,7 @@ int ObDropVecIndexTask::wait_child_task_finish(
       } else if (OB_FAIL(check_drop_index_finish(tenant_id_, task_info.task_id_, task_info.table_id_, finished))) {
         LOG_WARN("fail to check vec index child task finish", K(ret));
       } else if (!finished) { // nothing to do
-        LOG_INFO("child task hasn't been finished", K(tenant_id_), K(task_info));
+
       }
     }
     if (OB_SUCC(ret) && finished) {
@@ -925,7 +925,7 @@ int ObDropVecIndexTask::exit_all_dags_and_clean()
     LOG_WARN("check and cancel delete lob meta row data dag failed", K(ret));
   } else if (!all_delete_lob_meta_row_dag_exit) {
     if (REACH_COUNT_INTERVAL(1000L)) {
-      LOG_INFO("wait all delete lob meta row data dag exit", K(dst_tenant_id_), K(task_id_));
+
     }
   } else if (OB_FAIL(finish())) {
     LOG_WARN("finish tans failed", K(ret));
@@ -952,7 +952,7 @@ int ObDropVecIndexTask::cleanup_impl()
   } else {
     need_retry_ = false;
   }
-  LOG_INFO("clean task finished", K(ret), K(*this));
+
   return ret;
 }
 
@@ -1047,7 +1047,7 @@ int ObDropVecIndexTask::update_drop_lob_meta_row_job_status(const common::ObTabl
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("snapshot version not match", K(ret), K(snapshot_version), K(snapshot_version_));
   } else if (execution_id < execution_id_) {
-    LOG_INFO("receive a mismatch execution result, ignore", K(ret_code), K(execution_id), K(execution_id_));
+
   } else if (OB_FAIL(replica_builder_.update_build_progress(tablet_id,
                                                             addr,
                                                             ret_code,

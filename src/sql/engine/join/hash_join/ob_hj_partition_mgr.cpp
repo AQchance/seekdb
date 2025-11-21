@@ -117,7 +117,7 @@ int ObHJPartitionMgr::remove_undumped_part(int64_t cur_dumped_partition, int32_t
     }
   }
   if (0 < erase_cnt) {
-    LOG_TRACE("trace remove undumped part", K(ret), K(erase_cnt));
+
   }
   if (OB_SUCC(ret) && erase_cnt + part_pair_list_.size() != size) {
     ret = OB_ERR_UNEXPECTED;
@@ -197,7 +197,7 @@ int ObHJPartitionMgr::get_or_create_part(int32_t level,
       if (OB_FAIL(part_pair_list_.push_front(part_pair))) {
         LOG_WARN("fail to push part pair to part list", K(ret));
       } else {
-        LOG_DEBUG("push front part", K(partno), K(is_left));
+
         if (is_left) {
           part = part_pair.left_;
         } else {

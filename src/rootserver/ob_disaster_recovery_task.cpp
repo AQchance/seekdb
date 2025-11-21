@@ -598,7 +598,7 @@ int ObMigrateLSReplicaTask::execute(
     ret_comment = ObDRTaskRetComment::FAIL_TO_SEND_RPC;
     LOG_WARN("fail to send ls migrate replica rpc", KR(ret), K(arg));
   } else {
-    LOG_INFO("start to execute ls migrate replica", K(arg));
+
   }
   return ret;
 }
@@ -797,7 +797,7 @@ int ObMigrateLSReplicaTask::build_task_from_sql_result(
     LOG_WARN("fail to build a ObMigrateLSReplicaTask", KR(ret), K(task_key), K(task_id_to_set), K(comment_to_set),
                                                        K(dest_server), K(src_server), K(force_data_source));
   } else {
-    LOG_INFO("success to build a ObMigrateLSReplicaTask", KPC(this), K(task_id), K(task_id_sqlstring_format), K(task_id_to_set));
+
   }
   return ret;
 }
@@ -880,7 +880,7 @@ int ObAddLSReplicaTask::execute(
     ret_comment = ObDRTaskRetComment::FAIL_TO_SEND_RPC;
     LOG_WARN("fail to send ls add replica rpc", KR(ret), K(arg));
   } else {
-    LOG_INFO("start to execute ls add replica", K(arg));
+
   }
   return ret;
 }
@@ -1086,7 +1086,7 @@ int ObAddLSReplicaTask::build_task_from_sql_result(
     LOG_WARN("fail to build a ObAddLSReplicaTask", KR(ret), K(task_key), K(task_id_to_set), K(comment_to_set),
                                                    K(dest_server), K(src_server), K(force_data_source));
   } else {
-    LOG_INFO("success to build a ObAddLSReplicaTask", KPC(this), K(task_id), K(task_id_to_set), K(task_id_sqlstring_format));
+
   }
   return ret;
 }
@@ -1172,7 +1172,7 @@ int ObLSTypeTransformTask::execute(
     ret_comment = ObDRTaskRetComment::FAIL_TO_SEND_RPC;
     LOG_WARN("fail to send ls type transform rpc", KR(ret), K(arg));
   } else {
-    LOG_INFO("start to execute ls type transform", K(arg));
+
   }
   return ret;
 }
@@ -1360,7 +1360,7 @@ int ObLSTypeTransformTask::build_task_from_sql_result(
     LOG_WARN("fail to build a ObLSTypeTransformTask", KR(ret), K(task_key), K(task_id_to_set), K(comment_to_set),
               K(dest_member), K(src_member), K(src_paxos_replica_number), K(dest_paxos_replica_number));
   } else {
-    LOG_INFO("success to build a ObLSTypeTransformTask", KPC(this), K(task_id), K(task_id_to_set), K(task_id_sqlstring_format));
+
   }
   return ret;
 }
@@ -1433,7 +1433,7 @@ int ObRemoveLSReplicaTask::execute(
       ret_comment = ObDRTaskRetComment::FAIL_TO_SEND_RPC;
       LOG_WARN("fail to send ls remove paxos replica rpc", KR(ret), K(arg));
     } else {
-      LOG_INFO("start to execute ls remove paxos replica", K(arg));
+
     }
   } else if (ObDRTaskType::LS_REMOVE_NON_PAXOS_REPLICA == get_disaster_recovery_task_type()) {
     ObLSDropNonPaxosReplicaArg arg;
@@ -1451,7 +1451,7 @@ int ObRemoveLSReplicaTask::execute(
       ret_comment = ObDRTaskRetComment::FAIL_TO_SEND_RPC;
       LOG_WARN("fail to send ls remove nonpaxos replica", KR(ret), K(arg));
     } else {
-      LOG_INFO("start to execute ls remove nonpaxos replica", K(arg));
+
     }
   } else {
     ret = OB_STATE_NOT_MATCH;
@@ -1602,7 +1602,7 @@ int ObRemoveLSReplicaTask::build_task_from_sql_result(
     LOG_WARN("fail to build a ObRemoveLSReplicaTask", KR(ret), K(task_key), K(task_id_to_set),
                               K(comment_to_set), K(execute_server), K(dest_server));
   } else {
-    LOG_INFO("success to build a ObRemoveLSReplicaTask", KPC(this), K(task_id), K(task_id_to_set), K(task_id_sqlstring_format));
+
   }
   return ret;
 }
@@ -1674,7 +1674,7 @@ int ObLSModifyPaxosReplicaNumberTask::execute(
     ret_comment = ObDRTaskRetComment::FAIL_TO_SEND_RPC;
     LOG_WARN("fail to send ls modify paxos replica number rpc", KR(ret), K(arg));
   } else {
-    LOG_INFO("start to execute ls modify paxos replica number", K(arg));
+
   }
   return ret;
 }
@@ -1813,7 +1813,7 @@ int ObLSModifyPaxosReplicaNumberTask::build_task_from_sql_result(
                     generate_time_us))) {
     LOG_WARN("fail to build a ObLSModifyPaxosReplicaNumberTask", KR(ret), K(task_key), K(task_id_to_set), K(comment_to_set), K(execute_server));
   } else {
-    LOG_INFO("success to build a ObLSModifyPaxosReplicaNumberTask", KPC(this), K(task_id), K(task_id_to_set), K(task_id_sqlstring_format));
+
   }
   return ret;
 }

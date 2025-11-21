@@ -199,7 +199,7 @@ int ObTenantCompactionMemPool::mtl_init(ObTenantCompactionMemPool* &mem_pool)
   if (OB_FAIL(mem_pool->init())) {
     LOG_WARN("failed to init compaction memory pool", K(ret), K(tenant_id));
   } else {
-    LOG_INFO("success to init ObTenantCompactionMemPool", K(tenant_id));
+
   }
   return ret;
 }
@@ -324,7 +324,7 @@ int ObTenantCompactionMemPool::alloc(const int64_t size, ObCompactionBufferBlock
     if (OB_EXCEED_MEM_LIMIT != ret) {
       LOG_WARN("failed to alloc buffer block from chunk list", K(ret), K(size));
     } else {
-      LOG_INFO("chunk list reached the upper limit, alloc mem from piece allocator", K(ret), K(size));
+
       ret = OB_SUCCESS;
     }
   }
@@ -614,7 +614,7 @@ int ObCompactionBufferWriter::ensure_space(int64_t size)
     if (OB_FAIL(resize(size))) {
       LOG_WARN("failed to resize buffer writer", K(ret), K(size));
     } else {
-      LOG_TRACE("success to resize buffer writer", K(ret), K(size));
+
     }
   }
 
@@ -626,7 +626,7 @@ int ObCompactionBufferWriter::ensure_space(int64_t size)
     if (NULL != ref_mem_ctx_) {
       ref_mem_ctx_->inc_buffer_hold_mem(capacity_ - old_capacity);
     } else {
-      LOG_TRACE("no mem ctx has setted to thread", K(ret), K(label_), K(size), K(capacity_), K(old_capacity));
+
     }
   }
   return ret;

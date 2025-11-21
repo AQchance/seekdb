@@ -283,7 +283,7 @@ int ObTenantAllTables::get_table_stats()
             }
           }
         }
-        LOG_TRACE("succeed to get table stats", K(table_schema->get_table_id()), K(tab_stat));
+
       }
     }
   }

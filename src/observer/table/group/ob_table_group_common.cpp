@@ -310,7 +310,7 @@ int ObTableGroupValue::get_executable_group(int64_t batch_size, ObIArray<ObITabl
     if (OB_SUCC(ret) && ops.count() > 0) {
       group_info_.gmt_modified_ = common::ObTimeUtility::fast_current_time();
     }
-    LOG_DEBUG("[group commit] get executable batch size", K(ret), K(group_meta_), K(batch_size), K(check_queue_size));
+
   }
 
   return ret;
@@ -428,7 +428,7 @@ int ObTableGroupUtils::trigger(const ObTableGroupTriggerRequest &request)
   } else if (OB_FAIL(result.get_errno())) {
     LOG_WARN("fail to execute trigger request", K(ret), K(request), K(result));
   } else {
-    LOG_DEBUG("trigger group commit successfully", K(ret), K(result));
+
   }
 
   return ret;

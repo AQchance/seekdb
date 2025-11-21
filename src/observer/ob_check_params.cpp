@@ -64,7 +64,7 @@ int CheckAllParams::check_vm_max_map_count(bool strict_check)
           file_path,
           ". [suggestion] Please ensure vm.max_map_count is readable.");
     } else if (max_map_count >= 327600) {
-      LOG_INFO("[check OS params]:vm.max_map_count is within the range", K(max_map_count));
+
     } else {
       if (strict_check) {
         ret = OB_IMPROPER_OS_PARAM;
@@ -98,7 +98,7 @@ int CheckAllParams::check_vm_min_free_kbytes(bool strict_check)
           file_path,
           ". [suggestion] Please ensure vm.min_free_kbytes is readable.");
     } else if (vm_min_free_kbytes >= 32768 && vm_min_free_kbytes <= 2097152) {
-      LOG_INFO("[check OS params]:vm.min_free_kbytes is within the range", K(vm_min_free_kbytes));
+
     } else {
       if (strict_check) {
         ret = OB_IMPROPER_OS_PARAM;
@@ -133,7 +133,7 @@ int CheckAllParams::check_vm_overcommit_memory(bool strict_check)
           file_path,
           ". [suggestion] Please ensure vm.overcommit_memory is readable.");
     } else if (vm_overcommit_memory == 0) {
-      LOG_INFO("[check OS params]:vm.overcommit_memory is equal to 0", K(vm_overcommit_memory));
+
     } else {
       if (strict_check) {
         ret = OB_IMPROPER_OS_PARAM;
@@ -167,7 +167,7 @@ int CheckAllParams::check_fs_file_max(bool strict_check)
           file_path,
           ". [suggestion] Please ensure fs.file-max is readable.");
     } else if (fs_file_max >= 6573688) {
-      LOG_INFO("[check OS params]:fs.file-max is greater than or equal to 6573688", K(fs_file_max));
+
     } else {
       if (strict_check) {
         ret = OB_IMPROPER_OS_PARAM;
@@ -261,7 +261,7 @@ int CheckAllParams::check_ulimit_core_file_size(bool strict_check)
   // Check core file size limit
   if (getrlimit(RLIMIT_CORE, &rlim) == 0) {
     if (rlim.rlim_cur == RLIM_INFINITY && rlim.rlim_max == RLIM_INFINITY) {
-      LOG_INFO("[check OS params]:core file size limit is unlimited");
+
     } else {
       // Violations of the recommended range will only trigger a warning, regardless of strict or non-strict checking.
       LOG_WARN("[check OS params]:ulimit.core_file_size limit's soft nofile or hard nofile is limited",
@@ -281,7 +281,7 @@ int CheckAllParams::check_ulimit_stack_size(bool strict_check)
   // Check stack size limit
   if (getrlimit(RLIMIT_STACK, &rlim) == 0) {
     if (rlim.rlim_cur >= (1 << 20) && rlim.rlim_max >= (1 << 20)) {
-      LOG_INFO("[check OS params]:stack size limit is larger than 1M", K(rlim.rlim_cur), K(rlim.rlim_max));
+
     } else {
       if (strict_check) {
         ret = OB_IMPROPER_OS_PARAM;
@@ -343,7 +343,7 @@ int CheckAllParams::check_current_clocksource(bool strict_check)
       }
       if (strcmp(clocksource, "tsc") == 0 || strcmp(clocksource, "kvm-clock") == 0 ||
           strcmp(clocksource, "arch_sys_counter") == 0) {
-        LOG_INFO("[check OS params]:current_clocksource is in proper range", K(clocksource), K(ret));
+
       } else if (strict_check) {
         ret = OB_IMPROPER_OS_PARAM;
         LOG_DBA_ERROR_V2(OB_SERVER_CHECK_CURRENT_CLOCKSOURCE_FAIL,

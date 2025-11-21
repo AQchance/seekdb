@@ -968,16 +968,16 @@ int ObSchemaPrinter::print_vector_index_column(const ObTableSchema &table_schema
     LOG_WARN("fail to check oracle mode", KR(ret), K(table_schema));
   } else if (OB_ISNULL(table_column)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "The column schema is NULL, ", K(ret));
+
   } else if (OB_FAIL(table_column->get_cascaded_column_ids(ctxcat_ids))) {
-    STORAGE_LOG(WARN, "Failed to get cascaded column ids", K(ret));
+
   } else {
     for (int64_t j = 0; OB_SUCC(ret) && j < ctxcat_ids.count(); ++j) {
       const ObColumnSchemaV2 *ctxcat_column = NULL;
       ObString new_col_name;
       if (OB_ISNULL(ctxcat_column = table_schema.get_column_schema(ctxcat_ids.at(j)))) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "The column schema is NULL, ", K(ret));
+
       } else if (OB_FAIL(sql::ObSQLUtils::generate_new_name_with_escape_character(
                  allocator,
                  ctxcat_column->get_column_name_str(),
@@ -1011,16 +1011,16 @@ int ObSchemaPrinter::print_fulltext_index_column(const ObTableSchema &table_sche
     LOG_WARN("fail to check oracle mode", KR(ret), K(table_schema));
   } else if (OB_ISNULL(table_column)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "The column schema is NULL, ", K(ret));
+
   } else if (OB_FAIL(ObFtsIndexBuilderUtil::get_index_column_ids_for_fts(table_schema, *table_column, ctxcat_ids))) {
-    STORAGE_LOG(WARN, "Failed to get cascaded column ids", K(ret));
+
   } else {
     for (int64_t j = 0; OB_SUCC(ret) && j < ctxcat_ids.count(); ++j) {
       const ObColumnSchemaV2 *ctxcat_column = NULL;
       ObString new_col_name;
       if (OB_ISNULL(ctxcat_column = table_schema.get_column_schema(ctxcat_ids.at(j)))) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "The column schema is NULL, ", K(ret));
+
       } else if (OB_FAIL(sql::ObSQLUtils::generate_new_name_with_escape_character(
                  allocator,
                  ctxcat_column->get_column_name_str(),
@@ -1068,7 +1068,7 @@ int ObSchemaPrinter::print_spatial_index_column(const ObTableSchema &table_schem
   ObObjType type = column.get_meta_type().get_type();
 
   if (ObVarcharType != type && ObUInt64Type != type) {
-    STORAGE_LOG(WARN, "Invalid type for spatial index column", K(ret), K(type));
+
   } else if (ObVarcharType == column.get_meta_type().get_type()) {
     // do nothing
   } else { // ObUInt64Type, cellid column
@@ -4393,9 +4393,9 @@ int ObSchemaPrinter::print_routine_definition(
     CK (OB_NOT_NULL(routine_tree));
 
     if (OB_SUCC(ret)) {
-      LOG_INFO("print routine define", K(routine_tree->type_), K(routine_info->is_function()), K(routine_body));
+
     } else {
-      LOG_INFO("print routine define", K(routine_tree), K(routine_info->is_function()), K(routine_body));
+
     }
 
     CK (routine_info->is_function() ? T_SF_SOURCE == routine_tree->type_
@@ -5828,7 +5828,7 @@ int ObSchemaPrinter::print_location_definiton(const uint64_t tenant_id,
       if (NULL == token) {
         break;
       }
-      LOG_INFO("print credential", K(token));
+
       if (0 == strncmp(HOST, token, strlen(HOST))) {
         length = strlen(HOST);
         if (OB_FAIL(databuff_printf(buf, buf_len, pos, "\n  HOST = "))) {

@@ -190,7 +190,7 @@ int ObGAISRequestRpc::init(ObGAISRpcProxy *rpc_proxy, const ObAddr &self)
     rpc_proxy_ = rpc_proxy;
     self_ = self;
     is_inited_ = true;
-    LOG_INFO("gais request rpc inited success", KP(this), K(self));
+
   }
   return ret;
 }
@@ -202,7 +202,7 @@ void ObGAISRequestRpc::destroy()
     is_inited_ = false;
     rpc_proxy_ = NULL;
     self_.reset();
-    LOG_INFO("gais request rpc destroy");
+
   }
 }
 
@@ -233,7 +233,7 @@ int ObGAISRequestRpc::next_autoinc_val(const ObAddr &server,
         LOG_ERROR("post local gais require autoinc and gais_rpc_result is invalid", KR(ret), K(server),
                   K(msg), K(rpc_result));
       } else {
-        LOG_TRACE("post local require autoinc request success", K(msg), K(rpc_result));
+
       }
     }
   } else if (OB_FAIL(rpc_proxy_->to(server).by(msg.autoinc_key_.tenant_id_).timeout(timeout).next_autoinc_val(msg, rpc_result))) {
@@ -243,7 +243,7 @@ int ObGAISRequestRpc::next_autoinc_val(const ObAddr &server,
     LOG_ERROR("post remote gais require autoinc request and gais_rpc_result is invalid",
               KR(ret), K(server), K(msg), K(rpc_result));
   } else {
-    LOG_TRACE("post remote require autoinc request success", K(server), K(msg), K(rpc_result));
+
   }
   return ret;
 }
@@ -271,13 +271,13 @@ int ObGAISRequestRpc::curr_autoinc_val(const ObAddr &server,
       } else if (OB_FAIL(gais->handle_curr_autoinc_request(msg, rpc_result))) {
         LOG_WARN("post local gais get autoinc request failed", KR(ret), K(server), K(msg));
       } else {
-        LOG_TRACE("post local get autoinc request success", K(msg), K(rpc_result));
+
       }
     }
   } else if (OB_FAIL(rpc_proxy_->to(server).by(msg.autoinc_key_.tenant_id_).timeout(timeout).curr_autoinc_val(msg, rpc_result))) {
     LOG_WARN("post gais request failed", KR(ret), K(server), K(msg));
   } else {
-    LOG_TRACE("post get autoinc request success", K(server), K(msg), K(rpc_result));
+
   }
   return ret;
 }
@@ -305,13 +305,13 @@ int ObGAISRequestRpc::push_autoinc_val(const ObAddr &server,
       } else if (OB_FAIL(gais->handle_push_autoinc_request(msg, sync_value))) {
         LOG_WARN("post local gais push global request failed", KR(ret), K(server), K(msg));
       } else {
-        LOG_TRACE("post local gais push global request request success", K(msg), K(sync_value));
+
       }
     }
   } else if (OB_FAIL(rpc_proxy_->to(server).by(msg.autoinc_key_.tenant_id_).timeout(timeout).push_autoinc_val(msg, sync_value))) {
     LOG_WARN("post remote push global request failed", KR(ret), K(server), K(msg));
   } else {
-    LOG_TRACE("post remote push global request success", K(server), K(msg), K(sync_value));
+
   }
   return ret;
 }
@@ -337,13 +337,13 @@ int ObGAISRequestRpc::clear_autoinc_cache(const ObAddr &server, const ObGAISAuto
       } else if (OB_FAIL(gais->handle_clear_autoinc_cache_request(msg))) {
         LOG_WARN("post local gais clear autoinc cache failed", KR(ret), K(server), K(msg));
       } else {
-        LOG_TRACE("clear autoinc cache success", K(server), K(msg));
+
       }
     }
   } else if (OB_FAIL(rpc_proxy_->to(server).by(msg.autoinc_key_.tenant_id_).timeout(timeout).clear_autoinc_cache(msg))) {
     LOG_WARN("post gais request failed", KR(ret), K(server), K(msg));
   } else {
-    LOG_TRACE("clear autoinc cache success", K(server), K(msg));
+
   }
   return ret;
 }
@@ -374,7 +374,7 @@ int ObGAISRequestRpc::broadcast_global_autoinc_cache(const ObGAISBroadcastAutoIn
           LOG_WARN("fail to broadcast autoinc cache to server", K(ret), K(msg), K(dest));
           ret = OB_SUCCESS;
         } else {
-          LOG_DEBUG("broadcast autoinc cache success", K(dest), K(msg));
+
         }
       }
     }
@@ -405,7 +405,7 @@ int ObGAISRequestRpc::next_sequence_val(const common::ObAddr &server,
       } else if (OB_FAIL(gais->handle_next_sequence_request(msg, rpc_result))) {
         LOG_WARN("post local gais require autoinc request failed", KR(ret), K(server), K(msg));
       } else {
-        LOG_TRACE("post local require autoinc request success", K(msg), K(rpc_result));
+
       }
     }
   } else if (OB_UNLIKELY(OB_ISNULL(rpc_proxy_))) {
@@ -414,7 +414,7 @@ int ObGAISRequestRpc::next_sequence_val(const common::ObAddr &server,
   }else if (OB_FAIL(rpc_proxy_->to(server).by(msg.schema_.get_tenant_id()).timeout(timeout).next_sequence_val(msg, rpc_result))) {
     LOG_WARN("post require autoinc request failed", KR(ret), K(server), K(msg));
   } else {
-    LOG_TRACE("post remote require autoinc request success", K(server), K(msg), K(rpc_result));
+
   }
   return ret;
 }

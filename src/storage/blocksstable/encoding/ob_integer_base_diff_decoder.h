@@ -94,7 +94,7 @@ private:
   {
     UNUSEDx(datum, delta);
     int ret = common::OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "Undefined delta calculation", K(ret));
+
     return ret;
   }
 
@@ -150,13 +150,13 @@ OB_INLINE int ObIntegerBaseDiffDecoder::init(
   // performance critical, don't check params
   if (is_inited()) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init twice", K(ret));
+
   } else {
     const int64_t store_size = get_type_size_map()[column_header.get_store_obj_type()];
     ObObjTypeStoreClass sc = get_store_class_map()[ob_obj_type_class(column_header.get_store_obj_type())];
     if (ObIntSC != sc && ObUIntSC != sc) {
       ret = common::OB_INNER_STAT_ERROR;
-      STORAGE_LOG(WARN, "not supported store class", K(ret), K(column_header), K(sc));
+
     } else {
       meta += column_header.offset_;
       header_ = reinterpret_cast<const ObIntegerBaseDiffHeader *>(meta);

@@ -133,12 +133,12 @@ int ObDtlChannelGroup::link_channel(const ObDtlChannelInfo &ci, ObDtlChannel *&c
     if (OB_FAIL(DTL.create_local_channel(ci.tenant_id_, ci.chid_, ci.peer_, chan, dfc))) {
       LOG_WARN("create local channel fail", KP(chid), K(ret));
     }
-    LOG_TRACE("trace create local channel", KP(chid), K(ret), K(ci.peer_), K(ci.type_));
+
   } else {
     if (OB_FAIL(DTL.create_rpc_channel(ci.tenant_id_, ci.chid_, ci.peer_, chan, dfc))) {
       LOG_WARN("create rpc channel fail", KP(chid), K(ret), K(ci.peer_));
     }
-    LOG_TRACE("trace create rpc channel", KP(chid), K(ret), K(ci.peer_), K(ci.type_));
+
   }
   return ret;
 }

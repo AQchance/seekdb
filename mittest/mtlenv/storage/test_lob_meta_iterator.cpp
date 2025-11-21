@@ -93,19 +93,19 @@ int TestLobMetaIterator::fill_lob_sstable_slice_mock(
   ObLobMetaRowIterator row_iterator;
   if (OB_FAIL(ObInsertLobColumnHelper::insert_lob_column(
     allocator, nullptr, ls_id, tablet_id, lob_id, collation_type, datum, timeout_ts, has_lob_header, iter))) {
-    STORAGE_LOG(WARN, "fail to insert lob column", K(ret), K(ls_id), K(tablet_id), K(lob_id));
+
   } else if (OB_FAIL(row_iterator.init(&iter, trans_id, trans_version, sql_no))) {
-    STORAGE_LOG(WARN, "fail to init lob meta row iterator", K(ret), K(trans_id), K(trans_version));
+
   } else if (OB_FAIL(row_iterator.get_next_row(new_row))) {
-    STORAGE_LOG(WARN, "get_next_row failed", K(ret));
+
   } else if (OB_ISNULL(new_row)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "new_row is nullptr", K(ret));
+
   } else if (OB_FAIL(ObLobMetaUtil::transform_from_row_to_info(new_row, lob_meta_info, true))) {
-    STORAGE_LOG(WARN, "transform failed", K(ret));
+
   } else if (lob_meta_info.lob_id_.lob_id_ != lob_id.lob_id_) {
     //STORAGE_LOG("lob_meta_info", K(lob_meta_info));
-    STORAGE_LOG(WARN, "error info", K(ret), K(lob_meta_info.lob_id_.lob_id_), K(lob_id.lob_id_));
+
   }
   return ret;
 }
@@ -116,7 +116,7 @@ int TestLobMetaIterator::build_lob_data(ObObj &obj, std::string &st, common::ObA
   void *buf = NULL;
   if (OB_ISNULL(buf = allocator.alloc(sizeof(ObLobCommon) + 1000000))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to allocate memory for ObLobData", K(ret));
+
   } else {
     // ObLobIndex index;
     value = new (buf) ObLobCommon();

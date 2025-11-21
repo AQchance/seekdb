@@ -55,7 +55,7 @@ int ObMdsMergeMultiVersionRowStore::init(const ObDataStoreDesc &data_store_desc,
     data_store_desc_ = &data_store_desc;
     macro_writer_ = &macro_writer;
     is_inited_ = true;
-    LOG_DEBUG("succeed to init mds mini helper", K(ret), KPC(data_store_desc_));
+
   }
   return ret;
 }
@@ -72,7 +72,7 @@ int ObMdsMergeMultiVersionRowStore::finish()
   } else if (OB_FAIL(dump_row_queue())) {
     LOG_WARN("fail to dump row queue", K(ret), K(row_queue_));
   } else {
-    LOG_DEBUG("succeed to finish operator", K(ret));
+
   }
   return ret;
 }
@@ -166,7 +166,7 @@ int ObMdsMergeMultiVersionRowStore::dump_row_queue()
       if (OB_FAIL(macro_writer_->append_row(*last_row_in_qu))) {
         LOG_WARN("fail to append row", K(ret), KPC(last_row_in_qu), KPC(macro_writer_));
       } else {
-        LOG_DEBUG("succeed to append mds row", K(ret), KPC(last_row_in_qu));
+
       }
     }
   } else {
@@ -188,7 +188,7 @@ int ObMdsMergeMultiVersionRowStore::dump_row_queue()
           if (OB_FAIL(macro_writer_->append_row(*dump_row))) {
             LOG_WARN("fail to append row", K(ret), KPC(dump_row), KPC(macro_writer_));
           } else {
-            LOG_DEBUG("succeed to append mds row", K(ret), KPC(dump_row));
+
           }
         }
       }
@@ -222,7 +222,7 @@ int ObMdsMergeMultiVersionRowStore::dump_shadow_row()
     if (OB_FAIL(macro_writer_->append_row(shadow_row_))) {
       LOG_WARN("fail to append row", K(ret), K(shadow_row_), KPC(macro_writer_));
     } else {
-      LOG_DEBUG("succeed to append mds shadow row", K(ret), K(shadow_row_));
+
     }
   }
   return ret;
@@ -278,7 +278,7 @@ int ObTabletDumpMds2MiniOperator::operator()(const mds::MdsDumpKV &kv)
     } else if (OB_FAIL(row_store_.put_row_into_queue(cur_row_))) {
       LOG_WARN("fail to put row into queue", K(ret));
     } else {
-      LOG_INFO("mds op succeed to add row", K(ret), K(adapter), K(cur_row_), K(kv));
+
     }
   }
 
@@ -303,9 +303,9 @@ int ObCrossLSMdsMiniMergeOperator::operator()(const mds::MdsDumpKV &kv)
     LOG_WARN("not inited", K(ret), K_(is_inited));
   } else if (tablet_status_mds_unit_id == kv.k_.mds_unit_id_) {
     // filter tablet status mds kv
-    LOG_INFO("meet tablet status mds row, should skip", K(ret), K(tablet_status_mds_unit_id));
+
   } else if (kv.v_.end_scn_ > scan_end_scn_) {
-    LOG_INFO("node end scn is beyond scan end scn, should skip", K(ret), K_(scan_end_scn), K(kv));
+
   } else {
     cur_row_.reuse();
     cur_allocator_.reuse();
@@ -315,7 +315,7 @@ int ObCrossLSMdsMiniMergeOperator::operator()(const mds::MdsDumpKV &kv)
     } else if (OB_FAIL(row_store_.put_row_into_queue(cur_row_))) {
       LOG_WARN("fail to put row into queue", K(ret));
     } else {
-      LOG_INFO("cross ls mds op succeed to add row", K(ret), K(adapter), K(cur_row_));
+
     }
   }
 
@@ -340,7 +340,7 @@ int ObTabletDumpMediumMds2MiniOperator::operator()(const mds::MdsDumpKV &kv)
     } else if (OB_FAIL(row_store_.put_row_into_queue(cur_row_))) {
       LOG_WARN("fail to put row into queue", K(ret));
     } else {
-      LOG_INFO("mds op succeed to add medium mds row", K(ret), K(adapter), K(cur_row_));
+
     }
   }
   return ret;
@@ -448,7 +448,7 @@ int ObMdsTableMiniMerger::generate_mds_mini_sstable(
       if (OB_FAIL(macro_writer_.close())) {
         LOG_WARN("fail to close macro writer", K(ret), K(macro_writer_));
       } else if (OB_FAIL(ctx_->update_block_info(macro_writer_.get_merge_block_info(), 0/*cost_time*/))) {
-        STORAGE_LOG(WARN, "Failed to add macro blocks", K(ret));
+
       } else if (OB_FAIL(sstable_builder_.close(res))) {
         LOG_WARN("fail to close sstable builder", K(ret), K(sstable_builder_));
       } else if (CLICK_FAIL(param.init_for_mds(*ctx_, res, *storage_schema_))) {
@@ -468,7 +468,7 @@ int ObMdsTableMiniMerger::generate_mds_mini_sstable(
     const share::ObLSID &ls_id = ctx_->get_ls_id();
     const common::ObTabletID &tablet_id = ctx_->get_tablet_id();
     const blocksstable::ObSSTable *sstable = static_cast<blocksstable::ObSSTable*>(table_handle.get_table());
-    LOG_TRACE("succeed to generate mds mini sstable", K(ret), K(ls_id), K(tablet_id), KPC(sstable));
+
   }
   return ret;
 }
@@ -543,7 +543,7 @@ int ObMdsDataCompatHelper::generate_mds_mini_sstable(
   void *buf = nullptr;
   if (tablet.is_ls_inner_tablet()) {
     ret = OB_NO_NEED_UPDATE;
-    LOG_INFO("no need to generate mds sstable for ls inner tablet", K(ret), K(ls_id), K(tablet_id));
+
   } else if (OB_ISNULL(buf = allocator.alloc(sizeof(compaction::ObTabletMergeCtx)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     LOG_WARN("fail to alloc ObTabletMergeCtx", K(ret), K(allocator));
@@ -577,7 +577,7 @@ int ObMdsDataCompatHelper::generate_mds_mini_sstable(
           LOG_WARN("fail to generate mds mini sstable with mini merger", K(ret), K(mds_mini_merger));
         } else {
           has_tablet_status = !data.tablet_status_committed_kv_.v_.user_data_.empty() ? true : false;
-          LOG_INFO("succeed to generate mds mini sstable for compat", K(ret), K(ls_id), K(tablet_id), K(has_tablet_status), K(data));
+
         }
       }
     }

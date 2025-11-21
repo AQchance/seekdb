@@ -55,7 +55,7 @@ public:
     }
     const int64_t end_ts_my = ObTimeUtility::current_time();
     total_my += end_ts_my - start_ts_my;
-    LOG_INFO("total ", K(total_my));
+
   }
 protected:
 };
@@ -68,7 +68,7 @@ TEST_F(ObExprCompareTest, calc)
   time_test(0, "0.1234", 1000000, total_my);
   time_test(-1, "0", 1000000, total_my);
   time_test(1000000000, "10000000000.23", 1000000, total_my);
-  LOG_INFO("all total 1000000", K(total_my));
+
 }
 
 int main(int argc, char *argv[])

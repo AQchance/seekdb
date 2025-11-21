@@ -132,9 +132,9 @@ inline int TestTabletHelper::create_tablet(
   void *buff = nullptr;
   if (OB_FAIL(create_tablet_schema.init(schema_allocator, table_schema, compat_mode,
       false/*skip_column_info*/, DATA_VERSION_1_0_0_0))) {
-    STORAGE_LOG(WARN, "failed to init storage schema", KR(ret), K(table_schema));
+
   } else if (OB_FAIL(ObSSTableMergeRes::fill_column_checksum_for_empty_major(param.column_cnt_, param.column_checksums_))) {
-    STORAGE_LOG(WARN, "fill column checksum failed", K(ret), K(param));
+
   } else {
     const int64_t snapshot_version = 1;
     const share::ObLSID &ls_id = ls_handle.get_ls()->get_ls_id();
@@ -146,14 +146,14 @@ inline int TestTabletHelper::create_tablet(
     const bool need_generate_cs_replica_cg_array = 
       ls_handle.get_ls()->is_cs_replica() && create_tablet_schema.is_row_store() && create_tablet_schema.is_user_data_table();
     if (OB_FAIL(t3m->create_msd_tablet(WashTabletPriority::WTP_HIGH, key, ls_handle, tablet_handle))) {
-      STORAGE_LOG(WARN, "t3m acquire tablet failed", K(ret), K(ls_id), K(tablet_id));
+
     } else if (OB_FAIL(tablet_handle.get_obj()->init_for_first_time_creation(
         *tablet_handle.get_allocator(),
         ls_id, tablet_id, tablet_id, share::SCN::base_scn(),
         snapshot_version, create_tablet_schema, need_create_empty_major_sstable, share::SCN::invalid_scn()/*clog_checkpoint_scn*/,
         share::SCN::invalid_scn()/*mds_checkpoint_scn*/, false/*is_split_dest_tablet*/, ObTabletID()/*split_src_tablet_id*/,
         false/*micro_index_clustered*/, need_generate_cs_replica_cg_array, false/*has_cs_replica*/, freezer))){
-      STORAGE_LOG(WARN, "failed to init tablet", K(ret), K(ls_id), K(tablet_id));
+
     } else if (ObTabletStatus::Status::MAX != tablet_status) {
       ObTabletCreateDeleteMdsUserData data;
       data.tablet_status_ = tablet_status;
@@ -166,17 +166,17 @@ inline int TestTabletHelper::create_tablet(
 
       ObTabletCreateDeleteMdsUserData &user_data = tablet_handle.get_obj()->tablet_meta_.last_persisted_committed_tablet_status_;
       if (OB_FAIL(user_data.assign(data))) {
-        STORAGE_LOG(WARN, "failed to assign", K(ret), K(data));
+
       }
     }
 
     ObUpdateTabletPointerParam param;
     if (FAILEDx(tablet_handle.get_obj()->get_updating_tablet_pointer_param(param))) {
-      STORAGE_LOG(WARN, "fail to get updating tablet pointer parameters", K(ret), K(tablet_handle));
+
     } else if (OB_FAIL(t3m->compare_and_swap_tablet(key, tablet_handle, tablet_handle, param))) {
-      STORAGE_LOG(WARN, "failed to compare and swap tablet", K(ret), K(ls_id), K(tablet_id), K(param));
+
     } else if (OB_FAIL(ls_tablet_svr->tablet_id_set_.set(tablet_id))){
-      STORAGE_LOG(WARN, "set tablet id failed", K(ret), K(tablet_id));
+
     } else {
       handle = tablet_handle;
     }
@@ -196,7 +196,7 @@ inline int TestTabletHelper::create_tablet(
   ObTabletHandle tablet_handle;
 
   if (OB_FAIL(create_tablet(ls_handle, tablet_id, table_schema, allocator, tablet_status, create_commit_scn, tablet_handle))) {
-    STORAGE_LOG(WARN, "failed to create tablet", K(ret), K(tablet_id));
+
   }
 
   return ret;
@@ -215,16 +215,16 @@ inline int TestTabletHelper::remove_tablet(const ObLSHandle &ls_handle, const Ob
   ObTabletStatus status(ObTabletStatus::DELETING);
   data.tablet_status_ = status;
   if (OB_FAIL(tablet_handle.get_obj()->tablet_meta_.last_persisted_committed_tablet_status_.assign(data))) {
-    STORAGE_LOG(WARN, "failed to assign", K(ret), K(data));
+
   } else {
     ObMetaDiskAddr disk_addr;
     ObUpdateTabletPointerParam param;
     disk_addr.set_mem_addr(0, sizeof(ObTablet));
     if (OB_FAIL(tablet_handle.get_obj()->get_updating_tablet_pointer_param(param))) {
-      STORAGE_LOG(WARN, "fail to get updating tablet pointer parameters", K(ret), K(tablet_handle));
+
     } else if(OB_FAIL(t3m->compare_and_swap_tablet(
             ObTabletMapKey(ls_id, tablet_id), tablet_handle, tablet_handle, param))) {
-      STORAGE_LOG(WARN, "failed to compare and swap tablet", K(ret), K(ls_id), K(tablet_id), K(disk_addr));
+
     }
   }
 

@@ -128,7 +128,7 @@ int ObSqlSockProcessor::build_sql_req(ObSqlSockSession& sess, rpc::ObPacket* pkt
   ret_req->set_packet(pkt);
   ret_req->set_receive_timestamp(common::ObTimeUtility::current_time());
   ret_req->set_connection_phase(sess.conn_.connection_phase_);
-  LOG_DEBUG("build_sql_req", KP(ret_req), K(sess.conn_.connection_phase_));
+
   sql_req = ret_req;
   return ret;
 }

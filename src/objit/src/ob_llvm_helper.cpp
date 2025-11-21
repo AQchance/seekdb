@@ -605,7 +605,7 @@ int ObLLVMHelper::compile_module(jit::ObPLOptLevel optimization)
     if (optimization >= jit::ObPLOptLevel::O2) {
       OB_LLVM_MALLOC_GUARD(GET_PL_MOD_STRING(pl::OB_PL_CODE_GEN));
       jc_->optimize();
-      LOG_INFO("================Optimized LLVM Module================");
+
       dump_module();
     }
 
@@ -653,7 +653,7 @@ void ObLLVMHelper::dump_module()
     std::string o;
     llvm::raw_string_ostream s(o);
     jc_->TheModule->print(s, nullptr);
-    LOG_INFO("Dump LLVM Compile Module!\n", K(s.str().c_str()));
+
   }
 }
 
@@ -2159,7 +2159,7 @@ int ObDWARFHelper::dump(char* DebugBuf, int64_t DebugLen)
       Out.flush();
     }
   }
-  LOG_INFO("Dump LLVM DWARF DebugInfo!\n", K(ret), K(Out.str().c_str()), KP(DebugBuf), K(DebugLen));
+
   return ret;
 }
 

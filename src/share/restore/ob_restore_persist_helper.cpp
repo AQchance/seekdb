@@ -1231,7 +1231,7 @@ int ObRestorePersistHelper::transfer_tablet(
       LOG_WARN("failed to decrease finish tablet count in ls restore progress table", K(ret), K(src_ls_key));
 #ifdef ERRSIM      
     } else {
-      LOG_INFO("correct restore progress after transfer backfill", K(src_ls_key), K(dest_ls_key));
+
 #endif      
     }
   }

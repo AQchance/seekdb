@@ -115,12 +115,12 @@ TEST_F(TestAdjustExpr, basic_test)
   ObOpRawExpr *second_expr = static_cast<ObOpRawExpr * >(query_select->get_select_item(1).expr_);
   ObRawExpr *test1 = first_expr;
   ObRawExpr *test2 = second_expr;
-  LOG_INFO("=========================================");
-  LOG_INFO("rawexpr", K(test1));
-  LOG_INFO("rawexpr", K(test2));
-  LOG_INFO("rawexpr", K(*test1));
-  LOG_INFO("rawexpr", K(*test2));
-  LOG_INFO("=========================================");
+
+
+
+
+
+
   EXPECT_TRUE(test1 != test2);
 
   // run tests
@@ -150,7 +150,7 @@ TEST_F(TestAdjustExpr, basic_test)
       child_stmt->add_select_item(select_stmt->get_select_item(i));
     }
   }
-  LOG_INFO("child_stmt", K(*child_stmt));
+
 
   // for calc
   ObNewRow row;

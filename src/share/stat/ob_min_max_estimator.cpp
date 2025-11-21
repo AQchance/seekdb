@@ -171,7 +171,7 @@ int ObMinMaxEstimator::estimate(const ObOptStatGatherParam &param,
                                  opt_stat, tmp_opt_stats))) {
     LOG_WARN("failed to evaluate basic stats", K(ret));
   } else {
-    LOG_TRACE("succeed to gather min max value from index", K(opt_stat.column_stats_));
+
   }
   stat_items_.reuse();
   return ret;
@@ -189,7 +189,7 @@ int ObMinMaxEstimator::pack_sql(ObSqlString &raw_sql_str)
                                             select_fields_.ptr()))) {
     LOG_WARN("failed to build query sql stmt", K(ret));
   } else {
-    LOG_TRACE("OptStat: min max stat query sql", K(raw_sql_str));
+
   }
   return ret;
 }

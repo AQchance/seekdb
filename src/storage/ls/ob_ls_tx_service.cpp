@@ -713,11 +713,11 @@ int ObLSTxService::register_common_checkpoint(const ObCommonCheckpointType &type
 
   if (!is_valid_log_base_type(type) || NULL == common_checkpoint) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), K(type), K(common_checkpoint));
+
   } else {
     WLockGuard guard(rwlock_);
     if (OB_NOT_NULL(common_checkpoints_[type])) {
-      STORAGE_LOG(WARN, "repeat register common_checkpoint", K(ret), K(type), K(common_checkpoint));
+
     } else {
       common_checkpoints_[type] = common_checkpoint;
     }
@@ -733,7 +733,7 @@ int ObLSTxService::unregister_common_checkpoint(const ObCommonCheckpointType &ty
 
   if (!is_valid_log_base_type(type) || OB_ISNULL(common_checkpoint)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), K(type), K(common_checkpoint));
+
   } else {
     WLockGuard guard(rwlock_);
     if (OB_ISNULL(common_checkpoints_[type])) {
@@ -987,7 +987,7 @@ int ObLSTxService::transfer_out_tx_op(const ObTransferOutTxParam &param,
     TRANS_LOG(WARN, "for each tx ctx error", KR(ret));
   }
   int64_t end_time = ObTimeUtility::current_time();
-  LOG_INFO("transfer_out_tx_op", KR(ret), "cost", end_time - start_time, K(active_tx_count), K(op_tx_count));
+
   return ret;
 }
 
@@ -999,7 +999,7 @@ int ObLSTxService::wait_tx_write_end(ObTimeoutCtx &timeout_ctx)
     TRANS_LOG(WARN, "for each tx ctx error", KR(ret));
   }
   int64_t end_time = ObTimeUtility::current_time();
-  LOG_INFO("wait_tx_write_end", KR(ret), "cost", end_time - start_time);
+
   return ret;
 }
 
@@ -1016,7 +1016,7 @@ int ObLSTxService::collect_tx_ctx(const ObLSID dest_ls_id,
     TRANS_LOG(WARN, "for each tx ctx error", KR(ret));
   }
   int64_t end_time = ObTimeUtility::current_time();
-  LOG_INFO("collect_tx_ctx", KR(ret), K(ls_id_), "cost_us", end_time - start_time, K(collect_count));
+
   return ret;
 }
 

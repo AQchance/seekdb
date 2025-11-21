@@ -185,7 +185,7 @@ int TestMdsTableScan::wait_for_mds_table_flush(const common::ObTabletID &tablet_
   ret = tablet->fetch_table_store(table_store_wrapper);
   EXPECT_EQ(OB_SUCCESS, ret);
   table_store = table_store_wrapper.get_member();
-  STORAGE_LOG(INFO, "print mds sstables", K(table_store->mds_sstables_));
+
   if (table_store->mds_sstables_.count() != mds_sstable_cnt_before + 1) {
     EXPECT_EQ(1, table_store->mds_sstables_.count());
     EXPECT_EQ(ObITable::TableType::MDS_MINOR_SSTABLE, table_store->mds_sstables_.at(0)->key_.table_type_);
@@ -246,7 +246,7 @@ int TestMdsTableScan::try_schedule_mds_minor(const common::ObTabletID &tablet_id
     int times = 0;
     do
     {
-      STORAGE_LOG(INFO, "try mds minor", K(times));
+
       if (OB_FAIL(MTL(ObLSService*)->get_ls(LS_ID, ls_handle, ObLSGetMod::STORAGE_MOD))) {
         LOG_WARN("failed to get ls", K(ret), K(LS_ID));
       } else if (OB_FAIL(TestMdsTableScan::get_tablet(tablet_id, tablet_handle))) {
@@ -262,7 +262,7 @@ int TestMdsTableScan::try_schedule_mds_minor(const common::ObTabletID &tablet_id
       } else if (OB_FALSE_IT(static_cast<palf::PalfHandleImpl* >(guard.apply_status_->palf_handle_.palf_handle_impl_)->sw_.lsn_allocator_.lsn_ts_meta_.scn_delta_ =450)) {
       } else if (OB_FAIL(compaction::ObTenantTabletScheduler::schedule_tablet_minor_merge<compaction::ObTabletMergeExecuteDag>(
           compaction::MDS_MINOR_MERGE, ls_handle, tablet_handle))) {
-        STORAGE_LOG(WARN, "fail to schedule mds minor merge", K(ret));
+
       }
       // sleep
       ::ob_usleep(100_ms);
@@ -273,7 +273,7 @@ int TestMdsTableScan::try_schedule_mds_minor(const common::ObTabletID &tablet_id
       times = 0;
       const ObTabletTableStore *table_store = nullptr;
       do {
-        STORAGE_LOG(INFO, "waiting for mds minor finish", K(times));
+
         ret = TestMdsTableScan::get_tablet(tablet_id, tablet_handle);
         EXPECT_EQ(OB_SUCCESS, ret);
         ObTablet *tablet = tablet_handle.get_obj();
@@ -285,17 +285,17 @@ int TestMdsTableScan::try_schedule_mds_minor(const common::ObTabletID &tablet_id
         EXPECT_EQ(1, table_store->mds_sstables_.count());
         if (1 != table_store->mds_sstables_.count()) {
           ret = OB_EAGAIN;
-          STORAGE_LOG(WARN, "fail to  finish mds minor", KPC(table_store));
+
         }
         ::ob_usleep(100_ms);
         ++times;
       } while (OB_EAGAIN == ret && times < 20);
 
       if (OB_SUCC(ret)) {
-        STORAGE_LOG(INFO, "success finish mds minor", KPC(table_store));
+
       }
     } else {
-      STORAGE_LOG(WARN, "fail to schedule minor merge", K(ret));
+
     }
   }
 

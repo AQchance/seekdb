@@ -102,7 +102,7 @@ int ObAggGroupVec::eval_batch(
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("Unexpected null agg cell", K(ret), K(i), KP(agg_cell));
     } else if (agg_cell->is_agg_finish(pd_row_id_ctx)) {
-      LOG_DEBUG("aggregate has been pushdown to decoder", K(pd_row_id_ctx), K(agg_cell->get_agg_row_id()));
+
     } else if (OB_FAIL(agg_cell->eval_batch(reader, col_offset, pd_row_id_ctx.row_ids_, pd_row_id_ctx.get_row_count()))) {
       LOG_WARN("Failed to aggregate batch rows", K(ret), K(pd_row_id_ctx));
     }

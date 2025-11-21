@@ -78,7 +78,7 @@ int ObMySQLResultSet::to_mysql_field(const ObField &field, ObMySQLField &mfield)
       mfield.inout_mode_ |= 0x04;
     }
   }
-  LOG_TRACE("to mysql field", K(ret), K(mfield), K(field));
+
   return ret;
 }
 
@@ -126,7 +126,7 @@ int ObMySQLResultSet::to_oracle_field(const ObField &field, ObMySQLField &mfield
     } else {
       ret = ObSMUtils::get_mysql_type(field.type_.get_type(), mfield.type_, mfield.flags_, decimals);
     }
-    LOG_DEBUG("debug to oracle field in middle", K(ret), K(mfield), K(field), K(mfield.length_), K(mfield.accuracy_));
+
     mfield.type_owner_ = field.type_owner_;
     mfield.type_name_ = field.type_name_;
    //  In this scenario, the precsion and scale of number are undefined, 
@@ -162,7 +162,7 @@ int ObMySQLResultSet::to_oracle_field(const ObField &field, ObMySQLField &mfield
       mfield.inout_mode_ |= 0x04;
     }
   }
-  LOG_DEBUG("debug to oracle field", K(ret), K(mfield), K(field), K(mfield.length_), K(mfield.accuracy_));
+
   return ret;
 }
 

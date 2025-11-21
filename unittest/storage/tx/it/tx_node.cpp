@@ -565,7 +565,7 @@ int ObTxNode::read(const ObTxReadSnapshot &snapshot,
     row_key.assign(&row_key_obj, 1);
     row_key.store_rowkey_.assign(&key_obj, 1);
     OZ(memtable_->get(iter_param, access_context, row_key, row));
-    STORAGE_LOG(INFO, "read_result", K(row), KPC(this));
+
   }
   OZ(txs_.revert_store_ctx(read_store_ctx));
   if (OB_SUCC(ret)) {
@@ -786,7 +786,7 @@ int ObTxNode::replay(const void *buffer,
     if (OB_FAIL(executor.execute(log_buf, nbytes, tmp_pos))) {
       LOG_WARN("replay tx log error", K(ret), K(lsn), K(ts_ns));
     } else {
-      LOG_INFO("replay tx log succ", K(ret), K(lsn), K(ts_ns));
+
     }
   }
   return ret;

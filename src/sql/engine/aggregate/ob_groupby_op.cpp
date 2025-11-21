@@ -76,7 +76,7 @@ int ObGroupByOp::inner_open()
           K(op_spec->aggr_stage_), K(op_spec->dist_aggr_group_idxes_.count()));
       }
     } else {
-      LOG_DEBUG("finish inner_open");
+
     }
   }
   return ret;
@@ -91,7 +91,7 @@ int ObGroupByOp::inner_rescan()
   } else if (OB_FAIL(aggr_processor_.init())) {
     LOG_WARN("failed to init", K(ret));
   } else {
-    LOG_DEBUG("finish rescan");
+
   }
   return ret;
 }
@@ -105,7 +105,7 @@ int ObGroupByOp::inner_switch_iterator()
   } else if (OB_FAIL(aggr_processor_.init())) {
     LOG_WARN("failed to init", K(ret));
   } else {
-    LOG_DEBUG("finish switch_iterator");
+
   }
   return ret;
 }
@@ -117,7 +117,7 @@ int ObGroupByOp::inner_close()
   if (OB_FAIL(ObOperator::inner_close())) {
     LOG_WARN("failed to inner_close", K(ret));
   } else {
-    LOG_DEBUG("finish inner_close");
+
   }
   return ret;
 }

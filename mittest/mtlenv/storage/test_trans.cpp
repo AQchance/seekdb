@@ -99,7 +99,7 @@ class TestTrans : public ::testing::Test
 public:
   static void SetUpTestCase()
   {
-    LOG_INFO("SetUpTestCase");
+
     uint64_t version = cal_version(4, 3, 0, 0);
     ASSERT_EQ(OB_SUCCESS, ObClusterVersion::get_instance().init(version));
 
@@ -108,7 +108,7 @@ public:
   }
   static void TearDownTestCase()
   {
-    LOG_INFO("TearDownTestCase");
+
     MockTenantModuleEnv::get_instance().destroy();
   }
 
@@ -128,14 +128,14 @@ share::schema::ObTableSchema TestTrans::table_schema_;
 
 void TestTrans::create_ls(uint64_t tenant_id, ObLSID &ls_id, ObLS *&ls)
 {
-  LOG_INFO("create log stream");
+
   ObCreateLSArg arg;
   ASSERT_EQ(OB_SUCCESS, gen_create_ls_arg(tenant_id, ls_id, arg));
   ObLSService* ls_svr = MTL(ObLSService*);
   ASSERT_EQ(OB_SUCCESS, ls_svr->create_ls(arg));
 
   // set member list
-  LOG_INFO("set member list");
+
   ObLSHandle handle;
   ASSERT_EQ(OB_SUCCESS, ls_svr->get_ls(ls_id, handle, ObLSGetMod::STORAGE_MOD));
   ls = handle.get_ls();
@@ -148,7 +148,7 @@ void TestTrans::create_ls(uint64_t tenant_id, ObLSID &ls_id, ObLS *&ls)
                                                     learner_list));
 
   // check leader
-  LOG_INFO("check leader");
+
   for (int i = 0; i < 15; i++) {
     ObRole role;
     int64_t leader_epoch = 0;
@@ -182,7 +182,7 @@ void TestTrans::insert_rows(ObLSID &ls_id, ObTabletID &tablet_id, ObTxDesc &tx_d
   dml_param.store_ctx_guard_ = &store_ctx_guard;
 
   auto as = MTL(ObAccessService*);
-  LOG_INFO("storage access by dml");
+
   ASSERT_EQ(OB_SUCCESS, as->get_write_store_ctx_guard(ls_id,
                                                       dml_param.timeout_,
                                                       tx_desc,
@@ -213,7 +213,7 @@ void TestTrans::prepare_tx_desc(ObTxDesc *&tx_desc, ObTxReadSnapshot &snapshot)
   // init tx_desc and put in map
   ASSERT_EQ(OB_SUCCESS, tx_service->start_tx(*tx_desc, tx_p));
 
-  LOG_INFO("get snapshot for dml");
+
   {
     int64_t expire_ts = ObTimeUtility::current_time() + 100000000;
     ObTxIsolationLevel isolation = ObTxIsolationLevel::RC;
@@ -230,7 +230,7 @@ TEST_F(TestTrans, create_ls_and_tablet)
   uint64_t tenant_id = MTL_ID();
   create_ls(tenant_id, ls_id, ls);
 
-  LOG_INFO("create tablet");
+
   ObTabletID tablet_id(1001);
   ObLSTabletService *ls_tablet_svr = ls->get_tablet_svr();
   ObLSService* ls_svr = MTL(ObLSService*);
@@ -249,7 +249,7 @@ TEST_F(TestTrans, basic)
   ObLSID ls_id(100);
   ObTabletID tablet_id(1001);
 
-  LOG_INFO("start transaction");
+
   ObTxDesc *tx_desc = NULL;
   ObTxReadSnapshot snapshot;
   prepare_tx_desc(tx_desc, snapshot);
@@ -312,10 +312,10 @@ TEST_F(TestTrans, basic)
     }
     cb = cb->next_;
   }
-  LOG_INFO("commit transaction");
+
   ASSERT_EQ(OB_SUCCESS, tx_service->commit_tx(*tx_desc, ObTimeUtility::current_time() + 100000000));
 
-  LOG_INFO("release transaction");
+
   tx_service->release_tx(*tx_desc);
 
   //ASSERT_EQ(OB_SUCCESS, MTL(ObLSService*)->remove_ls(ls_id));
@@ -333,7 +333,7 @@ TEST_F(TestTrans, dist_trans)
   create_ls(tenant_id, ls_id2, ls2);
 
   // create tablet
-  LOG_INFO("create tablet");
+
   ObTabletID tablet_id2(1002);
 
   ObLSTabletService *ls_tablet_svr = ls2->get_tablet_svr();
@@ -343,7 +343,7 @@ TEST_F(TestTrans, dist_trans)
   ASSERT_EQ(OB_SUCCESS, TestTabletHelper::create_tablet(ls_handle2, tablet_id2, table_schema_, allocator_));
 
 
-  LOG_INFO("start transaction");
+
   ObTxDesc *tx_desc = NULL;
   ObTxReadSnapshot snapshot;
   prepare_tx_desc(tx_desc, snapshot);
@@ -359,10 +359,10 @@ TEST_F(TestTrans, dist_trans)
   insert_rows(ls_id2, tablet_id2, *tx_desc, snapshot, ins_str2);
 
   ObTransService *tx_service = MTL(ObTransService*);
-  LOG_INFO("commit transaction");
+
   ASSERT_EQ(OB_SUCCESS, tx_service->commit_tx(*tx_desc, ObTimeUtility::current_time() + 10000000000));
 
-  LOG_INFO("release transaction");
+
   tx_service->release_tx(*tx_desc);
 }
 
@@ -384,7 +384,7 @@ TEST_F(TestTrans, transfer_block)
   ObLSID ls_id(100);
   ObTabletID tablet_id(1001);
 
-  LOG_INFO("start transaction");
+
   ObTxDesc *tx_desc = NULL;
   ObTxReadSnapshot snapshot;
   prepare_tx_desc(tx_desc, snapshot);
@@ -405,10 +405,10 @@ TEST_F(TestTrans, transfer_block)
     part_ctx->sub_state_.clear_transfer_blocking();
   });
 
-  LOG_INFO("commit transaction");
+
   ASSERT_EQ(OB_SUCCESS, tx_service->commit_tx(*tx_desc, ObTimeUtility::current_time() + 100000000));
 
-  LOG_INFO("release transaction");
+
   tx_service->release_tx(*tx_desc);
 
   th.join();
@@ -421,7 +421,7 @@ TEST_F(TestTrans, transfer_block2)
   ObLSID ls_id(100);
   ObTabletID tablet_id(1001);
 
-  LOG_INFO("start transaction");
+
   ObTxDesc *tx_desc = NULL;
   ObTxReadSnapshot snapshot;
   prepare_tx_desc(tx_desc, snapshot);
@@ -443,10 +443,10 @@ TEST_F(TestTrans, transfer_block2)
     part_ctx->sub_state_.clear_transfer_blocking();
   });
 
-  LOG_INFO("rollback transaction");
+
   ASSERT_EQ(OB_SUCCESS, tx_service->rollback_tx(*tx_desc));
 
-  LOG_INFO("release transaction");
+
   tx_service->release_tx(*tx_desc);
   th.join();
 }

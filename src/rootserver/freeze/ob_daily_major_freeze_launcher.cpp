@@ -76,7 +76,7 @@ int ObDailyMajorFreezeLauncher::start()
   } else if (OB_FAIL(ObRsReentrantThread::start())) {
     LOG_WARN("fail to start major_freeze_launch thread", K_(tenant_id), KR(ret));
   } else {
-    LOG_INFO("ObDailyMajorFreezeLauncher start succ", K_(tenant_id));
+
   }
   return ret;
 }
@@ -89,12 +89,12 @@ void ObDailyMajorFreezeLauncher::run3()
     ret = OB_NOT_INIT;
     LOG_WARN("fail to run, not init", KR(ret));
   } else {
-    LOG_INFO("start daily major_freeze_launcher", K_(tenant_id));
+
     ObThreadCondGuard guard(get_cond());
 
     while (!stop_) {
       update_last_run_timestamp();
-      LOG_TRACE("run daily major freeze launcher", K_(tenant_id));
+
 
       if (OB_FAIL(try_launch_major_freeze())) {
         LOG_WARN("fail to try_launch_major_freeze", KR(ret), K_(tenant_id));
@@ -109,7 +109,7 @@ void ObDailyMajorFreezeLauncher::run3()
         LOG_WARN("fail to try_idle", KR(ret), KR(tmp_ret));
       }
     }
-    LOG_INFO("daily major_freeze_launcher stopped", K_(tenant_id));
+
   }
 }
 
@@ -125,7 +125,7 @@ int ObDailyMajorFreezeLauncher::try_launch_major_freeze()
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("tenant config is not valid", KR(ret), K_(tenant_id));
   } else if (tenant_config->major_freeze_duty_time.disable()) {
-    LOG_INFO("major_freeze_duty_time is disabled, can not launch major freeze by duty", K_(tenant_id));
+
   } else {
     const int hour = tenant_config->major_freeze_duty_time.hour();
     const int minute = tenant_config->major_freeze_duty_time.minute();
@@ -179,7 +179,7 @@ int ObDailyMajorFreezeLauncher::try_launch_major_freeze()
                     "time limit", KR(ret), K(start_us), "now", ObTimeUtility::current_time());
         }
       } else {
-        LOG_INFO("major_freeze has been already launched, no need to do again", K_(tenant_id));
+
       }
     } else {
       already_launch_ = false;

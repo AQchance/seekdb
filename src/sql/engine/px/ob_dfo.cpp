@@ -334,7 +334,7 @@ int ObDfo::get_task_receive_chs(int64_t child_dfo_id,
 {
   int ret = OB_SUCCESS;
 
-  LOG_TRACE("use receive_ch_sets_map_", KP(this), K_(dfo_id), K(lbt()));
+
   ch_sets.reuse();
 
   if (child_dfo_id < 0 || child_dfo_id >= MAX_DFO_ID) {
@@ -490,8 +490,8 @@ OB_DEF_SERIALIZE(ObPxRpcInitSqcArgs)
   if (OB_SUCC(ret) && sqc_.is_fulltree()) {
     ret = exec_ctx_->serialize_group_pwj_map(buf, buf_len, pos);
   }
-  LOG_TRACE("serialize sqc", K_(sqc));
-  LOG_DEBUG("end trace sqc args", K(pos), K(buf_len), K(this->get_serialize_size()));
+
+
   return ret;
 }
 
@@ -536,7 +536,7 @@ OB_DEF_SERIALIZE_SIZE(ObPxRpcInitSqcArgs)
         len += ObPxTreeSerializer::get_serialize_op_input_size(
             *op_spec_root_, exec_ctx_->get_kit_store());
       }
-      LOG_TRACE("trace get ser rpc init sqc args size", K(len));
+
       ser_cache.slen_ = len;
     }
     // always serialize
@@ -605,7 +605,7 @@ int ObPxRpcInitSqcArgs::do_deserialize(int64_t &pos, const char *net_buf, int64_
 
       LST_DO_CODE(OB_UNIS_DECODE, sqc_);
 
-      LOG_TRACE("deserialize sqc", K_(sqc));
+
       if (OB_SUCC(ret)) {
         const ObExprFrameInfo *frame_info = &des_phy_plan_->get_expr_frame_info();
         if (OB_FAIL(ObPxTreeSerializer::deserialize_expr_frame_info<true>(
@@ -651,7 +651,7 @@ int ObPxRpcInitSqcArgs::do_deserialize(int64_t &pos, const char *net_buf, int64_
     if (OB_SUCC(ret) && sqc_.is_fulltree() && pos < data_len) {
       ret = exec_ctx_->deserialize_group_pwj_map(buf, data_len, pos);
     }
-    LOG_TRACE("deserialize qc order gi tasks", K(qc_order_gi_tasks_), K(sqc_), K(this));
+
   }
   return ret;
 }
@@ -679,7 +679,7 @@ OB_DEF_SERIALIZE(ObPxRpcInitTaskArgs)
     LST_DO_CODE(OB_UNIS_ENCODE, sqc_task_ptr_val);
     LST_DO_CODE(OB_UNIS_ENCODE, sqc_handler_ptr_val);
 
-    LOG_TRACE("serialize task", KP_(sqc_task_ptr), KP_(sqc_handler), K_(task));
+
     // Serialize the core part of Task to the execution end: sub plan tree
     if (OB_SUCC(ret)) {
       const ObExprFrameInfo *frame_info = &ser_phy_plan_->get_expr_frame_info();
@@ -703,7 +703,7 @@ OB_DEF_SERIALIZE(ObPxRpcInitTaskArgs)
     LST_DO_CODE(OB_UNIS_ENCODE, sqc_task_ptr_val);
     LST_DO_CODE(OB_UNIS_ENCODE, sqc_handler_ptr_val);
 
-    LOG_TRACE("serialize task", KP_(sqc_task_ptr), KP_(sqc_handler), K_(task));
+
     // Serialize the core part of Task to the execution end: sub plan tree
     if (OB_SUCC(ret)) {
       const ObExprFrameInfo &frame_info = ser_phy_plan_->get_expr_frame_info();
@@ -763,7 +763,7 @@ OB_DEF_DESERIALIZE(ObPxRpcInitTaskArgs)
     sqc_task_ptr_ = reinterpret_cast<ObPxTask *>(sqc_task_ptr_val);
     sqc_handler_ = reinterpret_cast<ObPxSqcHandler *>(sqc_handler_ptr_val);
 
-    LOG_TRACE("deserialized task", KP_(sqc_task_ptr), KP_(sqc_handler), K_(task));
+
 
     if (OB_SUCC(ret)) {
       const ObExprFrameInfo *expr_frame_info = &inner_phy_plan_->get_expr_frame_info();
@@ -799,7 +799,7 @@ OB_DEF_DESERIALIZE(ObPxRpcInitTaskArgs)
     sqc_task_ptr_ = reinterpret_cast<ObPxTask *>(sqc_task_ptr_val);
     sqc_handler_ = reinterpret_cast<ObPxSqcHandler *>(sqc_handler_ptr_val);
 
-    LOG_TRACE("deserialized task", KP_(sqc_task_ptr), KP_(sqc_handler), K_(task));
+
 
     if (OB_SUCC(ret)) {
       const ObExprFrameInfo &expr_frame_info = des_phy_plan_->get_expr_frame_info();

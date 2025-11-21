@@ -55,7 +55,7 @@ int ObTenantTmpFileManager::init()
   if (OB_SUCC(ret)) {
     is_inited_ = true;
   }
-  LOG_INFO("ObTenantTmpFileManager init success", KR(ret), K(MTL_ID()), K(GCTX.is_shared_storage_mode()));
+
   return ret;
 }
 
@@ -76,7 +76,7 @@ int ObTenantTmpFileManager::start()
       LOG_WARN("fail to start sn tmp file manager", KR(ret));
     }
   }
-  LOG_INFO("ObTenantTmpFileManager start success", KR(ret), K(MTL_ID()), K(GCTX.is_shared_storage_mode()));
+
   return ret;
 }
 
@@ -90,7 +90,7 @@ void ObTenantTmpFileManager::stop()
     get_ss_file_manager().stop();
   }
 #endif
-  LOG_INFO("ObTenantTmpFileManager stop success", K(MTL_ID()), K(GCTX.is_shared_storage_mode()));
+
 }
 
 void ObTenantTmpFileManager::wait()
@@ -103,7 +103,7 @@ void ObTenantTmpFileManager::wait()
     get_ss_file_manager().wait();
   }
 #endif
-  LOG_INFO("ObTenantTmpFileManager wait success", K(MTL_ID()), K(GCTX.is_shared_storage_mode()));
+
 }
 
 void ObTenantTmpFileManager::destroy()
@@ -117,7 +117,7 @@ void ObTenantTmpFileManager::destroy()
   }
 #endif
   is_inited_ = false;
-  LOG_INFO("ObTenantTmpFileManager destroy success", K(MTL_ID()), K(GCTX.is_shared_storage_mode()));
+
 }
 
 int ObTenantTmpFileManager::alloc_dir(int64_t &dir_id)

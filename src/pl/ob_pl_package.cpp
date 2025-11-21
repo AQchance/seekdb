@@ -257,7 +257,7 @@ int ObPLPackage::instantiate_package_state(const ObPLResolveCtx &resolve_ctx,
                   K(ret), KPC(cur_ser_val), K(package_state.get_state_version()), K(state_version));
     } else if (!valid) {
       // discard user var value
-      LOG_INFO("===henry:invalid user var===", K(package_state.get_state_version()), K(state_version));
+
       if (OB_FAIL(value_map.clear())) {
         LOG_WARN("fail to clear hash map", K(ret));
       } else if (OB_FAIL(ObPLPackageState::disable_expired_user_variables(*exec_ctx.get_my_session(), key))) {

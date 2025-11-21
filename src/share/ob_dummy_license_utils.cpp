@@ -71,7 +71,7 @@ void ObLicenseUtils::clear_license_table_if_need() {
     if (OB_TMP_FAIL(proxy->write(OB_SYS_TENANT_ID, CLEAR_LICENSE_TABLE_SQL, affected_row))) {
       LOG_WARN("failed to clear inner table __all_license", KR(tmp_ret));
     } else {
-      LOG_INFO("successfully clear inner table", KR(tmp_ret), K(CLEAR_LICENSE_TABLE_SQL), K(affected_row));
+
       inner_table_cleared = true;
     }
   }

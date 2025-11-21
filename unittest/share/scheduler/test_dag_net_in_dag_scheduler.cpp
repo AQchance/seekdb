@@ -269,7 +269,7 @@ public:
       bret = false;
     } else {
       last_run_time_ = ObTimeUtility::current_time();
-      STORAGE_LOG(INFO, "check_can_schedule", KPC(this));
+
     }
     return bret;
   }
@@ -380,7 +380,7 @@ struct ObRetryDagInitParam : public ObIDagInitParam
     int ret = OB_SUCCESS;
     id_ = other.id_;
     if (OB_FAIL(deep_copy_str(other.str_.ptr(), str_))) {
-      STORAGE_LOG(WARN, "deep copy string", K(ret));
+
     }
     return ret;
   }
@@ -392,12 +392,12 @@ struct ObRetryDagInitParam : public ObIDagInitParam
 
     if (OB_ISNULL(src)) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "The src is NULL, ", K(ret));
+
     } else {
       int64_t len = strlen(src) + 1;
       if (NULL == (buf = static_cast<char *>(allocator_.alloc(len)))) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(ERROR, "Fail to allocate memory, ", K(len), K(ret));
+
       } else {
         MEMCPY(buf, src, len-1);
         buf[len-1] = '\0';

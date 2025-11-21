@@ -34,7 +34,7 @@ int ObNetEndpointIngressManager::init()
     LOG_WARN("fail create ingress_plan_map", K(ret));
   } else {
     total_bw_limit_ = 0;
-    LOG_INFO("endpoint ingress manager init ok");
+
   }
   return ret;
 }
@@ -73,7 +73,7 @@ int ObNetEndpointIngressManager::register_endpoint(const ObNetEndpointKey &endpo
         ob_free(endpoint_value);
         LOG_WARN("endpoint register failed", K(ret), K(endpoint_key), K(expire_time));
       } else {
-        LOG_INFO("endpoint register first time success", K(endpoint_key), K(expire_time), KP(endpoint_value));
+
       }
     } else {
       LOG_WARN("endpoint register failed", K(ret), K(endpoint_key));
@@ -98,7 +98,7 @@ int ObNetEndpointIngressManager::collect_predict_bw(ObNetEndpointKVArray &update
       const ObNetEndpointKey &endpoint_key = iter->first;
       ObNetEndpointValue *endpoint_value = iter->second;
       if (endpoint_value->expire_time_ < current_time) {
-        LOG_INFO("endpoint expired", K(endpoint_key), K(endpoint_value->expire_time_), K(current_time));
+
         if (OB_FAIL(delete_keys.push_back(endpoint_key))) {
           LOG_WARN("fail to push back arrays", K(ret), K(endpoint_key));
         } else {
@@ -289,7 +289,7 @@ int ObNetEndpointIngressManager::set_total_bw_limit(int64_t total_bw_limit)
   if (total_bw_limit >= 0) {
     if (total_bw_limit_ != total_bw_limit) {
       total_bw_limit_ = total_bw_limit;
-      LOG_INFO("total_bw_limit update success", K(total_bw_limit));
+
     }
   } else {
     ret = OB_INVALID_CONFIG;
@@ -308,7 +308,7 @@ void ObIngressBWAllocService::wait()
 {
   if (-1 != tg_id_) {
     TG_WAIT(tg_id_);
-    LOG_INFO("[INGRESS_SERVICE] ObIngressBWAllocService wait success", K(tg_id_));
+
   }
 }
 
@@ -323,7 +323,7 @@ void ObIngressBWAllocService::destroy()
     TG_DESTROY(tg_id_);
     tg_id_ = -1;
     ingress_manager_.destroy();
-    LOG_INFO("[INGRESS_SERVICE] ObIngressBWAllocService destroy success", K(tg_id_));
+
   }
 }
 

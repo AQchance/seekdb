@@ -179,7 +179,7 @@ int ObCreateTableExecutor::ObInsSQLPrinter::inner_print(char *buf, int64_t buf_l
       LOG_WARN("fail to print select stmt", K(ret));
     } else {
       res_len = pos1;
-      LOG_INFO("[CTAS] successfully print sql", "sql", buf);
+
     }
   }
   return ret;
@@ -218,7 +218,7 @@ int ObCreateTableExecutor::prepare_ins_arg(ObCreateTableStmt &stmt,
       LOG_WARN("fail to get sys var", K(ret));
     } else {
       online_sys_var = online_sys_var_obj.get_bool();
-      LOG_DEBUG("online opt stat gather", K(online_sys_var), K(no_osg_hint));
+
     }
   }
 
@@ -243,7 +243,7 @@ int ObCreateTableExecutor::prepare_ins_arg(ObCreateTableStmt &stmt,
       LOG_WARN("fail to assign converted insert into string", K(ret));
     }
   }
-  LOG_DEBUG("ins str preparation complete!", K(ins_sql), K(ret));
+
   return ret;
 }
 // Prepare alter table parameters
@@ -289,7 +289,7 @@ int ObCreateTableExecutor::prepare_alter_arg(ObCreateTableStmt &stmt,
   } else if (OB_FAIL(alter_table_schema->alter_option_bitset_.add_member(obrpc::ObAlterTableArg::TABLE_NAME))) {
     LOG_WARN("failed to add member TABLE_NAME for alter table schema", K(ret), K(alter_table_arg));
   }
-  LOG_DEBUG("alter table arg preparation complete!", K(*alter_table_schema), K(ret));
+
   return ret;
 }
 // Prepare drop table parameters
@@ -317,7 +317,7 @@ int ObCreateTableExecutor::prepare_drop_arg(const ObCreateTableStmt &stmt,
   } else if (OB_FAIL(drop_table_arg.tables_.push_back(table_item))) {
     LOG_WARN("failed to add table item!", K(table_item), K(ret));
   }
-  LOG_DEBUG("drop table arg preparation complete!", K(drop_table_arg), K(table_item), K(ret));
+
   return ret;
 }
 // Query table creation processing, through internal session execution query insert code reference ObTableModify::ObTableModifyCtx::open_inner_conn() implementation
@@ -480,20 +480,20 @@ int ObCreateTableExecutor::execute_ctas(ObExecContext &ctx,
             if (OB_SUCCESS != (tmp_ret = common_rpc_proxy->drop_table(drop_table_arg, res))) {
               LOG_WARN("failed to drop table", K(drop_table_arg), K(ret));
             } else {
-              LOG_INFO("table is created and dropped due to error ", K(ret));
+
             }
           }
         } else {
           plan_ctx->set_affected_rows(affected_rows);
-          LOG_DEBUG("CTAS all done", K(ins_sql), K(affected_rows));
+
         }
 
         if (OB_ERR_TABLE_EXIST == ret && create_table_arg.if_not_exist_) {
           ret = OB_SUCCESS;
-          LOG_DEBUG("table exists, force return success after cleanup", K(create_table_name));
+
         }
       } else {
-        LOG_DEBUG("table exists, no need to CTAS", K(create_table_res.table_id_));
+
       }
       if (OB_NOT_NULL(common_rpc_proxy)) {
         char table_info_buffer[256];
@@ -686,7 +686,7 @@ int ObCreateTableExecutor::execute(ObExecContext &ctx, ObCreateTableStmt &stmt)
     // only CTAS or create temporary table will make session_id != 0. If such table detected, set
     // need ctas cleanup task anyway to do some cleanup jobs
     if (0 != table_schema.get_session_id()) {
-      LOG_TRACE("CTAS or temporary table create detected", K(table_schema));
+
       ATOMIC_STORE(&OBSERVER.need_ctas_cleanup_, true);
     }
   }
@@ -750,7 +750,7 @@ int ObAlterTableExecutor::refresh_schema_for_table(
           tenant_id, global_version))) {
     LOG_WARN("fail to get global version", K(ret), "tenant_id", tenant_id);
   } else if (local_version < global_version) {
-    LOG_INFO("try to refresh schema", K(local_version), K(global_version));
+
     // force refresh schema latest version
     ObSEArray<uint64_t, 1> tenant_ids;
     if (OB_FAIL(tenant_ids.push_back(tenant_id))) {
@@ -948,7 +948,7 @@ int ObAlterTableExecutor::alter_table_rpc_v2(
             LOG_WARN("wait build index finish failed", K(tmp_ret), K(tenant_id), K(res.task_id_));
           }
         }
-        LOG_INFO("added indexes failed, we rolled back all indexes added in this same alter table sql. But we didn't roll back other actions in this same alter table sql");
+
       }
     }
   }
@@ -1048,7 +1048,7 @@ int ObAlterTableExecutor::execute(ObExecContext &ctx, ObAlterTableStmt &stmt)
   obrpc::ObCommonRpcProxy *common_rpc_proxy = NULL;
   obrpc::ObAlterTableArg &alter_table_arg = stmt.get_alter_table_arg();
   obrpc::ObExchangePartitionArg &exchange_partition_arg = stmt.get_exchange_partition_arg();
-  LOG_DEBUG("start of alter table execute", K(alter_table_arg));
+
   ObString first_stmt;
   OZ (stmt.get_first_stmt(first_stmt));
   OV (OB_NOT_NULL(task_exec_ctx = GET_TASK_EXECUTOR_CTX(ctx)), OB_NOT_INIT);
@@ -1892,7 +1892,7 @@ int ObAlterTableExecutor::check_alter_partition(ObExecContext &ctx,
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("no operation", K(arg.alter_part_type_), K(ret));
     }
-    LOG_DEBUG("dump table schema", K(table_schema));
+
   } else if (stmt.get_interval_expr() != NULL) {
     CK (NULL != stmt.get_transition_expr());
     OZ (ObPartitionExecutorUtils::check_transition_interval_valid(
@@ -1962,7 +1962,7 @@ int ObCommentExecutor::execute(ObExecContext &ctx, ObAlterTableStmt &stmt)
   ObTaskExecutorCtx *task_exec_ctx = nullptr;
   obrpc::ObCommonRpcProxy *common_rpc_proxy = nullptr;
   obrpc::ObAlterTableArg &alter_table_arg = stmt.get_alter_table_arg();
-  LOG_TRACE("start of comment execute", K(alter_table_arg));
+
   ObString first_stmt;
   if (OB_FAIL(stmt.get_first_stmt(first_stmt))) {
     LOG_WARN("fail to get first stmt", KR(ret));
@@ -2312,7 +2312,7 @@ int ObTruncateTableExecutor::execute(ObExecContext &ctx, ObTruncateTableStmt &st
             }
           }
           int64_t step_time = ObTimeUtility::current_time();
-          LOG_INFO("truncate_table_v2 finish trans", K(ret), "cost", step_time-start_time, "table_name", truncate_table_arg.table_name_, K(res));
+
           if (OB_FAIL(ret)) {
           } else if (!res.is_valid()) {
             ret = OB_ERR_UNEXPECTED;
@@ -2438,7 +2438,7 @@ int ObFlashBackTableToScnExecutor::execute(ObExecContext &ctx, ObFlashBackTableT
         LOG_WARN("failed to cast object", K(ret), K(tmp_obj));
       } else {
         arg.time_point_ = result_obj.get_datetime();
-        LOG_DEBUG("timestamp_val result", K(tmp_obj), K(result_obj), K(arg.time_point_));
+
       }
     } else if (ObFlashBackTableToScnStmt::TIME_SCN == stmt.get_time_type()) {
       EXPR_DEFINE_CAST_CTX(expr_ctx, CM_NONE);
@@ -2446,7 +2446,7 @@ int ObFlashBackTableToScnExecutor::execute(ObExecContext &ctx, ObFlashBackTableT
         LOG_WARN("failed to cast object", K(ret), K(tmp_obj));
       } else {
         arg.time_point_ = result_obj.v_.uint64_;
-        LOG_DEBUG("timestamp_val result", K(tmp_obj), K(result_obj), K(arg.time_point_));
+
       }
     }
   }
@@ -2568,7 +2568,7 @@ int ObOptimizeTenantExecutor::optimize_tenant(const obrpc::ObOptimizeTenantArg &
   int ret = OB_SUCCESS;
   uint64_t tenant_id = OB_INVALID_ID;
   ObSchemaGetterGuard schema_guard;
-  LOG_INFO("receive optimize tenant request", K(arg));
+
   if (!arg.is_valid() || NULL == common_rpc_proxy) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid arguments", K(ret), K(arg), KP(common_rpc_proxy));
@@ -2586,7 +2586,7 @@ int ObOptimizeTenantExecutor::optimize_tenant(const obrpc::ObOptimizeTenantArg &
     } else if (OB_FAIL(schema_guard.get_table_schemas_in_tenant(tenant_id, table_schemas))) {
       LOG_WARN("fail to get table schemas in tenant", K(ret));
     } else {
-      LOG_INFO("optimize tenant, table schema count", K(table_schemas.count()));
+
       for (int64_t i = 0; OB_SUCC(ret) && i < table_schemas.count(); ++i) {
         const ObSimpleTableSchemaV2 *table_schema = table_schemas.at(i);
         const ObDatabaseSchema *database_schema = nullptr;

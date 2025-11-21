@@ -134,7 +134,7 @@ private:
 void TestMacroBlockRowBareIterator::SetUpTestCase()
 {
   int ret = OB_SUCCESS;
-  STORAGE_LOG(INFO, "SetUpTestCase");
+
   EXPECT_EQ(OB_SUCCESS, MockTenantModuleEnv::get_instance().init());
 }
 
@@ -419,7 +419,7 @@ void TestMacroBlockRowBareIterator::prepare_schema()
 
 TEST_F(TestMacroBlockRowBareIterator, test_macro_block_row_bare_iterator)
 {
-  LOG_INFO("BEGIN TestMacroBlockRowBareIterator.test_macro_block_row_bare_iterator");
+
   ObWholeDataStoreDesc data_desc;
   ObSSTableIndexBuilder sstable_builder(false /* not need writer buffer*/);
   prepare_index_builder(data_desc, sstable_builder, true/*need_submit_io*/, ObMergeType::MAJOR_MERGE, false/* is_encrypt */);
@@ -458,7 +458,7 @@ TEST_F(TestMacroBlockRowBareIterator, test_macro_block_row_bare_iterator)
   }
   ASSERT_EQ(OB_SUCCESS, macro_writer->close());
   macro_writer = nullptr;
-  LOG_INFO("FINISH TestMacroBlockRowBareIterator.test_macro_block_row_bare_iterator");
+
 }
 
 }//end namespace unittest

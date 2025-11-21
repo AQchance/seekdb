@@ -42,7 +42,7 @@ int ObBarrierPieceMsgListener::on_message(
              K(pkt), K(ctx));
   } else {
     ctx.received_++;
-    LOG_DEBUG("got a barrier picece msg", "all_got", ctx.received_, "expected", ctx.task_cnt_);
+
   }
   // Already received all pieces, send sqc whole
   // Each sqc broadcasts to its respective task

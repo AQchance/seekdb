@@ -156,7 +156,7 @@ int ObDDLErrorMessageTableOperator::load_ddl_user_error(const uint64_t tenant_id
 {
   int ret = OB_SUCCESS;
   ObSqlString sql;
-  LOG_INFO("begin to load ddl user error", K(tenant_id), K(task_id), K(table_id));
+
   SMART_VAR(ObMySQLProxy::MySQLResult, res) {
     const uint64_t exec_tenant_id = ObSchemaUtils::get_exec_tenant_id(tenant_id);
     sqlclient::ObMySQLResult *result = NULL;
@@ -178,7 +178,7 @@ int ObDDLErrorMessageTableOperator::load_ddl_user_error(const uint64_t tenant_id
       LOG_WARN("fail to execute sql", K(ret), K(sql));
     } else if (OB_ISNULL(result = res.get_result())) {
       ret = OB_ITER_END;
-      LOG_INFO("single replica has not reported before", K(ret), K(table_id));
+
     } else {
       while (OB_SUCC(ret)) {
         if (OB_FAIL(result->next())) {
@@ -203,7 +203,7 @@ int ObDDLErrorMessageTableOperator::load_ddl_user_error(const uint64_t tenant_id
           } else if (OB_FAIL(databuff_printf(error_message.dba_message_, OB_MAX_ERROR_MSG_LEN, "%.*s", str_dba_message.length(), str_dba_message.ptr()))) {
             LOG_WARN("print to buffer failed", K(ret), K(str_dba_message));
           } else if (OB_SUCCESS != error_message.ret_code_ && !str_user_message.empty() && NULL == str_user_message.find('%')) {
-            LOG_INFO("load ddl user error success", K(error_message));
+
             break;
           }
         }
@@ -467,7 +467,7 @@ int ObDDLErrorMessageTableOperator::report_ddl_error_message(const ObBuildDDLErr
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("unexpected affected rows", K(ret), K(affected_rows));
         } else {
-          LOG_INFO("process ddl error message report success", K(ret), K(task_id), K(schema_version), K(table_id), K(addr), K(error_message), K(update_sql.ptr()));
+
         }
       }
     }

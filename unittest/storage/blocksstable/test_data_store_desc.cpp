@@ -126,7 +126,7 @@ TEST_F(TestObDataStoreDesc, test_static_desc)
   ObStaticDataStoreDesc static_desc3;
   ASSERT_EQ(OB_SUCCESS, static_desc3.assign(static_desc2));
   ASSERT_TRUE(static_desc3.is_valid());
-  STORAGE_LOG(INFO, "cmp", K(static_desc2), K(static_desc3));
+
   ASSERT_TRUE(static_desc3 == static_desc2);
 }
 

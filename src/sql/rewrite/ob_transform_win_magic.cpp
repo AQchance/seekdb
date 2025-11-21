@@ -69,13 +69,13 @@ int ObTransformWinMagic::check_hint_valid(ObDMLStmt &stmt, TableItem &table, boo
   const ObWinMagicHint *hint = static_cast<const ObWinMagicHint*>(get_hint(stmt.get_stmt_hint()));
   if (NULL == hint) {
     is_valid = true;
-    LOG_TRACE("check win magic hint is null", K(is_valid), K(table), K(stmt.get_stmt_hint()));
+
   } else if (OB_ISNULL(query_hint = stmt.get_stmt_hint().query_hint_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get unexpected null", K(ret), K(query_hint));
   } else {
     is_valid = hint->enable_win_magic(query_hint->cs_type_, table);
-    LOG_TRACE("succeed to check win magic hint valid", K(is_valid), K(table), K(*hint));
+
   }
   return ret;
 }
@@ -215,7 +215,7 @@ int ObTransformWinMagic::do_transform(common::ObIArray<ObParentDMLStmt> &parent_
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("stmt or stmt ctx is null", K(ret));
   } else if (NULL != myhint && myhint->is_disable_hint()) {
-    LOG_TRACE("hint is diabled", K(*myhint));
+
   } else if (OB_FAIL(try_trans_helper.fill_helper(stmt->get_query_ctx()))) {
     LOG_WARN("failed to fill try trans helper", K(ret));
   } else if (OB_FAIL(ObTransformUtils::deep_copy_stmt(*ctx_->stmt_factory_,
@@ -245,7 +245,7 @@ int ObTransformWinMagic::do_transform(common::ObIArray<ObParentDMLStmt> &parent_
   } else if (OB_FAIL(try_trans_helper.finish(accepted, stmt->get_query_ctx(), ctx_))) {
     LOG_WARN("failed to finish try trans helper", K(ret));
   } else if (!accepted) {
-    LOG_TRACE("win magic transform not accpeted", K(ret));
+
   } else if (OB_FAIL(add_transform_hint(*stmt, &trans_basic_tables))) {
     LOG_WARN("failed to add transform hint", K(ret));
   } else if (OB_FAIL(append(stmt->get_query_ctx()->all_equal_param_constraints_,
@@ -254,7 +254,7 @@ int ObTransformWinMagic::do_transform(common::ObIArray<ObParentDMLStmt> &parent_
   } else {
     add_trans_type(ctx_->happened_cost_based_trans_, WIN_MAGIC);
     trans_happened = true;
-    LOG_TRACE("equal param constraints", K(map_info.equal_param_map_));
+
   }
   return ret;
 }
@@ -469,7 +469,7 @@ int ObTransformWinMagic::check_view_valid_to_trans(ObSelectStmt *view, ObStmtMap
     if (OB_FAIL(check_lossess_join(*view, lossless_froms, lossless_conditions, is_valid))) {
       LOG_WARN("failed check is lossess join", K(ret));
     } else if (!is_valid) {
-      LOG_TRACE("has extra conditions or from items", K(ret));
+
       OPT_TRACE("view has extra conditions or from items");
     }
   }
@@ -632,7 +632,7 @@ int ObTransformWinMagic::get_view_to_trans(ObDMLStmt *&stmt,
       break;
     }
   }
-  LOG_DEBUG("drill_down_idx roll_up_idx", K(drill_down_idx), K(roll_up_idx));
+
   return ret;
 }
 
@@ -649,7 +649,7 @@ int ObTransformWinMagic::check_mode_and_agg_type(ObSelectStmt *stmt, bool &is_va
         LOG_WARN("aggregation expr is null", K(ret));
       } else if (stmt->get_aggr_item(i)->get_expr_type() == T_FUN_COUNT) {
         is_valid = false;
-        LOG_DEBUG("T_FUN_COUNT_SUM in mysql mode not implemented");
+
       }
     }
   }
@@ -2026,7 +2026,7 @@ int ObTransformWinMagic::push_down_join(ObDMLStmt *main_stmt,
   } else if (OB_FAIL(main_stmt->formalize_stmt(ctx_->session_info_, false))) {
     LOG_WARN("failed to formalize stmt info", K(ret));
   } else {
-    LOG_DEBUG("push down join", K(*main_stmt));
+
   }
   return ret;
 }

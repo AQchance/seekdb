@@ -477,7 +477,7 @@ int ObRelativeTable::prepare_truncate_part_filter(
     ret = OB_NOT_INIT;
     LOG_WARN("not inited", K(ret));
   } else if (OB_UNLIKELY(!tablet_iter_.table_iter()->is_valid())) {
-    LOG_DEBUG("[TRUNCATE INFO], empty tablet", KPC(tablet_iter_.table_iter()));
+
   } else if (OB_FAIL(tablet_iter_.table_iter()->get_boundary_table(false, table_ptr))) {
     LOG_WARN("failed to get boundary table", K(ret));
   } else {
@@ -486,7 +486,7 @@ int ObRelativeTable::prepare_truncate_part_filter(
     ObVersionRange read_version_range(major_table_version, read_snapshot);
     const storage::ObTableReadInfo &read_info = schema_param_->get_read_info();
     if (OB_UNLIKELY(!read_version_range.is_valid())) {
-      LOG_DEBUG("[TRUNCATE INFO] invalid version range, filter is empty", K(ret), K(read_version_range), KPC_(truncate_part_filter));
+
     } else if (OB_UNLIKELY(nullptr != table_ptr && table_ptr->is_major_sstable() && major_table_version <= 0)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("unexpected major sstable", K(ret), KPC(table_ptr));
@@ -500,7 +500,7 @@ int ObRelativeTable::prepare_truncate_part_filter(
         truncate_part_filter_))) {
       LOG_WARN("failed to build truncate part filter", K(ret));
     } else {
-      LOG_DEBUG("[TRUNCATE INFO]", K(ret), K(read_version_range), KPC_(truncate_part_filter));
+
     }
   }
   return ret;

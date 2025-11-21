@@ -369,7 +369,7 @@ int ObNormalTableQueryResultIterator::get_normal_result(table::ObTableQueryResul
     ObNewRow *row = nullptr;
     while (OB_SUCC(ret) && (!has_limit || !has_reach_limit) &&
            OB_SUCC(scan_result_->get_next_row(row))) {
-      LOG_DEBUG("[yzfdebug] scan result", "row", *row);
+
       if (has_limit && row_idx_ < offset_) {
         row_idx_++;
       } else if (OB_FAIL(one_result_->add_row(*row))) {
@@ -386,7 +386,7 @@ int ObNormalTableQueryResultIterator::get_normal_result(table::ObTableQueryResul
           NG_TRACE(tag9);
           break;
         } else {
-          LOG_DEBUG("[yzfdebug] scan return one row", "row", *row);
+
         }
       }
       has_reach_limit = (row_idx_ >= offset_ + limit_);
@@ -637,7 +637,7 @@ int ObTableFilterOperator::get_normal_result(table::ObTableQueryResult *&next_re
           NG_TRACE(tag9);
           break;
         } else {
-          LOG_DEBUG("scan return one row", K(*row));
+
         }
       }
       has_reach_limit = (row_idx_ >= offset + limit);

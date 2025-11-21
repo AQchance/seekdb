@@ -394,7 +394,7 @@ public:
     } else if (OB_FAIL(checkpoint_executor_.register_handler(type, subhandler))) {          \
       LOG_WARN("checkpoint_executor_ register failed", K(ret), K(type), K(ls_meta_.ls_id_));\
     } else {                                                                                \
-      LOG_INFO("register to logservice success", K(type), K(ls_meta_.ls_id_));              \
+              \
     }                                                                                       \
   }
 
@@ -409,7 +409,7 @@ public:
       LOG_WARN("restore_role_change_handler_ register failed",                              \
           K(ret), K(type), K(ls_meta_.ls_id_));                                             \
     } else {                                                                                \
-      LOG_INFO("register to restoreservice success", K(type), K(ls_meta_.ls_id_));          \
+          \
     }                                                                                       \
   }
 

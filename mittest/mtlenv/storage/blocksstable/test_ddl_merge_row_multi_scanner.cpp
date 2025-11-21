@@ -567,7 +567,7 @@ void TestDDLMergeRowMultiScanner::test_multi_scan_multi_get_with_scan(
     ret = ranges.push_back(mget_ranges[i]);
     ASSERT_EQ(OB_SUCCESS, ret);
   }
-  STORAGE_LOG(INFO, "multi scan begin");
+
   ASSERT_EQ(OB_SUCCESS, scanner.init(
           iter_param_,
           context_,
@@ -714,7 +714,7 @@ void TestDDLMergeRowMultiScanner::test_multi_scan_multi_get_with_scan(
   merge_ddl_scanner.reuse();
 
   // multi scan not exist row
-  STORAGE_LOG(DEBUG, "multi_scan_not_exist_row");
+
   ranges.reuse();
   for (int64_t i = 0; i < TEST_MULTI_GET_CNT; ++i) {
     ObDatumRowkey tmp_rowkey;

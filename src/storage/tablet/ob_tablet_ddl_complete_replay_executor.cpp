@@ -123,7 +123,7 @@ int ObTabletDDLCompleteReplayExecutor::update_tablet_table_store(ObTablet &table
                                                 table_store_wrapper.get_member()->get_major_sstables().get_boundary_table(false/*first*/)))) {
   } else if (nullptr != first_major_sstable) {
     /* do nothing */
-    LOG_INFO("first major sstable exist, do nothing", K(ret), K(user_data));
+
   } else if (OB_ISNULL(ls_service)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("ls_service is null", K(ret));

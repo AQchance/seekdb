@@ -79,7 +79,7 @@ int ObTabletCreateMdsHelper::register_process(
   } else if (CLICK_FAIL(ObTabletCreateDeleteMdsUserData::set_tablet_gc_trigger(arg.id_))) {
     LOG_WARN("failed to set tablet gc trigger", K(ret));
   }
-  LOG_INFO("create tablet register", KR(ret), "arg", PRETTY_ARG(arg));
+
   return ret;
 }
 
@@ -157,7 +157,7 @@ int ObTabletCreateMdsHelper::replay_process(
       ob_abort();
     }
   }
-  LOG_INFO("create tablet replay", KR(ret), K(scn), "arg", PRETTY_ARG(arg));
+
   return ret;
 }
 
@@ -181,7 +181,7 @@ int ObTabletCreateMdsHelper::on_replay(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("arg is invalid", K(ret), "arg", PRETTY_ARG(arg));
   } else if (arg.is_old_mds_) {
-    LOG_INFO("skip replay create tablet for old mds", K(ret), K(scn), "arg", PRETTY_ARG(arg));
+
   } else if (OB_FAIL(convert_schemas(arg))) {
     LOG_WARN("failed to convert_schemas", K(ret), "arg", PRETTY_ARG(arg));
   } else if (CLICK_FAIL(check_create_new_tablets(arg, true/*is_replay*/))) {
@@ -803,7 +803,7 @@ int ObTabletCreateMdsHelper::build_mixed_tablets(
     uint64_t data_format_version = 0;
     if (OB_FAIL(ret)) {
     } else if (for_replay && exist) {
-      LOG_INFO("tablet already exists in replay procedure, skip it", K(ret), K(ls_id), K(tablet_id));
+
     } else if (CLICK_FAIL(tablet_id_array.push_back(tablet_id))) {
       LOG_WARN("failed to push back tablet id", K(ret), K(ls_id), K(tablet_id));
     } else if (FALSE_IT(data_format_version = create_tablet_extra_infos[info.table_schema_index_[i]].need_create_empty_major_ ? 0 : create_tablet_extra_infos[i].tenant_data_version_)) {
@@ -1129,7 +1129,7 @@ void ObTabletCreateMdsHelper::handle_ret_for_replay(int &ret)
   if (OB_TIMEOUT == ret || OB_TOO_MANY_PARTITIONS_ERROR == ret) {
     int origin_ret = ret;
     ret = OB_EAGAIN;
-    LOG_INFO("rewrite failure to OB_EAGAIN to retry clog replay", K(ret), K(origin_ret));
+
   }
 }
 } // namespace storage

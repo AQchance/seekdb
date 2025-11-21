@@ -48,7 +48,7 @@ int HashBasedDistinctVecExtraResult::rewind()
       got_row_ = false;
     }
   }
-  LOG_DEBUG("extra result rewind");
+
   return ret;
 }
 
@@ -209,7 +209,7 @@ int HashBasedDistinctVecExtraResult::build_distinct_data_for_batch(
       } else if (OB_FAIL(hp_infras_->close_cur_part(InputSide::LEFT))) {
         LOG_WARN("failed to close cur part", K(ret));
       } else {
-        LOG_TRACE("trace break out of the loop");
+
         break;
       }
     } else if (OB_FAIL(ret)) {
@@ -718,7 +718,7 @@ int HybridHistVecExtraResult::init_data_set(ObIAllocator &allocator,
     store_.set_io_event_observer(io_event_observer);
     store_.set_dir_id(sql_mem_processor_.get_dir_id());
     data_store_inited_ = true;
-    LOG_TRACE("succeed to init hybrid histogram item", K(bucket_num_));
+
   }
   return ret;
 }

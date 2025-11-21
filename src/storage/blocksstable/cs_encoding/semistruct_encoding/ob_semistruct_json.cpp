@@ -950,7 +950,7 @@ int ObSimpleSubSchema::handle_null_type(ObSemiStructSubColumn& sub_column) const
     LOG_WARN("sub column is not json null type", K(ret), K(sub_column));
   } else {
     sub_column.set_obj_type(ObTinyIntType);
-    LOG_DEBUG("change obj null type to tinyint type", K(sub_column));
+
   }
   return ret;
 }
@@ -1001,7 +1001,7 @@ int ObSimpleSubSchema::build_sub_schema(ObSemiStructSubSchema& sub_schema, const
       sub_schema.spare_col_.set_json_type(ObJsonNodeType::J_OBJECT);
       sub_schema.spare_col_.set_obj_type(ObJsonType);
       sub_schema.is_inited_ = true;
-      LOG_DEBUG("init success", K(sub_schema.allocator_.used()), K(sub_schema));
+
     }
   }
   return ret;
@@ -1026,7 +1026,7 @@ int ObSimpleSubSchema::build_freq_and_spare_cols(ObIAllocator &allocator, ObIArr
         LOG_WARN("sub_column cnt is incorrect", K(ret), K(sub_column), K(row_cnt), K(columns_));
       } else if (need_as_spare || sub_column.col_->is_spare_storage()) {
         // spare column
-        LOG_DEBUG("spare sub column", K(sub_column), K(row_cnt), K(need_as_spare), K(freq_col_threshold_));
+
         if (need_as_spare) sub_column.col_->set_is_spare_storage();
         if (OB_FAIL(spare_cols.push_back(ObSemiStructSubColumn()))) {
           LOG_WARN("push back fail", K(ret), "size", spare_cols.count(), K(*iter));
@@ -1115,7 +1115,7 @@ int ObSimpleSubSchema::build_key_dict(ObSemiStructSubSchema& sub_schema, const i
     }
     if (array.count() > new_cnt) {
       // has repeat key
-      LOG_INFO("use key_dict", K(has_spare_column), K(new_cnt), K(array.count()));
+
       sub_schema.has_key_dict_ = true;
     } else {
       sub_schema.has_key_dict_ = false;
@@ -1213,7 +1213,7 @@ int ObSimpleSubSchema::merge(ObSimpleSubSchema &other)
         && right_sub_column.get_obj_type()!= ObNullType
         && (left_sub_column.get_obj_type() != right_sub_column.get_obj_type() 
             || (left_sub_column.get_obj_type() == ObNumberType && is_different_number_type(*left_sub_column.col_, *right_sub_column.col_)))) {
-      LOG_DEBUG("same sub column path, but type is not same", K(left_sub_column), K(right_sub_column));
+
       left_sub_column.col_->set_obj_type(ObJsonType);
       left_sub_column.col_->set_json_type(ObJsonNodeType::J_ERROR);
       left_sub_column.col_->set_is_spare_storage();
@@ -1224,7 +1224,7 @@ int ObSimpleSubSchema::merge(ObSimpleSubSchema &other)
       ++right_iter;
     } else {
       if (left_sub_column.get_obj_type() == ObNullType && right_sub_column.get_obj_type() != ObNullType) {
-        LOG_DEBUG("update sub column type", K(left_sub_column), K(right_sub_column));
+
         left_sub_column.col_->set_json_type(right_sub_column.get_json_type());
         left_sub_column.col_->set_obj_type(right_sub_column.get_obj_type());
       }
@@ -1612,7 +1612,7 @@ int ObJsonReassembler::serialize(const ObDatumRow &row, ObString &result)
     }
 
     if (allocator_.used() >= OB_DEFAULT_MACRO_BLOCK_SIZE) {
-      LOG_DEBUG("too much memroy used", KP(this), K(allocator_.used()), K(allocator_.total()), K(result.length()), K(j_bin_buf.capacity()));
+
     }
   }
   return ret;

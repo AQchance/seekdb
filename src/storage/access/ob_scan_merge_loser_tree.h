@@ -132,10 +132,10 @@ int ObMergeLoserTree<T, CompareFunctor>::init(const int64_t max_player_cnt,
   int ret = OB_SUCCESS;
   if (this->is_inited_) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init twice", K(ret));
+
   } else {
     if (OB_FAIL(LoserTree::init(max_player_cnt, player_cnt, allocator))) {
-      STORAGE_LOG(WARN, "init ObLoserTree init fail", K(ret));
+
     } else {
       has_king_ = false;
       is_king_eq_champion_ = false;
@@ -150,9 +150,9 @@ int ObMergeLoserTree<T, CompareFunctor>::open(const int64_t total_player_cnt)
   int ret = OB_SUCCESS;
   if (!this->is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else if (OB_FAIL(LoserTree::open(total_player_cnt))) {
-    STORAGE_LOG(WARN, "open LoserTree fail", K(ret));
+
   } else {
     has_king_ = false;
     is_king_eq_champion_ = false;
@@ -182,11 +182,11 @@ int ObMergeLoserTree<T, CompareFunctor>::top(const T *&player)
   int ret = OB_SUCCESS;
   if (!this->is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else if (has_king_) {
     player = &king_;
   } else if (OB_FAIL(LoserTree::top(player))) {
-    STORAGE_LOG(WARN, "get top from base tree fail", K(ret));
+
   }
   return ret;
 }
@@ -197,15 +197,15 @@ int ObMergeLoserTree<T, CompareFunctor>::pop()
   int ret = OB_SUCCESS;
   if (!this->is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else if (this->need_rebuild_) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "new players has been push, please rebuild", K(ret));
+
   } else if (has_king_) {
     has_king_ = false;
     is_king_eq_champion_ = false;
   } else if (OB_FAIL(LoserTree::pop())) {
-    STORAGE_LOG(WARN, "pop base tree fail", K(ret));
+
   }
   return ret;
 }
@@ -216,12 +216,12 @@ int ObMergeLoserTree<T, CompareFunctor>::push(const T &player)
   int ret = OB_SUCCESS;
   if (!this->is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else if (has_king_ && this->cur_free_cnt_ <= 1) {
     ret = OB_SIZE_OVERFLOW;
-    STORAGE_LOG(WARN, "player is full", K(ret), K(has_king_));
+
   } else if (OB_FAIL(LoserTree::push(player))) {
-    STORAGE_LOG(WARN, "push base tree fail", K(ret));
+
   }
   return ret;
 }
@@ -232,24 +232,24 @@ int ObMergeLoserTree<T, CompareFunctor>::rebuild()
   int ret = OB_SUCCESS;
   if (!this->is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else if (!this->need_rebuild_) {
     // push_top will arrange the player automatically, so whatever has_king_, this->need_rebuild_
     // will tell us if the tree has new players
   } else if (empty()) {
     ret = OB_EMPTY_RESULT;
-    STORAGE_LOG(WARN, "the tree is already empty", K(ret));
+
   } else {
     if (has_king_) {
       if (OB_FAIL(LoserTree::push(king_))) {
-        STORAGE_LOG(WARN, "fail to push king", K(ret));
+
       } else {
         has_king_ = false;
         is_king_eq_champion_ = false;
       }
     }
     if (OB_SUCC(ret) && OB_FAIL(LoserTree::rebuild())) {
-      STORAGE_LOG(WARN, "build base tree fail", K(ret), K(has_king_), K(is_king_eq_champion_));
+
     }
   }
   return ret;
@@ -261,16 +261,16 @@ int ObMergeLoserTree<T, CompareFunctor>::push_top(const T &player)
   int ret = OB_SUCCESS;
   if (!this->is_inited_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else if (has_king_) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "has old king", K(ret), K(has_king_));
+
   } else if (this->cur_free_cnt_ <= 0) {
     ret = OB_SIZE_OVERFLOW;
-    STORAGE_LOG(WARN, "player is full", K(ret), K(this->player_cnt_), K(this->cur_free_cnt_), K(has_king_));
+
   } else if (this->need_rebuild_) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "tree need rebuild", K(ret), K(this->need_rebuild_));
+
   } else if (0 == LoserTree::count()) {
     king_ = player;
     has_king_ = true;
@@ -287,7 +287,7 @@ int ObMergeLoserTree<T, CompareFunctor>::push_top(const T &player)
     if (OB_SUCC(ret) && LoserTree::count() > 1) {
       int64_t king_cmp = 0;
       if (OB_FAIL(this->cmp_.cmp(this->players_[champion], player, king_cmp))) {
-        STORAGE_LOG(WARN, "compare champion fail", K(ret));
+
       } else {
         if (king_cmp > 0) {
           king_ = player;
@@ -303,9 +303,9 @@ int ObMergeLoserTree<T, CompareFunctor>::push_top(const T &player)
 
     if (OB_SUCC(ret) && !has_king_) {
       if (OB_FAIL(LoserTree::push(player))) {
-        STORAGE_LOG(WARN, "push player fail", K(ret));
+
       } else if (OB_FAIL(LoserTree::rebuild())) {
-        STORAGE_LOG(WARN, "build base tree fail", K(ret));
+
       } else {
         has_king_ = false;
         is_king_eq_champion_ = false;
@@ -325,14 +325,14 @@ int ObMergeLoserTree<T, CompareFunctor>::duel(
   int ret = OB_SUCCESS;
   if (match_idx < 0 || match_idx >= this->leaf_offset_) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid match_idx", K(ret), K(match_idx));
+
   } else if (offender.iter_idx_ == defender.iter_idx_) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "rows from same iterator", K(ret), K(offender), K(defender));
+
   } else {
     int64_t cmp_ret = 0;
     if (OB_FAIL(this->cmp_.cmp(offender, defender, cmp_ret))) {
-      STORAGE_LOG(WARN, "compare fail", K(ret), K(offender), K(defender));
+
     } else {
       this->matches_[match_idx].is_draw_ = (0 == cmp_ret);
       if (0 == cmp_ret) {

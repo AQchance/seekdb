@@ -664,7 +664,7 @@ int ObFtsIndexBuilderUtil::set_fts_rowkey_doc_table_columns(
       } else if (OB_FAIL(index_schema.sort_column_array_by_column_id())) {
         LOG_WARN("failed to sort column", K(ret));
       } else {
-        LOG_INFO("succeed to set fts_rowkey_doc table columns", K(index_schema));
+
       }
     }
   }
@@ -759,7 +759,7 @@ int ObFtsIndexBuilderUtil::set_fts_doc_rowkey_table_columns(
       } else if (OB_FAIL(index_schema.sort_column_array_by_column_id())) {
         LOG_WARN("failed to sort column", K(ret));
       } else {
-        LOG_INFO("succeed to set fts_doc_rowkey table columns", K(index_schema));
+
       }
     }
   }
@@ -859,7 +859,7 @@ int ObFtsIndexBuilderUtil::set_fts_index_table_columns(
     if (FAILEDx(index_schema.sort_column_array_by_column_id())) {
       LOG_WARN("failed to sort column", K(ret));
     } else {
-      LOG_INFO("succeed to set fts index table columns", K(index_schema));
+
     }
   }
   STORAGE_FTS_LOG(DEBUG, "set fts index table column", K(ret), K(arg), K(index_schema), K(data_schema));
@@ -1119,7 +1119,7 @@ int ObFtsIndexBuilderUtil::generate_doc_id_column(
             ret = OB_ERR_UNEXPECTED;
             LOG_WARN("generate doc id col failed", K(ret), KP(doc_id_col));
           } else {
-            LOG_INFO("succeed to generate doc id column", KCSTRING(col_name_buf), K(col_id), K(data_schema));
+
           }
         }
       }
@@ -1282,7 +1282,7 @@ int ObFtsIndexBuilderUtil::generate_word_segment_column(
               ret = OB_ERR_UNEXPECTED;
               LOG_WARN("generate word segment col failed", K(ret), KP(word_segment_col));
             } else {
-              LOG_INFO("succeed to generate word segment column", KCSTRING(col_name_buf), K(col_id), K(data_schema));
+
             }
           }
         }
@@ -1399,7 +1399,7 @@ int ObFtsIndexBuilderUtil::generate_word_count_column(
               ret = OB_ERR_UNEXPECTED;
               LOG_WARN("generate word count col failed", K(ret), KP(word_count_col));
             } else {
-              LOG_INFO("succeed to generate word count column", K(col_id), K(data_schema));
+
             }
           }
         }
@@ -1512,7 +1512,7 @@ int ObFtsIndexBuilderUtil::generate_doc_length_column(
               ret = OB_ERR_UNEXPECTED;
               LOG_WARN("generate word count col failed", K(ret), KP(doc_length_col));
             } else {
-              LOG_INFO("succeed to generate document length column", K(col_id), K(data_schema));
+
             }
           }
         }
@@ -1938,7 +1938,7 @@ int ObFtsIndexBuilderUtil::generate_fts_parser_name(
       LOG_WARN("fail to set plugin name", K(ret), KCSTRING(name_str));
     } else if (OB_FAIL(plugin::ObPluginHelper::find_ftparser(name_str, parser))) {
       if (OB_FUNCTION_NOT_DEFINED == ret) {
-        LOG_DEBUG("no such parser", K(name_str));
+
       } else {
         LOG_WARN("fail to get fulltext parser", K(ret), K(parser_name));
       }
@@ -2224,7 +2224,7 @@ int ObFtsIndexBuilderUtil::get_fts_index_column_name(const ObTableSchema &data_t
           } else if (OB_FAIL(col_names.push_back(new_col_name))) {
             LOG_WARN("fail to push back col names", K(ret), K(new_col_name));
           } else {
-            LOG_DEBUG("success to get vector index col name", K(ret), K(new_col_name));
+
           }
         }
       }
@@ -3331,7 +3331,7 @@ int ObMulValueIndexBuilderUtil::set_multivalue_index_table_columns(
     } else if (OB_FAIL(index_schema.sort_column_array_by_column_id())) {
       LOG_WARN("failed to sort column", K(ret));
     } else {
-      LOG_INFO("succeed to set multivalue index table columns", K(index_schema));
+
     }
   }
   return ret;

@@ -529,12 +529,12 @@ int ObTabletPersister::delete_blocks_(
     if (OB_FAIL(file_manager->delete_file(iter->first, param_.ls_id_.id()))) {
       if (OB_OBJECT_NOT_EXIST == ret) {
         ret = OB_SUCCESS;
-        LOG_INFO("this block has not been written_down when tablet_persist", K(iter->first));
+
       } else {
         LOG_WARN("fail to delete file", K(ret), K(iter->first), K(param_.ls_id_), KP(file_manager));
       }
     } else {
-      LOG_INFO("succ delete block when tablet_persist failed", K(iter->first));
+
     }
   }
   return ret;
@@ -1159,7 +1159,7 @@ int ObTabletPersister::transform(const ObTabletTransformArg &arg, char *buf, con
     int64_t remain = len - start_pos;
     common::ObArenaAllocator allocator(common::ObMemAttr(MTL_ID(), "Transform"));
 
-    LOG_DEBUG("TINY TABLET: tablet", KP(buf), K(start_pos), K(remain));
+
     // rowkey read info related
     int64_t rowkey_read_info_size = 0;
     if (OB_SUCC(ret) && OB_NOT_NULL(arg.rowkey_read_info_ptr_)) {
@@ -1177,7 +1177,7 @@ int ObTabletPersister::transform(const ObTabletTransformArg &arg, char *buf, con
         remain -= rowkey_read_info_size;
         start_pos += rowkey_read_info_size;
       }
-      LOG_DEBUG("TINY TABLET: tablet + rowkey_read_info", KP(buf), K(start_pos), K(remain));
+
     }
 
     // ddl_kvs_ related
@@ -1195,7 +1195,7 @@ int ObTabletPersister::transform(const ObTabletTransformArg &arg, char *buf, con
           start_pos += ddl_kvs_size;
         }
       }
-      LOG_DEBUG("TINY TABLET: tablet + ddl_kvs", KP(buf), K(start_pos), K(remain), K(tiny_tablet->ddl_kv_count_));
+
     }
 
     // table store related
@@ -1253,7 +1253,7 @@ int ObTabletPersister::transform(const ObTabletTransformArg &arg, char *buf, con
 
     // id_array related
     if (OB_SUCC(ret)) {
-      LOG_INFO("TINY TABLET: tablet + rowkey_read_info + tablet store + auto_inc_seq", KP(buf), K(start_pos), K(remain));
+
       ObTabletMacroInfo *tablet_macro_info_obj = nullptr;
       if (OB_ISNULL(arg.tablet_macro_info_ptr_)) {
         // no need to prefetch id_array, since we only need it when recycling tablet
@@ -1269,7 +1269,7 @@ int ObTabletPersister::transform(const ObTabletTransformArg &arg, char *buf, con
             start_pos += tablet_macro_info_size;
           }
         } else {
-          LOG_DEBUG("TINY TABLET: no enough memory for tablet macro info", K(rowkey_read_info_size), K(remain), K(tablet_macro_info_size));
+
         }
       }
     }
@@ -1996,7 +1996,7 @@ int ObTabletPersister::link_write_medium_info_list(
         const int64_t size = medium_info->get_serialize_size();
 
         if (0 == size) {
-          LOG_INFO("medium info serialize size is 0, just skip", K(ret));
+
         } else {
           int64_t pos = 0;
           char *buffer = static_cast<char*>(arena_allocator.alloc(size));
@@ -2130,7 +2130,7 @@ int ObTabletPersister::load_table_store(
     } else {
       time_stats->click("deserialize_table_store");
       table_store = tmp_store;
-      LOG_DEBUG("succeed to load table store", K(ret), K(addr), KPC(table_store), K(tablet));
+
     }
   }
   if (OB_FAIL(ret)) {

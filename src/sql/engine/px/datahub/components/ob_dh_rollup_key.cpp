@@ -43,7 +43,7 @@ int ObRollupKeyPieceMsgListener::on_message(
   }
   if (OB_SUCC(ret)) {
      ctx.received_++;
-    LOG_TRACE("got a win buf picece msg", "all_got", ctx.received_, "expected", ctx.task_cnt_);
+
   }
   if (OB_SUCC(ret) && ctx.received_ == ctx.task_cnt_) {
     if (OB_FAIL(ctx.process_ndv())) {

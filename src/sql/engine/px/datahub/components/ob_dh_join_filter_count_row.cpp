@@ -78,7 +78,7 @@ int ObJoinFilterCountRowPieceMsgListener::on_message(ObJoinFilterCountRowPieceMs
                                                      const ObJoinFilterCountRowPieceMsg &pkt)
 {
   int ret = OB_SUCCESS;
-  LOG_TRACE("receive a piece msg", K(pkt));
+
   if (pkt.op_id_ != piece_ctx.op_id_) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected piece msg", K(ret), K(pkt), K(piece_ctx));
@@ -105,7 +105,7 @@ int ObJoinFilterCountRowPieceMsgListener::on_message(ObJoinFilterCountRowPieceMs
                 K(piece_ctx.ndv_info_.at(i).hllc_.estimate()));
     }
     if (OB_SUCC(ret) && piece_ctx.task_cnt_ == piece_ctx.received_) {
-      LOG_TRACE("send whole msg", K(pkt), K(piece_ctx.total_rows_));
+
       if (OB_FAIL(piece_ctx.send_whole_msg(sqcs))) {
         LOG_WARN("send whole msg failed", K(ret));
       }
@@ -129,7 +129,7 @@ int ObJoinFilterCountRowPieceMsgListener::on_message(ObJoinFilterCountRowPieceMs
             }
           }
           if (OB_SUCC(ret) && sqc_row_info.expected_ == sqc_row_info.received_) {
-            LOG_TRACE("send whole msg to one sqc", K(pkt), K(sqc_row_info));
+
             if (OB_FAIL(piece_ctx.send_whole_msg_to_one_sqc(&sqcs.at(i), sqc_row_info))) {
               LOG_WARN("send whole msg failed", K(ret));
             }
@@ -184,7 +184,7 @@ int ObJoinFilterCountRowPieceMsgCtx::alloc_piece_msg_ctx(const ObJoinFilterCount
         LOG_WARN("failed to init ndv_info", K(ret));
       }
     }
-    LOG_TRACE("allocate piece msg ctx", K(pkt));
+
   }
   return ret;
 }
@@ -215,7 +215,7 @@ int ObJoinFilterCountRowPieceMsgCtx::send_whole_msg(ObIArray<ObPxSqcMeta> &sqcs)
     } else if (OB_FAIL(ch->flush(true, false))) {
       LOG_WARN("fail flush dtl data", K(ret));
     } else {
-      LOG_DEBUG("dispatched barrier whole msg", K(idx), K(cnt), K(whole_msg), K(*ch));
+
     }
   }
   if (OB_SUCC(ret) && OB_FAIL(ObPxChannelUtil::sqcs_channles_asyn_wait(sqcs))) {
@@ -251,7 +251,7 @@ int ObJoinFilterCountRowPieceMsgCtx::send_whole_msg_to_one_sqc(ObPxSqcMeta *sqc,
   } else if (OB_FAIL(ch->flush(true, false))) {
     LOG_WARN("fail flush dtl data", K(ret));
   } else {
-    LOG_DEBUG("dispatched jf count row whole msg", K(whole_msg), K(*ch));
+
   }
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(ch->flush())) {

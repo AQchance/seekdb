@@ -309,7 +309,7 @@ int ObColMaxAggregator::init(
         col_desc.col_type_.get_type(), col_desc.col_type_.get_collation_type());
     cmp_func_ = basic_funcs->null_first_cmp_;
     data_evaluated_ = false;
-    LOG_DEBUG("[SKIP INDEX] init max aggregator", K_(col_desc), K_(can_aggregate), K_(is_major));
+
   }
   return ret;
 }
@@ -493,7 +493,7 @@ int ObColMinAggregator::init(
         col_desc.col_type_.get_type(), col_desc.col_type_.get_collation_type());
     cmp_func_ = basic_funcs->null_last_cmp_;
     data_evaluated_ = false;
-    LOG_DEBUG("[SKIP INDEX] init min aggregator", K_(col_desc), K_(can_aggregate), K_(is_major));
+
   }
   return ret;
 }
@@ -627,9 +627,9 @@ int ObColSumAggregator::init(
     LOG_WARN("fail to init ObIColAggregator", K(ret));
   } else if (!can_agg_sum(col_desc.col_type_.get_type())) {
     set_not_aggregate();
-    LOG_DEBUG("[SKIP INDEX] init col sum agg but is not numberic", K(col_desc));
+
   }
-  LOG_DEBUG("[SKIP INDEX] ObColSumAggregator init", K(col_desc_));
+
   return ret;
 }
 
@@ -829,7 +829,7 @@ int ObColSumAggregator::eval_decimal_int_number(const common::ObDatum &datum)
   if (!datum.is_null()) {
     sql::ObNumStackAllocator<1> tmp_alloc;
     number::ObNumber nmb;
-    LOG_DEBUG("decimal int to number", K(lbt()));
+
     if (OB_FAIL(wide::to_number(datum.get_decimal_int(), datum.get_int_bytes(),
                                 col_desc_.col_type_.get_scale(), tmp_alloc, nmb))) {
       LOG_WARN("to_number failed", K(ret));
@@ -1345,7 +1345,7 @@ int ObISkipIndexAggregator::get_aggregated_row(const ObSkipIndexAggResult *&aggr
 
     if (OB_SUCC(ret)) {
       aggregated_row = &agg_result_;
-      LOG_DEBUG("[SKIP INDEX] generate aggregated row", K(ret), K_(agg_result));
+
     }
   }
   return ret;
@@ -1423,7 +1423,7 @@ int ObISkipIndexAggregator::calc_max_agg_size(
     max_agg_size_ += col_idx_count * agg_col_idx_size;
     max_agg_size_ += col_idx_count * agg_col_off_size;
     max_agg_size_ += sizeof(ObAggRowHeader);
-    LOG_DEBUG("calc max aggregate size", K(max_agg_size_), K(col_idx_count), K(full_agg_metas));
+
   }
   return ret;
 }

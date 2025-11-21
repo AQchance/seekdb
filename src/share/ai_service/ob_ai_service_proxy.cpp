@@ -76,7 +76,7 @@ int ObAiServiceProxy::insert_ai_endpoint(const uint64_t tenant_id, ObMySQLTransa
     LOG_USER_ERROR(OB_ENTRY_EXIST, "endpoint already exists");
     LOG_WARN("ai model endpoint already exists", KR(ret), K(tenant_id), K(endpoint));
   }
-  LOG_DEBUG("insert ai model endpoint", K(tenant_id), K(new_endpoint_version), K(endpoint), K(buffer), KR(ret));
+
   return ret;
 }
 
@@ -121,7 +121,7 @@ int ObAiServiceProxy::update_ai_endpoint(const uint64_t tenant_id, ObMySQLTransa
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("affected_rows should be one", KR(ret), K(affected_rows));
   }
-  LOG_DEBUG("update ai model endpoint", K(tenant_id), K(new_endpoint_version), K(endpoint), K(buffer), KR(ret));
+
   return ret;
 }
 

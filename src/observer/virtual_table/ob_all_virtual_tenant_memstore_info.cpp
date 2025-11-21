@@ -92,7 +92,7 @@ int ObAllVirtualTenantMemstoreInfo::inner_get_next_row(ObNewRow *&row)
             switch (col_id) {
               case SERVER_IP:
                 if (!addr_.ip_to_string(ip_buf, sizeof(ip_buf))) {
-                  STORAGE_LOG(ERROR, "ip to string failed");
+
                   ret = OB_ERR_UNEXPECTED;
                 } else {
                   cells[i].set_varchar(ip_buf);

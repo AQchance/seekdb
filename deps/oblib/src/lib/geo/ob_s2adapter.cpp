@@ -290,7 +290,7 @@ int64_t ObS2Adapter::get_mbr(ObSpatialMBR &mbr)
       if (OB_FAIL(visitor_->get_mbr(rect, need_buffer_, distance_))) {
         LOG_WARN("fail to get cellid from visitor", K(ret));
       } else if (rect.is_empty()) {
-        LOG_DEBUG("It's might be empty geometry collection", K(geo_->type()), K(geo_->is_empty()));
+
       } else {
         mbr.y_min_ = rect.lat_lo().degrees();
         mbr.y_max_ = rect.lat_hi().degrees();
@@ -306,7 +306,7 @@ int64_t ObS2Adapter::get_mbr(ObSpatialMBR &mbr)
         } else if (OB_FAIL(ObGeoFuncEnvelope::eval(gis_context, box))) {
           LOG_WARN("get mbr box failed", K(ret));
         } else if (box.is_empty()) {
-          LOG_DEBUG("It's might be empty geometry collection", K(geo_->type()), K(geo_->is_empty()));
+
         } else {
           mbr.x_min_ = box.min_corner().get<0>();
           mbr.y_min_ = box.min_corner().get<1>();

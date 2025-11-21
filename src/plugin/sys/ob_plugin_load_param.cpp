@@ -98,7 +98,7 @@ int ObPluginLoadParamParser::parse_item(const ObString &item_str, ObPluginLoadPa
     ObString library_name;
     ObPluginLoadOption load_option(ObPluginLoadOption::ON);
     const char *sep = item_str.find(FIELD_TERMINATE_CHAR);
-    LOG_DEBUG("item str find field terminated char", KP(sep), K(item_str));
+
     if (OB_ISNULL(sep)) {
       library_name = item_str;
     } else {

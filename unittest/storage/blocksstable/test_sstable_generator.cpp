@@ -44,7 +44,7 @@ int TestSSTableGenerator::open(
 {
   int ret = OB_SUCCESS;
   if (OB_SUCCESS != (ret = desc_.assign(desc))) {
-    STORAGE_LOG(WARN, "desc fail to assign.", K(ret));
+
   } else {
     row_count_ = row_count;
     memcpy(path_, path, strlen(path));
@@ -66,23 +66,23 @@ int TestSSTableGenerator::open(
     spec.macro_block_size_ = 2 * 1024 * 1024;
 
     if (OB_SUCCESS != (ret = data_file_.format(location, spec))) {
-      STORAGE_LOG(WARN, "data file fail to format.", K(ret));
+
     } else if (OB_SUCCESS != (ret = data_file_.open(location, &image_))) {
-      STORAGE_LOG(WARN, "data file fail to open.", K(ret));
+
     } else if (OB_SUCCESS != (ret = image_.initialize(&data_file_, &logger_))) {
-      STORAGE_LOG(WARN, "image fail to initialize.", K(ret));
+
     } else if (OB_SUCCESS != (ret = logger_.init(data_file_, path, 2 * 1024 * 1024))) {
-      STORAGE_LOG(WARN, "logger fail to init.", K(ret));
+
     //} else if (OB_SUCCESS != (ret = logger_.replay())) {
     //  STORAGE_LOG(WARN, "logger fail to replay.", K(ret));
     } else if (OB_SUCCESS != (ret = marker_.initialize(&data_file_, &image_))) {
-      STORAGE_LOG(WARN, "marker fail to initialize.", K(ret));
+
     } else if (OB_SUCCESS != (ret = marker_.register_storage_meta(&image_))) {
-      STORAGE_LOG(WARN, "marker failt to register.", K(ret));
+
     } else if (OB_SUCCESS != (ret = marker_.mark_init())) {
-      STORAGE_LOG(WARN, "marker fail to mark init.", K(ret));
+
     } else if (OB_SUCCESS != (ret = writer_.open(&data_file_, desc_, start_seq))) {
-      STORAGE_LOG(WARN, "macro block writer fail to open.", K(ret));
+
     }
   }
   return ret;
@@ -93,12 +93,12 @@ int TestSSTableGenerator::generate()
   int ret = OB_SUCCESS;
   for (int64_t i = 0; OB_SUCC(ret) && i < row_count_; ++ i) {
     if (OB_SUCCESS != (ret = generate_row(i))) {
-      STORAGE_LOG(WARN, "sstable generator fail to generate row.", K(ret));
+
     }
   }
   if (OB_SUCC(ret)) {
     if (OB_SUCCESS != (ret = writer_.close())) {
-      STORAGE_LOG(WARN, "sstable generator fail to close.", K(ret));
+
     }
   }
   return ret;
@@ -132,7 +132,7 @@ int TestSSTableGenerator::generate_row(const int64_t index)
           break;
         }
       default:
-        STORAGE_LOG(WARN, "not supported");
+
         ret = OB_NOT_SUPPORTED;
     }
   }
@@ -143,7 +143,7 @@ int TestSSTableGenerator::generate_row(const int64_t index)
     row.row_val_.count_ = desc_.column_cnt_;
     row.flag_.set_flag(ObDmlFlag::DF_INSERT);
     if (OB_SUCCESS != (ret = writer_.append_row(row))) {
-      STORAGE_LOG(WARN, "macro block writer fail to append row.", K(ret));
+
     }
   }
   return ret;

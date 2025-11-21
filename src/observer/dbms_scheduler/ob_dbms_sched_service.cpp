@@ -46,7 +46,7 @@ int ObDBMSSchedService::init()
       *this))) {
     LOG_WARN("[DBMS_SCHED_SERVICE] fail to create thread", KR(ret));
   } else {
-    LOG_INFO("[DBMS_SCHED_SERVICE] ObDBMSSchedService init success", "tenant_id", tenant_id_);
+
   }
   return ret;
 }
@@ -64,7 +64,7 @@ int ObDBMSSchedService::start()
   } else if (OB_FAIL(ObTenantThreadHelper::start())) {
     LOG_WARN("[DBMS_SCHED_SERVICE] failed to start thread", KR(ret));
   } else {
-    LOG_INFO("[DBMS_SCHED_SERVICE] ObDBMSSchedService start success", "tenant_id", tenant_id_);
+
   }
   return ret;
 }
@@ -91,10 +91,10 @@ void ObDBMSSchedService::stop()
     ret = OB_NOT_INIT;
     LOG_WARN("not init", K(ret), K(job_master_.is_inited()));
   } else if (OB_FAIL(job_master_.stop())) {
-    LOG_INFO("[DBMS_SCHED_SERVICE] ObDBMSSchedService stop failure", "tenant_id", tenant_id_);
+
   } else {
     ObTenantThreadHelper::stop();
-    LOG_INFO("[DBMS_SCHED_SERVICE] ObDBMSSchedService stop success", "tenant_id", tenant_id_);
+
   }
 }
 
@@ -108,7 +108,7 @@ void ObDBMSSchedService::wait()
     LOG_WARN("not init", K(ret), K(job_master_.is_inited()));
   } else {
     ObTenantThreadHelper::wait();
-    LOG_INFO("[DBMS_SCHED_SERVICE] ObDBMSSchedService wait success", "tenant_id", tenant_id_);
+
   }
 }
 
@@ -121,11 +121,11 @@ void ObDBMSSchedService::destroy()
     if (OB_FAIL(job_master_.destroy())) {
       LOG_WARN("[DBMS_SCHED_SERVICE] job master destroy failed", K(ret), "tenant_id", tenant_id_);
     } else {
-      LOG_INFO("[DBMS_SCHED_SERVICE] job master destroy success", "tenant_id", tenant_id_);
+
     }
     ObTenantThreadHelper::destroy();
   }
-  LOG_INFO("[DBMS_SCHED_SERVICE] ObDBMSSchedService destroy success", "tenant_id", tenant_id_);
+
 }
 
 void ObDBMSSchedService::switch_to_follower_forcedly()
@@ -140,7 +140,7 @@ int ObDBMSSchedService::switch_to_leader()
   } else if (job_master_.is_inited()) {
     job_master_.switch_to_leader();
     ObTenantThreadHelper::switch_to_leader();
-    LOG_INFO("[DBMS_SCHED_SERVICE] ObDBMSSchedService switch leader", "tenant_id", tenant_id_);
+
   }
   return ret;
 }
@@ -152,7 +152,7 @@ int ObDBMSSchedService::switch_to_follower_gracefully()
   } else if (job_master_.is_inited()) {
     job_master_.switch_to_follower();
     ObTenantThreadHelper::switch_to_follower_gracefully();
-    LOG_INFO("[DBMS_SCHED_SERVICE] ObDBMSSchedService switch follower", "tenant_id", tenant_id_);
+
   }
   return ret;
 }
@@ -161,7 +161,7 @@ int ObDBMSSchedService::resume_leader()
   int ret = OB_SUCCESS;
   if (!is_leader()) {
     if (OB_FAIL(switch_to_leader())) {
-       LOG_INFO("[DBMS_SCHED_SERVICE] resume leader failed", "tenant_id", tenant_id_);
+
     }
   }
   return ret;

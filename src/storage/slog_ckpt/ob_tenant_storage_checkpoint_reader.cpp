@@ -40,7 +40,7 @@ int ObTenantStorageCheckpointReader::iter_read_meta_item(
   ObMemAttr mem_attr(MTL_ID(), ObModIds::OB_CHECKPOINT);
 
   if (OB_UNLIKELY(IS_EMPTY_BLOCK_LIST(entry_block))) {
-    LOG_INFO("has no snapshot of log stream", K(ret));
+
   } else if (OB_FAIL(item_reader.init(entry_block, mem_attr))) {
     LOG_WARN("failed to init log stream item reader");
   } else {

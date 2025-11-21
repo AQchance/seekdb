@@ -142,7 +142,7 @@ int ObSRBMWIterImpl::top_k_search()
 
   int64_t pivot_iter_idx = 0;
   while (OB_SUCC(ret) && BMWStatus::FINISHED != status_) {
-    LOG_DEBUG("[Sparse Retrieval] top k search status", K_(status));
+
     switch (status_) {
     case BMWStatus::FIND_NEXT_PIVOT: {
       if (OB_FAIL(next_pivot(pivot_iter_idx))) {

@@ -136,7 +136,7 @@ int64_t ObUDRItemMgr::UDRKeyNodePair::dec_ref_count()
   if (ref_count > 0) {
     // do nothing
   } else if (0 == ref_count) {
-    LOG_DEBUG("remove rule node", K(ref_count), K(this));
+
     this->~UDRKeyNodePair();
     allocator_.free(this);// I'm sure this is the last line, so it's safe here
   } else {
@@ -243,7 +243,7 @@ int ObUDRItemMgr::init(uint64_t tenant_id, common::ObIAllocator &allocator)
     tenant_id_ = tenant_id;
     allocator_ = &allocator;
   }
-  LOG_INFO("init rewrite rule item mapping manager", K(ret));
+
   return ret;
 }
 
@@ -282,12 +282,12 @@ int ObUDRItemMgr::get_value(const UDRKey &rule_key,
   switch (hash_err) {
     case OB_SUCCESS: {
       if (OB_FAIL(op.get_value(rule_node))) {
-        LOG_DEBUG("failed to lock rule node", K(ret), K(rule_key));
+
       }
       break;
     }
     case OB_HASH_NOT_EXIST: {
-      LOG_DEBUG("entry does not exist.", K(rule_key));
+
       break;
     }
     default: {
@@ -394,7 +394,7 @@ int ObUDRItemMgr::erase_item(const UDRKey &rule_key,  const int64_t rule_id)
     LOG_WARN("failed to get rule node", K(ret));
   } else if (nullptr == rule_node) {
     ret = OB_SUCCESS;
-    LOG_INFO("item already not exist", K(rule_key));
+
   } else {
     if (OB_FAIL(rule_node->remove_rule_item(rule_id))) {
       LOG_WARN("failed to remove rule item", K(ret));
@@ -403,7 +403,7 @@ int ObUDRItemMgr::erase_item(const UDRKey &rule_key,  const int64_t rule_id)
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("succ to erase item", K(rule_key));
+
   }
   return ret;
 }
@@ -442,7 +442,7 @@ int ObUDRItemMgr::match_rule_item(const ObUDRContext &rule_ctx,
   int ret = OB_SUCCESS;
   is_match = false;
   if (rule_item->get_rule_status() != ObUDRInfo::ENABLE_STATUS) {
-    LOG_DEBUG("invalid rule item", K(rule_item->get_rule_status()));
+
   } else if (OB_FAIL(match_fixed_param_list(rule_ctx, rule_item, is_match))) {
     LOG_WARN("failed to match fixed param list", K(ret));
   }
@@ -478,7 +478,7 @@ int ObUDRItemMgr::get_udr_item(const ObUDRContext &rule_ctx,
     LOG_WARN("failed to get rule node", K(ret));
   } else if (nullptr == rule_node) {
     ret = OB_SUCCESS;
-    LOG_DEBUG("item not exist", K(rule_key));
+
   } else if (NULL != cst_cons_list && OB_FAIL(get_all_cst_cons_by_key(rule_key, *cst_cons_list))) {
     LOG_WARN("failed to get all cst cons by key", K(ret));
   } else {
@@ -491,12 +491,12 @@ int ObUDRItemMgr::get_udr_item(const ObUDRContext &rule_ctx,
       } else if (is_match) {
         item->inc_ref_count();
         item_guard.ref_obj_ = item;
-        LOG_TRACE("succ to match rewrite rule item", KPC(item));
+
         break;
       }
     }
   }
-  LOG_TRACE("get udr item", K(ret), K(rule_key));
+
   return ret;
 }
 
@@ -511,7 +511,7 @@ int ObUDRItemMgr::get_all_cst_cons_by_key(const UDRKey &rule_key,
     LOG_WARN("failed to get rule node", K(ret));
   } else if (nullptr == rule_node) {
     ret = OB_SUCCESS;
-    LOG_DEBUG("item not exist", K(rule_key));
+
   } else {
     UDRKeyNodePair::RuleItemList::iterator iter = rule_node->rule_item_list_.begin();
     for (; OB_SUCC(ret) && iter != rule_node->rule_item_list_.end(); iter++) {
@@ -541,7 +541,7 @@ int ObUDRItemMgr::get_rule_item_by_id(const UDRKey &rule_key,
     LOG_WARN("failed to get rule node", K(ret));
   } else if (nullptr == rule_node) {
     ret = OB_SUCCESS;
-    LOG_DEBUG("item not exist", K(rule_key));
+
   } else if (OB_FAIL(rule_node->get_rule_item_by_id(rule_id, rule_item))) {
     LOG_WARN("failed to remove rule item", K(ret));
   }
@@ -551,7 +551,7 @@ int ObUDRItemMgr::get_rule_item_by_id(const UDRKey &rule_key,
 int ObUDRItemMgr::sync_local_cache_rules(const ObIArray<ObUDRInfo>& rule_infos)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("sync local cache rules", K(tenant_id_), K(rule_infos));
+
   for (int64_t i = 0; i < rule_infos.count() && OB_SUCC(ret); ++i) {
     const ObUDRInfo &rule_info = rule_infos.at(i);
     UDRKey rule_key;

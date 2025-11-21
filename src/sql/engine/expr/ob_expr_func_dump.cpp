@@ -108,7 +108,7 @@ int print_value(char *tmp_buf, const int64_t buff_size, int64_t &pos,
 
   if (OB_SUCC(ret)) {
     pos -= 1;
-    LOG_DEBUG("succ to print_value", K(value_string), K(print_value_string), K(fmt_enum), K(start_pos), K(print_value_len), K(pos));
+
   }
   return ret;
 }

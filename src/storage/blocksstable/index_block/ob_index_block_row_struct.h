@@ -732,7 +732,7 @@ public:
     int ret = OB_SUCCESS;
     if (OB_UNLIKELY(!filter->is_filter_constant())) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "Unexpected filter which is not constant", K(ret), K(filter->get_filter_bool_mask()));
+
     } else {
       skipping_filter_results_.push_back(filter);
     }
@@ -756,7 +756,7 @@ public:
     int ret = OB_SUCCESS;
     if (OB_UNLIKELY(!micro_index_info.skipping_filter_results_.is_valid())) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "Invalid ObSkippingFilterResults", K(ret), K_(micro_index_info.skipping_filter_results));
+
     } else if (!micro_index_info.is_filter_uncertain()) {
       set_filter_constant_type(micro_index_info.get_filter_constant_type());
     } else {

@@ -55,7 +55,7 @@ int ObWinbufPieceMsgListener::on_message(
   }
   if (OB_SUCC(ret)) {
      ctx.received_++;
-    LOG_TRACE("got a win buf picece msg", "all_got", ctx.received_, "expected", ctx.task_cnt_);
+
   }
   // Already received all pieces, send sqc whole
   // Each sqc broadcasts to its respective task
@@ -397,7 +397,7 @@ int SPWinFuncPXPieceMsgCtx::send_whole_msg(common::ObIArray<ObPxSqcMeta> &sqcs)
     } else if (OB_FAIL(ch->flush(true, false))) {
       LOG_WARN("flush dtl data failed", K(ret));
     } else {
-      LOG_DEBUG("dispatched sp_winfunc_px_whole_msg", K(idx), K(cnt), K(whole_msg_), K(*ch));
+
     }
   }
   if (OB_SUCC(ret) && OB_FAIL(ObPxChannelUtil::sqcs_channles_asyn_wait(sqcs))) {

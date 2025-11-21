@@ -156,7 +156,7 @@ int ObExternalTableFileManager::clear_inner_table_files(
   OZ (delete_sql.assign_fmt("DELETE FROM %s WHERE TABLE_ID = %lu",
                             OB_ALL_EXTERNAL_TABLE_FILE_TNAME, table_id));
   OZ (trans.write(tenant_id, delete_sql.ptr(), affected_rows));
-  LOG_DEBUG("check clear rows", K(affected_rows));
+
   return ret;
 }
 
@@ -173,7 +173,7 @@ int ObExternalTableFileManager::clear_inner_table_files_within_one_part(
   OZ (delete_sql.assign_fmt("DELETE FROM %s WHERE TABLE_ID = %lu AND PART_ID = %lu",
                             OB_ALL_EXTERNAL_TABLE_FILE_TNAME, table_id, part_id));
   OZ (trans.write(tenant_id, delete_sql.ptr(), affected_rows));
-  LOG_DEBUG("check clear rows", K(affected_rows));
+
   return ret;
 }
 int ObExternalTableFileManager::init()
@@ -344,7 +344,7 @@ int ObExternalTableFileManager::get_external_files_by_part_id(
       OZ (external_files.push_back(file_info));
     }
   }
-  LOG_TRACE("get external file list result", K(table_id), K(is_local_file_on_disk), K(external_files));
+
   return ret;
 }
 
@@ -764,7 +764,7 @@ int ObExternalTableFileManager::calculate_odps_part_val_by_part_spec(const ObTab
               LOG_WARN("cast string to number failed", K(ret), K(part_spec),
                        K(part_key_type));
             } else {
-              LOG_INFO("cast string to number success", K(ret));
+
               odps_part_row.get_cell(j).set_meta_type(part_col->get_meta_type());
               odps_part_row.get_cell(j).set_number(num);
             }
@@ -1172,7 +1172,7 @@ int ObExternalTableFileManager::get_external_file_list_on_device(
     driver.close();
   }
 
-  LOG_DEBUG("show external table files", K(file_urls), K(access_info));
+
   return ret;
 }
 
@@ -1419,11 +1419,11 @@ int ObExternalTableFileManager::fill_cache_from_inner_table(
               temp_ext_files.file_sizes_ = ObArrayWrap<int64_t>(temp_file_sizes.get_data(), temp_file_sizes.count());
               OZ (kv_cache_.put_and_fetch(key, temp_ext_files, ext_files, handle, true));
             }
-            LOG_TRACE("external table file urls", K(temp_file_urls), K(key));
+
           }
         }
       }
-      LOG_TRACE("external table fill cache", K(ext_files), K(key));
+
     }
   }
   if (fill_cache_locks_[bucket_id].self_locked()) {

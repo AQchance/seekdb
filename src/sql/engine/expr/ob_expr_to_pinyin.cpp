@@ -170,7 +170,7 @@ int ObExprToPinyin::eval_to_pinyin(const ObExpr &expr, ObEvalCtx &ctx,
 int ObExprToPinyin::eval_to_pinyin_batch(
   const ObExpr &expr, ObEvalCtx &ctx, const ObBitVector &skip, const int64_t batch_size)
 {
-  LOG_DEBUG("eval to_pinyin in batch mode", K(batch_size));
+
   int ret = OB_SUCCESS;
   ObDatum *results = expr.locate_batch_datums(ctx);
   const sql::ObSQLSessionInfo *session = ctx.exec_ctx_.get_my_session();

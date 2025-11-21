@@ -92,7 +92,7 @@ OB_INLINE int ObStringDiffDecoder::init(
   int ret = common::OB_SUCCESS;
   if (is_inited()) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init twice", K(ret));
+
   } else {
     meta += column_header.offset_;
     header_ = reinterpret_cast<const ObStringDiffHeader *>(meta);

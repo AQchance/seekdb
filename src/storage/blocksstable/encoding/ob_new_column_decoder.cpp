@@ -46,7 +46,7 @@ int ObNewColumnCommonDecoder::decode(
       datum.set_string(out);
     }
   }
-  LOG_DEBUG("[NEW_COLUMN_DECODE] decode new column", K(def_cell), K(datum), K(lbt()));
+
   return ret;
 }
 
@@ -62,7 +62,7 @@ int ObNewColumnCommonDecoder::batch_decode(
       LOG_WARN("Failed to decode new added datum", K(ret), K(col_param->get_orig_default_value()));
     }
   }
-  LOG_DEBUG("[NEW_COLUMN_DECODE] batch decode", K(col_param->get_orig_default_value()), K(row_cap), K(lbt()));
+
   return ret;
 }
 
@@ -84,7 +84,7 @@ int ObNewColumnCommonDecoder::decode_vector(ObVectorDecodeCtx &vector_ctx) const
       FOREACH_SET_VEC(ObFixedLengthBase)
     }
   }
-  LOG_DEBUG("[NEW_COLUMN_DECODE] decode vector", KPC(vector_ctx.default_datum_), K(lbt()));
+
   return ret;
 }
 
@@ -100,7 +100,7 @@ int ObNewColumnCommonDecoder::pushdown_operator(
   } else if (!filtered) {
     result_bitmap.bit_not();
   }
-  LOG_DEBUG("[NEW_COLUMN_DECODE] pushdown white filter", KPC(default_datum), K(filtered), K(lbt()));
+
   return ret;
 }
 
@@ -118,7 +118,7 @@ int ObNewColumnCommonDecoder::pushdown_operator(
   } else if (!filtered) {
     result_bitmap.bit_not();
   }
-  LOG_DEBUG("[NEW_COLUMN_DECODE] pushdown black filter", KPC(default_datum), K(filtered), K(lbt()));
+
   return ret;
 }
 
@@ -133,7 +133,7 @@ int ObNewColumnCommonDecoder::get_null_count(
   } else {
     null_count = 0;
   }
-  LOG_DEBUG("[NEW_COLUMN_DECODE] get null count", K(col_param->get_orig_default_value()), K(null_count), K(lbt()));
+
   return ret;
 }
 
@@ -148,7 +148,7 @@ int ObNewColumnCommonDecoder::read_distinct(
   } else {
     group_by_cell.set_distinct_cnt(1);
   }
-  LOG_DEBUG("[NEW_COLUMN_DECODE] read distinct", K(group_by_cell.get_group_by_col_offset()), KPC(datums), K(lbt()));
+
   return ret;
 }    
 
@@ -160,7 +160,7 @@ int ObNewColumnCommonDecoder::read_reference(
   uint32_t *ref_buf = group_by_cell.get_refs_buf();
   MEMSET(ref_buf, 0, sizeof(uint32_t) * row_cap);
   group_by_cell.set_ref_cnt(row_cap);
-  LOG_DEBUG("[NEW_COLUMN_DECODE] read refrence", K(row_cap), K(group_by_cell.get_group_by_col_offset()), K(lbt()));
+
   return ret;
 }
 

@@ -381,12 +381,12 @@ int ObTableTTLDeleteTask::process_one()
         && result.get_end_ts() > ObTimeUtility::current_time()) {
       ret = OB_ITER_END; // finsh task
       info_.err_code_ = ret; 
-      LOG_DEBUG("finish delete", KR(ret), K_(info));
+
     }
   }
 
   int64_t cost = ObTimeUtil::current_time() - start_time;
-  LOG_DEBUG("finish process one", KR(ret), K(cost));
+
   return ret;
 }
 
@@ -404,7 +404,7 @@ int ObTableTTLDeleteTask::init_scan_tb_ctx(ObKvSchemaCacheGuard &schema_cache_gu
   ObKVAttr kv_attributes;
 
   if (tb_ctx.is_init()) {
-    LOG_INFO("tb ctx has been inited", K(tb_ctx));
+
   } else if (OB_FAIL(schema_cache_guard.get_kv_attributes(kv_attributes))) {
     LOG_WARN("fail to get kv attributes", K(ret));
   } else if (OB_FAIL(get_scan_ranges(ranges, kv_attributes))) {
@@ -733,14 +733,14 @@ int ObTableTTLDeleteRowIterator::get_next_row(ObNewRow*& row)
   row = nullptr;
   if (cur_del_rows_ >= limit_del_rows_) {
     ret = OB_ITER_END; 
-    LOG_DEBUG("finish get next row", KR(ret), K(cur_del_rows_), K(limit_del_rows_));
+
   } else {
     bool is_expired = false;
     while(OB_SUCC(ret) && !is_expired) {
       int64_t cur_ts = ObTimeUtility::current_time();
       if (cur_ts > iter_end_ts_ && hbase_new_cq_) {
         ret = OB_ITER_END;
-        LOG_DEBUG("iter_end_ts reached, stop current iterator", KR(ret), K(cur_ts), K_(iter_end_ts));
+
       } else if (OB_FAIL(ObTableApiScanRowIterator::get_next_row(row))) {
         if (OB_ITER_END != ret) {
           LOG_WARN("fail to get next row", K(ret));
@@ -948,7 +948,7 @@ int ObTableTTLDeleteTask::execute_ttl_delete(ObKvSchemaCacheGuard &schema_cache_
       }
     }
   }
-  LOG_DEBUG("execute ttl delete", K(ret), K(result));
+
   return ret;
 }
 

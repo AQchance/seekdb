@@ -121,7 +121,7 @@ int ObDWARFContext::init()
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("failed to verify DWARFContext", K(ret));
       } else {
-        LOG_INFO("success to initialize DWARFContext", K(ret), K(Out.str().c_str()));
+
       }
     }
   }

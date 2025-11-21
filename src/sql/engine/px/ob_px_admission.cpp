@@ -81,7 +81,7 @@ int64_t ObPxAdmission::admit(ObSQLSessionInfo &session, ObExecContext &exec_ctx,
       LOG_WARN("apply target failed", K(ret), K(tenant_id), K(req_cnt));
     } else if (0 != admit_cnt) {
       exec_ctx.set_admission_version(admission_version);
-      LOG_TRACE("after enter admission", K(ret), K(req_cnt), K(admit_cnt));
+
     }
     left_time_us = wait_time_us - (ObClockGenerator::getClock() - start_time_us);
     if (OB_SUCC(ret) && 0 == admit_cnt && left_time_us > 0) {
@@ -179,7 +179,7 @@ int ObPxAdmission::enter_query_admission(ObSQLSessionInfo &session,
           // Indicates the actual number of allocations made by admission based on the current resource queue situation
           task_exec_ctx->set_admited_worker_cnt(admit_worker_count);
         }
-        LOG_TRACE("PX admission set the plan worker count", K(req_worker_count), K(minimal_px_worker_count), K(admit_worker_count));
+
       }
     }
   }
@@ -192,7 +192,7 @@ int ObPxAdmission::enter_query_admission(ObSQLSessionInfo &session,
     } else {
       int64_t real_das_dop = std::min(parallel_servers_target, plan.get_das_dop());
       exec_ctx.get_das_ctx().set_real_das_dop(real_das_dop);
-      LOG_TRACE("real das dop", K(real_das_dop), K(plan.get_das_dop()), K(parallel_servers_target));
+
     }
   }
   return ret;
@@ -216,7 +216,7 @@ void ObPxAdmission::exit_query_admission(ObSQLSessionInfo &session,
       LOG_WARN("release target failed", K(ret), K(tenant_id), K(exec_ctx.get_admission_version()));
     }
     (void)addr_map.destroy();
-    LOG_DEBUG("release resource, notify wait threads");
+
   }
 }
 // Supply SQC end used Admission module

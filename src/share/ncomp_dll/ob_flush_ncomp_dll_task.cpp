@@ -76,7 +76,7 @@ int ObFlushNcompDll::check_job_exists(ObMySQLTransaction &trans,
         }
       }
     }
-    LOG_INFO("succeed to check flush ncomp dll job exists", K(ret), K(select_sql), K(is_job_exists), K(row_count));
+
   }
   return ret;
 }
@@ -105,7 +105,7 @@ int ObFlushNcompDll::get_job_id(const uint64_t tenant_id,
       } else if (OB_FAIL(result->get_int("new_job_id", job_id))) {
         LOG_WARN("get int failed", KR(ret), K(tenant_id), K(sql));
       } else {
-         LOG_INFO("get new job_id successfully", KR(ret), K(tenant_id), K(job_id));
+
       }
     }
   }

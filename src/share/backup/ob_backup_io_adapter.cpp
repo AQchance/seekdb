@@ -408,12 +408,12 @@ int ObBackupIoAdapter::write_single_file(const common::ObString &uri, const comm
     OB_LOG(WARN, "fail to get device and open file !", K(uri), K(ret), K(storage_info));
   } else if (FALSE_IT(fd.device_handle_ = device_handle)) {
   } else if (OB_FAIL(io_manager_write(buf, 0, size, fd, write_size))) {
-    STORAGE_LOG(WARN, "fail to io manager write", K(ret), K(uri), K(storage_info), K(size), K(fd));
+
   }
   
   if (OB_SUCCESS != (ret_tmp = close_device_and_fd(device_handle, fd))) {
     ret = (OB_SUCCESS == ret) ? ret_tmp : ret;
-    STORAGE_LOG(WARN, "failed to close device and fd", K(ret), K(ret_tmp));
+
   }
   
 #ifdef ERRSIM
@@ -454,14 +454,14 @@ int ObBackupIoAdapter::pwrite(
     OB_LOG(WARN, "fail to get device and open file !", K(uri), K(storage_info), K(ret));
   } else if (FALSE_IT(fd.device_handle_ = device_handle)) {
   } else if (OB_FAIL(io_manager_write(buf, offset, size, fd, write_size))) {
-    STORAGE_LOG(WARN, "fail to io manager write", K(ret), K(uri), K(storage_info), K(size), K(fd));
+
   } else if (is_can_seal && OB_FAIL(device_handle->seal_file(fd))) {
-    STORAGE_LOG(WARN, "fail to seal file", KR(ret), K(uri), K(storage_info), K(fd));
+
   }
 
   if (OB_SUCCESS != (ret_tmp = close_device_and_fd(device_handle, fd))) {
     ret = (OB_SUCCESS == ret) ? ret_tmp : ret;
-    STORAGE_LOG(WARN, "failed to close device and fd", KR(ret), K(ret_tmp));
+
   }
   return ret;
 }
@@ -481,12 +481,12 @@ int ObBackupIoAdapter::seal_file(
     OB_LOG(WARN, "fail to get device and open file !", K(uri), K(storage_info), KR(ret));
   } else if (FALSE_IT(fd.device_handle_ = device_handle)) {
   } else if (OB_FAIL(device_handle->seal_file(fd))) {
-    STORAGE_LOG(WARN, "fail to seal file", KR(ret), K(uri), K(storage_info), K(fd));
+
   }
 
   if (OB_TMP_FAIL(close_device_and_fd(device_handle, fd))) {
     ret = COVER_SUCC(tmp_ret);
-    STORAGE_LOG(WARN, "failed to close device and fd", KR(ret), K(tmp_ret));
+
   }
   return ret;
 }
@@ -506,14 +506,14 @@ int ObBackupIoAdapter::pwrite(
   if ((ObStorageAccessType::OB_STORAGE_ACCESS_APPENDER != flag)
       && (ObStorageAccessType::OB_STORAGE_ACCESS_MULTIPART_WRITER != flag)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid storage access type", K(ret), K(flag));
+
   } else if (FALSE_IT(fd.device_handle_ = (&device_handle))) {
   } else if (OB_FAIL(io_manager_write(buf, offset, size, fd, write_size))) {
-    STORAGE_LOG(WARN, "fail to io manager write", K(ret), K(offset), K(size), K(fd));
+
   } else if (ObStorageAccessType::OB_STORAGE_ACCESS_APPENDER == flag
              && is_can_seal
              && OB_FAIL(device_handle.seal_file(fd))) {
-    STORAGE_LOG(WARN, "fail to seal file", K(ret), K(offset), K(size), K(fd));
+
   }
   return ret;
 }
@@ -614,7 +614,7 @@ int ObBackupIoAdapter::read_single_file(const common::ObString &uri, const commo
 
   if (OB_SUCCESS != (ret_tmp = close_device_and_fd(device_handle, fd))) {
     ret = (OB_SUCCESS == ret) ? ret_tmp : ret;
-    STORAGE_LOG(WARN, "failed to close device and fd", K(ret), K(ret_tmp));
+
   }
 
   return ret;
@@ -647,7 +647,7 @@ int ObBackupIoAdapter::adaptively_read_single_file(const common::ObString &uri, 
 
   if (OB_SUCCESS != (ret_tmp = close_device_and_fd(device_handle, fd))) {
     ret = (OB_SUCCESS == ret) ? ret_tmp : ret;
-    STORAGE_LOG(WARN, "failed to close device and fd", K(ret), K(ret_tmp));
+
   }
 
   return ret;
@@ -756,7 +756,7 @@ int ObBackupIoAdapter::read_part_file(const common::ObString &uri, const common:
 
   if (OB_SUCCESS != (ret_tmp = close_device_and_fd(device_handle, fd))) {
     ret = (OB_SUCCESS == ret) ? ret_tmp : ret;
-    STORAGE_LOG(WARN, "failed to close device and fd", K(ret), K(ret_tmp), KP(storage_info), K(uri));
+
   }
   return ret;
 }
@@ -780,7 +780,7 @@ int ObBackupIoAdapter::adaptively_read_part_file(const common::ObString &uri, co
 
   if (OB_SUCCESS != (ret_tmp = close_device_and_fd(device_handle, fd))) {
     ret = (OB_SUCCESS == ret) ? ret_tmp : ret;
-    STORAGE_LOG(WARN, "failed to close device and fd", K(ret), K(ret_tmp), KP(storage_info), K(uri));
+
   }
   return ret;
 }

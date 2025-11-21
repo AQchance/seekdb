@@ -224,7 +224,7 @@ int ObExprOperator::cg_expr(ObExprCGCtx &,
                             ObExpr &) const
 {
   int ret = OB_NOT_SUPPORTED;
-  LOG_INFO("not implemented in sql static typing engine, ", K(ret), K(raw_expr));
+
   return ret;
 }
 
@@ -315,7 +315,7 @@ int OB_INLINE ObExprOperator::cast_operand_type(common::ObObj &res_obj,
         cast_ctx.dest_collation_ = param_collation_type;
       }
       ret = ObObjCaster::bool_to_json(calc_type, cast_ctx, res_obj, res_obj, tmp_res_obj);
-      LOG_DEBUG("cast bool to json", K(cast_mode), K(calc_type), K(cast_ctx.dest_collation_), K(res_obj), K(ret));
+
     } else if (ob_is_string_or_lob_type(res_type.get_calc_type()) && res_type.is_zerofill()) {
       // For zerofilled string
       ObZerofillInfo zf_info(true, res_type.get_length());
@@ -816,12 +816,12 @@ int ObExprOperator::enable_old_charset_aggregation(const ObBasicSessionInfo *ses
   int ret = OB_SUCCESS;
   bool enable_old_rule = false;
   if (OB_ISNULL(session)) {
-    LOG_TRACE("use new charset aggregation rule");
+
   } else if (OB_FAIL(session->is_old_charset_aggregation_enabled(enable_old_rule))) {
     LOG_WARN("failed to check is_old_charset_aggregation_enabled", K(ret));
   } else if (enable_old_rule) {
     flags &= ~OB_COLL_ALLOW_NEW_CONV;
-    LOG_TRACE("old charset aggregation rule is enabled because variables control", K(enable_old_rule));
+
   }
   return ret;
 }
@@ -1042,7 +1042,7 @@ int ObExprOperator::aggregate_string_type_and_charset_oracle(
    * */
   OZ (aggregate_length_semantics_oracle(session, params, result, deduce_flag));
 
-  LOG_DEBUG("aggregate string charset", K(result), K(params));
+
 
   return ret;
 }
@@ -1291,7 +1291,7 @@ int ObExprOperator::aggregate_result_type_for_merge(
         }
       }
     }
-    LOG_DEBUG("merged type is", K(type), K(is_oracle_mode));
+
   }
   return ret;
 }
@@ -1334,11 +1334,11 @@ int ObExprOperator::aggregate_max_length_for_string_result(ObExprResType &type,
           }
         }
         /* Oracle compatible： if prejudged result type is char and args' length are different， change result type to varchar */
-        LOG_DEBUG("cur len", K(length), K(max_length), K(types[i]));
+
         if (is_oracle_mode && need_merge_type
             && (ObCharType == type.get_type() && ObCharType == types[i].get_type())
             && (max_length != -1) && (length != max_length)) {
-          LOG_DEBUG("Merge type from Char to Varchar ", K(length), K(max_length), K(types[i]));
+
           type.set_type(ObVarcharType);
         }
         /*no need to if(OB_SUCCE(ret)) here*/
@@ -1370,13 +1370,13 @@ int ObExprOperator::aggregate_max_length_for_string_result(ObExprResType &type,
           }
         }
         /* Oracle compatible： if prejudged result type is char and args' length are different， change result type to varchar */
-        LOG_DEBUG("cur len", K(length), K(max_length), K(max_length_char), K(length_semantics), K(types[i]), K(type));
+
         if (is_oracle_mode
             && need_merge_type
             && (ObCharType == type.get_type() && ObCharType == types[i].get_type())
             && (max_length != -1)
             && (length != max_length || (byte_length_count > 0 && char_length_count > 0))) {
-          LOG_DEBUG("Merge type from Char to Varchar ", K(length), K(max_length), K(length_semantics), K(types[i]));
+
           type.set_type(ObVarcharType);
         }
         if (length > max_length) {
@@ -1557,7 +1557,7 @@ int ObExprOperator::aggregate_numeric_accuracy_for_merge(ObExprResType &type,
         type.set_scale(MIN(max_decimal_digits, ObAccuracy::MAX_ACCURACY2[is_oracle_mode][type.get_type()].scale_));
       }
     }
-    LOG_DEBUG("aggregate numeric accuracy", K(max_integer_digits), K(max_decimal_digits), K(type));
+
   }
   return ret;
 }
@@ -2242,7 +2242,7 @@ int ObExprOperator::calc_cmp_type2(ObExprResType &type,
         }
       }
     }
-    LOG_DEBUG("calc cmp type", K(type1), K(type2), K(type.get_calc_meta()), K(lbt()));
+
   }
   return ret;
 }
@@ -3019,7 +3019,7 @@ int ObRelationalExprOperator::eval_min_max_compare(
   if (OB_SUCC(ret)) {
     if (l_datum->is_outrow() || l_datum->is_ext() || 
         r_datum->is_outrow() || r_datum->is_ext()) {
-      LOG_DEBUG("is min max comparison");
+
       if (l_datum->is_null() || r_datum->is_null()) {
         is_set_null = true;
         expr_datum.set_null();
@@ -3046,7 +3046,7 @@ int ObRelationalExprOperator::eval_min_max_compare(
           K(r_datum->is_ext()));
     } else {
       // normal process
-      LOG_DEBUG("is normal comparison");
+
       if (OB_ISNULL(expr.inner_functions_)) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("unexpected null inner_eval_func in min max compare", K(ret));
@@ -3086,7 +3086,7 @@ int ObRelationalExprOperator::eval_batch_min_max_compare(
     }
   }
   if (need_handle_ext) {  // min max process
-    LOG_DEBUG("is min max comparison");
+
     for (int i = 0; OB_SUCC(ret) && i < batch_size; i++) {
       int cmp_ret = 0;
       const ObDatum &l_datum = l_expr.is_batch_result() ? 
@@ -3118,7 +3118,7 @@ int ObRelationalExprOperator::eval_batch_min_max_compare(
       }
     }
   } else {
-    LOG_DEBUG("is normal comparison");
+
     if (OB_ISNULL(expr.inner_functions_)) {  // normal process
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("unexpected null inner_eval_func in min max compare", K(ret));
@@ -3174,7 +3174,7 @@ int ObRelationalExprOperator::eval_vector_min_max_compare(
         need_handle_ext = r_datums[0].is_outrow() || r_datums[0].is_ext() ? true : false;
       }
       if (need_handle_ext) {
-        LOG_DEBUG("is min max comparison");
+
         for (int i = bound.start(); OB_SUCC(ret) && i < bound.end(); i++) {
           int cmp_ret = 0;
           const char *l_payload = NULL;
@@ -3213,7 +3213,7 @@ int ObRelationalExprOperator::eval_vector_min_max_compare(
           }
         }
       } else {
-        LOG_DEBUG("is normal comparison");
+
         if (OB_ISNULL(expr.inner_functions_)) {
           ret = OB_ERR_UNEXPECTED;
           LOG_WARN("unexpected null inner_eval_func in min max compare", K(ret));
@@ -4795,7 +4795,7 @@ int ObBitwiseExprOperator::calc_result_type2(ObExprResType &type,
   } else {
     ret = OB_ERR_INVALID_TYPE_FOR_OP;
   }
-  LOG_DEBUG("bitwise calc type2 done", K(ret), K(type), K(type1), K(type2));
+
   return ret;
 }
 
@@ -6117,7 +6117,7 @@ int ObExprTRDateFormat::trunc_new_obtime(ObTime &ob_time, const ObString &fmt,
 
   OZ (get_format_id_by_format_string(fmt, fmt_id));
   OZ (trunc_new_obtime_by_fmt_id(ob_time, fmt_id, is_mysql_compat_dates));
-  LOG_DEBUG("check value", K(ob_time), K(fmt_id), K(fmt));
+
   return ret;
 }
 
@@ -6274,7 +6274,7 @@ int ObExprTRDateFormat::round_new_obtime(ObTime &ob_time, const ObString &fmt)
   OZ (get_format_id_by_format_string(fmt, fmt_id));
   OZ (round_new_obtime_by_fmt_id(ob_time, fmt_id));
 
-  LOG_DEBUG("check value", K(ob_time), K(fmt_id), K(fmt));
+
   return ret;
 }
 
@@ -6534,7 +6534,7 @@ int ObRelationalExprOperator::cg_datum_cmp_expr(ObIAllocator &allocator,
     const ObScale input_scale2 = rt_expr.args_[1]->datum_meta_.scale_;
     const ObPrecision in_prec1 = rt_expr.args_[0]->datum_meta_.precision_;
     const ObPrecision in_prec2 = rt_expr.args_[1]->datum_meta_.precision_;
-    LOG_DEBUG("CG Datum CMP Expr", K(input_type1), K(input_type2), K(cmp_op));
+
     const ObCollationType cs_type = rt_expr.args_[0]->datum_meta_.cs_type_;
     if (ObDatumFuncs::is_string_type(input_type1) && ObDatumFuncs::is_string_type(input_type2)) {
       CK(rt_expr.args_[0]->datum_meta_.cs_type_ == rt_expr.args_[1]->datum_meta_.cs_type_);
@@ -6558,7 +6558,7 @@ int ObRelationalExprOperator::cg_datum_cmp_expr(ObIAllocator &allocator,
 
     if (OB_SUCC(ret)) {
       if (raw_expr.has_flag(IS_AUTO_PART_EXPR)) {
-        LOG_DEBUG("set min or max compare func", K(cmp_op));
+
         void **inner_func_buf = NULL;
         const int64_t inner_func_count = 3;
         if (OB_ISNULL(inner_func_buf = (void **)allocator.alloc(sizeof(void *) * inner_func_count))) {
@@ -6660,7 +6660,7 @@ int ObRelationalExprOperator::cg_row_cmp_expr(const int row_dimension,
       if (OB_SUCC(ret)) {
         if (raw_expr.has_flag(IS_AUTO_PART_EXPR)) {
           rt_expr.eval_func_ = &min_max_row_eval;
-          LOG_DEBUG("set min or max compare func", K(cmp_op));
+
         } else {
           rt_expr.eval_func_ = &row_eval;
         }

@@ -215,7 +215,7 @@ int ObAgentVirtualTable::add_extra_condition(common::ObSqlString &sql)
   bool need_tenant_id = true;
   if (OB_FAIL(ret)) {
   } else if (lib::Worker::CompatMode::MYSQL == mode_ && is_sys_tenant(effective_tenant_id_)) {
-    LOG_TRACE("do not add tenant_id filter", K_(mode), K_(effective_tenant_id));
+
   } else if (OB_FAIL(should_add_tenant_condition(need_tenant_id, tenant_id))) {
     LOG_WARN("failed to get is_add_tenant_condition flag", K(ret));
   } else if (need_tenant_id && NULL != table_schema_->get_column_schema("tenant_id")) {
@@ -255,7 +255,7 @@ int ObAgentVirtualTable::inner_get_next_row(common::ObNewRow *&row)
         cur_row_.cells_[i].set_null();
       } else if (lib::Worker::CompatMode::MYSQL == mode_) {
         cur_row_.cells_[i] = input;
-        LOG_TRACE("mysql compat mode agent do not do convert", KR(ret), K(input));
+
       } else if (OB_FAIL(mapping_[scan_param_->column_ids_.at(i)].convert_func_(
           input, cur_row_.cells_[i], convert_alloc_))) {
         LOG_WARN("convert obj failed", K(ret), K(input),
@@ -288,7 +288,7 @@ int ObAgentVirtualTable::should_add_tenant_condition(bool &need, const uint64_t 
     const ObRangeArray &ranges = scan_param_->key_ranges_;
     const ObRowkeyInfo &info = index_table_->get_rowkey_info();
     if (info.get_size() <= 0) {
-      LOG_DEBUG("rowkeys is empty", K(ret), K(info.get_size()));
+
     } else {
       FOREACH_CNT_X(r, ranges, OB_SUCC(ret)) {
         if (r->table_id_ != index_table_->get_table_id()) {

@@ -242,7 +242,7 @@ int ObRawExprResolverImpl::do_recursive_resolve(const ParseNode *node,
     ret = OB_SIZE_OVERFLOW;
     LOG_WARN("stack overflow", K(ret));
   } else {
-    LOG_DEBUG("resolve item", "item_type", get_type_name(node->type_));
+
     if (IS_DATATYPE_OR_QUESTIONMARK_OP(node->type_)) {
       if (OB_FAIL(process_datatype_or_questionmark(*node, expr))) {
         LOG_WARN("fail to process datatype or questionmark", K(ret), K(node));
@@ -1277,7 +1277,7 @@ int ObRawExprResolverImpl::process_sql_udt_construct_node(const ParseNode *node,
             } else if (OB_FAIL(ctx_.stmt_->add_global_dependency_table(udt_version))) {
               LOG_WARN("add udt type dependency failed", K(ret), K(udt_version));
             } else {
-              LOG_TRACE("udt info: ", K(udt_version));
+
             }
           }
         } else {
@@ -1737,7 +1737,7 @@ int ObRawExprResolverImpl::check_pl_variable(ObQualifiedName &q_name, bool &is_p
                                                            false,/*is_prepare_protocol*/
                                                            true,/*is_check_mode*/
                                                            ctx_.current_scope_ != T_PL_SCOPE /*is_sql_scope*/))) {
-        LOG_INFO("failed to resolve external symbol", K(q_name), K(ret));
+
         if (OB_ERR_INVOKE_STATIC_BY_INSTANCE != ret) {
           ret = OB_SUCCESS;
           ob_reset_tsi_warning_buffer();
@@ -2262,7 +2262,7 @@ int ObRawExprResolverImpl::process_datatype_or_questionmark(const ParseNode &nod
     } else {
       if (!ctx_.is_extract_param_type_) {
         if (NULL == ctx_.param_list_) {
-          LOG_INFO("NOTICE : UNIT TEST Code direction.", K(ret));
+
         } else if (ctx_.param_list_->empty()) { // reach here means current val is ?, but param_list is empty, means it's prepare stage
           ObObjMeta question_mark_meta;
           // Compatible with MySQL, use the default varbinary type for type deduce in the ps prepare phase
@@ -2443,7 +2443,7 @@ int ObRawExprResolverImpl::process_datatype_or_questionmark(const ParseNode &nod
           } else {
             //questionmark won't set meta_type again
             if (param.get_param_meta().get_type() != param.get_type()) {
-              LOG_TRACE("question mark not suited", K(param.get_param_meta().get_type()), K(param.get_type()), K(common::lbt()));
+
             }
             c_expr->set_meta_type(param.get_param_meta());
             c_expr->set_expr_obj_meta(param.get_param_meta());
@@ -3330,7 +3330,7 @@ int ObRawExprResolverImpl::convert_any_or_all_expr(ObRawExpr *&expr,
     } else {
       happened = true;
       expr = op_expr;
-      LOG_DEBUG("succeed to convert any/all expr", K(*expr));
+
     }
   } else if (T_ANY == sub_expr2->get_expr_type() &&
              (T_OP_EQ < expr->get_expr_type() && expr->get_expr_type() <= T_OP_NE) &&
@@ -3394,7 +3394,7 @@ int ObRawExprResolverImpl::convert_any_or_all_expr(ObRawExpr *&expr,
     if (OB_SUCC(ret)) {
       happened = true;
       expr = op_expr;
-      LOG_DEBUG("succeed to convert great equal any expr to great equal or expr", K(*expr));
+
     }
   }
   return ret;
@@ -3850,7 +3850,7 @@ int ObRawExprResolverImpl::process_in_or_not_in_node(const ParseNode *node,
     LOG_WARN("resolve get invalid expr", K(ret), K(sub_expr1), K(sub_expr2));
   } else {
     ObItemType param_type2 = sub_expr2->get_expr_type();
-    LOG_DEBUG("in or not in with:", K(*sub_expr1), K(*sub_expr2));
+
     if (T_REF_QUERY == param_type2) {
       ObQueryRefRawExpr *sub_ref = static_cast<ObQueryRefRawExpr*>(sub_expr2);
       sub_ref->set_is_set(true);
@@ -3897,7 +3897,7 @@ int ObRawExprResolverImpl::process_in_or_not_in_node(const ParseNode *node,
           expr = in_expr;
         }
       }
-      LOG_DEBUG("final in or not in expr ", K(*in_expr));
+
     } else {
       if (OB_FAIL(in_expr->set_param_exprs(sub_expr1, sub_expr2))) {
         LOG_WARN("failed to add param expr", K(ret));
@@ -5161,7 +5161,7 @@ int ObRawExprResolverImpl::process_fun_interval_node(const ParseNode *node, ObRa
         } else if (OB_FAIL(fun_expr->add_param_expr(para_expr))) {
           LOG_WARN("fail to add param expr", K(ret), K(para_expr));
         }
-        LOG_DEBUG("param info:", K(expr_list.children_[i]), K(expr_list.children_[i]->type_));
+
       }
     }
   }
@@ -6753,7 +6753,7 @@ int ObRawExprResolverImpl::process_match_against(const ParseNode *node, ObRawExp
       match_against->set_search_key(search_keywords);
       match_against->set_mode_flag(static_cast<ObMatchAgainstMode>(node->value_));
       expr = match_against;
-      LOG_DEBUG("resolve match against expr finish", K(ret), KPC(expr));
+
     }
   }
   if (OB_SUCC(ret) && OB_FAIL(match_against->extract_info())) {
@@ -8264,7 +8264,7 @@ int ObRawExprResolverImpl::process_odbc_time_literals(const ObItemType dst_time_
         if (ret == OB_ERR_WRONG_VALUE) {//invalid time str, go back default way like Mysql.
           ret = OB_SUCCESS;
           is_valid_time_str = false;
-          LOG_TRACE("is invalid time string", K(time_str));
+
         } else {
           LOG_WARN("fail to process datatype or questionmark", K(ret));
         }
@@ -8350,7 +8350,7 @@ int ObRawExprResolverImpl::process_last_refresh_scn_node(const ParseNode *expr_n
     func_expr->set_mview_id(mview_id);
     func_expr->set_func_name(ObString::make_string(N_SYS_LAST_REFRESH_SCN));
     expr = func_expr;
-    LOG_DEBUG("finish resolve last_refresh_scn expr", K(get_type_name(child_node->type_)), K(func_expr->get_mview_id()));
+
   }
   return ret;
 }

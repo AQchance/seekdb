@@ -95,7 +95,7 @@ int ObTransformSemiToInner::transform_one_stmt(
         LOG_WARN("failed to transform semi join to inner join", K(ret));
       } else if (!happened) {
         OPT_TRACE("semi join can not transform to inner join");
-        LOG_TRACE("semi join can not transform to inner join", K(*semi_info));
+
       } else if (OB_FAIL(ObTransformUtils::partial_cost_eval_validity_check(*ctx_, parent_stmts, 
                                                                             stmt, true, 
                                                                             partial_cost_check))) {
@@ -111,7 +111,7 @@ int ObTransformSemiToInner::transform_one_stmt(
         if (OB_FAIL(add_ignore_semi_info(semi_info->semi_id_))) {
           LOG_WARN("failed to add ignore semi info", K(ret));
         } else {
-          LOG_TRACE("semi join can not transform to inner join due to cost", K(*semi_info));
+
         }
       } else {
         if (!need_check_cost || ctx.hint_force_) {
@@ -186,7 +186,7 @@ int ObTransformSemiToInner::transform_semi_to_inner(ObDMLStmt *root_stmt,
   } else if (need_check_cost && OB_FAIL(is_ignore_semi_info(pre_semi_info->semi_id_, ignore))) {
     LOG_WARN("failed to check is ignore semi info", K(ret));
   } else if (ignore) {
-    LOG_TRACE("semi info has check cost", K(*semi_info));
+
     OPT_TRACE("this semi join has checked cost, not need try again");
   } else if (need_check_cost &&
              OB_FAIL(ObTransformUtils::deep_copy_stmt(*ctx_->stmt_factory_,
@@ -550,7 +550,7 @@ int ObTransformSemiToInner::check_basic_validity(ObDMLStmt *root_stmt,
     trans_param.need_add_distinct_ = false;
     need_check_cost = false;
     OPT_TRACE("semi right table output is unique");
-    LOG_TRACE("semi right table output is unique");
+
   } else if (OB_FAIL(check_right_table_output_one_row(*right_table, is_one_row))) {
     LOG_WARN("failed to check right tables output one row", K(ret));
   } else if (is_one_row) {
@@ -560,7 +560,7 @@ int ObTransformSemiToInner::check_basic_validity(ObDMLStmt *root_stmt,
     trans_param.need_add_distinct_ = false;
     need_check_cost = false;
     OPT_TRACE("semi join right table output most one row, no need distinct");
-    LOG_TRACE("semi join right table output most one row, no need distinct");
+
   } else if (is_all_left_filter && (NULL == right_table->ref_query_ ||
                                     NULL == right_table->ref_query_->get_limit_percent_expr())) {
     is_valid = true;
@@ -569,7 +569,7 @@ int ObTransformSemiToInner::check_basic_validity(ObDMLStmt *root_stmt,
     trans_param.right_table_need_add_limit_ = true;
     need_check_cost = false;
     OPT_TRACE("semi conditions are all left filters, will not add distinct, will add limit 1");
-    LOG_TRACE("semi conditions are all left filters, will not add distinct, will add limit 1");
+
   } else if (OB_FAIL(stmt.check_from_dup_insensitive(is_non_sens_dup_vals))) {
     LOG_WARN("failed to check from scope duplicate insensitive", K(ret));
   } else if (is_non_sens_dup_vals) {
@@ -581,7 +581,7 @@ int ObTransformSemiToInner::check_basic_validity(ObDMLStmt *root_stmt,
       trans_param.need_add_distinct_ = false;
       ctx.is_non_sens_dul_vals_ = true;
       OPT_TRACE("stmt is insensitive to result of subquery has duplicated values");
-      LOG_TRACE("stmt is insensitive to result of subquery has duplicated values");
+
     }
   } else if (invalid_conds_count > 0) {
     // do nothing
@@ -1045,7 +1045,7 @@ int ObTransformSemiToInner::check_need_add_cast(const ObRawExpr *left_arg,
                                                                    is_valid))) {
     LOG_WARN("failed to check expr is equivalent", K(ret));
   } else if (!is_valid) {
-    LOG_TRACE("can not use left expr type as the (left, right) compare type", K(is_valid));
+
   } else if (OB_FAIL(ObRelationalExprOperator::is_equal_transitive(left_arg->get_result_type(),
                                                                    right_arg->get_result_type(),
                                                                    is_equal))) {
@@ -1441,7 +1441,7 @@ int ObTransformSemiToInner::add_distinct(ObSelectStmt &view,
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("expect valid cast expr", K(ret));
       } else if (need_add_cast) {
-        LOG_TRACE("need cast expr", K(*left), K(*right));
+
       }
     }
     if (OB_FAIL(ret)) {

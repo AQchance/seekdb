@@ -289,7 +289,7 @@ int ObPersistentLSTable::construct_ls_replica(
               K(paxos_replica_number), K(member_list_to_set), K(learner_list_to_set));
   }
 
-  LOG_DEBUG("construct log stream replica", KR(ret), K(replica));
+
   return ret;
 }
 
@@ -342,7 +342,7 @@ int ObPersistentLSTable::update(
   ObLSReplica new_replica;
   uint64_t sql_tenant_id = get_private_table_exec_tenant_id(replica.get_tenant_id());
   if (OB_UNLIKELY(ERRSIM_NOT_UPDATE_LS_META_TABLE)) {
-    LOG_INFO("errsim here, do nothing");
+
   } else if (OB_UNLIKELY(!is_inited()) || OB_ISNULL(sql_proxy_)) {
     ret = OB_NOT_INIT;
     LOG_WARN("ObPersistentLSTable not init", KR(ret), KP_(sql_proxy));
@@ -378,7 +378,7 @@ int ObPersistentLSTable::update(
   }
 
   if (OB_UNLIKELY(ERRSIM_NOT_UPDATE_LS_META_TABLE)) {
-    LOG_INFO("errsim here, do nothing");
+
   } else if (OB_SUCC(ret)) {
     int64_t max_proposal_id = palf::INVALID_PROPOSAL_ID;
     // update leader

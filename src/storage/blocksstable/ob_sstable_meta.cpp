@@ -1164,9 +1164,9 @@ int ObMigrationSSTableParam::serialize_(char *buf, const int64_t buf_len, int64_
   } else if (OB_FAIL(serialization::encode_bool(buf, buf_len, pos, is_empty_cg_sstables_))) {
     LOG_WARN("fail to serialize is_empty_cg_sstables_", K(ret), KP(buf), K(buf_len), K(pos));
   } else if (OB_FAIL(addr_serialize(root_block_addr_, root_block_buf_, buf, buf_len, pos))) {
-    STORAGE_LOG(WARN, "fail to serialize address", K(ret), KP(buf), K(buf_len), K(pos), K(root_block_addr_));
+
   } else if (OB_FAIL(addr_serialize(data_block_macro_meta_addr_, data_block_macro_meta_buf_, buf, buf_len, pos))) {
-    STORAGE_LOG(WARN, "fail to serialize address", K(ret), KP(buf), K(buf_len), K(pos), K(data_block_macro_meta_addr_));
+
   }
 
   LST_DO_CODE(OB_UNIS_ENCODE, is_meta_root_);
@@ -1226,10 +1226,10 @@ int ObMigrationSSTableParam::deserialize_(const char *buf, const int64_t data_le
   } else if (pos < data_len && OB_FAIL(serialization::decode_bool(buf, data_len, pos, &is_empty_cg_sstables_))) {
     LOG_WARN("fail to deserialize is_empty_cg_sstables_", K(ret), KP(buf), K(data_len), K(pos));
   } else if (pos < data_len && OB_FAIL(addr_deserialize(buf, data_len, pos, root_block_addr_, root_block_buf_))) {
-    STORAGE_LOG(WARN, "fail to deserialize address and buf", K(ret), KP(buf), K(data_len), K(pos));
+
   } else if (pos < data_len && OB_FAIL(addr_deserialize(buf, data_len, pos,
       data_block_macro_meta_addr_, data_block_macro_meta_buf_))) {
-    STORAGE_LOG(WARN, "fail to deserialize address and buf", K(ret), KP(buf), K(data_len), K(pos));
+
   }
 
   LST_DO_CODE(OB_UNIS_DECODE, is_meta_root_);
@@ -1271,7 +1271,7 @@ int ObMigrationSSTableParam::addr_serialize(const ObMetaDiskAddr &addr, const ch
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(addr.serialize(buf, buf_len, pos))) {
-    STORAGE_LOG(WARN, "fail to serialize address", K(ret), KP(buf), K(buf_len), K(pos), K(addr));
+
   } else if (addr.is_memory()) {
     MEMCPY(buf + pos, addr_buf, addr.size());
     pos += addr.size();
@@ -1284,15 +1284,15 @@ int ObMigrationSSTableParam::addr_deserialize(const char *buf, const int64_t dat
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(addr.deserialize(buf, data_len, pos))) {
-    STORAGE_LOG(WARN, "fail to deserialize address", K(ret), KP(buf), K(data_len), K(pos));
+
   } else if (addr.is_memory()) {
     char *data_buf = nullptr;
     if (pos + addr.size() > data_len) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "unexpected data len is not enough", K(ret), K(pos), K(data_len), K(addr));
+
     } else if (OB_ISNULL(data_buf = static_cast<char *>(allocator_.alloc(addr.size())))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "fail to alloc data buffer", K(ret), K(addr));
+
     } else {
       MEMCPY(data_buf, buf + pos, addr.size());
       root_buf = data_buf;

@@ -49,7 +49,7 @@ int ObMPInitDB::deserialize()
 
 int ObMPInitDB::process()
 {
-  LOG_INFO("init db", K_(db_name));
+
   int ret = OB_SUCCESS;
   bool need_disconnect = true;
   ObSQLSessionInfo *session = NULL;

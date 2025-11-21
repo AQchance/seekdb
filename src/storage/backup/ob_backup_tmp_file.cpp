@@ -52,7 +52,7 @@ int ObBackupTmpFile::open(const uint64_t tenant_id)
     tenant_id_ = tenant_id;
     file_size_ = 0;
     is_opened_ = true;
-    LOG_INFO("success to open backup tmp file", K_(tenant_id), K_(file_dir), K_(file_fd));
+
   }
   return ret;
 }
@@ -71,7 +71,7 @@ int ObBackupTmpFile::write(const char *buf, const int64_t size)
     LOG_WARN("failed to write tmp file", K(ret), K(io_info), K(timeout_ms));
   } else {
     file_size_ += size;
-    LOG_DEBUG("backup tmp file write", K(buf), K(size));
+
   }
   return ret;
 }
@@ -98,7 +98,7 @@ int ObBackupTmpFile::close()
     LOG_WARN("failed to remove tmp file fd", K(ret), K(file_fd_));
   } else {
     is_opened_ = false;
-    LOG_INFO("success to close backup tmp file", K(ret), K_(tenant_id), K_(file_dir), K_(file_fd));
+
   }
   return ret;
 }

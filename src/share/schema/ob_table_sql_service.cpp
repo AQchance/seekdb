@@ -2502,7 +2502,7 @@ int ObTableSqlService::create_table(ObTableSchema &table,
     end_usec = ObTimeUtility::current_time();
     cost_usec = end_usec - start_usec;
     start_usec = end_usec;
-    LOG_INFO("add_sequence for autoinc cost: ", K(cost_usec));
+
   }
 
   bool only_history = false;
@@ -2528,7 +2528,7 @@ int ObTableSqlService::create_table(ObTableSchema &table,
     end_usec = ObTimeUtility::current_time();
     cost_usec = end_usec - start_usec;
     start_usec = end_usec;
-    LOG_INFO("add_table cost: ", K(cost_usec));
+
     if (OB_FAIL(add_columns(sql_client, table))) {
       LOG_WARN("insert column schema failed, ", K(ret), K(table));
     } else if (OB_FAIL(add_constraints(sql_client, table))) {
@@ -2537,7 +2537,7 @@ int ObTableSqlService::create_table(ObTableSchema &table,
     end_usec = ObTimeUtility::current_time();
     cost_usec = end_usec - start_usec;
     start_usec = end_usec;
-    LOG_INFO("add_column cost: ", K(cost_usec));
+
     if (OB_SUCC(ret)) {
       if (OB_FAIL(add_table_part_info(sql_client, table))) {
         LOG_WARN("fail to add_table_part_info", K(ret));
@@ -2545,7 +2545,7 @@ int ObTableSqlService::create_table(ObTableSchema &table,
       end_usec = ObTimeUtility::current_time();
       cost_usec = end_usec - start_usec;
       start_usec = end_usec;
-      LOG_INFO("add part info cost: ", K(cost_usec));
+
     }
     // insert into all_foreign_key.
     if (OB_SUCC(ret) && !is_inner_table(table.get_table_id())) {
@@ -2588,11 +2588,11 @@ int ObTableSqlService::create_table(ObTableSchema &table,
       end_usec = ObTimeUtility::current_time();
       cost_usec = end_usec - start_usec;
       start_usec = end_usec;
-      LOG_INFO("log_operation cost: ", K(cost_usec));
+
     }
 
     if (OB_SUCC(ret)) {
-      LOG_DEBUG("add table", "table type", table.get_table_type(), "index type", table.get_index_type());
+
       if ((table.is_index_table()
           || table.is_aux_vp_table()
           || table.is_aux_lob_table()
@@ -2605,7 +2605,7 @@ int ObTableSqlService::create_table(ObTableSchema &table,
         end_usec = ObTimeUtility::current_time();
         cost_usec = end_usec - start_usec;
         start_usec = end_usec;
-        LOG_INFO("update_data_table_schema_version cost: ", K(cost_usec));
+
       }
     }
   }
@@ -3013,7 +3013,7 @@ int ObTableSqlService::add_transition_point_val(ObDMLSqlSplicer &dml,
     } else if (OB_FAIL(dml.add_column("b_transition_point", ObString(pos, transition_point_str)))) {
       LOG_WARN("Failed to add column b_transition_point", K(ret));
     } else {
-      LOG_DEBUG("transition point info", "transition_point", ObString(pos, transition_point_str).ptr(), K(pos));
+
     } //do nothing
   }
   return ret;
@@ -4184,10 +4184,10 @@ int ObTableSqlService::gen_column_dml_without_check(
         orig_default_value.assign_ptr(orig_default_value_buf, static_cast<int32_t>(orig_default_value_len));
         cur_default_value.assign_ptr(cur_default_value_buf, static_cast<int32_t>(cur_default_value_len));
       }
-      LOG_TRACE("begin gen_column_dml", K(ret), K(compat_mode), K(orig_default_value), K(cur_default_value),  K(orig_default_value_len), K(cur_default_value_len));
+
     }
   }
-  LOG_TRACE("begin gen_column_dml", K(ret), K(orig_default_value), K(cur_default_value), K(column));
+
   if (OB_SUCC(ret)) {
     ObString cur_default_value_v1;
     if (column.get_orig_default_value().is_null()) {

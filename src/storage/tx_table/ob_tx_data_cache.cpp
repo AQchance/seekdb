@@ -31,7 +31,7 @@ int ObTxDataCacheValue::init(const ObTxData &tx_data)
   int ret = OB_SUCCESS;
   if (IS_INIT) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init tx data cache value twice", KR(ret), KPC(this));
+
   } else {
     // reserve or allocate buf to store tx data
     int64_t size = tx_data.size_need_cache();
@@ -41,7 +41,7 @@ int ObTxDataCacheValue::init(const ObTxData &tx_data)
       tx_data_buf = &reserved_buf_;
     } else if (OB_ISNULL(tx_data_buf = mtl_malloc(size, "TX_DATA_CACHE"))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "allocate memory for tx data cache value failed", KR(ret));
+
     } else {
       mtl_alloc_buf_ = tx_data_buf;
     }
@@ -49,7 +49,7 @@ int ObTxDataCacheValue::init(const ObTxData &tx_data)
     // deep copy tx data to the buf
     if (OB_FAIL(ret)){
     } else if (OB_FAIL(inner_deep_copy_(tx_data_buf, tx_data))) {
-      STORAGE_LOG(WARN, "deep copy tx data failed", KR(ret), K(tx_data));
+
     } else {
       is_inited_ = true;
     }
@@ -64,12 +64,12 @@ int ObTxDataCacheValue::init(const ObTxDataCacheValue &tx_data_cache_val, void *
   const ObTxData *tx_data = nullptr;
   if (IS_INIT) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(ERROR, "init tx data cache value twice", KR(ret), KPC(this));
+
   } else if (OB_ISNULL(tx_data = tx_data_cache_val.get_tx_data())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(ERROR, "init tx data cache value with invalid argument", KR(ret), K(tx_data_cache_val));
+
   } else if (OB_FAIL(inner_deep_copy_(tx_data_buf, *tx_data))) {
-    STORAGE_LOG(WARN, "inner deep copy tx data failed", KR(ret), KPC(tx_data));
+
   } else {
     is_inited_ = true;
   }
@@ -92,15 +92,15 @@ int ObTxDataCacheValue::deep_copy(char *buf, const int64_t buf_len, ObIKVCacheVa
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "the tx data cache value to be copied is not inited", KR(ret), K(is_inited_), KP(tx_data_));
+
   } else if (OB_ISNULL(buf) || OB_UNLIKELY(buf_len < size())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", KR(ret), K(buf_len), K(size()));
+
   } else {
     ObTxDataCacheValue *tx_data_cache_value = new (buf) ObTxDataCacheValue();
     int64_t fixed_size = sizeof(*tx_data_cache_value);
     if (OB_FAIL(tx_data_cache_value->init(*this, buf + fixed_size, buf_len - fixed_size))) {
-      STORAGE_LOG(WARN, "init tx data cache failed", KR(ret));
+
     } else {
       value = tx_data_cache_value;
     }
@@ -114,7 +114,7 @@ int ObTxDataCacheValue::inner_deep_copy_(void *tx_data_buf, const ObTxData &rhs)
   int ret = OB_SUCCESS;
   if (OB_ISNULL(tx_data_buf)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(ERROR, "invalid buf", KR(ret), KP(tx_data_buf), K(rhs));
+
   } else {
     tx_data_ = new (tx_data_buf) ObTxData();
     tx_data_->assign_without_undo(rhs);
@@ -132,7 +132,7 @@ int ObTxDataCacheValue::inner_deep_copy_(void *tx_data_buf, const ObTxData &rhs)
       undo_node_array_ = (ObUndoStatusNode *)((char *)tx_data_buf + TX_DATA_SLICE_SIZE + TX_DATA_SLICE_SIZE);
       // ignore mds op
       if (OB_FAIL(inner_deep_copy_undo_status_(rhs))) {
-        STORAGE_LOG(WARN, "deep copy undo status node for tx data kv cache failed", KR(ret), K(rhs));
+
       }
     }
   }
@@ -153,7 +153,7 @@ int ObTxDataCacheValue::inner_deep_copy_undo_status_(const ObTxData &rhs)
     pre_node = rhs_node;
     if (OB_ISNULL(rhs_node)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(ERROR, "undo status list node count dismatach", KR(ret), K(i), K(rhs.op_guard_->get_undo_status_list().undo_node_cnt_));
+
     } else {
       undo_node_array_[i].assign_value(*rhs_node);
       undo_node_array_[i].next_ = nullptr;
@@ -174,14 +174,14 @@ int ObTxDataKVCache::get_row(const ObTxDataCacheKey &key, ObTxDataValueHandle &v
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!key.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid tx data cache key", KR(ret), K(key));
+
   } else if (OB_FAIL(get(key, val_handle.value_, val_handle.handle_))) {
     if (OB_UNLIKELY(OB_ENTRY_NOT_EXIST != ret)) {
-      STORAGE_LOG(WARN, "get value from tx data kv cache failed", KR(ret), K(key));
+
     }
   } else if (OB_ISNULL(val_handle.value_)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(ERROR, "get a nullptr from kv cache", KR(ret), K(key));
+
   }
   return ret;
 }
@@ -191,9 +191,9 @@ int ObTxDataKVCache::put_row(const ObTxDataCacheKey &key, const ObTxDataCacheVal
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!key.is_valid() || !value.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid tx data cache key or cache value", KR(ret), K(value));
+
   } else if (OB_FAIL(put(key, value, true /*overwrite*/))) {
-    STORAGE_LOG(WARN, "put tx data cache row failed", KR(ret), K(key), K(value));
+
   } else {
     // put tx data cache row success
   }

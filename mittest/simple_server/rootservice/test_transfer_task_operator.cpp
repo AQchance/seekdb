@@ -85,7 +85,7 @@ void TestTransferTaskOperator::SetUp()
   }
   ASSERT_EQ(OB_SUCCESS, task_.init(task_id_, src_ls_, dest_ls_, part_list_, status_, trace_id_,
       ObBalanceTaskID(12), data_version_));
-  LOG_INFO("tranfer task init", K(task_));
+
 }
 
 TEST_F(TestTransferTaskOperator, test_basic_func)
@@ -100,7 +100,7 @@ TEST_F(TestTransferTaskOperator, test_basic_func)
   ASSERT_EQ(OB_SUCCESS, tablet_info.init(ObTabletID(20001), 1));
   ASSERT_EQ(OB_SUCCESS, tablet_info.to_display_str(buf, sizeof(buf), pos));
   ASSERT_TRUE(0 == strcmp(buf, "20001:1"));
-  LOG_INFO("tablet_info str", K(buf), K(tablet_info));
+
   tablet_info.reset();
   ASSERT_EQ(OB_SUCCESS, tablet_info.parse_from_display_str(ObString::make_string(buf)));
   ASSERT_TRUE((tablet_info.tablet_id().id() == 20001) && (tablet_info.transfer_seq() == 1));
@@ -123,7 +123,7 @@ TEST_F(TestTransferTaskOperator, test_basic_func)
   ASSERT_EQ(OB_SUCCESS, part_info.init(123456, 654321));
   ASSERT_EQ(OB_SUCCESS, part_info.to_display_str(part_info_buf, sizeof(part_info_buf), pos));
   ASSERT_TRUE(0 == strcmp(part_info_buf, "123456:654321"));
-  LOG_INFO("part_info str", K(part_info_buf), K(part_info));
+
   part_info.reset();
   ASSERT_EQ(OB_SUCCESS, part_info.parse_from_display_str(ObString::make_string(part_info_buf)));
   ASSERT_TRUE((part_info.table_id() == 123456) && (part_info.part_object_id() == 654321));
@@ -142,9 +142,9 @@ TEST_F(TestTransferTaskOperator, test_basic_func)
   ObString part_list_str;
   ObTransferPartList new_part_list;
   ASSERT_EQ(OB_SUCCESS, part_list_.to_display_str(allocator, part_list_str));
-  LOG_INFO("ObTransferPartList to str", K(part_list_str));
+
   ASSERT_EQ(OB_SUCCESS, new_part_list.parse_from_display_str(part_list_str));
-  LOG_INFO("parse str into ObTransferPartList", K(new_part_list));
+
   ASSERT_TRUE(!new_part_list.empty());
   ARRAY_FOREACH_N(part_list_, idx, cnt) {
     ASSERT_TRUE(part_list_.at(idx) == new_part_list.at(idx));
@@ -154,10 +154,10 @@ TEST_F(TestTransferTaskOperator, test_basic_func)
   ObString table_lock_tablet_list_str;
   ObTransferTabletList new_tablet_list;
   ASSERT_EQ(OB_SUCCESS, tablet_list_.to_display_str(allocator, tablet_list_str));
-  LOG_INFO("ObTransferTabletList to str", K(tablet_list_str));
+
   ASSERT_EQ(OB_SUCCESS, table_lock_tablet_list_.to_display_str(allocator, table_lock_tablet_list_str));
   ASSERT_EQ(OB_SUCCESS, new_tablet_list.parse_from_display_str(tablet_list_str));
-  LOG_INFO("parse str into ObTransferTabletList", K(new_tablet_list));
+
   ASSERT_TRUE(!new_tablet_list.empty());
   ARRAY_FOREACH_N(tablet_list_, idx, cnt) {
     ASSERT_TRUE(tablet_list_.at(idx) == new_tablet_list.at(idx));
@@ -191,7 +191,7 @@ TEST_F(TestTransferTaskOperator, test_basic_func)
   ASSERT_EQ(OB_SUCCESS, task.init(task_id_, src_ls_, dest_ls_, part_list_str, empty_str, empty_str, table_lock_tablet_list_str, tablet_list_str,
       start_scn_, finish_scn_, status_, trace_id_, OB_SUCCESS, ObTransferTaskComment::EMPTY_COMMENT,
       ObBalanceTaskID(2), lock_owner_id_, data_version_));
-  LOG_INFO("tranfer task other init", K(task));
+
   ASSERT_TRUE(task.is_valid());
   task.reset();
   ASSERT_EQ(OB_SUCCESS, task.assign(task_));
@@ -218,7 +218,7 @@ TEST_F(TestTransferTaskOperator, test_operator)
   ObSimpleClusterTestBase::SetUp();
   ASSERT_EQ(OB_SUCCESS, create_tenant());
   ASSERT_EQ(OB_SUCCESS, get_tenant_id(tenant_id_));
-  LOG_INFO("new tenant_id", K(tenant_id_));
+
   ObMySQLProxy &sql_proxy = get_curr_observer().get_mysql_proxy();
 
   // get_all_task_status empty
@@ -254,10 +254,10 @@ TEST_F(TestTransferTaskOperator, test_operator)
   ASSERT_TRUE(task.get_task_id() == task_id_);
   ASSERT_TRUE(task.get_tablet_list().empty());
   ASSERT_TRUE(0 == strcmp(transfer_task_comment_to_str(task.get_comment()), "Task canceled"));
-  LOG_INFO("get from table", K(task));
+
   task.reset();
   ASSERT_EQ(OB_SUCCESS, ObTransferTaskOperator::get(sql_proxy, tenant_id_, task_id_, true, task, 0/*group_id*/));
-  LOG_INFO("get from table", K(task));
+
   ASSERT_EQ(OB_ENTRY_NOT_EXIST, ObTransferTaskOperator::get(sql_proxy, tenant_id_,
       ObTransferTaskID(555), false, task, 0/*group_id*/));
 
@@ -295,7 +295,7 @@ TEST_F(TestTransferTaskOperator, test_operator)
   task.reset();
   ASSERT_EQ(OB_SUCCESS, ObTransferTaskOperator::get(sql_proxy, tenant_id_, task_id_, false, task, 0/*group_id*/));
   ASSERT_TRUE(!task.get_tablet_list().empty());
-  LOG_INFO("update to start status", K(task));
+
   ASSERT_EQ(OB_STATE_NOT_MATCH, ObTransferTaskOperator::update_to_start_status(sql_proxy, tenant_id_,task_id_,
       ObTransferStatus(ObTransferStatus::ABORTED), part_list_, not_exist_part_list_, lock_conflict_part_list_, table_lock_tablet_list_, tablet_list_, ObTransferStatus(ObTransferStatus::START), lock_owner_id_));
 

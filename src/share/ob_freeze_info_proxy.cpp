@@ -159,7 +159,7 @@ int ObFreezeInfoProxy::get_freeze_info_larger_or_equal_than(
       }
     }
   }
-  LOG_INFO("finish load_freeze_info", KR(ret), K_(tenant_id), K(sql));
+
   return ret;
 }
 
@@ -196,7 +196,7 @@ int ObFreezeInfoProxy::get_max_frozen_scn_smaller_or_equal_than(
       }
     }
   }
-  LOG_INFO("finish to get freeze_info", KR(ret), K_(tenant_id), K(sql));
+
   return ret;
 }
 
@@ -242,7 +242,7 @@ int ObFreezeInfoProxy::batch_delete(
   } else if (OB_FAIL(sql_proxy.write(tenant_id_, sql.ptr(), affected_rows))) {
     LOG_WARN("fail to execute sql", KR(ret), K(sql), K_(tenant_id));
   } else {
-    LOG_INFO("succ to delete freeze_info", K_(tenant_id), K(upper_frozen_scn), K(affected_rows));
+
   }
   return ret;
 }

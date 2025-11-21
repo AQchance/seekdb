@@ -135,7 +135,7 @@ int ObReportingWFPieceMsgCtx::send_whole_msg(common::ObIArray<ObPxSqcMeta> &sqcs
     } else if (OB_FAIL(ch->flush(true /* wait */, false /* wait response */))) {
       LOG_WARN("fail flush dtl data", K(ret));
     } else {
-      LOG_DEBUG("dispatched winbuf whole msg", K(idx), K(cnt), K(whole_msg_), K(*ch));
+
     }
   }
   if (OB_SUCC(ret) && OB_FAIL(ObPxChannelUtil::sqcs_channles_asyn_wait(sqcs))) {
@@ -174,7 +174,7 @@ int ObReportingWFPieceMsgListener::on_message(
   }
   if (OB_SUCC(ret)) {
      ++ctx.received_;
-    LOG_TRACE("got a win buf picece msg", "all_got", ctx.received_, "expected", ctx.task_cnt_);
+
   }
   if (OB_SUCC(ret) && ctx.received_ == ctx.task_cnt_) {
     if (OB_FAIL(ctx.send_whole_msg(sqcs))) {

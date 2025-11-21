@@ -66,7 +66,7 @@ do {                                                                  \
   if (OB_UNLIKELY(0 == (CTX->get_row_scan_cnt(LOCAL_CNT) % 10000))) { \
     if (!access_ctx_->query_flag_.is_daily_merge()) {                 \
       if (OB_FAIL(THIS_WORKER.check_status())) {                      \
-        STORAGE_LOG(WARN, "query interrupt, ", K(ret));               \
+               \
       }                                                               \
     }                                                                 \
   }                                                                   \

@@ -342,7 +342,7 @@ int ObLSMeta::inc_update_transfer_scn(const int64_t ls_epoch, const share::SCN &
   if (OB_FAIL(check_can_update_())) {
     LOG_WARN("ls meta cannot update", K(ret), K(*this));
   } else if (transfer_scn_ > transfer_scn) {
-    LOG_INFO("transfer scn is small",  K_(tenant_id), K_(ls_id), K(transfer_scn), K_(transfer_scn));
+
   } else {
     ObLSMeta tmp(*this);
     tmp.transfer_scn_ = transfer_scn;
@@ -593,7 +593,7 @@ int ObLSMeta::update_ls_meta(
       major_mv_merge_info_ = src_ls_meta.major_mv_merge_info_;
       // store format doesn't change
     }
-    LOG_INFO("update ls meta", K(ret), K(tmp), K(src_ls_meta), K(*this));
+
   }
   return ret;
 }
@@ -914,7 +914,7 @@ int ObLSMeta::set_transfer_meta_info(
     LOG_WARN("invalid transfer meta info", K(ret), K(replay_scn), K(src_ls), K(src_scn), K(trans_status), K(data_version));
   } else if (transfer_scn_ > replay_scn) {
     need_update = false;
-    LOG_INFO("no need set transfer meta info", K(replay_scn), K(src_ls), K(transfer_scn_));
+
   } else if (transfer_scn_ == replay_scn) {
     if (transfer_meta_info_.is_trans_status_same(trans_status)) {
       need_update = false;
@@ -976,7 +976,7 @@ int ObLSMeta::cleanup_transfer_meta_info(
     LOG_WARN("invalid transfer meta info", K(ret), K(replay_scn));
   } else if (transfer_scn_ > replay_scn) {
     need_update = false;
-    LOG_INFO("no need cleanup transfer meta info", K(replay_scn), K(transfer_scn_), KPC(this));
+
   } else if (transfer_scn_ == replay_scn) {
     if (ObTransferInTransStatus::NONE != transfer_meta_info_.trans_status_) {
       ret = OB_ERR_UNEXPECTED;
@@ -986,7 +986,7 @@ int ObLSMeta::cleanup_transfer_meta_info(
     }
   } else {
     need_update = true;
-    LOG_INFO("need cleanup transfer meta info", K(replay_scn), K(transfer_scn_), KPC(this));
+
   }
 
   if (OB_FAIL(ret)) {

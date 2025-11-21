@@ -348,7 +348,7 @@ void ObVectorsResultHolder::ObColResultHolder::restore_continuous_base_single_ro
       convert_continuous_to_uniform(expr, from_idx, 0, eval_ctx);
       break;
     default:
-      LOG_INFO("get wrong vector format", K(dst_fmt));
+
       break;
   }
 }
@@ -672,7 +672,7 @@ int ObVectorsResultHolder::drive_row_extended(int64_t from_idx, int64_t start_ds
   } else {
     for (int64_t i = 0; OB_SUCC(ret) && i < exprs_->count(); ++i) {
       VectorFormat backup_format = backup_cols_[i].header_.format_;
-      LOG_DEBUG("drive row extended for NLJ_VEC_2, and backup format is", K(i), K(backup_format));
+
       VectorFormat extend_format = get_single_row_restore_format(backup_cols_[i].header_.get_format(), exprs_->at(i));
       if (OB_FAIL(exprs_->at(i)->init_vector(*eval_ctx_, extend_format, eval_ctx_->max_batch_size_))) {
         LOG_WARN("failed to init vector for backup expr", K(i), K(backup_cols_[i].header_.get_format()), K(ret));
@@ -724,7 +724,7 @@ int ObVectorsResultHolder::restore_single_row(int64_t from_idx, int64_t to_idx) 
         LOG_WARN("failed to init vector for backup expr", K(i), K(backup_cols_[i].header_.get_format()), K(ret));
       } else {
         VectorFormat format = backup_cols_[i].header_.format_;
-        LOG_DEBUG("vector format is", K(format));
+
         switch (format) {
           case VEC_FIXED:
               backup_cols_[i].restore_fixed_base_single_row(static_cast<ObFixedLengthBase &>

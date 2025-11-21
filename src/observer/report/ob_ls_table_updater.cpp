@@ -259,7 +259,7 @@ int ObLSTableUpdater::async_update(
   } else if (OB_FAIL(update_queue_set_.add_task(task))) {
     LOG_WARN("async_update failed", KR(ret), K(tenant_id), K(ls_id));
   } else {
-    LOG_TRACE("add ls table update task success", K(task));
+
   }
   return ret;
 }

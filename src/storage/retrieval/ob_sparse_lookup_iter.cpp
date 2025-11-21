@@ -72,7 +72,7 @@ int ObSRLookupIter::init(
       is_inited_ = true;
     }
   }
-  LOG_DEBUG("init sr lookup iter", K_(cache_capacity));
+
   return ret;
 }
 
@@ -85,7 +85,7 @@ void ObSRLookupIter::reset()
   input_row_cnt_ = 0;
   output_row_cnt_ = 0;
   is_inited_ = false;
-  LOG_DEBUG("reset sr lookup iter");
+
 }
 
 void ObSRLookupIter::reuse(const bool switch_tablet)
@@ -96,7 +96,7 @@ void ObSRLookupIter::reuse(const bool switch_tablet)
   rangekey_size_ = 0;
   input_row_cnt_ = 0;
   output_row_cnt_ = 0;
-  LOG_DEBUG("reuse sr lookup iter");
+
 }
 
 int ObSRLookupIter::get_next_row()
@@ -127,7 +127,7 @@ int ObSRLookupIter::get_next_row()
   } else {
     ++output_row_cnt_;
   }
-  LOG_DEBUG("get next row from sr lookup iter", K(ret), K_(output_row_cnt));
+
   return ret;
 }
 
@@ -146,7 +146,7 @@ int ObSRLookupIter::get_next_rows(const int64_t capacity, int64_t &count)
       LOG_WARN("failed to project results", K(ret), K(capacity), K(count));
     }
   }
-  LOG_DEBUG("get next rows from sr lookup iter", K(ret), K_(output_row_cnt), K(capacity), K(count));
+
   return ret;
 }
 
@@ -195,7 +195,7 @@ int ObSRSortedLookupIter::load_results()
         ret = OB_SUCCESS;
       }
     }
-    LOG_DEBUG("sr lookup iter loading results", K(ret), K_(rangekey_size), K(cur_idx), K(sub_count));
+
     ObEvalCtx *eval_ctx = iter_param_->eval_ctx_;
     const ObDatumVector &id_datums = iter_param_->id_proj_expr_->locate_expr_datumvector(*eval_ctx);
     const ObDatumVector &relevance_datums = iter_param_->relevance_proj_expr_->locate_expr_datumvector(*eval_ctx);
@@ -273,7 +273,7 @@ int ObSRSortedLookupIter::set_hints(const common::ObIArray<std::pair<ObDocIdExt,
       }
     }
   }
-  LOG_DEBUG("set hints of sr lookup iter", K(ret), K_(cache_capacity), K_(rangekey_size));
+
   return ret;
 }
 
@@ -312,7 +312,7 @@ int ObSRHashLookupIter::load_results()
         ret = OB_SUCCESS;
       }
     }
-    LOG_DEBUG("sr lookup iter loading results", K(ret), K_(rangekey_size), K(cur_idx), K(sub_count));
+
     ObEvalCtx *eval_ctx = iter_param_->eval_ctx_;
     const ObDatumVector &id_datums = iter_param_->id_proj_expr_->locate_expr_datumvector(*eval_ctx);
     const ObDatumVector &relevance_datums = iter_param_->relevance_proj_expr_->locate_expr_datumvector(*eval_ctx);
@@ -396,7 +396,7 @@ int ObSRHashLookupIter::set_hints(const common::ObIArray<std::pair<ObDocIdExt, i
       }
     }
   }
-  LOG_DEBUG("set hints of sr lookup iter", K(ret), K_(cache_capacity), K_(rangekey_size));
+
   return ret;
 }
 

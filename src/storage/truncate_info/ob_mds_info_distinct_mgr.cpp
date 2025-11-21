@@ -72,7 +72,7 @@ int ObMdsInfoDistinctMgr::init(
           LOG_WARN("failed to put truncate info array into kv cache", KR(tmp_ret), K(tablet_id), K(distinct_array_));
         }
       }
-      LOG_DEBUG("put truncate info array into kv cache", K(tmp_ret), K(tablet.get_tablet_id()), K(cache_key), K(distinct_array_), K(read_version_range));
+
     }
     is_inited_ = true;
   }
@@ -127,7 +127,7 @@ int ObMdsInfoDistinctMgr::build_distinct_array(
       LOG_WARN("unexpected nullptr in array", KR(ret), K(idx), K_(distinct_array));
     } else if (for_access && input_info->commit_version_ > read_version_range.snapshot_version_) {
       ret = OB_SNAPSHOT_DISCARDED;
-      LOG_INFO("refused to old snapshot access before truncate partition DDL", KR(ret), K(read_version_range), KPC(input_info));
+
     } else if (input_info->commit_version_ <= read_version_range.base_version_
               || input_info->commit_version_ > read_version_range.snapshot_version_) {
       continue;
@@ -150,7 +150,7 @@ int ObMdsInfoDistinctMgr::build_distinct_array(
               } else {
                 // use new input info to replace exist info
                 distinct_array_.at(j) = input_array.at(idx);
-                LOG_INFO("use new input info to replace exist info", KR(ret), K(exist_info), KPC(input_info));
+
               }
             }
             exist = true;
@@ -194,7 +194,7 @@ int ObMdsInfoDistinctMgr::fill_mds_filter_info(
     if (FAILEDx(mds_filter_info.init_truncate_keys(allocator, truncate_info_keys))) {
       LOG_WARN("failed to init truncate info keys", KR(ret), K(truncate_info_keys));
     } else {
-      LOG_INFO("[TRUNCATE INFO] success to init mds filter info", KR(ret), K(mds_filter_info));
+
     }
   }
   return ret;

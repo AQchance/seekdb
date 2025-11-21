@@ -116,7 +116,7 @@ int ObServerBalancer::tenant_group_balance()
       if (OB_FAIL(zone_mgr_->get_zone(ObZoneStatus::ACTIVE, zones))) {
         LOG_WARN("get_zone failed", "status", ObZoneStatus::ACTIVE, K(ret));
       } else {
-        LOG_INFO("start to do tenant group unit balance");
+
         // The server balance of all zones is completed independently
         for (int64_t i = 0; OB_SUCC(ret) && i < zones.count(); ++i) {
           bool can_execute_rebalance = false;
@@ -138,7 +138,7 @@ int ObServerBalancer::tenant_group_balance()
 int ObServerBalancer::balance_servers()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start do unit balance");
+
   ObRootBalanceHelp::BalanceController balance_controller;
   ObString switch_config_str = GCONF.__balance_controller.str();
   DEBUG_SYNC(START_UNIT_BALANCE);
@@ -172,7 +172,7 @@ int ObServerBalancer::balance_servers()
       }
     }
   }
-  LOG_INFO("finish do unit balance", K(ret));
+
   return ret;
 }
 
@@ -228,7 +228,7 @@ int ObServerBalancer::distribute_pool_for_standalone_sys_unit(
         LOG_WARN("fail to get server status", K(ret), "server", unit->server_);
       } else if (!server_info.is_active()) {
         // Only process servers that are active, skip non-active servers
-        LOG_INFO("unit server status not active", K(ret), K(server_info), K(*unit));
+
       } else if (!has_exist_in_array(sys_unit_server_array, unit->server_)) {
         // bypass
       } else if (OB_FAIL(unit_stat_mgr_.get_unit_stat(
@@ -288,7 +288,7 @@ int ObServerBalancer::distribute_for_standalone_sys_unit()
   const bool enable_sys_unit_standalone = GCONF.enable_sys_unit_standalone;
   ObArray<ObAddr> sys_unit_server_array;
   const common::ObZone empty_zone; // means all zones
-  LOG_INFO("start distribute for standalone sys unit");
+
   if (!check_inner_stat()) {
     ret = OB_INNER_STAT_ERROR;
     LOG_WARN("fail to check inner stat", K(ret), K(inited_));
@@ -325,7 +325,7 @@ int ObServerBalancer::distribute_for_standalone_sys_unit()
 int ObServerBalancer::distribute_for_server_status_change()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start distribute for server status change");
+
   if (!check_inner_stat()) {
     ret = OB_INNER_STAT_ERROR;
     LOG_WARN("check_inner_stat failed", K_(inited),  K(ret));
@@ -376,7 +376,7 @@ int ObServerBalancer::distribute_for_server_status_change()
       LOG_WARN("distribute by pool failed", "pool", *(pool_it->second), K(ret));
     }
   }
-  LOG_INFO("finish distribute for server status change", K(ret));
+
   return ret;
 }
 
@@ -541,7 +541,7 @@ int ObServerBalancer::distribute_for_permanent_offline_or_delete(
       //   }
       // }
     } else {
-      LOG_INFO("revert migrate unit success", K(ret), K(unit_info), K(server_info));
+
     }
   }
   ObUnitStat unit_stat;
@@ -609,7 +609,7 @@ int ObServerBalancer::distribute_for_permanent_offline_or_delete(
         migrate_server))) {
       LOG_WARN("fail to try migrate unit", "unit", unit_info.unit_, K(migrate_server), K(ret));
     } else {
-      LOG_INFO("migrate unit success", K(module), K(unit_info), K(server_info), "dest_server", migrate_server);
+
     }
   }
   return ret;
@@ -820,7 +820,7 @@ int ObServerBalancer::check_can_execute_rebalance(
       LOG_WARN("fail to get zone info", K(ret), K(zone));
     } else if (ObZoneStatus::ACTIVE != zone_info.status_) {
       can_execute_rebalance = false;
-      LOG_INFO("cannot execute server rebalance: zone inactive", K(zone));
+
     } else if (OB_FAIL(SVR_TRACER.get_servers_of_zone(zone, server_list))) {
       LOG_WARN("fail to get servers of zone", K(ret), K(zone));
     } else if (OB_FAIL(unit_mgr_->inner_get_unit_ids(unit_ids))) {
@@ -853,7 +853,7 @@ int ObServerBalancer::check_can_execute_rebalance(
           LOG_WARN("fail to get server status", K(ret));
         } else if (server_info.is_temporary_offline() || server_info.is_stopped()) {
           can_execute_rebalance = false;
-          LOG_INFO("cannot execute server rebalance: Server status is not normal", K(zone), K(server_info));
+
         } else if (OB_FAIL(server_mgr_->get_server_resource_info(server_info.get_server(), resource_info))) {
           LOG_WARN("fail to execute get_server_resource_info", KR(ret), K(server_info.get_server()));
         } else if (fabs(resource_info.report_cpu_assigned_ - sum_load.min_cpu()) > CPU_EPSILON
@@ -874,10 +874,10 @@ int ObServerBalancer::check_can_execute_rebalance(
           LOG_WARN("unit ptr is null", K(ret), KP(unit));
         } else if (ObUnit::UNIT_STATUS_DELETING == unit->status_) {
           can_execute_rebalance = false;
-          LOG_INFO("cannot execute server rebalance: unit deleting", K(zone), "unit", *unit);
+
         } else if (unit->migrate_from_server_.is_valid()) {
           can_execute_rebalance = false;
-          LOG_INFO("cannot execute server rebalance: unit migrating", K(zone), "unit", *unit);
+
         } else {} // unit in stable status
       }
     }
@@ -893,7 +893,7 @@ int ObServerBalancer::rebalance_servers_v2(
   common::ObArray<uint64_t> standalone_tenant_array;
   common::ObArray<ObUnitManager::ObUnitLoad> not_grant_units;
   common::ObArray<ObUnitManager::ObUnitLoad> standalone_units;
-  LOG_INFO("start to do tenant group unit balance", K(zone));
+
   if (OB_UNLIKELY(!inited_)) {
     ret = OB_NOT_INIT;
     LOG_WARN("not init", K(ret));
@@ -1212,7 +1212,7 @@ int ObServerBalancer::generate_available_servers(
         // Permanently offline and deleting servers are not available servers
       }
     }
-    LOG_INFO("generate available servers finish", K(ret), K(zone), K(available_servers));
+
   }
   return ret;
 }
@@ -1231,7 +1231,7 @@ int ObServerBalancer::check_need_balance_sys_tenant_units(
       LOG_WARN("unit load invalid", K(ret), K(unit_load));
     } else if (!has_exist_in_array(available_servers, unit_load.unit_->server_)) {
       need_balance = true;
-      LOG_INFO("need to execute sys tenant units balance", "unit", *unit_load.unit_);
+
     } else {} // go on to check next
   }
   return ret;
@@ -1606,7 +1606,7 @@ int ObServerBalancer::try_balance_sys_tenant_units(
           zone, false /* sys unit not excluded*/ , available_servers))) {
     LOG_WARN("fail to generate available servers", K(ret), K(zone));
   } else if (available_servers.count() <= 0) {
-    LOG_INFO("no available servers, bypass", K(zone));
+
   } else if (OB_FAIL(unit_mgr_->get_tenant_zone_all_unit_loads(
           common::OB_SYS_TENANT_ID, zone, sys_tenant_units))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
@@ -1660,7 +1660,7 @@ int ObServerBalancer::try_balance_non_sys_tenant_units(
           zone, enable_sys_unit_standalone, available_servers))) {
     LOG_WARN("fail to generate available servers", K(ret));
   } else if (available_servers.count() <= 0) {
-    LOG_INFO("no available servers, bypass", K(zone));
+
   } else {
     for (int64_t i = 0; OB_SUCC(ret) && i < balance_info_array.count(); ++i) {
       TenantGroupBalanceInfo &balance_info = balance_info_array.at(i);
@@ -1743,7 +1743,7 @@ int ObServerBalancer::do_degrade_tenant_group_matrix(
     ret = OB_NOT_INIT;
     LOG_WARN("not init", K(ret));
   } else {
-    LOG_INFO("start degrade tenant group matrix", K(source_tenant_group));
+
     for (int64_t i = 0; OB_SUCC(ret) && i < source_tenant_group.get_row_count(); ++i) {
       Matrix<uint64_t> tenant_id_vector;
       const int64_t VECTOR_ROW_CNT = 1;
@@ -1766,7 +1766,7 @@ int ObServerBalancer::do_degrade_tenant_group_matrix(
         } else if (OB_FAIL(degraded_tenant_group_array.push_back(tenant_id_vector))) {
           LOG_WARN("fail to push back", K(ret));
         } else {
-          LOG_INFO("output vector tenant group", K(i), "vector_ttg", tenant_id_vector);
+
         }
       }
     }
@@ -2437,7 +2437,7 @@ int ObServerBalancer::try_balance_disk_by_stable_tenantgroup(
           zone, available_servers, g_res_weights, RES_MAX, server_loads))) {
     LOG_WARN("fail to generate complete server loads", K(ret));
   } else {
-    LOG_INFO("do balance disk by stable tenantgroup", K(ret), K(disk_over_servers));
+
     common::ObArray<UnitMigrateStat> task_array;
     do_balance_disk = false;
     for (int64_t i = 0; OB_SUCC(ret) && i < disk_over_servers.count(); ++i) {
@@ -3627,7 +3627,7 @@ int ObServerBalancer::try_generate_square_task_from_ttg_matrix(
     } else if (enough) {
       // good, return the task array
     } else {
-      LOG_INFO("server resource not enough");
+
       task_array.reset();
       // Matrix task cannot be executed at the same time, clear task
     }
@@ -3684,7 +3684,7 @@ int ObServerBalancer::try_generate_line_task_from_ttg_matrix(
         if (enough) {
           // good, return the task array
         } else {
-          LOG_INFO("server resource not enough");
+
           task_array.reset();
           // row task cannot be executed at the same time, clear task
         }
@@ -3713,7 +3713,7 @@ int ObServerBalancer::try_generate_dot_task_from_migrate_stat(
           unit_migrate_stat, dummy_collide_unit, tenant_unit_collide))) {
     LOG_WARN("fail to check unit migrate stat unit", K(ret));
   } else if (tenant_unit_collide) {
-    LOG_INFO("migrate unit collide", K(unit_migrate_stat), K(dummy_collide_unit));
+
     task_array.reset();
   } else if (OB_FAIL(accumulate_balance_task_loadsum(unit_migrate_stat, server_load_sums))) {
     LOG_WARN("fail to accumulate balance task loadsum", K(ret));
@@ -3724,7 +3724,7 @@ int ObServerBalancer::try_generate_dot_task_from_migrate_stat(
   } else if (enough) {
     // good
   } else {
-    LOG_INFO("server resource not enough", K(server_load_sums));
+
     task_array.reset();
   }
   return ret;
@@ -4726,7 +4726,7 @@ int ObServerBalancer::make_non_ttg_balance_under_load_by_disk(
       } else if (OB_FAIL(task_array.push_back(unit_migrate))) {
         LOG_WARN("fail to push back", K(ret));
       } else {
-        LOG_INFO("unit migration task generated for disk in use over waterlevel", KR(ret), K(unit_stat), K(unit_migrate));
+
         break;
         // unit migrate success
       }
@@ -4842,7 +4842,7 @@ int ObServerBalancer::check_and_do_migrate_unit_task_(
             K(idx), K(task), K(lbt()));
         can_do_unit_migrate = false;
       } else {
-        LOG_INFO("[SERVER_BALANCE] [CHECK_CAN_DO] unit can do migrate", K(idx), K(task), K(lbt()));
+
         // other tenant unit can do migrate
         can_do_unit_migrate = true;
       }
@@ -5255,7 +5255,7 @@ int ObServerBalancer::do_non_tenantgroup_unit_balance_task(
   common::ObArray<ServerTotalLoad *> under_server_loads;
   double upper_lmt = 0.0;
 
-  LOG_INFO("start do non-tenantgroup unit balance task", K(zone));
+
 
   if (OB_UNLIKELY(!inited_)) {
     ret = OB_NOT_INIT;
@@ -7772,7 +7772,7 @@ int ObServerBalancer::generate_zone_server_disk_statistic(
       } else {} // no more to do
     }
     if (OB_SUCC(ret)) {
-      LOG_INFO("build zone disk statistic succeed", K(ret), K(zone_disk_statistic_));
+
     }
   }
   return ret;

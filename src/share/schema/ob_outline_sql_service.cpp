@@ -312,7 +312,7 @@ int ObOutlineSqlService::add_outline(common::ObISQLClient &sql_client,
     if (only_history && 0 == STRCMP(tname[i], OB_ALL_OUTLINE_TNAME)) {
       continue;
     } else if (OB_FAIL(sql.assign_fmt("INSERT INTO %s (", tname[i]))) {
-      STORAGE_LOG(WARN, "append table name failed, ", K(ret));
+
     } else {
       SQL_COL_APPEND_VALUE(sql, values, ObSchemaUtils::get_extract_tenant_id(exec_tenant_id, outline_info.get_tenant_id()), "tenant_id", "%lu");
       SQL_COL_APPEND_VALUE(sql, values, ObSchemaUtils::get_extract_schema_id(exec_tenant_id, outline_info.get_outline_id()), "outline_id", "%lu");

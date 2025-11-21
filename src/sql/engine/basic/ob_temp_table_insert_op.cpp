@@ -198,7 +198,7 @@ int ObTempTableInsertOp::do_get_next_batch(const int64_t max_row_cnt)
       (void) brs_.copy(child_brs);
       break;
     }
-    LOG_DEBUG("finish processing batch result", KPC(child_brs));
+
   }
   return ret;
 }

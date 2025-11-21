@@ -199,7 +199,7 @@ TEST_F(TestUtlFileHandler, fcopy)
     md5str dst_result;
     ASSERT_EQ(OB_SUCCESS, md5sum(dir, src_filename, src_result));
     ASSERT_EQ(OB_SUCCESS, md5sum(dir, dst_filename, dst_result));
-    LOG_INFO("md5sum", "src_result", src_result.to_string(), "dst_result", dst_result.to_string());
+
     ASSERT_TRUE(src_result == dst_result);
   }
 
@@ -215,7 +215,7 @@ TEST_F(TestUtlFileHandler, fcopy)
     md5str dst_result;
     ASSERT_EQ(OB_SUCCESS, md5sum(dir, src_filename, begin, end, src_result));
     ASSERT_EQ(OB_SUCCESS, md5sum(dir, dst_filename, dst_result));
-    LOG_INFO("md5sum", "src_result", src_result.to_string(), "dst_result", dst_result.to_string());
+
     ASSERT_TRUE(src_result == dst_result);
   }
 
@@ -232,7 +232,7 @@ TEST_F(TestUtlFileHandler, fcopy)
     md5str dst_result;
     ASSERT_EQ(OB_SUCCESS, md5sum(dir, src_filename, begin, end, src_result));
     ASSERT_EQ(OB_SUCCESS, md5sum(dir, dst_filename, dst_result));
-    LOG_INFO("md5sum", "src_result", src_result.to_string(), "dst_result", dst_result.to_string());
+
     ASSERT_TRUE(src_result == dst_result);
   }*/
 

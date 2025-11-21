@@ -142,7 +142,7 @@ int ObTableLoadRedefTable::start(const ObTableLoadRedefTableStartArg &arg,
       res.task_id_ = create_table_res.task_id_;
       res.schema_version_ = create_table_res.schema_version_;
       res.is_no_logging_ = create_table_res.is_no_logging_;
-      LOG_INFO("succeed to create hidden table", K(arg), K(res));
+
       if (OB_UNLIKELY(res.snapshot_version_ <= 0 || res.data_format_version_ <= 0)) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("invalid snapshot version", K(ret), K(res));
@@ -191,7 +191,7 @@ int ObTableLoadRedefTable::finish(const ObTableLoadRedefTableFinishArg &arg,
     if (OB_FAIL(ObDDLServerClient::copy_table_dependents(copy_table_dependents_arg, session_info))) {
       LOG_WARN("failed to copy table dependents", KR(ret), K(copy_table_dependents_arg));
     } else {
-      LOG_INFO("succeed to copy table dependents", K(copy_table_dependents_arg));
+
       ObFinishRedefTableArg finish_redef_table_arg;
       finish_redef_table_arg.task_id_ = arg.task_id_;
       finish_redef_table_arg.tenant_id_ = arg.tenant_id_;
@@ -219,7 +219,7 @@ int ObTableLoadRedefTable::finish(const ObTableLoadRedefTableFinishArg &arg,
           ret = OB_DIRECT_LOAD_COMMIT_ERROR;
         }
       } else {
-        LOG_INFO("succeed to finish redef table", KR(ret), K(finish_redef_table_arg));
+
       }
     }
     THIS_WORKER.set_timeout_ts(origin_timeout_ts);
@@ -244,7 +244,7 @@ int ObTableLoadRedefTable::abort(const ObTableLoadRedefTableAbortArg &arg,
     if (OB_FAIL(ObDDLServerClient::abort_redef_table(abort_redef_table_arg, &session_info))) {
       LOG_WARN("failed to abort redef table", KR(ret), K(abort_redef_table_arg));
     } else {
-      LOG_INFO("succeed to abort hidden table", K(arg));
+
     }
     THIS_WORKER.set_timeout_ts(origin_timeout_ts);
   }

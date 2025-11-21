@@ -73,7 +73,7 @@ int ObPDMLOpDataDriver::init(const ObTableModifySpec &spec,
     if (OB_FAIL(cache_.init(MTL_ID(), 1, with_barrier_, spec))) {
       LOG_WARN("failed to init batch row cache", K(ret));
     } else {
-      LOG_TRACE("init pdml data driver", KPC(dml_rtdef_));
+
     }
   }
   return ret;
@@ -160,7 +160,7 @@ int ObPDMLOpDataDriver::get_next_row(ObExecContext &ctx, const ObExprPtrIArray &
         }
       } else {
         found = true;
-        LOG_DEBUG("read row from cache", K(row), K(state_));
+
       }
     }
   } while (OB_SUCC(ret) && FILL_CACHE == state_ && !found);
@@ -220,7 +220,7 @@ int ObPDMLOpDataDriver::fill_cache_unitl_cache_full_or_child_iter_end(ObExecCont
           LOG_WARN("failed to add row to cache", K_(with_barrier), K(ret));
         }
       } else {
-        LOG_DEBUG("add row to cache successfully", "row", ROWEXPR2STR(*eval_ctx_, *row), K(tablet_id));
+
       }
     } while (OB_SUCCESS == ret);
     // reader has finished reading error, can be processed
@@ -366,7 +366,7 @@ int ObPDMLOpDataDriver::next_row_from_cache_for_returning(const ObExprPtrIArray 
       if (OB_FAIL(switch_row_iter_to_next_partition())) {
         if (OB_ITER_END == ret) {
           // Indicates there is no next partition, return OB_ITER_END
-          LOG_TRACE("no next partition row iter can be switched to", K(ret));
+
         } else {
           LOG_WARN("failed to switch next partition row iter", K(ret));
         }

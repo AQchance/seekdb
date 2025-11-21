@@ -109,7 +109,7 @@ public:
 
   ~HnswIndexHandler() {
     index_ = nullptr;
-    LOG_INFO("[OBVSAG] after deconstruction, hnsw index", KP(allocator_), K(index_.use_count()), K(lbt()));
+
   }
   int build_index(const vsag::DatasetPtr &base);
   int get_index_number();
@@ -180,7 +180,7 @@ int HnswIndexHandler::build_index(const vsag::DatasetPtr &base)
   int ret = OB_SUCCESS;
   tl::expected<std::vector<int64_t>, Error> result = index_->Build(base);
   if (result.has_value()) {
-    LOG_DEBUG("build index success");
+
   } else {
     ret = vsag_errcode2ob(result.error().type);
   }
@@ -197,7 +197,7 @@ int HnswIndexHandler::add_index(const vsag::DatasetPtr &incremental)
   int ret = OB_SUCCESS;
   tl::expected<std::vector<int64_t>, Error> result = index_->Add(incremental);
   if (result.has_value()) {
-    LOG_DEBUG("add index success", K(get_index_number()));
+
   } else {
     ret = vsag_errcode2ob(result.error().type);
   }
@@ -255,7 +255,7 @@ int HnswIndexHandler::get_extra_info_by_ids(const int64_t *ids, int64_t count,
   int ret = OB_SUCCESS;
   tl::expected<void, Error> result = index_->GetExtraInfoByIds(ids, count, extra_infos);
   if (result.has_value()) {
-    LOG_DEBUG("get_extra_info_by_ids success", KP(ids), K(count), KP(extra_infos));
+
   } else {
     ret = vsag_errcode2ob(result.error().type);
   }
@@ -267,7 +267,7 @@ int HnswIndexHandler::get_vid_bound(int64_t &min_vid, int64_t &max_vid)
   int ret = OB_SUCCESS;
   int64_t element_cnt = index_->GetNumElements();
   if (element_cnt == 0) {
-    LOG_TRACE("num elements is zero");
+
   } else {
     tl::expected<std::pair<int64_t, int64_t>, Error> result = index_->GetMinAndMaxId();
     if (result.has_value()) {
@@ -423,11 +423,11 @@ void set_log_level(int32_t ob_level_num)
 bool is_init_ = vsag::init();
 bool is_init()
 {
-    LOG_INFO("[OBVSAG] Init VsagLib]:");
+
     if (is_init_) {
-        LOG_INFO("[OBVSAG] Init VsagLib success");
+
     } else {
-        LOG_INFO("[OBVSAG] Init VsagLib fail");
+
     }
     return is_init_; 
 }
@@ -634,7 +634,7 @@ int construct_vsag_create_param(
     LOG_WARN("failed to fill result_param_str", K(ret));
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("build param", K(create_type), KCSTRING(result_param_str), K(lbt()));
+
   }
   return ret;
 }
@@ -676,7 +676,7 @@ int construct_vsag_sindi_create_param(uint8_t create_type, const char *dtype, co
     LOG_WARN("failed to fill result_param_str", K(ret));
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("build param", K(create_type), KCSTRING(result_param_str), K(lbt()));
+
   }
   return ret;
 }
@@ -724,7 +724,7 @@ int construct_vsag_search_param(uint8_t create_type,
     LOG_WARN("failed to fill result_param_str", K(ret), K(index_type_str));
   }
   if (OB_SUCC(ret)) {
-    LOG_TRACE("search param", KCSTRING(result_param_str), K(lbt()));
+
   }
   return ret;
 }
@@ -754,7 +754,7 @@ int construct_vsag_sindi_search_param(float query_prune_ratio, uint64_t n_candid
     LOG_WARN("failed to fill result_param_str", K(ret), K(index_type_str));
   }
   if (OB_SUCC(ret)) {
-    LOG_TRACE("search param", KCSTRING(result_param_str), K(lbt()));
+
   }
   return ret;
 }
@@ -774,16 +774,16 @@ int create_index(VectorIndexPtr &index_handler,
     vsag::Allocator *vsag_allocator = nullptr;
     if (allocator == nullptr) {
       vsag_allocator = nullptr;
-      LOG_INFO("[OBVSAG] allocator is null , use default_allocator", K(index_type), K(lbt()));
+
     } else {
       vsag_allocator = static_cast<vsag::Allocator *>(allocator);
-      LOG_INFO("[OBVSAG] use caller allocator ", K(index_type), K(lbt()));
+
     }
   
     // hgraph of vsag needs to be multiplied by 2 so as to align recall with hnsw
     if (HNSW_SQ_TYPE == index_type || HNSW_BQ_TYPE == index_type || HGRAPH_TYPE == index_type) {
       max_degree *= 2;
-      LOG_INFO("change max_degree for hgraph", K(index_type), K(max_degree), K(lbt()));
+
     }
 
     const char* index_type_str = get_index_type_str(index_type);
@@ -829,10 +829,10 @@ int create_index(VectorIndexPtr &index_handler, IndexType index_type, const char
     vsag::Allocator *vsag_allocator = nullptr;
     if (allocator == nullptr) {
       vsag_allocator = nullptr;
-      LOG_INFO("[OBVSAG] allocator is null , use default_allocator", K(index_type), K(lbt()));
+
     } else {
       vsag_allocator = static_cast<vsag::Allocator *>(allocator);
-      LOG_INFO("[OBVSAG] use caller allocator ", K(index_type), K(lbt()));
+
     }
 
     const char *index_type_str = get_index_type_str(index_type);
@@ -1199,7 +1199,7 @@ int fserialize(VectorIndexPtr &index_handler, std::ostream &out_stream)
     HnswIndexHandler *hnsw = static_cast<HnswIndexHandler *>(index_handler);
     tl::expected<void, Error> bs = hnsw->get_index()->Serialize(out_stream);
     if (bs.has_value()) {
-      LOG_INFO("[OBVSAG] serialize index success");
+
     } else {
       ret = vsag_errcode2ob(bs.error().type);
       LOG_WARN("[OBVSAG] fserialize error happend", K(ret), K(bs.error().type));
@@ -1265,7 +1265,7 @@ int fdeserialize(VectorIndexPtr &index_handler,
         tl::expected<void, Error> bs = hnsw_index->Deserialize(in_stream);
         if (bs.has_value()) {
           hnsw->set_index(hnsw_index);
-          LOG_INFO("[OBVSAG] fdeserialize success", KCSTRING(result_param_str));
+
         } else {
           ret = vsag_errcode2ob(bs.error().type);
           LOG_WARN("[OBVSAG] fdeserialize error", K(ret), K(index.error().type));
@@ -1294,7 +1294,7 @@ int delete_index(VectorIndexPtr &index_handler)
 
 void delete_iter_ctx(void *iter_ctx)
 {
-  LOG_TRACE("[OBVAG] delete_iter_ctx", KP(iter_ctx), K(lbt()));
+
   if (iter_ctx != nullptr) {
     delete static_cast<vsag::IteratorContext *>(iter_ctx);
     iter_ctx = nullptr;

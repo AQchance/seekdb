@@ -340,7 +340,7 @@ int ObRawExpr::get_name(char *buf, const int64_t buf_len, int64_t &pos, ExplainT
   if (OB_FAIL(check_stack_overflow(is_stack_overflow))) {
     LOG_WARN("fail to check stack overflow", K(ret), K(is_stack_overflow));
   } else if (is_stack_overflow) {
-    LOG_DEBUG("too deep recursive", K(ret), K(is_stack_overflow));
+
   } else {
     if (OB_FAIL(get_name_internal(buf, buf_len, pos, type))) {
       LOG_WARN("fail to get_name", K(buf_len), K(pos), K(ret));
@@ -402,7 +402,7 @@ int ObRawExpr::deduce_type(const ObSQLSessionInfo *session_info,
         OB_ERR_INVALID_COLUMN_NUM != ret &&
         OB_ERR_TOO_MANY_VALUES != ret) {
       ret = OB_SUCCESS;
-      LOG_TRACE("ps prepare phase ignores type deduce error");
+
     } else {
       LOG_WARN("fail to deduce", K(ret));
     }
@@ -2922,7 +2922,7 @@ int ObOpRawExpr::get_name_internal(char *buf, const int64_t buf_len, int64_t &po
              && T_OP_BOOL == get_expr_type()) {
     CK(1 == get_param_count());
     OZ(get_param_expr(0)->get_name(buf, buf_len, pos, type));
-    LOG_DEBUG("debug print wrapper inner", K(ret), K(lbt()));
+
   } else if (T_OP_BOOL == get_expr_type()) {
     if (OB_UNLIKELY(1 != get_param_count())) {
       ret = OB_ERR_UNEXPECTED;

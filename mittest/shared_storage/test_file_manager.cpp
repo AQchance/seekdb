@@ -38,14 +38,14 @@ using namespace oceanbase::storage;
   {                                                               \
     file_id.set_storage_object_type(OBJ_TYPE);                    \
     ret = ctx.set_file_ctx(file_id, ls_epoch_id, IS_LOCAL_CACHE); \
-    LOG_INFO("file id to path", KR(ret), K(file_id), K(ls_epoch_id), K(IS_LOCAL_CACHE), K(ctx.get_path())); \
+ \
   }
 
 #define PRINT_MACRO_ID_PARENT_DIR_PATH(OBJ_TYPE) \
   {                                              \
     file_id.set_storage_object_type(OBJ_TYPE);   \
     ret = ObFileHelper::get_file_parent_dir(dir_path, common::MAX_PATH_SIZE, file_id, ls_epoch_id); \
-    LOG_INFO("file id's parent dir path", KR(ret), K(file_id), K(ls_epoch_id), K(dir_path)); \
+ \
   }
 
 #define CHECK_MACRO_ID_TO_PATH(OBJ_TYPE, IS_LOCAL_CACHE, EXPECTED_RET, EXPECTED_PATH)        \

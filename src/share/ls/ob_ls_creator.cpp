@@ -146,7 +146,7 @@ int ObLSCreator::create_user_ls(
 {
   int ret = OB_SUCCESS;
   const int64_t start_time = ObTimeUtility::current_time(); 
-  LOG_INFO("start to create log stream", K_(id), K_(tenant_id));
+
   if (OB_UNLIKELY(!is_valid())) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", KR(ret));
@@ -179,7 +179,7 @@ int ObLSCreator::create_user_ls(
         if (OB_FAIL(alloc_duplicate_ls_addr_(tenant_id_, zone_locality, addr))) {
           LOG_WARN("failed to alloc duplicate ls addr", KR(ret), K_(tenant_id));
         } else {
-          LOG_INFO("finish alloc duplicate ls addr", K_(tenant_id), K(addr));
+
         }
       } else if (OB_FAIL(alloc_user_ls_addr(tenant_id_, status_info.unit_group_id_,
                                              zone_locality, addr))) {
@@ -202,7 +202,7 @@ int ObLSCreator::create_user_ls(
     }
   }
   const int64_t cost = ObTimeUtility::current_time() - start_time;
-  LOG_INFO("finish to create log stream", KR(ret), K_(id), K_(tenant_id), K(cost));
+
   LS_EVENT_ADD(tenant_id_, id_, "create_ls_finish", ret, paxos_replica_num, "", K(cost));
   return ret;
 }
@@ -249,7 +249,7 @@ int ObLSCreator::create_tenant_sys_ls(
     const ObAllTenantInfo &tenant_info)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start to create log stream", K_(id), K_(tenant_id));
+
   const int64_t start_time = ObTimeUtility::current_time();
   share::ObLSStatusInfo status_info;
   if (OB_UNLIKELY(!is_valid())) {
@@ -310,7 +310,7 @@ int ObLSCreator::create_tenant_sys_ls(
     }
   }
   const int64_t cost = ObTimeUtility::current_time() - start_time;
-  LOG_INFO("finish to create log stream", KR(ret), K_(id), K_(tenant_id), K(cost));
+
   LS_EVENT_ADD(tenant_id_, id_, "create_ls_finish", ret, paxos_replica_num, "", K(cost));
   return ret;
 }
@@ -495,7 +495,7 @@ int ObLSCreator::create_ls_(const ObILSAddr &addrs,
         LOG_WARN("fail to check need create arb replica", KR(tmp_ret));
       } else if (!need_create_arb_replica) {
         // do nothing
-        LOG_INFO("no need to create A-replica for this log stream", K_(tenant_id), K_(id));
+
       } else if (OB_SUCCESS != (tmp_ret = try_create_arbitration_service_replica_(
                                               tenant_info.get_tenant_role(),
                                               arbitration_service_addr))) {
@@ -678,7 +678,7 @@ int ObLSCreator::check_create_ls_result_(
               LOG_WARN("failed to add member", KR(ret), K(addr), K(member));
             }
           }
-          LOG_TRACE("create ls result", KR(ret), K(i), K(addr), KPC(result));
+
         }
       }
     }
@@ -1164,7 +1164,7 @@ int ObLSCreator::compensate_zone_readonly_replica_(
         // already exists in ls_addr
       } else if (ObUnit::UNIT_STATUS_DELETING == unit.status_) {
         // unit may be deleting
-        LOG_TRACE("unit is not active", K(unit));
+
       } else {
         ObLSReplicaAddr ls_replica_addr;
         if (OB_FAIL(ls_replica_addr.init(

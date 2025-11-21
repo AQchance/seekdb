@@ -169,7 +169,7 @@ int ObBackupTabletFuseDagNet::clear_dag_net_ctx()
 {
   int ret = OB_SUCCESS;
   int tmp_ret = OB_SUCCESS;
-  LOG_INFO("start clear dag net ctx", KPC(ctx_));
+
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
     LOG_WARN("tablet group fuse dag net do not init", K(ret));
@@ -355,7 +355,7 @@ int ObInitialBackupTabletGroupFuseDag::create_first_task()
   } else if (OB_FAIL(add_task(*task))) {
     LOG_WARN("Fail to add task", K(ret));
   } else {
-    LOG_INFO("success to create first task", K(ret), KPC(this));
+
   }
   return ret;
 }
@@ -431,7 +431,7 @@ int ObStartBackupTabletGroupFuseDag::create_first_task()
   } else if (OB_FAIL(add_task(*task))) {
     LOG_WARN("Fail to add task", K(ret));
   } else {
-    LOG_INFO("success to create first task", K(ret), KPC(this));
+
   }
   return ret;
 }
@@ -505,7 +505,7 @@ int ObFinishBackupTabletGroupFuseDag::create_first_task()
   } else if (OB_FAIL(add_task(*task))) {
     LOG_WARN("Fail to add task", K(ret));
   } else {
-    LOG_INFO("success to create first task", K(ret), KPC(this));
+
   }
   return ret;
 }
@@ -620,7 +620,7 @@ int ObBackupTabletFuseDag::create_first_task()
   } else if (OB_FAIL(add_task(*task))) {
     LOG_WARN("Fail to add task", K(ret));
   } else {
-    LOG_INFO("success to create first task", K(ret), KPC(this));
+
   }
   return ret;
 }
@@ -639,7 +639,7 @@ int ObBackupTabletFuseDag::generate_next_dag(share::ObIDag *&dag)
     LOG_WARN("tablet fuse dag do not init", K(ret));
   } else if (OB_ISNULL(group_ctx_)) {
     ret = OB_ERR_UNEXPECTED;
-    LOG_INFO("tablet fuse dag not has next dag", KPC(this));
+
   } else if (group_ctx_->is_failed()) {
     // do nothing
   } else if (OB_ISNULL(scheduler = MTL(ObTenantDagScheduler *))) {
@@ -659,7 +659,7 @@ int ObBackupTabletFuseDag::generate_next_dag(share::ObIDag *&dag)
   } else if (OB_FAIL(tablet_fuse_dag->set_dag_id(dag_id))) {
     LOG_WARN("failed to set dag id", K(ret), K(fuse_item));
   } else {
-    LOG_INFO("succeed generate next dag", KPC(tablet_fuse_dag));
+
     dag = tablet_fuse_dag;
     tablet_fuse_dag = NULL;
   }

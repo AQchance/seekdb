@@ -47,12 +47,12 @@ int ObLinkedMacroBlockReader::init(const MacroBlockId &entry_block, const ObMemA
       reinterpret_cast<char*>(allocator_.alloc(OB_STORAGE_OBJECT_MGR.get_macro_block_size())))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     int64_t io_size = OB_STORAGE_OBJECT_MGR.get_macro_block_size();
-    STORAGE_LOG(WARN, "failed to alloc macro read info buffer", K(ret), K(io_size));
+
   } else if (OB_ISNULL(io_buf_[1] =
       reinterpret_cast<char*>(allocator_.alloc(OB_STORAGE_OBJECT_MGR.get_macro_block_size())))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     int64_t io_size = OB_STORAGE_OBJECT_MGR.get_macro_block_size();
-    STORAGE_LOG(WARN, "failed to alloc macro read info buffer", K(ret), K(io_size));
+
   } else if (OB_FAIL(prefetch_block())) {
     LOG_WARN("fail to prefetch block", K(ret));
   } else {
@@ -84,7 +84,7 @@ int ObLinkedMacroBlockReader::get_meta_blocks(const MacroBlockId &entry_block)
     handles_[handle_pos].reset();
     if (OB_ISNULL(read_info.buf_ = reinterpret_cast<char*>(allocator.alloc(read_info.size_)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed to alloc macro read info buffer", K(ret), K(read_info.size_));
+
     } else {
       if (OB_FAIL(ObObjectManager::async_read_object(read_info, handles_[handle_pos]))) {
         LOG_WARN("fail to async read block", K(ret));
@@ -116,7 +116,7 @@ int ObLinkedMacroBlockReader::get_meta_blocks(const MacroBlockId &entry_block)
   handles_[0].reset();
   handles_[1].reset();
   prefetch_macro_block_idx_ = macros_handle_.count() - 1;
-  LOG_INFO("get meta blocks", K(macros_handle_));
+
   return ret;
 }
 
@@ -524,7 +524,7 @@ int ObLinkedMacroBlockItemReader::get_next_block_id(const ObIArray<MacroBlockId>
 int ObLinkedMacroBlockItemReader::read_large_item(const ObIArray<MacroBlockId> &block_list,
   const ObMetaDiskAddr &addr, char *item_buf, int64_t &item_buf_len)
 {
-  LOG_INFO("reading item cross the block boundary is inefficient", K(addr));
+
 
   int ret = OB_SUCCESS;
   ObStorageObjectHandle handler;
@@ -540,7 +540,7 @@ int ObLinkedMacroBlockItemReader::read_large_item(const ObIArray<MacroBlockId> &
   } else if (OB_ISNULL(io_buf = reinterpret_cast<char*>(allocator.alloc(buf_len)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     int64_t block_size = OB_STORAGE_OBJECT_MGR.get_macro_block_size();
-    STORAGE_LOG(WARN, "failed to alloc macro read info buffer", K(ret), K(block_size));
+
   } else if (OB_FAIL(ObLinkedMacroBlockReader::read_block_by_id(block_id, handler, io_buf))) {
     LOG_WARN("fail to read block by id", K(ret));
   } else {

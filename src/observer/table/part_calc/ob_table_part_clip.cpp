@@ -89,10 +89,10 @@ int ObTablePartClipper::clip(const ObSimpleTableSchemaV2 &simple_schema,
     } else if (!clip && OB_FAIL(dst_tablet_id.push_back(tablet_id))) {
       LOG_WARN("fail to push back tablet id", K(ret), K(tablet_id), K(i));
     }
-    LOG_DEBUG("tablet clip", KPC(part), K(tablet_id), K(part_id), K(subpart_id), K(i));
+
   }
 
-  LOG_DEBUG("clip result", K(clip_type), K(src_tablet_ids), K(dst_tablet_id));
+
 
   return ret;
 }

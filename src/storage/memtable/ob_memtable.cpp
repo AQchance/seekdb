@@ -214,11 +214,11 @@ void ObMemtable::destroy()
     // check release to destroy
     const int64_t release_to_destroy_time = ObTimeUtility::current_time() - mt_stat_.release_time_;
     if (release_to_destroy_time > 1LL * 1000LL * 1000LL /* 1 second */) {
-      STORAGE_LOG(WARN, "it costs too much time from release to destroy", K(release_to_destroy_time), KP(this));
+
     }
 
     set_allow_freeze(true);
-    STORAGE_LOG(INFO, "memtable destroyed", K(*this));
+
     time_guard.click();
   }
   is_inited_ = false;
@@ -246,7 +246,7 @@ int ObMemtable::safe_to_destroy(bool &is_safe)
   // check frozen to flush
   const int64_t frozen_to_flush_time = mt_stat_.create_flush_dag_time_ - mt_stat_.ready_for_flush_time_;
   if (frozen_to_flush_time > 60LL * 1000LL * 1000LL /* 60 seconds */) {
-    STORAGE_LOG(WARN, "it costs too much time from frozen to flush", K(frozen_to_flush_time), KP(this));
+
   }
 
   int64_t ref_cnt = get_ref();
@@ -714,13 +714,13 @@ int ObMemtable::get(
           int64_t length = concurrency_control::ObTransStatRow::MAX_TRANS_STRING_SIZE;
           if (OB_ISNULL(trans_info_ptr = static_cast<char *>(context.stmt_allocator_->alloc(length)))) {
             ret = OB_ALLOCATE_MEMORY_FAILED;
-            STORAGE_LOG(WARN, "fail to alloc memory", K(ret));
+
           }
         }
         if (OB_FAIL(ret)) {
           // do nothing
         } else if (OB_FAIL(row.init(*context.allocator_, request_cnt, trans_info_ptr))) {
-          STORAGE_LOG(WARN, "Failed to init datum row", K(ret), K(param.need_trans_info()));
+
         }
       }
       if (OB_SUCC(ret)) {
@@ -949,7 +949,7 @@ int ObMemtable::multi_scan(
       TRANS_LOG(WARN, "mscan iter init fail", "ret", ret);
     } else {
       row_iter = mscan_iter_ptr;
-      STORAGE_LOG(DEBUG, "multiscan iterator inited");
+
     }
   }
   if (OB_FAIL(ret)) {
@@ -1108,7 +1108,7 @@ int ObMemtable::check_row_locked_on_frozen_stores_(
           if (OB_FAIL(rowkey_converter.convert_datum_rowkey(
                         memtable_key->get_rowkey()->get_rowkey(),
                         datum_rowkey))) {
-            STORAGE_LOG(WARN, "Failed to convert datum rowkey", K(ret), KPC(memtable_key));
+
           } else if (OB_FAIL(sstable->check_row_locked(param,
                                                        datum_rowkey,
                                                        context,
@@ -1126,7 +1126,7 @@ int ObMemtable::check_row_locked_on_frozen_stores_(
           if (OB_FAIL(rowkey_converter.convert_datum_rowkey(
                         memtable_key->get_rowkey()->get_rowkey(),
                         datum_rowkey))) {
-            STORAGE_LOG(WARN, "Failed to convert datum rowkey", K(ret), KPC(memtable_key));
+
           } else if (OB_FAIL(ddl_kv->check_row_locked(param,
                                                       datum_rowkey,
                                                       context,
@@ -1384,7 +1384,7 @@ int ObMemtable::check_rows_locked_on_frozen_stores_(
           ObDirectLoadMemtableRowsLockedChecker checker(*this, check_exist, param, context, rows_info);
           if (OB_FAIL(ddl_kv->access_first_ddl_memtable(checker))) {
             if (OB_UNLIKELY(OB_ENTRY_NOT_EXIST != ret)) {
-              STORAGE_LOG(WARN, "fail to access first ddl memtable", K(ret), K(i), K(iter_tables));
+
             } else {
               ret = OB_SUCCESS;
             }
@@ -1668,7 +1668,7 @@ bool ObMemtable::ready_for_flush_()
                     ObSuspectInfoType::SUSPECT_NOT_READY_FOR_FLUSH,
                     static_cast<int64_t>(is_frozen_memtable()), get_write_ref(), get_unsubmitted_cnt(),
                     current_right_boundary.get_val_for_tx(), get_end_scn().get_val_for_tx()))) {
-      STORAGE_LOG(WARN, "failed to add suspcet info", K(tmp_ret));
+
     }
   }
 
@@ -1857,7 +1857,7 @@ int ObMemtable::flush(share::ObLSID ls_id)
                       ObSuspectInfoType::SUSPECT_MEMTABLE_CANT_CREATE_DAG,
                       static_cast<int64_t>(ret),
                       cur_time - mt_stat_.ready_for_flush_time_, mt_stat_.ready_for_flush_time_))) {
-        STORAGE_LOG(WARN, "failed to add suspect info", K(tmp_ret));
+
       }
     }
   }
@@ -1925,7 +1925,7 @@ int ObMemtable::get_split_ranges(const ObStoreRange &input_range,
     merge_range.set_start_key(*start_key);
     merge_range.set_end_key(*end_key);
     if (OB_FAIL(range_array.push_back(merge_range))) {
-      STORAGE_LOG(WARN, "push back merge range to range array failed", KR(ret), K(merge_range));
+
     }
   }
 
@@ -2047,7 +2047,7 @@ int64_t ObMemtable::try_split_range_for_sample_(const ObStoreRange &input_range,
                     K(chose_range_idx),
                     K(store_range_array.at(chose_range_idx)));
       } else if (OB_FAIL(sample_memtable_ranges.push_back(datum_range))) {
-        STORAGE_LOG(WARN, "Failed to push back merge range to array", K(ret), K(datum_range));
+
       } else {
         // chose the next store range
         chose_range_idx += range_count_each_chosen;
@@ -2228,7 +2228,7 @@ int ObMemtable::multi_set_(
         // only the active memtable, so the following check for this row on
         // the frozen stores is unnecessary
         rows_info.set_row_checked(permutation_idx);
-        LOG_DEBUG("check decided row in active memtable", K(mvcc_result), K(ctx), K(i), K(permutation_idx));
+
       }
       TRANS_LOG(DEBUG, "set row lock state", K(mvcc_results), K(permutation_idx), K(mvcc_result), K(i), K(rows_info));
     }
@@ -3012,7 +3012,7 @@ bool ObMemtable::rec_scn_is_stable()
   } else {
     SCN max_consequent_callbacked_scn;
     if (OB_FAIL(freezer_->get_max_consequent_callbacked_scn(max_consequent_callbacked_scn))) {
-      STORAGE_LOG(WARN, "get_max_consequent_callbacked_scn failed", K(ret), K(get_ls_id()));
+
     } else {
       rec_scn_is_stable = (max_consequent_callbacked_scn >= get_rec_scn());
     }
@@ -3032,7 +3032,7 @@ bool ObMemtable::rec_scn_is_stable()
                                        ObSuspectInfoType::SUSPECT_REC_SCN_NOT_STABLE,
                                        get_rec_scn().get_val_for_tx(),
                                        max_consequent_callbacked_scn.get_val_for_tx()))) {
-        STORAGE_LOG(WARN, "failed to add suspect info", K(tmp_ret));
+
       }
     }
   }

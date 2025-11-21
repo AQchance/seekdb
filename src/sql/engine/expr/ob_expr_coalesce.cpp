@@ -143,7 +143,7 @@ int ObExprCoalesce::calc_batch_coalesce_expr(const ObExpr &expr, ObEvalCtx &ctx,
   int  ret = OB_SUCCESS;
   constexpr bool is_udt_type = false;
   bool v = false;
-  LOG_DEBUG("calculate batch coalesce expr", K(batch_size));
+
 
   ObDatum *results = expr.locate_batch_datums(ctx);
   if (OB_ISNULL(results)) {

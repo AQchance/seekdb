@@ -63,7 +63,7 @@ void ObTabletCreateMdsCtx::on_abort(const share::SCN &abort_scn)
     checkpoint::ObTabletEmptyShellHandler *handler = ls->get_tablet_empty_shell_handler();
     handler->set_empty_shell_trigger(true/*is_trigger*/);
 
-    LOG_INFO("tablet create tx aborted", K(ret), K_(ls_id), K(abort_scn));
+
   }
 }
 

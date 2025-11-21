@@ -67,7 +67,7 @@ int ObExprSubstr::calc_result_length(ObExprResType *types_array,
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_DEBUG("substr calc len", K(result_len), K(substr_len), K(start_pos), K(types_array[0].get_param()));
+
     if (0 >= result_len || 0 >= substr_len || start_pos > result_len) {
       res_len = 0;
     } else {
@@ -182,7 +182,7 @@ int ObExprSubstr::cast_param_type_for_mysql(const ObObj& in,
   int ret = OB_SUCCESS;
   ObCastMode cast_mode = CM_NONE;
   EXPR_DEFINE_CAST_CTX(expr_ctx, cast_mode);
-  LOG_DEBUG("ObExprSubstr cast_param_type_for_mysql in.get_type(): ", K(in.get_type()));
+
   // select substr('abcd', '1.9') where MySQL performs trunc operation on '1.9'
   // select substr('abcd', 1.9) where MySQL rounds 1.9
   if (ObVarcharType == in.get_type()) {
@@ -500,7 +500,7 @@ int ObExprSubstr::eval_substr(const ObExpr &expr, ObEvalCtx &ctx, ObDatum &expr_
 int ObExprSubstr::eval_substr_batch(const ObExpr &expr, ObEvalCtx &ctx,
                                     const ObBitVector &skip, const int64_t batch_size)
 {
-  LOG_DEBUG("eval substr in batch mode", K(batch_size));
+
   int ret = OB_SUCCESS;
   ObDatum *results = expr.locate_batch_datums(ctx);
 

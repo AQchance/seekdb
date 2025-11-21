@@ -50,7 +50,7 @@ int ObFilePrefetchBuffer::prefetch(const int64_t file_offset, const int64_t size
   length_ = 0;
   if (size > max_prebuffer_size) {
     // do nothing
-    LOG_TRACE("exceeding the maximum prefetch size", K(size), K(max_prebuffer_size));
+
   } else {
     void *buffer = nullptr;
     int64_t read_size = 0;
@@ -78,7 +78,7 @@ int ObFilePrefetchBuffer::prefetch(const int64_t file_offset, const int64_t size
       offset_ = file_offset;
       length_ = size;
     }
-    LOG_INFO("success prefetch", K(ret), K(file_offset), K(size));
+
   }
   return ret;
 }
@@ -89,7 +89,7 @@ bool ObFilePrefetchBuffer::in_prebuffer_range(const int64_t position, const int6
   if (OB_UNLIKELY(nullptr == buffer_) || position < offset_
       || position + nbytes > offset_ + length_) {
     in_range = false;
-    LOG_TRACE("out of prebuffer range", K(position), K(nbytes), K(offset_), K(length_));
+
   }
   return in_range;
 }

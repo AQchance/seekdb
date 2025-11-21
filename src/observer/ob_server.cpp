@@ -231,7 +231,7 @@ int ObServer::init(const ObServerOptions &opts, const ObPLogWriterCfg &log_cfg)
     LOG_ERROR("check need initialize failed", KR(ret));
   }
   if (OB_SUCC(ret) && need_initialize) {
-    LOG_INFO("Need to initialize", K(need_initialize));
+
   }
   LOG_DBA_INFO_V2(OB_SERVER_INIT_BEGIN,
                   DBA_STEP_INC_INFO(server_start),
@@ -957,7 +957,7 @@ int ObServer::start(bool embed_mode)
     if (FAILEDx(wr_service_.start())) {
       LOG_ERROR("failed to start wr service", K(ret));
     } else {
-      LOG_INFO("success to start wr service");
+
     }
 
     if (FAILEDx(SERVER_STORAGE_META_SERVICE.start())) {
@@ -970,7 +970,7 @@ int ObServer::start(bool embed_mode)
     if (FAILEDx(OB_STORAGE_OBJECT_MGR.check_disk_space_available())) {
       LOG_ERROR("failed to check disk space available", K(ret));
     } else {
-      LOG_INFO("success to check disk space available");
+
     }
 
     if (FAILEDx(log_block_mgr_.start(storage_env_.log_disk_size_))) {
@@ -1233,7 +1233,7 @@ int ObServer::try_update_hidden_sys()
       if (OB_FAIL(multi_tenant_.create_hidden_sys_tenant())) {
         LOG_ERROR("fail to create hidden sys tenant", KR(ret));
       }
-      LOG_INFO("finish create hidden sys", KR(ret));
+
     } else {
       LOG_ERROR("fail to get tenant", KR(ret));
     }
@@ -1958,7 +1958,7 @@ int ObServer::init_config(const ObServerOptions &opts)
     if (OB_FAIL(config_mgr_.dump2file())) {
       LOG_ERROR("config_mgr_ dump2file failed", KR(ret));
     } else {
-      LOG_INFO("config_mgr_ dump2file success", KR(ret));
+
     }
   } else if (OB_FAIL(init_config_module(optstr.ptr()))) {
     LOG_ERROR("init config module failed", KR(ret));
@@ -2061,7 +2061,7 @@ int ObServer::init_data_dir_and_redo_dir(const ObServerOptions &opts)
       }
       config_.data_dir.set_value(tmp_data_dir.ptr());
       config_.data_dir.set_version(start_time_);
-      LOG_INFO("set data dir", K(config_.data_dir));
+
     }
   }
 
@@ -2094,7 +2094,7 @@ int ObServer::init_data_dir_and_redo_dir(const ObServerOptions &opts)
       }
       config_.redo_dir.set_value(tmp_redo_dir.ptr());
       config_.redo_dir.set_version(start_time_);
-      LOG_INFO("set redo dir", K(config_.redo_dir));
+
     }
   }
   return ret;
@@ -2116,11 +2116,11 @@ int ObServer::init_self_addr()
   if (OB_SUCC(ret)) {
     const char *syslog_file_info = ObServerUtils::build_syslog_file_info();
     OB_LOGGER.set_new_file_info(syslog_file_info);
-    LOG_INFO("Build basic information for each syslog file", "info", syslog_file_info);
+
 
     // initialize self address
     obrpc::ObRpcProxy::myaddr_ = self_addr_;
-    LOG_INFO("my addr", K_(self_addr));
+
     config_.self_addr_ = self_addr_;
   }
 
@@ -2172,7 +2172,7 @@ int ObServer::set_running_mode()
   const int64_t cpu_cnt = cnt > 0 ? cnt : common::get_cpu_num();
   if (memory_limit < lib::ObRunningModeConfig::MINI_MEM_UPPER) {
     ObTaskController::get().allow_next_syslog();
-    LOG_INFO("observer start with mini_mode", K(memory_limit));
+
     lib::update_mini_mode(memory_limit, cpu_cnt);
   } else {
     lib::update_mini_mode(memory_limit, cpu_cnt);
@@ -2202,15 +2202,15 @@ int ObServer::init_pre_setting()
     OB_LOGGER.set_record_old_log_file();
     OB_LOGGER.set_enable_async_log(enable_async_syslog);
     OB_LOG_COMPRESSOR.set_max_disk_size(max_disk_size);
-    LOG_INFO("Whether compress syslog file", K(compress_func_ptr));
+
     OB_LOG_COMPRESSOR.set_compress_func(compress_func_ptr);
     OB_LOG_COMPRESSOR.set_min_uncompressed_count(min_uncompressed_count);
     LOG_INFO("init log config", K(enable_async_syslog),
              K(max_disk_size), K(compress_func_ptr), K(min_uncompressed_count));
     if (0 == max_log_cnt) {
-      LOG_INFO("won't recycle log file");
+
     } else {
-      LOG_INFO("recycle log file", "count", max_log_cnt);
+
     }
   }
 
@@ -2231,14 +2231,14 @@ int ObServer::init_pre_setting()
     const int64_t hard_limit_memory = GMEMCONF.get_server_hard_memory_limit();
     const int64_t reserved_memory = std::min(config_.cache_wash_threshold.get_value(),
         static_cast<int64_t>(static_cast<double>(limit_memory) * KVCACHE_FACTOR));
-    LOG_INFO("set memory config", K(hard_limit_memory), K(limit_memory), K(reserved_memory));
+
     set_hard_memory_limit(hard_limit_memory);
     set_memory_limit(limit_memory);
     ob_set_reserved_memory(reserved_memory);
   }
   if (OB_SUCC(ret)) {
     const int64_t stack_size = std::max(1L << 19, static_cast<int64_t>(GCONF.stack_size));
-    LOG_INFO("set stack_size", K(stack_size));
+
     global_thread_stack_size = stack_size - SIG_STACK_SIZE - ACHUNK_PRESERVE_SIZE;
   }
   if (OB_SUCC(ret) && GCONF.use_ipv6) {
@@ -2424,7 +2424,7 @@ int ObServer::init_plugin()
     ret = OB_ERR_UNEXPECTED;
     LOG_ERROR("plugin dir is invalid", KR(ret), K(plugin_dir));
   } else {
-    LOG_INFO("got plugin dir", K(plugin_dir));
+
 
     if (OB_ISNULL(mgr = new ObPluginMgr())) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
@@ -2437,7 +2437,7 @@ int ObServer::init_plugin()
       LOG_ERROR("failed to load dynamic plugins", KR(ret));
     } else {
       GCTX.plugin_mgr_ = mgr;
-      LOG_INFO("plugin init done");
+
     }
   }
 
@@ -2455,7 +2455,7 @@ void ObServer::deinit_plugin()
     delete mgr;
     GCTX.plugin_mgr_ = nullptr;
   }
-  LOG_INFO("plugin deinit done");
+
 }
 
 int ObServer::init_zlib_lite_compressor()
@@ -2471,7 +2471,7 @@ int ObServer::init_zlib_lite_compressor()
     LOG_ERROR("failed to init zlib lite compressor", K(ret));
   } else {
     const char *zlib_lite_compress_method = zlib_lite_compressor->compression_method();
-    LOG_INFO("zlib lite compressor init success", KCSTRING(zlib_lite_compress_method));
+
   }
   return ret;
 }
@@ -2488,7 +2488,7 @@ void ObServer::deinit_zlib_lite_compressor()
   } else {
     zlib_lite_compressor->deinit();
   }
-  LOG_INFO("zlib lite compressor deinit done");
+
 }
 
 int ObServer::init_loaddata_global_stat()
@@ -2538,7 +2538,7 @@ int ObServer::init_network()
                                      self_addr_))) {
     LOG_ERROR("init batch rpc failed", KR(ret));
   } else if (OB_FAIL(TG_SET_RUNNABLE_AND_START(lib::TGDefIDs::BRPC, batch_rpc_))) {
-    STORAGE_LOG(WARN, "fail to start batch rpc proxy", KR(ret));
+
   } else {
     srv_rpc_proxy_.set_server(get_self());
     rs_rpc_proxy_.set_rs_mgr(rs_mgr_);
@@ -2659,7 +2659,7 @@ int ObServer::init_sql()
 {
   int ret = OB_SUCCESS;
 
-  LOG_INFO("init sql");
+
   if (OB_FAIL(session_mgr_.init())) {
     LOG_ERROR("init sql session mgr fail");
   } else if (OB_FAIL(conn_res_mgr_.init(schema_service_))) {
@@ -2668,8 +2668,8 @@ int ObServer::init_sql()
                                  ObSQLSessionMgr::SCHEDULE_PERIOD, true))) {
     LOG_ERROR("tier schedule fail");
   } else {
-    LOG_INFO("init sql session mgr done");
-    LOG_INFO("init sql location cache done");
+
+
   }
 
   if (OB_SUCC(ret)) {
@@ -2681,7 +2681,7 @@ int ObServer::init_sql()
                     rs_mgr_))) {
       LOG_ERROR("init sql engine failed", KR(ret));
     } else {
-      LOG_INFO("init sql engine done");
+
     }
   }
 
@@ -2713,7 +2713,7 @@ int ObServer::init_sql()
   }
 
   if (OB_SUCC(ret)) {
-    LOG_INFO("init sql done");
+
   } else {
     LOG_ERROR("init sql fail", KR(ret));
   }
@@ -2729,7 +2729,7 @@ int ObServer::init_sql_runner()
   } else if (OB_FAIL(ObDASTaskResultGCRunner::schedule_timer_task())) {
     LOG_WARN("schedule das result gc runner failed", KR(ret));
   } else {
-    LOG_INFO("init sql runner done");
+
   }
 
   return ret;
@@ -2742,7 +2742,7 @@ int ObServer::init_sequence()
   if (OB_FAIL(cache.init(schema_service_, sql_proxy_))) {
     LOG_ERROR("init sequence engine failed", KR(ret));
   } else {
-    LOG_INFO("init sequence engine done");
+
   }
   return ret;
 }
@@ -2751,11 +2751,11 @@ int ObServer::init_pl()
 {
   int ret = OB_SUCCESS;
 
-  LOG_INFO("init pl");
+
   if (OB_FAIL(pl_engine_.init(sql_proxy_))) {
     LOG_ERROR("init pl engine failed", KR(ret));
   } else {
-    LOG_INFO("init pl engine done");
+
   }
   return ret;
 }
@@ -2825,7 +2825,7 @@ int ObServer::init_global_context()
 
   (void) gctx_.set_server_id(config_.observer_id);
   if (is_valid_server_id(gctx_.get_server_id())) {
-    LOG_INFO("this observer has had a valid server_id", K(gctx_.get_server_id()));
+
   }
   gctx_.in_bootstrap_ = false;
   gctx_.inited_ = true;
@@ -2847,7 +2847,7 @@ int ObServer::init_ts_mgr()
                              net_frame_.get_req_transport()))) {
     LOG_ERROR("gts cache mgr init failed", K_(self_addr), KR(ret));
   } else {
-    LOG_INFO("gts cache mgr init success");
+
   }
 
   return ret;
@@ -2859,7 +2859,7 @@ int ObServer::init_px_target_mgr()
   if (OB_FAIL(OB_PX_TARGET_MGR.init(self_addr_, server_tracer_))) {
     LOG_ERROR("px target mgr init failed", K(self_addr_), KR(ret));
   } else {
-    LOG_INFO("px target mgr init success");
+
   }
   return ret;
 }
@@ -2882,7 +2882,7 @@ int ObServer::init_storage()
             OB_FILE_SYSTEM_ROUTER.get_clog_dir(), clogdir_is_empty))) {
       LOG_ERROR("is_dir_empty fail", K(ret));
     } else if (clogdir_is_empty) {
-      LOG_INFO("clog dir is empty");
+
     } else {
       clogdir_is_empty = log_disk_in_use == 0;
     }
@@ -3061,7 +3061,7 @@ int ObServer::get_network_speed_from_config_file(int64_t &network_speed)
     }
   } else {
     if (!nic_rate_file_exist) {
-      LOG_INFO("Reading NIC Config file", K(nic_rate_path));
+
       nic_rate_file_exist = 1;
     }
     memset(buf, 0, MAX_NIC_CONFIG_FILE_SIZE + 1);
@@ -3111,12 +3111,12 @@ int ObServer::init_bandwidth_throttle()
   int64_t network_speed = 0;
 
   if (OB_SUCC(get_network_speed_from_config_file(network_speed))) {
-    LOG_DEBUG("got network speed from config file", K(network_speed));
+
   } else if (OB_SUCC(get_network_speed_from_sysfs(network_speed))) {
-    LOG_DEBUG("got network speed from sysfs", K(network_speed));
+
   } else {
     network_speed = DEFAULT_ETHERNET_SPEED;
-    LOG_DEBUG("using default network speed", K(network_speed));
+
   }
 
   sys_bkgd_net_percentage_ = config_.sys_bkgd_net_percentage;
@@ -3300,7 +3300,7 @@ void ObServer::ObCTASCleanUpTask::runTimerTask()
     ret = OB_NOT_INIT;
     LOG_ERROR("ObCTASCleanUpTask has not been inited", KR(ret));
   } else if (false == need_ctas_cleanup) {
-    LOG_DEBUG("CTAS cleanup task skipped this time");
+
   } else if (OB_ISNULL(obs_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_ERROR("CTAS cleanup task got null ptr", KR(ret));
@@ -3308,7 +3308,7 @@ void ObServer::ObCTASCleanUpTask::runTimerTask()
     LOG_WARN("CTAS clean up task failed", KR(ret));
     ATOMIC_STORE(&obs_->need_ctas_cleanup_, true);
   } else {
-    LOG_DEBUG("CTAS clean up task succeed");
+
   }
 }
 
@@ -3340,30 +3340,30 @@ bool ObServer::ObCTASCleanUp::operator()(sql::ObSQLSessionMgr::Key key,
         (void)sess_info->unlock_query();
         set_drop_flag(false);
         ATOMIC_STORE(&obs_->need_ctas_cleanup_, true); //The current session is creating a table and needs to continue to check in the next schedule
-        LOG_INFO("current table is in status of creating", K(sess_info->get_last_active_time()));
+
       } else {
         (void)sess_info->unlock_query();
-        LOG_INFO("current table was in status of creating", K(sess_info->get_last_active_time()));
+
       }
     } else if (ObCTASCleanUp::TEMP_TAB_RULE == get_cleanup_type()) { //3, Directly connected temporary table cleanup
       if (sess_info->get_sess_create_time() < get_schema_version() + 100) {
         (void)sess_info->unlock_query();
         set_drop_flag(false);
         ATOMIC_STORE(&obs_->need_ctas_cleanup_, true); //The session that created the temporary table is still alive and needs to be checked in the next schedule
-        LOG_DEBUG("session that creates temporary table is still alive");
+
       } else {
         (void)sess_info->unlock_query();
-        LOG_DEBUG("current session reusing session id that created temporary table", K(sess_info->get_sess_create_time()));
+
       }
     } else { //4. Proxy temporary table cleanup
       if (sess_info->get_sess_create_time() < get_schema_version() + 100) {
         (void)sess_info->unlock_query();
         ATOMIC_STORE(&obs_->need_ctas_cleanup_, true); //The session that created the temporary table is still alive and needs to be checked in the next schedule
-        LOG_DEBUG("session that creates temporary table is still alive");
+
       } else {
         set_drop_flag(true);
         (void)sess_info->unlock_query();
-        LOG_DEBUG("current session reusing session id that created temporary table", K(sess_info->get_sess_create_time()));
+
       }
     }
   }
@@ -3534,7 +3534,7 @@ int ObServer::refresh_cpu_frequency()
     cpu_frequency = ObServer::DEFAULT_CPU_FREQUENCY;
   }
   if (cpu_frequency != cpu_frequency_) {
-    LOG_INFO("Cpu frequency changed", "from", cpu_frequency_, "to", cpu_frequency);
+
     cpu_frequency_ = cpu_frequency;
   }
 
@@ -3547,16 +3547,16 @@ int ObServer::refresh_network_speed()
   int64_t network_speed = 0;
 
   if (OB_SUCC(get_network_speed_from_config_file(network_speed))) {
-    LOG_DEBUG("got network speed from config file", K(network_speed));
+
   } else if (OB_SUCC(get_network_speed_from_sysfs(network_speed))) {
-    LOG_DEBUG("got network speed from sysfs", K(network_speed));
+
   } else {
     network_speed = DEFAULT_ETHERNET_SPEED;
-    LOG_DEBUG("using default network speed", K(network_speed));
+
   }
 
   if ((network_speed > 0) && (network_speed != ethernet_speed_)) {
-    LOG_INFO("network speed changed", "from", ethernet_speed_, "to", network_speed);
+
     OB_IO_MANAGER.get_tc().set_device_bandwidth(network_speed);
     if (OB_FAIL(reload_bandwidth_throttle_limit(network_speed))) {
       LOG_WARN("ObRefreshNetworkSpeedTask reload bandwidth throttle limit failed", KR(ret));
@@ -3822,9 +3822,9 @@ int ObServer::clean_up_invalid_tables_by_tenant(
       } else if (0 == table_schema->get_session_id()) {
         //do nothing
       } else if (0 != table_schema->get_create_host_str().compare(create_host_str)) {
-        LOG_DEBUG("current observer is not the one created the table, just skip", "current session", create_host_str, K(*table_schema));
+
       } else {
-        LOG_DEBUG("table is creating or encountered error or is temporary one", K(*table_schema));
+
         if (table_schema->is_obproxy_create_tmp_tab()) { //1, Temporary tables, proxy table creation, cleanup rules see 3.2#
           LOG_DEBUG("clean_up_invalid_tables::ob proxy created", K(i), K(ObTimeUtility::current_time()),
                                                                  K(table_schema->get_sess_active_time()), K(CONNECT_TIMEOUT_VALUE));
@@ -3858,7 +3858,7 @@ int ObServer::clean_up_invalid_tables_by_tenant(
           }
         }
         if (ctas_cleanup.get_drop_flag()) {
-          LOG_INFO("a table will be dropped!", K(*table_schema));
+
           obrpc::ObDDLRes res;
           database_schema = NULL;
           drop_table_arg.tables_.reset();
@@ -3877,7 +3877,7 @@ int ObServer::clean_up_invalid_tables_by_tenant(
             ret = OB_ERR_UNEXPECTED;
             LOG_WARN("database schema is null", KR(ret));
           } else if (database_schema->is_in_recyclebin() || table_schema->is_in_recyclebin()) {
-            LOG_DEBUG("skip table schema in recyclebin", K(*table_schema));
+
           } else if (FALSE_IT(table_item.database_name_ = database_schema->get_database_name_str())) {
             //impossible
           } else if (OB_FAIL(drop_table_arg.tables_.push_back(table_item))) {
@@ -3885,10 +3885,10 @@ int ObServer::clean_up_invalid_tables_by_tenant(
           } else if (OB_FAIL(common_rpc_proxy->drop_table(drop_table_arg, res))) {
             LOG_WARN("failed to drop table", K(drop_table_arg), K(table_item), KR(ret));
           } else {
-            LOG_INFO("a table is dropped due to previous error or is a temporary one", K(i), "table_name", table_item.table_name_);
+
           }
         } else {
-          LOG_DEBUG("no need to drop table", K(i));
+
         }
       }
     }
@@ -3905,7 +3905,7 @@ int ObServer::update_table_all_server(int64_t start_service_time)
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("GCTX.sql_proxy_ is null");
   } else if (GCTX.in_bootstrap_) {
-    LOG_INFO("don't update all_server table", K(GCTX.in_bootstrap_));
+
   } else if (OB_FAIL(trans.start(GCTX.sql_proxy_, OB_SYS_TENANT_ID))) {
     LOG_WARN("fail to start trans", KR(ret));
   } else if (OB_FAIL(observer::ObService::get_build_version(build_version))) {
@@ -3917,7 +3917,7 @@ int ObServer::update_table_all_server(int64_t start_service_time)
           build_version))) {
     LOG_WARN("fail to update start info", KR(ret), K(self_addr_), K(start_service_time), K(build_version));
   } else {
-    LOG_INFO("start info is updated", K(self_addr_), K(start_service_time), K(build_version));
+
   }
   int tmp_ret = OB_SUCCESS;
   if (!trans.is_started()) {
@@ -3971,7 +3971,7 @@ int ObServer::init_server_in_arb_mode()
   arb_opts.opts_ = opts;
   arb_opts.self_ = self_addr_;
 
-  LOG_INFO("io thread connection negotiation enabled!");
+
   arb_opts.negotiation_enable_ = 1;          // enable negotiation
   arb_opts.rpc_port_ = rpc_port;
   const int64_t max_io_depth = 256;
@@ -4005,7 +4005,7 @@ int ObServer::init_server_in_arb_mode()
   } else if (OB_FAIL(ASCONF.init_config_with_file())) {
     LOG_ERROR("init config with file failed", K(ret));
   } else {
-    LOG_INFO("init_server_in_arb_mode success", K(ret), K(arb_opts));
+
   }
 
   return ret;
@@ -4020,7 +4020,7 @@ int ObServer::start_server_in_arb_mode()
   } else if (OB_FAIL(arb_timer_.start())) {
     LOG_ERROR("start ObArbServerTimer failed", K(ret));
   } else {
-    LOG_INFO("start_server_in_arb_mode success", K(ret));
+
   }
   return ret;
 }

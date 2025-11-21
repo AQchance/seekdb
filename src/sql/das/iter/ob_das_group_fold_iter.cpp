@@ -149,7 +149,7 @@ int ObDASGroupFoldIter::set_scan_group(int64_t group_id)
   if (cur_group_idx_ >= group_size_) {
     ret = OB_ITER_END;
   }
-  LOG_TRACE("set group id for fold iter", K(cur_group_idx_), K(group_id), K(group_size_), K(lbt()));
+
   return ret;
 }
 
@@ -244,11 +244,11 @@ int ObDASGroupFoldIter::inner_get_next_rows(int64_t &count, int64_t capacity)
   int64_t ret_count = 0;
   int64_t group_idx = MIN_GROUP_INDEX;
   available_group_idx_ = group_save_rows_.cur_group_idx();
-  LOG_TRACE("das group fold iter get next rows begin", K_(available_group_idx), K_(cur_group_idx));
+
 
   if (available_group_idx_ > cur_group_idx_) {
     ret = OB_ITER_END;
-    LOG_TRACE("available_group_idx > cur_group_idx, no available rows", K_(available_group_idx), K_(cur_group_idx));
+
   } else {
     while (MIN_GROUP_INDEX != available_group_idx_ && available_group_idx_ < cur_group_idx_) {
       group_save_rows_.next_start_pos();
@@ -267,7 +267,7 @@ int ObDASGroupFoldIter::inner_get_next_rows(int64_t &count, int64_t capacity)
         if (storage_count > 0) {
           ret = OB_SUCCESS;
         } else {
-          LOG_TRACE("underlying iter tree reached iter end", K_(available_group_idx), K_(cur_group_idx));
+
           // subsequent calls to get next rows will no longer be able to return rows.
           available_group_idx_ = INT64_MAX;
         }
@@ -317,13 +317,13 @@ int ObDASGroupFoldIter::inner_get_next_rows(int64_t &count, int64_t capacity)
       }
     } else {
       OB_ASSERT(available_group_idx_ > cur_group_idx_ && available_group_idx_ != INT64_MAX);
-      LOG_TRACE("all new rows from storage layer have greater group idx", K_(available_group_idx), K_(cur_group_idx));
+
       ret = OB_ITER_END;
     }
   }
   count = ret_count;
 
-  LOG_TRACE("das group fold iter get next rows end", K(ret_count), K(storage_count), K(*this));
+
   return ret;
 }
 
@@ -332,7 +332,7 @@ int ObDASGroupFoldIter::inner_get_next_row()
   int ret = OB_SUCCESS;
   if (available_group_idx_ > cur_group_idx_) {
     ret = OB_ITER_END;
-    LOG_TRACE("available_group_idx > cur_group_idx, no available rows", K_(available_group_idx), K_(cur_group_idx));
+
   } else if (available_group_idx_ == cur_group_idx_) {
     OZ(group_save_rows_.to_expr(false, 0, 1));
     available_group_idx_ = MIN_GROUP_INDEX;

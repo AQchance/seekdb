@@ -113,7 +113,7 @@ void ObCloneScheduler::wakeup()
 
 void ObCloneScheduler::do_work()
 {
-  LOG_INFO("[RESTORE] clone scheduler start");
+
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
@@ -160,7 +160,7 @@ void ObCloneScheduler::do_work()
       idle();
     }
   }
-  LOG_INFO("[RESTORE] clone scheduler quit");
+
 }
 
 int ObCloneScheduler::process_sys_clone_job(const share::ObCloneJob &job)
@@ -311,7 +311,7 @@ int ObCloneScheduler::clone_lock(const share::ObCloneJob &job)
           if (ObTenantSnapStatus::CREATING == original_global_state_status) {
             ret = OB_SUCCESS;
             need_wait = true;
-            LOG_INFO("need wait for current tenant snapshot creation", KR(ret), K(source_tenant_id));
+
           } else {
             LOG_WARN("GLOBAL_STATE snapshot lock conflict", KR(ret), K(source_tenant_id),
                                                                 K(original_global_state_status));
@@ -351,7 +351,7 @@ int ObCloneScheduler::clone_lock(const share::ObCloneJob &job)
   if (OB_TMP_FAIL(try_update_job_status_(ret, job))) {
     LOG_WARN("fail to update job status", KR(ret), KR(tmp_ret), K(job));
   }
-  LOG_INFO("[RESTORE] clone lock", KR(ret), K(job));
+
   return ret;
 }
 
@@ -367,7 +367,7 @@ int ObCloneScheduler::clone_create_resource_pool(const share::ObCloneJob &job)
   const int64_t job_id = job.get_job_id();
   if (OB_UNLIKELY(ERRSIM_CLONE_RESOURCE_POOL_DO_NOTHING_ERROR)) {
     // do nothing
-    LOG_INFO("errsim here, do nothing, let clone job hang");
+
   } else {
     if (OB_UNLIKELY(ERRSIM_CLONE_RESOURCE_POOL_ERROR)) {
       ret = ERRSIM_CLONE_RESOURCE_POOL_ERROR;
@@ -409,7 +409,7 @@ int ObCloneScheduler::clone_create_resource_pool(const share::ObCloneJob &job)
       LOG_WARN("fail to update job status", KR(ret), KR(tmp_ret), K(job));
     }
   }
-  LOG_INFO("[RESTORE] clone create resource pool", KR(ret), K(arg), K(job));
+
   return ret;
 }
 
@@ -510,7 +510,7 @@ int ObCloneScheduler::clone_create_snapshot_for_fork_tenant(const share::ObClone
   if (OB_TMP_FAIL(try_update_job_status_(ret, job))) {
     LOG_WARN("fail to update job status", KR(ret), KR(tmp_ret), K(job));
   }
-  LOG_INFO("[RESTORE] create fork tenant snapshot", KR(ret), K(job));
+
   return ret;
 }
 
@@ -593,7 +593,7 @@ int ObCloneScheduler::clone_wait_create_snapshot_for_fork_tenant(const share::Ob
     }
   }
 
-  LOG_INFO("[RESTORE] wait create fork tenant snapshot", KR(ret), K(need_wait), K(job));
+
   return ret;
 }
 
@@ -648,7 +648,7 @@ int ObCloneScheduler::clone_create_tenant(const share::ObCloneJob &job)
   if (OB_TMP_FAIL(try_update_job_status_(ret, job))) {
     LOG_WARN("fail to update job status", KR(ret), KR(tmp_ret), K(job));
   }
-  LOG_INFO("[RESTORE] clone create tenant", KR(ret), K(arg), K(job));
+
   return ret;
 }
 
@@ -681,7 +681,7 @@ int ObCloneScheduler::clone_wait_tenant_restore_finish(const ObCloneJob &job)
       LOG_WARN("fail to get clone job history", KR(ret), K(clone_tenant_id));
     } else {
       need_wait = true;
-      LOG_INFO("need wait user tenant restore finish", KR(ret), K(clone_tenant_id));
+
     }
   } else if (user_job_history.get_status().is_user_success_status()) {
     ObTenantSchema tenant_schema;
@@ -731,7 +731,7 @@ int ObCloneScheduler::clone_wait_tenant_restore_finish(const ObCloneJob &job)
       LOG_WARN("fail to update job status", KR(ret), KR(tmp_ret), K(job));
     }
   }
-  LOG_INFO("[RESTORE] clone wait tenant restore finish", KR(ret), K(job));
+
   return ret;
 }
 
@@ -775,7 +775,7 @@ int ObCloneScheduler::clone_release_resource(const share::ObCloneJob &job)
   } else if (OB_TMP_FAIL(try_update_job_status_(ret, job))) {
     LOG_WARN("fail to update job status", KR(ret), KR(tmp_ret), K(job));
   }
-  LOG_INFO("[RESTORE] clone_release_resource", KR(ret), K(need_retry), K(job));
+
   return ret;
 }
 
@@ -814,7 +814,7 @@ int ObCloneScheduler::clone_sys_finish(const share::ObCloneJob &job)
     LOG_WARN("recycle clone job failed", KR(ret), K(job));
   }
 
-  LOG_INFO("[RESTORE] clone sys finish", KR(ret), K(job));
+
   const char *status_str = ObTenantCloneStatus::get_clone_status_str(job.get_status());
   ROOTSERVICE_EVENT_ADD("clone", "clone_sys_finish",
                         "job_id", job.get_job_id(),
@@ -842,7 +842,7 @@ int ObCloneScheduler::clone_prepare(const share::ObCloneJob &job)
       LOG_WARN("fail to update job status", KR(ret), KR(tmp_ret), K(job));
     }
   }
-  LOG_INFO("[RESTORE] clone prepare", KR(ret), K(job));
+
   return ret;
 }
 
@@ -886,7 +886,7 @@ int ObCloneScheduler::clone_init_ls(const share::ObCloneJob &job)
     ObLSRecoveryStatOperator ls_recovery;
     const uint64_t exec_tenant_id = get_private_table_exec_tenant_id(user_tenant_id);
     START_TRANSACTION(sql_proxy_, exec_tenant_id)
-    LOG_INFO("start to create ls and set sync scn", K(sync_scn), K(ls_attr_array), K(source_tenant_id));
+
     if (FAILEDx(ls_recovery.update_sys_ls_sync_scn(user_tenant_id, trans, sync_scn))) {
       LOG_WARN("failed to update sync ls sync scn", KR(ret), K(sync_scn));
     }
@@ -922,7 +922,7 @@ int ObCloneScheduler::clone_init_ls(const share::ObCloneJob &job)
     }
   }
 
-  LOG_INFO("[RESTORE] clone init ls", KR(ret), KR(tmp_ret), K(job), K(need_wait));
+
   return ret;
 }
 
@@ -1100,7 +1100,7 @@ int ObCloneScheduler::clone_wait_ls_finish(const share::ObCloneJob &job)
     if (OB_TMP_FAIL(try_update_job_status_(tenant_restore_result, job))) {
       LOG_WARN("fail to update job status", KR(tmp_ret), KR(tenant_restore_result), K(job));
     }
-    LOG_INFO("[RESTORE] clone wait all ls finish", KR(ret), KR(tenant_restore_result), K(job));
+
   }
   return ret;
 }
@@ -1139,7 +1139,7 @@ int ObCloneScheduler::clone_post_check(const share::ObCloneJob &job)
       LOG_WARN("fail to update job status", KR(ret), KR(tmp_ret), K(job));
     }
   }
-  LOG_INFO("[RESTORE] clone post check", KR(ret), K(job));
+
   return ret;
 }
 
@@ -1164,7 +1164,7 @@ int ObCloneScheduler::clone_user_finish(const share::ObCloneJob &job)
     LOG_WARN("fail to recycle clone job", KR(ret), K(user_tenant_id));
   }
 
-  LOG_INFO("[RESTORE] clone user finish", KR(ret), K(job));
+
   const char *status_str = ObTenantCloneStatus::get_clone_status_str(job.get_status());
   ROOTSERVICE_EVENT_ADD("clone", "clone_user_finish",
                         "job_id", job.get_job_id(),
@@ -1223,7 +1223,7 @@ int ObCloneScheduler::clone_recycle_failed_job(const share::ObCloneJob &job)
                           K(ret),
                           "cur_clone_status", status_str);
   }
-  LOG_INFO("[RESTORE] clone recycle failed job", KR(ret), K(job));
+
   return ret;
 }
 
@@ -1456,7 +1456,7 @@ int ObCloneScheduler::check_meta_tenant_(const uint64_t tenant_id)
       LOG_WARN("tenant not exist", KR(ret), K(tenant_id));
     } else if (!meta_tenant_schema->is_normal()) {
       ret = OB_OP_NOT_ALLOW;
-      LOG_INFO("meta tenant is not normal", KR(ret), K(tenant_id));
+
     } else if (OB_FAIL(schema_guard.get_tenant_info(user_tenant_id, user_tenant_schema))) {
       LOG_WARN("failed to get tenant info", KR(ret), K(user_tenant_id));
     } else if (OB_ISNULL(user_tenant_schema)) {
@@ -1465,14 +1465,14 @@ int ObCloneScheduler::check_meta_tenant_(const uint64_t tenant_id)
     } else if (!user_tenant_schema->is_restore_tenant_status()) {
       //we only stop this thread in clone tenant when the status of the tenant is normal
       is_clone_tenant = false;
-      LOG_INFO("tenant is not in restore status", KR(ret), KPC(user_tenant_schema));
+
     } else { /*restore_tenant_status*/
       if (OB_FAIL(ObAllTenantInfoProxy::load_tenant_info(user_tenant_id, GCTX.sql_proxy_,
                             false/*for_update*/, all_tenant_info))) {
         LOG_WARN("failed to load tenant info", KR(ret), K(user_tenant_id));
       } else if (all_tenant_info.is_restore()) {
         is_clone_tenant = false;
-        LOG_INFO("tenant is in restore role", KR(ret), K(all_tenant_info));
+
       }
     }
   }
@@ -1686,7 +1686,7 @@ int ObCloneScheduler::wait_all_ls_created_(
         }
       }
     }
-    LOG_INFO("[RESTORE] wait ls created", KR(ret), K(tenant_id), K(ls_array));
+
   }
   return ret;
 }
@@ -1739,7 +1739,7 @@ int ObCloneScheduler::get_source_tenant_archive_log_path_(
         LOG_WARN("dest arr is empty", KR(ret), K(source_tenant_id));
       } else {
         path = dest_arr.at(0).second;
-        LOG_INFO("get source tenant archive log dest path succ", K(path), K(source_tenant_id));
+
       }
     }
   }

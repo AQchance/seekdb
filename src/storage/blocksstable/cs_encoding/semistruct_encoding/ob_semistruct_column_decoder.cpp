@@ -193,7 +193,7 @@ int ObSemiStructColumnDecoder::pushdown_operator(
       LOG_WARN("check_can_pushdown fail", K(ret), K(semistruct_node), KPC(handler));
     } else if (OB_UNLIKELY(! can_pushdown)) {
       ret = OB_NOT_SUPPORTED;
-      LOG_INFO("pushdown not support for current filter", K(semistruct_node), KPC(handler));
+
     } else if (OB_UNLIKELY(sub_col_idx < 0 || sub_col_idx >= sub_col_cnt)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("invalid sub_col_idx", K(ret), K(sub_col_idx), K(semistruct_node), KPC(handler));

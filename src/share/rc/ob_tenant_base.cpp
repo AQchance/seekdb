@@ -174,7 +174,7 @@ int ObTenantBase::create_mtl_module()
     LOG_WARN("create twice error", K(ret));
   }
 
-  LOG_INFO("create_mtl_module", K(id_));
+
   #define CREATE_TMP(IDX)                                                                   \
     if (OB_SUCC(ret)) {                                                                     \
       void *mtl_ptr = nullptr;                                                              \
@@ -182,7 +182,7 @@ int ObTenantBase::create_mtl_module()
       } else if (OB_FAIL(ObTenantBase::new_m##IDX##_func(m##IDX##_))) {                     \
         LOG_WARN("mtl create failed", K(ret), "type", typeid(m##IDX##_).name());            \
       } else if (get_mtl_ptr(m##IDX##_, mtl_ptr)) {                                         \
-        LOG_INFO("finish create mtl"#IDX, "type", typeid(m##IDX##_).name(), KP(mtl_ptr));   \
+   \
       }                                                                                     \
     }
   #define CREATE(UNUSED, IDX) CREATE_TMP(IDX)
@@ -198,7 +198,7 @@ int ObTenantBase::create_mtl_module()
 int ObTenantBase::init_mtl_module()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("init_mtl_module", K(id_));
+
   #define INIT_TMP(IDX)                                                                          \
     if (OB_SUCC(ret)) {                                                                          \
       int64_t start_time_us = ObTimeUtility::current_time();                                     \
@@ -207,7 +207,7 @@ int ObTenantBase::init_mtl_module()
         LOG_WARN("mtl init failed", K(ret), "type", typeid(m##IDX##_).name());                   \
       }                                                                                          \
       int64_t cost_time_us = ObTimeUtility::current_time() - start_time_us;                      \
-      LOG_INFO("finish init mtl"#IDX, K(cost_time_us), "type", typeid(m##IDX##_).name());        \
+        \
     }
   #define INIT(UNUSED, IDX) INIT_TMP(IDX)
     LST_DO2(INIT, (), MTL_MEMBERS);
@@ -217,7 +217,7 @@ int ObTenantBase::init_mtl_module()
 int ObTenantBase::start_mtl_module()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start_mtl_module", K(id_));
+
 
   #define START_TMP(IDX)                                                                       \
     if (OB_SUCC(ret)) {                                                                        \
@@ -227,7 +227,7 @@ int ObTenantBase::start_mtl_module()
         LOG_WARN("mtl start failed", K(ret), "type", typeid(m##IDX##_).name());                \
       }                                                                                        \
       int64_t cost_time_us = ObTimeUtility::current_time() - start_time_us;                    \
-      LOG_INFO("finish start mtl"#IDX, K(cost_time_us), "type", typeid(m##IDX##_).name());     \
+     \
     }
   #define START(UNUSED, IDX) START_TMP(IDX)
     LST_DO2(START, (), MTL_MEMBERS);
@@ -238,7 +238,7 @@ int ObTenantBase::start_mtl_module()
 
 void ObTenantBase::stop_mtl_module()
 {
-  LOG_INFO("stop_mtl_module", K(id_));
+
   ObSEArray<FuncWrapper, 100> func_arr;
 #define STOP_TMP(IDX)                                                                               \
   if (ObTenantBase::stop_m##IDX##_func != nullptr) {                                                \
@@ -261,7 +261,7 @@ void ObTenantBase::stop_mtl_module()
 
 void ObTenantBase::wait_mtl_module()
 {
-  LOG_INFO("wait_mtl_module", K(id_));
+
   ObSEArray<FuncWrapper, 100> func_arr;
 #define WAIT_TMP(IDX)                                                                             \
   if (ObTenantBase::wait_m##IDX##_func != nullptr) {                                              \
@@ -300,7 +300,7 @@ void ObTenantBase::destroy()
 
 void ObTenantBase::destroy_mtl_module()
 {
-  LOG_INFO("destroy_mtl_module", K(id_));
+
    ObSEArray<FuncWrapper, 100> func_arr;
 #define DESTROY_TMP(IDX)                                                                                           \
   if (ObTenantBase::destroy_m##IDX##_func != nullptr) {                                                            \
@@ -365,7 +365,7 @@ int ObTenantBase::pre_run()
     ret = cgroup_ctrl->add_self_to_cgroup_(id_);
   }
 
-  LOG_INFO("tenant thread pre_run", K(ret), K(thread_count_), K(id_), K(GET_GROUP_ID()));
+
   return ret;
 }
 
@@ -379,7 +379,7 @@ int ObTenantBase::end_run()
     thread_list_.remove(node);
   }
   ATOMIC_DEC(&thread_count_);
-  LOG_INFO("tenant thread end_run", K(ret), K(thread_count_), K(id_), K(GET_GROUP_ID()));
+
   return ret;
 }
 
@@ -466,7 +466,7 @@ int ObTenantBase::update_thread_cnt(double tenant_unit_cpu)
     }
   }
   int64_t new_thread_count = ATOMIC_LOAD(&thread_count_);
-  LOG_INFO("update_thread_cnt", K(tenant_unit_cpu), K(old_thread_count), K(new_thread_count));
+
   return ret;
 }
 

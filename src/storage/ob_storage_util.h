@@ -110,7 +110,7 @@ OB_INLINE int init_expr_vector_header(
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(expr.init_vector(eval_ctx, format, size, true))) {
-    STORAGE_LOG(WARN, "Failed to init vector", K(ret), K(expr));
+
   }
   return ret;
 }
@@ -126,9 +126,9 @@ OB_INLINE int init_exprs_uniform_header(
       sql::ObExpr *expr = exprs->at(i);
       if (OB_ISNULL(expr)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "Unexpected null expr", K(ret), KPC(exprs));
+
       } else if (OB_FAIL(init_expr_vector_header(*expr, eval_ctx, size))) {
-        STORAGE_LOG(WARN, "Failed to init vector", K(ret), K(i), KPC(expr));
+
       }
     }
   }
@@ -146,9 +146,9 @@ OB_INLINE int init_exprs_vector_header(
       sql::ObExpr *expr = exprs->at(i);
       if (OB_ISNULL(expr)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "Unexpected null expr", K(ret), KPC(exprs));
+
       } else if (OB_FAIL(init_expr_vector_header(*expr, eval_ctx, size, expr->get_default_res_format()))) {
-        STORAGE_LOG(WARN, "Failed to init vector", K(ret), K(i), KPC(expr));
+
       }
     }
   }
@@ -164,7 +164,7 @@ OB_INLINE int init_exprs_new_format_header(
   for (int64_t i = 0; OB_SUCC(ret) && i < cols_projector.count(); ++i) {
     sql::ObExpr *expr = exprs.at(i);
     if (OB_FAIL(expr->init_vector_default(eval_ctx, eval_ctx.max_batch_size_))) {
-      STORAGE_LOG(WARN, "Failed to init vector", K(ret), K(i), KPC(exprs.at(i)));
+
     }
   }
   return ret;
@@ -262,10 +262,10 @@ public:
     int ret = common::OB_SUCCESS;
     if (IS_INIT) {
       ret = common::OB_INIT_TWICE;
-      STORAGE_LOG(WARN, "init twice", K(ret), K(is_inited_));
+
     } else if (OB_ISNULL(allocator)) {
       ret = common::OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "invalid arguments", K(ret), KP(allocator));
+
     } else {
       allocator_ = allocator;
       data_ = reinterpret_cast<common::ObObj*>(local_data_buf_);
@@ -282,7 +282,7 @@ public:
     int ret = common::OB_SUCCESS;
     if (IS_NOT_INIT) {
       ret = common::OB_NOT_INIT;
-      STORAGE_LOG(WARN, "ObObjBufArray not inited", K(ret), K(is_inited_));
+
     } else if (count > capacity_) {
       int64_t new_size = count * sizeof(common::ObObj);
       common::ObObj *new_data = reinterpret_cast<common::ObObj *>(allocator_->alloc(new_size));
@@ -295,7 +295,7 @@ public:
         capacity_ = count;
       } else {
         ret = common::OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(ERROR, "no memory", K(ret), K(new_size), K(capacity_));
+
       }
     }
     return ret;
@@ -372,9 +372,9 @@ public:
     if (OB_FAIL(ret)) {
       // do nothing
     } else if (!reverse_ && OB_FAIL(cmp_func_(datum1, datum2, cmp_ret))) {
-      STORAGE_LOG(WARN, "Failed to compare datum", K(ret), K(datum1), K(datum2), K_(cmp_func));
+
     } else if (reverse_ && OB_FAIL(cmp_func_(datum2, datum1, cmp_ret))) {
-      STORAGE_LOG(WARN, "Failed to compare datum", K(ret), K(datum1), K(datum2), K_(cmp_func));
+
     } else if (0 == cmp_ret && !equal_) {
       equal_ = true;
     }
@@ -446,7 +446,7 @@ inline int reverse_trans_version_val(common::ObDatum &datum)
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(datum.is_nop() || datum.is_null() || datum.get_int() > 0)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "unexpected datum value", K(ret), K(datum));
+
   } else {
     datum.set_int(-datum.get_int());
   }

@@ -1417,7 +1417,7 @@ int ObDictDecoder::cmp_ref_and_set_res(
             parent, col_ctx, dict_ref, col_data, cmp_op, flag, result_bitmap, DEFAULT_BIT_PACKED);
       } else {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "Unpack size larger than 64 bit", K(ret), K(row_ref_size));
+
       }
     } else {
       DICT_CMP_REF_SET_RES(
@@ -1653,7 +1653,7 @@ int ObDictDecoder::get_distinct_count(int64_t &distinct_count) const
 {
   int ret = OB_SUCCESS;
   distinct_count = meta_header_->count_;
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(meta_header_->count_));
+
   return ret;
 }
 

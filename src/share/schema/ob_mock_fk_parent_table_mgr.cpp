@@ -264,7 +264,7 @@ int ObMockFKParentTableMgr::add_mock_fk_parent_table(const ObSimpleMockFKParentT
     if (OB_FAIL(mock_fk_parent_table_map_.set_refactored(hash_wrapper, new_schema, overwrite))) {
       LOG_WARN("build mock_fk_parent_table hash map failed", K(ret));
     } else {
-      LOG_INFO("add new mock_fk_parent_table to mock_fk_parent_table map", K(*new_schema));
+
     }
   }
   if (OB_FAIL(ret)) {
@@ -311,7 +311,7 @@ int ObMockFKParentTableMgr::del_mock_fk_parent_table(const ObMockFKParentTableKe
                      schema_to_del))) {
      if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("failed to remove mock_fk_parent_table schema, item may not exist", K(ret));
+
     } else {
       LOG_WARN("failed to remove mock_fk_parent_table schema", K(ret), K(key.tenant_id_), K(key.mock_fk_parent_table_id_));
     }
@@ -325,7 +325,7 @@ int ObMockFKParentTableMgr::del_mock_fk_parent_table(const ObMockFKParentTableKe
     hash_ret = mock_fk_parent_table_map_.erase_refactored(wrapper);
     if (OB_SUCCESS != hash_ret) {
       if (OB_HASH_NOT_EXIST == hash_ret) {
-        LOG_INFO("failed to remove mock_fk_parent_table schema, item may not exist", K(ret));
+
       } else {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("fail to delete mock_fk_parent_table from mock_fk_parent_table hashmap",

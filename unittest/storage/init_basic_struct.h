@@ -48,7 +48,7 @@ int __attribute__((weak))  build_test_schema(share::schema::ObTableSchema &table
   column.set_rowkey_position(1);
   table_schema.set_max_used_column_id(1);
   if (OB_FAIL(table_schema.add_column(column))) {
-   STORAGE_LOG(WARN, "failed to add column", KR(ret), K(column));
+
   }
   return ret;
 }
@@ -72,9 +72,9 @@ int __attribute__((weak)) gen_create_ls_arg(const int64_t tenant_id,
   palf::PalfBaseInfo palf_base_info;
   ObMajorMVMergeInfo major_merge_info;
   if (OB_FAIL(tenant_info.init(tenant_id, share::PRIMARY_TENANT_ROLE))) {
-    STORAGE_LOG(WARN, "failed to init tenant info", KR(ret), K(tenant_id));
+
   } else if (OB_FAIL(arg.init(tenant_id, ls_id, replica_type, property, tenant_info, create_scn, compat_mode, false, palf_base_info, major_merge_info))) {
-   STORAGE_LOG(WARN, "failed to init arg", KR(ret), K(tenant_id), K(ls_id), K(tenant_info), K(create_scn), K(compat_mode), K(palf_base_info), K(major_merge_info));
+
   }
   return ret;
 }
@@ -102,15 +102,15 @@ int __attribute__((weak)) gen_create_tablet_arg(const int64_t tenant_id,
   }
   share::schema::ObTableSchema &table_schema = *table_schema_ptr;
   if (OB_FAIL(build_test_schema(table_schema, table_id))) {
-    STORAGE_LOG(WARN, "failed to build test table schema", KR(ret), K(table_id));
+
   }
 
   for(int64_t i = 0; OB_SUCC(ret) && i < count; i++) {
     ObTabletID tablet_id_insert(tablet_id.id() + i);
     if (OB_FAIL(index_tablet_ids.push_back(tablet_id_insert))) {
-      STORAGE_LOG(WARN, "failed to push back tablet id", KR(ret), K(tablet_id_insert));
+
     } else if (OB_FAIL(index_tablet_schema_idxs.push_back(0))) {
-      STORAGE_LOG(WARN, "failed to push back index id", KR(ret));
+
     }
   }
 
@@ -125,11 +125,11 @@ int __attribute__((weak)) gen_create_tablet_arg(const int64_t tenant_id,
     STORAGE_LOG(WARN, "failed to init tablet info", KR(ret), K(index_tablet_ids),
         K(tablet_id), K(index_tablet_schema_idxs));
   } else if (OB_FAIL(arg.init_create_tablet(ls_id, share::SCN::min_scn(), false/*need_check_tablet_cnt*/))) {
-    STORAGE_LOG(WARN, "failed to init create tablet", KR(ret), K(tenant_id), K(ls_id));
+
   } else if (OB_FAIL(arg.table_schemas_.push_back(table_schema))) {
-    STORAGE_LOG(WARN, "failed to push back table schema", KR(ret), K(table_schema));
+
   } else if (OB_FAIL(arg.tablets_.push_back(tablet_info))) {
-    STORAGE_LOG(WARN, "failed to push back tablet info", KR(ret), K(tablet_info));
+
   }
   return ret;
 }

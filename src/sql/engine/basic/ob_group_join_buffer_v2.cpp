@@ -522,10 +522,10 @@ int ObDriverRowIterator::get_next_left_row()
           l_idx_ = i + 1;
         }
       }
-      LOG_TRACE("get a row from left batch", K(l_idx_), K(get_row), K(left_brs_->size_));
+
     } else {
       // get a new batch
-      LOG_TRACE("start get next batch from left op");
+
       if (need_backup_left_ && OB_FAIL(left_batch_.restore())) {
         LOG_WARN("failed to restore left batch rows", K(ret));
       } else if (OB_FAIL(get_next_left_batch(op_max_batch_size_, left_brs_))) {
@@ -536,7 +536,7 @@ int ObDriverRowIterator::get_next_left_row()
         LOG_WARN("failed to get backup left batch rows", K(ret));
       }
       l_idx_ = 0;
-      LOG_TRACE("end get next batch from left", K(left_brs_->size_), K(left_brs_->end_));
+
     }
   }
   return ret;
@@ -552,7 +552,7 @@ int ObDriverRowIterator::drive_row_extend(int size)
     left_batch_.drive_row_extended(l_idx_, 0, size);
     left_expr_extend_size_ = size;
   }
-  LOG_TRACE("drive_row extended", K(l_idx_), K(size), K(left_expr_extend_size_), K(min_vec_size), K(op_->get_spec().id_));
+
   return ret;
 }
 
@@ -609,7 +609,7 @@ int ObDriverRowIterator::get_min_vec_size_from_drive_row(int &min_vec_size) {
       } else {
         int tmp_vec_size = static_cast<ObVectorBase *>(expr->get_vector(*eval_ctx_))->get_max_row_cnt();
         if (tmp_vec_size < left_expr_extend_size_) {
-          LOG_TRACE("the vector size is less than left expr extended size", K(expr), K(i));
+
         }
         if (tmp_vec_size < min_vec_size) {
           min_vec_size = tmp_vec_size;

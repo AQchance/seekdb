@@ -183,12 +183,12 @@ void remove_all_files_and_check_state(ObArray<ObSNTmpFileHandle> &tmp_file_handl
 {
   int ret = OB_SUCCESS;
   // remove all tmp files
-  LOG_INFO("begin removing tmp files", K(tmp_file_handles.size()));
+
   for (int64_t i = 0; i < tmp_file_handles.count(); ++i) {
     ObITmpFileHandle &file_handle = tmp_file_handles.at(i);
     if (OB_NOT_NULL(file_handle.get())) {
       int64_t fd = file_handle.get()->get_fd();
-      LOG_INFO("removing tmp file", K(i), K(fd), KPC(file_handle.get()));
+
       file_handle.reset();
       ret = MTL(ObTenantTmpFileManager *)->remove(fd);
       ASSERT_EQ(OB_SUCCESS, ret);
@@ -250,7 +250,7 @@ TEST_F(TestTmpFileFlushMgr, test_basic)
   remove_all_files_and_check_state(tmp_file_handles, flush_tg, pc_ctrl);
 
   delete [] write_buf;
-  LOG_INFO("test_basic");
+
 }
 
 TEST_F(TestTmpFileFlushMgr, test_maintain_flush_ctx_correctness_when_IO_failed)
@@ -301,17 +301,17 @@ TEST_F(TestTmpFileFlushMgr, test_maintain_flush_ctx_correctness_when_IO_failed)
 
   // generate 3 flush tasks, inject IO error to ensure send io [task 1(succ), task 2(succ), task 3(fail)]
   // fd 0: [task 1, task 3], fd 1: [task 2]
-  LOG_INFO("begin flushing data pages");
+
   MockIO.set_send_mode(MockTmpFileUtil::MOCK_SEND_IO_MODE::MOCK_SUCC_FOR_FIRST_X_TASK);
   MockIO.set_io_cnt(0);
   MockIO.set_X(2);
   flush_tg.do_work_();
-  LOG_INFO("flush_tg phase 1, 2 wait, 1 retry", K(flush_tg));
+
   usleep(20 * 1000);
   // task 1 && 2 update file meta succ, fd 1 generate new flush task 4,
   // but flush seq will not inc because task 3 && 4 fail to send IO;
   flush_tg.do_work_();
-  LOG_INFO("flush_tg phase 2, 0 wait, 2 retry", K(flush_tg));
+
 
   // allow 1 more task send IO succ(task 3), now only task-4 is in retry list;
   // fd 0 still have 138 dirty data pages, and it will try to generate task 5 but
@@ -322,13 +322,13 @@ TEST_F(TestTmpFileFlushMgr, test_maintain_flush_ctx_correctness_when_IO_failed)
   flush_tg.do_work_();
   usleep(10 * 1000);
 
-  LOG_INFO("flush_tg phase 3", K(flush_tg));
+
   MockIO.set_X(INT64_MAX); // allow all IO succ
   flush_tg.do_work_();
   usleep(10 * 1000);
-  LOG_INFO("flush_tg phase 4", K(flush_tg));
+
   flush_tg.do_work_();
-  LOG_INFO("flush_tg phase 5", K(flush_tg));
+
 
   ASSERT_EQ(0, flush_tg.wait_list_size_);
   ASSERT_EQ(0, flush_tg.retry_list_size_);
@@ -352,7 +352,7 @@ TEST_F(TestTmpFileFlushMgr, test_maintain_flush_ctx_correctness_when_IO_failed)
 
   ATOMIC_SET(&pc_ctrl.flush_all_data_, false);
   delete [] write_buf;
-  LOG_INFO("test_maintain_flush_ctx_correctness_when_IO_failed");
+
 }
 
 void do_async_flush(ObTenantBase *tenant_ctx, ObTmpFileFlushTG &flush_tg, bool &has_stop)
@@ -362,7 +362,7 @@ void do_async_flush(ObTenantBase *tenant_ctx, ObTmpFileFlushTG &flush_tg, bool &
   ObTenantEnv::set_tenant(tenant_ctx);
   while (!ATOMIC_LOAD(&has_stop)) {
     flush_tg.do_work_();
-    LOG_INFO("flush_tg info in background thread", K(flush_tg));
+
     sleep(1);
   }
 }
@@ -443,7 +443,7 @@ TEST_F(TestTmpFileFlushMgr, test_delete_file_when_flushing)
   for (int64_t i = 0; i < expect_retry_task_num; ++i) {
     flush_tg.do_work_();
   }
-  LOG_INFO("flush_tg info", K(flush_tg));
+
 
   // start a thread to remove deleting tmp file in retry list
   bool has_stop = false;
@@ -471,11 +471,11 @@ TEST_F(TestTmpFileFlushMgr, test_delete_file_when_flushing)
   flush_tg.do_work_();
   usleep(20 * 1000);
   flush_tg.do_work_();
-  LOG_INFO("flush_tg info after remove file 2 && 3", K(flush_tg));
+
 
   remove_all_files_and_check_state(tmp_file_handles, flush_tg, pc_ctrl);
   delete [] write_buf;
-  LOG_INFO("test_delete_file_when_flushing");
+
 }
 
 // write tmp file return error immediately when OB_SERVER_OUTOF_DISK_SPACE occurs
@@ -508,7 +508,7 @@ TEST_F(TestTmpFileFlushMgr, test_write_tmp_file_OUTOF_DISK_SPACE)
   io_info.io_timeout_ms_ = 2 * 1000;
   ret = MTL(ObTenantTmpFileManager *)->write(MTL_ID(), io_info);
   ASSERT_EQ(OB_SERVER_OUTOF_DISK_SPACE, ret);
-  LOG_INFO("file size", KPC(file_handle.get()));
+
   file_handle.reset();
 
   // file 1 write data, fail for OB_SERVER_OUTOF_DISK_SPACE
@@ -520,7 +520,7 @@ TEST_F(TestTmpFileFlushMgr, test_write_tmp_file_OUTOF_DISK_SPACE)
   io_info.io_timeout_ms_ = 2 * 1000;
   ret = MTL(ObTenantTmpFileManager *)->write(MTL_ID(), io_info);
   ASSERT_EQ(OB_SERVER_OUTOF_DISK_SPACE, ret);
-  LOG_INFO("file size", KPC(file_handle.get()));
+
   file_handle.reset();
 
   pc_ctrl.write_buffer_pool_.default_wbp_memory_limit_ = BIG_WBP_MEM_LIMIT; // use big wbp to flush more task in each round
@@ -529,7 +529,7 @@ TEST_F(TestTmpFileFlushMgr, test_write_tmp_file_OUTOF_DISK_SPACE)
   MockIO.set_send_mode(MockTmpFileUtil::MOCK_SEND_IO_MODE::MOCK_FAIL_FOR_FIRST_X_TASK);
   MockIO.set_X(5);
 
-  LOG_INFO("begin writing file 2");
+
   file_handle = tmp_file_handles.at(2);
   io_info.fd_ = file_handle.get()->fd_;
   io_info.io_desc_.set_wait_event(2);
@@ -538,13 +538,13 @@ TEST_F(TestTmpFileFlushMgr, test_write_tmp_file_OUTOF_DISK_SPACE)
   io_info.io_timeout_ms_ = 2 * 1000;
   ret = MTL(ObTenantTmpFileManager *)->write(MTL_ID(), io_info);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("file size", KPC(file_handle.get()));
+
   file_handle.reset();
 
   ObTmpFileFlushTG &flush_tg = pc_ctrl.mock_swap_tg_.flush_tg_ref_;
   remove_all_files_and_check_state(tmp_file_handles, flush_tg, pc_ctrl);
   delete [] write_buf;
-  LOG_INFO("test_write_tmp_file_OUTOF_DISK_SPACE");
+
 }
 
 // flush task will keep retrying when IO_timeout occurs
@@ -574,7 +574,7 @@ TEST_F(TestTmpFileFlushMgr, test_write_tmp_file_IO_timeout)
   io_info.io_timeout_ms_ = 5 * 1000;
   ret = MTL(ObTenantTmpFileManager *)->write(MTL_ID(), io_info);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("file size", KPC(file_handle.get()));
+
   file_handle.reset();
 
   // file 1 write data
@@ -586,7 +586,7 @@ TEST_F(TestTmpFileFlushMgr, test_write_tmp_file_IO_timeout)
   io_info.io_timeout_ms_ = 5 * 1000;
   ret = MTL(ObTenantTmpFileManager *)->write(MTL_ID(), io_info);
   ASSERT_EQ(OB_SUCCESS, ret);
-  LOG_INFO("file size", KPC(file_handle.get()));
+
   file_handle.reset();
 
   MockIO.set_wait_mode(MockTmpFileUtil::MOCK_WAIT_IO_MODE::MOCK_ALL_IO_TIMEOUT);
@@ -597,19 +597,19 @@ TEST_F(TestTmpFileFlushMgr, test_write_tmp_file_IO_timeout)
 
   flush_tg.notify_doing_flush();
   sleep(1);
-  LOG_INFO("flush_tg info", K(flush_tg));
+
   EXPECT_EQ(31, flush_tg.flushing_block_num_); // 30 tasks for data, 1 task for meta
 
   MockIO.set_wait_mode(MockTmpFileUtil::MOCK_WAIT_IO_MODE::NORMAL); // io recover
   sleep(2);
 
-  LOG_INFO("io recover, flush_tg info", K(flush_tg));
+
   EXPECT_EQ(0, flush_tg.retry_list_size_);
   EXPECT_EQ(0, flush_tg.wait_list_size_);
 
   remove_all_files_and_check_state(tmp_file_handles, flush_tg, pc_ctrl);
   delete [] write_buf;
-  LOG_INFO("test_write_tmp_file_IO_timeout");
+
 }
 
 void batch_write_file(ObTenantBase *tenant_ctx, const int32_t WRITE_DATA_BATCH, const int32_t idx,
@@ -672,17 +672,17 @@ TEST_F(TestTmpFileFlushMgr, test_tmp_file_DISK_HUNG)
 
   MockTmpFileSwapTg &mock_swap_tg = pc_ctrl.mock_swap_tg_;
   ObTmpFileFlushTG &flush_tg = mock_swap_tg.flush_tg_ref_;
-  LOG_INFO("flush_tg info", K(flush_tg));
+
   pc_ctrl.write_buffer_pool_.print_statistics();
 
   MockIO.set_send_mode(MockTmpFileUtil::MOCK_SEND_IO_MODE::NORMAL); // io recover
   sleep(2);
-  LOG_INFO("flush_tg info after io recover", K(flush_tg));
+
   pc_ctrl.write_buffer_pool_.print_statistics();
 
   remove_all_files_and_check_state(tmp_file_handles, flush_tg, pc_ctrl);
   delete [] write_buf;
-  LOG_INFO("test_tmp_file_DISK_HUNG");
+
 }
 
 TEST_F(TestTmpFileFlushMgr, test_single_file_wbp_shrink_basic)
@@ -721,14 +721,14 @@ TEST_F(TestTmpFileFlushMgr, test_single_file_wbp_shrink_basic)
 
   pc_ctrl.write_buffer_pool_.print_statistics();
 
-  LOG_INFO("simulate tenant memory shrink, wbp is going to shrink...");
+
   wbp.default_wbp_memory_limit_ = SMALL_WBP_MEM_LIMIT;
   for (int32_t i = 0; i < 10; i++) {
     mock_swap_tg.shrink_wbp_if_needed_();
     flush_tg.do_work_();
     usleep(20 * 1000);
   }
-  LOG_INFO("wbp target shrink size info", K(wbp.default_wbp_memory_limit_), K(wbp.capacity_));
+
   printf("wbp target shrink size: %ld, actual_size:%ld\n", wbp.default_wbp_memory_limit_, wbp.capacity_);
   printf("shrink complete: %s\n", wbp.default_wbp_memory_limit_ >= wbp.capacity_ ? "True" : "False");
 
@@ -737,7 +737,7 @@ TEST_F(TestTmpFileFlushMgr, test_single_file_wbp_shrink_basic)
 
   remove_all_files_and_check_state(tmp_file_handles, flush_tg, pc_ctrl);
   delete [] write_buf;
-  LOG_INFO("test_wbp_shrink_basic");
+
 }
 
 TEST_F(TestTmpFileFlushMgr, test_single_file_wbp_shrink_abort)
@@ -780,7 +780,7 @@ TEST_F(TestTmpFileFlushMgr, test_single_file_wbp_shrink_abort)
   mock_swap_tg.shrink_wbp_if_needed_();
   mock_swap_tg.shrink_wbp_if_needed_();
 
-  LOG_INFO("simulate tenant memory enlarge, abort shrinking");
+
   wbp.default_wbp_memory_limit_ = BIG_WBP_MEM_LIMIT; // abort wbp shrinking
   for (int32_t i = 0; i < 10; i++) {
     mock_swap_tg.shrink_wbp_if_needed_();
@@ -792,12 +792,12 @@ TEST_F(TestTmpFileFlushMgr, test_single_file_wbp_shrink_abort)
   ASSERT_EQ(wbp.default_wbp_memory_limit_, wbp.capacity_);
   ASSERT_EQ(false, wbp.shrink_ctx_.is_valid());
 
-  LOG_INFO("wbp target shrink size info", K(wbp.default_wbp_memory_limit_), K(wbp.capacity_));
+
   printf("wbp target shrink size: %ld, actual_size:%ld\n", wbp.default_wbp_memory_limit_, wbp.capacity_);
   printf("shrink complete: %s\n", wbp.default_wbp_memory_limit_ >= wbp.capacity_ ? "True" : "False");
   remove_all_files_and_check_state(tmp_file_handles, flush_tg, pc_ctrl);
   delete [] write_buf;
-  LOG_INFO("test_wbp_shrink_abort");
+
 }
 
 TEST_F(TestTmpFileFlushMgr, test_wbp_shrink_during_single_file_writing)
@@ -829,7 +829,7 @@ TEST_F(TestTmpFileFlushMgr, test_wbp_shrink_during_single_file_writing)
     // wait for tmp file fill wbp for a while, then shrink wbp
     ATOMIC_SET(&wbp.default_wbp_memory_limit_, SMALL_WBP_MEM_LIMIT);
     wbp.print_statistics();
-    LOG_INFO("simulate tenant memory shrink, wbp is going to shrink...", K(wbp.default_wbp_memory_limit_), K(wbp.capacity_));
+
     MockIO.set_async_mode(tenant_base, &pc_ctrl.mock_swap_tg_); // start mock background thread
   });
 
@@ -838,7 +838,7 @@ TEST_F(TestTmpFileFlushMgr, test_wbp_shrink_during_single_file_writing)
   int64_t write_count = 0;
   char *read_buf = new char[MAX_READ_BUF_SIZE];
   int64_t read_buf_offset = 0;
-  LOG_INFO("write data for 3 seconds");
+
   wbp.print_statistics();
   int64_t start_ts = ObTimeUtil::current_time();
   while (ObTimeUtil::current_time() - start_ts <= 3 * 1000 * 1000) { // generate at most 300MB data
@@ -856,10 +856,10 @@ TEST_F(TestTmpFileFlushMgr, test_wbp_shrink_during_single_file_writing)
     write_count += 1;
     usleep(50 * 1000); // 50ms
   }
-  LOG_INFO("write data count", K(write_count), K(read_buf_offset));
+
 
   sleep(2);
-  LOG_INFO("wbp target shrink size info", K(wbp.default_wbp_memory_limit_), K(wbp.capacity_));
+
   printf("wbp target shrink size: %ld, actual_size:%ld\n", wbp.default_wbp_memory_limit_, wbp.capacity_);
   printf("shrink complete: %s\n", wbp.default_wbp_memory_limit_ >= wbp.capacity_ ? "True" : "False");
 
@@ -890,7 +890,7 @@ TEST_F(TestTmpFileFlushMgr, test_wbp_shrink_during_single_file_writing)
   remove_all_files_and_check_state(tmp_file_handles, flush_tg, pc_ctrl);
   delete [] write_buf;
   delete [] read_buf;
-  LOG_INFO("test_wbp_shrink_during_single_file_writing");
+
 }
 
 TEST_F(TestTmpFileFlushMgr, test_reinsert_item_into_meta_tree)
@@ -927,9 +927,9 @@ TEST_F(TestTmpFileFlushMgr, test_reinsert_item_into_meta_tree)
   ASSERT_EQ(OB_SUCCESS, ret);
 
   flush_tg.do_work_();
-  LOG_INFO("flush info 1", K(flush_tg));
+
   wbp.print_statistics();
-  LOG_INFO("file status 1", KPC(file_handle.get()));
+
   EXPECT_EQ(37, flush_tg.flushing_block_num_); // 36 data task + 1 meta task(13 meta pages)
   EXPECT_TRUE(wbp.meta_page_cnt_ > 0);
   EXPECT_TRUE(wbp.dirty_meta_page_cnt_ == 0);
@@ -940,15 +940,15 @@ TEST_F(TestTmpFileFlushMgr, test_reinsert_item_into_meta_tree)
   MockIO.set_wait_mode(MockTmpFileUtil::MOCK_WAIT_IO_MODE::MOCK_META_IO_TIMEOUT);
 
   flush_tg.do_work_();
-  LOG_INFO("flush info 2", K(flush_tg));
+
   wbp.print_statistics();
-  LOG_INFO("file status 2", KPC(file_handle.get()));
+
   EXPECT_EQ(nullptr, file_handle.get()->data_flush_node_.get_next());
   // 3. meta IO not completed, meta cannot be brushed again
   flush_tg.do_work_();
-  LOG_INFO("flush info 3", K(flush_tg));
+
   wbp.print_statistics();
-  LOG_INFO("file status 3", KPC(file_handle.get()));
+
   // add one meta pages at level 0, level 1 rightmost meta page becomes dirty
   EXPECT_EQ(wbp.write_back_meta_cnt_, 12);
   ASSERT_EQ(OB_SUCCESS, MockIO.get_generate_error_code());
@@ -959,12 +959,12 @@ TEST_F(TestTmpFileFlushMgr, test_reinsert_item_into_meta_tree)
     usleep(10 * 1000);
   }
 
-  LOG_INFO("flush info 4, complete", K(flush_tg), KPC(file_handle.get()));
+
   wbp.print_statistics();
   file_handle.reset();
   remove_all_files_and_check_state(tmp_file_handles, flush_tg, pc_ctrl);
   delete [] write_buf;
-  LOG_INFO("test_reinsert_item_into_meta_tree");
+
 }
 
 } // namespace oceanbase

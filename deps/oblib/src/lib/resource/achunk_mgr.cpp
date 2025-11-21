@@ -32,7 +32,7 @@ void ObLargePageHelper::set_param(const char *param)
     } else if (0 == strcasecmp(param, "only")) {
       large_page_type_ = ONLY_LARGE_PAGE;
     }
-    LOG_INFO("set large page param", K(large_page_type_));
+
   }
 }
 

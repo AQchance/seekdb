@@ -56,7 +56,7 @@ int ObBackupOtherBlockIdIterator::init(const common::ObTabletID &tablet_id, cons
       LOG_WARN("failed to prepare macro id iterator", K(ret));
     } else {
       is_inited_ = true;
-      LOG_INFO("prepare backup other block id iterator", K(tablet_id));
+
     }
   }
   return ret;
@@ -97,7 +97,7 @@ int ObBackupOtherBlockIdIterator::get_next_id(blocksstable::MacroBlockId &macro_
   } else if (OB_FAIL(id_iterator_.get_next_macro_id(macro_id))) {
     LOG_WARN("failed to get next macro id", K(ret));
   } else {
-    LOG_INFO("get next macro id", K(macro_id));
+
   }
   return ret;
 }
@@ -161,7 +161,7 @@ int ObBackupOtherBlocksMgr::wait(ObLSBackupCtx *ls_backup_ctx)
         LOG_WARN("ls backup ctx should not be null", K(ret));
       } else if (OB_SUCCESS != ls_backup_ctx->get_result_code()) {
         ret = OB_CANCELED;
-        LOG_INFO("ls backup ctx already failed", K(ret), K(ret));
+
         break;
       } else if (total_other_block_count_ < cur_list_count) {
         ret = OB_ERR_UNEXPECTED;
@@ -171,7 +171,7 @@ int ObBackupOtherBlocksMgr::wait(ObLSBackupCtx *ls_backup_ctx)
         sleep(WAIT_SLEEP_TIME);
         continue;
       } else {
-        LOG_INFO("other block all has been backed up", K_(tablet_id), K_(tablet_id), K_(table_key), K_(total_other_block_count));
+
         break;
       }
     }
@@ -192,7 +192,7 @@ int ObBackupOtherBlocksMgr::add_item(const ObBackupLinkedItem &link_item)
   } else if (OB_FAIL(list_.push_back(link_item))) {
     LOG_WARN("failed to push back", K(ret), K(link_item));
   } else {
-    LOG_INFO("add item", K(link_item));
+
   }
   return ret;
 }
@@ -240,7 +240,7 @@ int ObBackupOtherBlocksMgr::get_total_other_block_count_(const common::ObTabletI
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_INFO("get total other block count", K(total_count), K(tablet_id), K(sstable));
+
   }
   return ret;
 }

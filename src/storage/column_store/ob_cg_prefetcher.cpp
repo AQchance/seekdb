@@ -540,7 +540,7 @@ int ObCGPrefetcher::prefetch_micro_data()
             if (OB_FAIL(agg_group_->fill_index_info(block_info, true))) {
               LOG_WARN("Fail to agg index info", K(ret), KPC_(agg_group));
             } else {
-              LOG_DEBUG("[COLUMNSTORE] success to agg index info", K(ret), K(block_info));
+
             }
           } else if (OB_FAIL(prefetch_data_block(
                       micro_data_prefetch_idx_,
@@ -579,7 +579,7 @@ int ObCGPrefetcher::prefetch_micro_data()
       }
     }
   }
-  LOG_DEBUG("[INDEX BLOCK] prefetched info", K(ret),  KPC(this));
+
   return ret;
 }
 
@@ -591,7 +591,7 @@ int ObCGPrefetcher::compare_range(const ObCSRange &index_range)
   } else {
     cmp_ret = index_range.compare(query_index_range_.end_row_id_);
   }
-  LOG_DEBUG("[INDEX BLOCK] compare range", K(cmp_ret), K(is_reverse_scan_), K(index_range), K(query_index_range_));
+
   return cmp_ret;
 }
 
@@ -669,7 +669,7 @@ int ObCGPrefetcher::ObCSIndexTreeLevelHandle::prefetch(
         if (OB_FAIL(prefetcher.agg_group_->fill_index_info(index_info, true))) {
           LOG_WARN("Fail to agg index info", K(ret), KPC(prefetcher.agg_group_));
         } else {
-          LOG_DEBUG("[COLUMNSTORE] success to agg index info", K(ret), K(index_info));
+
         }
       } else {
         ObSSTableReadHandle &read_handle = prefetcher.read_handles_[index_info.range_idx() % prefetcher.max_range_prefetching_cnt_];
@@ -750,7 +750,7 @@ int ObCGPrefetcher::ObCSIndexTreeLevelHandle::locate_row_index(
       if (OB_UNLIKELY(OB_BEYOND_THE_RANGE != ret)) {
         LOG_WARN("Fail to locate root range", K(ret), K(prefetcher.query_range_));
       }  else {
-        LOG_DEBUG("Row index range beyond the sstable", K(prefetcher.query_index_range_), KPC(prefetcher.sstable_));
+
         ret = OB_SUCCESS;
       }
     } else {

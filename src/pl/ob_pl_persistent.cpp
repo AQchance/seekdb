@@ -475,7 +475,7 @@ int ObRoutinePersistentInfo::check_dep_schema(ObSchemaGetterGuard &schema_guard,
       }
     }
     if (OB_SUCC(ret) && !match) {
-      LOG_INFO("not match schema", K(merge_version), K(dep_schema_objs.at(i)));
+
     }
   }
 
@@ -586,7 +586,7 @@ int ObRoutinePersistentInfo::read_dll_from_disk(ObSQLSessionInfo *session_info,
 
               if (OB_SUCC(ret)) {
                 op = ObRoutinePersistentInfo::ObPLOperation::SUCC;
-                LOG_INFO("succ decode dll from disk", K(ret), K(key_id_), K(merge_version));
+
               }
             }
           }
@@ -644,7 +644,7 @@ int ObRoutinePersistentInfo::insert_or_update_dll_to_disk(schema::ObSchemaGetter
     }
     // ignore duplicate key error 
     if (OB_ERR_PRIMARY_KEY_DUPLICATE == ret) {
-      LOG_TRACE("has a duplicate key error", K(ret), K(op), K(key_id_));
+
       ret = OB_SUCCESS;
     }
   }
@@ -738,7 +738,7 @@ int ObRoutinePersistentInfo::delete_dll_from_disk(common::ObISQLClient &trans,
         LOG_WARN("execute query failed", K(ret), K(sql));
       } else {
         // do nothing
-        LOG_INFO("succ to delete dll", K(key_id), K(tenant_id), K(affected_rows));
+
       }
     }
   }

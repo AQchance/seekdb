@@ -260,7 +260,7 @@ public:
 
     for (int64_t i = 0; i < size; i++) {
       if (!ObDatum::binary_equal(datums->at(row_ids[i]), datums3[i])) {
-        LOG_INFO("not equal", K(datums->at(row_ids[i])), K(datums3[i]), K(i), K(row_ids[i]));
+
         ::abort();
       }
     }
@@ -298,7 +298,7 @@ public:
 
     for (int64_t i = 0; i < size; i++) {
       if (!ObDatum::binary_equal(datums->at(row_ids[i]), datums3[i])) {
-        LOG_INFO("not equal", K(datums->at(row_ids[i])), K(datums3[i]), K(i), K(row_ids[i]));
+
         ::abort();
       }
     }
@@ -314,7 +314,7 @@ public:
 
       for (int64_t i = 0; i < size; i++) {
         if (!ObDatum::binary_equal(datums->at(row_ids[i]), datums3[i])) {
-          LOG_INFO("not equal", K(datums->at(row_ids[i])), K(datums3[i]), K(i), K(row_ids[i]), K(ref_arr[row_ids[i]]));
+
           ::abort();
         }
       }
@@ -400,7 +400,7 @@ TEST_F(TestStringStream, test_datums_encoding)
     }
 
     for (int64_t i = 1; i <= max_count; i=(i * (i + j + 1))) {
-      LOG_INFO("round", K(i), K(j));
+
       test_and_check_str_datums(i, compress_type, use_zero_len_as_null, has_null, is_fix_len, use_nullbitmap,
           has_empty_string, all_null, all_empty, half_null_half_empty, use_null_replaced_ref);
     }

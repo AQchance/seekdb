@@ -163,7 +163,7 @@ int ObTruncateWhiteFilterExecutor::init_evaluated_datums(bool &is_valid)
 {
   int ret = OB_SUCCESS;
   is_valid = true;
-  LOG_DEBUG("truncate filter do not need do this now", K(ret), K(lbt()));
+
   return ret;
 }
 
@@ -239,7 +239,7 @@ int ObTruncateWhiteFilterExecutor::prepare_truncate_param(
       LOG_WARN("failed to prepare datum buf", K(ret));
     }
   }
-  LOG_INFO("[TRUNCATE INFO]", K(ret), K(schema_rowkey_cnt), K(cols_desc), K(truncate_partition), KPC(this));
+
   return ret;
 }
 
@@ -304,7 +304,7 @@ int ObTruncateWhiteFilterExecutor::prepare_truncate_value(
       LOG_WARN("unexpected truncate item type", K(ret), K_(truncate_item_type), KPC(this), K(truncate_partition));
     }
   }
-  LOG_INFO("[TRUNCATE INFO]", K(ret), K(truncate_commit_viersion), K(truncate_partition), KPC(this));
+
   return ret;
 }
 
@@ -329,7 +329,7 @@ int ObTruncateWhiteFilterExecutor::inner_filter(
   } else if (OB_UNLIKELY(need_flip())) {
     filtered = !filtered;
   }
-  LOG_DEBUG("[TRUNCATE INFO]", K(ret), KPC(this), K(count), K(filtered));
+
   return ret;
 }
 
@@ -471,7 +471,7 @@ int ObTruncateBlackFilterExecutor::init_evaluated_datums(bool &is_valid)
 {
   int ret = OB_SUCCESS;
   is_valid = true;
-  LOG_DEBUG("truncate filter do not need do this now", K(ret));
+
   return ret;
 }
 
@@ -541,7 +541,7 @@ int ObTruncateBlackFilterExecutor::prepare_truncate_param(
       LOG_WARN("failed to prepare datum buf", K(ret));
     }
   }
-  LOG_INFO("[TRUNCATE INFO]", K(ret), K(schema_rowkey_cnt), K(cols_desc), K(truncate_partition), KPC(this));
+
   return ret;
 }
 
@@ -601,7 +601,7 @@ int ObTruncateBlackFilterExecutor::prepare_truncate_value(
       LOG_WARN("unexpected truncate item type", K(ret), KPC(this));
     }
   }
-  LOG_INFO("[TRUNCATE INFO]", K(ret), KPC(this), K(truncate_partition));
+
   return ret;
 }
 
@@ -687,7 +687,7 @@ int ObTruncateBlackFilterExecutor::inner_filter(
       filtered = !filtered;
     }
   }
-  LOG_DEBUG("[TRUNCATE INFO]", K(ret), KPC(this), K(count), K(filtered));
+
   return ret;
 }
 
@@ -786,7 +786,7 @@ int ObTruncateOrFilterExecutor::init_evaluated_datums(bool &is_valid)
 {
   int ret = OB_SUCCESS;
   is_valid = true;
-  LOG_DEBUG("truncate filter do not need do this now", K(ret), K(lbt()));
+
   return ret;
 }
 
@@ -888,7 +888,7 @@ int ObTruncateAndFilterExecutor::init_evaluated_datums(bool &is_valid)
 {
   int ret = OB_SUCCESS;
   is_valid = true;
-  LOG_DEBUG("truncate filter do not need do this now", K(ret));
+
   return ret;
 }
 

@@ -139,7 +139,7 @@ int ObColumnCSDecoder::quick_compare(const ObStorageDatum &left,
   if (OB_FAIL(decoder_->decode(*ctx_, row_id, right_datum))) {
     LOG_WARN("decode cell fail", K(ret), K(row_id));
   } else if (OB_FAIL(cmp_func.compare(left, right_datum, cmp_ret))) {
-    STORAGE_LOG(WARN, "fail to compare datums", K(ret), K(left), K(right_datum));
+
   }
   return ret;
 }
@@ -463,7 +463,7 @@ int ObCSEncodeBlockGetReader::get_row(const ObMicroBlockData &block_data,
       ret = OB_BEYOND_THE_RANGE;
     }
   }
-  LOG_DEBUG("ObCSEncodeBlockGetReader get_row", K(ret), K(found), K(row_id), K(read_info));
+
   return ret;
 }
 
@@ -492,7 +492,7 @@ int ObCSEncodeBlockGetReader::locate_row(const ObDatumRowkey &rowkey,
 
   if (OB_UNLIKELY(rowkey.get_datum_cnt() > datum_utils.get_rowkey_count())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to locate row", K(ret), K(rowkey), K(datum_utils));
+
   } else {
     found = false;
     row_id = -1;
@@ -612,7 +612,7 @@ int ObCSEncodeBlockGetReader::get_row(
       row.row_flag_.set_flag(ObDmlFlag::DF_INSERT);
     }
   }
-  LOG_DEBUG("ObCSEncodeBlockGetReader get_row", K(ret), K(row_idx), K(read_info));
+
   return ret;
 }
 
@@ -934,7 +934,7 @@ int ObMicroBlockCSDecoder::init(
       LOG_WARN("do init failed", K(ret));
     }
 
-    LOG_DEBUG("init ObMicroBlockCSDecoder", K(ret), K(block_data), K(read_info));
+
   }
 
   return ret;
@@ -1087,7 +1087,7 @@ int ObMicroBlockCSDecoder::compare_rowkey(
           LOG_WARN("fail to decode datum", K(ret), K(index), K(i));
         } else if (OB_FAIL(datum_utils.get_cmp_funcs().at(i).compare(
                      store_datum, rowkey.datums_[i], compare_result))) {
-          STORAGE_LOG(WARN, "Failed to compare datums", K(ret), K(i), K(store_datum), K(rowkey));
+
         }
       }
     }
@@ -1190,7 +1190,7 @@ int ObMicroBlockCSDecoder::cache_decoders(char *buf,
       offset += decoder_size;
       h->count_++;
     }
-    LOG_DEBUG("cache decoders", K(size), K(header->column_count_), "cached_col_cnt", h->count_);
+
 
     ObDecoderArrayAllocator allocator(reinterpret_cast<char *>(&h->col_[h->count_]));
     const ObIColumnCSDecoder *d = nullptr;
@@ -1569,7 +1569,7 @@ int ObMicroBlockCSDecoder::filter_pushdown_truncate_filter(
     } else if (OB_FAIL(col_cs_decoder->decoder_->pushdown_operator(parent, *col_cs_decoder->ctx_, *truncate_executor,
         pd_filter_info, result_bitmap))) {
       if (OB_LIKELY(ret == OB_NOT_SUPPORTED)) {
-        LOG_TRACE("[PUSHDOWN] Column specific operator failed, switch to retrograde filter pushdown", K(ret), K(filter));
+
         // reuse result bitmap as null objs set
         result_bitmap.reuse();
         ret = OB_SUCCESS;
@@ -1814,7 +1814,7 @@ int ObMicroBlockCSDecoder::get_aggregate_result(
         LOG_WARN("Failed to eval batch", K(ret));
       }
     }
-    LOG_DEBUG("get_aggregate_result", K(ret), K(can_pushdown), K(agg_cell));
+
   }
   return ret;
 }
@@ -1902,7 +1902,7 @@ int ObMicroBlockCSDecoder::read_distinct(
       LOG_WARN("Failed to read distinct", K(ret));
     }
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(group_by_cell));
+
   return ret;
 }
 
@@ -1921,7 +1921,7 @@ int ObMicroBlockCSDecoder::read_reference(
   } else {
     group_by_cell.set_ref_cnt(row_cap);
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(group_by_cell));
+
   return ret;
 }
 
@@ -1970,7 +1970,7 @@ int ObMicroBlockCSDecoder::get_group_by_aggregate_result(
           last_agg_col_offset = agg_col_offset;
         }
       }
-      LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(i), K(group_by_col), K(agg_col_offset), K(group_by_cell), K(need_get_col_datum));
+
     }
   }
   return ret;
@@ -2046,7 +2046,7 @@ int ObMicroBlockCSDecoder::get_group_by_aggregate_result(
           last_agg_col_offset = agg_col_offset;
         }
       }
-      LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(i), K(group_by_col), K(agg_col_offset), K(group_by_cell), K(need_get_col));
+
     }
   }
   return ret;

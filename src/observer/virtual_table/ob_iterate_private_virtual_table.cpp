@@ -90,7 +90,7 @@ int ObIteratePrivateVirtualTable::do_open()
         bool in_range = scan_param_->key_ranges_.empty();
         FOREACH_CNT_X(range, scan_param_->key_ranges_, OB_SUCC(ret) && !in_range) {
           in_range = check_tenant_in_range_(*id, *range);
-          LOG_TRACE("check tenant in range", K(*id), K(*range));
+
         }
         // user tenant can only see its own data while sys tenant can see all tenant's data.
         if (in_range
@@ -105,7 +105,7 @@ int ObIteratePrivateVirtualTable::do_open()
             ret = OB_ERR_UNEXPECTED;
             LOG_WARN("tenant schema is nullptr", KR(ret), K(*id), K(exec_tenant_id));
           } else if (!simple_tenant_schema->is_normal()) {
-            LOG_TRACE("tenant status is not normal, just skip", K(exec_tenant_id));
+
           } else if (OB_FAIL(schema_guard_->check_table_exist(
                      exec_tenant_id, base_table_id_, exist))) {
             LOG_WARN("fail to check table exist",
@@ -125,7 +125,7 @@ int ObIteratePrivateVirtualTable::do_open()
       } else {
         lib::ob_sort(tenants_.begin(), tenants_.end());
       }
-      LOG_TRACE("tenant id array", K(tenants_));
+
     }
 
     // Iterate virtual table's `tenant_id` to the head of primary key/index,

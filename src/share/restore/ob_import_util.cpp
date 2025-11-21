@@ -118,7 +118,7 @@ int ObImportTableUtil::check_tablegroup_exist(share::schema::ObMultiVersionSchem
   } else if (OB_FAIL(guard.get_tablegroup_id(tenant_id, tablegroup, table_group_id))) {
     LOG_WARN("failed to get tablegroup id", K(ret), K(tenant_id)); 
   } else if (OB_INVALID_ID == table_group_id) {
-    LOG_INFO("tablegroup not exist", K(tenant_id), K(tablegroup));
+
   } else {
     is_exist = true;
   }

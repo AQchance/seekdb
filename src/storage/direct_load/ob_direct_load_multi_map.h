@@ -64,17 +64,17 @@ public:
                    OB_MALLOC_NORMAL_BLOCK_SIZE, ModulePageAllocator("TLD_MM_bagi", MTL_ID()));
       if (OB_ISNULL(bag)) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "fail to new bag", KR(ret));
+
       } else if (OB_FAIL(map_.set_refactored(key, bag))) {
-        STORAGE_LOG(WARN, "fail to put bag", KR(ret));
+
       }
     } else if (ret != OB_SUCCESS) {
-      STORAGE_LOG(WARN, "fail to get bag", KR(ret));
+
     }
 
     if (OB_SUCC(ret)) {
       if (OB_FAIL(bag->push_back(value))) {
-        STORAGE_LOG(WARN, "fail to push back value", KR(ret));
+
       }
     }
     return ret;
@@ -86,12 +86,12 @@ public:
     auto fn = [&keys] (MapTypePair &p) {
       int ret = OB_SUCCESS;
       if (OB_FAIL(keys.push_back(p.first))) {
-        STORAGE_LOG(WARN, "fail to push key", KR(ret));
+
       }
       return ret;
     };
     if (OB_FAIL(map_.foreach_refactored(fn))) {
-      STORAGE_LOG(WARN, "fail to traverse map", KR(ret));
+
     }
     return ret;
   }
@@ -105,13 +105,13 @@ public:
         bag = nullptr;
         ret = common::OB_SUCCESS;
       } else {
-        STORAGE_LOG(WARN, "fail to get bag", KR(ret));
+
       }
     }
     if (bag != nullptr) {
       for (int64_t i = 0; OB_SUCC(ret) && i < bag->count(); i ++) {
         if (OB_FAIL(out_bag.push_back(bag->at(i)))) {
-          STORAGE_LOG(WARN, "fail to push item", KR(ret));
+
         }
       }
     }

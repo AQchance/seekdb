@@ -161,7 +161,7 @@ int ObTempTableInsertVecOp::do_get_next_vector(const int64_t max_row_cnt)
     if (child_brs->end_) {
       break;
     }
-    LOG_DEBUG("finish processing batch result", KPC(child_brs));
+
   }
   return ret;
 }

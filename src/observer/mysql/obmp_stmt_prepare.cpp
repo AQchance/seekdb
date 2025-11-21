@@ -210,7 +210,7 @@ int ObMPStmtPrepare::process()
       LOG_WARN("packet too large than allowd for the session", K_(sql), K(ret));
     } else if (OB_FAIL(session.check_tenant_status())) {
       need_disconnect = false;
-      LOG_INFO("unit has been migrated, need deny new request", K(ret), K(MTL_ID()));
+
     } else if (OB_FAIL(sql::ObFLTUtils::init_flt_info(pkt.get_extra_info(), session,
                             conn->proxy_cap_flags_.is_full_link_trace_support(),
                             enable_flt))) {
@@ -643,7 +643,7 @@ int ObMPStmtPrepare::send_column_packet(const ObSQLSessionInfo &session,
       if (OB_FAIL(response_packet(fp, const_cast<ObSQLSessionInfo *>(&session)))) {
         LOG_WARN("response packet fail", K(ret));
       } else {
-        LOG_DEBUG("response field succ", K(field));
+
         ret = result.next_field(field);
       }
     }
@@ -685,7 +685,7 @@ int ObMPStmtPrepare::send_param_packet(const ObSQLSessionInfo &session,
     while (OB_SUCC(ret)) {
       OMPKField fp(field);
       if (OB_FAIL(response_packet(fp, const_cast<ObSQLSessionInfo *>(&session)))) {
-        LOG_DEBUG("response packet fail", K(ret));
+
       } else {
 //        LOG_INFO("response field succ", K(field));
         ret = result.next_param(field);

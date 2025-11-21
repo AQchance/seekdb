@@ -29,7 +29,7 @@ void ObPsStmtItemRefAtomicOp::operator()(const PsStmtIdKV &entry)
   if (NULL != entry.second) {
     if (entry.second->check_erase_inc_ref_count()) {//has been marked by other threads
       callback_ret_ = OB_EAGAIN;
-      LOG_INFO("element will be free, try again", K(entry), K(callback_ret_));
+
     } else {//When execution reaches this code block, the reference count will not be 0, because operator() is protected by the lock in the hashtable}
       callback_ret_ = OB_SUCCESS;
       stmt_item_ = entry.second;
@@ -71,7 +71,7 @@ void ObPsStmtInfoRefAtomicOp::operator ()(const PsStmtInfoKV &entry)
   if (NULL != entry.second) {
     if (entry.second->check_erase_inc_ref_count()) {//has been marked by other threads
       callback_ret_ = OB_EAGAIN;
-      LOG_INFO("element will be free, try again", K(entry), K(callback_ret_));
+
     } else {//When execution reaches this code block, the reference count will not be 0, because operator() is protected by the lock in the hashtable}
       callback_ret_ = OB_SUCCESS;
       stmt_info_ = entry.second;

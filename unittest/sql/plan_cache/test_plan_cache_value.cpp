@@ -75,13 +75,13 @@ void generate_plan(TestSqlCtx &test_sql_ctx, const char *query,
                    ParamStore &params, ObLogPlan *&logical_plan,
                    ObPhysicalPlan *&phy_plan, const  ObSQLSessionInfo &session)
 {
-  LOG_INFO("generate_plan!");
+
   ParseResult parse_result;
   ObStmt *stmt = NULL;
 
   //parse
   test_sql->do_parse(*test_sql_ctx.allocator_, query, parse_result);
-  LOG_INFO("tree", "tree", CSJ(ObParserResultPrintWrapper(*(parse_result.result_tree_))));
+
   //replace const expt with ? in syntax tree; get params;
 
   SqlInfo not_param_info;
@@ -98,7 +98,7 @@ void generate_plan(TestSqlCtx &test_sql_ctx, const char *query,
                                                fixed_param_store,
                                                is_transform_outline);
 
-  LOG_INFO("tree", "tree trans", CSJ(ObParserResultPrintWrapper(*(parse_result.result_tree_))));
+
   //resolve
   test_sql->do_resolve(test_sql_ctx, parse_result, stmt, &params);
   //logical_plan

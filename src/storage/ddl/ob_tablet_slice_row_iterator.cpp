@@ -66,7 +66,7 @@ int ObTabletSliceRowIterator::init(const ObTabletID &tablet_id,
     row_iter_ = &row_iter;
     param_ = &write_param;
     is_inited_ = true;
-    LOG_INFO("tablet slice row iter init finished", KPC(this));
+
   }
   return ret;
 }
@@ -103,7 +103,7 @@ int ObTabletSliceRowIterator::get_next_row(const blocksstable::ObDatumRow *&row)
     row = current_row;
   }
 
-  LOG_TRACE("tablet slice row iter get next row", K(ret), KPC(row));
+
   return ret;
 }
 

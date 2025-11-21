@@ -150,7 +150,7 @@ void ObTruncateInfoServiceTest::check_tablet_cache(
   const int64_t newest_commit_version,
   const int64_t newest_schema_version)
 {
-  LOG_INFO("read_truncate_info_array check_tablet_cache", K(ls_id), K(tablet_id), K(is_valid));
+
   ObTabletHandle tablet_handle;
   ASSERT_EQ(OB_SUCCESS, TruncateInfoHelper::get_tablet(ls_id, tablet_id, tablet_handle));
   ObTruncateInfoCache &truncate_info_cache = tablet_handle.get_obj()->truncate_info_cache_;
@@ -175,7 +175,7 @@ void ObTruncateInfoServiceTest::check_kv_cache(
   ObTruncateInfoArray array;
   int ret = ObTruncateInfoKVCacheUtil::get_truncate_info_array(
                             allocator_, cache_key, array);
-  LOG_INFO("read_truncate_info_array check_kv_cache", K(tablet.get_tablet_id()), K(ret));
+
   ASSERT_EQ(OB_SUCCESS, ret);
   ASSERT_EQ(info_cnt, array.count());
   ASSERT_EQ(newest_commit_version, array.at(array.count() - 1)->commit_version_);
@@ -360,7 +360,7 @@ TEST_F(ObTruncateInfoServiceTest, truncate_range_part)
     bool equal = false;
     if (OB_NOT_NULL(truncate_info_array.at(0))) {
       ASSERT_FALSE(truncate_info_array.at(0)->is_sub_part_);
-      LOG_INFO("print 111", KPC(truncate_info_array.at(0)), K(truncate_part));
+
       ASSERT_EQ(OB_SUCCESS, truncate_part.compare(truncate_info_array.at(0)->truncate_part_, equal));
       ASSERT_TRUE(equal);
       newest_commit_version = truncate_info_array.at(0)->commit_version_;
@@ -368,7 +368,7 @@ TEST_F(ObTruncateInfoServiceTest, truncate_range_part)
 
       check_tablet_cache(ls_id, tablet_id, true/*is_valid*/, newest_commit_version, newest_schema_version);
       check_kv_cache(*tablet_handle.get_obj(), 1/*info_cnt*/, newest_commit_version, newest_schema_version);
-      LOG_INFO("read_truncate_info_array success to check tablet cache 1", KR(ret), K(tablet_id), K(newest_commit_version), K(newest_schema_version));
+
     }
 
     ASSERT_EQ(OB_SUCCESS, sql_proxy.write("alter table t_range1 truncate subpartition p1sp2", affected_rows));
@@ -382,7 +382,7 @@ TEST_F(ObTruncateInfoServiceTest, truncate_range_part)
     if (OB_NOT_NULL(truncate_info_array.at(0))) {
       newest_commit_version = truncate_info_array.at(0)->commit_version_;
       ASSERT_TRUE(truncate_info_array.at(0)->is_sub_part_);
-      LOG_INFO("print 222", KPC(truncate_info_array.at(0)), K(truncate_part));
+
       ASSERT_EQ(OB_SUCCESS, truncate_part.compare(truncate_info_array.at(0)->truncate_part_, equal));
       ASSERT_TRUE(equal);
       ASSERT_EQ(OB_SUCCESS, TruncateInfoHelper::mock_truncate_partition(allocator_, 500, 600, truncate_part));
@@ -398,7 +398,7 @@ TEST_F(ObTruncateInfoServiceTest, truncate_range_part)
                   ObVersionRange(0, EXIST_READ_SNAPSHOT_VERSION), truncate_info_array));
     check_tablet_cache(ls_id, tablet_id, true/*is_valid*/, newest_commit_version, newest_schema_version);
     check_kv_cache(*tablet_handle.get_obj(), 2/*info_cnt*/, newest_commit_version, newest_schema_version);
-    LOG_INFO("read_truncate_info_array success to check tablet cache 2", KR(ret), K(tablet_id), K(newest_commit_version), K(newest_schema_version));
+
   }
 #undef CHECK_PREV_PART_HIGH_BOUND
 #undef CHECK_SUBPART_HIGH_BOUND
@@ -488,7 +488,7 @@ TEST_F(ObTruncateInfoServiceTest, truncate_range_columns_part)
     bool equal = false;
     if (OB_NOT_NULL(truncate_info_array.at(0))) {
       ASSERT_FALSE(truncate_info_array.at(0)->is_sub_part_);
-      LOG_INFO("print111", KPC(truncate_info_array.at(0)), K(truncate_part));
+
       ASSERT_EQ(OB_SUCCESS, truncate_part.compare(truncate_info_array.at(0)->truncate_part_, equal));
       ASSERT_TRUE(equal);
       newest_commit_version = truncate_info_array.at(0)->commit_version_;
@@ -510,7 +510,7 @@ TEST_F(ObTruncateInfoServiceTest, truncate_range_columns_part)
       newest_commit_version = cmp_info->commit_version_;
       newest_schema_version = cmp_info->schema_version_;
       ASSERT_TRUE(cmp_info->is_sub_part_);
-      LOG_INFO("print222", KPC(cmp_info), K(truncate_part));
+
       ASSERT_EQ(OB_SUCCESS, truncate_part.compare(cmp_info->truncate_part_, equal));
       ASSERT_TRUE(equal);
       GENERATE_START_RANGE(500);
@@ -635,7 +635,7 @@ TEST_F(ObTruncateInfoServiceTest, truncate_list_part)
     ASSERT_EQ(OB_SUCCESS, TruncateInfoHelper::mock_part_key_idxs(allocator_, 1/*part_key_idx*/, truncate_part));
     if (OB_NOT_NULL(truncate_info_array.at(0))) {
       ASSERT_FALSE(truncate_info_array.at(0)->is_sub_part_);
-      LOG_INFO("print", KPC(truncate_info_array.at(0)), K(truncate_part));
+
       ASSERT_EQ(OB_SUCCESS, truncate_part.compare(truncate_info_array.at(0)->truncate_part_, equal));
       ASSERT_TRUE(equal);
       last_commit_version = truncate_info_array.at(0)->commit_version_;
@@ -655,7 +655,7 @@ TEST_F(ObTruncateInfoServiceTest, truncate_list_part)
       range_begin_obj.set_int(20);
       range_end_obj.set_max_value();
       ASSERT_EQ(OB_SUCCESS, TruncateInfoHelper::mock_truncate_partition(allocator_, range_begin_rowkey, range_end_rowkey, truncate_part));
-      LOG_INFO("print", KPC(truncate_info_array.at(0)), K(truncate_part));
+
       ASSERT_EQ(OB_SUCCESS, truncate_part.compare(truncate_info_array.at(0)->truncate_part_, equal));
       ASSERT_TRUE(equal);
       const int64_t list_val_cnt = 3;
@@ -663,7 +663,7 @@ TEST_F(ObTruncateInfoServiceTest, truncate_list_part)
       ASSERT_EQ(OB_SUCCESS, TruncateInfoHelper::mock_truncate_partition(allocator_, list_vals, list_val_cnt, truncate_part));
       ASSERT_EQ(OB_SUCCESS, TruncateInfoHelper::mock_part_key_idxs(allocator_, 0/*part_key_idx*/, truncate_part));
       truncate_part.part_op_ = ObTruncatePartition::EXCEPT;
-      LOG_INFO("print", KPC(truncate_info_array.at(0)), K(truncate_part));
+
       ASSERT_EQ(OB_SUCCESS, truncate_part.compare(truncate_info_array.at(0)->truncate_subpart_, equal));
       ASSERT_TRUE(equal);
     }

@@ -376,10 +376,10 @@ public:
     reset();
     if (OB_ISNULL(tx_data)) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "init ObTxDataGuard with invalid arguments", KR(ret));
+
     } else if (tx_data->inc_ref() <= 0) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(ERROR, "unexpected ref cnt on tx data", KR(ret), KP(tx_data), KPC(tx_data));
+
       ob_abort();
     } else {
       tx_data_ = tx_data;

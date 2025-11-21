@@ -37,12 +37,12 @@ int ObHNormalAdapter::put(ObTableExecCtx &ctx, const ObITableEntity &cell)
       if (OB_FAIL(ObTableApiService::put(tb_ctx, cell, result))) {
         LOG_WARN("fail to put in hbase normal adapter", K(ret), K(cell));
       } else {
-        LOG_DEBUG("put success", K(ret), K(ctx.get_table_name()), K(tb_ctx.get_tablet_id()), K(cell));
+
       }
     } else if (OB_FAIL(ObTableApiService::insert_or_update(tb_ctx, cell, result))) {
       LOG_WARN("fail to insert or update in hbase normal adapter", K(ret), K(cell));
     } else {
-      LOG_DEBUG("put success", K(ret), K(ctx.get_table_name()), K(tb_ctx.get_tablet_id()), K(cell));
+
     }
   }
   return ret;

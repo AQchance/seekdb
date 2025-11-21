@@ -132,7 +132,7 @@ int ObEncryptedHelper::encrypt_password(const ObString &raw_pwd, const ObString 
   int ret = OB_SUCCESS;
   copy_len = 0;
   if (raw_pwd.empty()) {
-    LOG_INFO("empty password");
+
   } else if (OB_UNLIKELY(scramble_str.empty())
              || OB_UNLIKELY(SCRAMBLE_LENGTH != scramble_str.length())
              || OB_ISNULL(pwd_buf) || (buf_len <= SHA1_HASH_SIZE)) {

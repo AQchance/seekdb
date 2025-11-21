@@ -116,7 +116,7 @@ int ObPhysicalRestoreTenantExecutor::sync_wait_tenant_created_(
   int ret = OB_SUCCESS;
   common::ObMySQLProxy *sql_proxy = nullptr;
   const int64_t cur_time_us = ObTimeUtility::current_time();
-  LOG_INFO("sync wait tenant created start", K(tenant_name));
+
   if (OB_ISNULL(sql_proxy = ctx.get_sql_proxy())) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("sql proxy must not be null", K(ret));
@@ -148,7 +148,7 @@ int ObPhysicalRestoreTenantExecutor::sync_wait_tenant_created_(
         LOG_WARN("tenant schema must not be null", K(ret), K(meta_tenant_id));
       } else if (!tenant_info->is_normal()) {
         ret = OB_EAGAIN;
-        LOG_DEBUG("tenant status not normal, wait later", K(ret), K(meta_tenant_id));
+
       } else {
         break;
       }
@@ -160,7 +160,7 @@ int ObPhysicalRestoreTenantExecutor::sync_wait_tenant_created_(
           LOG_WARN("failed to check physical restore finish", K(ret), K(job_id));
         } else if (!is_finish) {
           sleep(1);
-          LOG_DEBUG("restore not finish, wait later", K(ret), K(user_tenant_id));
+
         } else if (is_failed) {
           char comment[OB_INNER_TABLE_DEFAULT_KEY_LENTH] = { 0 };
           if(OB_FAIL(ObRestoreUtil::get_restore_job_comment(*sql_proxy, job_id, comment, OB_INNER_TABLE_DEFAULT_KEY_LENTH))) {
@@ -177,7 +177,7 @@ int ObPhysicalRestoreTenantExecutor::sync_wait_tenant_created_(
 
     if (OB_SUCC(ret)) {
       int cost_ts = (ObTimeUtility::current_time() - cur_time_us) / 1000000;
-      LOG_INFO("sync wait tenant created finished", K(cost_ts), K(tenant_name));
+
     } else {
       int cost_ts = (ObTimeUtility::current_time() - cur_time_us) / 1000000;
       LOG_WARN("sync wait tenant created failed", K(ret), K(cost_ts), K(tenant_name));

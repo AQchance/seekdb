@@ -608,7 +608,7 @@ int SetCommandOperator::do_srand_mem_repeat_inner(
   } else if (OB_FAIL(get_complex_type_count(db, key, total_count))) {
     LOG_WARN("fail to get set count", K(ret), K(db), K(key));
   } else if (total_count == 0 || count == 0) {
-    LOG_INFO("set is empty", K(ret), K(db), K(key));
+
   } else if (OB_FAIL(srand_result.res_members_.reserve(count))) {
     LOG_WARN("fail to reserve", K(ret), K(count));
   } else {
@@ -674,7 +674,7 @@ int SetCommandOperator::do_srand_mem_inner(
   } else if (OB_FAIL(get_complex_type_count(db, key, total_count))) {
     LOG_WARN("fail to get set count", K(ret), K(db), K(key));
   } else if (total_count == 0) {
-    LOG_INFO("set is empty", K(ret), K(db), K(key));
+
   } else if (count >= total_count) {
     srand_result.is_get_all_ = true;
     if (OB_FAIL(srand_result.res_members_.reserve(total_count))) {

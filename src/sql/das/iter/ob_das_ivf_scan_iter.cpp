@@ -271,7 +271,7 @@ int ObDASIvfBaseScanIter::inner_init(ObDASIterParam &param)
           if (OB_FAIL(ObVectorIndexParam::build_search_param(vec_aux_ctdef_->vector_index_param_, vec_aux_ctdef_->vec_query_param_, search_param_))) {
             LOG_WARN("build search param fail", K(vec_aux_ctdef_->vector_index_param_), K(vec_aux_ctdef_->vec_query_param_));
           } else {
-            LOG_TRACE("search param", K(vec_aux_ctdef_->vector_index_param_), K(vec_aux_ctdef_->vec_query_param_), K(search_param_));
+
 
             if (search_param_.similarity_threshold_ != 0) {
               if (OB_FAIL(ObDasVecScanUtils::get_distance_threshold_ivf(
@@ -678,7 +678,7 @@ int ObDASIvfBaseScanIter::try_write_centroid_cache(
   int ret = OB_SUCCESS;
   RWLock::WLockGuard guard(cent_cache.get_lock());
   if (!cent_cache.is_writing()) {
-    LOG_INFO("other threads already writed centroids cache, skip", K(ret));
+
   } else {
     ObArenaAllocator tmp_allocator;
     ObCenterId cent_id;
@@ -765,10 +765,10 @@ int ObDASIvfBaseScanIter::try_write_centroid_cache(
     if (OB_SUCC(ret)) {
       if (cent_cache.get_count() > 0) {
         cent_cache.set_completed();
-        LOG_DEBUG("success to write centroid table cache", K(centroid_tablet_id_), K(cent_cache.get_count()));
+
       } else {
         cent_cache.reuse();
-        LOG_DEBUG("Empty centroid table, no need to set cache", K(centroid_tablet_id_));
+
       }
     }
   }
@@ -819,7 +819,7 @@ int ObDASIvfBaseScanIter::get_centers_cache(bool is_vectorized,
         is_cache_usable = cent_cache->is_completed();
       }
     } else {
-      LOG_INFO("other threads already writed centroids cache, skip", K(ret));
+
     }
   } else {
     // read cache
@@ -1449,7 +1449,7 @@ int ObDASIvfScanIter::process_ivf_scan_post(bool is_vectorized)
     if (ret != OB_ENTRY_NOT_EXIST) {
       LOG_WARN("failed to get nearest probe center ids", K(ret));
     } else {
-      LOG_INFO("nearest probe center ids is empty", K(ret));
+
       ret = OB_SUCCESS;
     }
   }
@@ -2812,7 +2812,7 @@ int ObDASIvfPQScanIter::try_write_pq_centroid_cache(
   int ret = OB_SUCCESS;
   RWLock::WLockGuard guard(cent_cache.get_lock());
   if (!cent_cache.is_writing()) {
-    LOG_INFO("other threads already writed centroids cache, skip", K(ret));
+
   } else {
     ObArenaAllocator tmp_allocator;
     const ObDASScanCtDef *pq_cid_vec_ctdef = vec_aux_ctdef_->get_vec_aux_tbl_ctdef(
@@ -2906,10 +2906,10 @@ int ObDASIvfPQScanIter::try_write_pq_centroid_cache(
     if (OB_SUCC(ret)) {
       if (cent_cache.get_count() > 0) {
         cent_cache.set_completed();
-        LOG_DEBUG("success to write centroid table cache", K(pq_centroid_tablet_id_), K(cent_cache.get_count()));
+
       } else {
         cent_cache.reuse();
-        LOG_DEBUG("Empty centroid table, no need to set cache", K(pq_centroid_tablet_id_));
+
       }
       
     }
@@ -2960,7 +2960,7 @@ int ObDASIvfPQScanIter::get_pq_precomputetable_cache(
         is_cache_usable = cent_cache->is_completed();
       }
     } else {
-      LOG_INFO("other threads already writed pq precompute table cache, skip", K(ret));
+
     }
   } else {
     // read cache
@@ -2988,7 +2988,7 @@ int ObDASIvfPQScanIter::try_write_pq_precompute_table_cache(
   } else {
     RWLock::WLockGuard guard(cent_cache.get_lock());
     if (!cent_cache.is_writing()) {
-      LOG_INFO("other threads already writed centroids cache, skip", K(ret));
+
     } else {
       if (is_pq_cent_cache_usable && is_ivf_cent_cache_usable) {
         
@@ -3330,7 +3330,7 @@ int ObDASIvfSQ8ScanIter::process_ivf_scan_post(bool is_vectorized)
     if (ret != OB_ENTRY_NOT_EXIST) {
       LOG_WARN("failed to get nearest probe center ids", K(ret));
     } else {
-      LOG_INFO("nearest probe center ids is empty", K(ret));
+
       ret = OB_SUCCESS;
     }
   } 

@@ -72,7 +72,7 @@ int SimpleServerHelper::create_ls(uint64_t tenant_id, ObAddr addr)
     arg.major_mv_merge_info_.major_mv_merge_scn_safe_calc_.atomic_store(merge_scn);
     arg.major_mv_merge_info_.major_mv_merge_scn_.atomic_store(merge_scn);
     FR(ls_svr->create_ls(arg));
-    LOG_INFO("set member list");
+
     ObLSHandle handle;
     ObLS *ls = nullptr;
     FR(ls_svr->get_ls(ls_id, handle, ObLSGetMod::STORAGE_MOD));
@@ -86,7 +86,7 @@ int SimpleServerHelper::create_ls(uint64_t tenant_id, ObAddr addr)
                                                       learner_list));
 
     // check leader
-    LOG_INFO("check leader");
+
     for (int i = 0; i < 15; i++) {
       ObRole role;
       int64_t leader_epoch = 0;
@@ -308,7 +308,7 @@ int SimpleServerHelper::submit_redo(uint64_t tenant_id, ObLSID ls_id)
 
 int SimpleServerHelper::wait_checkpoint_newest(uint64_t tenant_id, ObLSID ls_id)
 {
-  LOG_INFO("wait_checkpoint_newest", K(tenant_id), K(ls_id));
+
   int ret = OB_SUCCESS;
   ObTransID failed_tx_id;
   SCN end_scn;
@@ -326,16 +326,16 @@ int SimpleServerHelper::wait_checkpoint_newest(uint64_t tenant_id, ObLSID ls_id)
                                                                     ObFreezeSourceFlag::TEST_MODE))) {
         } else if (FALSE_IT(checkpoint_scn = ls_handle.get_ls()->get_ls_meta().get_clog_checkpoint_scn())) {
         } else if (checkpoint_scn < end_scn) {
-          LOG_INFO("wait ls checkpoint advance", K(tenant_id), K(ls_id), K(checkpoint_scn), K(end_scn));
+
           ob_usleep(500 * 1000);
         } else {
-          LOG_INFO("wait ls checkpoint advance", K(tenant_id), K(ls_id), K(checkpoint_scn), K(end_scn));
+
           break;
         }
       }
     }
   }
-  LOG_INFO("wait_checkpoint_newest finish", K(tenant_id), K(ls_id));
+
   return ret;
 }
 
@@ -646,7 +646,7 @@ int SimpleServerHelper::find_tx_info(uint64_t tenant_id, ObLSID ls_id, ObTransID
 
 int SimpleServerHelper::wait_tx(uint64_t tenant_id, ObLSID ls_id, ObTransID tx_id, ObTxState tx_state)
 {
-  LOG_INFO("wait_tx", K(tenant_id), K(ls_id), K(tx_id));
+
   int ret = OB_SUCCESS;
   int wait_end = false;
   while (OB_SUCC(ret) && !wait_end) {
@@ -662,7 +662,7 @@ int SimpleServerHelper::wait_tx(uint64_t tenant_id, ObLSID ls_id, ObTransID tx_i
             wait_end = true;
           }
           if (wait_end || REACH_TIME_INTERVAL(1 * 1000 * 1000)) {
-            LOG_INFO("wait_tx", K(tx_state), K(*ctx), KP(ctx), K(ctx->exec_info_.state_), K(ls_id));
+
           }
           ls_handle.get_ls()->revert_tx_ctx(ctx);
         }
@@ -670,13 +670,13 @@ int SimpleServerHelper::wait_tx(uint64_t tenant_id, ObLSID ls_id, ObTransID tx_i
     }
     ob_usleep(50 * 1000);
   }
-  LOG_INFO("wait_tx finish", K(tenant_id), K(ls_id), K(tx_id));
+
   return ret;
 }
 
 int SimpleServerHelper::wait_tx_exit(uint64_t tenant_id, ObLSID ls_id, ObTransID tx_id)
 {
-  LOG_INFO("wait_tx_end", K(tenant_id), K(ls_id), K(tx_id));
+
   int ret = OB_SUCCESS;
   while (OB_SUCC(ret)) {
     MTL_SWITCH(tenant_id) {
@@ -688,7 +688,7 @@ int SimpleServerHelper::wait_tx_exit(uint64_t tenant_id, ObLSID ls_id, ObTransID
         if (OB_FAIL(ls_handle.get_ls()->get_tx_ctx(tx_id, true, ctx))) {
         } else {
           if (REACH_TIME_INTERVAL(1 * 1000 * 1000)) {
-            LOG_INFO("wait_tx", K(*ctx), KP(ctx), K(ctx->exec_info_.state_));
+
           }
           ls_handle.get_ls()->revert_tx_ctx(ctx);
         }
@@ -696,7 +696,7 @@ int SimpleServerHelper::wait_tx_exit(uint64_t tenant_id, ObLSID ls_id, ObTransID
     }
     ob_usleep(50 * 1000);
   }
-  LOG_INFO("wait_tx_end finish", K(ret), K(tenant_id), K(ls_id), K(tx_id));
+
   return ret;
 }
 
@@ -748,7 +748,7 @@ int SimpleServerHelper::enable_wrs(uint64_t tenant_id, ObLSID ls_id, bool enable
 int SimpleServerHelper::wait_weak_read_ts_advance(uint64_t tenant_id, ObLSID ls_id1, ObLSID ls_id2)
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("wait_weak_read_ts_advance", K(tenant_id), K(ls_id1), K(ls_id2));
+
   bool advance = false;
   SCN ts1,ts2;
   while (OB_SUCC(ret) && !advance) {
@@ -766,13 +766,13 @@ int SimpleServerHelper::wait_weak_read_ts_advance(uint64_t tenant_id, ObLSID ls_
       }
     }
   }
-  LOG_INFO("wait_weak_read_ts_advance finish", K(tenant_id), K(ls_id1), K(ts1), K(ls_id2), K(ts2));
+
   return ret;
 }
 
 int SimpleServerHelper::modify_wrs(uint64_t tenant_id, ObLSID ls_id, int64_t add_ns)
 {
-  LOG_INFO("modify_wrs", K(tenant_id), K(ls_id), K(add_ns));
+
   int ret = OB_SUCCESS;
   MTL_SWITCH(tenant_id) {
     ObLSHandle ls_handle;
@@ -781,7 +781,7 @@ int SimpleServerHelper::modify_wrs(uint64_t tenant_id, ObLSID ls_id, int64_t add
       SCN &wrs_scn = ls_handle.get_ls()->get_ls_wrs_handler()->ls_weak_read_ts_;
       SCN old_scn = wrs_scn;
       wrs_scn = SCN::plus(old_scn, add_ns);
-      LOG_INFO("modify_wrs finish", K(tenant_id), K(ls_id), K(add_ns), K(old_scn), K(wrs_scn));
+
     }
   }
   return ret;
@@ -790,7 +790,7 @@ int SimpleServerHelper::modify_wrs(uint64_t tenant_id, ObLSID ls_id, int64_t add
 
 int SimpleServerHelper::ls_reboot(uint64_t tenant_id, ObLSID ls_id)
 {
-  LOG_INFO("ls_reboot", K(tenant_id), K(ls_id));
+
   int ret = OB_SUCCESS;
   auto print_mgr_state = [](ObLS *ls) {
     const ObTxLSStateMgr &state_mgr = ls->ls_tx_svr_.mgr_->tx_ls_state_mgr_;
@@ -815,7 +815,7 @@ int SimpleServerHelper::ls_reboot(uint64_t tenant_id, ObLSID ls_id)
       } else if (OB_FAIL(wait_replay_advance(tenant_id, ls_id, end_scn))) {
         LOG_WARN("wait replay advance failed", KR(ret), K(tenant_id), K(ls_id), K(end_scn));
       }
-      LOG_INFO("ls_reboot", KR(ret), K(tenant_id), K(ls_id));
+
     }
     return ret;
   };
@@ -827,7 +827,7 @@ int SimpleServerHelper::ls_reboot(uint64_t tenant_id, ObLSID ls_id)
       break;
     }
   }
-  LOG_INFO("ls_reboot finish", K(tenant_id), K(ls_id));
+
   return ret;
 }
 
@@ -877,7 +877,7 @@ int InjectTxFaultHelper::submit_log(const char *buf,
   if (OB_NOT_NULL(mgr_)) {
     ls_id = mgr_->ls_id_;
   }
-  LOG_INFO("submit_log", K(ret), K(log_block_header), K(log_list), K(ls_id));
+
   ObTxLogType *inject_tx_log_type = nullptr;
   if (FALSE_IT(inject_tx_log_type = tx_injects_.get(log_block_header.tx_id_))) {
   } else if (OB_ISNULL(inject_tx_log_type)) {
@@ -903,7 +903,7 @@ int InjectTxFaultHelper::submit_log(const char *buf,
 
 int InjectTxFaultHelper::inject_tx_block(uint64_t tenant_id, ObLSID ls_id, ObTransID tx_id, ObTxLogType log_type)
 {
-  LOG_INFO("inject_tx_block", K(tenant_id), K(ls_id), K(tx_id), K(log_type));
+
   int ret = OB_SUCCESS;
   MTL_SWITCH(tenant_id) {
     ObLSHandle ls_handle;
@@ -919,7 +919,7 @@ int InjectTxFaultHelper::inject_tx_block(uint64_t tenant_id, ObLSID ls_id, ObTra
       mgr_ = mgr;
     }
   }
-  LOG_INFO("inject_tx_block finish", K(ret), K(tenant_id), K(ls_id), K(tx_id), K(log_type));
+
   return ret;
 }
 

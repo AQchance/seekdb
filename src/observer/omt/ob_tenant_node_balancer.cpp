@@ -72,7 +72,7 @@ void ObTenantNodeBalancer::handle()
   ObCurTraceId::init(GCONF.self_addr_);
   if (!SERVER_STORAGE_META_SERVICE.is_started()) {
     // do nothing if not finish replaying slog
-    LOG_INFO("server slog not finish replaying, need wait");
+
     ret = OB_NEED_RETRY;
   } else if (OB_FAIL(unit_getter_.get_sys_unit_count(sys_unit_cnt))) {
     LOG_WARN("get sys unit count fail", KR(ret));
@@ -102,7 +102,7 @@ void ObTenantNodeBalancer::handle()
   ObSEArray<uint64_t, 10> tenants;
   if (!SERVER_STORAGE_META_SERVICE.is_started()) {
     // do nothing if not finish replaying slog
-    LOG_INFO("server slog not finish replaying, need wait");
+
     ret = OB_NEED_RETRY;
   } else if (OB_FAIL(unit_getter_.get_tenants(tenants))) {
     LOG_WARN("get cluster tenants fail", K(ret));
@@ -137,7 +137,7 @@ int ObTenantNodeBalancer::handle_notify_unit_resource(const obrpc::TenantServerU
 
 int ObTenantNodeBalancer::notify_create_tenant(const obrpc::TenantServerUnitConfig &unit)
 {
-  LOG_INFO("succ to receive notify of creating tenant", K(unit));
+
   int ret = OB_SUCCESS;
   bool is_hidden_sys = false;
   bool unit_id_exist = false;
@@ -182,7 +182,7 @@ int ObTenantNodeBalancer::notify_create_tenant(const obrpc::TenantServerUnitConf
       LOG_WARN("failed to create new tenant", KR(ret), K(basic_tenant_unit), K(create_tenant_timeout_ts));
     } else {
       ret = OB_SUCCESS;
-      LOG_INFO("succ to create new user tenant", KR(ret), K(unit), K(basic_tenant_unit), K(create_tenant_timeout_ts));
+
     }
   }
 
@@ -193,7 +193,7 @@ int ObTenantNodeBalancer::notify_create_tenant(const obrpc::TenantServerUnitConf
 // So here we only make a mark, the deletion of tenant is uniformly done in refresh tenant
 int ObTenantNodeBalancer::try_notify_drop_tenant(const int64_t tenant_id)
 {
-  LOG_INFO("[DELETE_TENANT] succ to receive notify of dropping tenant", K(tenant_id));
+
   int ret = OB_SUCCESS;
   int tmp_ret = OB_SUCCESS;
   TCWLockGuard guard(lock_);
@@ -206,7 +206,7 @@ int ObTenantNodeBalancer::try_notify_drop_tenant(const int64_t tenant_id)
       ret = OB_SUCC(ret) ? tmp_ret : ret;
     }
   }
-  LOG_INFO("[DELETE_TENANT] mark drop tenant", KR(ret), K(tenant_id));
+
   return ret;
 }
 
@@ -254,10 +254,10 @@ int ObTenantNodeBalancer::check_del_tenants(const TenantUnits &local_units, Tena
     }
     if (!tenant_exists ||
         ObUnitInfoGetter::ObUnitStatus::UNIT_DELETING_IN_OBSERVER == local_unit.unit_status_) {
-      LOG_INFO("[DELETE_TENANT] begin to delete tenant", K(local_unit));
-      LOG_INFO("[DELETE_TENANT] need convert_real_to_hidden_sys_tenant");
+
+
       if (OB_FAIL(omt_->convert_real_to_hidden_sys_tenant())) {
-        LOG_INFO("fail to convert_real_to_hidden_sys_tenant", K(ret));
+
       }
     }
   }
@@ -301,7 +301,7 @@ int ObTenantNodeBalancer::check_new_tenant(
     LOG_WARN("tenant should not be null here", KR(ret), K(tenant_id));
   } else if (tenant->get_unit_status() == ObUnitInfoGetter::ObUnitStatus::UNIT_DELETING_IN_OBSERVER
              || tenant->has_stopped()) {
-    LOG_INFO("tenant has been stopped, no need to update", KR(ret), K(tenant_id));
+
   } else {
     if (tenant->is_hidden() && OB_FAIL(omt_->convert_hidden_to_real_sys_tenant(unit, abs_timeout_us))) {
       LOG_WARN("fail to create real sys tenant", K(unit));
@@ -362,7 +362,7 @@ void ObTenantNodeBalancer::periodically_check_tenant()
     IGNORE_RETURN (*it).tenant_->unlock();
   }
   ObResourcePlanManager &plan_mgr = G_RES_MGR.get_plan_mgr();
-  LOG_INFO("refresh resource manager plan", K(plan_mgr));
+
 }
 
 // Although unit has been deleted, the local cached unit cannot be deleted if the tenant still holds resource

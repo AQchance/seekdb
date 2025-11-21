@@ -1266,7 +1266,7 @@ int ObTableParam::construct_columns_and_projector(
       LOG_WARN("assign failed", K(ret));
     }
   }
-  LOG_DEBUG("Generated main read info", K_(main_read_info));
+
   read_param_version_ = ObCGReadInfo::MIX_READ_INFO_LOCAL_CACHE;
   if (OB_SUCC(ret) && is_cs && tmp_cg_idxs.count() <= ObCGReadInfo::get_local_max_cg_cnt()) {
     // construct cg read infos
@@ -1364,7 +1364,7 @@ int ObTableParam::convert(const ObTableSchema &table_schema,
   } else if (table_schema.is_fts_index() && OB_FAIL(convert_fulltext_index_info(table_schema))) {
     LOG_WARN("fail to convert fulltext index info", K(ret));
   } else {
-    LOG_DEBUG("construct columns", K(table_id_), K(access_column_ids), K_(main_read_info));
+
   }
 
   return ret;
@@ -1559,7 +1559,7 @@ int ObTableParam::convert_column_schema_to_param(const ObColumnSchemaV2 &column_
   column_param.set_gen_col_udf_expr(column_schema.is_generated_column_using_udf());
   column_param.set_is_hidden(column_schema.is_hidden());
   column_param.set_lob_chunk_size(column_schema.get_lob_chunk_size());
-  LOG_DEBUG("convert_column_schema_to_param", K(column_schema), K(column_param), K(lbt()));
+
   if (column_schema.is_generated_column()) {
     ObObj nop_obj;
     nop_obj.set_nop_value();

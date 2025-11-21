@@ -214,7 +214,7 @@ void ObTableInsertOp::record_err_for_load_data(int err_ret, int row_num)
     if (OB_NOT_NULL(buffer) && 0 == buffer->get_error_line()) {
       buffer->set_error_line_column(row_num, 0);
     }
-    LOG_DEBUG("load data exec log error line", K(err_ret), K(row_num));
+
   }
 }
 

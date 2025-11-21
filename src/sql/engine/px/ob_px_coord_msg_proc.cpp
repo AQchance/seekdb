@@ -78,7 +78,7 @@ int ObPxSubCoordMsgProc::on_interrupted(const ObInterruptCode &ic) const
   sqc_ctx_.interrupted_ = true;
   // Throw error code to main processing routine, end SQC
   ret = ic.code_;
-  LOG_TRACE("sqc received a interrupt and throw out of msg proc", K(ic));
+
   return ret;
 }
 

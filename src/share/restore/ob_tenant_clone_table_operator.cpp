@@ -562,7 +562,7 @@ int ObTenantCloneTableOperator::get_clone_job_by_source_tenant_id(
     if (OB_ENTRY_NOT_EXIST != ret) {
       LOG_WARN("fail to read job", KR(ret), K(sql));
     } else {
-      LOG_INFO("clone job not exist", KR(ret), K(sql));
+
     }
   }
   return ret;
@@ -587,7 +587,7 @@ int ObTenantCloneTableOperator::get_clone_job_by_job_id(const int64_t job_id,
     if (OB_ENTRY_NOT_EXIST != ret) {
       LOG_WARN("fail to read job", KR(ret), K(sql));
     } else {
-      LOG_INFO("clone job not exist", KR(ret), K(sql));
+
     }
   }
 
@@ -618,7 +618,7 @@ int ObTenantCloneTableOperator::get_clone_job_by_clone_tenant_name(
     if (OB_ENTRY_NOT_EXIST != ret) {
       LOG_WARN("fail to read job", KR(ret), K(sql));
     } else {
-      LOG_INFO("clone job not exist", KR(ret), K(sql));
+
     }
   }
   return ret;
@@ -644,7 +644,7 @@ int ObTenantCloneTableOperator::get_clone_job_by_clone_tenant_id(
     if (OB_ENTRY_NOT_EXIST != ret) {
       LOG_WARN("fail to read job", KR(ret), K(sql));
     } else {
-      LOG_INFO("clone job not exist", KR(ret), K(sql));
+
     }
   }
   return ret;
@@ -1042,7 +1042,7 @@ int ObTenantCloneTableOperator::get_user_clone_job_history(ObCloneJob &job)
     if (OB_ENTRY_NOT_EXIST != ret) {
       LOG_WARN("fail to read job", KR(ret), K(sql));
     } else {
-      LOG_INFO("clone job not exist", KR(ret), K(sql));
+
     }
   }
   return ret;
@@ -1069,7 +1069,7 @@ int ObTenantCloneTableOperator::get_sys_clone_job_history(
     if (OB_ENTRY_NOT_EXIST != ret) {
       LOG_WARN("fail to read job", KR(ret), K(sql));
     } else {
-      LOG_INFO("clone job not exist", KR(ret), K(sql));
+
     }
   }
   return ret;
@@ -1152,7 +1152,7 @@ int ObTenantCloneTableOperator::read_only_exist_one_job_(
     LOG_WARN("fail to read jobs", KR(ret), K(sql));
   } else if (jobs.empty()) {
     ret = OB_ENTRY_NOT_EXIST;
-    LOG_INFO("clone job not exist", KR(ret));
+
   } else if (jobs.count() > 1) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected clone job count", KR(ret), K(jobs));

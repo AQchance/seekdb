@@ -63,7 +63,7 @@ int ObCompactionHistogramStat::add_value(const int64_t time, const bool failed)
   int64_t index = ObCompactionHistogramBucketUtil::get_index(time);
   if (OB_UNLIKELY(ObCompactionHistogramBucketUtil::BUCKET_MAX_COUNT < index || 0 > index)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "get unexpected index", K(ret), K(index));
+
   } else {
     ++bucket_[index].finish_cnt_;
     if (failed) {
@@ -315,7 +315,7 @@ int ObCompactionSuggestionMgr::init()
 {
   int ret = OB_SUCCESS;
   if (OB_FAIL(array_.init(SUGGESTION_MAX_CNT))) {
-    STORAGE_LOG(WARN, "failed to init ObInfoRingArray", K(ret));
+
   } else {
     is_inited_ = true;
   }
@@ -327,9 +327,9 @@ int ObCompactionSuggestionMgr::get_suggestion_list(ObIArray<ObCompactionSuggesti
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else if (OB_FAIL(array_.get_list(input_array))) {
-    STORAGE_LOG(WARN, "failed to get suggestion list", K(ret));
+
   }
   return ret;
 }
@@ -339,7 +339,7 @@ int ObCompactionSuggestionMgr::update_running_cnt(const ObIArray<int64_t> &dag_r
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else {
     ObMutexGuard guard(lock_);
     compaction_dag_status_.update_running_cnt(dag_running_cnts);
@@ -355,7 +355,7 @@ int ObCompactionSuggestionMgr::update_finish_cnt(
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else if (ObCompactionDagStatus::COMPACTION_DAG_MAX > type) {
     ObMutexGuard guard(lock_);
     compaction_dag_status_.update_finish_cnt(type, failed, exe_time);
@@ -422,7 +422,7 @@ int ObCompactionSuggestionMgr::analyze_for_suggestion(
     suggestion.merge_start_time_ = common::ObTimeUtility::fast_current_time();
     suggestion.merge_finish_time_ = suggestion.merge_start_time_;
     if (OB_FAIL(array_.add(suggestion))) {
-      STORAGE_LOG(WARN, "failed to add suggestion", K(ret), K(suggestion));
+
     }
   }
   #undef ADD_COMPACTION_DAG_INFO_PARAM
@@ -439,12 +439,12 @@ int ObCompactionSuggestionMgr::diagnose_for_suggestion(
   int tmp_ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else if (ObIDag::MergeDagPrioCnt != reasons.count()
       || ObIDag::MergeDagPrioCnt != running_cnts.count()
       || ObIDag::MergeDagPrioCnt != thread_limits.count()) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret));
+
   } else {
     int64_t suggestion_reason;
     int64_t thread_limit;
@@ -457,7 +457,7 @@ int ObCompactionSuggestionMgr::diagnose_for_suggestion(
     }
     // force to print log
     int64_t end_time = common::ObTimeUtility::fast_current_time();
-    STORAGE_LOG(INFO, "[COMPACTION DAG STATUS] ", "start_time", click_time_, K(end_time), K(dag_status));
+
     click_time_ = end_time;
     // ayalyze
     for (int64_t i = 0; i < ObIDag::MergeDagPrioCnt; ++i) {
@@ -502,7 +502,7 @@ int ObCompactionSuggestionMgr::analyze_merge_info(
   int ret = OB_SUCCESS;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else {
     ObCompactionSuggestion suggestion;
     char * buf = suggestion.suggestion_;
@@ -566,7 +566,7 @@ int ObCompactionSuggestionMgr::analyze_merge_info(
       suggestion.merge_start_time_ = running_info.merge_start_time_;
       suggestion.merge_finish_time_ = running_info.merge_finish_time_;
       if (OB_FAIL(array_.add(suggestion))) {
-        STORAGE_LOG(WARN, "failed to add suggestion", K(ret), K(suggestion));
+
       }
     }
   }
@@ -580,25 +580,25 @@ int ObCompactionSuggestionIterator::open(const int64_t tenant_id)
   all_tenants.set_label(ObModIds::OB_TENANT_ID_LIST);
   if (is_opened_) {
     ret = OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "The ObCompactionSuggestionIterator has been opened", K(ret));
+
   } else if (!::is_valid_tenant_id(tenant_id)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), K(tenant_id));
+
   } else if (OB_SYS_TENANT_ID == tenant_id) { // sys tenant can get all tenants' info
     GCTX.omt_->get_tenant_ids(all_tenants);
   } else if (OB_FAIL(all_tenants.push_back(tenant_id))) {
-    STORAGE_LOG(WARN, "failed to push back tenant_id", K(ret), K(tenant_id));
+
   }
   for (int64_t i = 0; OB_SUCC(ret) && i < all_tenants.size(); ++i) {
     uint64_t tenant_id = all_tenants[i];
     if (!is_virtual_tenant_id(tenant_id)) { // skip virtual tenant
       MTL_SWITCH(tenant_id) {
         if (OB_FAIL(MTL(ObCompactionSuggestionMgr *)->get_suggestion_list(suggestion_array_))) {
-          STORAGE_LOG(WARN, "failed to get suggestion list", K(ret));
+
         }
       } else {
         if (OB_TENANT_NOT_IN_SERVER != ret) {
-          STORAGE_LOG(WARN, "switch tenant failed", K(ret), K(tenant_id));
+
         } else {
           ret = OB_SUCCESS;
         }
@@ -618,7 +618,7 @@ int ObCompactionSuggestionIterator::get_next_info(ObCompactionSuggestion &info)
   int ret = OB_SUCCESS;
   if (!is_opened_) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN, "not init", K(ret));
+
   } else if (cur_idx_ >= suggestion_array_.count()) {
     ret = OB_ITER_END;
   } else {

@@ -177,7 +177,7 @@ int ObTabletLogicMacroIdReader::get_next_batch(common::ObIArray<ObBackupMacroBlo
         if (OB_FAIL(id_array.push_back(macro_id))) {
           LOG_WARN("failed to push back", K(ret), K(macro_id), K(data_macro_block_meta.val_));
         } else {
-          LOG_DEBUG("push back logic id", K_(tablet_id), K_(table_key), K_(cur_total_row_count), K(macro_id.absolute_row_offset_));
+
         }
       }
     }
@@ -261,7 +261,7 @@ int ObMacroBlockBackupReader::process_(ObIAllocator *io_allocator)
   int ret = OB_SUCCESS;
   blocksstable::ObStorageObjectReadInfo read_info;
   if (is_data_ready_) {
-    LOG_INFO("macro data is ready, no need fetch", K(ret));
+
   } else if (OB_FAIL(get_macro_read_info_(read_info))) {
     LOG_WARN("failed to get macro block read info", K(ret), K(logic_id_));
   } else if (OB_ISNULL(io_allocator)) {
@@ -270,7 +270,7 @@ int ObMacroBlockBackupReader::process_(ObIAllocator *io_allocator)
   } else if (OB_ISNULL(read_info.buf_ =
       reinterpret_cast<char*>(io_allocator->alloc(read_info.size_)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "failed to alloc macro read info buffer", K(ret), K(read_info.size_));
+
   } else {
     if (OB_FAIL(ObObjectManager::read_object(read_info, macro_handle_))) {
       LOG_WARN("failed to read block", K(ret), K(read_info));
@@ -286,7 +286,7 @@ int ObMacroBlockBackupReader::process_(ObIAllocator *io_allocator)
         LOG_WARN("failed to get macro block size", K(ret), K(buffer_reader_));
       } else {
         buffer_reader_.set_pos(size);
-        LOG_INFO("fetch macro block data", K(logic_id_));
+
       }
     }
   }
@@ -389,7 +389,7 @@ int ObMacroBlockBackupReader::get_other_macro_block_size_(const blocksstable::Ob
     const int64_t header_size = header.header_size_;
     const int64_t data_size = header.data_size_;
     size = header_size + data_size;
-    LOG_INFO("get other macro block size", K(size));
+
   }
   return ret;
 }
@@ -447,7 +447,7 @@ int ObMultiMacroBlockBackupReader::get_next_macro_block(
     LOG_WARN("not init", K(ret));
   } else if (reader_idx_ >= readers_.count()) {
     ret = OB_ITER_END;
-    LOG_DEBUG("multi macro block backup reader get end", K(ret));
+
   } else if (OB_FAIL(fetch_macro_block_with_retry_(data, table_key, logic_id, macro_id, io_allocator))) {
     LOG_WARN("failed to fetch macro block with retry", K(ret));
   } else {
@@ -465,7 +465,7 @@ void ObMultiMacroBlockBackupReader::reset()
     }
   }
   is_inited_ = false;
-  LOG_INFO("free multi macro block backup reader");
+
 }
 
 void ObMultiMacroBlockBackupReader::reset_prev_macro_block_reader_(const int64_t idx)
@@ -627,7 +627,7 @@ int ObTabletMetaBackupReader::get_meta_data(blocksstable::ObBufferReader &buffer
     } else if (OB_FAIL(buffer_writer_.write_serialize(backup_tablet_meta))) {
       LOG_WARN("failed to write serialize", K(ret), K(backup_tablet_meta));
     } else {
-      LOG_INFO("backup tablet meta", K_(tablet_id), K(backup_tablet_meta));
+
       buffer_reader.assign(buffer_writer_.data(), buffer_writer_.length(), buffer_writer_.length());
     }
   }
@@ -721,7 +721,7 @@ int ObSSTableMetaBackupReader::get_meta_data(blocksstable::ObBufferReader &buffe
           } else if (OB_FAIL(buffer_writer_.write_serialize(backup_sstable_meta))) {
             LOG_WARN("failed to write serialize", K(ret), K(table_key), K(backup_sstable_meta));
           } else {
-            LOG_INFO("backup sstable meta", K(i), K(table_key), K_(tablet_id), K_(sstable_array), K(backup_sstable_meta));
+
           }
         } else {
           if (OB_FAIL(close_sstable_index_builder_(table_key))) {
@@ -740,7 +740,7 @@ int ObSSTableMetaBackupReader::get_meta_data(blocksstable::ObBufferReader &buffe
           } else if (OB_FAIL(free_sstable_index_builder_(table_key))) {
             LOG_WARN("failed to free sstable index builder", K(ret), K(table_key));
           } else {
-            LOG_INFO("backup sstable meta", K(i), K(table_key), K_(tablet_id), K_(sstable_array), K(backup_sstable_meta));
+
           }
         }
       }
@@ -771,7 +771,7 @@ int ObSSTableMetaBackupReader::check_all_sstable_macro_block_ready_()
     } else if (OB_FAIL(inner_check_all_sstable_macro_block_ready_(finished))) {
       LOG_WARN("failed to check tablet finished", K(ret));
     } else if (finished) {
-      LOG_INFO("sstable is ready", K_(tablet_id));
+
       break;
     } else {
       if (OB_FAIL(cond_.wait(WAIT_TIME))) {
@@ -809,7 +809,7 @@ int ObSSTableMetaBackupReader::deal_with_ddl_sstable_(
       backup_sstable_meta.total_other_block_count_))) {
     LOG_WARN("failed to get root block id", K(ret));
   } else {
-    LOG_INFO("get root block id", K(table_key), K(backup_sstable_meta));
+
   }
   return ret;
 }

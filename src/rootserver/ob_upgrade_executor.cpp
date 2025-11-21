@@ -428,7 +428,7 @@ int ObUpgradeExecutor::check_inner_stat_() const
 int ObUpgradeExecutor::check_schema_sync_(const uint64_t tenant_id)
 {
   const int64_t start = ObTimeUtility::current_time();
-  LOG_INFO("[UPGRADE] start to check schema sync", K(tenant_id), K(start));
+
   int ret = OB_SUCCESS;
   if (OB_FAIL(check_inner_stat_())) {
     LOG_WARN("fail to check inner stat", KR(ret));
@@ -443,7 +443,7 @@ int ObUpgradeExecutor::check_schema_sync_(const uint64_t tenant_id)
       } else if (is_sync) {
         break;
       } else {
-        LOG_INFO("schema not sync, should wait", KR(ret), K(tenant_id));
+
         ob_usleep(static_cast<useconds_t>((WAIT_US)));
       }
     }
@@ -1398,7 +1398,7 @@ int ObUpgradeExecutor::run_upgrade_end_action_(
                        "cost", ObTimeUtility::current_time() - start_ts);
               break;
             } else {
-              LOG_INFO("[UPGRADE] config doesn't take effective", K(tenant_id));
+
               usleep(1 * 1000 * 1000L); // 1s
             }
           }

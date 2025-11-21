@@ -73,7 +73,7 @@ TEST(ObBackupIndexBlockCompressorTest, Compress)
   EXPECT_EQ(in_size, decomp_size);
   EXPECT_LE(out_size, in_size);
 
-  LOG_INFO("compress info", K(in_size), K(out_size), K(decomp_size));
+
 }
 
 }

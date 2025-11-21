@@ -300,7 +300,7 @@ int ObIncMinDDLMergeHelper::assemble_sstable(ObDDLTabletMergeDagParamV2 &dag_mer
   } else if (OB_FAIL(merge_ctx->slice_cg_sstables_.get_refactored(0 /*slice_id*/, sstable_handles))) {
     LOG_WARN("failed to get refactor", K(ret), K(dag_merge_param));
   } else if (0 == sstable_handles->count()) {
-    LOG_INFO("no sstable need to be merge", K(ret));
+
   } else if (OB_ISNULL(sstable = static_cast<ObSSTable*>(sstable_handles->at(0).get_table()))) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("sstable should not be null", K(ret));

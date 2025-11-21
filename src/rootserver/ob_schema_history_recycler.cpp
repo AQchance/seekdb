@@ -184,7 +184,7 @@ int ObSchemaHistoryRecycler::check_stop()
 
 void ObSchemaHistoryRecycler::run3()
 {
-  LOG_INFO("[SCHEMA_RECYCLE] schema history recycler start");
+
   int ret = OB_SUCCESS;
   if (!inited_) {
     ret = OB_NOT_INIT;
@@ -194,17 +194,17 @@ void ObSchemaHistoryRecycler::run3()
   } else {
     while (!stop_) {
       ObCurTraceId::init(GCTX.self_addr());
-      LOG_INFO("[SCHEMA_RECYCLE] recycle schema history start");
+
       if (OB_FAIL(try_recycle_schema_history())) {
         LOG_WARN("fail to recycle schema history", KR(ret));
       }
-      LOG_INFO("[SCHEMA_RECYCLE] recycle schema history finish", KR(ret));
+
       // retry until stopped, reset ret to OB_SUCCESS
       ret = OB_SUCCESS;
       idle();
     }
   }
-  LOG_INFO("[SCHEMA_RECYCLE] schema history recycler quit");
+
   return;
 }
 
@@ -345,7 +345,7 @@ int ObSchemaHistoryRecycler::check_can_skip_tenant(
       LOG_WARN("tenant not exist", K(ret), K(tenant_id));
     } else if (!tenant_schema->is_normal()) {
       skip = true;
-      LOG_INFO("tenant is not in normal stat", K(ret), KPC(tenant_schema));
+
     }
   }
   return ret;
@@ -545,7 +545,7 @@ int ObSchemaHistoryRecycler::get_recycle_schema_version_by_global_stat(
             LOG_WARN("fail to get all freeze info", KR(ret), K(global_info));
           } else if (frozen_status_arr.count() < reserved_num + 1) {
             // skip, so other tenant could recycle normally
-            LOG_INFO("[SCHEMA_RECYCLE] not exist enough frozen_scn to reserve", KR(ret), K(tenant_id), K(reserved_num), K(frozen_status_arr));
+
             specific_schema_version = OB_INVALID_VERSION;
             // fill OB_INVALID_VERSION, do not recycle this tenant's schema history in this round
             if (OB_FAIL(fill_recycle_schema_versions(tenant_id, specific_schema_version, recycle_schema_versions))) {
@@ -1427,7 +1427,7 @@ int EXECUTOR::fill_schema_history(\
     if (FAILEDx(schema_history_map_.set_refactored(key, new_value))) { \
       LOG_WARN("fail to set new value", K(key), K(new_value)); \
     } else { \
-      LOG_DEBUG("key and value", K(ret), K(key), K(new_value)); \
+ \
     } \
   } \
   return ret; \

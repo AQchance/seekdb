@@ -43,7 +43,7 @@ int ObTableLockDetectFuncList::detect_session_alive(const uint32_t session_id, b
   } else if (OB_FAIL(session_mgr->get_session(session_id, session))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
       is_alive = false;
-      LOG_INFO("can not find the session, it's not alive", K(session_id));
+
     } else {
       LOG_WARN("get session info failed", K(ret), K(session_id));
     }
@@ -74,7 +74,7 @@ int ObTableLockDetectFuncList::detect_session_alive_for_rpc(const uint32_t sessi
   // No matter detect_session_alive is success or not,
   // we should set tmp_is_alive to is_alive here.
   is_alive = tmp_is_alive;
-  LOG_DEBUG("detect_session_alive_for_rpc", K(tmp_ret), K(session_id), K(is_alive));
+
   return ret;
 }
 
@@ -166,7 +166,7 @@ int ObTableLockDetectFuncList::do_session_alive_detect_for_a_server_session_(con
       ret = OB_SUCCESS;
       if (OB_FAIL(srv_rpc_proxy->to(addr).detect_session_alive(server_session_id, tmp_is_alive))) {
         if (!tmp_is_alive) {
-          LOG_INFO("find server session is not alive", K(ret), K(addr), K(server_session_id), K(tmp_is_alive));
+
           is_alive = false;
           ret = OB_SUCCESS;
           break;
@@ -278,7 +278,7 @@ int ObTableLockDetectFuncList::check_server_is_online_(const ObString &svr_ip, c
     if (OB_EMPTY_RESULT == ret) {
       ret = OB_SUCCESS;
       is_online = false;
-      LOG_INFO("can not find the server in the server_list, it has been removed", K(svr_ip), K(svr_port));
+
     } else {
       LOG_WARN("read from __all_server table failed", K(where_cond));
     }
@@ -347,7 +347,7 @@ int ObTableLockDetector::record_detect_info_to_inner_table(sql::ObSQLSessionInfo
     ret = OB_NOT_SUPPORTED;
     LOG_WARN("do not support detect task type", K(ret), K(task_type));
   } else if (OB_ISNULL(inner_conn = static_cast<observer::ObInnerSQLConnection *>(session_info->get_inner_conn()))) {
-    LOG_INFO("there is no inner connection in the session, we will try to create one", K(session_info->get_server_sid()));
+
 
     if (OB_FAIL(ObInnerConnectionLockUtil::create_inner_conn(session_info, GCTX.sql_proxy_, inner_conn))) {
       LOG_WARN("get inner connection failed", K(session_info->get_server_sid()));
@@ -397,7 +397,7 @@ int ObTableLockDetector::remove_detect_info_from_inner_table(sql::ObSQLSessionIn
   // it next time.
   need_remove_from_lock_table = false;
   if (OB_ISNULL(inner_conn = static_cast<observer::ObInnerSQLConnection *>(session_info->get_inner_conn()))) {
-    LOG_INFO("there is no inner connection in the session, we will try to create one", K(session_info->get_server_sid()));
+
     if (OB_FAIL(ObInnerConnectionLockUtil::create_inner_conn(session_info, GCTX.sql_proxy_, inner_conn))) {
       LOG_WARN("get inner connection failed", K(session_info->get_server_sid()));
     } else {
@@ -458,7 +458,7 @@ int ObTableLockDetector::remove_detect_info_from_inner_table(sql::ObSQLSessionIn
 
   lib::CompatModeGuard guard(lib::Worker::CompatMode::MYSQL);
   if (OB_ISNULL(inner_conn = static_cast<observer::ObInnerSQLConnection *>(session_info->get_inner_conn()))) {
-    LOG_INFO("there is no inner connection in the session, we will try to create one", K(session_info->get_server_sid()));
+
     if (OB_FAIL(ObInnerConnectionLockUtil::create_inner_conn(session_info, GCTX.sql_proxy_, inner_conn))) {
       LOG_WARN("get inner connection failed", K(session_info->get_server_sid()));
     } else {
@@ -545,7 +545,7 @@ int ObTableLockDetector::check_lock_id_exist_in_inner_table(sql::ObSQLSessionInf
   bool need_release_conn = false;
 
   if (OB_ISNULL(inner_conn = static_cast<observer::ObInnerSQLConnection *>(session_info->get_inner_conn()))) {
-    LOG_INFO("there is no inner connection in the session, we will try to create one", K(session_info->get_server_sid()));
+
     if (OB_FAIL(ObInnerConnectionLockUtil::create_inner_conn(session_info, GCTX.sql_proxy_, inner_conn))) {
       LOG_WARN("get inner connection failed", K(session_info->get_server_sid()));
     } else {
@@ -579,7 +579,7 @@ int ObTableLockDetector::check_lock_owner_exist_in_inner_table(sql::ObSQLSession
   ObSqlString where_cond;
 
   if (OB_ISNULL(inner_conn = static_cast<observer::ObInnerSQLConnection *>(session_info->get_inner_conn()))) {
-    LOG_INFO("there is no inner connection in the session, we will try to create one", K(session_info->get_server_sid()));
+
     if (OB_FAIL(ObInnerConnectionLockUtil::create_inner_conn(session_info, GCTX.sql_proxy_, inner_conn))) {
       LOG_WARN("get inner connection failed", K(session_info->get_server_sid()));
     } else {
@@ -619,7 +619,7 @@ int ObTableLockDetector::check_lock_exist_in_inner_table(sql::ObSQLSessionInfo *
   bool need_release_conn = false;
 
   if (OB_ISNULL(inner_conn = static_cast<observer::ObInnerSQLConnection *>(session_info->get_inner_conn()))) {
-    LOG_INFO("there is no inner connection in the session, we will try to create one", K(session_info->get_server_sid()));
+
     if (OB_FAIL(ObInnerConnectionLockUtil::create_inner_conn(session_info, GCTX.sql_proxy_, inner_conn))) {
       LOG_WARN("get inner connection failed", K(session_info->get_server_sid()));
     } else {
@@ -695,7 +695,7 @@ int ObTableLockDetector::get_unlock_request_list(sql::ObSQLSessionInfo *session,
   arg_list.reset();
 
   if (OB_ISNULL(inner_conn = static_cast<observer::ObInnerSQLConnection *>(session->get_inner_conn()))) {
-    LOG_INFO("there is no inner connection in the session, we will try to create one", K(session->get_server_sid()));
+
     if (OB_FAIL(ObInnerConnectionLockUtil::create_inner_conn(session, GCTX.sql_proxy_, inner_conn))) {
       LOG_WARN("get inner connection failed", K(session->get_server_sid()));
     } else {
@@ -839,7 +839,7 @@ int ObTableLockDetector::record_detect_info_to_inner_table_(observer::ObInnerSQL
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("only can affetct 1 row due to insert, or 2 rows due to insert on duplicate key", K(affected_rows));
   }
-  LOG_DEBUG("lock_live_detector debug: record_detect_info_to_inner_table_", K(ret), K(insert_sql), K(affected_rows));
+
   return ret;
 }
 
@@ -978,7 +978,7 @@ int ObTableLockDetector::delete_record_(const char *table_name,
   } else if (affected_rows != 1) {
     LOG_WARN("do not delete the record", KR(ret), K(sql), K(affected_rows));
   }
-  LOG_DEBUG("lock_live_detector debug: delete_record_", K(sql), K(affected_rows));
+
   return ret;
 }
 
@@ -1056,12 +1056,12 @@ int ObTableLockDetector::get_lock_cnt_in_table_(observer::ObInnerSQLConnection *
       if (OB_ITER_END == ret) {
         ret = OB_SUCCESS;
         cnt = 0;
-        LOG_DEBUG("can not find lock", K(ret), K(sql));
+
       }
     } else {
       (void)GET_COL_IGNORE_NULL(result->get_int, "cnt", cnt);
     }
-    LOG_DEBUG("lock_live_detector debug: get_cnt sql", K(ret), K(sql), K(cnt));
+
   }  // end SMART_VAR
   return ret;
 }
@@ -1096,7 +1096,7 @@ int ObTableLockDetector::remove_detect_info_from_table_(observer::ObInnerSQLConn
   OZ (get_table_name_and_dml_with_pk_column_(task_type, lock_req, table_name, dml));
   OZ (dml.splice_delete_sql(table_name, delete_sql));
   OZ (ObInnerConnectionLockUtil::execute_write_sql(conn, delete_sql, affected_rows));
-  LOG_DEBUG("lock_live_detector debug: delete sql", K(ret), K(delete_sql), K(lock_req), K(affected_rows));
+
   return ret;
 }
 
@@ -1170,7 +1170,7 @@ int ObTableLockDetector::generate_get_unlock_request_sql_(const ObTableLockOwner
   OZ (sql.append_fmt("%s", where_cond.ptr()));
   OZ (sql.append_fmt(" owner_id = %" PRId64 " AND owner_type = %d", owner_id.id(), static_cast<int>(owner_id.type())));
 
-  LOG_DEBUG("lock_live_detector debug: generate_get_unlock_request_sql_", K(ret), K(owner_id), K(task_type), K(sql));
+
 
   return ret;
 }

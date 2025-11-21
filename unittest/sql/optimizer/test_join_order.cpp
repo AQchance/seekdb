@@ -83,7 +83,7 @@ TEST_F(TestJoinOrder, ob_join_order_src)
   ObJoinOrder join_order(NULL, &plan, sql::INVALID);
 
   TestPath test_path;
-  LOG_INFO("test to string func", K(test_path), K(join_order));
+
   pos = join_order.get_name(buf, 256);
   //case: test reset()
   ret = join_order.interesting_paths_.push_back(&sp_path);

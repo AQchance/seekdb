@@ -1256,7 +1256,7 @@ int ObLogicalOperator::get_limit_offset_value(ObRawExpr *percent_expr,
     limit_percent = -1;
   }
 
-  LOG_DEBUG("get limit offset value", K(limit_count), K(offset_count), K(limit_percent));
+
   return ret;
 }
 
@@ -1543,7 +1543,7 @@ int ObLogicalOperator::do_pre_traverse_operation(const TraverseOp &op, void *ctx
       } else if (OB_FAIL(allocate_expr_pre(*alloc_expr_context))) {
         LOG_WARN("failed to do allocate expr pre", K(ret));
       } else {
-        LOG_TRACE("succeed to do allocate expr pre", K(get_type()), K(get_name()), K(get_op_id()), K(ret));
+
       }
       break;
     }
@@ -1638,7 +1638,7 @@ int ObLogicalOperator::do_post_traverse_operation(const TraverseOp &op, void *ct
             LOG_WARN("unexpected status: exchange is null", K(ret));
           } else {
             exchange->set_old_unblock_mode(false);
-            LOG_TRACE("pipe blocking ctx", K(get_name()));
+
           }
         }
         break;
@@ -1723,7 +1723,7 @@ int ObLogicalOperator::do_post_traverse_operation(const TraverseOp &op, void *ct
         } else {
           uint64_t *seed = reinterpret_cast<uint64_t *>(ctx);
           *seed = hash(*seed);
-          LOG_TRACE("", "operator", get_name(), "hash_value", *seed);
+
         }
         break;
       }
@@ -1763,7 +1763,7 @@ int ObLogicalOperator::do_plan_tree_traverse(const TraverseOp &operation, void *
   if (OB_FAIL(do_pre_traverse_operation(operation, ctx))) {
     LOG_WARN("failed to perform traverse operation", K(ret), "operator", get_name(), K(operation));
   } else {
-    LOG_TRACE("succ to perform pre traverse operation", "operator", get_name(), K(operation));
+
   }
 
   for (int64_t i = 0; OB_SUCC(ret) && i < get_num_of_child(); i++) {
@@ -1780,7 +1780,7 @@ int ObLogicalOperator::do_plan_tree_traverse(const TraverseOp &operation, void *
     if (OB_FAIL(do_post_traverse_operation(operation, ctx))) {
       LOG_WARN("failed to perform post traverse action", K(ret), K(operation));
     } else {
-      LOG_TRACE("succ to perform post traverse action", K(operation), "operator", get_name());
+
     }
   } else { /*do nothing*/ }
 
@@ -2335,14 +2335,14 @@ int ObLogicalOperator::allocate_expr_post(ObAllocExprContext &ctx)
           LOG_WARN("get unexpected null", K(ret));
         } else if (OB_INVALID_ID == producers.at(i).producer_branch_ &&
                     producers.at(i).producer_id_ == id_) { // not produced yet
-          LOG_TRACE("try to produce expr", K(*expr), K(get_name()));
+
           bool can_be_produced = false;
           if (OB_FAIL(expr_can_be_produced(expr, ctx, can_be_produced))) {
             LOG_WARN("expr_can_be_produced fails", K(ret));
           } else if (can_be_produced) {
             producers.at(i).producer_branch_ = branch_id_;
             producers.at(i).producer_id_ = id_; // dummy assign
-            LOG_TRACE("expr can be produced now", K(*expr), K(get_name()), K(id_));
+
           } else {
             ret = OB_ERR_UNEXPECTED;
             LOG_WARN("expr can not be produced now", K(*expr), K(get_name()), K(id_));
@@ -2390,7 +2390,7 @@ int ObLogicalOperator::expr_can_be_produced(const ObRawExpr *expr,
     if (OB_FAIL(expr_has_been_produced(expr, expr_ctx, can_be_produced))) {
       LOG_WARN("failed to check whether expr_has_been_produced", K(ret));
     } else if (can_be_produced) {
-      LOG_TRACE("expr has been produced", K(expr), K(get_name()), K(id_), K(branch_id_));
+
     } else if (!expr->has_flag(CNT_COLUMN)) {
       can_be_produced = true;
       LOG_TRACE("expr can be produced", K(expr), K(*expr), K(get_name()),
@@ -2866,7 +2866,7 @@ int ObLogicalOperator::get_tbl_loc_cons_for_scan(LocationConstraint &loc_cons)
       }
     }
 
-    LOG_TRACE("initialized table's location constraint for table scan op", K(loc_cons));
+
   }
   return ret;
 }
@@ -2921,7 +2921,7 @@ int ObLogicalOperator::get_tbl_loc_cons_for_insert(LocationConstraint &loc_cons,
         loc_cons.add_constraint_flag(LocationConstraint::SingleSubPartition);
       }
     }
-    LOG_TRACE("initialized table's location constraint for insert op", K(loc_cons), K(is_multi_part_dml));
+
   }
 
   return ret;
@@ -3058,7 +3058,7 @@ uint64_t ObLogicalOperator::hash(uint64_t seed) const
 {
   seed = do_hash(type_, seed);
   seed = do_hash(id_, seed);
-  LOG_TRACE("operator hash", K(get_op_name(type_)));
+
   return seed;
 }
 
@@ -3456,7 +3456,7 @@ int ObLogicalOperator::check_output_dependance(ObIArray<ObRawExpr *> &child_outp
 {
   int ret = OB_SUCCESS;
   ObSEArray<ObRawExpr*, 8> exprs;
-  LOG_TRACE("start to check output exprs", K(type_), K(child_output), K(deps));
+
   ObRawExprCheckDep dep_checker(child_output, deps, false);
   if (OB_FAIL(append(exprs, op_exprs_))) {
     LOG_WARN("failed to append exprs", K(ret));
@@ -3465,7 +3465,7 @@ int ObLogicalOperator::check_output_dependance(ObIArray<ObRawExpr *> &child_outp
   } else if (OB_FAIL(dep_checker.check(exprs))) {
     LOG_WARN("failed to check output exprs", K(ret));
   } else {
-    LOG_TRACE("succeed to check output exprs", K(exprs), K(type_), K(deps));
+
   }
   return ret;
 }
@@ -3525,7 +3525,7 @@ void ObLogicalOperator::do_project_pruning(ObIArray<ObRawExpr *> &exprs, PPDeps 
 {
   int64_t i = 0;
   int64_t j = 0;
-  LOG_TRACE("start to do project pruning", K(type_), K(exprs), K(deps));
+
   for (i = 0, j = 0; i < exprs.count(); i++) {
     if (deps.has_member(static_cast<int32_t>(i))) {
       exprs.at(j++) = exprs.at(i);
@@ -3560,7 +3560,7 @@ int ObLogicalOperator::adjust_plan_root_output_exprs()
     } else if (need_pack && OB_FAIL(build_and_put_pack_expr(output_exprs_))) {
       LOG_WARN("failed to add pack expr to context", K(ret));
     }
-    LOG_TRACE("succeed to adjust plan root output exprs", K(output_exprs_));
+
   }
   return ret;
 }
@@ -3798,7 +3798,7 @@ int ObLogicalOperator::explain_print_partitions(ObTablePartitionInfo &table_part
             } else if (partition->get_part_id() == part_loc.get_partition_id()) {
               part_info.part_id_ = j;
             }
-            LOG_TRACE("show external table partition", K(tablet_id), KPC(partition), K(partitions.at(i)), K(part_info));
+
           }
         }
         OZ(part_infos.push_back(part_info));
@@ -3812,7 +3812,7 @@ int ObLogicalOperator::explain_print_partitions(ObTablePartitionInfo &table_part
       //   //do nothing
       // } else {
       // }
-      LOG_TRACE("explain print partition", K(tablet_id), K(part_info), K(ref_table_id));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -3989,7 +3989,7 @@ int ObLogicalOperator::px_pipe_blocking_post(ObPxPipeBlockingCtx &ctx)
                 && static_cast<ObLogDistinct*>(child)->get_algo() ==  HASH_AGGREGATE
                 && !static_cast<ObLogDistinct *>(child)->is_push_down()) {
               static_cast<ObLogDistinct*>(child)->set_block_mode(true);
-              LOG_DEBUG("distinct block mode", K(lbt()));
+
             } else if (OB_FAIL(allocate_material(i))) {
               LOG_WARN("allocate material failed", K(ret));
             }
@@ -4055,7 +4055,7 @@ int ObLogicalOperator::px_pipe_blocking_post(ObPxPipeBlockingCtx &ctx)
     if (OB_SUCC(ret)) {
       op_ctx->in_.set_exch(got_in_exch);
       op_ctx->has_dfo_below_ = child_dfo_cnt > 0;
-      LOG_TRACE("pipe blocking ctx", K(get_name()), K(*op_ctx));
+
     }
   }
   return ret;
@@ -4133,7 +4133,7 @@ int ObLogicalOperator::allocate_granule_nodes_above(AllocGIContext &ctx)
     LOG_WARN("failed to check has temp table access", K(ret));
   } else if (has_temp_table_access || get_contains_fake_cte()) {
     // do not allocate granule nodes above temp table access now
-    LOG_TRACE("do not allocate granule iterator due to temp table", K(get_name()));
+
   } else if (LOG_TABLE_SCAN != get_type()
              && LOG_JOIN != get_type()
              && LOG_SET != get_type()
@@ -4378,12 +4378,12 @@ int ObLogicalOperator::pw_allocate_granule_pre(AllocGIContext &ctx)
    *   gi allocate ctx.
    * */
   if (!ctx.exchange_above()) {
-    LOG_TRACE("no exchange above, do nothing");
+
   } else if (!ctx.is_in_partition_wise_state()
       && !ctx.is_in_pw_affinity_state()
       && is_partition_wise()) {
     ctx.set_in_partition_wise_state(this);
-    LOG_TRACE("in find partition wise state", K(*this));
+
   }
   return ret;
 }
@@ -4406,7 +4406,7 @@ int ObLogicalOperator::pw_allocate_granule_post(AllocGIContext &ctx)
    *   so OP(2) cann't reset this state.
    * */
   if (!ctx.exchange_above()) {
-    LOG_TRACE("no exchange above, do nothing", K(ctx));
+
   } else if (ctx.is_op_set_pw(this)) {
     // In partition-wise join case, when GI is above group by/window function with pw attribute,
     // it doesn't support rescan before,
@@ -6175,7 +6175,7 @@ int ObLogicalOperator::recursively_disable_alloc_op_above(AllocOpContext& ctx)
   } else {
     ret = OB_SUCCESS;
   }
-  LOG_DEBUG("disable alloc op above", K(op_id_), K(type_));
+
   for (int64_t i = 0; OB_SUCC(ret) && i < get_num_of_child(); i++) {
     if (OB_FAIL(SMART_CALL(get_child(i)->recursively_disable_alloc_op_above(ctx)))) {
       LOG_WARN("fail to disable alloc op above", K(ret));

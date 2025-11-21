@@ -110,7 +110,7 @@ int ObMySQLStatement::execute_update(int64_t &affected_rows)
       affected_rows = mysql_affected_rows(stmt_);
     }
     int64_t end = ObTimeUtility::current_monotonic_raw_time();
-    LOG_TRACE("execute stat", "excute time(us)", (end - begin), "SQL:", sql_str_, K(ret));
+
   }
   return ret;
 }
@@ -160,7 +160,7 @@ ObMySQLResult *ObMySQLStatement::execute_query(bool enable_use_result)
     int64_t begin = ObTimeUtility::current_monotonic_raw_time();
     int err = 0;
     int status = mysql_real_query_start(&err, stmt_, sql_str_.ptr(), sql_str_.length());
-    LOG_TRACE("status after mysql_real_query_start", K(status), K(err), K(sql_str_));
+
     while (status && OB_SUCC(ret)) {
       if (OB_FAIL(wait_for_mysql(status))) {
         LOG_WARN("wait for mysql failed", K(ret));
@@ -196,7 +196,7 @@ ObMySQLResult *ObMySQLStatement::execute_query(bool enable_use_result)
     }
     conn_->set_last_error(ret);
     int64_t end = ObTimeUtility::current_monotonic_raw_time();
-    LOG_TRACE("execute stat", "time(us)", (end - begin), "SQL", sql_str_, K(ret));
+
   }
   return result;
 }

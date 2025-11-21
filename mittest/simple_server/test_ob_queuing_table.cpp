@@ -84,12 +84,12 @@ void ObQueuingTableTest::create_table_and_fetch_infomations(
   // 1. Create table
   {
     common::ObMySQLProxy &sql_proxy = get_curr_simple_server().get_sql_proxy();
-    LOG_INFO("start create table", K(tname));
+
     ObSqlString sql;
     int64_t affected_rows = 0;
     ASSERT_EQ(OB_SUCCESS, sql.assign_fmt("create table %s (k int primary key, v int) table_mode='%s'", tname, table_mode_flag_to_str(mode)));
     ASSERT_EQ(OB_SUCCESS, sql_proxy.write(sql.ptr(), affected_rows));
-    LOG_INFO("finish create table", K(tname));
+
   }
   
   static bool need_init = true;
@@ -99,7 +99,7 @@ void ObQueuingTableTest::create_table_and_fetch_infomations(
   }
   common::ObMySQLProxy &sql_proxy = get_curr_simple_server().get_sql_proxy2();
   {
-    LOG_INFO("start query table_id", K(tname));
+
     ObSqlString sql;
     ASSERT_EQ(OB_SUCCESS, sql.assign_fmt("select tablet_id from __all_virtual_table where table_name='%s'", tname));
     SMART_VAR(ObMySQLProxy::MySQLResult, res) {
@@ -110,10 +110,10 @@ void ObQueuingTableTest::create_table_and_fetch_infomations(
       ASSERT_EQ(OB_SUCCESS, result->get_uint("tablet_id", tablet_id));
       ASSERT_NE(0, tablet_id);
     }
-    LOG_INFO("finish query table_id", K(tname), K(tablet_id));
+
   }
   {
-    LOG_INFO("start query ls_id", K(tname));
+
     ObSqlString sql;
     ASSERT_EQ(OB_SUCCESS, sql.assign_fmt("select ls_id from __all_virtual_tablet_to_ls where tablet_id=%ld", tablet_id));
     SMART_VAR(ObMySQLProxy::MySQLResult, res) {
@@ -123,9 +123,9 @@ void ObQueuingTableTest::create_table_and_fetch_infomations(
       ASSERT_EQ(OB_SUCCESS, result->next());
       ASSERT_EQ(OB_SUCCESS, result->get_int("ls_id", ls_id));
     }
-    LOG_INFO("finish query ls_id", K(tname), K(ls_id));
+
   }
-  LOG_INFO("Success to create table", K(tname), "mode", table_mode_flag_to_str(mode), K(ls_id), K(tablet_id));
+
 }
 
 
@@ -137,17 +137,17 @@ void ObQueuingTableTest::wait_refresh()
   const int64_t current_time = ObTimeUtility::current_time();
   const int64_t last_update_time = stat_mgr->get_last_update_time();
   const int64_t TIMEOUT_INTERVAL = 5 * ObTenantTabletStatMgr::CHECK_INTERVAL;
-  LOG_INFO("Wait until ObTenantTabletStatMgr refresh", K(current_time), K(last_update_time));
+
   
   while (last_update_time == stat_mgr->get_last_update_time()) {
-    LOG_INFO("sleep for a while");
+
     usleep(ObTenantTabletStatMgr::CHECK_INTERVAL / 2);
     if ((ObTimeUtility::current_time() - current_time) > TIMEOUT_INTERVAL) {
       ASSERT_TRUE(false) << "Waiting stat mgr update timeout";
     }
   }
   ASSERT_GT(stat_mgr->get_last_update_time(), last_update_time);
-  LOG_INFO("Finsih waiting ObTenantTabletStatMgr refresh");
+
 }
 
 void ObQueuingTableTest::check_report_stats(ObIArray<ReportStat> &report_stats)
@@ -196,17 +196,17 @@ void ObQueuingTableTest::alter_table_mode(const char*tname, const ObTableModeFla
 {
   int ret = OB_SUCCESS;
   common::ObMySQLProxy &sql_proxy = get_curr_simple_server().get_sql_proxy();
-  LOG_INFO("start alter table mode", K(tname), "new_mode", table_mode_flag_to_str(new_mode));
+
   ObSqlString sql;
   int64_t affected_rows = 0;
   ASSERT_EQ(OB_SUCCESS, sql.assign_fmt("alter table %s set table_mode='%s'", tname, table_mode_flag_to_str(new_mode)));
   ASSERT_EQ(OB_SUCCESS, sql_proxy.write(sql.ptr(), affected_rows));
-  LOG_INFO("finish alter table mode", K(tname), "new_mode", table_mode_flag_to_str(new_mode));
+
 }
 
 TEST_F(ObQueuingTableTest, refresh_queuing_mode)
 {
-  LOG_INFO("ObQueuingTableTest::refresh_queuing_mode");
+
   int ret = OB_SUCCESS;
   share::ObTenantSwitchGuard tenant_guard;
   ret = tenant_guard.switch_to(OB_SYS_TENANT_ID);
@@ -233,7 +233,7 @@ TEST_F(ObQueuingTableTest, refresh_queuing_mode)
   int64_t idx = 0;
   bool succ_report = false;
   for (int64_t round = 0; round < 3; round++) {
-    LOG_INFO("Checking alter table mode and report again", K(round));
+
     base_mode = report_stats.at(0).mode_;
     for (idx = 0; idx < report_cnt; idx++) {
       new_mode = idx == report_cnt - 1 ? base_mode : report_stats.at(idx+1).mode_;

@@ -60,7 +60,7 @@ int ObXaRollBackResolver::resolve(const ParseNode &parse_node)
           xa_rollback_stmt->set_format_id(format_id);
         }
       }
-      LOG_DEBUG("xa rollback resolver",K(gtrid_string), K(bqual_string), K(format_id));
+
     }
   }
   return ret;

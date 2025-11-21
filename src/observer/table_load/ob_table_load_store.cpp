@@ -76,7 +76,7 @@ void ObTableLoadStore::abort_ctx(ObTableLoadTableCtx *ctx, int error_code, bool 
     // store ctx not init, do nothing
     is_stopped = true;
   } else {
-    LOG_INFO("store abort");
+
     // 0. mark session query killed
     if (nullptr != ctx->session_info_ && OB_TMP_FAIL(ctx->session_info_->kill_query())) {
       LOG_WARN("fail to kill query", KR(tmp_ret));
@@ -163,7 +163,7 @@ int ObTableLoadStore::pre_begin()
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("store pre begin");
+
     if (OB_FAIL(ObTableLoadService::assign_memory(ctx_->param_.task_need_sort_, ctx_->param_.avail_memory_))) {
       LOG_WARN("fail to assign_memory", KR(ret));
     } else {
@@ -181,7 +181,7 @@ int ObTableLoadStore::confirm_begin()
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("store confirm begin");
+
     store_ctx_->heart_beat(); // init heart beat
     if (store_ctx_->enable_dag_) {
       // 等待write_ctx初始化完成
@@ -265,7 +265,7 @@ int ObTableLoadStore::pre_merge(
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("store pre merge");
+
     ObArenaAllocator allocator("TLD_Tmp");
     bool trans_exist = false;
     ObTableLoadArray<ObTableLoadTransId> store_committed_trans_id_array;
@@ -312,14 +312,14 @@ int ObTableLoadStore::start_merge()
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else if (store_ctx_->enable_dag_) {
-    LOG_INFO("store start merge");
+
     if (OB_FAIL(ctx_->store_ctx_->write_ctx_.write_channel_->flush())) {
       LOG_WARN("fail to flush write channel", KR(ret));
     } else if (OB_FAIL(store_ctx_->set_status_merging())) {
       LOG_WARN("fail to set store status merging", KR(ret));
     }
   } else {
-    LOG_INFO("store start merge");
+
     if (OB_FAIL(store_ctx_->set_status_merging())) {
       LOG_WARN("fail to set store status merging", KR(ret));
     } else if (ctx_->store_ctx_->write_ctx_.enable_pre_sort_) {
@@ -367,7 +367,7 @@ int ObTableLoadStore::commit(ObTableLoadResultInfo &result_info,
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("store commit");
+
     ObTransService *txs = nullptr;
     ObMutexGuard guard(store_ctx_->get_op_lock());
     if (OB_ISNULL(MTL(ObTransService *))) {
@@ -413,7 +413,7 @@ int ObTableLoadStore::get_status(ObTableLoadStatusType &status, int &error_code)
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("store get status");
+
     store_ctx_->get_status(status, error_code);
   }
   return ret;
@@ -426,7 +426,7 @@ int ObTableLoadStore::heart_beat()
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else {
-    LOG_DEBUG("store heart beat");
+
     store_ctx_->heart_beat();
   }
   return ret;
@@ -439,7 +439,7 @@ int ObTableLoadStore::pre_start_trans(const ObTableLoadTransId &trans_id)
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("store pre start trans", K(trans_id));
+
     ObTableLoadStoreTrans *trans = nullptr;
     if (OB_FAIL(store_ctx_->start_trans(trans_id, trans))) {
       LOG_WARN("fail to start trans", KR(ret), K(trans_id));
@@ -459,7 +459,7 @@ int ObTableLoadStore::confirm_start_trans(const ObTableLoadTransId &trans_id)
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("store confirm start trans", K(trans_id));
+
     ObTableLoadStoreTrans *trans = nullptr;
     if (OB_FAIL(store_ctx_->get_trans(trans_id, trans))) {
       LOG_WARN("fail to get trans", KR(ret));
@@ -481,7 +481,7 @@ int ObTableLoadStore::pre_finish_trans(const ObTableLoadTransId &trans_id)
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("store pre finish trans", K(trans_id));
+
     ObTableLoadStoreTrans *trans = nullptr;
     if (OB_FAIL(store_ctx_->get_trans(trans_id, trans))) {
       LOG_WARN("fail to get trans", KR(ret));
@@ -503,7 +503,7 @@ int ObTableLoadStore::confirm_finish_trans(const ObTableLoadTransId &trans_id)
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("store confirm finish trans", K(trans_id));
+
     ObTableLoadStoreTrans *trans = nullptr;
     if (OB_FAIL(store_ctx_->get_trans(trans_id, trans))) {
       LOG_WARN("fail to get trans", KR(ret));
@@ -525,7 +525,7 @@ int ObTableLoadStore::abandon_trans(const ObTableLoadTransId &trans_id)
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("store abandon trans", K(trans_id));
+
     ObTableLoadStoreTrans *trans = nullptr;
     if (OB_FAIL(store_ctx_->get_trans(trans_id, trans))) {
       if (OB_UNLIKELY(OB_ENTRY_NOT_EXIST != ret)) {
@@ -610,7 +610,7 @@ private:
 int ObTableLoadStore::clean_up_trans(ObTableLoadStoreTrans *trans)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("store clean up trans");
+
   ObTableLoadTransStoreWriter *store_writer = nullptr;
   // Retrieve the current store_writer
   if (OB_FAIL(trans->get_store_writer(store_writer))) {
@@ -663,7 +663,7 @@ int ObTableLoadStore::get_trans_status(const ObTableLoadTransId &trans_id,
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("store get trans status");
+
     ObTableLoadTransCtx *trans_ctx = nullptr;
     if (OB_FAIL(store_ctx_->get_trans_ctx(trans_id, trans_ctx))) {
       LOG_WARN("fail to get trans ctx", KR(ret), K(trans_id));
@@ -766,7 +766,7 @@ int ObTableLoadStore::write(const ObTableLoadTransId &trans_id, int32_t session_
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else {
-    LOG_DEBUG("store write");
+
     ObTableLoadStoreTrans *trans = nullptr;
     ObTableLoadTransStoreWriter *store_writer = nullptr;
     ObTableLoadMutexGuard guard;
@@ -924,7 +924,7 @@ int ObTableLoadStore::flush(ObTableLoadStoreTrans *trans)
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else {
-    LOG_DEBUG("store flush");
+
     ObTableLoadTransStoreWriter *store_writer = nullptr;
     // Retrieve the current store_writer
     if (OB_FAIL(trans->get_store_writer(store_writer))) {
@@ -977,14 +977,14 @@ int ObTableLoadStore::px_start_trans(const ObTableLoadTransId &trans_id)
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("store px start trans", K(trans_id));
+
     ObTableLoadStoreTrans *trans = nullptr;
     if (OB_FAIL(store_ctx_->start_trans(trans_id, trans))) {
       LOG_WARN("fail to start trans", KR(ret), K(trans_id));
     } else if (OB_FAIL(trans->set_trans_status_running())) {
       LOG_WARN("fail to set trans status running", KR(ret));
     } else {
-      LOG_DEBUG("succeed to start trans", K(trans_id));
+
     }
     if (OB_NOT_NULL(trans)) {
       store_ctx_->put_trans(trans);
@@ -1001,7 +1001,7 @@ int ObTableLoadStore::px_finish_trans(const ObTableLoadTransId &trans_id)
     ret = OB_NOT_INIT;
     LOG_WARN("ObTableLoadStore not init", KR(ret), KP(this));
   } else {
-    LOG_INFO("store px finish trans", K(trans_id));
+
     ObTableLoadStoreTrans *trans = nullptr;
     if (OB_FAIL(store_ctx_->get_segment_trans(trans_id.segment_id_, trans))) {
       LOG_WARN("fail to get segment trans", KR(ret));
@@ -1013,7 +1013,7 @@ int ObTableLoadStore::px_finish_trans(const ObTableLoadTransId &trans_id)
     } else if (OB_FAIL(store_ctx_->commit_trans(trans))) {
       LOG_WARN("fail to commit trans", KR(ret));
     } else {
-      LOG_DEBUG("succeed to commit trans", K(trans_id));
+
     }
     if (OB_NOT_NULL(trans)) {
       store_ctx_->put_trans(trans);
@@ -1077,7 +1077,7 @@ int ObTableLoadStore::px_flush(ObTableLoadStoreTrans *trans)
     } else if (OB_FAIL(store_writer->flush(session_id))) {
       LOG_WARN("fail to flush store", KR(ret));
     } else {
-      LOG_DEBUG("succeed to flush store");
+
     }
     if (OB_NOT_NULL(store_writer)) {
       trans->put_store_writer(store_writer);
@@ -1096,7 +1096,7 @@ int ObTableLoadStore::px_abandon_trans(ObTableLoadTableCtx *ctx, const ObTableLo
   } else if (OB_UNLIKELY(nullptr == ctx->store_ctx_ || !ctx->store_ctx_->is_valid())) {
     // store ctx not init, do nothing
   } else {
-    LOG_INFO("store px abandon trans", K(trans_id));
+
     ObTableLoadStoreCtx *store_ctx = ctx->store_ctx_;
     ObTableLoadStoreTrans *trans = nullptr;
     if (OB_FAIL(store_ctx->get_segment_trans(trans_id.segment_id_, trans))) {

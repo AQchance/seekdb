@@ -89,7 +89,7 @@ int ObDirectorySqlService::add_schema(ObISQLClient &sql_client, const ObDirector
        OB_SUCC(ret) && i < ARRAYSIZEOF(DIRECTORY_TABLES);
        ++i) {
     if (OB_FAIL(sql.assign_fmt("INSERT INTO %s(", DIRECTORY_TABLES[i]))) {
-      STORAGE_LOG(WARN, "append table name failed", K(ret));
+
     } else if (OB_FAIL(gen_sql(sql, values, schema))) {
       LOG_WARN("fail to gen sql", K(ret));
     } else if (i == THE_HISTORY_TABLE_IDX) {
@@ -131,7 +131,7 @@ int ObDirectorySqlService::alter_schema(ObISQLClient &sql_client, const ObDirect
     if (OB_FAIL(sql.assign_fmt("%s INTO %s(",
                                (i == THE_HISTORY_TABLE_IDX) ? "INSERT" : "REPLACE",
                                DIRECTORY_TABLES[i]))) {
-      STORAGE_LOG(WARN, "append table name failed", K(ret));
+
     } else if (OB_FAIL(gen_sql(sql, values, schema))) {
       LOG_WARN("fail to gen sql", K(ret));
     } else if (i == THE_HISTORY_TABLE_IDX) {
@@ -184,7 +184,7 @@ int ObDirectorySqlService::drop_schema(ObISQLClient &sql_client, const ObDirecto
         OB_SUCC(ret) && i < ARRAYSIZEOF(DIRECTORY_TABLES);
         ++i) {
      if (OB_FAIL(sql.assign_fmt("INSERT INTO %s(", DIRECTORY_TABLES[i]))) {
-       STORAGE_LOG(WARN, "append table name failed", K(ret));
+
      } else if (OB_FAIL(gen_sql(sql, values, schema))) {
        LOG_WARN("fail to gen sql", K(ret));
      } else if (i == THE_HISTORY_TABLE_IDX) {

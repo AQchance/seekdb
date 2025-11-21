@@ -64,7 +64,7 @@ int ObDASUtils::check_nested_sql_mutating(ObTableID ref_table_id, ObExecContext 
   }
   while (OB_SUCC(ret) && cur_parent_ctx != nullptr) {
     ObDASCtx &parent_das_ctx = cur_parent_ctx->get_das_ctx();
-    LOG_DEBUG("check nested sql mutating", K(cur_parent_ctx), K(parent_das_ctx), K(ref_table_id));
+
     FOREACH_X(node, parent_das_ctx.get_table_loc_list(), OB_SUCC(ret)) {
       ObDASTableLoc *table_loc = *node;
       if (table_loc->loc_meta_->ref_table_id_ == ref_table_id 
@@ -294,7 +294,7 @@ int ObDASUtils::reshape_datum_value(const ObObjMeta &col_type,
     }
   } else if (lib::is_oracle_mode() && enable_oracle_empty_char_reshape_to_null && col_type.is_character_type() && datum_value.len_ == 0) {
     // Oracle compatibility mode: '' as null
-    LOG_DEBUG("reshape empty string to null", K(datum_value));
+
     datum_value.set_null();
   } else if (col_type.is_fixed_len_char_type()) {
     const char *str = datum_value.ptr_;
@@ -356,7 +356,7 @@ int ObDASUtils::reshape_datum_vector_value(const ObObjMeta &col_type,
           ObLength len = datum.len_;
           if (lib::is_oracle_mode() && 0 == len) {
             // Oracle compatibility mode: '' as null
-            LOG_DEBUG("reshape empty string to null", K(i));
+
             datum.set_null();
           } else {
             const char *str = datum.ptr_;
@@ -378,7 +378,7 @@ int ObDASUtils::reshape_datum_vector_value(const ObObjMeta &col_type,
       while (OB_SUCC(ret) && OB_SUCC(selector.get_next(i))) {
         ObDatum &datum = datum_vector.datums_[i];
         if (!datum.is_null() && 0 == datum.len_) {
-          LOG_DEBUG("reshape empty string to null", K(i));
+
           datum.set_null();
         }
       }
@@ -653,7 +653,7 @@ int ObDASUtils::reshape_vector_value(const ObObjMeta &col_type,
             const ObLength length = offsets[i + 1] - offsets[i];
             if (lib::is_oracle_mode() && enable_oracle_empty_char_reshape_to_null && 0 == length) {
               // Oracle compatibility mode: '' as null
-              LOG_DEBUG("reshape empty string to null", K(i));
+
               continuous_vec->set_null(i);
               discrete_vec->set_null(i);
             } else {
@@ -691,7 +691,7 @@ int ObDASUtils::reshape_vector_value(const ObObjMeta &col_type,
             ObLength len = lens[i];
             if (lib::is_oracle_mode() && enable_oracle_empty_char_reshape_to_null && 0 == len) {
               // Oracle compatibility mode: '' as null
-              LOG_DEBUG("reshape empty string to null", K(i));
+
               discrete_vec->set_null(i);
             } else {
               const char *str = ptrs[i];
@@ -720,7 +720,7 @@ int ObDASUtils::reshape_vector_value(const ObObjMeta &col_type,
             ObLength len = datum.len_;
             if (lib::is_oracle_mode() && enable_oracle_empty_char_reshape_to_null && 0 == len) {
               // Oracle compatibility mode: '' as null
-              LOG_DEBUG("reshape empty string to null", K(i));
+
               datum.set_null();
             } else {
               const char *str = datum.ptr_;
@@ -746,7 +746,7 @@ int ObDASUtils::reshape_vector_value(const ObObjMeta &col_type,
           ObLength len = datum.len_;
           if (lib::is_oracle_mode() && enable_oracle_empty_char_reshape_to_null && 0 == len) {
             // Oracle compatibility mode: '' as null
-            LOG_DEBUG("reshape empty string to null");
+
             datum.set_null();
           } else {
             const char *str = datum.ptr_;
@@ -776,7 +776,7 @@ int ObDASUtils::reshape_vector_value(const ObObjMeta &col_type,
         int64_t i = 0;
         while (OB_SUCC(ret) && OB_SUCC(selector.get_next(i))) {
           if (!continuous_vec->is_null(i) && offsets[i + 1] == offsets[i]) {
-            LOG_DEBUG("reshape empty string to null", K(i));
+
             continuous_vec->set_null(i);
           }
         }
@@ -792,7 +792,7 @@ int ObDASUtils::reshape_vector_value(const ObObjMeta &col_type,
         int64_t i = 0;
         while (OB_SUCC(ret) && OB_SUCC(selector.get_next(i))) {
           if (!discrete_vec->is_null(i) && 0 == lens[i]) {
-            LOG_DEBUG("reshape empty string to null", K(i));
+
             discrete_vec->set_null(i);
           }
         }
@@ -809,7 +809,7 @@ int ObDASUtils::reshape_vector_value(const ObObjMeta &col_type,
         while (OB_SUCC(ret) && OB_SUCC(selector.get_next(i))) {
           ObDatum &datum = datums[i];
           if (!datum.is_null() && 0 == datum.len_) {
-            LOG_DEBUG("reshape empty string to null", K(i));
+
             datum.set_null();
           }
         }
@@ -823,7 +823,7 @@ int ObDASUtils::reshape_vector_value(const ObObjMeta &col_type,
         ObUniformBase *uniform_vec = static_cast<ObUniformBase *>(vector);
         ObDatum &datum = uniform_vec->get_datums()[0];
         if (!datum.is_null() && 0 == datum.len_) {
-          LOG_DEBUG("reshape empty string to null");
+
           datum.set_null();
         }
         break;
@@ -845,7 +845,7 @@ int ObDASUtils::wait_das_retry(int64_t retry_cnt)
                                             ? THIS_WORKER.get_timeout_remain()
                                                 : 10000L * timeout_factor;
   if (sleep_us > 0) {
-    LOG_INFO("[DAS RETRY] will sleep", K(sleep_us), K(THIS_WORKER.get_timeout_remain()));
+
     THIS_WORKER.sched_wait();
     ob_usleep(static_cast<uint32_t>(sleep_us));
     THIS_WORKER.sched_run();

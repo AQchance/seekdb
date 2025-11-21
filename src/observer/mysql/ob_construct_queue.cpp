@@ -55,7 +55,7 @@ void ObConstructQueueTask::runTimerTask()
   code = OB_E(EventTable::EN_SQL_AUDIT_CONSTRUCT_BACK_THREAD_STUCK) OB_SUCCESS;
   if (OB_UNLIKELY(OB_SUCCESS != code && is_tp_trigger_)) {
     sleep(abs(code));
-    LOG_INFO("Construct sleep", K(abs(code)));
+
     is_tp_trigger_ = false;
   } else if (OB_SUCCESS == code) {
     is_tp_trigger_ = true;

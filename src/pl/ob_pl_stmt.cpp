@@ -461,7 +461,7 @@ int ObPLRoutineInfo::make_routine_param(ObIAllocator &allocator,
                       const_cast<ObString&>(param->get_type_subname())), extern_type_info);
 
 
-  LOG_DEBUG("make call routine param", K(ret), K(extern_type_info), K(param_type), K(lbt()));
+
 
   if (OB_FAIL(ret) && OB_NOT_NULL(param)) {
     param->~ObPLRoutineParam();
@@ -930,7 +930,7 @@ int ObPLBlockNS::add_label(const ObString &name,
   } else {
     bool is_dup = false;
     if (OB_FAIL(check_dup_label(name, is_dup))) {
-      LOG_INFO("check dup label fail. ", K(ret), K(name));
+
     } else if (is_dup) {
       ret = OB_ERR_REDEFINE_LABEL;
       LOG_WARN("redefining label ", K(name), K(ret));

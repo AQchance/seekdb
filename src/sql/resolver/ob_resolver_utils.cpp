@@ -1792,7 +1792,7 @@ int ObResolverUtils::resolve_sp_name(ObSQLSessionInfo &session_info,
       }
     }
   }
-  LOG_DEBUG("check sp name result", K(sp_name), K(db_name));
+
   return ret;
 }
 
@@ -2203,7 +2203,7 @@ int ObResolverUtils::set_string_val_charset(ObIAllocator &allocator,
     // use the default collation of the specified charset
     ObCollationType collation_type = ObCharset::get_default_collation(charset_type);
     val.set_collation_type(collation_type);
-    LOG_DEBUG("use default collation", K(charset_type), K(collation_type));
+
     ObLength length = static_cast<ObLength>(ObCharset::strlen_char(val.get_collation_type(),
           val.get_string_ptr(),
           val.get_string_len()));
@@ -2260,7 +2260,7 @@ int ObResolverUtils::resolve_const(const ParseNode *node,
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("parse node is invalid", K(node));
   } else {
-    LOG_DEBUG("resolve item", "item_type", get_type_name(static_cast<int>(node->type_)), K(stmt_type));
+
     int16_t precision = PRECISION_UNKNOWN_YET;
     int16_t scale = SCALE_UNKNOWN_YET;
     // const value contains NOT_NULL flag
@@ -2354,7 +2354,7 @@ int ObResolverUtils::resolve_const(const ParseNode *node,
       //  LOG_WARN("invalid str", K(ret), K(val));
       //}
       val.set_param_meta(val.get_meta());
-      LOG_DEBUG("resolve const char", K(val));
+
       break;
     }
     case T_IEEE754_NAN: {
@@ -2404,7 +2404,7 @@ int ObResolverUtils::resolve_const(const ParseNode *node,
     case T_UINT64:
     case T_INT: {
       if (NULL != parents_expr_info) {
-        LOG_DEBUG("T_INT as pl acc idx", K(parents_expr_info->has_member(IS_PL_ACCESS_IDX)));
+
       }
       if (T_INT == node->type_) {
         val.set_int(node->value_);
@@ -2438,7 +2438,7 @@ int ObResolverUtils::resolve_const(const ParseNode *node,
       if (true == node->is_date_unit_) {
         literal_prefix.assign_ptr(node->str_value_, static_cast<int32_t>(node->str_len_));
       }
-      LOG_DEBUG("resolve integer constant", K(val), K(val.get_meta()), K(formalized_prec), K(stmt_type), K(lbt()));
+
       break;
     }
     case T_NUMBER: {
@@ -2486,7 +2486,7 @@ int ObResolverUtils::resolve_const(const ParseNode *node,
           val.set_precision(precision);
           val.set_scale(scale);
           val.set_length(len);
-          LOG_DEBUG("finish parse decimal int from str", K(literal_prefix), K(precision), K(scale));
+
         } else {
           val.set_number(nmb);
           val.set_precision(precision);
@@ -2974,7 +2974,7 @@ bool ObResolverUtils::is_valid_partition_column_type(const ObObjType type,
       PARTITION_FUNC_TYPE_LIST == part_type) {
     // Check the type of the column in partition by hash(c1)
     // Check the type of the column in partition by range(c1)
-    LOG_DEBUG("check partition column type", K(part_type), K(type), K(lbt()));
+
     if (ob_is_integer_type(type) || ObYearType == type || ObBitType == type) {
       bret = true;
     }
@@ -3025,7 +3025,7 @@ int ObResolverUtils::check_partition_range_value_result_type(const ObPartitionFu
                                                              ObRawExpr &part_value_expr)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("check_partition_range_value_result_type ", K(part_func_type), K(part_column_expr), K(part_value_expr));
+
 
   ObObjTypeClass expect_value_tc = ObMaxTC;
   ObObjType part_column_expr_type = part_column_expr.get_data_type();
@@ -3068,7 +3068,7 @@ int ObResolverUtils::check_partition_range_value_result_type(const ObPartitionFu
                                                              ObObj &part_value)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("check_partition_range_value_result_type ", K(part_func_type), K(column_type), K(column_name));
+
 
   ObObjTypeClass expect_value_tc = ObMaxTC;
   ObObjType part_column_expr_type = column_type.get_type();
@@ -3387,7 +3387,7 @@ int ObResolverUtils::check_expr_valid_for_partition(ObRawExpr &expr,
 {
   int ret = OB_SUCCESS;
   ObRawExpr *part_expr = NULL;
-  LOG_DEBUG("check_expr_valid_for_partition", K(ret), K(expr), K(part_type), K(in_tablegroup));
+
 
   if (is_hash_part(part_type)) {
     // Because partition by hash(xx) here the expr is hash(xx) function, here we only check xx
@@ -4184,7 +4184,7 @@ int ObResolverUtils::resolve_external_table_column_def(ObRawExprFactory &expr_fa
       LOG_WARN("fail replace expr", K(ret));
     }
   }
-  LOG_TRACE("resolve external table column ref", K(q_name.col_name_), KP(expr), KPC(expr));
+
   return ret;
 }
 
@@ -5426,7 +5426,7 @@ int ObResolverUtils::resolve_data_type(const ParseNode &type_node,
   }
   const ObAccuracy &default_accuracy = ObAccuracy::DDL_DEFAULT_ACCURACY2[is_oracle_mode][data_type.get_obj_type()];
 
-  LOG_DEBUG("resolve_data_type", K(ret), K(has_specify_scale), K(type_node.type_), K(type_node.param_num_), K(number_type), K(scale), K(precision), K(length));
+
   switch (data_type.get_type_class()) {
     case ObIntTC:
       // fallthrough
@@ -5528,7 +5528,7 @@ int ObResolverUtils::resolve_data_type(const ParseNode &type_node,
         if (enable_decimal_int_type && !convert_real_type_to_decimal
             && !data_type.get_meta_type().is_unumber()) {
           data_type.set_obj_type(ObDecimalIntType);
-          LOG_DEBUG("set decimalint in mysql mode", K(data_type), K(precision), K(scale));
+
         }
       }
     }
@@ -5655,7 +5655,7 @@ int ObResolverUtils::resolve_data_type(const ParseNode &type_node,
         }
         data_type.set_charset_type(ObCharset::charset_type_by_coll(cs_type));
         data_type.set_collation_type(cs_type);
-        LOG_DEBUG("check data type after resolve", K(ret), K(data_type));
+
       } else if (!is_oracle_mode && ObCharType == data_type.get_obj_type()
                                 && OB_MAX_CHAR_LENGTH < length) {
         // varchar length check , TODO: 
@@ -5753,7 +5753,7 @@ int ObResolverUtils::resolve_data_type(const ParseNode &type_node,
       break;
   }
   }
-  LOG_DEBUG("resolve data type", K(ret), K(data_type), K(lbt()));
+
   return ret;
 }
 
@@ -5870,7 +5870,7 @@ int ObResolverUtils::set_sync_ddl_id_str(ObSQLSessionInfo *session_info, ObStrin
     common::ObObj var_obj;
     if (OB_FAIL(session_info->get_user_variable_value(var_name, var_obj))) {
       if (OB_ERR_USER_VARIABLE_UNKNOWN == ret) {
-        LOG_DEBUG("no __oceanbase_ddl_id user variable: ", K(ddl_id_str));
+
         ret = OB_SUCCESS; // No session variable is set, need to return normally
       } else {
         LOG_WARN("failed to get value of __oceanbase_ddl_id user variable", K(ret), K(var_name));
@@ -5878,7 +5878,7 @@ int ObResolverUtils::set_sync_ddl_id_str(ObSQLSessionInfo *session_info, ObStrin
     } else {
       if (ob_is_string_type(var_obj.get_type())) {
         ddl_id_str = var_obj.get_string();
-        LOG_DEBUG("__oceanbase_ddl_id user variable: ", K(ddl_id_str));
+
       } else {
         ret = OB_ERR_WRONG_TYPE_FOR_VAR;
         LOG_WARN("data type of __oceanbase_ddl_id user variable is not string", K(ret), K(var_obj));
@@ -6810,7 +6810,7 @@ int ObResolverUtils::wait_for_sys_package_ready(ObSQLSessionInfo &session_info)
         LOG_WARN("check status failed", K(ret));
       } else {
         if (!waited) {
-          LOG_INFO("sys package not ready yet, waiting for loading completion");
+
           waited = true;
         }
         ob_usleep(retry_interval_us);
@@ -6822,7 +6822,7 @@ int ObResolverUtils::wait_for_sys_package_ready(ObSQLSessionInfo &session_info)
       LOG_WARN("sys package not ready after waiting");
     } else {
       if (waited) {
-        LOG_INFO("sys package ready after waiting");
+
       }
       // Return OB_SCHEMA_EAGAIN to retry acquiring schema
       ret = OB_SCHEMA_EAGAIN;
@@ -6904,7 +6904,7 @@ int ObResolverUtils::resolve_external_symbol(common::ObIAllocator &allocator,
           ObPLDependencyGuard switch_guard(&pl_resolver.get_external_ns(), pl_resolver.get_current_namespace().get_external_ns());
           if (OB_FAIL(pl_resolver.resolve_qualified_name(q_name, columns, real_exprs, func_ast, expr))) {
             if (is_check_mode) {
-              LOG_INFO("failed to resolve var", K(q_name), K(ret));
+
             } else {
               LOG_WARN_IGNORE_COL_NOTFOUND(ret, "failed to resolve var", K(q_name), K(ret));
             }
@@ -7365,7 +7365,7 @@ int ObResolverUtils::uv_mysql_insertable_join(const TableItem &table_item, const
         LOG_WARN("null join table item", K(ret));
       } else if (item->is_basic_table()) {
         if (table_item.view_base_item_ != item && item->ref_id_ == base_tid) {
-          LOG_DEBUG("reference to insert table");
+
           insertable = false;
         }
       } else if (item->is_generated_table()) {
@@ -7681,7 +7681,7 @@ int ObResolverUtils::check_secure_path(const common::ObString &secure_file_priv,
             // continue
           } else {
             ret = OB_SUCCESS;
-            LOG_INFO("check sys tenant whitelist success.", K(ret), K(secure_file_path), K(full_path));
+
           }
         }
       }
@@ -8658,7 +8658,7 @@ int ObResolverUtils::rm_space_for_neg_num(ParseNode *param_node, ObIAllocator &a
      // 'select - 1.2 from dual' and 'select 1.2 from dual' will hit the same plan, the key is
      // select ? from dual, so '- 1.2' and '1.2' will all go here, if '-' is not presented,
      // do nothing
-    LOG_TRACE("rm space for neg num", K(idx), K(ObString(param_node->str_len_, param_node->str_value_)));
+
   } else if (OB_ISNULL(buf = (char *)allocator.alloc(param_node->str_len_))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     LOG_WARN("failed to allocator memory", K(ret), K(param_node->str_len_));
@@ -8673,7 +8673,7 @@ int ObResolverUtils::rm_space_for_neg_num(ParseNode *param_node, ObIAllocator &a
     pos += len;
     param_node->str_value_ = buf;
     param_node->str_len_ = pos;
-    LOG_TRACE("rm space for neg num", K(idx), K(ObString(param_node->str_len_, param_node->str_value_)));
+
   }
   return ret;
 }
@@ -8792,7 +8792,7 @@ int ObResolverUtils::resolver_param(ObPlanCacheCtx &pc_ctx,
               (obj_param.get_int() < 0 || (0 == obj_param.get_int() && '-' == raw_param->str_value_[0]))) {
             ret = OB_ERR_UNEXPECTED;
             pc_ctx.should_add_plan_ = false;
-            LOG_TRACE("param must be positive", K(ret), K(param_idx), K(obj_param));
+
           }
         }
       }

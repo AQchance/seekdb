@@ -323,7 +323,7 @@ int ObFTParseHelper::init(
   } else if (OB_FAIL(ObPluginHelper::find_ftparser(parser_name_.get_parser_name().str(),
                                                    parser_desc_, plugin_param_))) {
     if (OB_FUNCTION_NOT_DEFINED == ret) {
-      LOG_DEBUG("no such parser", K(parser_name_), K(ret));
+
     } else {
       LOG_WARN("fail to open plugin handler", K(ret), K(plugin_name));
     }
@@ -335,7 +335,7 @@ int ObFTParseHelper::init(
   } else {
     allocator_ = allocator;
     is_inited_ = true;
-    LOG_TRACE("succeed to init ft parser helper", K(ret), K(plugin_name), K(plugin_properties), KPC(this));
+
   }
   if (OB_FAIL(ret) && OB_UNLIKELY(!is_inited_)) {
     reset();

@@ -1015,7 +1015,7 @@ int ObNFMBase::decimal_to_hex(const ObString &origin_str, char *buf,
           pos = fmt_desc_.output_len_;
         } else {
           ObString hex_str(pos, buf);
-          LOG_DEBUG("decimal_to_hex", K(hex_str));
+
           if (pos < valid_len
                     && ObNFMElem::has_type(NFM_ZERO_FLAG, fmt_desc_.elem_flag_)) {
             // if the length of the fmt is greater than the length of the result string
@@ -1385,7 +1385,7 @@ int ObNFMBase::cast_obj_to_int(
       }
     }
   }
-  LOG_DEBUG("cast_obj_to_int", K(ret), K(res_val));
+
   return ret;
 }
 
@@ -1507,7 +1507,7 @@ int ObNFMBase::cast_obj_to_num_str(
     } else {
       num_str.assign_ptr(num_str_buf, static_cast<int32_t>(num_str_len));
     }
-    LOG_DEBUG("cast_obj_to_num_str", K(num_str));
+
   }
   return ret;
 }
@@ -1786,7 +1786,7 @@ int ObNFMToChar::process_mul_format(
     }
     if (OB_SUCC(ret)) {
       num_str.assign_ptr(origin_str_buf, static_cast<int32_t>(origin_str_len + extra_zeros_count));
-      LOG_DEBUG("obj_to_multi_num_str", K(num_str));
+
     }
   }
   return ret;
@@ -1860,7 +1860,7 @@ int ObNFMToChar::process_tm_format(const ObNFMObj &nfm_obj, const int64_t in_sca
     }
     if (OB_SUCC(ret)) {
       num_str.assign_ptr(num_str_buf, static_cast<int32_t>(num_str_len));
-      LOG_DEBUG("process_tme_format", K(ret), K(num_str_buf), K(num_str_len));
+
       if (num_str_len <= 64) {
         MEMCPY(buf, num_str_buf, num_str_len);
         pos += num_str_len;
@@ -1937,7 +1937,7 @@ int ObNFMToChar::process_tme_format(const ObNFMObj &nfm_obj, const int64_t in_sc
         }
       }
       num_str.assign_ptr(num_str_buf, static_cast<int32_t>(num_str_len));
-      LOG_DEBUG("process_tme_format", K(ret), K(num_str_buf), K(num_str_len));
+
       if (OB_FAIL(num_str_to_sci(num_str, out_scale, buf, buf_len, pos, true))) {
         LOG_WARN("failed to convert num to sci str", K(ret));
       } else if (OB_FAIL(process_fillmode(buf, buf_len, pos))) {

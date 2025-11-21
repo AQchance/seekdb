@@ -241,7 +241,7 @@ int ObHashGroupByOp::inner_open()
       LOG_WARN("failed to init llc map", K(ret));
     } else {
       llc_est_.enabled_ = MY_SPEC.by_pass_enabled_ && MY_SPEC.llc_ndv_est_enabled_ && !force_by_pass_;
-      LOG_TRACE("gby switch", K(MY_SPEC.id_), K(llc_est_.enabled_), K(MY_SPEC.by_pass_enabled_), K(MY_SPEC.llc_ndv_est_enabled_), K(bypass_ctrl_.by_pass_ctrl_enabled_), K(ret));
+
       enable_dump_ = (!(aggr_processor_.has_distinct() || aggr_processor_.has_order_by())
                      && GCONF.is_sql_operator_dump_enabled());
       group_store_.set_dir_id(sql_mem_processor_.get_dir_id());
@@ -486,7 +486,7 @@ int ObHashGroupByOp::inner_get_next_row()
     if (bypass_ctrl_.by_pass_ctrl_enabled_ && force_by_pass_) {
       curr_group_id_ = 0;
       bypass_ctrl_.start_by_pass();
-      LOG_TRACE("force by pass open");
+
     } else if (OB_FAIL(load_data())) {
       LOG_WARN("load data failed", K(ret));
     } else {
@@ -601,7 +601,7 @@ int ObHashGroupByOp::next_duplicate_data_permutation(
   insert_group_ht = true;
   if (ObThreeStageAggrStage::NONE_STAGE == MY_SPEC.aggr_stage_) {
     // non-three stage aggregation
-    LOG_DEBUG("debug write aggr code", K(ret), K(last_group), K(nth_group));
+
   } else if (ObThreeStageAggrStage::FIRST_STAGE == MY_SPEC.aggr_stage_) {
     int64_t first_idx = MY_SPEC.aggr_code_idx_ + 1;
     int64_t start_idx = nth_group < MY_SPEC.dist_col_group_idxs_.count() ?
@@ -647,7 +647,7 @@ int ObHashGroupByOp::next_duplicate_data_permutation(
         eval_flags.set(i);
       }
       aggr_code_expr->set_evaluated_projected(eval_ctx_);
-      LOG_DEBUG("debug write aggr code", K(ret), K(aggr_code), K(first_idx));
+
     } else {
       // disable rowsets
       const int64_t aggr_code = last_group ? MY_SPEC.dist_col_group_idxs_.count() : nth_group;
@@ -656,7 +656,7 @@ int ObHashGroupByOp::next_duplicate_data_permutation(
       datum.set_int(aggr_code);
       aggr_code_expr->set_evaluated_projected(eval_ctx_);
 
-      LOG_DEBUG("debug write aggr code", K(ret), K(aggr_code), K(first_idx));
+
     }
     LOG_DEBUG("debug write aggr code", K(ret), K(last_group), K(nth_group), K(first_idx),
       K(can_skip_last_group_), K(start_idx), K(end_idx));
@@ -807,10 +807,10 @@ int ObHashGroupByOp::finish_insert_distinct_data()
     } else if (OB_FAIL(distinct_data_set_.open_hash_table_part())) {
       LOG_WARN("failed to open hash table part", K(ret));
     } else {
-      LOG_DEBUG("finish insert row and open hash table part", K(ret), K(is_init_distinct_data_));
+
     }
   }
-  LOG_DEBUG("open hash table part", K(ret), K(is_init_distinct_data_));
+
   return ret;
 }
 
@@ -825,7 +825,7 @@ int ObHashGroupByOp::insert_distinct_data()
   } else if (OB_FAIL(distinct_data_set_.insert_row(distinct_origin_exprs_, has_exists, inserted))) {
     LOG_WARN("failed to insert row", K(ret));
   } else {
-    LOG_DEBUG("debug insert distinct row", K(has_exists), K(inserted));
+
   }
   return ret;
 }
@@ -897,7 +897,7 @@ int ObHashGroupByOp::get_next_distinct_row()
       LOG_WARN("failed to get next row in hash table", K(ret));
     }
   } else {
-    LOG_DEBUG("debug get distinct rows", K(ROWEXPR2STR(eval_ctx_, distinct_origin_exprs_)));
+
   }
   return ret;
 }
@@ -1047,7 +1047,7 @@ int ObHashGroupByOp::load_data()
       }
       curr_gr_item.is_expr_row_ = true;
       curr_gr_item.batch_idx_ = 0;
-      LOG_DEBUG("finish calc_groupby_exprs_hash", K(curr_gr_item));
+
       if (OB_FAIL(ret)) {
       } else if ((!start_dump || bloom_filter->exist(curr_gr_item.hash()))
                 && NULL != (exist_curr_gr_item = local_group_rows_.get(curr_gr_item))) {
@@ -1096,7 +1096,7 @@ int ObHashGroupByOp::load_data()
               LOG_WARN("unexpected status: dup date must empty", K(ret));
             } else {
               *static_cast<uint64_t *>(stored_row->get_extra_payload()) = curr_gr_item.hash();
-              LOG_DEBUG("finish dump", K(part_idx), K(curr_gr_item), KPC(stored_row));
+
               // only dump one row
               break;
             }
@@ -1109,7 +1109,7 @@ int ObHashGroupByOp::load_data()
   row_store_iter.reset();
   if (OB_ITER_END == ret) {
     ret = OB_SUCCESS;
-    LOG_DEBUG("debug iter end load data", K(ret), K(cur_part), K(use_distinct_data_));
+
   }
 
   if (OB_FAIL(ret)) {
@@ -1123,7 +1123,7 @@ int ObHashGroupByOp::load_data()
       LOG_WARN("failed add llc map from ht", K(ret));
     } else {
       llc_est_.est_cnt_ += agged_row_cnt_;
-      LOG_TRACE("llc map succ to add hash val from insert state", K(ret), K(llc_est_.est_cnt_), K(agged_row_cnt_), K(agged_group_cnt_));
+
     }
   }
   if (OB_SUCC(ret) && NULL == cur_part && !use_distinct_data_ &&
@@ -1374,7 +1374,7 @@ bool ObHashGroupByOp::need_start_dump(const int64_t input_rows, int64_t &est_par
       }
       actual_need_dump = false;
       int ret = OB_SUCCESS; // no use
-      LOG_TRACE("max insert is about to dump, stop it", K(ret), K(get_actual_mem_used_size()), K(get_mem_bound_size()), K(sql_mem_processor_.get_data_ratio()));
+
     } else if (MY_SPEC.by_pass_enabled_) {
       bypass_ctrl_.start_process_ht();
       bypass_ctrl_.set_max_rebuild_times();
@@ -1457,7 +1457,7 @@ int ObHashGroupByOp::setup_dump_env(const int64_t part_id, const int64_t input_r
     } else if (OB_FAIL(sql_mem_processor_.update_used_mem_size(get_mem_used_size()))) {
       LOG_WARN("failed to update mem size", K(ret));
     }
-    LOG_TRACE("trace setup dump", K(part_cnt), K(pre_part_cnt), K(part_id));
+
   }
   return ret;
 }
@@ -1576,7 +1576,7 @@ int ObHashGroupByOp::inner_get_next_batch(const int64_t max_row_cnt)
     if (bypass_ctrl_.by_pass_ctrl_enabled_ && force_by_pass_) {
       curr_group_id_ = 0;
       bypass_ctrl_.start_by_pass();
-      LOG_TRACE("force by pass open");
+
     } else if (OB_FAIL(load_data_batch(MY_SPEC.max_batch_size_))) {
       LOG_WARN("load data failed", K(ret));
     } else {
@@ -1765,7 +1765,7 @@ int ObHashGroupByOp::load_data_batch(int64_t max_row_cnt)
         //batch calc aggr for each group
         uint16_t offset_in_selector = 0;
         for (int64_t i = 0; OB_SUCC(ret) && i < gri_cnt_per_batch_; i++) {
-          LOG_DEBUG("process batch begin", K(i), K(*gris_per_batch_[i]));
+
           OB_ASSERT(OB_NOT_NULL(gris_per_batch_[i]->group_row_));
           if (OB_FAIL(aggr_processor_.process_batch(
               child_brs,
@@ -1800,7 +1800,7 @@ int ObHashGroupByOp::load_data_batch(int64_t max_row_cnt)
       LOG_WARN("failed add llc map from ht", K(ret));
     } else {
       llc_est_.est_cnt_ += agged_row_cnt_;
-      LOG_TRACE("llc map succ to add hash val from insert state", K(ret), K(llc_est_.est_cnt_), K(agged_row_cnt_), K(agged_group_cnt_));
+
     }
   }
   if (OB_FAIL(ret)) {
@@ -1905,7 +1905,7 @@ int ObHashGroupByOp::next_batch(bool is_from_row_store,
     } else if (OB_FAIL(child_->get_next_batch(max_row_cnt, child_brs))) {
       LOG_WARN("fail to get next batch", K(ret));
     }
-    LOG_TRACE("get_row from child", K(*child_brs), K(ret));
+
   } else {
     int64_t read_size = 0;
     child_brs = &dumped_batch_rows_;
@@ -1919,7 +1919,7 @@ int ObHashGroupByOp::next_batch(bool is_from_row_store,
         LOG_WARN("fail to get next batch", K(ret));
       }
     } else {
-      LOG_TRACE("get_row from row_store", K(read_size));
+
       const_cast<ObBatchRows *>(child_brs)->size_ = read_size;
       const_cast<ObBatchRows *>(child_brs)->end_ = false;
       if (first_batch_from_store_) {
@@ -2417,7 +2417,7 @@ int ObHashGroupByOp::group_child_batch_rows(const ObChunkDatumStore::StoredRow *
           } else {
             selector_array_[new_groups++] = i;
             gris_per_batch_[gri_cnt_per_batch_++] = tmp_gr_item;
-            LOG_DEBUG("new group row", K(gri_cnt_per_batch_), K(*tmp_gr_item), K(i), K(agged_row_cnt_));
+
           }
         }
       } else {
@@ -2675,7 +2675,7 @@ int ObHashGroupByOp::by_pass_prepare_one_batch(const int64_t batch_size)
   int ret = OB_SUCCESS;
   bool last_group = false;
   bool insert_group_ht = false;
-  LOG_TRACE("by pass prepare one batch", K(batch_size));
+
   if (ObThreeStageAggrStage::FIRST_STAGE == MY_SPEC.aggr_stage_
       && by_pass_nth_group_ <= MY_SPEC.dist_col_group_idxs_.count()
       && by_pass_nth_group_ > 0) {
@@ -2837,7 +2837,7 @@ int ObHashGroupByOp::init_popular_values()
   }
 
   if (popular_map_.size() == 0) {
-    LOG_TRACE("data skew4: no popular values", K(ret), K(dop), K(total_load_rows_), K(MY_SPEC.id_));
+
   } else {
     op_monitor_info_.otherstat_4_value_ = popular_map_.size();
   }
@@ -2966,7 +2966,7 @@ int ObHashGroupByOp::process_popular_value(uint64_t hash_value,
         LOG_WARN("fail to process row", K(ret), KPC(exist_curr_gr_item));
       }
     } else { // Encounter a popular value at first, prepare
-      LOG_TRACE("data skew: one popular value has encountered", K(ret), K(hash_value), K(num_value));
+
       agged_group_cnt_++;
       agged_row_cnt_++;
       ObGroupRowItem *tmp_gr_item = NULL;
@@ -3204,11 +3204,11 @@ int ObHashGroupByOp::check_llc_ndv()
   } else {
     global_bound_size = tenant_sql_mem_manager->get_global_bound_size();
     has_enough_mem_for_deduplication = (global_bound_size * LlcEstimate::GLOBAL_BOUND_RATIO_) > (llc_est_.avg_group_mem_ * ndv);
-    LOG_TRACE("check llc ndv", K(ndv_ratio_is_small_enough), K(ndv), K(llc_est_.est_cnt_), K(has_enough_mem_for_deduplication), K(llc_est_.avg_group_mem_), K(global_bound_size), K(get_actual_mem_used_size()));
+
     if (!has_enough_mem_for_deduplication) {
       //continue bypass and stop estimating llc ndv 
       llc_est_.enabled_ = false;
-      LOG_TRACE("stop check llc ndv and continue bypass", K(ndv_ratio_is_small_enough), K(ndv), K(llc_est_.est_cnt_), K(has_enough_mem_for_deduplication), K(llc_est_.avg_group_mem_), K(global_bound_size), K(get_actual_mem_used_size()));
+
     } else if (ndv_ratio_is_small_enough) {
       // go to llc_insert_state and stop bypass and stop estimating llc ndv
       bypass_ctrl_.bypass_rebackto_insert(ndv);
@@ -3216,7 +3216,7 @@ int ObHashGroupByOp::check_llc_ndv()
       if (OB_FAIL(by_pass_brs_holder_.save(MY_SPEC.max_batch_size_))) {
         LOG_WARN("failed to save child batch", K(ret));
       }
-      LOG_TRACE("reback into deduplication state and stop bypass and stop estimating llc ndv", K(ndv_ratio_is_small_enough), K(ndv), K(llc_est_.est_cnt_), K(has_enough_mem_for_deduplication), K(llc_est_.avg_group_mem_), K(global_bound_size), K(get_actual_mem_used_size()));
+
     } else {
       //do nothing, continue bypass and estimate llc ndv 
     }

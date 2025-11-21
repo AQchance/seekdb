@@ -58,7 +58,7 @@ int ObMicroBlockRawEncoder::build_block(char *&buf, int64_t &size)
     ret = OB_INNER_STAT_ERROR;
     LOG_WARN("empty micro block", K(ret));
   } else if (OB_FAIL(set_datum_rows_ptr())) {
-    STORAGE_LOG(WARN, "fail to set datum rows ptr", K(ret));
+
   } else if (OB_FAIL(pivot())) {
     LOG_WARN("pivot rows to columns failed", K(ret));
   } else if (OB_FAIL(row_indexs_.reserve(datum_rows_.count()))) {
@@ -87,7 +87,7 @@ int ObMicroBlockRawEncoder::build_block(char *&buf, int64_t &size)
     for (int64_t i = 0; OB_SUCC(ret) && i < encoders_.count(); i++) {
       int64_t need_size = 0;
       if (OB_FAIL(encoders_.at(i)->get_encoding_store_meta_need_space(need_size))) {
-        STORAGE_LOG(WARN, "fail to get_encoding_store_meta_need_space", K(ret), K(i), K(encoders_));
+
       } else {
         need_size += encoders_.at(i)->calc_encoding_fix_data_need_space();
         encoders_need_size += need_size;
@@ -97,10 +97,10 @@ int ObMicroBlockRawEncoder::build_block(char *&buf, int64_t &size)
 
   if (OB_FAIL(ret)) {
   } else if (OB_FAIL(data_buffer_.ensure_space(col_header_size + encoders_need_size))) {
-    STORAGE_LOG(WARN, "fail to ensure space", K(ret), K(data_buffer_));
+
   } else if (OB_ISNULL(encoding_meta_buf = static_cast<char *>(encoding_meta_allocator_.alloc(encoders_need_size)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to alloc fix header buf", K(ret), K(encoders_need_size));
+
   } else {
     STORAGE_LOG(DEBUG, "[debug] build micro block", K_(estimate_size), K_(header_size), K_(expand_pct),
         K(datum_rows_.count()), K(ctx_));
@@ -113,7 +113,7 @@ int ObMicroBlockRawEncoder::build_block(char *&buf, int64_t &size)
       LOG_WARN("failed to store encoding meta and fixed col data", K(ret));
     } else if (FALSE_IT(encoding_meta_size = meta_buf_writer.length())) {
     } else if (OB_FAIL(data_buffer_.write_nop(encoding_meta_size))) {
-      STORAGE_LOG(WARN, "failed to write nop", K(ret), K(meta_buf_writer), K(data_buffer_));
+
     }
 
     // <2> set row data store offset
@@ -145,7 +145,7 @@ int ObMicroBlockRawEncoder::build_block(char *&buf, int64_t &size)
         ObIntegerArrayGenerator gen;
         const int64_t row_index_size = row_indexs_.count() * get_header(data_buffer_)->row_index_byte_;
         if (OB_FAIL(data_buffer_.ensure_space(row_index_size))) {
-          STORAGE_LOG(WARN, "fail to ensure space", K(ret), K(row_index_size), K(data_buffer_));
+
         } else if (OB_FAIL(gen.init(data_buffer_.data() + data_buffer_.length(), get_header(data_buffer_)->row_index_byte_))) {
           LOG_WARN("init integer array generator failed",
               K(ret), "byte", get_header(data_buffer_)->row_index_byte_);
@@ -373,7 +373,7 @@ void TestRawDecoder::setup_obj(ObObj& obj, int64_t column_id, int64_t seed)
 {
   obj.copy_meta_type(row_generate_.column_list_.at(column_id).col_type_);
   ObObjType column_type = row_generate_.column_list_.at(column_id).col_type_.get_type();
-  LOG_INFO("Type of current column is: ", K(column_type));
+
   row_generate_.set_obj(column_type, row_generate_.column_list_.at(column_id).col_id_, seed, obj, 0);
   if ( ObVarcharType == column_type || ObCharType == column_type || ObHexStringType == column_type
       || ObTextType == column_type){
@@ -1077,7 +1077,7 @@ TEST_F(TestRawDecoder, filter_push_down_in_nu)
   }
   for (int64_t i = ROW_CNT - 10; i < ROW_CNT; ++i) {
     ASSERT_EQ(OB_SUCCESS, encoder_.append_row(row)) << "i: " << i << std::endl;
-    LOG_INFO("Null row appended: ", K(row));
+
   }
 
   int64_t seed0_count = ROW_CNT - 40;
@@ -1220,7 +1220,7 @@ TEST_F(TestRawDecoder, batch_decode_to_datum)
       continue;
     }
     int32_t col_offset = i;
-    LOG_INFO("Current col: ", K(i), K(col_descs_.at(i)),  K(*decoder.decoders_[col_offset].ctx_));
+
     ObDatum datums[ROW_CNT];
     int32_t row_ids[ROW_CNT];
     for (int32_t j = 0; j < ROW_CNT; ++j) {
@@ -1230,7 +1230,7 @@ TEST_F(TestRawDecoder, batch_decode_to_datum)
     ASSERT_EQ(OB_SUCCESS, decoder.decoders_[col_offset]
         .batch_decode(decoder.row_index_, row_ids, cell_datas, ROW_CNT, datums));
     for (int64_t j = 0; j < ROW_CNT; ++j) {
-      LOG_INFO("Current row: ", K(j), K(col_offset), K(rows[j].storage_datums_[col_offset]), K(datums[j]));
+
       ASSERT_TRUE(ObDatum::binary_equal(rows[j].storage_datums_[col_offset], datums[j]));
     }
   }
@@ -1298,7 +1298,7 @@ TEST_F(TestRawDecoder, opt_batch_decode_to_datum)
       continue;
     }
     int32_t col_offset = i;
-    STORAGE_LOG(INFO, "Current col: ", K(i),K(col_descs_.at(i)), K(*decoder.decoders_[col_offset].ctx_));
+
     ObDatum datums[ROW_CNT];
     int32_t row_ids[ROW_CNT];
     for (int32_t j = 0; j < ROW_CNT; ++j) {
@@ -1308,7 +1308,7 @@ TEST_F(TestRawDecoder, opt_batch_decode_to_datum)
     ASSERT_EQ(OB_SUCCESS, decoder.decoders_[col_offset]
         .batch_decode(decoder.row_index_, row_ids, cell_datas, ROW_CNT, datums));
     for (int64_t j = 0; j < ROW_CNT; ++j) {
-      LOG_INFO("Current row: ", K(j), K(col_offset), K(rows[j].storage_datums_[col_offset]), K(datums[j]));
+
       ASSERT_TRUE(ObDatum::binary_equal(rows[j].storage_datums_[col_offset], datums[j]));
     }
   }
@@ -1357,7 +1357,7 @@ TEST_F(TestRawDecoder, cell_decode_to_datum)
       continue;
     }
     int32_t col_offset = i;
-    LOG_INFO("Current col: ", K(i), K(col_descs_.at(i)),  K(*decoder.decoders_[col_offset].ctx_));
+
     for (int64_t j = 0; j < ROW_CNT; ++j) {
       ObDatum datum;
       datum.ptr_ = reinterpret_cast<char *>(datum_buf);
@@ -1365,7 +1365,7 @@ TEST_F(TestRawDecoder, cell_decode_to_datum)
       ObBitStream bs(reinterpret_cast<unsigned char *>(const_cast<char *>(row_data)), row_len);
       ASSERT_EQ(OB_SUCCESS,
           decoder.decoders_[col_offset].decode(datum,j, bs, row_data, row_len));
-      LOG_INFO("Current row: ", K(j), K(col_offset), K(rows[j].storage_datums_[col_offset]), K(datum));
+
       ASSERT_TRUE(ObDatum::binary_equal(rows[j].storage_datums_[col_offset], datum));
     }
   }

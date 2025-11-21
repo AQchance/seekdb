@@ -111,7 +111,7 @@ public:
                           K(result.ec == std::errc::result_out_of_range),
                           K(function_name));
           } else {
-            LOG_INFO( "[JIT] function stack_size", K(function_name), K(stack_size));
+
             JitEngine.update_stack_size(stack_size);
           }
         }

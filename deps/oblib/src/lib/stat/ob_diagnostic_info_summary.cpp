@@ -72,7 +72,7 @@ ObDiagnosticInfoCollector::~ObDiagnosticInfoCollector()
     }
     ob_free(di_info_bundle_);
     di_info_bundle_ = nullptr;
-    LOG_INFO("destroy current di collector", KPC(this));
+
   }
 }
 
@@ -200,7 +200,7 @@ int ObBaseDiagnosticInfoSummary::init(int64_t cpu_cnt)
     } else {
       cpu_cnt_ = cpu_cnt;
       is_inited_ = true;
-      LOG_INFO("init di base summary finished", K(cpu_cnt), KPC(this));
+
     }
   }
   return ret;

@@ -194,7 +194,7 @@ public:
     while(ATOMIC_LOAD(&seq_) < TEST_MAX_EXECUTOR_COUNT) {
       sleep(1);
       int64_t cur_seq = ATOMIC_LOAD(&seq_);
-      LOG_INFO("ring array", "tps", cur_seq - last_seq);
+
       if (seq_ % 1000 == 0) {
         monitor_mgr_.print_memory_size();
       }
@@ -233,13 +233,13 @@ int TestMonitorInfoManager::do_add_and_check()
       } else if (OB_FAIL(monitor_mgr_.add_monitor_info(info))) {
         LOG_ERROR("fail to add monitor info", K(ret), K(query_id), K(plan_id));
       } else {
-        LOG_INFO("add monitor info success", K(query_id), K(plan_id), K(info));
+
         ObPhyPlanMonitorInfo *plan_info;
         common::ObRaQueue::Ref ref;
         if (OB_FAIL(monitor_mgr_.get_by_index(query_id, plan_info, &ref))) {
           LOG_WARN("fail to get monitor info", K(ret), K(query_id));
         } else {
-          LOG_INFO("get from index success", K(ret), K(query_id), K(*plan_info));
+
         }
         monitor_mgr_.revert(&ref);
       }
@@ -380,7 +380,7 @@ TEST_F(TestMonitorInfoManager, test_serialize)
       EXPECT_EQ(i, value);
     }
   }
-  LOG_INFO("output dest info", K(dest_info));
+
 }
 TEST_F(TestMonitorInfoManager, test_dispatch)
 {

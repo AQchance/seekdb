@@ -804,7 +804,7 @@ int ObDMLSqlSplicer::finish_row()
       LOG_WARN("failed to push back", K(ret), K(last_pos), K(last_row_end_pos));
     }
   }
-  LOG_DEBUG("end of row", K(ret), K(N), K(last_pos));
+
   return ret;
 }
 

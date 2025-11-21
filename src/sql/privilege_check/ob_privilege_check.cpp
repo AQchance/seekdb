@@ -683,7 +683,7 @@ int get_create_table_stmt_need_privs(
       LOG_WARN("Can not create table in information_schema database", K(session_priv), K(ret));
     } else if (stmt->is_view_table()){
       for (int64_t i = 0; i < stmt->get_view_need_privs().count(); i++) {
-        LOG_INFO("output need privs", K(stmt->get_view_need_privs().at(i)), K(i));
+
       }
       if (OB_FAIL(need_privs.assign(stmt->get_view_need_privs()))) {
         LOG_WARN("fail to assign need_privs", K(ret));

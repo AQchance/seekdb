@@ -149,7 +149,7 @@ TEST_F(TestIndexSSTableEstimator, estimate_major_sstable_whole_range)
   get_part_est(ddl_memtable_, range, ddl_kv_part_est);
   get_part_est(partial_sstable_, range, ddl_merge_part_est);
 
-  STORAGE_LOG(INFO, "part_est", K(part_est), K(ddl_kv_part_est), K(ddl_merge_part_est));
+
   ASSERT_EQ(part_est, ddl_merge_part_est);
 }
 
@@ -165,7 +165,7 @@ TEST_F(TestIndexSSTableEstimator, estimate_major_sstable_range)
   get_part_est(ddl_memtable_, range, ddl_kv_part_est);
   get_part_est(partial_sstable_, range, ddl_merge_part_est);
 
-  STORAGE_LOG(INFO, "part_est", K(part_est), K(ddl_kv_part_est), K(ddl_merge_part_est));
+
   ASSERT_EQ(ddl_kv_part_est, ddl_merge_part_est);
   ASSERT_EQ(part_est, ddl_merge_part_est);
 }
@@ -182,7 +182,7 @@ TEST_F(TestIndexSSTableEstimator, estimate_major_sstable_left_range)
   get_part_est(ddl_memtable_, range, ddl_kv_part_est);
   get_part_est(partial_sstable_, range, ddl_merge_part_est);
 
-  STORAGE_LOG(INFO, "part_est", K(part_est), K(ddl_kv_part_est), K(ddl_merge_part_est));
+
   ASSERT_EQ(part_est, ddl_merge_part_est);
 }
 
@@ -198,7 +198,7 @@ TEST_F(TestIndexSSTableEstimator, estimate_major_sstable_right_range)
   get_part_est(ddl_memtable_, range, ddl_kv_part_est);
   get_part_est(partial_sstable_, range, ddl_merge_part_est);
 
-  STORAGE_LOG(INFO, "part_est", K(part_est), K(ddl_kv_part_est), K(ddl_merge_part_est));
+
   ASSERT_EQ(part_est, ddl_merge_part_est);
 }
 
@@ -214,7 +214,7 @@ TEST_F(TestIndexSSTableEstimator, estimate_major_sstable_middle_range)
   get_part_est(ddl_memtable_, range, ddl_kv_part_est);
   get_part_est(partial_sstable_, range, ddl_merge_part_est);
 
-  STORAGE_LOG(INFO, "part_est", K(part_est), K(ddl_kv_part_est), K(ddl_merge_part_est));
+
   ASSERT_EQ(ddl_kv_part_est, ddl_merge_part_est);
   ASSERT_TRUE(part_est.logical_row_count_ > ddl_merge_part_est.logical_row_count_);
 }
@@ -231,7 +231,7 @@ TEST_F(TestIndexSSTableEstimator, estimate_major_sstable_noexist_range)
   get_part_est(ddl_memtable_, range, ddl_kv_part_est);
   get_part_est(partial_sstable_, range, ddl_merge_part_est);
 
-  STORAGE_LOG(INFO, "part_est", K(part_est), K(ddl_kv_part_est), K(ddl_merge_part_est));
+
   ASSERT_EQ(part_est, ddl_merge_part_est);
 }
 

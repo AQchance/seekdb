@@ -134,7 +134,7 @@ int ObExprOr::cg_expr(ObExprCGCtx &expr_cg_ctx, const ObRawExpr &raw_expr,
 int ObExprOr::eval_or_batch_exprN(const ObExpr &expr, ObEvalCtx &ctx,
                                     const ObBitVector &skip, const int64_t batch_size)
 {
-  LOG_DEBUG("eval or batch mode", K(batch_size));
+
   int ret = OB_SUCCESS;
   ObDatum *results = expr.locate_batch_datums(ctx);
   if (OB_ISNULL(results)) {

@@ -481,9 +481,9 @@ int ObDDLRetryTask::wait_alter_table(const ObDDLTaskStatus new_status)
           LOG_WARN("wait build index finish failed", K(ret), K(tenant_id), K(task_id));
         } else if (is_finish) {
           res_array.pop_back();
-          LOG_INFO("index status is final", K(ret), K(task_id));
+
         } else {
-          LOG_INFO("index status is not final", K(task_id));
+
           break;
         }
       }
@@ -524,7 +524,7 @@ int ObDDLRetryTask::cleanup_impl()
   } else {
     need_retry_ = false;
   }
-  LOG_INFO("clean task finished", K(ret), K(*this));
+
   return ret;
 }
 
@@ -608,7 +608,7 @@ int ObDDLRetryTask::process()
     ddl_tracing_.release_span_hierarchy();
     if (OB_FAIL(ret)) {
       add_event_info("ddl retry task process fail");
-      LOG_INFO("ddl retry task process fail", K(ret), K(snapshot_version_), K(object_id_), K(target_object_id_), K(schema_version_), "ddl_event_info", ObDDLEventInfo());
+
     }
   }
   return ret;
@@ -722,7 +722,7 @@ int ObDDLRetryTask::update_task_status_wait_child_task_finish(
   } else if (OB_FAIL(ObDDLTaskRecordOperator::update_task_status(trans, tenant_id, task_id, new_task_status))) {
     LOG_WARN("update task status failed", K(ret));
   } else {
-    LOG_INFO("update task status to wait child task finish", K(ret));
+
   }
   return ret;
 }

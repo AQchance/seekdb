@@ -44,7 +44,7 @@ int ObTenantFreezerRpcCb::process()
 void ObTenantFreezerRpcCb::on_timeout()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("Tenant major freeze request timeout");
+
   if (OB_FAIL(ObTenantFreezer::rpc_callback())) {
     LOG_WARN("rpc callback failed", K(ret));
   }
@@ -78,7 +78,7 @@ int ObTenantFreezerP::do_tx_data_table_freeze_()
 {
   int ret = OB_SUCCESS;
 
-  LOG_INFO("start tx data table self freeze task in rpc handle thread", K(arg_));
+
 
   common::ObSharedGuard<ObLSIterator> iter_guard;
   ObTenantTxDataFreezeGuard tenant_freeze_guard;
@@ -120,7 +120,7 @@ int ObTenantFreezerP::do_tx_data_table_freeze_()
     }
   }
 
-  LOG_INFO("finish self freeze task in rpc handle thread", KR(ret), K(arg_));
+
   return ret;
 }
 
@@ -160,7 +160,7 @@ int ObTenantFreezerP::do_major_freeze_()
       if (OB_FAIL(param.add_freeze_info(tenant_id))) {
         LOG_WARN("push back failed", KR(ret), K(tenant_id));
       } else {
-        LOG_INFO("do major freeze", K(param));
+
         if (OB_FAIL(ObMajorFreezeHelper::major_freeze(param))) {
           LOG_WARN("major freeze failed", K(param), KR(ret));
         } else {
@@ -171,14 +171,14 @@ int ObTenantFreezerP::do_major_freeze_()
     freezer->set_retry_major_info(retry_major_info);
   }
 
-  LOG_INFO("finish tenant major freeze", KR(ret), K(tenant_id), K(frozen_scn));
+
   return ret;
 }
 
 int ObTenantFreezerP::do_mds_table_freeze_()
 {
   int ret = OB_SUCCESS;
-  LOG_INFO("start mds table self freeze task in rpc handle thread", K(arg_));
+
 
   common::ObSharedGuard<ObLSIterator> iter_guard;
   ObLSService *ls_srv = MTL(ObLSService *);
@@ -216,7 +216,7 @@ int ObTenantFreezerP::do_mds_table_freeze_()
     }
   }
 
-  LOG_INFO("finish mds table self freeze task in rpc handle thread", KR(ret), K(arg_));
+
   return ret;
 }
 

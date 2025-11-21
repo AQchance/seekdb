@@ -677,9 +677,9 @@ int ObDMLStmt::get_child_table_id_recurseive(
         LOG_WARN("failed to push_back tmp_table->ref_id_", KPC(tmp_table), K(ret));
       } else if (OB_UNLIKELY(object_ids.count() >= object_limit_count)) {
         is_finish = true;
-        LOG_DEBUG("arrieve limit count", KPC(this), K(object_limit_count));
+
       } else {
-        LOG_DEBUG("succ push object_ids", KPC(tmp_table));
+
       }
     }
   }
@@ -726,7 +726,7 @@ int ObDMLStmt::get_child_table_id_count_recurseive(
     } else if (tmp_table->is_basic_table()) {
       if (OB_UNLIKELY(++object_ids_cnt >= object_limit_count)) {
         is_finish = true;
-        LOG_DEBUG("arrieve limit count", KPC(tmp_table), K(object_limit_count), K(object_ids_cnt));
+
       }
     }
   }
@@ -2226,7 +2226,7 @@ int ObDMLStmt::remove_useless_sharable_expr(ObRawExprFactory *expr_factory,
       if (OB_FAIL(column_items_.remove(i))) {
         LOG_WARN("failed to remove column item", K(ret));
       } else {
-        LOG_TRACE("succeed to remove column items", K(expr), K(lbt()));
+
       }
     }
   }
@@ -2240,7 +2240,7 @@ int ObDMLStmt::remove_useless_sharable_expr(ObRawExprFactory *expr_factory,
     } else if (OB_FAIL(subquery_exprs_.remove(i))) {
       LOG_WARN("failed to remove subquery expr", K(ret));
     } else {
-      LOG_TRACE("succeed to remove subquery exprs", K(*expr));
+
     }
   }
   for (int64_t i = pseudo_column_like_exprs_.count() - 1; OB_SUCC(ret) && i >= 0; i--) {
@@ -2253,7 +2253,7 @@ int ObDMLStmt::remove_useless_sharable_expr(ObRawExprFactory *expr_factory,
     } else if (OB_FAIL(pseudo_column_like_exprs_.remove(i))) {
       LOG_WARN("failed to remove pseudo column like exprs", K(ret));
     } else {
-      LOG_TRACE("succeed to remove pseudo column like exprs", K(*expr));
+
     }
   }
   return ret;
@@ -2685,7 +2685,7 @@ int ObDMLStmt::add_table_item(const ObSQLSessionInfo *session_info, TableItem *t
       }
     }
   }
-  LOG_DEBUG("finish to add table item", K(*table_item), K(common::lbt()));
+
   return ret;
 }
 
@@ -2879,7 +2879,7 @@ int ObDMLStmt::remove_table_item(const TableItem *ti)
       if (OB_FAIL(table_items_.remove(i))) {
         LOG_WARN("fail to remove table item", K(ret));
       } else {
-        LOG_DEBUG("succ to remove_table_item", KPC(ti), K(lbt()));
+
         break;
       }
     }
@@ -3438,7 +3438,7 @@ int ObDMLStmt::add_column_item(ColumnItem &column_item)
     } else if (OB_FAIL(column_items_.push_back(column_item))) {
       LOG_WARN("push back column item failed", K(ret));
     } else {
-      LOG_DEBUG("add_column_item", K(column_item), KP(this), KPC(column_item.expr_), K(column_items_.count()));
+
     }
   }
   return ret;
@@ -4581,7 +4581,7 @@ int ObDMLStmt::set_check_constraint_item(CheckConstraintItem &check_constraint_i
     }
   }
   if (found) {
-    LOG_TRACE("check constraint item exists", K(check_constraint_item), K(check_constraint_items_));
+
   } else if (OB_FAIL(check_constraint_items_.push_back(check_constraint_item))) {
     LOG_WARN("failed to push back", K(ret));
   }
@@ -4905,7 +4905,7 @@ int ObDMLStmt::do_formalize_query_ref_exprs_post()
         LOG_WARN("failed to remove exec param", K(ret));
       } else {
         is_updated = true;
-        LOG_TRACE("succeed to remove exec param expr", K(*exec_param));
+
       }
     }
     if (OB_SUCC(ret) && is_updated) {
@@ -5039,7 +5039,7 @@ int ObDMLStmt::do_formalize_lateral_derived_table_post()
       } else if (OB_FAIL(table_item->exec_params_.remove(i))) {
         LOG_WARN("failed to remove exec param", K(ret));
       } else {
-        LOG_TRACE("succeed to remove exec param expr", K(*exec_param));
+
       }
     }
     if (OB_SUCC(ret) && table_item->is_lateral_table() && 

@@ -312,7 +312,7 @@ int main(int argc, char **argv)
 {
   system("rm -rf test_multi_version_sstable_single_get.log");
   OB_LOGGER.set_file_name("test_multi_version_sstable_single_get.log");
-  STORAGE_LOG(INFO, "begin unittest: test_multi_version_sstable_single_get");
+
   oceanbase::common::ObLogger::get_logger().set_log_level("INFO");
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

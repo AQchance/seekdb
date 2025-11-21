@@ -139,7 +139,7 @@ int ObDtlRpcChannel::SendBCMsgCB::process()
     if (OB_SUCC(ret)) {
       ret = tmp_ret;
     }
-    LOG_TRACE("rpc clone sendbcmsg cb", K(responses_.at(i)), K(trace_id_));
+
   }
   resps.reset();
   destroy();
@@ -149,7 +149,7 @@ int ObDtlRpcChannel::SendBCMsgCB::process()
 rpc::frame::ObReqTransport::AsyncCB *ObDtlRpcChannel::SendBCMsgCB::clone(
     const rpc::frame::SPAlloc &alloc) const
 {
-  LOG_DEBUG(" clone sendbcmsg cb", K(lbt()));
+
   SendBCMsgCB *cb = NULL;
   void *mem = alloc(sizeof(*this));
   if (NULL != mem) {
@@ -188,7 +188,7 @@ ObDtlRpcChannel::ObDtlRpcChannel(
 ObDtlRpcChannel::~ObDtlRpcChannel()
 {
   destroy();
-  LOG_TRACE("dtl use time", K(times_), K(write_buf_use_time_), K(send_use_time_), K(lbt()));
+
 }
 
 int ObDtlRpcChannel::init()
@@ -218,7 +218,7 @@ int ObDtlRpcChannel::feedup(ObDtlLinkedBuffer *&buffer)
       // drain msg
       if (dfc_) {
         dfc_->set_drain(this);
-        LOG_TRACE("a RPC channel has been drained", K(this), KP(this->id_), KP(this->peer_id_));
+
       } else {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("control channel can't drain msg", K(ret));

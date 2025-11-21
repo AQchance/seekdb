@@ -54,7 +54,7 @@ public:
           help_buf_ = nullptr;
         }
         allocator_->free(this);
-        LOG_INFO("success reset callback when out_rec_cnt = 0");
+
       }
     }
 
@@ -68,7 +68,7 @@ public:
         LOG_WARN("Invalid data, the allocator is NULL, ", K(ret));
       } else if (OB_UNLIKELY(data_size <= 0)) {
         ret = OB_INVALID_ARGUMENT;
-        STORAGE_LOG(WARN, "invalid data buffer size", K(ret), K(data_size));
+
       } else if (OB_ISNULL(help_buf_ = static_cast<char *>(allocator_->alloc(data_size)))) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
         LOG_WARN("Failed to allocate help buf", K(ret), K(data_size), KP(help_buf_));

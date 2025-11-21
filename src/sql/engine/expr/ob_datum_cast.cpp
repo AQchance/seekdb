@@ -891,7 +891,7 @@ int common_string_double(const ObExpr &expr,
   } else {
     SET_RES_DOUBLE(out_val);
   }
-  LOG_DEBUG("common_string_double", K(ret), K(warning), K(out_val), K(in_str));
+
   return ret;
 }
 
@@ -2660,7 +2660,7 @@ static int common_floating_string(const ObExpr &expr,
   ObScale scale = expr.args_[0]->datum_meta_.scale_;
   bool nan_or_inf = is_ieee754_nan_inf(in_val, buf, length);
   if (nan_or_inf) {
-    LOG_DEBUG("Infinity or NaN value is", K(in_val));
+
   } else {
     if (0 <= scale) {
       length = ob_fcvt(in_val, scale, sizeof(buf) - 1, buf, NULL);
@@ -2797,7 +2797,7 @@ int common_datetime_string(const ObExpr &expr, const ObObjType in_type, const Ob
                                                     in_scale, buf, buf_len,
                                                     out_len, true))) {
           if (OB_SIZE_OVERFLOW == ret) {
-            LOG_TRACE("failed to convert ob time to string", K(ret));
+
           } else {
             LOG_WARN("failed to convert ob time to string", K(ret));
           }
@@ -3152,7 +3152,7 @@ int cast_eval_arg_batch(const ObExpr &expr,
                         const ObBitVector &skip,
                         const int64_t batch_size)
 {
-  LOG_DEBUG("eval cast in batch mode", K(batch_size));
+
   int ret = OB_SUCCESS;
   ObDatum *results = expr.locate_batch_datums(ctx);
 
@@ -3211,7 +3211,7 @@ CAST_FUNC_NAME(int, uint)
   EVAL_ARG()
   {
     if (CM_SKIP_CAST_INT_UINT(expr.extra_)) {
-      LOG_DEBUG("skip cast int uint", K(ret));
+
     } else {
       ObObjType out_type = expr.datum_meta_.type_;
       DEF_IN_OUT_VAL(int64_t, uint64_t, static_cast<uint64_t>(in_val));
@@ -4007,7 +4007,7 @@ static int common_string_json(const ObExpr &expr,
           ret = OB_SUCCESS;
           j_base = &j_string;
         } else {
-          LOG_DEBUG("fail to parse string as json tree", K(ret), K(in_type), K(in_str));
+
           if (CM_IS_COLUMN_CONVERT(expr.extra_)) {
             ret = OB_ERR_INVALID_JSON_TEXT;
             LOG_USER_ERROR(OB_ERR_INVALID_JSON_TEXT);
@@ -5016,7 +5016,7 @@ CAST_FUNC_NAME(float, geometry)
     ObGeoType dst_geo_type = ObGeoCastUtils::get_geo_type_from_cast_mode(expr.extra_);
     bool nan_or_inf = is_ieee754_nan_inf(in_val, buf, len);
     if (nan_or_inf) {
-      LOG_DEBUG("Infinity or NaN value is", K(in_val));
+
     } else {
       if (0 <= scale) {
         len = ob_fcvt(in_val, scale, sizeof(buf) - 1, buf, NULL);
@@ -5401,7 +5401,7 @@ CAST_FUNC_NAME(double, geometry)
     const char *cast_name = ObGeometryTypeCastUtil::get_cast_name(dst_geo_type);
     bool nan_or_inf = is_ieee754_nan_inf(in_val, buf, len);
     if (nan_or_inf) {
-      LOG_DEBUG("Infinity or NaN value is", K(in_val));
+
     } else {
       if (0 <= scale) {
         len = ob_fcvt(in_val, scale, sizeof(buf) - 1, buf, NULL);
@@ -5828,7 +5828,7 @@ CAST_FUNC_NAME(datetime, date)
         } else {
           res_datum.set_date(out_val);
         }
-        LOG_DEBUG("in datetime date cast", K(ret), K(out_val), K(in_val));
+
       }
     }
   }
@@ -5855,7 +5855,7 @@ CAST_FUNC_NAME(datetime, mdate)
         } else {
           res_datum.set_mysql_date(out_val);
         }
-        LOG_DEBUG("in datetime date cast", K(ret), K(out_val), K(in_val));
+
       }
     }
   }
@@ -5877,7 +5877,7 @@ CAST_FUNC_NAME(mdatetime, date)
       } else {
         res_datum.set_date(out_val);
       }
-      LOG_DEBUG("in datetime date cast", K(ret), K(out_val), K(in_val));
+
     }
   }
   return ret;
@@ -5896,7 +5896,7 @@ CAST_FUNC_NAME(mdatetime, mdate)
       } else {
         res_datum.set_mysql_date(out_val);
       }
-      LOG_DEBUG("in datetime date cast", K(ret), K(out_val), K(in_val));
+
     }
   }
   return ret;
@@ -10378,7 +10378,7 @@ int uint_to_set(const uint64_t input_value,
     if (CM_IS_WARN_ON_FAIL(cast_mode)) {
       value = value & ((1ULL << val_cnt) - 1);
       warning = OB_ERR_DATA_TRUNCATED;
-      LOG_INFO("input value out of range", K(input_value), K(value), K(val_cnt), K(warning));
+
     } else {
       ret = OB_ERR_DATA_TRUNCATED;
       LOG_WARN("input value out of range", K(input_value), K(value), K(val_cnt), K(ret));
@@ -11198,7 +11198,7 @@ CAST_FUNC_NAME(decimalint, number)
     int warning = OB_SUCCESS;
     ObNumStackOnceAlloc tmp_alloc;
     number::ObNumber nmb;
-    LOG_DEBUG("decimalint to number", K(lbt()));
+
     if (OB_FAIL(wide::to_number(child_res->get_decimal_int(), child_res->get_int_bytes(),
                                 expr.args_[0]->datum_meta_.scale_, tmp_alloc, nmb))) {
       LOG_WARN("to_number failed", K(ret));
@@ -11690,7 +11690,7 @@ int padding_char_for_cast(int64_t padding_cnt, const ObCollationType &padding_cs
                 K(padding_cs_type));
     }
   }
-  LOG_DEBUG("pad char done", K(ret), K(padding_cnt), K(padding_cs_type), K(padding_res));
+
   return ret;
 }
 
@@ -16349,7 +16349,7 @@ int ObDatumCast::get_implicit_cast_function(const ObObjType in_type,
     ObObjTypeClass in_tc = ob_obj_type_class(in_type);
     ObObjTypeClass out_tc = ob_obj_type_class(out_type);
     eval_func = OB_DATUM_CAST_MYSQL_IMPLICIT[in_tc][out_tc];
-    LOG_DEBUG("get_implicit_cast_function ", K(in_tc), K(out_tc), K(in_type), K(out_type));
+
   }
 
   return ret;
@@ -16428,7 +16428,7 @@ int ObDatumCast::get_enumset_cast_function(const common::ObObjTypeClass in_tc,
   } else {
     eval_func = OB_DATUM_CAST_MYSQL_ENUMSET_IMPLICIT[in_tc][out_type == ObSetType];
   }
-  LOG_DEBUG("in get_enumset_cast_function", K(ret), K(in_tc), K(out_type));
+
   return ret;
 }
 
@@ -16565,7 +16565,7 @@ int ObDatumCaster::to_type(const ObDatumMeta &dst_type,
               && src_cs == dst_cs)
              || (!ob_is_string_or_lob_type(src_type.type_) && !need_cast_decimalint
                  && src_type.type_ == dst_type.type_ && !need_cast_collection)) {
-    LOG_DEBUG("no need to cast, just eval src_expr", K(ret), K(src_expr), K(dst_type));
+
     if (OB_FAIL(src_expr.eval(*eval_ctx_, res))) { LOG_WARN("eval src_expr failed", K(ret)); }
   } else {
     bool nonstr_to_str = !ob_is_string_or_lob_type(src_type.type_) &&
@@ -16915,7 +16915,7 @@ DEF_BATCH_CAST_FUNC(ObDecimalIntTC, ObNumberTC)
   }
 
   int ret = OB_SUCCESS;
-  LOG_DEBUG("eval batch cast from decimal into to number", K(lbt()), K(batch_size));
+
   EVAL_BATCH_ARGS()
   {
     DEF_BATCH_CAST_PARAMS;

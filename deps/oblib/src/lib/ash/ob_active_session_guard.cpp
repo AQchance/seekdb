@@ -89,7 +89,7 @@ void ObActiveSessionStat::set_fixup_buffer()
       common::ObSharedGuard<ObAshBuffer> buffer = lib_get_ash_list_instance()->get_ash_buffer();
       if (buffer.is_valid()) {
         set_fixup_buffer(buffer);
-        LOG_DEBUG("succ to fixup buffer");
+
       }
     } else if (fixup_ash_buffer_.get_ptr() != lib_get_ash_list_instance()->get_ash_buffer().get_ptr()) {
       // process resize ash buffer
@@ -97,7 +97,7 @@ void ObActiveSessionStat::set_fixup_buffer()
       if (buffer.is_valid()) {
         fixup_index_ = -1;
         set_fixup_buffer(buffer);
-        LOG_DEBUG("succ to fixup buffer");
+
       }
     }
   }
@@ -445,7 +445,7 @@ uint64_t ObBackgroundSessionIdGenerator::get_next_rpc_session_id() {
   uint64_t sessid = static_cast<uint64_t>(ATOMIC_AAF(&local_seq_, 1));
   sessid &= 0xFFFFFFFFFFFFFFF;
   sessid |= ((uint64_t)1 << 60);
-  LOG_DEBUG("succ to generate rpc session id", K_(local_seq), K(sessid));
+
 
   return sessid;
 }
@@ -454,7 +454,7 @@ uint64_t ObBackgroundSessionIdGenerator::get_next_background_session_id() {
   uint64_t sessid = static_cast<uint64_t>(ATOMIC_AAF(&local_seq_, 1));
   sessid &= 0xFFFFFFFFFFFFFFF;
   sessid |= ((uint64_t)1 << 61);
-  LOG_DEBUG("succ to generate background session id", K_(local_seq), K(sessid));
+
 
   return sessid;
 }
@@ -463,7 +463,7 @@ uint64_t ObBackgroundSessionIdGenerator::get_next_inner_sql_session_id() {
   uint64_t sessid = static_cast<uint64_t>(ATOMIC_AAF(&local_seq_, 1));
   sessid &= 0xFFFFFFFFFFFFFFF;
   sessid |= ((uint64_t)1 << 62);
-  LOG_DEBUG("succ to generate inner sql session id", K_(local_seq), K(sessid));
+
 
   return sessid;
 }

@@ -65,7 +65,7 @@ int ObSchemaGenerator::generate_table(
     column.set_column_id(i + OB_APP_MIN_COLUMN_ID);
     sprintf(name, "test%020ld", i);
     if (OB_FAIL(column.set_column_name(name))) {
-      STORAGE_LOG(WARN, "set_column_name failed", K(ret));
+
     } else {
       set_column_type(obj_type, column);
       column.set_data_length(1);
@@ -79,7 +79,7 @@ int ObSchemaGenerator::generate_table(
 
     if (OB_SUCC(ret)) {
       if (OB_FAIL(table_schema.add_column(column))) {
-        STORAGE_LOG(WARN, "add_column failed", K(ret), K(column));
+
       }
     }
   }

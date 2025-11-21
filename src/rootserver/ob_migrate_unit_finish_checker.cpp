@@ -71,7 +71,7 @@ int ObMigrateUnitFinishChecker::check()
 {
   int ret = OB_SUCCESS;
   int tmp_ret = OB_SUCCESS;
-  LOG_INFO("start check unit migrate finish");
+
   ObArray<uint64_t> tenant_id_array;
   if (OB_UNLIKELY(!inited_)) {
     ret = OB_NOT_INIT;
@@ -164,7 +164,7 @@ int ObMigrateUnitFinishChecker::try_check_migrate_unit_finish_by_tenant(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("sql proxy is null", KR(ret));
   } else {
-    LOG_INFO("try check migrate unit finish by tenant", K(tenant_id));
+
     DRLSInfo dr_ls_info(gen_user_tenant_id(tenant_id), schema_service_);
     ObLSStatusInfoArray ls_status_info_array;
     share::ObLSStatusOperator ls_status_operator;
@@ -248,7 +248,7 @@ int ObMigrateUnitFinishChecker::statistic_migrate_unit_by_ls(
           && (ls_replica->is_in_service() || ls_status_info.ls_is_creating())) {
         unit_stat_info->inc_outside_replica_cnt();
         if (unit_stat_info->get_outside_replica_cnt() <= 2) { // print the first two outside replica
-          LOG_INFO("outside replica", KPC(ls_replica), "unit", unit_stat_info->get_unit());
+
         }
       }
     }

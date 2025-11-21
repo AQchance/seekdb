@@ -968,7 +968,7 @@ int ObConstDecoder::get_distinct_count(int64_t &distinct_count) const
 {
   int ret = OB_SUCCESS;
   distinct_count = 0 == meta_header_->count_ ? 1 : dict_decoder_.get_dict_header()->count_;
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(distinct_count));
+
   return ret;
 }
 

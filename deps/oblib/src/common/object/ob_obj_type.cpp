@@ -832,7 +832,7 @@ int ob_sql_type_str(const ObObjMeta &obj_meta,
 {
   int ret = OB_SUCCESS;
   int16_t precision_or_length_semantics = accuracy.get_precision();
-  LOG_DEBUG("ob_sql_type_str",K(ret), K(accuracy), K(precision_or_length_semantics), K(precision_or_length_semantics), K(is_string_lob), KCSTRING(common::lbt()));
+
   if (lib::is_oracle_mode() && obj_meta.is_varchar_or_char() && precision_or_length_semantics == default_length_semantics) {
     precision_or_length_semantics = LS_DEFAULT;
   }

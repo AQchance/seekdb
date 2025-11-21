@@ -350,7 +350,7 @@ int ObMViewSchedJobUtils::add_mview_info_and_refresh_job(ObISQLClient &sql_clien
       LOG_WARN("fail to insert mview info", KR(ret), K(mview_info));
     }
   }
-  LOG_INFO("succeed to add mview info and refresh job", K(mview_info));
+
   return ret;
 }
 
@@ -578,7 +578,7 @@ int ObMViewSchedJobUtils::acquire_major_refresh_mv_merge_scn_(common::ObISQLClie
                                                          major_refresh_mv_merge_scn))) {
       if (OB_ERR_NULL_VALUE == ret) {
         ret = OB_SUCCESS;
-        LOG_INFO("[MAJ_REF_MV] major_refresh_mv_merge_scn has not been set");
+
         major_refresh_mv_merge_scn.set_min();
         if (OB_FAIL(tmp_proxy.update_major_refresh_mv_merge_scn(major_refresh_mv_merge_scn,
                                                                 false /*is incremental*/))) {
@@ -643,7 +643,7 @@ int ObMViewSchedJobUtils::replace_mview_refresh_job(common::ObISQLClient &sql_cl
                            *GCTX.sql_proxy_, job_info, false))) {
       if (tmp_ret == OB_ENTRY_NOT_EXIST) {
         tmp_ret = OB_SUCCESS;
-        LOG_INFO("job not running", K(tmp_ret));
+
       } else {
         // stop job failed not cause alter ddl failed
         LOG_WARN("fail to stop job", K(tmp_ret), K(job_info));
@@ -728,12 +728,12 @@ int ObMViewSchedJobUtils::disable_and_stop_job(
                        *GCTX.sql_proxy_, job_info, false))) {
       if (ret == OB_ENTRY_NOT_EXIST) {
         ret = OB_SUCCESS;
-        LOG_INFO("no running job", K(ret));
+
       } else {
         LOG_WARN("fail to stop job", K(ret), K(job_info));
       }
     }
-    LOG_INFO("disable and stop job when drop mview", K(ret), K(job_info));
+
   }
   return ret;
 }

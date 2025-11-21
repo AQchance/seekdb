@@ -512,7 +512,7 @@ bool ObWkbToS2Visitor::is_full_range_cell_union(S2CellUnion &cellids)
       for (uint32_t i = 0; i < cellids.size(); i++) {
         if (cellids[i].level() == 0) {
           curr_faces++;
-          LOG_INFO("cell id", K(static_cast<uint64_t>(cellids[i].id())));
+
         }
       }
       if (curr_faces == cell_faces) {
@@ -523,7 +523,7 @@ bool ObWkbToS2Visitor::is_full_range_cell_union(S2CellUnion &cellids)
     for (uint32_t i = 0; i < cellids.size() && !b_ret; i++) {
         if (cellids[i].face() != 0) {
           b_ret = true;
-          LOG_INFO("cell id", K(static_cast<uint64_t>(cellids[i].id())));
+
         }
       }
   }
@@ -545,7 +545,7 @@ int ObWkbToS2Visitor::get_s2_cell_union()
       S2LatLngRect rect = bounder_.GetBound().Expanded(margin);
       cell_union_ = coverer.GetCovering(rect);
       mbr_ = rect;
-      LOG_INFO("generate new mbr: ", K(rect.lo().ToStringInDegrees().c_str()), K(rect.hi().ToStringInDegrees().c_str()));
+
       S2cells_.clear();
       for (uint8_t i = 0; i < 4 && OB_SUCC(ret); i++) {
         if (OB_FAIL(add_cell_from_point(rect.GetVertex(i)))) {

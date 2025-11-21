@@ -132,7 +132,7 @@ int ObColumnDecoder::decode_vector(
              OB_FAIL(storage::reverse_trans_version_val(vector_ctx.get_vector(), vector_ctx.row_cap_))) {
      LOG_WARN("Failed to reverse trans version val", K(ret));
   }
-  LOG_DEBUG("[Vector decode] Batch decoded datums: ", K(ret), K(*ctx_), K(vector_ctx));
+
   return ret;
 }
 
@@ -165,7 +165,7 @@ int ObColumnDecoder::quick_compare(const ObStorageDatum &left, const ObStorageDa
   if (OB_FAIL(decoder_->decode(*ctx_, right_datum, row_id, bs, data, len))) {
     LOG_WARN("decode cell fail", K(ret), K(row_id), K(len), KP(data), K(bs));
   } else if (OB_FAIL(cmp_func.compare(left, right_datum, cmp_ret))) {
-    STORAGE_LOG(WARN, "Failed to compare datums", K(ret), K(left), K(right_datum));
+
   }
   return ret;
 }
@@ -650,7 +650,7 @@ int ObEncodeBlockGetReader::locate_row(
 
   if (OB_UNLIKELY(rowkey.get_datum_cnt() > datum_utils.get_rowkey_count())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "Invalid argument to locate row", K(ret), K(rowkey), K(datum_utils));
+
   } else {
     found = false;
     row_data = NULL;
@@ -1420,7 +1420,7 @@ int ObMicroBlockDecoder::compare_rowkey(const ObDatumRowkey &rowkey, const int64
     int64_t compare_column_count = rowkey.get_datum_cnt();
     if (OB_UNLIKELY(datum_utils.get_rowkey_count() < compare_column_count)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "Unexpected datum utils to compare rowkey", K(ret), K(compare_column_count), K(datum_utils));
+
     } else {
       ObStorageDatum store_datum;
       for (int64_t i = 0; OB_SUCC(ret) && i < compare_column_count && 0 == compare_result; ++i) {
@@ -1429,7 +1429,7 @@ int ObMicroBlockDecoder::compare_rowkey(const ObDatumRowkey &rowkey, const int64
         if (OB_FAIL((decoders_ + i)->decode(store_datum, index, bs, row_data, row_len))) {
           LOG_WARN("fail to decode datum", K(ret), K(index), K(i));
         } else if (OB_FAIL(datum_utils.get_cmp_funcs().at(i).compare(store_datum, rowkey.datums_[i], compare_result))) {
-          STORAGE_LOG(WARN, "Failed to compare datums", K(ret), K(i), K(store_datum), K(rowkey));
+
         }
       }
     }
@@ -1460,7 +1460,7 @@ int ObMicroBlockDecoder::compare_rowkey(const ObDatumRange &range,
     int64_t compare_column_count = start_rowkey.get_datum_cnt();
     if (OB_UNLIKELY(datum_utils.get_rowkey_count() < compare_column_count)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "Unexpected datum utils to compare rowkey", K(ret), K(compare_column_count), K(datum_utils));
+
     } else {
       ObStorageDatum store_datum;
       for (int64_t i = 0; OB_SUCC(ret) && i < compare_column_count && 0 == start_key_compare_result; ++i) {
@@ -1470,12 +1470,12 @@ int ObMicroBlockDecoder::compare_rowkey(const ObDatumRange &range,
           LOG_WARN("fail to decode datum", K(ret), K(index), K(i));
         } else if (OB_FAIL(datum_utils.get_cmp_funcs().at(i).compare(
                 store_datum, start_rowkey.datums_[i], start_key_compare_result))) {
-          STORAGE_LOG(WARN, "Failed to compare datums", K(ret), K(i), K(store_datum), K(start_rowkey));
+
         } else {
           if (start_key_compare_result >= 0 && 0 == end_key_compare_result) {
             if (OB_FAIL(datum_utils.get_cmp_funcs().at(i).compare(
                     store_datum, end_rowkey.datums_[i], end_key_compare_result))) {
-              STORAGE_LOG(WARN, "Failed to compare datums", K(ret), K(i), K(store_datum), K(end_rowkey));
+
             }
           }
         }
@@ -1546,7 +1546,7 @@ int ObMicroBlockDecoder::cache_decoders(
         h->count_++;
       }
 
-      LOG_DEBUG("cache decoders", K(size), K(header->column_count_), "cached_col_cnt", h->count_);
+
 
       ObDecoderArrayAllocator allocator(reinterpret_cast<char *>(&h->col_[h->count_]));
       for (int64_t i = 0; OB_SUCC(ret) && i < h->count_; ++i) {
@@ -1920,7 +1920,7 @@ int ObMicroBlockDecoder::filter_pushdown_truncate_filter(
     } else if (OB_FAIL(column_decoder->decoder_->pushdown_operator(parent, *column_decoder->ctx_, *truncate_executor,
         meta_data_, row_index_, pd_filter_info, result_bitmap))) {
       if (OB_LIKELY(ret == OB_NOT_SUPPORTED)) {
-        LOG_TRACE("[PUSHDOWN] Column specific operator failed, switch to retrograde filter pushdown", K(ret), K(filter));
+
         // reuse result bitmap as null objs set
         result_bitmap.reuse();
         ret = OB_SUCCESS;
@@ -2090,7 +2090,7 @@ int ObMicroBlockDecoder::get_aggregate_result(
   } else if (OB_FAIL(agg_cell.eval_batch(datum_buf, row_cap))) {
     LOG_WARN("Failed to eval batch", K(ret));
   }
-  LOG_DEBUG("get_aggregate_result", K(ret), K(agg_cell));
+
   return ret;
 }
 
@@ -2196,7 +2196,7 @@ int ObMicroBlockDecoder::read_distinct(
       LOG_WARN("Failed to read distinct", K(ret));
     }
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(group_by_cell));
+
   return ret;
 }
 
@@ -2215,7 +2215,7 @@ int ObMicroBlockDecoder::read_reference(
   } else {
     group_by_cell.set_ref_cnt(row_cap);
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(group_by_cell));
+
   return ret;
 }
 
@@ -2262,7 +2262,7 @@ int ObMicroBlockDecoder::get_group_by_aggregate_result(
           last_agg_col_offset = agg_col_offset;
         }
       }
-      LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(i), K(group_by_col), K(agg_col_offset), K(group_by_cell), K(need_get_col_datum));
+
     }
   }
   return ret;
@@ -2338,7 +2338,7 @@ int ObMicroBlockDecoder::get_group_by_aggregate_result(
           last_agg_col_offset = agg_col_offset;
         }
       }
-      LOG_DEBUG("[GROUP BY PUSHDOWN]", K(ret), K(i), K(group_by_col), K(agg_col_offset), K(group_by_cell), K(need_get_col));
+
     }
   }
   return ret;

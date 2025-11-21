@@ -57,7 +57,7 @@ int ObCSReplicaUtil::check_need_process_for_cs_replica_for_ddl(
                          && schema.is_row_store()
                          && schema.is_user_data_table();
 
-  LOG_INFO("[CS-Replica] check replica set need process cs replica", K(ret), K(tablet_meta), K(schema), K(cs_replica_visable), K(need_process_cs_replica));
+
   return ret;
 }
 
@@ -83,7 +83,7 @@ int ObCSReplicaUtil::check_cs_replica_global_visible(
   if (OB_SUCC(ret)) {
     if (EN_LS_NOT_SEE_CS_REPLICA) {
       is_global_visible = false;
-      LOG_INFO("ERRSIM EN_LS_NOT_SEE_CS_REPLICA", K(ret), K(is_global_visible));
+
     }
   }
 #endif
@@ -162,7 +162,7 @@ int ObCSReplicaUtil::check_need_process_cs_replica_for_offline_ddl(
   } else if (OB_UNLIKELY(EN_LS_NOT_SEE_CS_REPLICA_FOR_COMPLEMENT_DAG)) {
     int tmp_ret = EN_LS_NOT_SEE_CS_REPLICA_FOR_COMPLEMENT_DAG;   
     need_process = false;
-    LOG_INFO("ERRSIM EN_LS_NOT_SEE_CS_REPLICA_FOR_COMPLEMENT_DAG, not see cs replica when set ddl type", K(tmp_ret), K(need_process));
+
 #endif
   } else {
     ObSEArray<ObLSInfo, 8> ls_infos;
@@ -180,7 +180,7 @@ int ObCSReplicaUtil::check_need_process_cs_replica_for_offline_ddl(
           LOG_WARN("failed to check need process cs replica", K(ret), K(ls_info));
         } else if (is_global_visible) {
           need_process = true;
-          LOG_INFO("[CS-Replica] Finish checking for complement data rely on dag", K(ret), K(ls_infos));
+
           break;
         }
       }
@@ -205,7 +205,7 @@ int ObCSReplicaUtil::check_need_wait_for_report(
     LOG_WARN("cs replica status is invalid", K(ret), K(ls), K(tablet));
   } else if (!is_normal_status(cs_replica_status)) {
     need_wait_for_report = true;
-    LOG_INFO("tablet status is not normal, try report later", K(ret), K(cs_replica_status), K(ls), K(tablet));
+
   } 
   return ret;
 }
@@ -254,7 +254,7 @@ int ObCSReplicaUtil::init_cs_replica_tablet_status(
         }
       }
       if (!is_normal_status(cs_replica_status)) {
-        LOG_INFO("[CS-Replica] Finish init cs replica tablet status", K(ret), K(ls), K(tablet), K(cs_replica_status), K(need_procss_cs_replica));
+
       }
     }
   }
@@ -324,7 +324,7 @@ int ObCSReplicaUtil::get_full_column_array_from_table_schema(
     } else if (OB_FAIL(get_column_array_from_full_storage_schema(allocator, expected_stored_column_cnt, *full_storage_schema, column_array))) {
       LOG_WARN("failed to get column array from full storage schema", K(ret), K(update_param), K(expected_stored_column_cnt), K(full_storage_schema));
     } else {
-      LOG_INFO("[CS-Replica] Successfully get column array", K(ret), K(update_param), K(expected_stored_column_cnt), K(column_array));
+
     }
     ObTabletObjLoadHelper::free(allocator, full_storage_schema);
   }
@@ -369,9 +369,9 @@ int ObCSReplicaUtil::get_column_array_from_full_storage_schema(
       col_schema.default_checksum_ = src_col_schema.default_checksum_;
       col_schema.meta_type_ = src_col_schema.meta_type_;
       if (OB_FAIL(col_schema.deep_copy_default_val(allocator, src_col_schema.orig_default_value_))) {
-        STORAGE_LOG(WARN, "failed to deep copy col schema", K(ret), K(i), K(src_col_schema));
+
       } else if (OB_FAIL(column_array.push_back(col_schema))) {
-        STORAGE_LOG(WARN, "failed to push back col schema", K(ret));
+
         col_schema.destroy(allocator);
       }
     }
@@ -433,10 +433,10 @@ void ObCSReplicaUtil::diagnose_trim_default_value_checksum_error(
           blocksstable::ObStorageDatum datum;
           int64_t orig_datum_length = 0;
           if (OB_FAIL(datum.from_obj_enhance(orig_default_val))) {
-            STORAGE_LOG(WARN, "Failed to transfer obj to datum", K(ret));
+
           } else if (FALSE_IT(orig_datum_length = datum.len_)) {
           } else if (OB_FAIL(ObStorageSchema::trim(orig_default_val.get_collation_type(), datum))) {
-            STORAGE_LOG(WARN, "failed to trim datum", K(ret), K(orig_default_val), K(datum));
+
           } else if (orig_datum_length != datum.len_) {
             FLOG_INFO("Tips: there is default value with space in oracle mode for this table, which will be trimmed in data version > 4.3.5.BP2 when calculating column checksum", K(storage_schema));
             break;

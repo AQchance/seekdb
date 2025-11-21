@@ -480,7 +480,7 @@ int ObInnerSQLConnection::init_session(sql::ObSQLSessionInfo* extern_session, co
       const int64_t bg_sess_id = ObBackgroundSessionIdGenerator::get_instance().get_next_inner_sql_session_id();
       MAKE_TENANT_SWITCH_SCOPE_GUARD(tenant_switch_guard);
       if (OB_TMP_FAIL(tenant_switch_guard.switch_to(tenant_id))) {
-        LOG_DEBUG("failed to switch tenant", K(tmp_ret), K(tenant_id));
+
       } else {
         oceanbase::ObDiagnosticInfoContainer *container = MTL(common::ObDiagnosticInfoContainer *);
         if (OB_ISNULL(container)) {
@@ -765,7 +765,7 @@ int ObInnerSQLConnection::process_final(const T &sql,
     }
 
     if (process_time > 1L * 1000 * 1000) {
-      LOG_INFO("slow inner sql", K(last_ret), K(sql), K(process_time));
+
     }
   }
   return ret;
@@ -946,7 +946,7 @@ int ObInnerSQLConnection::query(sqlclient::ObIExecutor &executor,
             }
           } else if (retry_cnt > 0) {
             int64_t total_time_cost_us = (ObTimeUtility::current_time() - start_time);
-            LOG_INFO("[OK] inner sql execute success after retry!", K(retry_cnt), K(total_time_cost_us));
+
           }
           get_session().set_session_in_retry(need_retry, ret_code);
           //Monitoring item statistics start
@@ -1048,7 +1048,7 @@ int ObInnerSQLConnection::retry_while_no_tenant_resource(const int64_t cluster_i
         LOG_WARN("timeout, do not need retry", K(ret), K(abs_timeout_us), K(now));
       } else if (OB_FAIL(function())) {
         if (is_unit_migrate(ret)) {
-          LOG_INFO("failed to get newest location and will force renew", K(ret), K(tenant_id), K(ls_id));
+
           int tmp_ret = GCTX.location_service_->nonblock_renew(cluster_id, tenant_id, ls_id);
           if (OB_SUCCESS != tmp_ret) {
             need_retry = false; // nonblock_renew failed
@@ -1108,7 +1108,7 @@ int ObInnerSQLConnection::start_transaction_inner(
       }
     } else {
       has_tenant_resource = false;
-      LOG_DEBUG("tenant not in server", K(ret), K(tenant_id), K(MYADDR));
+
     }
     if (OB_SUCC(ret)) {
       if (is_in_trans()) {
@@ -1213,7 +1213,7 @@ int ObInnerSQLConnection::register_multi_data_source(const uint64_t &tenant_id,
         LOG_WARN("set system tenant id failed", K(ret), K(tenant_id));
       }
     } else {
-      LOG_DEBUG("tenant may be not in server", K(ret), K(local_execute), K(tenant_id), K(MYADDR));
+
     }
 
     if (OB_SUCC(ret)) {
@@ -1683,7 +1683,7 @@ int ObInnerSQLConnection::execute_write_inner(const uint64_t tenant_id, const Ob
     }
 #ifndef NDEBUG
     if (tenant_id < OB_MAX_RESERVED_TENANT_ID) {  //only print log for sys table
-      LOG_INFO("execute write sql", K(ret), K(tenant_id), K(affected_rows), K(sql), K(get_session().get_server_sid()));
+
     }
 #endif
   }
@@ -1815,7 +1815,7 @@ int ObInnerSQLConnection::execute_read_inner(const int64_t cluster_id,
     } else if (!OB_ISNULL(sql_exec_addr)) {
        set_resource_svr(*sql_exec_addr);
        set_resource_conn_id(OB_INVALID_ID);
-       LOG_INFO("set sql exec addr", KR(ret), K(*sql_exec_addr));
+
     } else {
       common::ObAddr resource_server_addr;
       share::ObLSID ls_id(share::ObLSID::SYS_LS_ID);
@@ -1926,7 +1926,7 @@ int ObInnerSQLConnection::nonblock_get_leader(
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("leader addr invalid", K(ret), K(cluster_id), K(tenant_id), K(ls_id), K(leader));
       } else {
-        LOG_DEBUG("get participants", K(tenant_id), K(ls_id), K(leader), K(cluster_id));
+
       }
     } while (is_location_service_renew_error(ret));
   }
@@ -1966,7 +1966,7 @@ int ObInnerSQLConnection::execute(
         }
       }
     }
-    LOG_INFO("execute executor", K(ret), K(tenant_id), K(executor));
+
   }
   return ret;
 }
@@ -2028,9 +2028,9 @@ int ObInnerSQLConnection::set_timeout(int64_t &abs_timeout_us)
       if (THIS_WORKER.get_timeout_remain() < OB_MAX_USER_SPECIFIED_TIMEOUT) {
         timeout = THIS_WORKER.get_timeout_remain();
         abs_timeout_us = THIS_WORKER.get_timeout_ts();
-        LOG_DEBUG("set timeout by worker", K(timeout), K(abs_timeout_us));
+
         trx_timeout = timeout;
-        LOG_DEBUG("set timeout according to THIS_WORKER", K(timeout), K(trx_timeout), K(abs_timeout_us));
+
       }
     }
   }
@@ -2051,7 +2051,7 @@ int ObInnerSQLConnection::set_timeout(int64_t &abs_timeout_us)
       }
     }
 #if !defined(NDEBUG)
-    LOG_DEBUG("set timeout according to time_ctx", K(timeout), K(trx_timeout), K(abs_timeout_us));
+
 #endif
   }
 
@@ -2079,7 +2079,7 @@ int ObInnerSQLConnection::set_session_timeout(int64_t query_timeout, int64_t trx
 {
   int ret = OB_SUCCESS;
   if (OB_SUCC(ret)) {
-    LOG_DEBUG("set query timeout", K(query_timeout));
+
     ObObj val;
     val.set_int(query_timeout);
     if (OB_FAIL(get_session().update_sys_variable(SYS_VAR_OB_QUERY_TIMEOUT, val))) {
@@ -2087,7 +2087,7 @@ int ObInnerSQLConnection::set_session_timeout(int64_t query_timeout, int64_t trx
     }
   }
   if (OB_SUCC(ret)) {
-    LOG_DEBUG("set trx timeout", K(trx_timeout));
+
     ObObj val;
     val.set_int(trx_timeout);
     if (OB_FAIL(get_session().update_sys_variable(SYS_VAR_OB_TRX_TIMEOUT, val))) {
@@ -2184,7 +2184,7 @@ int ObInnerSQLConnection::set_session_variable(const ObString &name, int64_t val
     LOG_WARN("not init", K(ret));
   } else if (0 == name.case_compare("ob_check_sys_variable")) { // fake system variable
     if (0 == val) {
-      LOG_TRACE("disable inner sql check sys variable");
+
     }
     (void)get_session().set_check_sys_variable(0 != val);
   } else if (0 == name.case_compare("tx_isolation")) {
@@ -2198,7 +2198,7 @@ int ObInnerSQLConnection::set_session_variable(const ObString &name, int64_t val
   } else if (OB_FAIL(get_session().update_sys_variable_by_name(name, val))) {
     LOG_WARN("failed to update sys variable", K(ret), K(name), K(val));
   } else if (0 == name.case_compare("ob_read_consistency")) {
-    LOG_INFO("inner session use weak consitency", K(val), "inner_connection_p", this);
+
   }
   return ret;
 }
@@ -2322,7 +2322,7 @@ bool ObInnerSQLConnection::is_inner_session_mgr_enable()
 int ObInnerSQLConnection::destroy_inner_session()
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("begin destroying inner session", K(ret), KP(inner_session_), K(free_session_ctx_), K(lbt()));
+
   if (NULL != inner_session_) {
     try_release_query_lock();
     if (INNER_SQL_SESS_ID == free_session_ctx_.sessid_) {
@@ -2358,7 +2358,7 @@ int ObInnerSQLConnection::destroy_inner_session()
   free_session_ctx_.tenant_id_ = common::OB_INVALID_ID;
   free_session_ctx_.proxy_sessid_ = ObSQLSessionInfo::INVALID_SESSID;
   EVENT_DEC(ACTIVE_SESSIONS);
-  LOG_DEBUG("end destroying inner session", K(ret), K(inner_session_), K(free_session_ctx_));
+
   return ret;
 }
 

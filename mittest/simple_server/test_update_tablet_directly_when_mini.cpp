@@ -60,12 +60,12 @@ int ObUpdateTabletDirectlyTest::get_tablet(
   ObLS *ls = nullptr;
 
   if (OB_FAIL(MTL(ObLSService*)->get_ls(ls_id, ls_handle, ObLSGetMod::STORAGE_MOD))) {
-    STORAGE_LOG(WARN, "failed to get ls", K(ret));
+
   } else if (OB_ISNULL(ls = ls_handle.get_ls())) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "ls is null", K(ret), KP(ls));
+
   } else if (OB_FAIL(ls->get_tablet_svr()->direct_get_tablet(tablet_id, tablet_handle))) {
-    STORAGE_LOG(WARN, "failed to get tablet", K(ret), KP(ls));
+
   }
 
   return ret;
@@ -89,11 +89,11 @@ TEST_F(ObUpdateTabletDirectlyTest, update_tablet_directly)
   WRITE_SQL("set ob_query_timeout = 3000000000");
   WRITE_SQL("set autocommit=0");
 
-  STORAGE_LOG(INFO, "insert data start");
+
   WRITE_SQL("begin;");
   WRITE_SQL("insert into t1 values(1);");
   WRITE_SQL("rollback;");
-  STORAGE_LOG(INFO, "insert data finish");
+
   ObSqlString sql;
   sql.assign_fmt("select tablet_id as val from oceanbase.__all_virtual_table where table_name = 't1' limit 1");
   int64_t tablet_id = 0;
@@ -113,11 +113,11 @@ TEST_F(ObUpdateTabletDirectlyTest, update_tablet_directly)
     ASSERT_EQ(OB_SUCCESS, get_tablet(ObLSID(ls_id), ObTabletID(tablet_id), tablet_handle));
     ObSEArray<ObTableHandleV2, BASIC_MEMSTORE_CNT> memtable_handles;
     if (OB_FAIL(tablet_handle.get_obj()->get_all_memtables_from_memtable_mgr(memtable_handles))) {
-      STORAGE_LOG(WARN, "failed to get all memtable", K(ret), K(ls_id), K(tablet_id));
+
     } else if (memtable_handles.empty()) {
       break;
     } else {
-      STORAGE_LOG(INFO, "wait memtable release", K(ret), K(ls_id), K(tablet_id));
+
       sleep(5);
     }
   } while (idx < 100 && OB_SUCC(ret));

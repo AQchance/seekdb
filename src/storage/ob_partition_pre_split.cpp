@@ -73,7 +73,7 @@ void ObPartitionPreSplit::get_split_num(
           split_num : 
           MAX_SPLIT_RANGE_NUM;
   }
-  LOG_DEBUG("[PRE_SPLIT] get tablet split num", K(split_num));
+
 }
 
 /*
@@ -336,7 +336,7 @@ int ObPartitionPreSplit::get_global_index_pre_split_schema_if_need(
           } else if (OB_FAIL(do_pre_split_global_index(database_name, *data_table_schema, index_schema, auto_part_size, index_schema))) {
             LOG_WARN("[PRE_SPLIT] fail to get new index table split range", K(ret), K(tenant_id), K(database_name));
           } else {
-            LOG_DEBUG("[PRE_SPLIT] success pre split index schema", K(index_schema));
+
           }
           if (OB_SUCC(ret) && index_schema.is_partitioned_table()) {
             if (OB_FAIL(create_index_arg->index_schema_.assign(index_schema))) {
@@ -344,7 +344,7 @@ int ObPartitionPreSplit::get_global_index_pre_split_schema_if_need(
             }
           } else if (ret == OB_NOT_SUPPORTED) {
             ret = OB_SUCCESS;
-            LOG_INFO("[PRE_SPLIT] not support pre-split schema. do nothing", K(ret), K(index_schema));
+
           }
         }
       }
@@ -370,7 +370,7 @@ int ObPartitionPreSplit::do_table_pre_split_if_need(
   if (!ori_table_schema.is_auto_partitioned_table()) {
     // skip // not auto split partition table
     ret = OB_NOT_SUPPORTED;
-    LOG_DEBUG("[PRE_SPLIT] table is not auto part table, no need to pre split", K(ret));
+
   } else if (OB_UNLIKELY(db_name.empty() || OB_INVALID_ID == tenant_id || ddl_type > ObDDLType::DDL_MAX)) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("[PRE_SPLIT] invalid argument", K(ret), K(db_name), K(tenant_id), K(ddl_type));
@@ -380,7 +380,7 @@ int ObPartitionPreSplit::do_table_pre_split_if_need(
   if (OB_FAIL(ret)) {
     if (ret == OB_NOT_SUPPORTED) {
       ret = OB_SUCCESS; // some ddl type no need to do pre split, just return success.
-      LOG_INFO("not support pre-split schema. do nothing", K(ret), K(new_table_schema));
+
     }
   } else if (is_building_global_index) {
     // 1. create index global (partition or not partition table)
@@ -404,7 +404,7 @@ int ObPartitionPreSplit::do_table_pre_split_if_need(
     }
     if (!need_pre_split) {
       // do nothing
-      LOG_INFO("[PRE_SPLIT] no need to do pre split type", K(ddl_type), K(new_table_schema));
+
     } else if (OB_FAIL(do_pre_split_main_table(db_name, ori_table_schema, new_table_schema))) {
       LOG_WARN("fail to do pre split global index", K(ret),
         K(db_name), K(ori_table_schema), K(new_table_schema));
@@ -500,7 +500,7 @@ int ObPartitionPreSplit::do_pre_split_main_table(
     LOG_WARN("[PRE_SPLIT] fail to build split table schema", K(ret), 
       K(tenant_id), K(ori_table_schema), K(new_table_schema));
   }
-  LOG_DEBUG("[PRE_SPLIT] finish do pre split", K(ret), K(ori_table_schema), K(new_table_schema));
+
   return ret;
 }
 
@@ -542,7 +542,7 @@ int ObPartitionPreSplit::check_table_can_do_pre_split(
     // part_option.get_part_func_expr_str().empty() makes sure the user doesn't specify the part func expr
     if (is_global_index_table && part_option.is_hash_part() && part_option.get_part_func_expr_str().empty()) {
       /* case: create index idx1 on t1(c1), default partition type is hash */ 
-      LOG_INFO("[pre_split] support global index table without partition by", K(part_option));
+
     } else {
       ret = OB_NOT_SUPPORTED;
       LOG_WARN("[PRE_SPLIT] not support none range partition table", K(ret), K(part_option));
@@ -942,7 +942,7 @@ int ObPartitionPreSplit::build_new_table_schema(
     } else if (OB_FAIL(modify_partition_func_type_if_need(new_table_schema))) {
       LOG_WARN("[PRE_SPLIT] fail to modify partition type", K(ret), K(new_table_schema));
     } 
-    LOG_DEBUG("[PRE_SPLIT] build new schema finish", K(ori_table_schema), K(new_table_schema));
+
   }
   return ret;
 }
@@ -1154,7 +1154,7 @@ int ObPartitionPreSplit::get_partition_columns_range(
       }
     }
   }
-  LOG_DEBUG("get partition columns range", K(ret), K(part_range));
+
   return ret;
 }
 
@@ -1370,7 +1370,7 @@ int ObPartitionPreSplit::build_tablet_pre_split_ranges(
     LOG_WARN("[PRE_SPLIT] fail to get query ranges.", K(ret), K(tenant_id), K(source_tablet_id), K(old_table_schema));
   } else if (tmp_ranges.count() <= 0) {
     // empty range, do nothing
-    LOG_DEBUG("[PRE_SPLIT] query ranges result is none, no need to split");
+
   } else if (OB_FAIL(get_partition_columns_name(new_table_schema, part_columns_name))) {
     LOG_WARN("[PRE_SPLIT] fail to get rowkey column name.", K(ret), K(part_columns_name));
   } else {

@@ -248,7 +248,7 @@ void ObNotifyLoaded::registerDebugInfoToGdb(ObObjectKey Key)
     __jit_debug_register_code();
   }
 
-  LOG_DEBUG("finished registerDebugInfoToGdb", K(ret), K(Key), K(AllGdbReg.second.size()));
+
 }
 
 void ObNotifyLoaded::deregisterDebugInfoFromGdb(ObObjectKey Key)
@@ -282,7 +282,7 @@ void ObNotifyLoaded::deregisterDebugInfoFromGdb(ObObjectKey Key)
     }
   }
   
-  LOG_DEBUG("finished deregisterDebugInfoFromGdb", K(ret), K(Key), K(entry), K(AllGdbReg.second.size()));
+
 }
 
 int ObOrcJit::add_compiled_object(size_t length, const char *ptr) 

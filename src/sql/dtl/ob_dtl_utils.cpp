@@ -98,7 +98,7 @@ int ObDtlAsynSender::asyn_send()
   int ret = OB_SUCCESS;
   int64_t max_batch_size = 0;
   int64_t max_loop_times = 0;
-  LOG_TRACE("Send eof/drain row", "ch_cnt", channels_.count(), K(ret));
+
   if (OB_ISNULL(ch_info_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected status: ch info is null", K(ret));
@@ -113,7 +113,7 @@ int ObDtlAsynSender::asyn_send()
     if (OB_FAIL(syn_send())) {
       LOG_WARN("failed to syn send message", K(ret));
     }
-    LOG_TRACE("failed to calc batch buffer cnt", K(ret));
+
   } else {
     dtl::ObDtlChannel *ch = NULL;
     int tmp_ret = OB_SUCCESS;
@@ -202,7 +202,7 @@ int ObDfcDrainAsynSender::action(ObDtlChannel* ch)
 {
   int ret = OB_SUCCESS;
   ObDtlDrainMsg drain_msg;
-  LOG_TRACE("drain channel", K(ret), KP(ch->get_id()), K(ch->get_peer()));
+
   if (OB_FAIL(ch->send(drain_msg, timeout_ts_))) {
     LOG_WARN("failed to push data to channel", K(ret), KP(ch->get_id()), K(ch->get_peer()));
   } else if (OB_FAIL(ch->flush(true, false))) {

@@ -51,7 +51,7 @@ void ObTableGroupOpFactory::free(ObITableOp *op)
       used_list_[op_type].remove(op);
       free_list_[op_type].add_last(op);
     } else {
-      LOG_DEBUG("[ObTableGroupOpFactory] invalid op type", K(op_type));
+
     }
   }
 }

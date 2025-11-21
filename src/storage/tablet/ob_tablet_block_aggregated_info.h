@@ -241,7 +241,7 @@ int ObTabletMacroInfo::ObBlockInfoArray<T>::reserve(const int64_t cnt, ObArenaAl
     arr_ = nullptr;
   } else if (OB_ISNULL(arr_ = reinterpret_cast<T *>(allocator.alloc(sizeof(T) * cnt)))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to allocate memory", K(ret), K(sizeof(T) * cnt));
+
   }
   if (OB_SUCC(ret)) {
     cnt_ = cnt;
@@ -256,16 +256,16 @@ int ObTabletMacroInfo::ObBlockInfoArray<T>::serialize(char *buf, const int64_t b
   int ret = OB_SUCCESS;
   if (OB_ISNULL(buf) || OB_UNLIKELY(buf_len <= 0 || pos < 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), KP(buf), K(buf_len), K(pos));
+
   } else if (OB_FAIL(serialization::encode_i64(buf, buf_len, pos, cnt_))) {
-    STORAGE_LOG(WARN, "fail to encode count", K(ret), K_(cnt));
+
   }
   for (int64_t i = 0; OB_SUCC(ret) && i < cnt_; i++) {
     if (OB_UNLIKELY(!arr_[i].is_valid())) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN, "macro block id is invalid", K(ret), K(i), K(arr_[i]));
+
     } else if (OB_FAIL(arr_[i].serialize(buf, buf_len, pos))) {
-      STORAGE_LOG(WARN, "fail to serialize macro block id", K(ret), K(i), KP(buf), K(buf_len), K(pos));
+
     }
   }
   return ret;
@@ -277,25 +277,25 @@ int ObTabletMacroInfo::ObBlockInfoArray<T>::deserialize(ObArenaAllocator &alloca
   int ret = OB_SUCCESS;
   if (OB_ISNULL(buf) || OB_UNLIKELY(pos < 0 || data_len <= 0)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid arguments", K(ret), KP(buf), K(data_len), K(pos));
+
   } else if (OB_FAIL(serialization::decode_i64(buf, data_len, pos, &cnt_))) {
-    STORAGE_LOG(WARN, "fail to decode count", K(ret), K(data_len), K(pos));
+
   } else if (0 == cnt_) {
     // no macro id
     arr_ = nullptr;
   } else if (OB_UNLIKELY(cnt_ < 0)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "array count shouldn't be less than 0", K(ret), K_(cnt));
+
   } else {
     if (OB_ISNULL(arr_ = static_cast<T *>(allocator.alloc(cnt_ * sizeof(T))))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "fail to allocate memory for macro id array", K(ret), K_(cnt));
+
     }
     for (int64_t i = 0; OB_SUCC(ret) && i < cnt_; i++) {
       if (OB_FAIL(arr_[i].deserialize(buf, data_len, pos))) {
-        STORAGE_LOG(WARN, "fail to deserialize macro block id", K(ret), K(data_len), K(pos));
+
       } else if (OB_UNLIKELY(!arr_[i].is_valid())) {
-        STORAGE_LOG(WARN, "deserialized macro id is invalid", K(ret), K(arr_[i]));
+
       }
     }
   }
@@ -328,7 +328,7 @@ int ObTabletMacroInfo::ObBlockInfoArray<T>::deep_copy(char *buf, const int64_t b
   const int64_t memory_size = get_deep_copy_size();
   if (OB_ISNULL(buf) || OB_UNLIKELY(buf_len <= 0 || pos < 0 || buf_len - pos < memory_size)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(buf), K(buf_len), K(pos), K(memory_size));
+
   } else if (OB_NOT_NULL(arr_) && 0 != cnt_) {
     dest_obj.arr_ = reinterpret_cast<T *>(buf + pos);
     MEMCPY(dest_obj.arr_, arr_, sizeof(T) * cnt_);

@@ -329,7 +329,7 @@ int ObTXTransferUtils::set_tablet_freeze_flag(storage::ObLS &ls, ObTablet *table
       }
     }
     if (OB_SUCC(ret)) {
-      LOG_INFO("succ set transfer freeze", K(tablet_id), K(ls_id));
+
     }
   }
 
@@ -670,7 +670,7 @@ int ObTransferBuildTabletInfoCtx::ObTransferStorageSchemaMgr::build_latest_stora
     }
   }
 
-  LOG_INFO("finish build storage schema", K(ret), "cost_ts", ObTimeUtil::current_time() - start_ts);
+
   return ret;
 }
 

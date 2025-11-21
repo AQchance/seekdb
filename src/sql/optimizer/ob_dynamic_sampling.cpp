@@ -72,12 +72,12 @@ int ObDynamicSampling::estimate_table_rowcount(const ObDSTableParam &param,
 {
   int ret = OB_SUCCESS;
   throw_ds_error = false;
-  LOG_TRACE("begine to estimate table rowcount", K(param), K(ds_result_items));
+
   if (OB_FAIL(get_ds_stat_items(param, ds_result_items))) {
     LOG_WARN("failed to get ds stat items");
   } else if (get_ds_item_size() == 0) {
     //all ds item can get from cache.
-    LOG_TRACE("succeed to get ds item from cache", K(param));
+
   } else if (OB_FAIL(do_estimate_table_rowcount(param, throw_ds_error))) {
     LOG_WARN("failed to do estimate table rowcount", K(ret));
   } else if (OB_FAIL(add_ds_result_cache(ds_result_items))) {
@@ -504,7 +504,7 @@ int ObDynamicSampling::construct_ds_stat_key(const ObDSTableParam &param,
     key.ds_level_ = param.ds_level_;
     key.sample_block_ = sample_micro_cnt;
     key.expression_hash_ = murmurhash64A(expr_str.ptr(), expr_str.length(), 0);
-    LOG_TRACE("succeed to construct ds stat key", K(key), K(expr_str), K(partition_str));
+
   }
   return ret;
 }
@@ -521,7 +521,7 @@ int ObDynamicSampling::do_estimate_table_rowcount(const ObDSTableParam &param, b
   ObString tmp_str;
   ObSEArray<ObRawExpr*, 4> tmp_filters;
   throw_ds_error = false;
-  LOG_TRACE("begin estimate table rowcount", K(param));
+
   if (OB_FAIL(add_table_info(param.db_name_,
                              param.table_name_,
                              param.alias_name_))) {
@@ -695,7 +695,7 @@ int ObDynamicSampling::pack(ObSqlString &raw_sql_str)
                                             where_conditions_.ptr()))) {
     LOG_WARN("failed to build query sql stmt", K(ret));
   } else {
-    LOG_TRACE("OptStat: dynamic sampling query sql", K(raw_sql_str));
+
     OPT_TRACE("dynamic sampling query sql:", raw_sql_str.string());
   }
   return ret;
@@ -836,7 +836,7 @@ int ObDynamicSampling::print_filter_exprs(const ObSQLSessionInfo *session_info,
       }
     }
   }
-  LOG_TRACE("succeed to print filter exprs", K(filter_exprs), K(expr_str));
+
   return ret;
 }
 
@@ -1470,7 +1470,7 @@ int ObDynamicSamplingUtils::get_ds_table_param(ObOptimizerContext &ctx,
     } else if (check_is_failed_ds_table(table_meta->get_ref_table_id(),
                                         table_meta->get_all_used_parts(),
                                         ctx.get_failed_ds_tab_list())) {
-      LOG_TRACE("get faile ds table, not use dynamic sampling", K(*table_meta), K(ctx.get_failed_ds_tab_list()));
+
     } else if (OB_FAIL(get_ds_table_degree(ctx, log_plan,
                                            table_meta->get_table_id(),
                                            table_meta->get_ref_table_id(),
@@ -1672,7 +1672,7 @@ int ObDynamicSamplingUtils::get_ds_table_degree(ObOptimizerContext &ctx,
   } else {
     degree = std::max(degree, ctx.get_parallel());
   }
-  LOG_TRACE("succeed to get ds table degree", K(degree));
+
   return ret;
 }
 

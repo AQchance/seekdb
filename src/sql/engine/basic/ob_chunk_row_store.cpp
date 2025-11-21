@@ -114,7 +114,7 @@ void ObChunkRowStore::StoredRow::unswizzling(char *base/*= NULL*/)
       chunk_row_store::pointer2off(cells()[i].v_.string_, base);
     }
   }
-  LOG_DEBUG("trace unswizzling", K(this));
+
 }
 
 void ObChunkRowStore::StoredRow::swizzling()
@@ -289,7 +289,7 @@ void ObChunkRowStore::reset()
     if (OB_FAIL(FILE_MANAGER_INSTANCE_WITH_MTL_SWITCH.remove(tenant_id_, io_.fd_))) {
       LOG_WARN("remove file failed", K(ret), K_(io_.fd));
     } else {
-      LOG_TRACE("close file success", K(ret), K_(io_.fd));
+
     }
     io_.fd_ = -1;
   }
@@ -317,7 +317,7 @@ void ObChunkRowStore::reset()
   }
   free_list_.reset();
 
-  LOG_DEBUG("mem usage after free", K(mem_hold_), K(mem_used_));
+
   max_blk_size_ = 0;
   n_blocks_ = 0;
   row_cnt_ = 0;
@@ -373,7 +373,7 @@ void *ObChunkRowStore::alloc_blk_mem(const int64_t size, const bool for_iterator
 void ObChunkRowStore::free_blk_mem(void *mem, const int64_t size /* = 0 */)
 {
   if (NULL != mem) {
-    LOG_DEBUG("free blk memory", K(size), KP(mem));
+
     allocator_->free(mem);
     mem_hold_ -= size;
     callback_free(size);
@@ -401,13 +401,13 @@ bool ObChunkRowStore::shrink_block(int64_t size)
   bool succ = false;
   int ret = OB_SUCCESS;
   if ((0 == blocks_.get_size() && 0 == free_list_.get_size()) || 0 == size) {
-    LOG_DEBUG("RowStore no need to shrink", K(size), K(blocks_.get_size()));
+
   } else {
     Block* item = free_list_.remove_first();
     //free those blocks haven't been used yet
     while (NULL != item) {
       freed_size += item->get_buffer()->mem_size();
-      LOG_DEBUG("RowStore shrink free empty", K(size), K(freed_size), K_(item->blk_size));
+
       free_block(item);
       item = free_list_.remove_first();
     }
@@ -427,7 +427,7 @@ bool ObChunkRowStore::shrink_block(int64_t size)
       item = blocks_.remove_first();
     }
   }
-  LOG_DEBUG("RowStore shrink_block", K(ret), K(freed_size), K(size));
+
   if (freed_size >= size) {
     succ = true;
   }
@@ -503,7 +503,7 @@ inline int ObChunkRowStore::dump_one_block(BlockBuffer *item)
     LOG_WARN("write block to file failed");
   } else {
     n_block_in_file_++;
-    LOG_DEBUG("RowStore Dumpped block", K_(item->block->rows), K_(item->cur_pos), K(item->capacity()));
+
   }
   return ret;
 }
@@ -516,7 +516,7 @@ int ObChunkRowStore::dump(bool reuse, bool all_dump)
   BlockBuffer* buf = NULL;
   if (!enable_dump_) {
     ret = OB_EXCEED_MEM_LIMIT;
-    LOG_DEBUG("ChunkRowStore exceed mem limit and dump is disabled");
+
   } else {
     int64_t n_block = blocks_.get_size();
     const int64_t org_n_block = n_block;
@@ -529,7 +529,7 @@ int ObChunkRowStore::dump(bool reuse, bool all_dump)
         LOG_WARN("cur block is null", K(ret));
       } else {
         buf = cur->get_buffer();
-        LOG_DEBUG("dumping", K(cur), K(*cur), K(*buf));
+
         if (!buf->is_empty() && OB_FAIL(dump_one_block(buf))) {
           LOG_WARN("failed to dump block", K(ret));
         }
@@ -572,14 +572,14 @@ bool ObChunkRowStore::find_block_can_hold(const int64_t size, bool &need_shrink)
     found = true;
   } else if (free_list_.get_size() > 0 && default_block_size_ >= size) {
     Block* next = free_list_.remove_first();
-    LOG_DEBUG("reuse block", K(next), K(*next), K(next->get_buffer()), K(*next->get_buffer()));
+
     found = true;
     use_block(next);
     blocks_.add_last(next);
     n_blocks_++;
   } else if (mem_limit_ > 0 && mem_hold_ > mem_used_ && mem_hold_ + size > mem_limit_) {
     need_shrink = true;
-    LOG_DEBUG("RowStore need shrink", K(size), K(mem_hold_));
+
   }
   return found;
 }
@@ -598,14 +598,14 @@ int ObChunkRowStore::switch_block(const int64_t min_size)
       LOG_WARN("got error when dump blocks", K(ret));
     }
   } else {
-    LOG_DEBUG("RowStore switch block", K(min_size));
+
     Block *new_block = NULL;
     bool need_shrink = false;
     bool can_find = find_block_can_hold(min_size, need_shrink);
-    LOG_DEBUG("RowStore switch block", K(can_find), K(need_shrink), K(min_size));
+
     if (need_shrink) {
       if (shrink_block(min_size)) {
-        LOG_DEBUG("RowStore shrink succ", K(min_size));
+
       }
     }
     if (!can_find) { // need alloc new block
@@ -636,7 +636,7 @@ int ObChunkRowStore::add_row(const common::ObNewRow &row, StoredRow **stored_row
     ObNewRow &r = const_cast<ObNewRow &>(row);
     //store project
     if (STORE_MODE::FULL == row_store_mode_ && NULL != row.projector_ && row.projector_size_ > 0) {
-      LOG_DEBUG("has projector", K(row.projector_size_), K(row.count_));
+
       if (OB_ISNULL(projector_)) {
         ObMemAttr attr(tenant_id_, label_, ctx_id_);
         projector_size_ = row.projector_size_;
@@ -777,7 +777,7 @@ int ObChunkRowStore::finish_add_row(bool need_dump)
       LOG_WARN("get timeout failed", K(ret));
     }
   } else {
-    LOG_DEBUG("finish_add_row no need to dump", K(ret));
+
   }
 
   return ret;
@@ -1021,7 +1021,7 @@ int ObChunkRowStore::load_next_block(ChunkIterator &it)
           Block* blk_head = it.cur_iter_blk_;
           int64_t ac_size = it.cur_iter_blk_->blk_size_;
           int64_t pre_size = it.cur_iter_blk_buf_->mem_size();
-          LOG_DEBUG("RowStore need read file", K(ac_size), K(blk_head), K(block_size));
+
           if (read_size + it.cur_iter_pos_ > file_size_) {
             ret = OB_ITER_END;
             LOG_WARN("RowStore iter end unexpected", K(ret), K(it.cur_iter_pos_),
@@ -1105,11 +1105,11 @@ int ObChunkRowStore::load_next_block(ChunkIterator &it)
     } else {
       //all in mem or read blocks in mem at first
       it.cur_iter_blk_ = blocks_.get_first();
-      LOG_DEBUG("RowStore got block in mem", K_(it.cur_iter_blk), K_(*it.cur_iter_blk));
+
       it.cur_chunk_n_blocks_ = blocks_.get_size();
       it.cur_nth_blk_ += it.cur_chunk_n_blocks_;
       it.chunk_n_rows_ = this->get_row_cnt_in_memory();
-      LOG_TRACE("trace read in memoery data", K(ret));
+
       if (it.cur_nth_blk_ != n_blocks_ - 1) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("unexpected status: last chunk data", K(it.cur_nth_blk_), K(n_blocks_),
@@ -1498,7 +1498,7 @@ int ObChunkRowStore::write_file(void *buf, int64_t size)
         file_size_ = 0;
         io_.io_desc_.set_wait_event(ObWaitEventIds::ROW_STORE_DISK_WRITE);
         io_.io_timeout_ms_ = timeout_ms;
-        LOG_TRACE("open file success", K_(io_.fd), K_(io_.dir_id));
+
       }
     }
     ret = OB_E(EventTable::EN_8) ret;

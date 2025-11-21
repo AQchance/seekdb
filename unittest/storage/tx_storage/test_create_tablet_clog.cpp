@@ -103,7 +103,7 @@ TEST_F(TestCreateTabletClog, replay_create_tablet_clog_test)
   obrpc::ObCreateTabletBatchRes res;
   obrpc::ObBatchCreateTabletArg create_tablet_arg;
 
-  LOG_INFO("replay_create_tablet_clog_test begin");
+
   // 1. prepare ls
   ASSERT_EQ(OB_SUCCESS, gen_create_ls_arg(env.tenant_id, ls_id, arg));
   ASSERT_EQ(OB_SUCCESS, gen_create_tablet_arg(env.tenant_id, ls_id, tablet_id, create_tablet_arg));

@@ -411,7 +411,7 @@ int ObServiceNameCommand::broadcast_refresh_(
         LOG_WARN("invalid result",
             KR(ret), KR(tmp_ret), KR(first_ret), KPC(result), K(dest_addr));
       } else {
-        LOG_INFO("refresh_service_name success", KR(ret), KR(tmp_ret), KR(first_ret), K(dest_addr), K(arg), KPC(result));
+
         if (OB_FAIL(success_servers.push_back(dest_addr))) {
           LOG_WARN("fail to push back", KR(ret), K(dest_addr));
         }

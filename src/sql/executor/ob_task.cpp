@@ -183,7 +183,7 @@ OB_DEF_SERIALIZE_SIZE(ObTask)
       len += ObPxTreeSerializer::get_serialize_op_input_size(
         *root_spec_, exec_ctx_->get_kit_store());
     }
-    LOG_TRACE("trace get ser rpc init sqc args size", K(len));
+
     LST_DO_CODE(OB_UNIS_ADD_LEN, ranges_);
   }
   LST_DO_CODE(OB_UNIS_ADD_LEN, max_sql_no_);
@@ -198,7 +198,7 @@ DEFINE_TO_YSON_KV(ObTask, OB_ID(task_id), ob_task_id_,
 int ObTask::assign_ranges(const ObIArray<ObNewRange> &ranges)
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("assign ranges to task", K(ranges));
+
   FOREACH_CNT_X(it, ranges, OB_SUCC(ret)) {
     if (OB_FAIL(ranges_.push_back(*it))) {
       LOG_WARN("push back range failed", K(ret));

@@ -208,7 +208,7 @@ void ObPxBloomFilter::calc_num_of_bits()
   // min size is block size = 256.
   bits_count_ = ((n < MIN_FILTER_SIZE) ? MIN_FILTER_SIZE : (n >= max_bit_count_) ? max_bit_count_ : n + 1);
   block_mask_ = (bits_count_ >> (LOG_HASH_COUNT + 6)) - 1;
-  LOG_TRACE("calc num of bits", K(data_length_), K(fpp_), K(old_n), K(ori_n), K(bits_count_));
+
 }
 
 void ObPxBloomFilter::align_max_bit_count(int64_t max_filter_size)

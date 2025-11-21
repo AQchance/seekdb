@@ -66,7 +66,7 @@ ObUDF &ObUDF::operator = (const ObUDF &src_schema)
     if (OB_FAIL(ret)) {
       error_ret_ = ret;
     }
-    LOG_DEBUG("operator =", K(src_schema), K(*this));
+
   }
   return *this;
 }

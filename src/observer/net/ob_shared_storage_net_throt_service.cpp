@@ -76,7 +76,7 @@ int ObSharedStorageNetThrotManager::init()
     LOG_WARN("fail create ObSharedStorageNetThrotManager's storage_key_limit_map_", K(ret));
   } else {
     is_inited_ = true;
-    LOG_INFO("ObSharedStorageNetThrotManager init ok");
+
   }
   return ret;
 }
@@ -807,7 +807,7 @@ void ObSSNTAllocService::destroy()
     stop();
     wait();
     quota_manager_.destroy();
-    LOG_INFO("[SSNT_SERVICE] ObSSNTService destroy success", K(tg_id_));
+
   }
 }
 int ObSSNTAllocService::register_endpoint(const ObSSNTEndpointArg &endpoint_storage_infos)

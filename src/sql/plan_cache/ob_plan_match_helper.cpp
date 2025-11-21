@@ -60,7 +60,7 @@ int ObPlanMatchHelper::match_plan(const ObPlanCacheCtx &pc_ctx,
       } else {
         has_duplicate_table = true;
       }
-      LOG_DEBUG("contain duplicate table", K(has_duplicate_table), K(is_retrying));
+
     }
     if (OB_SUCC(ret)) {
       // check base table constraints
@@ -74,11 +74,11 @@ int ObPlanMatchHelper::match_plan(const ObPlanCacheCtx &pc_ctx,
                                         phy_tbl_infos, is_matched))) {
         LOG_WARN("failed to compare table types", K(ret), K(base_cons));
       } else if (!is_matched) {
-        LOG_DEBUG("table types not match", K(base_cons));
+
       } else if (OB_FAIL(check_partition_constraint(pc_ctx, base_cons, phy_tbl_infos, is_matched))) {
         LOG_WARN("failed to check partition constraint", K(ret));
       } else if (!is_matched) {
-        LOG_DEBUG("partition constraint not match", K(base_cons));
+
       } else if (strict_cons.count() <= 0 && non_strict_cons.count() <= 0) {
         // do nothing
       } else if (OB_FAIL(pwj_map.create(8, ObModIds::OB_PLAN_EXECUTE))) {
@@ -190,7 +190,7 @@ int ObPlanMatchHelper::calc_table_locations(
                                                          need_check_on_same_server))) {
         LOG_WARN("failed to get phy locations", K(ret));
       } else {
-        LOG_DEBUG("calculated phy locations", K(loc_cons), K(phy_tbl_infos));
+
       }
     }
   }
@@ -354,7 +354,7 @@ int ObPlanMatchHelper::check_inner_constraints(
                                                  strict_pwj_comparer, pwj_map, is_same))) {
           LOG_WARN("failed to check strict pwj cons", K(ret));
         } else {
-          LOG_DEBUG("succ to check strict pwj cons", K(is_same));
+
         }
       }
 
@@ -367,7 +367,7 @@ int ObPlanMatchHelper::check_inner_constraints(
                                                      non_strict_pwj_comparer, is_same))) {
           LOG_WARN("failed to check non strict pwj cons", K(ret));
         } else {
-          LOG_DEBUG("succ to check non strict pwj cons", K(is_same));
+
         }
       }
     }

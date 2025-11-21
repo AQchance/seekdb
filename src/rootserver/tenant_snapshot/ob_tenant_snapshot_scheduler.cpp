@@ -96,7 +96,7 @@ int ObTenantSnapshotScheduler::idle()
 //TODO: Standby tenant stop this thread
 void ObTenantSnapshotScheduler::do_work()
 {
-  LOG_INFO("[SNAPSHOT] tenant snapshot scheduler start");
+
   int ret = OB_SUCCESS;
   if (!inited_) {
     ret = OB_NOT_INIT;
@@ -114,7 +114,7 @@ void ObTenantSnapshotScheduler::do_work()
       } else if (OB_FAIL(ObTenantSnapshotUtil::check_tenant_status(user_tenant_id, status_satisfied))) {
         LOG_WARN("check_tenant_status failed", KR(ret), K(user_tenant_id));
       } else if (!status_satisfied) {
-        LOG_INFO("tenant status is not valid", K(user_tenant_id), K(status_satisfied));
+
       } else {
         //*********************************************************************
         //First, check whether creation or deletion jobs exist.
@@ -590,7 +590,7 @@ int ObTenantSnapshotScheduler::process_create_tenant_snapshot_(
                                                             need_wait_minority))) {
       LOG_WARN("the result does not meet the requirements or other errors", KR(ret), K(create_job));
     } else if (need_wait_minority) {
-      LOG_INFO("wait for minority to create snapshot", K(create_job));
+
     } else if (OB_FAIL(send_flush_ls_archive_rpc_(user_tenant_id, addr_array))) {
       LOG_WARN("fail to send ls flush rpc", KR(ret), K(user_tenant_id), K(addr_array));
     } else if (OB_FAIL(check_log_archive_finish_(user_tenant_id, snapshot_scn, need_wait_archive_finish))) {
@@ -758,7 +758,7 @@ int ObTenantSnapshotScheduler::check_create_tenant_snapshot_result_(
               ret = OB_ERR_UNEXPECTED;
               LOG_WARN("scn is not valid", KR(ret), K(item));
             } else if (item.get_begin_interval_scn() < round_attr.start_scn_) {
-              LOG_INFO("checkpoint scn of the ls replica is smaller than archive scn", K(item), K(round_attr));
+
               ObTenantSnapLSReplicaSimpleItem new_item;
 
               if (OB_FAIL(new_item.assign(item))) {
@@ -960,7 +960,7 @@ int ObTenantSnapshotScheduler::check_standby_gts_exceed_snapshot_scn_(
         // good, gts_scn for standby tenant has already exceed sync_scn
         finished = true;
         ObTenantSnapItem item;
-        LOG_INFO("standby tenant gts_scn exceeded sync_scn", K(tenant_id), K(snapshot_scn_to_check), K(gts_scn));
+
         if (OB_FAIL(table_op.get_tenant_snap_item(tenant_snapshot_id, false/*need_lock*/, item))) {
           LOG_WARN("fail to get tenant snapshot item", KR(ret), K(tenant_snapshot_id));
         } else if (OB_FAIL(table_op.update_tenant_snap_item(
@@ -1079,7 +1079,7 @@ int ObTenantSnapshotScheduler::check_log_archive_finish_(
     LOG_WARN("need wait log archive checkpoint_scn exceed snapshot_scn", KR(ret),
                   K(round_attr.checkpoint_scn_), K(snapshot_scn));
   } else {
-    LOG_INFO("log archive finish", KR(ret), K(round_attr.checkpoint_scn_), K(snapshot_scn));
+
   }
   return ret;
 }
@@ -1139,7 +1139,7 @@ int ObTenantSnapshotScheduler::finish_create_tenant_snapshot_(
   }
 
   if (OB_SUCC(ret)) {
-    LOG_INFO("create tenant snapshot finished", K(tenant_snapshot_id));
+
   }
   return ret;
 }
@@ -1238,7 +1238,7 @@ int ObTenantSnapshotScheduler::process_delete_tenant_snapshots_(
         LOG_WARN("failed to get snapshot related addrs", KR(ret), K(tenant_snapshot_id));
       } else if (addr_array.empty()) {
         //may be that creating the snapshot failed during the preparation phase.
-        LOG_INFO("addr_array in __all_tenant_snapshot_ls_replica is empty", KR(ret), K(tenant_snapshot_id));
+
       } else if (OB_FAIL(send_delete_tenant_snapshot_rpc_(tenant_snapshot_id, user_tenant_id, addr_array))) {
         LOG_WARN("failed to send delete snapshot rpc", KR(ret), K(tenant_snapshot_id),
                                                             K(user_tenant_id), K(addr_array));
@@ -1352,7 +1352,7 @@ int ObTenantSnapshotScheduler::finish_delete_tenant_snapshot_(
   }
 
   if (OB_SUCC(ret)) {
-    LOG_INFO("delete tenant snapshot finished", K(tenant_snapshot_id));
+
   }
 
   return ret;

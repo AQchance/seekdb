@@ -366,7 +366,7 @@ int ObZoneStorageManagerBase::drop_storage(const ObString &storage_path,
       LOG_WARN("failed to drop storage", KR(ret), K(storage_path), K(zone), K(use_for),
                K(wait_type));
     } else {
-      LOG_INFO("succeed to drop storage", K(storage_path), K(zone), K(use_for), K(wait_type));
+
       ROOTSERVICE_EVENT_ADD("storage", "drop_storage", "storage_path", storage_path, "zone", zone,
                             "used_for", use_for, "wait_type", wait_type);
     }
@@ -468,7 +468,7 @@ int ObZoneStorageManagerBase::alter_storage(const ObString &storage_path, const 
       } else if (OB_FAIL(alter_storage_authorization(storage_dest, wait_type))) {
         LOG_WARN("failed to alter storage authorization", KR(ret), K(storage_dest), K(wait_type));
       } else {
-        LOG_INFO("succeed to alter storage authorization", K(storage_path), K(wait_type));
+
         ROOTSERVICE_EVENT_ADD("storage", "alter storage authorization", "path", storage_path, "wait_type", wait_type);
       }
     }
@@ -480,7 +480,7 @@ int ObZoneStorageManagerBase::alter_storage(const ObString &storage_path, const 
       } else if (OB_FAIL(alter_storage_attribute(storage_path, wait_type, max_iops, max_bandwidth))) {
         LOG_WARN("failed to alter storage attribute", KR(ret), K(storage_path), K(wait_type), K(attribute));
       } else {
-        LOG_INFO("succeed to alter storage attribute", K(storage_path), K(wait_type), K(attribute));
+
         ROOTSERVICE_EVENT_ADD("storage", "alter storage attribute", "path", storage_path, "wait_type", wait_type, "attribute", attribute);
       }
     }
@@ -695,7 +695,7 @@ int ObZoneStorageManagerBase::reload()
   }
   if (OB_SUCC(ret)) {
     loaded_ = true;
-    LOG_INFO("succeed to reload zone storage manager", "zone_storage_manager_info", this);
+
   } else {
     LOG_WARN("failed to reload zone storage manager", KR(ret));
   }

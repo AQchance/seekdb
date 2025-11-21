@@ -385,7 +385,7 @@ int TestCompactionPolicy::mock_column_sstable(
     sstable->meta_cache_.upper_trans_version_ = upper_trans_version;
     sstable->meta_cache_.nested_size_ = 0;
     sstable->meta_cache_.nested_offset_ = 0;
-    LOG_INFO("Finish mock column sstable", K(ret), KPC(sstable));
+
   }
   return ret;
 }
@@ -427,7 +427,7 @@ int TestCompactionPolicy::mock_co_sstable(
       } else if (OB_FAIL(cg_sstables.push_back(cg_sstable))) {
         LOG_WARN("failed to push back cg sstable", K(ret), KP(cg_sstable));
       } else {
-        LOG_INFO("Finish mock cg sstable", K(ret), KPC(cg_sstable));
+
       }
     }
 
@@ -435,7 +435,7 @@ int TestCompactionPolicy::mock_co_sstable(
     } else if (OB_FAIL(co_sstable->fill_cg_sstables(cg_sstables))) {
       LOG_WARN("failed to fill cg sstables", K(ret), KPC(co_sstable), K(cg_sstables));
     } else {
-      LOG_INFO("Finish mock co sstable", K(ret), KPC(co_sstable));
+
     }
   }
   return ret;
@@ -948,7 +948,7 @@ TEST_F(TestCompactionPolicy, basic_create_table_store)
   ret = TestCompactionPolicy::mock_table_store(allocator_, tablet_handle, major_tables, minor_tables);
   ASSERT_EQ(OB_SUCCESS, ret);
 
-  LOG_INFO("Print tablet", KPC(tablet_handle.get_obj()));
+
 }
 
 TEST_F(TestCompactionPolicy, basic_batch_create_sstable)
@@ -1414,7 +1414,7 @@ TEST_F(TestCompactionPolicy, test_co_convert_replace_old_major)
   ret = prepare_tablet(key_data, 150, 150);
   ASSERT_EQ(OB_SUCCESS, ret);
   ObTabletTableStore &table_store = *tablet_handle_.get_obj()->table_store_addr_.get_ptr();
-  LOG_INFO("[CS-Replica] show table store", K(ret), K(table_store), K(ObPrintTableStore(table_store)));
+
 
   ObSEArray<ObITable *, 4> major_tables;
   ObSEArray<ObITable *, 4> new_sstables;
@@ -1441,7 +1441,7 @@ TEST_F(TestCompactionPolicy, test_co_convert_replace_old_major_rebuild)
   ret = prepare_tablet(key_data, 150, 150);
   ASSERT_EQ(OB_SUCCESS, ret);
   ObTabletTableStore &table_store = *tablet_handle_.get_obj()->table_store_addr_.get_ptr();
-  LOG_INFO("[CS-Replica] show table store", K(ret), K(table_store), K(ObPrintTableStore(table_store)));
+
 
   ObSEArray<ObITable *, 4> hybrid_major_tables;
   ObTableHandleV2 co_table_handle0;
@@ -1480,7 +1480,7 @@ TEST_F(TestCompactionPolicy, test_co_convert_replace_old_major_rebuild)
   ASSERT_EQ(OB_SUCCESS, mock_old_table_store_majors.replace_twin_majors_and_build_new(new_sstables, major_tables));
   table_store.major_tables_.reset();
   ASSERT_EQ(OB_SUCCESS, table_store.major_tables_.init(allocator_, major_tables, 0 /*start_pos*/));
-  LOG_INFO("[CS-Replica] after replace co major", K(ret), K(table_store), K(ObPrintTableStore(table_store)));
+
 }
 
 TEST_F(TestCompactionPolicy, test_build_tablet_for_hybrid_store)
@@ -1558,7 +1558,7 @@ TEST_F(TestCompactionPolicy, test_build_tablet_for_hybrid_store)
   ASSERT_EQ(OB_SUCCESS, tablet->fetch_table_store(table_store_wrapper));
   ASSERT_TRUE(table_store_wrapper.is_valid());
   const ObTabletTableStore &table_store = *table_store_wrapper.get_member();
-  LOG_INFO("[CS-Replica] show hybrid table store", K(ret), K(table_store), K(ObPrintTableStore(table_store)));
+
 }
 
 TEST_F(TestCompactionPolicy, test_freeze_info_boundary_func)

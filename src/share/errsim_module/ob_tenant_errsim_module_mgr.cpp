@@ -147,7 +147,7 @@ int ObTenantErrsimModuleMgr::build_tenant_moulde(
         } else if (OB_FAIL(module_set_.set_refactored(module_type, flag))) {
           LOG_WARN("failed to set module set", K(ret), K(module_type));
         } else {
-          LOG_INFO("succeed set module", K(module_type), K(tenant_id));
+
         }
       }
 

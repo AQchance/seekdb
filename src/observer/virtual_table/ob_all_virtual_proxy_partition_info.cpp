@@ -107,14 +107,14 @@ int ObAllVirtualProxyPartitionInfo::inner_open()
     } else if (OB_FAIL(tenant_schema_guard_.get_tenant_info(input_tenant_name_, tenant_schema))) {
       LOG_WARN("fail to get tenant info", KR(ret), K_(input_tenant_name));
     } else if (OB_ISNULL(tenant_schema)) {
-      LOG_TRACE("tenant not exist", K_(input_tenant_name)); // skip
+ // skip
     } else {
       tenant_id = tenant_schema->get_tenant_id();
       if (OB_UNLIKELY(!is_valid_tenant_id(effective_tenant_id_))) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("invalid effective_tenant_id", KR(ret), K_(effective_tenant_id));
       } else if (!is_sys_tenant(effective_tenant_id_) && (tenant_id != effective_tenant_id_)) {
-        LOG_TRACE("unprivileged tenant", K(tenant_id), K_(effective_tenant_id)); // skip
+ // skip
       } else if (OB_FAIL(schema_service_->get_tenant_schema_guard(tenant_id, tenant_schema_guard_))) {
         LOG_WARN("fail to get tenant schema guard", KR(ret), K(tenant_id));
       } else {
@@ -127,10 +127,10 @@ int ObAllVirtualProxyPartitionInfo::inner_open()
             if (OB_FAIL(check_schema_version(tenant_schema_guard_, tenant_id))) {
               LOG_WARN("fail to check schema version", KR(ret), K(tenant_id));
             } else {
-              LOG_TRACE("table not exist", K(tenant_id), K(current_table_id)); // skip
+ // skip
             }
           } else if (!table_schema->is_partitioned_table()) {
-            LOG_TRACE("is not partitioned table", K(current_table_id)); // skip
+ // skip
           } else if (OB_FAIL(table_schemas_.push_back(table_schema))) {
             LOG_WARN("fail to push back table_schema", K(table_schema), KR(ret));
           }
@@ -741,10 +741,10 @@ int ObAllVirtualProxyPartitionInfo::build_check_str_to_raw_expr_(
       }
     }
     if (OB_SUCC(ret)) {
-      LOG_TRACE("constraint check expr", K(check_expr_str));
+
       LOG_TRACE("constraint check expr parse_node: ",
                  K(sql::ObParserResultPrintWrapper(*expr_node)));
-      LOG_TRACE("constraint check exp raw_expr: ", K(*check_expr));
+
     }
   }
 

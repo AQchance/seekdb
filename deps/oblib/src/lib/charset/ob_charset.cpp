@@ -3455,14 +3455,14 @@ int ObCharset::whitespace_padding(ObIAllocator &allocator,
         buf[i] = OB_PADDING_BINARY;
         buf[i+1] = OB_PADDING_CHAR;
       }
-      LOG_DEBUG("UTF16 padding", K(pad_whitespace_length), K(input));
+
     } else if (is_utf16le) {
       //UTF16le space is 0x2000
       for (int i = input.length(); i + 1 < buf_len; i+=2) {
         buf[i] = OB_PADDING_CHAR;
         buf[i+1] = OB_PADDING_BINARY;
       }
-      LOG_DEBUG("UTF16le padding", K(pad_whitespace_length), K(input));
+
     }
     result = ObString(buf_len, buf_len, buf);
   }
@@ -3844,7 +3844,7 @@ int ObStringScanner::next_character(ObString &encoding_value, int32_t &unicode_v
   }
   if (OB_SUCC(ret)) {
     encoding_value.assign_ptr(str.ptr(), length);
-    LOG_DEBUG("next_character", K(ret), KPHEX(str.ptr(), str.length()));
+
     str += length;
   }
   return ret;

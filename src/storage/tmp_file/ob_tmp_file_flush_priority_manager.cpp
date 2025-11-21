@@ -41,7 +41,7 @@ int ObTmpFileFlushPriorityManager::init()
     LOG_WARN("ObTmpFileFlushPriorityManager inited twice", KR(ret));
   } else {
     is_inited_ = true;
-    LOG_INFO("ObTmpFileFlushPriorityManager init succ", K(is_inited_));
+
   }
   return ret;
 }
@@ -81,7 +81,7 @@ void ObTmpFileFlushPriorityManager::destroy()
     // }
     meta_flush_lists_[i].reset();
   }
-  LOG_INFO("ObTmpFileFlushPriorityManager destroy succ");
+
 }
 
 int64_t ObTmpFileFlushPriorityManager::get_file_size()
@@ -111,7 +111,7 @@ int ObTmpFileFlushPriorityManager::insert_data_flush_list(ObITmpFile &file, cons
   } else if (OB_FAIL(insert_flush_list_(false/*is_meta*/, file, flush_idx))) {
     LOG_WARN("fail to insert data flush list", KR(ret), K(file), K(dirty_page_size));
   } else {
-    LOG_DEBUG("insert_data_flush_list succ", K(file), K(dirty_page_size));
+
   }
 
   return ret;
@@ -132,7 +132,7 @@ int ObTmpFileFlushPriorityManager::insert_meta_flush_list(ObITmpFile &file,
     LOG_WARN("fail to insert meta flush list", KR(ret), K(file), K(flush_idx),
              K(non_rightmost_dirty_page_num), K(rightmost_dirty_page_num));
   } else {
-    LOG_DEBUG("insert_meta_flush_list succ", K(file), K(non_rightmost_dirty_page_num), K(rightmost_dirty_page_num));
+
   }
 
   return ret;
@@ -169,7 +169,7 @@ int ObTmpFileFlushPriorityManager::insert_flush_list_(const bool is_meta, ObITmp
     }
   }
 
-  LOG_DEBUG("insert tmp file into flush list", KR(ret), K(is_meta), K(file), K(flush_idx));
+
   return ret;
 }
 
@@ -185,7 +185,7 @@ int ObTmpFileFlushPriorityManager::update_data_flush_list(ObITmpFile &file, cons
   } else if (OB_FAIL(update_flush_list_(false/*is_meta*/, file, new_flush_idx))) {
     LOG_WARN("fail to update data flush list", KR(ret), K(file), K(dirty_page_size));
   } else {
-    LOG_DEBUG("update_data_flush_list succ", K(file), K(dirty_page_size));
+
   }
   return ret;
 }
@@ -205,7 +205,7 @@ int ObTmpFileFlushPriorityManager::update_meta_flush_list(ObITmpFile &file,
     LOG_WARN("fail to update meta flush list", KR(ret), K(file), K(new_flush_idx),
              K(non_rightmost_dirty_page_num), K(rightmost_dirty_page_num));
   } else {
-    LOG_DEBUG("update_meta_flush_list succ", K(file), K(non_rightmost_dirty_page_num), K(rightmost_dirty_page_num));
+
   }
   return ret;
 }
@@ -259,7 +259,7 @@ int ObTmpFileFlushPriorityManager::update_flush_list_(const bool is_meta, ObITmp
     }
   }
 
-  LOG_DEBUG("update tmp file flush list", KR(ret), K(is_meta), K(file), K(new_flush_idx));
+
   return ret;
 }
 
@@ -310,7 +310,7 @@ int ObTmpFileFlushPriorityManager::remove_file(const bool is_meta, ObITmpFile &f
       if (OB_FAIL(set_flush_page_level_(is_meta, FileList::INVALID, file))) {
         LOG_WARN("fail to set flush page level", KR(ret), K(is_meta), K(file));
       }
-      LOG_DEBUG("remove file succ", K(file), K(is_meta));
+
     }
   }
   return ret;
@@ -349,7 +349,7 @@ int ObTmpFileFlushPriorityManager::popN_from_file_list(const bool is_meta, const
           LOG_WARN("fail to add node to list", KR(tmp_ret), K(list_idx), KP(file));
         }
       } else {
-        LOG_DEBUG("pop file succ", KPC(file), K(is_meta));
+
         file->dec_ref_cnt(); // ref_cnt of flush list
         actual_count++;
       }

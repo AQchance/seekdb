@@ -442,7 +442,7 @@ int ObVectorIndexLookupOp::set_lookup_vid_key()
   } else if (OB_FAIL(doc_id_scan_param_.key_ranges_.push_back(doc_id_range))) {
     LOG_WARN("store lookup key range failed", K(ret));
   } else {
-    LOG_DEBUG("generate vid scan range", K(ret), K(doc_id_range));
+
   }
   return ret;
 }
@@ -524,7 +524,7 @@ int ObVectorIndexLookupOp::set_lookup_vid_key(ObRowkey& doc_id_rowkey)
   } else if (OB_FAIL(doc_id_scan_param_.key_ranges_.push_back(doc_id_range))) {
     LOG_WARN("store lookup key range failed", K(ret));
   } else {
-    LOG_DEBUG("generate doc id scan range", K(ret), K(doc_id_range));
+
   }
   return ret;
 }
@@ -730,7 +730,7 @@ int ObVectorIndexLookupOp::prepare_state(const ObVidAdaLookupStatus& cur_state,
         reuse_scan_param_complete_data();
       }
 
-      LOG_INFO("SYCN_DELTA_query_data", K(ada_ctx.get_vec_cnt()), K(ada_ctx.get_curr_idx()), K(ada_ctx.get_curr_idx()));
+
 
       if (OB_ITER_END == ret) {
         ret = OB_SUCCESS;
@@ -743,7 +743,7 @@ int ObVectorIndexLookupOp::prepare_state(const ObVidAdaLookupStatus& cur_state,
           LOG_WARN("failed to revert complete data iter.", K(ret));
           ret = ret == OB_SUCCESS ? tmp_ret : ret;
         }
-        LOG_INFO("SYCN_DELTA_query_end_revert", K(ada_ctx.get_vec_cnt()), K(ada_ctx.get_curr_idx()), K(ada_ctx.get_curr_idx()));
+
       }
       break;
     }
@@ -1073,7 +1073,7 @@ int ObVectorIndexLookupOp::set_com_main_table_lookup_key()
     } else if (OB_FAIL(com_aux_vec_scan_param_.key_ranges_.push_back(lookup_range))) {
       LOG_WARN("store lookup key range failed", K(ret), K(scan_param_));
     } else {
-      LOG_DEBUG("get rowkey from docid rowkey table", K(ret), K(table_rowkey), K(lookup_range));
+
     }
   }
   return ret;
@@ -1123,7 +1123,7 @@ int ObVectorIndexLookupOp::set_main_table_lookup_key()
     } else if (OB_FAIL(scan_param_.key_ranges_.push_back(lookup_range))) {
       LOG_WARN("store lookup key range failed", K(ret), K(scan_param_));
     } else {
-      LOG_DEBUG("get rowkey from docid rowkey table", K(ret), K(table_rowkey), K(lookup_range));
+
     }
   }
   return ret;

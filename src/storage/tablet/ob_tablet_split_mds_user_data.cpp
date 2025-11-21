@@ -503,7 +503,7 @@ OB_DEF_DESERIALIZE(ObTabletSplitMdsUserData)
     void *datum_buf = nullptr;
     if (OB_ISNULL(datum_buf = allocator_.alloc(sizeof(ObStorageDatum) * datum_cnt))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "failed to alloc memory", K(ret), K(datum_cnt));
+
     } else {
       ObStorageDatum *datums = new (datum_buf) ObStorageDatum[datum_cnt];
       OB_UNIS_DECODE_ARRAY(datums, datum_cnt);

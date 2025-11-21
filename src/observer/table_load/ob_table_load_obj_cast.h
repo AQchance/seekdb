@@ -280,7 +280,7 @@ private:
         || OB_UNLIKELY(OB_ERR_UNKNOWN_TIME_ZONE == ret)) {
       ret = OB_INVALID_DATE_VALUE;
     } else if (OB_SUCCESS != ret && CM_IS_WARN_ON_FAIL(cast_mode)) {
-      LOG_INFO("static int get_cast_ret", K(CM_IS_WARN_ON_FAIL(cast_mode)), K(cast_mode));
+
       warning = ret;
       ret = OB_SUCCESS;
     }

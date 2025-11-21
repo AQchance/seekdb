@@ -136,7 +136,7 @@ int ObCommonSqlProxy::read(ObISQLConnection *conn, ReadResult &result,
       LOG_WARN("query failed", K(ret), K(conn), K(start), KCSTRING(sql));
     }
   }
-  LOG_TRACE("execute sql", KCSTRING(sql), K(ret));
+
   return ret;
 }
 
@@ -162,7 +162,7 @@ int ObCommonSqlProxy::write(const uint64_t tenant_id, const char *sql, const int
     }
   }
   close(conn, ret);
-  LOG_TRACE("execute sql", KCSTRING(sql), K(ret));
+
   return ret;
 }
 
@@ -256,7 +256,7 @@ int ObCommonSqlProxy::write(const uint64_t tenant_id, const ObString sql,
     }
   }
   close(conn, ret);
-  LOG_TRACE("execute sql with sql mode", K(sql), K(compatibility_mode), K(ret));
+
   return ret;
 }
 
@@ -334,6 +334,6 @@ int ObCommonSqlProxy::read(
     }
   }
   close(conn, ret);
-  LOG_TRACE("execute sql", KCSTRING(sql), K(ret));
+
   return ret;
 }

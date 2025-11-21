@@ -40,7 +40,7 @@ int ObTransformEliminateOuterJoin::transform_one_stmt(common::ObIArray<ObParentD
   } else if (OB_FAIL(eliminate_outer_join(parent_stmts, stmt, trans_happened))) {
     LOG_WARN("failed to eliminate_outer_join on stmt", K(ret));
   } else if (trans_happened) {
-    LOG_TRACE("succeed to eliminate outer join", K(trans_happened));
+
     if (OB_FAIL(add_transform_hint(*stmt))) {
       LOG_WARN("failed to add transform hint", K(ret));
     }
@@ -82,7 +82,7 @@ int ObTransformEliminateOuterJoin::eliminate_outer_join(ObIArray<ObParentDMLStmt
       } else if (OB_FAIL(stmt->get_joined_tables().assign(joined_table_list))) {
         LOG_WARN("failed to reset joined table container", K(ret));
       } else {
-        LOG_TRACE("succ to to do outer join elimination");
+
       }
     }
   }

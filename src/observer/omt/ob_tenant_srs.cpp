@@ -142,7 +142,7 @@ int ObTenantSrs::get_tenant_srs_guard(ObSrsCacheGuard &srs_guard)
   int ret = OB_SUCCESS;
   if (!srs_guard.empty()) {
     // do nothing
-    LOG_TRACE("guard isn't empty");
+
   } else if (OB_FAIL(try_get_last_snapshot(srs_guard))) {
     if (ret == OB_ERR_EMPTY_QUERY) {
       ret = OB_ERR_SRS_EMPTY;
@@ -236,7 +236,7 @@ int ObTenantSrs::refresh_srs(bool is_sys)
   const uint64_t tenant_id = MTL_ID();
   if (OB_FAIL(fetch_all_srs(srs, is_sys))) {
     if (ret == OB_ERR_EMPTY_QUERY ) {
-      LOG_DEBUG("srs table is empty", K(is_sys));
+
     } else {
       LOG_WARN("failed to fetch ObSrsCacheSnapShot", K(ret), K(is_sys));
     }
@@ -284,7 +284,7 @@ void ObTenantSrs::recycle_last_snapshots()
     allocator_.free(last_sys_snapshot_);
     last_sys_snapshot_ = NULL;
   } else if (OB_NOT_NULL(last_sys_snapshot_)) {
-    LOG_INFO("unexpected srs snapshot ref count", K(last_sys_snapshot_->get_ref_count()));
+
   }
   if (OB_NOT_NULL(last_user_snapshot_) &&
       last_user_snapshot_->get_ref_count() <= 0) {
@@ -292,7 +292,7 @@ void ObTenantSrs::recycle_last_snapshots()
     allocator_.free(last_user_snapshot_);
     last_user_snapshot_ = NULL;
   } else if (OB_NOT_NULL(last_user_snapshot_)) {
-    LOG_INFO("unexpected srs snapshot ref count", K(last_user_snapshot_->get_ref_count()));
+
   }
 }
 
@@ -413,7 +413,7 @@ int ObTenantSrs::fetch_all_srs(ObSrsCacheSnapShot *&srs_snapshot, bool is_sys_sr
     LOG_WARN("get srs cnt failed", K(ret));
   } else if (srs_cnt < TOTAL_SRS_CNT) {
     if (srs_cnt > 1) {
-      LOG_INFO("srs is importing, retry fetch later", K(srs_cnt), K(tenant_id));
+
     }
     ret = OB_ERR_EMPTY_QUERY;
   } else {

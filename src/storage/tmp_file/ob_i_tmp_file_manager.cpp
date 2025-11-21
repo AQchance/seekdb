@@ -156,7 +156,7 @@ void ObITenantTmpFileManager::destroy()
     }
   }
 
-  LOG_INFO("ObITenantTmpFileManager destroy", K(tenant_id_), KP(this));
+
 }
 
 int ObITenantTmpFileManager::remove(const int64_t fd)
@@ -164,7 +164,7 @@ int ObITenantTmpFileManager::remove(const int64_t fd)
   int ret = OB_SUCCESS;
   ObITmpFileHandle tmp_file_handle;
   int64_t start_remove_ts = ObTimeUtility::current_time();
-  LOG_INFO("remove a tmp file start", KR(ret), K(start_remove_ts), K(fd), K(lbt()));
+
 
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
@@ -178,7 +178,7 @@ int ObITenantTmpFileManager::remove(const int64_t fd)
   } else if (OB_FAIL(files_.erase(ObTmpFileKey(fd), tmp_file_handle))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
       ret = OB_SUCCESS;
-      LOG_INFO("erase non-exist tmp file", K(fd), K(lbt()));
+
     } else {
       LOG_WARN("fail to erase tmp file", KR(ret), K(fd), K(lbt()));
     }
@@ -214,7 +214,7 @@ int ObITenantTmpFileManager::remove(const int64_t fd)
     }
   }
 
-  LOG_INFO("remove a tmp file over", KR(ret), K(start_remove_ts), K(fd), K(lbt()));
+
   return ret;
 }
 
@@ -248,7 +248,7 @@ int ObITenantTmpFileManager::aio_read(const uint64_t tenant_id,
     tmp_file_handle.get()->set_read_stats_vars(io_handle.get_io_ctx(), io_info.size_);
   }
 
-  LOG_DEBUG("aio_read a tmp file over", KR(ret), K(io_info), K(io_handle), KPC(tmp_file_handle.get()));
+
   return ret;
 }
 
@@ -283,7 +283,7 @@ int ObITenantTmpFileManager::aio_pread(const uint64_t tenant_id,
     tmp_file_handle.get()->set_read_stats_vars(io_handle.get_io_ctx(), io_info.size_);
   }
 
-  LOG_DEBUG("aio_pread a tmp file over", KR(ret), K(io_info), K(offset), K(io_handle), KPC(tmp_file_handle.get()));
+
   return ret;
 }
 
@@ -325,7 +325,7 @@ int ObITenantTmpFileManager::read(const uint64_t tenant_id,
     ret = OB_SUCCESS == ret ? tmp_ret : ret;
   }
 
-  LOG_DEBUG("read a tmp file over", KR(ret), K(io_info), K(io_handle), KPC(tmp_file_handle.get()));
+
   return ret;
 }
 
@@ -368,7 +368,7 @@ int ObITenantTmpFileManager::pread(const uint64_t tenant_id,
     ret = OB_SUCCESS == ret ? tmp_ret : ret;
   }
 
-  LOG_DEBUG("pread a tmp file over", KR(ret), K(io_info), K(offset), K(io_handle), KPC(tmp_file_handle.get()));
+
   return ret;
 }
 
@@ -399,7 +399,7 @@ int ObITenantTmpFileManager::aio_write(const uint64_t tenant_id,
     tmp_file_handle.get()->set_write_stats_vars(io_handle.get_io_ctx());
   }
 
-  LOG_DEBUG("aio_write a tmp file over", KR(ret), K(io_info), K(io_handle), KPC(tmp_file_handle.get()));
+
   return ret;
 }
 
@@ -413,7 +413,7 @@ int ObITenantTmpFileManager::write(const uint64_t tenant_id, const ObTmpFileIOIn
     LOG_WARN("fail to aio write", KR(ret), K(io_info));
   }
 
-  LOG_DEBUG("write a tmp file over", KR(ret), K(io_info), K(io_handle));
+
   return ret;
 }
 
@@ -433,7 +433,7 @@ int ObITenantTmpFileManager::truncate(const int64_t fd, const int64_t offset)
   } else if (OB_FAIL(tmp_file_handle.get()->truncate(offset))) {
     LOG_WARN("fail to truncate", KR(ret), K(fd), K(offset), KPC(tmp_file_handle.get()));
   } else {
-    LOG_DEBUG("truncate a tmp file over", KR(ret), K(fd), K(offset));
+
   }
   return ret;
 }
@@ -451,7 +451,7 @@ int ObITenantTmpFileManager::seal(const int64_t fd)
   } else if (OB_FAIL(tmp_file_handle.get()->seal())) {
     LOG_WARN("fail to seal", KR(ret), K(fd), KPC(tmp_file_handle.get()));
   } else {
-    LOG_INFO("seal a tmp file over", KR(ret), K(fd));
+
   }
   return ret;
 }
@@ -491,7 +491,7 @@ int ObITenantTmpFileManager::get_tmp_file_size(const int64_t fd, int64_t &size)
     size = tmp_file_handle.get()->get_file_size();
   }
 
-  LOG_DEBUG("get tmp file size", KR(ret), K(fd), K(size));
+
   return ret;
 }
 
@@ -533,7 +533,7 @@ int ObITenantTmpFileManager::get_tmp_file_info(const int64_t fd, ObTmpFileInfo &
     LOG_WARN("ObITenantTmpFileManager has not been inited", KR(ret), K(tenant_id_));
   } else if (OB_FAIL(get_tmp_file(fd, file_handle))) {
     if (OB_ENTRY_NOT_EXIST == ret) {
-      LOG_INFO("tmp file not exist", KR(ret), K(fd));
+
     } else {
       LOG_WARN("fail to get tmp file", KR(ret), K(fd));
     }

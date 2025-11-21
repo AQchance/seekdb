@@ -64,7 +64,7 @@ int ObVecIndexDMLIterator::generate_domain_rows(const ObChunkDatumStore::StoredR
       }
     }
   }
-  LOG_DEBUG("generate vector index delta buffer rows", K(ret), K(rows_), KPC(store_row));
+
   return ret;
 }
 
@@ -93,7 +93,7 @@ int ObVecIndexDMLIterator::get_vec_data(
                                                                 vector))) {
       LOG_WARN("fail to get real data.", K(ret), K(vector));
     } else {
-      LOG_DEBUG("succeed to get vector id and vector", K(vec_id), K(store_row->cells()[row_projector_->at(vector_idx)]));
+
     }
   }
   return ret;
@@ -213,7 +213,7 @@ int ObVecIndexDMLIterator::generate_vec_delta_buff_row(common::ObIAllocator &all
     } else if (OB_FAIL(rows.push_back(row))) {
       LOG_WARN("fail to push back row", K(ret), KPC(row));
     } else {
-      LOG_DEBUG("succeed add delta buffer row", K(ret), K(das_ctdef_->op_type_), K(vec_id), K(is_old_row_));
+
     }
   }
   return ret;
@@ -282,7 +282,7 @@ int ObSparseVecIndexDMLIterator::generate_domain_rows(const ObChunkDatumStore::S
       LOG_WARN("failed to generate sparse vec index row", K(ret));
     }
   }
-  LOG_DEBUG("generate domain rows", K(ret), K(rows_), KPC(store_row));
+
   return ret;
 }
 
@@ -484,7 +484,7 @@ int ObHybridVecLogDMLIterator::generate_domain_rows(const ObChunkDatumStore::Sto
       }
     }
   }
-  LOG_DEBUG("generate hybrid vec log rows", K(ret), K(rows_), KPC(store_row));
+
   return ret;
 }
 
@@ -502,7 +502,7 @@ int ObHybridVecLogDMLIterator::get_vec_id(
     } else {
       const int64_t vec_id_new_proj_idx = das_ctdef_->new_row_projector_.at(vec_id_idx);
       vec_id = store_row->cells()[vec_id_new_proj_idx].get_int();
-      LOG_DEBUG("get new vec id for hybrid log update", K(vec_id), K(vec_id_idx), K(vec_id_new_proj_idx));
+
     }
   } else {
     if (OB_UNLIKELY(vec_id_idx >= row_projector_->count())) {
@@ -532,7 +532,7 @@ int ObHybridVecLogDMLIterator::get_vec_data_for_update(
     int64_t old_vec_id = store_row->cells()[vec_id_old_proj_idx].get_int();
     int64_t new_vec_id = store_row->cells()[vec_id_new_proj_idx].get_int();
     vec_id = is_old_row_ ? old_vec_id : new_vec_id;
-    LOG_DEBUG("get vec id for hybrid log update", K(vec_id), K(old_vec_id), K(new_vec_id), K(is_old_row_));
+
   }
   return ret;
 }
@@ -816,7 +816,7 @@ int ObEmbeddedVecDMLIterator::get_embedded_vec_column_idxs(int64_t &vid_idx, int
       LOG_WARN("not get embedded vec column idxs", K(ret), K(vec_id_col_id), K(vec_embedded_vec_col_id),
           K(vid_idx), K(embedded_vec_idx));
     }
-    LOG_DEBUG("get_embedded_vec_column_idxs", K(vid_idx), K(embedded_vec_idx));
+
   }
   return ret;
 }
@@ -832,7 +832,7 @@ int ObEmbeddedVecDMLIterator::check_sync_interval(bool &is_sync_interval) const
   if (table_param.get_vec_index_param().empty()) {
     // Use default sync mode when vector index param is empty?
     sync_interval_type = ObVectorIndexSyncIntervalType::VSIT_IMMEDIATE;
-    LOG_DEBUG("vector index param is empty, use default sync mode", K(sync_interval_type));
+
   } else if (OB_FAIL(share::ObVectorIndexUtil::parser_params_from_string(
                                                                         table_param.get_vec_index_param(),
                                                                         share::ObVectorIndexType::VIT_HNSW_INDEX,

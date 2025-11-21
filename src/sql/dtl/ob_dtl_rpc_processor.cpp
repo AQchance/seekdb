@@ -27,7 +27,7 @@ namespace dtl {
 int ObDtlSendMessageP::process()
 {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("on dtl rpc process");
+
   if (OB_FAIL(process_msg(result_, arg_))) {
     LOG_WARN("failed to process msg", K(ret), "peer", get_peer());
   }
@@ -57,7 +57,7 @@ int ObDtlSendMessageP::process_msg(ObDtlRpcDataResponse &response, ObDtlSendArgs
     if (!arg.buffer_.is_data_msg() && OB_FAIL(ObDtlLinkedBuffer::deserialize_msg_header(arg.buffer_, header, keep_pos))) {
       LOG_WARN("failed to deserialize msg header", K(ret));
     } else if (header.is_drain()) {
-      LOG_TRACE("receive drain cmd, unregister rpc channel", KP(arg.chid_));
+
       ret = OB_SUCCESS;
       tmp_ret = OB_SUCCESS;
     } else if (header.is_px_bloom_filter_data()) {
@@ -72,7 +72,7 @@ int ObDtlSendMessageP::process_msg(ObDtlRpcDataResponse &response, ObDtlSendArgs
       LOG_WARN("failed to get channel", K(ret));
     } else {
       // Too many get channel fail, use trace
-      LOG_TRACE("get DTL channel fail", KP(arg.chid_), K(ret), K(tmp_ret));
+
     }
   } else {
     // Add tenant context, convenient for subsequent release channel if needed, can call MTL_GET to get dtl manager related information
@@ -105,7 +105,7 @@ int ObDtlBCSendMessageP::process()
   int ret = OB_SUCCESS;
   ObIArray<ObDtlRpcDataResponse> &resps = result_.resps_;
   ObIArray<ObDtlSendArgs> &args = arg_.args_;
-  LOG_TRACE("receive broadcast msg", K(resps), K(args));
+
   if (args.empty()) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected args", K(ret));
@@ -133,7 +133,7 @@ int ObDtlBCSendMessageP::process()
       }
     }
   }
-  LOG_TRACE("finish process broadcast msg", K(ret), K(arg_.bc_buffer_), K(resps), K(args));
+
   // rpc response must return OB_SUCCESS, otherwise response will not be serialized
   return OB_SUCCESS;
 }

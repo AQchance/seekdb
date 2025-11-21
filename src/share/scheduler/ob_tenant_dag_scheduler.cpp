@@ -2185,12 +2185,12 @@ void ObDagPrioScheduler::destroy()
       if (cur_dag->get_dag_id().is_valid()
           && OB_TMP_FAIL(ObSysTaskStatMgr::get_instance().del_task(cur_dag->get_dag_id()))) {
         if (OB_ENTRY_NOT_EXIST != tmp_ret) {
-          STORAGE_LOG_RET(WARN, tmp_ret, "failed to del sys task", K(cur_dag->get_dag_id()));
+
         }
       }
 
       if (OB_TMP_FAIL(finish_dag_(ObIDag::DAG_STATUS_ABORT, cur_dag, false/*try_move_child*/))) {
-        STORAGE_LOG_RET(WARN, tmp_ret, "failed to abort dag", K(tmp_ret), KPC(cur_dag));
+
       } else {
         ++abort_dag_cnt;
       }
@@ -2501,7 +2501,7 @@ int ObDagPrioScheduler::schedule_dag_(ObIDag &dag, bool &move_dag_to_waiting_lis
   if (dag.is_dag_net_canceled()) {
     next_dag_status = ObIDag::DAG_STATUS_NODE_FAILED;
     dag.set_dag_ret(OB_CANCELED);
-    LOG_INFO("dag net is cancel", K(dag));
+
   } else if (!dag.check_can_schedule()) { // cur dag can't be scheduled now
     move_dag_to_waiting_list = true;
   } else { // dag can be scheduled
@@ -2723,9 +2723,9 @@ int ObDagPrioScheduler::pop_task_from_ready_list_(ObITask *&task)
       if (OB_FAIL(ret)) {
         ret = OB_SUCCESS;
         if (OB_NOT_NULL(tmp_dag_net = cur->get_dag_net()) && tmp_dag_net->is_co_dag_net()) {
-          LOG_INFO("ERRSIM EN_CO_MREGE_DAG_READY_FOREVER", K(ret));
+
           if (tmp_dag_net->is_cancel()) {
-            LOG_INFO("ERRSIM EN_CO_MREGE_DAG_READY_FOREVER CO MERGE DAG IS CANCELED", K(ret));
+
           } else {
             cur = cur->get_next();
             continue;
@@ -2876,7 +2876,7 @@ int ObDagPrioScheduler::finish_dag_(
         "dag_cnt", scheduler_->get_cur_dag_cnt(), "dag_type_cnt", scheduler_->get_type_dag_cnt(dag->get_type()),
         K(dag), KPC(dag));
     if (dag->get_dag_id().is_valid() && OB_TMP_FAIL(ObSysTaskStatMgr::get_instance().del_task(dag->get_dag_id()))) {
-      STORAGE_LOG(WARN, "failed to del sys task", K(tmp_ret), K(dag->get_dag_id()));
+
     }
 
     compaction::ObCompactionSuggestionMgr *suggestion_mgr = MTL(compaction::ObCompactionSuggestionMgr *);
@@ -3381,7 +3381,7 @@ int ObDagPrioScheduler::get_min_end_scn_from_major_dag(const ObLSID &ls_id, SCN 
   } // for
   if (OB_SUCC(ret)) {
     min_end_scn = dag_min_end_scn;
-    LOG_INFO("[MIN_END_SCN]success to get min end scn from major dag", KR(ret), K(ls_id), K(dag_min_end_scn));
+
   }
   return ret;
 }
@@ -3631,7 +3631,7 @@ int ObDagPrioScheduler::cancel_dag(const ObIDag &dag, const bool force_cancel)
         ret = hash_ret;
         LOG_WARN("failed to get from dag map", K(ret));
       } else {
-        LOG_INFO("dag is not in dag_map", K(ret));
+
       }
     } else if (OB_ISNULL(cur_dag)) {
       ret = OB_ERR_SYS;
@@ -3640,7 +3640,7 @@ int ObDagPrioScheduler::cancel_dag(const ObIDag &dag, const bool force_cancel)
       ret = OB_ERR_UNEXPECTED;
       COMMON_LOG(WARN, "unexpected priority value", K(ret), K(cur_dag->get_priority()), K(dag.get_priority()));
     } else if (cur_dag->get_dag_status() == ObIDag::DAG_STATUS_READY) {
-      LOG_INFO("cancel dag", K(ret), KP(cur_dag));
+
       if (OB_FAIL(ret)) {
       } else if (OB_FAIL(finish_dag_(ObIDag::DAG_STATUS_ABORT, cur_dag, true/*try_move_child*/))) {
         COMMON_LOG(WARN, "failed to erase dag and dag net", K(ret), KPC(cur_dag));
@@ -3650,7 +3650,7 @@ int ObDagPrioScheduler::cancel_dag(const ObIDag &dag, const bool force_cancel)
       if (OB_FAIL(cur_dag->set_stop())) {
         COMMON_LOG(WARN, "failed to set stop", K(ret), KPC(cur_dag));
       } else {
-        LOG_INFO("cancel running dag", K(ret), KP(cur_dag));
+
       }
     }
   }
@@ -4087,13 +4087,13 @@ int ObDagNetScheduler::loop_running_dag_net_list()
   ObIDagNet *dag_net = nullptr;
 
   while (NULL != cur && head != cur) { // ignore failure
-    LOG_DEBUG("loop running dag net list", K(ret), KPC(cur));
+
     dag_net = cur;
     cur = cur->get_next();
     if (dag_net->is_started() && OB_TMP_FAIL(dag_net->schedule_rest_dag())) {
       LOG_WARN("failed to schedule rest dag", K(tmp_ret));
     } else if (dag_net->check_finished_and_mark_stop()) {
-      LOG_INFO("dag net is in finish state, move to finished list", K(ret), KPC(dag_net));
+
       (void) erase_dag_net_list_or_abort(RUNNING_DAG_NET_LIST, dag_net);
       (void) add_dag_net_list_or_abort(FINISHED_DAG_NET_LIST, dag_net);
     } else if (dag_net->is_co_dag_net()
@@ -4108,7 +4108,7 @@ int ObDagNetScheduler::loop_running_dag_net_list()
     } else if (dag_net->get_start_time() + PRINT_SLOW_DAG_NET_THREASHOLD < ObTimeUtility::fast_current_time()) {
       ++slow_dag_net_cnt;
       if (REACH_THREAD_TIME_INTERVAL(LOOP_PRINT_LOG_INTERVAL)) {
-        LOG_INFO("slow dag net", K(ret), KP(dag_net), "dag_net_start_time", dag_net->get_start_time());
+
       }
     }
   }
@@ -4130,7 +4130,7 @@ int ObDagNetScheduler::loop_finished_dag_net_list()
     ObIDagNet *cur = head->get_next();
     ObIDagNet *dag_net = nullptr;
     while (NULL != cur && head != cur) {
-      LOG_DEBUG("loop blocking dag net list", K(ret), KPC(cur));
+
       dag_net = cur;
       cur = cur->get_next();
       (void) erase_dag_net_list_or_abort(FINISHED_DAG_NET_LIST, dag_net);
@@ -4160,7 +4160,7 @@ int ObDagNetScheduler::loop_blocking_dag_net_list()
     ObIDagNet *tmp = nullptr;
     int64_t rest_cnt = DEFAULT_MAX_RUNNING_DAG_NET_CNT - (dag_net_map_.size() - dag_net_list_[BLOCKING_DAG_NET_LIST].get_size());
     while (NULL != cur && head != cur && rest_cnt > 0 && !is_dag_map_full_()) {
-      LOG_DEBUG("loop blocking dag net list", K(ret), KPC(cur), K(rest_cnt));
+
       tmp = cur;
       cur = cur->get_next();
       if (tmp->is_cancel() || OB_TMP_FAIL(tmp->start_running())) {
@@ -4278,7 +4278,7 @@ int ObDagNetScheduler::check_ls_compaction_dag_exist_with_cancel(const ObLSID &l
   }
 
   if (OB_SUCC(ret)) {
-    LOG_INFO("success to cancel dag net", KR(ret), K(ls_id), K(cancel_dag_cnt), K(exist));
+
   }
   return ret;
 }
@@ -4313,7 +4313,7 @@ int ObDagNetScheduler::get_min_end_scn_from_major_dag(const ObLSID &ls_id, SCN &
 
   if (OB_SUCC(ret)) {
     min_end_scn = dag_net_min_end_scn;
-    LOG_INFO("[MIN_END_SCN]success to get min end scn from dag net", KR(ret), K(ls_id), K(dag_net_min_end_scn));
+
   }
   return ret;
 }
@@ -4862,7 +4862,7 @@ int ObTenantDagScheduler::get_minor_exe_dag_info(
     ret = OB_NOT_INIT;
     COMMON_LOG(WARN, "ObDagScheduler is not inited", K(ret));
   } else if (OB_FAIL(dag.init_by_param(&param))) {
-    STORAGE_LOG(WARN, "failed to init dag", K(ret), K(param));
+
   } else if (OB_FAIL(prio_sche_[ObDagPrio::DAG_PRIO_COMPACTION_MID].get_minor_exe_dag_info(dag, merge_range_array))) {
     COMMON_LOG(WARN, "fail to get minor exe dag info", K(ret), K(dag));
   }
@@ -5368,7 +5368,7 @@ int ObTenantDagScheduler::set_compaction_dag_limit(const int64_t new_val)
     if (OB_SUCC(ret)) {
       compaction_dag_limit_ = new_val;
       if (OB_FAIL(scheduler_sync_.signal())) {
-        STORAGE_LOG(WARN, "Failed to signal", K(ret), K(compaction_dag_limit_));
+
       } else {
         COMMON_LOG(INFO, "set compaction dag limit successfully", K(compaction_dag_limit_));
       }
@@ -5396,7 +5396,7 @@ int ObTenantDagScheduler::set_thread_score(const int64_t priority, const int64_t
       work_thread_num_ -= old_val;
       work_thread_num_ += new_val;
       if (OB_FAIL(scheduler_sync_.signal())) {
-        STORAGE_LOG(WARN, "Failed to signal", K(ret), K(priority), K(score));
+
       } else {
         COMMON_LOG(INFO, "set thread score successfully", K(score),
             "prio", OB_DAG_PRIOS[priority].dag_prio_str_,

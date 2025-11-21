@@ -565,7 +565,7 @@ int ObInnerTableOperator::do_insert_row_(ObISQLClient &proxy, const ObIInnerTabl
   } else if (OB_FAIL(proxy.write(exec_tenant_id, sql.ptr(), group_id_, affected_rows))) {
     LOG_WARN("fail to exec sql", K(ret), K(sql), K(exec_tenant_id));
   } else {
-    LOG_INFO("insert one row", K(row), K(affected_rows), K(sql));
+
   }
 
   return ret;
@@ -588,7 +588,7 @@ int ObInnerTableOperator::do_update_row_(ObISQLClient &proxy, const ObIInnerTabl
   } else if (OB_FAIL(proxy.write(exec_tenant_id, sql.ptr(), group_id_, affected_rows))) {
     LOG_WARN("fail to exec sql", K(ret), K(sql), K(exec_tenant_id));
   } else {
-    LOG_INFO("update one row", K(row), K(affected_rows), K(sql));
+
   }
 
   return ret;
@@ -611,7 +611,7 @@ int ObInnerTableOperator::do_insert_or_update_row_(ObISQLClient &proxy, const Ob
   } else if (OB_FAIL(proxy.write(exec_tenant_id, sql.ptr(), group_id_, affected_rows))) {
     LOG_WARN("fail to exec sql", K(ret), K(sql), K(exec_tenant_id));
   } else {
-    LOG_INFO("insert/update one row", K(row), K(affected_rows), K(sql));
+
   }
 
   return ret;
@@ -634,7 +634,7 @@ int ObInnerTableOperator::do_delete_row_(
   } else if (OB_FAIL(proxy.write(exec_tenant_id, sql.ptr(), group_id_, affected_rows))) {
     LOG_WARN("fail to exec sql", K(ret), K(sql), K(exec_tenant_id));
   } else {
-    LOG_INFO("delete one row", K(key), K(affected_rows), K(sql));
+
   }
 
   return ret;
@@ -785,7 +785,7 @@ int ObInnerTableOperator::do_increase_column_by_(
   } else if (OB_FAIL(proxy.write(exec_tenant_id, sql.ptr(), group_id_, affected_rows))) {
     LOG_WARN("fail to exec sql", K(ret), K(sql), K(exec_tenant_id));
   } else {
-    LOG_INFO("update one column", K(key), K(column_name), K(value), K(affected_rows), K(sql));
+
   }
 
   return ret;
@@ -814,7 +814,7 @@ int ObInnerTableOperator::do_update_column_(
   } else if (OB_FAIL(proxy.write(exec_tenant_id, sql.ptr(), group_id_, affected_rows))) {
     LOG_WARN("fail to exec sql", K(ret), K(sql), K(exec_tenant_id));
   } else {
-    LOG_INFO("update one column", K(key), K(assignments), K(affected_rows), K(sql));
+
   }
 
   return ret;
@@ -849,7 +849,7 @@ int ObInnerTableOperator::do_compare_and_swap_(
   } else if (OB_FAIL(proxy.write(exec_tenant_id, sql.ptr(), group_id_, affected_rows))) {
     LOG_WARN("fail to exec sql", K(ret), K(sql), K(exec_tenant_id));
   } else {
-    LOG_INFO("compare and swap one column", K(key), K(assignments), K(predicates), K(affected_rows), K(sql));
+
   }
 
   return ret;

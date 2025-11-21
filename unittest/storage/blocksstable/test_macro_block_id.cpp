@@ -178,7 +178,7 @@ int main(int argc, char **argv)
   system("rm -f test_macro_block_id.log*");
   //OB_LOGGER.set_file_name("test_macro_block_id.log", true, false);
   OB_LOGGER.set_log_level("INFO");
-  STORAGE_LOG(INFO, "begin unittest: test_macro_block_id");
+
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

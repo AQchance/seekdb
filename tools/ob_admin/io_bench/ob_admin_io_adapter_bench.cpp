@@ -61,28 +61,28 @@ int ObAdminIOAdapterBenchmarkExecutor::execute(int argc, char *argv[])
   ObMallocAllocator *malloc = ObMallocAllocator::get_instance();
   if (OB_ISNULL(malloc->get_tenant_ctx_allocator(OB_SERVER_TENANT_ID, 0))) {
     if (OB_FAIL(malloc->create_and_add_tenant_allocator(OB_SERVER_TENANT_ID))) {
-      STORAGE_LOG(WARN, "failed to create_and_add_tenant_allocator", K(ret));
+
     }
   }
  
   if (FAILEDx(tenant_base->init())) {
-    STORAGE_LOG(WARN, "failed to init tenant base", K(ret));
+
   } else if (FALSE_IT(ObTenantEnv::set_tenant(tenant_base))) {
   } else if (OB_FAIL(ObDeviceManager::get_instance().init_devices_env())) {
-    STORAGE_LOG(WARN, "init device manager failed", KR(ret));
+
   } else if (OB_FAIL(ObIOManager::get_instance().init(MEMORY_LIMIT))) {
-    STORAGE_LOG(WARN, "failed to init io manager", K(ret));
+
   } else if (OB_FAIL(ObIOManager::get_instance().start())) {
-    STORAGE_LOG(WARN, "failed to start io manager", K(ret));
+
   } else if (OB_FAIL(ObObjectStorageInfo::register_cluster_version_mgr(&ObClusterVersionBaseMgr::get_instance()))) {
-    STORAGE_LOG(WARN, "fail to register cluster version mgr", KR(ret));
+
   }
 
   ObRefHolder<ObTenantIOManager> tenant_holder;
   if (FAILEDx(OB_IO_MANAGER.get_tenant_io_manager(OB_SERVER_TENANT_ID, tenant_holder))) {
-    STORAGE_LOG(WARN, "failed to get tenant io manager", K(ret));
+
   } else if (OB_FAIL(tenant_holder.get_ptr()->update_memory_pool(MEMORY_LIMIT))) {
-    STORAGE_LOG(WARN, "failed to update memory pool", K(ret), K(MEMORY_LIMIT));
+
   }
 
   if (FAILEDx(parse_cmd_(argc, argv))) {
@@ -212,13 +212,13 @@ int ObAdminIOAdapterBenchmarkExecutor::parse_cmd_(int argc, char *argv[])
       }
       case 'e': {
         if (OB_FAIL(set_s3_url_encode_type(optarg))) {
-          STORAGE_LOG(WARN, "failed to set s3 url encode type", KR(ret));
+
         }
         break;
       }
       case 'i': {
         if (OB_FAIL(set_sts_credential_key(optarg))) {
-          STORAGE_LOG(WARN, "failed to set sts credential", KR(ret));
+
         }
         break;
       }

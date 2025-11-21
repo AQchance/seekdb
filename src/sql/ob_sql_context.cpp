@@ -842,7 +842,7 @@ int ObSqlCtx::set_location_constraints(const ObLocationConstraintContext &locati
           base_constraints_.at(i).table_partition_info_ = NULL;
         }
       }
-      LOG_DEBUG("set base constraints", K(base_constraints.count()));
+
     }
   }
   if (OB_SUCC(ret) && strict_constraints.count() > 0) {
@@ -855,7 +855,7 @@ int ObSqlCtx::set_location_constraints(const ObLocationConstraintContext &locati
           LOG_WARN("failed to push back location constraint", K(ret));
         }
       }
-      LOG_DEBUG("set strict constraints", K(strict_constraints.count()));
+
     }
   }
   if (OB_SUCC(ret) && non_strict_constraints.count() > 0) {
@@ -868,7 +868,7 @@ int ObSqlCtx::set_location_constraints(const ObLocationConstraintContext &locati
           LOG_WARN("failed to push back location constraint", K(ret));
         }
       }
-      LOG_DEBUG("set non strict constraints", K(non_strict_constraints.count()));
+
     }
   }
   if (OB_SUCC(ret) && dup_table_replica_cons.count() > 0) {
@@ -881,7 +881,7 @@ int ObSqlCtx::set_location_constraints(const ObLocationConstraintContext &locati
           LOG_WARN("failed to push back location constraint", K(ret));
         }
       }
-      LOG_DEBUG("set duplicate table replica constraints", K(dup_table_replica_cons.count()));
+
     }
   }
   return ret;

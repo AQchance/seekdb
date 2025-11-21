@@ -88,7 +88,7 @@ int ObCOTabletMergeCtx::schedule_minor_errsim(bool &schedule_minor) const
         ret = OB_E((EventTable::tracepoint)) OB_SUCCESS;                \
         if (OB_FAIL(ret)) {                                             \
           ret = OB_SUCCESS;                                             \
-          STORAGE_LOG(INFO, "ERRSIM " #tracepoint);                     \
+                     \
           schedule_minor = get_tables_handle().get_count() > 1;         \
         }                                                               \
       }                                                                 \
@@ -152,7 +152,7 @@ int ObCOTabletMergeCtx::init_tablet_merge_info()
   void *buf = nullptr;
   if (OB_UNLIKELY(cg_count <= 1)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(ERROR, "Unexpected cg count for co major", K(ret), K(cg_count), K(static_param_));
+
   } else if (OB_ISNULL(buf = mem_ctx_.alloc(alloc_size))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
     LOG_WARN("failed to alloc memory", K(ret), K(alloc_size));
@@ -213,7 +213,7 @@ int ObCOTabletMergeCtx::prepare_cs_replica_param(const ObMediumCompactionInfo *m
       if (sstable->is_major_sstable()) {
         static_param_.major_sstable_status_ = ObCOMajorSSTableStatus::COL_REPLICA_MAJOR;
         static_param_.co_major_merge_type_ = ObCOMajorMergePolicy::USE_RS_BUILD_SCHEMA_MATCH_MERGE;
-        LOG_INFO("[CS-Replica] Decide rebuild column store from row major for cs replica", K(ret), KPC(sstable), K_(static_param));
+
       } else {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("first table should be major in cs replica", K(ret), KPC(sstable), K_(static_param));
@@ -237,7 +237,7 @@ int ObCOTabletMergeCtx::handle_alter_cg_delayed_in_cs_replica()
       // major_sstable_status_ is decided in static_param_, according to the storage schema in medium compaction info
       if (static_param_.is_build_redundent_row_store_from_rowkey_cg()) {
         static_param_.co_major_merge_type_ = ObCOMajorMergePolicy::BUILD_REDUNDANT_ROW_STORE_MERGE;
-        LOG_INFO("[CS-Replica] Decide build redundant row store from rowkey cg for cs replica", K(ret), K_(static_param));
+
       }
     } else {
       // Storage schema in tablet may be column store when alter column group delayed and do transfer (with updated storage schema).
@@ -253,12 +253,12 @@ int ObCOTabletMergeCtx::handle_alter_cg_delayed_in_cs_replica()
           // storage schema for compaction: rowkey cg + normal cg (from table schema after alter column group delayed)
           // base major sstable: rowkey cg + normal cg (from cs replica)
           static_param_.co_major_merge_type_ = ObCOMajorMergePolicy::BUILD_COLUMN_STORE_MERGE;
-          LOG_INFO("[CS-Replica] Decide build column store from rowkey cg for potential cs replica", K(ret), K_(static_param));
+
         } else if (static_param_.is_build_redundent_row_store_from_rowkey_cg()) {
           // storage schema for compaction: all cg + normal cg (from table schema after alter column group delayed)
           // base major sstable: rowkey cg + normal cg (from cs replica)
           static_param_.co_major_merge_type_ = ObCOMajorMergePolicy::BUILD_REDUNDANT_ROW_STORE_MERGE;
-          LOG_INFO("[CS-Replica] Decide build redundant row store from rowkey cg for potential cs replica", K(ret), K_(static_param));
+
         } 
       }
     }
@@ -356,7 +356,7 @@ int ObCOTabletMergeCtx::build_ctx(bool &finish_flag)
     // meta major merge not support row col switch now
     if (is_build_row_store_from_rowkey_cg() || is_build_redundant_row_store_from_rowkey_cg()) {
       if (OB_FAIL(mock_row_store_table_read_info())) {
-        STORAGE_LOG(WARN, "fail to init table read info", K(ret));
+
       }
     }
   }
@@ -543,7 +543,7 @@ int ObCOTabletMergeCtx::prepare_index_builder(
     if (OB_FAIL(inner_loop_prepare_index_tree(start_cg_idx, end_cg_idx))) {
       LOG_WARN("failed to loop prepare index tree", KR(ret), KP(this), K(start_cg_idx), K(end_cg_idx));
     } else {
-      LOG_INFO("success to init merge info array", K(ret), KP(this), K(start_cg_idx), K(end_cg_idx));
+
     }
   }
   if (OB_FAIL(ret) && OB_NOT_NULL(buf)) {
@@ -643,7 +643,7 @@ int ObCOTabletMergeCtx::create_sstables(const uint32_t start_cg_idx, const uint3
       // optimization: no need to create empty normal cg
 #ifdef ERRSIM
     } else if ((i > start_cg_idx + 2) && OB_FAIL(ret = OB_E(EventTable::EN_COMPACTION_CO_PUSH_TABLES_FAILED) OB_SUCCESS)) {
-      LOG_INFO("ERRSIM EN_COMPACTION_CO_PUSH_TABLES_FAILED", K(ret));
+
       SERVER_EVENT_SYNC_ADD("merge_errsim", "co_push_table_failed", "ret_code", ret);
 #endif
     } else if (OB_FAIL(push_table_handle(table_handle, count))) {
@@ -777,7 +777,7 @@ int ObCOTabletMergeCtx::create_sstable(const ObSSTable *&new_sstable)
   } else {
     // only exist one co table here, empty or empty cg sstables
     new_sstable = static_cast<ObSSTable *>(base_co_table);
-    LOG_DEBUG("[RowColSwitch] FinsihTask with only one co sstable", KPC(new_sstable));
+
   }
 
   if (FAILEDx(check_convert_co_checksum(new_sstable))) {
@@ -832,7 +832,7 @@ int ObCOTabletMergeCtx::inner_add_cg_sstables(const ObSSTable *&new_sstable)
     LOG_WARN("failed to fill cg sstables to co sstable", K(ret), K(new_progressive_merge_step), KPC(base_co_table));
   } else {
     new_sstable = base_co_table;
-    LOG_DEBUG("[RowColSwitch] Success to fill cg sstables to co sstable", KPC(new_sstable));
+
   }
   return ret;
 }
@@ -848,7 +848,7 @@ int ObCOTabletMergeCtx::validate_column_checksums(
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("table count must be equal to schema count", K(ret), K(cg_schemas.count()), K_(array_count), KPC(this));
   } else if (OB_FAIL(get_schema()->get_multi_version_column_descs(column_descs))) {//temp code
-    STORAGE_LOG(WARN, "fail to get_multi_version_column_descs", K(ret));
+
   }
 
   ObSSTable * cur_cg_table = nullptr;
@@ -920,7 +920,7 @@ int ObCOTabletMergeCtx::get_cg_schema_for_merge(const int64_t idx, const ObStora
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("get invalid cg schema", K(ret), KPC(cg_schema_ptr), K(idx), K(cg_schemas.at(idx)), KPC(this));
     } else {
-      LOG_DEBUG("[RowColSwitch] get cg schema for merge", K(idx), KPC(cg_schema_ptr));
+
     }
   }
   return ret;
@@ -939,7 +939,7 @@ int ObCOTabletMergeCtx::prepare_row_store_cg_schema()
     } else if (sstable->is_major_sstable() && !static_param_.schema_->is_row_store()) {
       static_param_.major_sstable_status_ = ObCOMajorSSTableStatus::DELAYED_TRANSFORM_MAJOR;
       // should be delayed column group transform
-      LOG_INFO("set major sstable status with column store schema", K(ret), KPC(sstable), K_(static_param));
+
     } else {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("first table should be major in co merge", K(ret), KPC(sstable), K_(static_param));
@@ -970,10 +970,10 @@ int ObCOTabletMergeCtx::construct_column_param(
       column_param.set_meta_type(meta_type);
     } else {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "invalid argument", K(ret), K(column_id));
+
     }
   } else if (OB_FAIL(column_schema->construct_column_param(static_param_.data_version_, column_param))) {
-    STORAGE_LOG(WARN, "fail to construct column param from column schema", K(ret), K(column_id), K_(static_param));
+
   }
   return ret;
 }
@@ -987,10 +987,10 @@ int ObCOTabletMergeCtx::mock_row_store_table_read_info()
   const int64_t column_cnt = all_column_ids.count();
   if (OB_ISNULL(storage_schema)) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "storage schema is nullptr", K(ret));
+
   } else if (OB_UNLIKELY(column_cnt > INT32_MAX)) {
     ret = OB_SIZE_OVERFLOW;
-    STORAGE_LOG(ERROR, "column count is overflow", K(column_cnt));
+
   } else {
     static const int64_t COMMON_COLUMN_NUM = 16;
     ObSEArray<ObColumnParam *, COMMON_COLUMN_NUM> tmp_cols;
@@ -1010,18 +1010,18 @@ int ObCOTabletMergeCtx::mock_row_store_table_read_info()
       column = nullptr;
       is_multi_version_col = OB_HIDDEN_TRANS_VERSION_COLUMN_ID == column_id || OB_HIDDEN_SQL_SEQUENCE_COLUMN_ID == column_id;
       if (OB_FAIL(ObTableParam::alloc_column(mem_ctx_.get_allocator(), column))) {
-        STORAGE_LOG(WARN, "fail to alloc column", K(ret));
+
       } else if (OB_FAIL(construct_column_param(column_id, column_schema, *column))) {
-        STORAGE_LOG(WARN, "fail to construct column param", K(ret), K(column_id), K(column_schema));
+
       } else if (OB_FAIL(tmp_cols.push_back(column))) {
-        STORAGE_LOG(WARN, "fail to push back column param", K(ret));
+
       } else if (OB_FAIL(tmp_cols_index.push_back(i))) {
-        STORAGE_LOG(WARN, "fail to push back col_index", K(ret), K(i));
+
       } else if (OB_FAIL(storage_schema->get_column_group_index(column_id, i /* real column idx */, cg_idx))) {
-        STORAGE_LOG(WARN, "fail to get column group idx", K(ret), K(i), K(column_id));
+
       } else if (OB_FAIL(tmp_cg_idxs.push_back(cg_idx))) {
         // even if rowkey cg contains all rowkey column, still need to get column from each cg
-        STORAGE_LOG(WARN, "fail to push back cg idx", KR(ret), K(cg_idx));
+
       }
     } // for
 
@@ -1034,11 +1034,11 @@ int ObCOTabletMergeCtx::mock_row_store_table_read_info()
           tmp_cols_index,
           tmp_cols,
           tmp_cg_idxs))) {
-      STORAGE_LOG(WARN, "fail to init table read info", K(ret), K(all_column_ids), K(tmp_cols_index), K(tmp_cols), K(tmp_cg_idxs));
+
     }
   }
 
-  LOG_INFO("[RowColSwitch] Generate read info for co merge", K(ret), K(mocked_row_store_table_read_info_));
+
   return ret;
 }
 
@@ -1120,7 +1120,7 @@ int ObCOTabletOutputMergeCtx::generate_macro_seq_info(
   if (OB_FAIL(task_ckp_mgr_.get_macro_start_seq(task_idx, macro_start_seq))) {
     LOG_WARN("failed to get macro seq", K(ret), K(task_idx));
   } else {
-    LOG_INFO("success to get macro start seq", KR(ret), K(task_idx), K(macro_start_seq));
+
   }
   return ret;
 }
@@ -1197,7 +1197,7 @@ int ObCOTabletValidateMergeCtx::create_sstables(const uint32_t start_cg_idx, con
         } else if (OB_FAIL(major_ckm_info_.init_from_merge_result(mem_ctx_.get_allocator(), *this, cg_schema, res))) {
           LOG_WARN("failed to init major ckm info", KR(ret));
         } else {
-          LOG_INFO("success to init major ckm info", K(ret), K(i), K(cg_schema));
+
         }
       }
     }

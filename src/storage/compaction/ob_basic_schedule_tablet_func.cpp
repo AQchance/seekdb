@@ -95,7 +95,7 @@ void ObBasicScheduleTabletFunc::schedule_freeze_dag(const bool force)
       LOG_WARN_RET(tmp_ret, "failed to schedule batch force freeze tablets dag", K(freeze_param_));
       // most tablets will clear failed since the capacity of ObTenantTabletStatMgr is limited
     } else {
-      LOG_INFO("success to schedule batch freeze dag", KR(tmp_ret), K_(freeze_param));
+
     }
     freeze_param_.clear_array();
   }
@@ -154,7 +154,7 @@ int ObBasicScheduleTabletFunc::check_with_schedule_scn(
   if (OB_SUCC(ret)) {
     ret = OB_E(EventTable::EN_COMPACTION_DIAGNOSE_CANNOT_MAJOR) OB_SUCCESS;
     if (OB_FAIL(ret)) {
-      STORAGE_LOG(INFO, "ERRSIM EN_COMPACTION_DIAGNOSE_CANNOT_MAJOR", K(ret));
+
       can_merge = false;
       ret = OB_SUCCESS;
     }

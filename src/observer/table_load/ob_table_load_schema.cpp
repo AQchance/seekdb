@@ -55,7 +55,7 @@ int ObTableLoadSchema::get_schema_guard(uint64_t tenant_id,
         LOG_WARN("fail to get schema version", KR(ret), K(tenant_id));
       } else if (tenant_schema_version < schema_version) {
         if (REACH_TIME_INTERVAL(10 * 1000 * 1000)) {
-          LOG_INFO("tenant schema not refreshed", K(schema_version), K(tenant_schema_version));
+
         }
         ob_usleep(retry_interval);
       } else {
@@ -233,7 +233,7 @@ int ObTableLoadSchema::get_column_ids(const ObTableSchema *table_schema,
   } else {
     ObArray<ObColDesc> column_descs;
     if (OB_FAIL(table_schema->get_column_ids(column_descs, true/*no_virtual*/))) {
-      STORAGE_LOG(WARN, "fail to get column descs", KR(ret), KPC(table_schema));
+
     }
     for (int64_t i = 0; OB_SUCC(ret) && i < column_descs.count(); ++i) {
       const ObColDesc &col_desc = column_descs.at(i);
@@ -607,7 +607,7 @@ int ObTableLoadSchema::init_lob_storage(const ObIArray<ObColDesc> &column_descs)
       }
     }
   }
-  LOG_INFO("ObTableLoadSchema::init_lob_storage", K(has_lob_rowkey_), K(lob_column_idxs_));
+
   return ret;
 }
 

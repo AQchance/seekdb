@@ -2935,7 +2935,7 @@ int ObTableSchema::add_partition_key_(ObColumnSchemaV2 &column)
   ObPartitionKeyColumn partition_key_column;
 
   if (column.is_part_key_column()) {
-    LOG_INFO("already partition key", K(column), KR(ret));
+
   } else if (FALSE_IT(construct_partition_key_column(column, partition_key_column))) {
   } else if (OB_FAIL(column.set_part_key_pos(partition_key_info_.get_size() + 1))) {
     LOG_WARN("Failed to set partition key position", KR(ret));
@@ -2957,7 +2957,7 @@ int ObTableSchema::add_subpartition_key(const common::ObString &column_name)
     ret = OB_ERR_BAD_FIELD_ERROR;
     LOG_WARN("fail to get column schema, return NULL", K(column_name), K(ret));
   } else if (column->is_subpart_key_column()) {
-    LOG_INFO("already partition key", K(column_name), K(ret));
+
   } else if (FALSE_IT(construct_partition_key_column(*column, partition_key_column))) {
   } else if (OB_FAIL(column->set_subpart_key_pos(subpartition_key_info_.get_size() + 1))) {
     LOG_WARN("Failed to set partition key position", K(ret));
@@ -3079,7 +3079,7 @@ int ObTableSchema::get_orig_default_row(const common::ObIArray<ObColDesc> &colum
           LOG_WARN("column must not null", K(ret), K(j), K(column_cnt_));
         } else if (column->get_column_id() == column_ids.at(i).col_id_) {
           if (OB_FAIL(default_row.storage_datums_[i].from_obj_enhance(column->get_orig_default_value()))) {
-            STORAGE_LOG(WARN, "Failed to transefer obj to datum", K(ret));
+
           } else {
             found = true;
           }
@@ -5044,7 +5044,7 @@ int ObTableSchema::check_alter_column_is_offline(const ObColumnSchemaV2 *src_col
     LOG_WARN("failed to check prohibition rules", K(ret));
   }
   // all alter skip_index operations are online ddl through progressive merge
-  LOG_DEBUG("check_alter_column_is_offline", K(ret), K(is_offline));
+
   return ret;
 }
 
@@ -5123,7 +5123,7 @@ int ObTableSchema::check_column_can_be_altered_offline(
     const ObAccuracy &src_accuracy = src_column->get_accuracy();
     const ObAccuracy &dst_accuracy = dst_column->get_accuracy();
     char err_msg[number::ObNumber::MAX_PRINTABLE_SIZE] = {0};
-    LOG_DEBUG("check column schema can be altered", KPC(src_column), KPC(dst_column));
+
     // oracle mode the column length of char semantics needs to be converted into the length of byte semantics for comparison
     if (OB_SUCC(ret) && is_oracle_mode
                 && src_column->get_meta_type().is_character_type()
@@ -5193,7 +5193,7 @@ int ObTableSchema::check_column_can_be_altered_online(
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("Only NORMAL table and INDEX table and SYSTEM table are allowed", K(ret));
   } else {
-    LOG_DEBUG("check column schema can be altered", KPC(src_schema), KPC(dst_schema));
+
     // Additional restriction for system table:
     // 1. Can't alter column name
     // 2. Can't alter column from "NULL" to "NOT NULL"
@@ -8886,7 +8886,7 @@ int ObTableSchema::init_column_meta_array(
   ObArray<ObColDesc> columns;
   ObSSTableColumnMeta col_meta;
   if (OB_FAIL(get_multi_version_column_descs(columns))) {
-    STORAGE_LOG(WARN, "fail to get store column ids", K(ret));
+
   } else {
     blocksstable::ObStorageDatum datum;
     for (int64_t i = 0; OB_SUCC(ret) && i < columns.count(); ++i) {
@@ -8901,26 +8901,26 @@ int ObTableSchema::init_column_meta_array(
         const ObColumnSchemaV2 *col_schema = get_column_schema(col_id);
         if (OB_ISNULL(col_schema)) {
           ret = OB_ERR_SYS;
-          STORAGE_LOG(ERROR, "col_schema must not null", K(ret), K(col_id));
+
         } else if (!col_schema->is_valid()) {
           ret = OB_ERR_SYS;
-          STORAGE_LOG(ERROR, "invalid col schema", K(ret), K(col_schema));
+
         } else if (!col_schema->is_column_stored_in_sstable()
                   && !is_storage_index_table()) {
           ret = OB_ERR_UNEXPECTED;
-          STORAGE_LOG(WARN, "virtual generated column should be filtered already", K(ret), K(col_schema));
+
         } else {
           if (ob_is_large_text(col_schema->get_data_type())) {
             col_meta.column_default_checksum_ = 0;
           } else if (OB_FAIL(datum.from_obj_enhance(col_schema->get_orig_default_value()))) {
-            STORAGE_LOG(WARN, "Failed to transefer obj to datum", K(ret));
+
           } else {
             col_meta.column_default_checksum_ = datum.checksum(0);
           }
         }
       }
       if (OB_SUCC(ret) && OB_FAIL(meta_array.push_back(col_meta))) {
-        STORAGE_LOG(WARN, "Fail to push column meta", K(ret));
+
       }
     } // end for
   }
@@ -9131,7 +9131,7 @@ int ObTableSchema::get_rowkey_doc_tid(uint64_t &index_table_id) const
   }
   if (OB_SUCC(ret) && OB_UNLIKELY(OB_INVALID_ID == index_table_id)) {
     ret = OB_ERR_INDEX_KEY_NOT_FOUND;
-    LOG_DEBUG("not found rowkey doc index", K(ret), K(simple_index_infos));
+
   }
   return ret;
 }
@@ -9152,7 +9152,7 @@ int ObTableSchema::get_rowkey_vid_tid(uint64_t &index_table_id) const
   }
   if (OB_SUCC(ret) && OB_UNLIKELY(OB_INVALID_ID == index_table_id)) {
     ret = OB_ERR_INDEX_KEY_NOT_FOUND;
-    LOG_DEBUG("not found rowkey vid index", K(ret), K(simple_index_infos));
+
   }
   return ret;
 }
@@ -9173,7 +9173,7 @@ int ObTableSchema::get_embedded_vec_tid(uint64_t &index_table_id) const
   }
   if (OB_SUCC(ret) && OB_UNLIKELY(OB_INVALID_ID == index_table_id)) {
     ret = OB_ERR_INDEX_KEY_NOT_FOUND;
-    LOG_DEBUG("not found rowkey vid index", K(ret), K(simple_index_infos));
+
   }
   return ret;
 }
@@ -9715,7 +9715,7 @@ int ObTableSchema::get_column_group_index(
       LOG_WARN("Unexpected, can not find cg idx", K(ret), K(column_id), K_(max_used_column_group_id));
     }
   }
-  LOG_TRACE("[CS-Replica] get column group index", K(ret), K(need_calculate_cg_idx), K(param), K(cg_idx), KPC(this));
+
   return ret;
 }
 

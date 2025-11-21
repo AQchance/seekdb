@@ -43,13 +43,13 @@ int ObDomainIdCmp::init(const ObObjMeta &obj_meta)
   int ret = OB_SUCCESS;
   if (OB_UNLIKELY(!obj_meta.is_valid())) {
     ret = OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN,"invalid argument", K(ret), K(obj_meta));
+
   } else {
     sql::ObExprBasicFuncs *id_basic_funcs = ObDatumFuncs::get_basic_func(
       obj_meta.get_type(), obj_meta.get_collation_type());
     if (OB_ISNULL(id_basic_funcs)) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN,"failed to get basic functions", K(ret), K(obj_meta));
+
     } else {
       cmp_func_ = id_basic_funcs->null_first_cmp_;
     }
@@ -66,11 +66,11 @@ int ObDomainIdCmp::compare(const ObDatum &lhs, const ObDatum &rhs, int &cmp_ret)
   const bool rmin = rhs.is_min();
   if (OB_UNLIKELY(nullptr == cmp_func_)) {
     ret = OB_NOT_INIT;
-    STORAGE_LOG(WARN,"not init", K(ret));
+
   } else if (lhs.is_ext() || rhs.is_ext()) {
     if (OB_UNLIKELY(!(lmax || lmin || rmax || rmin))) {
       ret = OB_ERR_UNEXPECTED;
-      STORAGE_LOG(WARN,"unexpected ext datum", K(ret), K(lhs), K(rhs));
+
     } else if (lmax || rmax) {
       cmp_ret = lmax - rmax;
     } else if (lmin || rmin) {

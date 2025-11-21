@@ -40,7 +40,7 @@ bool JoinHashTable::use_normalized_ht(JoinTableCtx &hjt_ctx)
       }
     }
   }
-  LOG_DEBUG("use norimalized hash table", K(ret));
+
 
   return ret;
 }
@@ -117,7 +117,7 @@ int JoinHashTable::build(JoinPartitionRowIter &iter, JoinTableCtx &ctx) {
             const_cast<ObHJStoredRow **>(ctx.stored_rows_), read_size, used_buckets, collisions))) {
       LOG_WARN("fail to insert batch", K(ret));
     }
-    LOG_DEBUG("build hash join table", K(read_size), K(ret));
+
   }
   hash_table_->set_diag_info(used_buckets, collisions);
 

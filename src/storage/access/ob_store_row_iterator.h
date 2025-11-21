@@ -204,10 +204,10 @@ public:
     count = 0;
     if (capacity <= 0) {
       ret = OB_INVALID_ARGUMENT;
-      STORAGE_LOG(WARN, "Invalid argument", K(ret), K(capacity));
+
     } else if (OB_FAIL(get_next_row(row))) {
       if (OB_UNLIKELY(OB_ITER_END != ret)) {
-        STORAGE_LOG(WARN, "fail to get next row", K(ret));
+
       }
     } else {
       count = 1;
@@ -365,7 +365,7 @@ void ObStoreRowIterPool<T>::inner_return_iter(T *iter, const uint32_t cg_idx)
   int ret = OB_SUCCESS;
   if (OB_ISNULL(iter)) {
     ret = OB_ERR_UNEXPECTED;
-    STORAGE_LOG(WARN, "iter is null", K(ret), K(iter));
+
   } else {
     TableTypedIters<T> *typed_iters = nullptr;
     for (int64_t i = 0; i < table_iters_array_.count(); ++i) {
@@ -378,22 +378,22 @@ void ObStoreRowIterPool<T>::inner_return_iter(T *iter, const uint32_t cg_idx)
       void *buf = nullptr;
       if (OB_ISNULL(buf = allocator_.alloc(sizeof(TableTypedIters<T>)))) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
-        STORAGE_LOG(WARN, "Failed to alloc memory", K(ret));
+
       } else if (FALSE_IT(typed_iters = new(buf) TableTypedIters<T>(typeid(*iter), cg_idx, allocator_))) {
       } else if (OB_FAIL(table_iters_array_.push_back(typed_iters))) {
-        STORAGE_LOG(WARN, "Failed to push back new typed_iters", K(ret), K(typeid(*iter).name()), K(*iter));
+
       }
     }
     if (OB_SUCC(ret)) {
       if (OB_ISNULL(typed_iters)) {
         ret = OB_ERR_UNEXPECTED;
-        STORAGE_LOG(WARN, "Unexpected null typed_iters", K(ret));
+
       } else if (OB_FAIL(typed_iters->iters_.push_back(iter))) {
-        STORAGE_LOG(WARN, "Failed to push back iter", K(ret), K(typeid(*iter).name()), K(*iter));
+
       }
     }
     if (OB_FAIL(ret)) {
-      STORAGE_LOG(ERROR, "Failed to return iter", K(ret), K(typeid(*iter).name()));
+
       iter->~T();
       allocator_.free(iter);
     }
@@ -410,7 +410,7 @@ int ObStoreRowIterPool<T>::get_iter(const std::type_info &type, T *&iter, const 
     if (OB_NOT_NULL(typed_iters) && typed_iters->is_type(type, cg_idx)) {
       if (typed_iters->iters_.count() > 0) {
         if (OB_FAIL(typed_iters->iters_.pop_back(iter))) {
-          STORAGE_LOG(WARN, "Failed to pop back", K(ret), K(typed_iters->iters_));
+
         }
       }
       break;
@@ -424,14 +424,14 @@ int ObStoreRowIterPool<T>::get_iter(const std::type_info &type, T *&iter, const 
 do {                                                                                           \
   if (NULL != ctx.get_stmt_iter_pool()) {                                                      \
     if (OB_FAIL(ctx.get_stmt_iter_pool()->get_iter(typeid(class), ptr))) {                     \
-      STORAGE_LOG(WARN, "Failed to get iter from pool", K(ret), K(ctx));                       \
+                       \
     }                                                                                          \
   }                                                                                            \
   void *buf = NULL;                                                                            \
   if (OB_SUCC(ret) && NULL == ptr) {                                                           \
     if (NULL == (buf = ctx.get_long_life_allocator()->alloc(sizeof(class)))) {                 \
       ret = OB_ALLOCATE_MEMORY_FAILED;                                                         \
-      STORAGE_LOG(WARN, "Fail to allocate memory", K(ret));                                    \
+                                    \
     } else {                                                                                   \
       ptr = new (buf) class();                                                                 \
     }                                                                                          \
@@ -449,14 +449,14 @@ do {                                                                            
 do {                                                                                           \
   if (NULL != ctx.cg_iter_pool_) {                                                             \
     if (OB_FAIL(ctx.cg_iter_pool_->get_iter(typeid(class), ptr, cg_idx))) {                    \
-      STORAGE_LOG(WARN, "Failed to get iter from pool", K(ret), K(ctx));                       \
+                       \
     }                                                                                          \
   }                                                                                            \
   void *buf = NULL;                                                                            \
   if (OB_SUCC(ret) && NULL == ptr) {                                                           \
     if (NULL == (buf = ctx.get_long_life_allocator()->alloc(sizeof(class)))) {                 \
       ret = OB_ALLOCATE_MEMORY_FAILED;                                                         \
-      STORAGE_LOG(WARN, "Fail to allocate memory", K(ret));                                    \
+                                    \
     } else {                                                                                   \
       ptr = new (buf) class();                                                                 \
     }                                                                                          \

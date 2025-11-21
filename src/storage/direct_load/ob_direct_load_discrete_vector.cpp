@@ -62,7 +62,7 @@ int ObDirectLoadDiscreteVector::_append_batch(const int64_t batch_idx, ObContinu
   char *buf = nullptr;
   if (OB_ISNULL(buf = alloc_buf(total_size))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to alloc buf", KR(ret), K(total_size));
+
   } else if (total_size == 0) {
     for (int64_t dest_idx = batch_idx; dest_idx < batch_idx + size; ++dest_idx) {
       lens_[dest_idx] = 0;
@@ -98,7 +98,7 @@ int ObDirectLoadDiscreteVector::_append_batch(const int64_t batch_idx, ObDiscret
   char *buf = nullptr;
   if (OB_ISNULL(buf = alloc_buf(total_size))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to alloc buf", KR(ret), K(total_size));
+
   } else if (total_size == 0) {
     for (int64_t dest_idx = batch_idx; dest_idx < batch_idx + size; ++dest_idx) {
       ptrs_[dest_idx] = buf;
@@ -128,7 +128,7 @@ int ObDirectLoadDiscreteVector::_append_batch<false>(const int64_t batch_idx, co
   char *buf = nullptr;
   if (OB_ISNULL(buf = alloc_buf(total_size))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(INFO, "fail to alloc buf", KR(ret), K(total_size));
+
   } else {
     for (int64_t src_idx = offset, dest_idx = batch_idx; src_idx < offset + size;
          ++src_idx, ++dest_idx) {
@@ -152,7 +152,7 @@ int ObDirectLoadDiscreteVector::_append_batch<true>(const int64_t batch_idx, con
   char *buf = nullptr;
   if (OB_ISNULL(buf = alloc_buf(datum.len_))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(INFO, "fail to alloc buf", KR(ret), K(datum.len_));
+
   } else {
     MEMCPY(buf, datum.ptr_, datum.len_);
     for (int64_t dest_idx = batch_idx; dest_idx < batch_idx + size; ++dest_idx) {
@@ -182,7 +182,7 @@ inline int ObDirectLoadDiscreteVector::_append_selective(const int64_t batch_idx
   char *buf = nullptr;
   if (OB_ISNULL(buf = alloc_buf(total_size))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to alloc buf", KR(ret), K(total_size));
+
   } else if (total_size == 0) {
     for (int64_t dest_idx = batch_idx; dest_idx < batch_idx + size; ++dest_idx) {
       lens_[dest_idx] = 0;
@@ -219,7 +219,7 @@ inline int ObDirectLoadDiscreteVector::_append_selective(const int64_t batch_idx
   char *buf = nullptr;
   if (OB_ISNULL(buf = alloc_buf(total_size))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to alloc buf", KR(ret), K(total_size));
+
   } else if (total_size == 0) {
     for (int64_t dest_idx = batch_idx; dest_idx < batch_idx + size; ++dest_idx) {
       lens_[dest_idx] = 0;
@@ -254,7 +254,7 @@ inline int ObDirectLoadDiscreteVector::_append_selective<false>(const int64_t ba
   char *buf = nullptr;
   if (OB_ISNULL(buf = alloc_buf(total_size))) {
     ret = OB_ALLOCATE_MEMORY_FAILED;
-    STORAGE_LOG(WARN, "fail to alloc buf", KR(ret), K(total_size));
+
   } else if (total_size == 0) {
     for (int64_t dest_idx = batch_idx; dest_idx < batch_idx + size; ++dest_idx) {
       lens_[dest_idx] = 0;

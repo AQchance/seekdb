@@ -405,7 +405,7 @@ int ObDBMSLimitCalculator::get_server_resource_info_(
         } else if (OB_FAIL(resource_res.push_back(*res))) {
           LOG_WARN("failed to push back", KR(ret), KPC(res));
         } else {
-          LOG_INFO("success to get server resource", KPC(res));
+
         }
       }
     }

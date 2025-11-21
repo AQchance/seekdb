@@ -219,7 +219,7 @@ int ObBackupLinkedBlockReader::decode_linked_header_(blocksstable::ObBufferReade
     LOG_WARN("linked header is not valid", K(ret), KPC(linked_header));
   } else {
     linked_header_ = *linked_header;
-    LOG_INFO("decode linked header", K(linked_header_));
+
   }
   return ret;
 }
@@ -300,7 +300,7 @@ int ObBackupLinkedBlockItemReader::check_need_fetch_new_block_(bool &need_fetch_
   } else {
     need_fetch_new = false;
   }
-  LOG_INFO("need fetch new", K(need_fetch_new), K_(item_idx), K_(has_prev));
+
   return ret;
 }
 
@@ -344,7 +344,7 @@ int ObBackupLinkedBlockItemReader::parse_item_list_(
       cur_item_count++;
     }
   }
-  LOG_INFO("parse item list", K(item_count), K(cur_item_count), K_(read_block_count), K(buffer_reader));
+
   return ret;
 }
 

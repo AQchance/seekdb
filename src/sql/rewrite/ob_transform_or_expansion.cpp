@@ -69,9 +69,9 @@ int ObTransformOrExpansion::transform_one_stmt_with_outline(ObIArray<ObParentDML
     LOG_WARN("failed to transform one stmt for or expansion", K(ret));
   } else if (trans_happened) {
     ++ctx_->trans_list_loc_;
-    LOG_TRACE("succeed to do or expansion with outline", K(ctx_->src_qb_name_));
+
   } else {
-    LOG_TRACE("can not do or expansion with outline", K(ctx_->src_qb_name_));
+
   }
   return ret;
 }
@@ -187,7 +187,7 @@ int ObTransformOrExpansion::transform_in_where_conditon(ObIArray<ObParentDMLStmt
         LOG_WARN("failed to finish try trans helper", K(ret));
       } else {
         ++try_times_;
-        LOG_TRACE("transform or expansion in where conds", K(trans_happened));
+
       }
     }
     if (OB_FAIL(ret)) {
@@ -295,7 +295,7 @@ int ObTransformOrExpansion::transform_in_semi_info(ObIArray<ObParentDMLStmt> &pa
             LOG_WARN("failed to finish try trans helper", K(ret));
           } else {
             ++try_times_;
-            LOG_TRACE("transform or expansion in semi info", K(trans_happened), K(i), K(*semi_info));
+
           }
         }
       }
@@ -472,7 +472,7 @@ int ObTransformOrExpansion::try_do_transform_inner_join(ObIArray<ObParentDMLStmt
         LOG_WARN("failed to finish try trans helper", K(ret));
       } else {
         ++try_times_;
-        LOG_TRACE("transform or expansion in inner join", K(trans_happened), K(i), K(*conds.at(i)));
+
       }
     }
     if (OB_FAIL(ret)) {
@@ -607,7 +607,7 @@ int ObTransformOrExpansion::try_do_transform_left_join(ObIArray<ObParentDMLStmt>
         LOG_WARN("failed to finish try trans helper", K(ret));
       } else {
         ++try_times_;
-        LOG_TRACE("transform or expansion in left join", K(trans_happened), K(i), K(*joined_table));
+
       }
     }
     if (OB_FAIL(ret)) {
@@ -1197,7 +1197,7 @@ int ObTransformOrExpansion::check_basic_validity(const ObDMLStmt &stmt, bool &is
   if (reached_max_times_for_or_expansion()) {
     is_valid = false;
     OPT_TRACE("retry count reached max times:", try_times_);
-    LOG_TRACE("reached max times for or expansion.", K(is_valid));
+
   } else if (stmt.is_set_stmt()
              || stmt.get_from_item_size() == 0
              || !stmt.is_sel_del_upd()) {
@@ -2113,7 +2113,7 @@ int ObTransformOrExpansion::is_condition_valid(const ObDMLStmt *stmt,
     }
   } else if (INVALID_OR_EXPAND_TYPE != trans_info.or_expand_type_) {
     /*do nothing*/
-    LOG_TRACE("valid topk condition", K(*expr), K(trans_info));
+
   } else if (T_OP_OR != expr->get_expr_type()) {
     /*do nothing*/
   } else if (using_same_cols && !expr->has_flag(CNT_SUB_QUERY)) {
@@ -2620,7 +2620,7 @@ int ObTransformOrExpansion::is_valid_semi_anti_cond(const ObDMLStmt *stmt,
       }
       if (OB_SUCC(ret) && check_status) {
         trans_type = OR_EXPAND_JOIN;
-        LOG_TRACE("get valid semi anti cond",  K(semi_info->is_anti_join()), K(*expr));
+
       }
     }
   }
@@ -2926,7 +2926,7 @@ int ObTransformOrExpansion::is_expected_multi_index_plan(ObLogicalOperator* op,
         LOG_WARN("failed to get candi match index exprs", K(ret));
       } else if (candi_exprs.empty()) {
         is_valid = false;
-        LOG_TRACE("expr is not candi match index expr", K(*ctx.expand_exprs_.at(i)));
+
       } else if (OB_FAIL(ObOptimizerUtil::intersect_exprs(candi_exprs, 
                                                           range_exprs, 
                                                           deduced_index_expr_equal_sets, 
@@ -2937,7 +2937,7 @@ int ObTransformOrExpansion::is_expected_multi_index_plan(ObLogicalOperator* op,
       }
     }
   }
-  LOG_TRACE("is expand exprs match range exprs", K(range_exprs), K(ctx.expand_exprs_), K(is_valid));
+
   return ret;
 }
 
@@ -3211,7 +3211,7 @@ int ObTransformOrExpansion::classify_or_expr(const ObDMLStmt &stmt, ObRawExpr *&
         }
       }
     }
-    LOG_DEBUG("or expr after classify", KPC(expr));
+
   }
   return ret;
 }

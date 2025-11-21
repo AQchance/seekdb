@@ -201,7 +201,7 @@ int ObAggCellVec::eval(
       LOG_WARN("Failed to add one row in aggregate", K(ret), K_(agg_idx), K(datum), KP(agg_cell));
     }
   }
-  LOG_DEBUG("[PD_AGGREGATE] aggregate one row", K(ret), K(datum), K(row_count), K(agg_row_idx), KPC(this));
+
   return ret;
 }
 
@@ -283,7 +283,7 @@ int ObAggCellVec::eval_index_info(
       LOG_WARN("Failed to eval skip index datum", K(ret), K_(skip_index_datum));
     }
   }
-  LOG_DEBUG("[PD_AGGREGATE] aggregate index info", K(ret), K_(skip_index_datum), K(is_cg), K(agg_row_idx), KPC(this));
+
   return ret;
 }
 
@@ -382,7 +382,7 @@ int ObAggCellVec::fill_output_expr_if_need(
       }
     }
   }
-  LOG_DEBUG("check need fill output expr", K(output_expr), K(group_by_col_expr), KPC(this));
+
   return ret;
 }
 
@@ -404,7 +404,7 @@ int ObAggCellVec::copy_output_rows(const int32_t start_offset, const int32_t end
                                              end_offset - start_offset))) {
     LOG_WARN("Failed to collect result", K(ret), K(start_offset), K(end_offset));
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN] copy rows in group by pushdown", K(ret), K(start_offset), K(end_offset), KPC(this)); 
+ 
   return ret;
 }
 
@@ -513,7 +513,7 @@ int ObAggCellVec::get_def_datum(const blocksstable::ObStorageDatum *&default_dat
     const ObObj &def_cell = basic_info_.col_param_->get_orig_default_value();
     if (!def_cell.is_nop_value()) {
       if (OB_FAIL(default_datum_.from_obj_enhance(def_cell))) {
-        STORAGE_LOG(WARN, "Failed to transfer obj to datum", K(ret));
+
       } else if (def_cell.is_lob_storage() && !def_cell.is_null()) {
         // lob def value must have no lob header when not null, should add lob header for default value
         ObString data = default_datum_.get_string();
@@ -839,7 +839,7 @@ int ObCountAggCellVec::copy_output_rows(const int32_t start_offset, const int32_
       agg_expr->get_vector(eval_ctx)->set_int(i, 1);
     }
   }
-  LOG_DEBUG("[GROUP BY PUSHDOWN] copy rows in group by pushdown", K(ret), K(start_offset), K(end_offset), KPC(this));
+
   return ret;
 }
 
@@ -980,7 +980,7 @@ int ObSumAggCellVec::eval_index_info(
       LOG_WARN("Failed to eval skip index datum", K(ret), K_(skip_index_datum));
     }
   }
-  LOG_DEBUG("[PD_AGGREGATE] aggregate index info", K(ret), KPC(eval_datum), K(is_cg), K(agg_row_idx), KPC(this));
+
   return ret;
 }
 
@@ -1436,7 +1436,7 @@ int ObGroupByCellVec::init(const ObTableAccessParam &param, const ObTableAccessC
     null_datum.set_null();
     for (int64_t i = 0; OB_SUCC(ret) && i < param.output_exprs_->count(); ++i) {
       if (T_PSEUDO_GROUP_ID == param.output_exprs_->at(i)->type_) {
-        LOG_TRACE("Group by pushdown in batch nlj", K(ret));
+
         continue;
       } else if (nullptr == param.output_sel_mask_ || param.output_sel_mask_->at(i)) {
         int32_t col_offset = param.iter_param_.out_cols_project_->at(i);
@@ -1604,7 +1604,7 @@ int ObGroupByCellVec::extract_distinct()
 
       }
     }
-    LOG_DEBUG("[GROUP BY PUSHDOWN] extract distinct", K(ret), K(ref_cnt_), K(distinct_cnt_));
+
   }
   return ret;
 }
@@ -1675,7 +1675,7 @@ int ObGroupByCellVec::output_extra_group_by_result(int64_t &count, const ObTable
         ret = OB_ITER_END;
       }
     }
-    LOG_DEBUG("[GROUP BY PUSHDOWN] output group by result", K(ret), K(format), K(count), K_(projected_cnt), K_(distinct_cnt));
+
   }
   return ret;
 }

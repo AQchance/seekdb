@@ -156,19 +156,19 @@ int ObAddWord::process_word(
     LOG_WARN("invalid arguments", K(ret), KP(word), K(word_len), K(char_cnt), K(word_freq));
   } else if (is_min_max_word(char_cnt)) {
     ++min_max_word_cnt_;
-    LOG_DEBUG("skip too small or large word", K(ret), K(src_word), K(char_cnt));
+
   } else if (OB_FAIL(casedown_word(src_word, dst_word))) {
     LOG_WARN("fail to casedown word", K(ret), K(src_word));
   } else if (OB_FAIL(check_stopword(dst_word, is_stopword))) {
     LOG_WARN("fail to check stopword", K(ret), K(dst_word));
   } else if (OB_UNLIKELY(is_stopword)) {
     ++stopword_cnt_;
-    LOG_DEBUG("skip stopword", K(ret), K(dst_word));
+
   } else if (OB_FAIL(groupby_word(dst_word, word_freq))) {
     LOG_WARN("fail to groupby word into word map", K(ret), K(dst_word), K(word_freq));
   } else {
     non_stopword_cnt_ += word_freq;
-    LOG_DEBUG("add word", K(ret), KP(word), K(word_len), K(char_cnt), K(word_freq), K(src_word), K(dst_word));
+
   }
   return ret;
 }

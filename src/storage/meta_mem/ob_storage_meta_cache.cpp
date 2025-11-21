@@ -240,7 +240,7 @@ int ObStorageMetaValue::process_sstable(
     if (OB_FAIL(OB_STORE_CACHE.get_storage_meta_cache().put_and_fetch(key, value, cache_value->value_, cache_value->cache_handle_))) {
       LOG_WARN("fail to put and fetch value into storage meta cache", K(ret), K(key), K(value), K(cache_value));
     } else {
-      LOG_DEBUG("succeed to process sstable", K(ret), K(value), KPC(cache_value));
+
     }
   }
   if (OB_NOT_NULL(tiny_meta)) {
@@ -625,7 +625,7 @@ int ObStorageMetaCache::prefetch(
     ObStorageMetaIOCallback *callback = nullptr;
     if (OB_ISNULL(buf = io_allocator.alloc(sizeof(ObStorageMetaIOCallback)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "allocate callback memory failed", K(ret));
+
     } else {
       callback = new (buf) ObStorageMetaIOCallback(&io_allocator,
                                                    type,
@@ -663,7 +663,7 @@ int ObStorageMetaCache::get_meta_and_bypass_cache(
     ObStorageMetaIOCallback *callback = nullptr;
     if (OB_ISNULL(buf = io_allocator.alloc(sizeof(ObStorageMetaIOCallback)))) {
       ret = OB_ALLOCATE_MEMORY_FAILED;
-      STORAGE_LOG(WARN, "allocate callback memory failed", K(ret));
+
     } else {
       callback = new (buf) ObStorageMetaIOCallback(&io_allocator,
                                                    type,

@@ -89,7 +89,7 @@ int ObExprSubQueryRef::ExtraInfo::init_cursor_info(ObIAllocator *allocator,
     }
     if (OB_SUCC(ret)) {
       rt_expr.extra_info_ = cursor_info;
-      LOG_DEBUG("succ init_cursor_info", KPC(cursor_info));
+
     }
   }
   return ret;

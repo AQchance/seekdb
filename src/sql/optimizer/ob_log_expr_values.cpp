@@ -103,7 +103,7 @@ int ObLogExprValues::add_values_expr(const common::ObIArray<ObRawExpr *> &value_
     } else if (OB_FAIL(value_exprs_.push_back(stmt_id_expr))) {
       LOG_WARN("fail to push stmt_id_expr", K(ret));
     } else {
-      LOG_TRACE("print after add_values_expr", K(get_stmt()->get_query_ctx()->ab_param_exprs_), K(stmt_id_expr));
+
     }
   }
   return ret;

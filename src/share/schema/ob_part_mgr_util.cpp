@@ -51,7 +51,7 @@ int ObPartGetter::get_part_ids(const common::ObString &part_name,
         LOG_WARN("get null partition", K(ret));
       } else {
         cmp_part_name = part->get_part_name();
-        LOG_DEBUG("cmp part name", K(cmp_part_name));
+
         if (ObCharset::case_insensitive_equal(part_name, cmp_part_name)) {
           // match level one part
           find = true;
@@ -141,7 +141,7 @@ int ObPartGetter::get_subpart_ids_in_partition(const common::ObString &part_name
       LOG_WARN("get null subpartition", K(ret));
     } else {
       cmp_part_name = subpart->get_part_name();
-      LOG_DEBUG("cmp part name", K(cmp_part_name));
+
       if (ObCharset::case_insensitive_equal(part_name, cmp_part_name)) {
         if (OB_FAIL(part_ids.push_back(subpart->get_sub_part_id()))) {
           LOG_WARN("failed to push back subpart id", K(ret));

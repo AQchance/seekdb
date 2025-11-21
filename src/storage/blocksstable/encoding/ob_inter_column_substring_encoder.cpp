@@ -132,7 +132,7 @@ int64_t ObInterColSubStrEncoder::is_substring(const ObDatum &cell, const ObDatum
     start_pos = EXCEPTION_START_POS;
   }
 
-  LOG_DEBUG("start pos", K(start_pos), KP(found), K(cell.len_));
+
   return start_pos;
 }
 
@@ -319,7 +319,7 @@ int ObInterColSubStrEncoder::store_meta(ObBufferWriter &buf_writer)
         LOG_WARN("write meta failed", K(ret), KP(buf));
       }
     }
-    LOG_DEBUG("meta_header", K(*meta_header));
+
   }
   return ret;
 }

@@ -60,7 +60,7 @@ int ObInitSqcP::process()
 {
   GET_DIAGNOSTIC_INFO->get_ash_stat().in_px_execution_ = true;
   int ret = OB_SUCCESS;
-  LOG_TRACE("receive dfo", K_(arg));
+
   ObPxSqcHandler *sqc_handler = arg_.sqc_handler_;
   result_.sqc_order_gi_tasks_ = true;
   /**
@@ -222,7 +222,7 @@ int ObInitSqcP::after_process(int error_code)
     /**
      * Get the local thread according to arg_ parameter and execute task
      */
-    LOG_TRACE("process dfo", K(arg), K(session->get_compatibility_mode()), K(sqc_handler->get_reserved_px_thread_count()));
+
     ret = startup_normal_sqc(*sqc_handler);
     session->set_session_sleep();
   }
@@ -383,7 +383,7 @@ int ObInitFastSqcP::process()
 {
   GET_DIAGNOSTIC_INFO->get_ash_stat().in_sql_execution_ = true;
   int ret = OB_SUCCESS;
-  LOG_TRACE("receive dfo", K_(arg));
+
   ObPxSqcHandler *sqc_handler = arg_.sqc_handler_;
   ObSQLSessionInfo *session = nullptr;
   if (OB_ISNULL(sqc_handler)) {
@@ -636,7 +636,7 @@ int ObPxTenantTargetMonitorP::process()
         if ((tem_ret = OB_PX_TARGET_MGR.reset_leader_statistics(tenant_id)) != OB_SUCCESS) {
           LOG_ERROR("reset statistics failed", K(tem_ret), K(tenant_id), K(leader_version));
         } else {
-          LOG_INFO("reset statistics succeed", K(tenant_id), K(leader_version));
+
         }
       } else {
         ObPxGlobalResGather gather(result_);
@@ -669,7 +669,7 @@ int ObPxCleanDtlIntermResP::process()
             info.ch_total_info_, ch_set))) {
         LOG_WARN("get receive dtl channel set failed", K(ret));
       } else {
-        LOG_TRACE("ObPxCleanDtlIntermResP process", K(i), K(arg_.batch_size_), K(info), K(task_id), K(ch_set));
+
         for (int64_t ch_idx = 0; ch_idx < ch_set.count(); ch_idx++) {
           key.channel_id_ = ch_set.get_ch_info_set().at(ch_idx).chid_;
           for (int64_t batch_id = 0; batch_id < batch_size && OB_SUCC(ret); batch_id++) {

@@ -277,7 +277,7 @@ int ObSequenceMgr::add_sequence(const ObSequenceSchema &sequence_schema)
     if (OB_FAIL(sequence_map_.set_refactored(hash_wrapper, new_sequence_schema, overwrite))) {
       LOG_WARN("build sequence hash map failed", K(ret));
     } else {
-      LOG_INFO("add new sequence to sequence map", K(*new_sequence_schema));
+
     }
   }
   if (sequence_infos_.count() != sequence_map_.item_count()) {

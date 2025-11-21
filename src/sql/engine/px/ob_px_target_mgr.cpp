@@ -50,7 +50,7 @@ int ObPxTargetMgr::init(const common::ObAddr &server,
     server_ = server;
     server_tracer_ = &server_tracer;
     is_inited_ = true;
-    LOG_INFO("ObPxTargetMgr inited success", K(server_));
+
   }
   return ret;
 }
@@ -63,7 +63,7 @@ void ObPxTargetMgr::reset()
   server_tracer_ = NULL;
   px_info_map_.reset();
   alive_server_set_.clear();
-  LOG_INFO("ObPxTargetMgr reset success", K(server_));
+
 }
 
 int ObPxTargetMgr::start()
@@ -82,7 +82,7 @@ int ObPxTargetMgr::start()
     LOG_WARN("PX global resource manager refresh worker timer schdule error", K(ret));
   } else {
     is_running_ = true;
-    LOG_INFO("ObPxTargetMgr start success");
+
   }
   return ret;
 }
@@ -96,7 +96,7 @@ void ObPxTargetMgr::stop()
   } else {
     TG_STOP(lib::TGDefIDs::PxTargetMgr);
     is_running_ = false;
-    LOG_INFO("ObPxTargetMgr stop success");
+
   }
 }
 
@@ -111,7 +111,7 @@ void ObPxTargetMgr::wait()
     LOG_WARN("ObPxTargetMgr is running", K(ret));
   } else {
     TG_WAIT(lib::TGDefIDs::PxTargetMgr);
-    LOG_INFO("ObPxTargetMgr wait success");
+
   }
 }
 
@@ -123,7 +123,7 @@ void ObPxTargetMgr::destroy()
       wait();
     }
     is_inited_ = false;
-    LOG_INFO("ObPxTargetMgr destroyed");
+
   }
 }
 
@@ -148,7 +148,7 @@ void ObPxTargetMgr::run_timer_task()
       } else if (!alive) {
         // TODO: it's not very good, maybe not all tenant in this server
         px_res_refresh_funtor.set_need_refresh_all(true);
-        LOG_INFO("found a server is not longer alive, so refresh all", K(it->first));
+
       }
     }
     if (px_res_refresh_funtor.need_refresh_all_) {
@@ -191,7 +191,7 @@ int ObPxTargetMgr::add_tenant(const uint64_t tenant_id)
             LOG_WARN("wait queue hashmap insert failed", K(ret), K(tenant_id), KP(px_res_info));
           } else {
             px_info_map_.revert(px_res_info);
-            LOG_INFO("px res info add tenant success", K(tenant_id), K(server_), K(timeguard), K(lbt()));
+
           }
         }
         if (OB_FAIL(ret)) {
@@ -226,7 +226,7 @@ int ObPxTargetMgr::delete_tenant(const uint64_t tenant_id)
   }
 
   if (OB_SUCCESS == ret) {
-    LOG_INFO("delete tenant success", K(tenant_id));
+
   } else {
     LOG_WARN("delete tenant failed", K(ret), K(tenant_id));
   }

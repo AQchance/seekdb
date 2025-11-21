@@ -195,7 +195,7 @@ int ObCreateTableResolver::set_temp_table_info(ObTableSchema &table_schema, Pars
 
     table_schema.set_sess_active_time(ObTimeUtility::current_time());
   }
-  LOG_DEBUG("resolve create temp table", K(session_info_->is_obproxy_mode()), K(*session_info_), K(table_schema));
+
   return ret;
 }
 
@@ -1360,7 +1360,7 @@ int ObCreateTableResolver::resolve_table_elements(const ParseNode *node,
 
           if (OB_SUCC(ret)) {
             ObColumnSchemaV2 *tmp_col = NULL;
-            LOG_DEBUG("resolve table elements mid2", K(i), K(column));
+
             if (OB_FAIL(table_schema.add_column(column))) {
               SQL_RESV_LOG(WARN, "add column schema failed", K(ret), K(column), K(table_schema));
             } else if (OB_ISNULL(tmp_col = table_schema.get_column_schema(column.get_column_id()))) {
@@ -1544,7 +1544,7 @@ int ObCreateTableResolver::resolve_table_elements(const ParseNode *node,
         SQL_RESV_LOG(WARN, "resolve_primary_key_node_in_heap_table failed", K(ret));
       }
     }
-    LOG_DEBUG("resolve table elements end ", K(resolve_rule), K(table_schema));
+
   }
   return ret;
 }
@@ -1595,7 +1595,7 @@ int ObCreateTableResolver::set_nullable_for_cta_column(ObSelectStmt *select_stmt
       LOG_WARN("failed to check expr not null", K(ret));
     }
   }
-  LOG_DEBUG("set nullable_for_cta_column", K(is_not_null), K(column));
+
   if (OB_SUCC(ret)) {
     if (expr->is_win_func_expr()) {//compatible with mysql
       const ObWinFunRawExpr *win_expr = reinterpret_cast<const ObWinFunRawExpr*>(expr);
@@ -1684,7 +1684,7 @@ int ObCreateTableResolver::resolve_table_elements_from_select(const ParseNode &p
     select_stmt = select_resolver.get_select_stmt();
     ObTableSchema &table_schema = create_table_stmt->get_create_table_arg().schema_;
     table_schema.set_tenant_id(session_info_->get_effective_tenant_id());
-    LOG_DEBUG("resolve table select item begin", K(table_schema));
+
     if (OB_ISNULL(select_stmt)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("invalid select stmt", K(select_stmt));
@@ -1813,14 +1813,14 @@ int ObCreateTableResolver::resolve_table_elements_from_select(const ParseNode &p
               column.set_geo_type(static_cast<uint64_t>(expr->get_geo_expr_result_type()));
             }
             OZ (adjust_string_column_length_within_max(column, false));
-            LOG_DEBUG("column expr debug", K(*expr));
+
           }
           if (OB_FAIL(ret)) { // do nothing.
           //create_table_column_count > 0  means the format of ctas is "create table t(c1, c2,...) as select"
           // During the first step of resolving ctas, column schemas of (c1, c2, ...) are
           // generated and added into table_schema.
           } else {
-            LOG_DEBUG("ctas mysql mode, create_table_column_count = 0,begin", K(create_table_column_count), K(column));
+
             column.set_column_id(gen_column_id());
             ObColumnSchemaV2 *org_column = table_schema.get_column_schema(column.get_column_name());
             if (OB_NOT_NULL(org_column)) {
@@ -1858,7 +1858,7 @@ int ObCreateTableResolver::resolve_table_elements_from_select(const ParseNode &p
               } else if (OB_FAIL(table_schema.add_column(new_column))) {
                 LOG_WARN("add column failed", K(ret), K(new_column));
               } else {
-                LOG_DEBUG("reorder column successfully", K(new_column));
+
               }
             } else {
               if (OB_FAIL(set_nullable_for_cta_column(select_stmt, column, expr, table_name_, *allocator_, stmt_))) {
@@ -1889,7 +1889,7 @@ int ObCreateTableResolver::resolve_table_elements_from_select(const ParseNode &p
                 }
               }
             }
-            LOG_DEBUG("ctas mysql mode, create_table_column_count = 0,end", K(column));
+
           }
         }
       }

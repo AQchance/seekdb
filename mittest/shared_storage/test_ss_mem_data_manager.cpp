@@ -133,7 +133,7 @@ public:
                 LOG_WARN("fail to try free", KR(ret), K(i));
               } else if (succ_free) {
                 ATOMIC_AAF(&total_free_bg_cnt_, 1);
-                LOG_INFO("succ free bg_mem_block", K(idx), K(i), K_(total_free_bg_cnt));
+
               }
             }
           }
@@ -155,7 +155,7 @@ public:
             if (OB_FAIL(mem_data_mgr_->add_into_sealed_block_list(mem_handle))) {
               LOG_WARN("fail to add into sealed block list", KR(ret), K(j), K(is_fg), K(mem_handle));
             } else {
-              LOG_INFO("succ alloc mem_block", K(j), K(is_fg), K(mem_handle.get_ptr()->is_completed()));
+
               usleep(interval_us);
             }
           }

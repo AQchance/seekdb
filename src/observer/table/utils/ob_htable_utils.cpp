@@ -40,7 +40,7 @@ ObString ObHTableCellEntity::get_rowkey() const
 {
   ObString rowkey_str;
   if (OB_ISNULL(ob_row_)) {
-    LOG_INFO("get_rowkey but ob_row is null", K(ob_row_));
+
     rowkey_str = NULL;
   } else {
     rowkey_str = ob_row_->get_cell(ObHTableConstants::COL_IDX_K).get_varchar();
@@ -84,7 +84,7 @@ ObString ObHTableCellEntity::get_qualifier() const
 {
   ObString qualifier_str;
   if (OB_ISNULL(ob_row_)) {
-    LOG_INFO("get_qualifier but ob_row is null", K(ob_row_));
+
   } else {
     qualifier_str = ob_row_->get_cell(ObHTableConstants::COL_IDX_Q).get_varchar();
   }
@@ -95,7 +95,7 @@ int64_t ObHTableCellEntity::get_timestamp() const
 {
   int64_t timestamp = 0;
   if (OB_ISNULL(ob_row_)) {
-    LOG_INFO("get_timestamp but ob_row is null", K(ob_row_));
+
   } else {
     timestamp = ob_row_->get_cell(ObHTableConstants::COL_IDX_T).get_int();
   }
@@ -106,7 +106,7 @@ ObString ObHTableCellEntity::get_value() const
 {
   ObString value_str;
   if (OB_ISNULL(ob_row_)) {
-    LOG_INFO("get_value but ob_row is null", K(ob_row_));
+
   } else {
     value_str = ob_row_->get_cell(ObHTableConstants::COL_IDX_V).get_varchar();
   }

@@ -93,7 +93,7 @@ int ObLogDistinct::est_width()
     LOG_WARN("failed to estimate width for output distinct exprs", K(ret));
   } else {
     set_width(width);
-    LOG_TRACE("est width for distinct", K(output_exprs), K(width));
+
   }
   return ret;
 }

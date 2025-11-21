@@ -380,7 +380,7 @@ int ObOptStatManager::erase_column_stat(const ObOptColumnStat::Key &key)
       LOG_WARN("failed to erase column stat", K(ret));
     } else {
       ret = OB_SUCCESS;
-      LOG_TRACE("failed to erase column stat", K(key));
+
     }
   }
   return ret;
@@ -393,7 +393,7 @@ int ObOptStatManager::erase_table_stat(const ObOptTableStat::Key &key)
     if (OB_ENTRY_NOT_EXIST != ret) {
       LOG_WARN("failed to erase table stat", K(ret));
     } else {
-      LOG_TRACE("erase table stat failed", K(key));
+
       ret = OB_SUCCESS;
     }
   }
@@ -475,7 +475,7 @@ int ObOptStatManager::handle_refresh_system_stat_task(const obrpc::ObUpdateStatC
       LOG_WARN("failed to erase system stat", K(ret));
     } else {
       ret = OB_SUCCESS;
-      LOG_TRACE("failed to erase system stat", K(key));
+
     }
   }
   if (OB_SUCC(ret)) {
@@ -970,7 +970,7 @@ int ObOptStatManager::get_ds_stat(const ObOptDSStat::Key &key,
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get unexpected null", K(ret), K(ds_stat_handle.stat_));
   } else {
-    LOG_TRACE("succeed to get ds stat", KPC(ds_stat_handle.stat_));
+
   }
   return ret;
 }

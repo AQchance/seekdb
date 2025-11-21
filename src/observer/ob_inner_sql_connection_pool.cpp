@@ -461,7 +461,7 @@ int ObInnerSQLConnectionPool::on_client_inactive(ObISQLClient *client_addr)
     }
   }
   if (cnt > 0) {
-    LOG_INFO("kill inner query", K(ret), K(cnt));
+
   }
   return ret;
 }

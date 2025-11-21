@@ -196,14 +196,14 @@ int ObDDLReplicaBuildExecutor::build(const ObDDLReplicaBuildExecutorParam &param
   //   table_id_buffer);
 
   if (OB_SUCC(ret)) {
-    LOG_INFO("start to schedule task", K(src_tablet_ids_.count()), "ddl_event_info", ObDDLEventInfo());
+
     if (OB_FAIL(schedule_task())) {
       LOG_WARN("fail to schedule tasks", K(ret));
     } else {
-      LOG_INFO("start to schedule task", K(param.source_tablet_ids_));
+
     }
   } else {
-    LOG_INFO("fail to build single replica task", K(ret), "ddl_event_info", ObDDLEventInfo());
+
   }
   return ret;
 }
@@ -255,7 +255,7 @@ int ObDDLReplicaBuildExecutor::schedule_task()
         LOG_WARN("failed to send rpc", K(ret), K(addr), K(rpc_timeout),
             K(args.at(i)));
       } else {
-        LOG_INFO("send build single replica request", K(addr), K(args.at(i)));
+
       }
     }
     int tmp_ret = OB_SUCCESS;
@@ -325,7 +325,7 @@ int ObDDLReplicaBuildExecutor::check_build_end(const bool need_checksum, bool &i
         LOG_WARN("failed to check need schedule", K(ret));
       } else if (need_schedule) {
         ++reschedule_cnt;
-        LOG_INFO("replica build need reschedule", K(replica_build_ctx));
+
       } else { // rpc requested, waiting for report
         ++waiting_cnt;
       }
@@ -335,17 +335,17 @@ int ObDDLReplicaBuildExecutor::check_build_end(const bool need_checksum, bool &i
   } else if (failed_cnt != 0) {
     // ret_code already set in for loop
     is_end = true;
-    LOG_INFO("exist replica build task failed", K(failed_cnt), K(total_cnt));
+
   } else if (reschedule_cnt != 0) {
     if (OB_FAIL(schedule_task())) {
       LOG_WARN("fail to schedule task", K(ret));
     } else {
-      LOG_INFO("replica build task schedule again", K(reschedule_cnt), K(total_cnt));
+
     }
   } else if (succ_cnt == total_cnt) {
     is_end = true;
     ret_code = ret;
-    LOG_INFO("all replica build finished", K(succ_cnt), K(total_cnt));
+
     if (!share::is_tablet_split(ddl_type_) && need_checksum) {
       if (OB_FAIL(ObCheckTabletDataComplementOp::check_finish_report_checksum(
               dest_tenant_id_, dest_table_id, execution_id_, ddl_task_id_))) {
@@ -390,9 +390,9 @@ int ObDDLReplicaBuildExecutor::update_build_progress(
                 true/*is_observer_report*/))) {
           LOG_WARN("failed to update replica build ctx", K(ret), K(tablet_id), K(addr), K(ret_code));
         }
-        LOG_INFO("receive build progress report from replica", K(tablet_id), K(addr), K(ret_code));
+
       } else { // not found
-        LOG_INFO("ignore build progress report from expired replica", K(tablet_id), K(addr), K(ret_code));
+
       }
     }
   } // lock scope

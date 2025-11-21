@@ -30,42 +30,42 @@ ObPLException pre_reserved_e(OB_ALLOCATE_MEMORY_FAILED); // reserved exception s
 
 void ObPLEH::eh_debug_int64(const char *name_ptr, int64_t name_len, int64_t object)
 {
-  LOG_DEBUG(">>>>>>>>>>0", K(ObString(name_len, name_ptr)), K(object));
+
 }
 
 void ObPLEH::eh_debug_int64ptr(const char *name_ptr, int64_t name_len, const int64_t *object)
 {
-  LOG_DEBUG(">>>>>>>>>>0", K(ObString(name_len, name_ptr)), K(*object));
+
 }
 
 void ObPLEH::eh_debug_int32(const char *name_ptr, int64_t name_len, int32_t object)
 {
-  LOG_DEBUG(">>>>>>>>>>0", K(ObString(name_len, name_ptr)), K(object));
+
 }
 
 void ObPLEH::eh_debug_int32ptr(const char *name_ptr, int64_t name_len, const int32_t *object)
 {
-  LOG_DEBUG(">>>>>>>>>>0", K(ObString(name_len, name_ptr)), K(*object));
+
 }
 
 void ObPLEH::eh_debug_int8(const char *name_ptr, int64_t name_len, const int8_t object)
 {
-  LOG_DEBUG(">>>>>>>>>>0", K(ObString(name_len, name_ptr)), K(object));
+
 }
 
 void ObPLEH::eh_debug_int8ptr(const char *name_ptr, int64_t name_len, const int8_t *object)
 {
-  LOG_DEBUG(">>>>>>>>>>0", K(ObString(name_len, name_ptr)), K(*object));
+
 }
 
 void ObPLEH::eh_debug_obj(const char *name_ptr, int64_t name_len, const ObObj *object)
 {
-  LOG_DEBUG(">>>>>>>>>>0", K(ObString(name_len, name_ptr)), K(*object));
+
 }
 
 void ObPLEH::eh_debug_objparam(const char *name_ptr, int64_t name_len, const ObObjParam *object)
 {
-  LOG_DEBUG(">>>>>>>>>>0", K(ObString(name_len, name_ptr)), K(*object));
+
 }
 
 int ObPLEH::eh_convert_exception(bool oracle_mode, int oberr, ObPLConditionType *type, int64_t *error_code, const char **sql_state, int64_t *str_len)
@@ -595,7 +595,7 @@ _Unwind_Reason_Code ObPLEH::eh_personality(int version, _Unwind_Action actions,
                                    struct _Unwind_Context *context)
 {
   const uint8_t *lsda = reinterpret_cast<const uint8_t *>(_Unwind_GetLanguageSpecificData(context));
-  LOG_DEBUG(">>>>>>>>>>0", K(version), K(actions), K(exceptionClass), K(lsda));
+
   return handleLsda(version, lsda, actions, exceptionClass, exceptionObject, context);
 }
 

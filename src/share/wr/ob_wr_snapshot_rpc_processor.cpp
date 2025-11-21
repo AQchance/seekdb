@@ -143,7 +143,7 @@ int ObWrAsyncSnapshotTaskP::process()
   int ret = OB_SUCCESS;
   WR_STAT_GUARD(WR_SNAPSHOT);
   ObWrSnapshotArg &arg = ObWrAsyncSnapshotTaskP::arg_;
-  LOG_DEBUG("wr snapshot task", K(MTL_ID()), K(arg));
+
   // gather inner table data
   bool tenant_need_upgrade = false;
   if (OB_FAIL(TENANT_NEED_UPGRADE(MTL_ID(), tenant_need_upgrade))) {
@@ -257,7 +257,7 @@ int ObWrAsyncPurgeSnapshotTaskP::process()
   int ret = OB_SUCCESS;
   WR_STAT_GUARD(WR_PURGE);
   ObWrSnapshotArg &arg = ObWrAsyncPurgeSnapshotTaskP::arg_;
-  LOG_DEBUG("wr snapshot task", K(MTL_ID()), K(arg));
+
   // gather inner table data
   bool tenant_need_upgrade = false;
   if (OB_FAIL(TENANT_NEED_UPGRADE(MTL_ID(), tenant_need_upgrade))) {
@@ -370,7 +370,7 @@ int ObWrSyncUserModifySettingsTaskP::process()
   int ret = OB_SUCCESS;
   int64_t tmp_interval = 0;
   ObWrUserModifySettingsArg &arg = ObWrSyncUserModifySettingsTaskP::arg_;
-  LOG_DEBUG("user submit modify snapshot settings task", K(MTL_ID()), K(arg));
+
   bool tenant_need_upgrade = false;
   if (OB_ISNULL(GCTX.wr_service_)) {
     ret = OB_ERR_UNEXPECTED;
@@ -421,7 +421,7 @@ int ObWrSyncUserModifySettingsTaskP::process()
                       ObWrCollector::exec_write_sql_with_retry(gen_meta_tenant_id(arg.get_tenant_id()), sql.ptr(), affected_rows))) {
           LOG_WARN("failed to write snapshot_info", KR(ret), K(sql), K(gen_meta_tenant_id( arg.get_tenant_id())));
         } else if (affected_rows != 1) {
-          LOG_TRACE("affected rows is not 1", KR(ret), K(affected_rows), K(sql));
+
         }
       }
     }

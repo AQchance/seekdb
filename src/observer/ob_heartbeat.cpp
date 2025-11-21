@@ -159,7 +159,7 @@ void ObHeartBeatProcess::check_and_update_server_id_(const uint64_t server_id)
     const bool repeat = false;
     if (0 == GCTX.get_server_id()) {
       (void) GCTX.set_server_id(server_id);
-      LOG_INFO("receive new server id in GCTX", K(server_id));
+
     } else if (server_id != GCTX.get_server_id()) {
       ret = OB_ERR_UNEXPECTED;
       LOG_ERROR("GCTX.get_server_id() is not the same as server_id in RS", KR(ret),
@@ -168,7 +168,7 @@ void ObHeartBeatProcess::check_and_update_server_id_(const uint64_t server_id)
     if (OB_FAIL(ret)) {
     } else if (0 == GCONF.observer_id) {
       GCONF.observer_id = server_id;
-      LOG_INFO("receive new server id in GCONF", K(server_id));
+
       if (OB_SUCCESS != (tmp_ret = TG_SCHEDULE(lib::TGDefIDs::CONFIG_MGR, server_id_persist_task_, delay, repeat))) {
         server_id_persist_task_.enable_need_retry_flag();
         LOG_WARN("schedule server_id persist task failed", K(tmp_ret));
@@ -206,7 +206,7 @@ int ObHeartBeatProcess::do_heartbeat_event(const ObLeaseResponse &lease_response
     LOG_WARN("version mismatching", "version", lease_response.version_,
         LITERAL_K(ObLeaseResponse::LEASE_VERSION), KR(ret));
   } else {
-    LOG_DEBUG("get lease_response", K(lease_response));
+
     int tmp_ret = OB_SUCCESS;
     (void) check_and_update_server_id_(lease_response.server_id_);
     if (!ObHeartbeatHandler::is_rs_epoch_id_valid()) {
@@ -242,7 +242,7 @@ int ObHeartBeatProcess::do_heartbeat_event(const ObLeaseResponse &lease_response
     if (OB_FAIL(TG_TASK_EXIST(lib::TGDefIDs::ObHeartbeat, update_task_, is_exist))) {
       LOG_WARN("check exist failed", KR(ret));
     } else if (is_exist) {
-      LOG_DEBUG("update task in scheduled, no need to schedule again");
+
     } else if (OB_FAIL(TG_SCHEDULE(lib::TGDefIDs::ObHeartbeat, update_task_, delay, repeat))) {
       LOG_WARN("schedule update zone lease info task failed", K(delay), K(repeat), KR(ret));
     }
@@ -268,7 +268,7 @@ int ObHeartBeatProcess::update_lease_info()
       *GCTX.sql_proxy_, zone_lease_info_))) {
     LOG_WARN("get zone lease info failed", KR(ret));
   } else {
-    LOG_INFO("succeed to update cluster_lease_info", K_(zone_lease_info));
+
   }
   return ret;
 }

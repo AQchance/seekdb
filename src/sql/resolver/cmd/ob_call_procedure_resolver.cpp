@@ -268,7 +268,7 @@ int ObCallProcedureResolver::add_call_proc_info(ObCallProcedureInfo *call_info)
   } else if (OB_FAIL(pl::ObPLCacheMgr::add_pl_cache(plan_cache, call_info, pc_ctx))) {
     if (OB_SQL_PC_PLAN_DUPLICATE == ret) {
       ret = OB_SUCCESS;
-      LOG_DEBUG("this plan has been added by others, need not add again", KPC(call_info));
+
     } else if (OB_REACH_MEMORY_LIMIT == ret || OB_SQL_PC_PLAN_SIZE_LIMIT == ret) {
       if (REACH_TIME_INTERVAL(1000000)) { //1s, when memory reaches its limit, this log print will be relatively frequent, so it is printed at an interval of 1s
         LOG_DEBUG("can't add plan to plan cache",
@@ -278,7 +278,7 @@ int ObCallProcedureResolver::add_call_proc_info(ObCallProcedureInfo *call_info)
       ret = OB_SUCCESS;
     } else if (is_not_supported_err(ret)) {
       ret = OB_SUCCESS;
-      LOG_DEBUG("plan cache don't support add this kind of plan now",  KPC(call_info));
+
     } else {
       if (OB_REACH_MAX_CONCURRENT_NUM != ret && OB_REACH_MAX_CCL_CONCURRENT_NUM != ret) { // If it reaches the rate limit upper limit, then throw out the error code
         ret = OB_SUCCESS; // add plan error, overwrite error code, ensure that failure of plan cache does not affect normal execution path

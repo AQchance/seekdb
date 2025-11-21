@@ -77,7 +77,7 @@ int ObHSeriesAdapter::multi_put(ObTableExecCtx &ctx, const ObIArray<ObITableEnti
                                                                  KPC(tb_ctx.get_batch_tablet_ids()), 
                                                                  K(real_tablet_ids));
       } else {
-        LOG_DEBUG("multi put success", K(ret), K(ctx.get_table_name()), KPC(tb_ctx.get_batch_tablet_ids()));
+
       }
     }
   }

@@ -88,7 +88,7 @@ int ObImportRemapArg::add_remap_database(const ObRemapDatabaseItem &item)
   } else if (OB_FAIL(remap_database_array_.add_item(item))) {
     LOG_WARN("failed to add remap database item", K(ret), K(item));
   } else {
-    LOG_INFO("add one remap database", K(item));
+
   }
   return ret;
 }
@@ -115,7 +115,7 @@ int ObImportRemapArg::add_remap_table(const ObRemapTableItem &item)
   } else if (OB_FAIL(remap_table_array_.add_item(item))) {
     LOG_WARN("failed to add remap table item", K(ret), K(item));
   } else {
-    LOG_INFO("add one remap table", K(item));
+
   }
   return ret;
 }
@@ -159,7 +159,7 @@ int ObImportRemapArg::add_remap_tablegroup(const ObRemapTablegroupItem &item)
   } else if (OB_FAIL(remap_tablegroup_array_.add_item(item))) {
     LOG_WARN("failed to add remap tablegroup item", K(ret), K(item));
   } else {
-    LOG_INFO("add one remap tablegroup", K(item));
+
   }
   return ret;
 }
@@ -186,7 +186,7 @@ int ObImportRemapArg::add_remap_tablespace(const ObRemapTablespaceItem &item)
   } else if (OB_FAIL(remap_tablespace_array_.add_item(item))) {
     LOG_WARN("failed to add remap tablespace item", K(ret), K(item));
   } else {
-    LOG_INFO("add one remap tablespace", K(item));
+
   }
   return ret;
 }

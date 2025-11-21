@@ -174,7 +174,7 @@ TEST_F(TestBlockMetaTree, random_keybtree)
       ObDatumRowkey *rowkey = new (buf) ObDatumRowkey(row->storage_datums_, TEST_ROWKEY_COLUMN_CNT);
 
       if (REACH_COUNT_INTERVAL(1000)) {
-        LOG_INFO("wenqu: generate row", K(*rowkey), KP(rowkey->datums_), K(i), K(j));
+
         meta_tree.block_tree_.print(dump_file);
       }
       ASSERT_EQ(OB_SUCCESS, meta_tree.insert_macro_block(

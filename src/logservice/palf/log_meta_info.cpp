@@ -1259,7 +1259,7 @@ int LogSnapshotMeta::get_prev_log_info(const LSN &curr_lsn,
                                        LSN &tail_lsn) const
 {
   int ret = OB_SUCCESS;
-  log_info.reset();
+
   tail_lsn.reset();
   if (LOG_SNAPSHOT_META_VERSION == version_) {
     if (!prev_log_info_.is_valid() || curr_lsn != base_lsn_) {

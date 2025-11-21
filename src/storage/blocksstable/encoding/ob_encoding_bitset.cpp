@@ -32,10 +32,10 @@ int ObBitMapMetaBaseWriter::init(
   int ret = common::OB_SUCCESS;
   if (OB_UNLIKELY(is_inited_)) {
     ret = common::OB_INIT_TWICE;
-    STORAGE_LOG(WARN, "init twice", K(ret));
+
   } else if (OB_ISNULL(exc_row_ids) || OB_ISNULL(col_datums) || OB_UNLIKELY(exc_row_ids->count() <= 0)) {
     ret = common::OB_INVALID_ARGUMENT;
-    STORAGE_LOG(WARN, "invalid argument", K(ret), KP(exc_row_ids), KP(col_datums));
+
   } else {
     exc_row_ids_ = exc_row_ids;
     col_datums_ = col_datums;

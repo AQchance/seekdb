@@ -101,7 +101,7 @@ int ObUpdateIndexStatusHelper::generate_schemas_()
       LOG_WARN("tenant not exist", KR(ret), K_(tenant_id));
     } else if (tenant_schema->is_restore()) {
       new_status_ = INDEX_STATUS_RESTORE_INDEX_ERROR;
-      LOG_INFO("conver error index status", KR(ret), K_(new_status));
+
     }
   }
   const ObDatabaseSchema *database_schema = NULL;

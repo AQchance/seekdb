@@ -503,7 +503,7 @@ int ObTableApiScanExecutor::get_next_row_with_das()
       // so cannot check filter
       LOG_WARN("fail to check row filtered", K(ret));
     } else if (filter) {
-      LOG_DEBUG("the row is filtered", K(ret));
+
     } else {
       got_row = true;
     }
@@ -854,7 +854,7 @@ int ObTableApiScanRowIterator::get_next_row(ObNewRow *&row, common::ObIAllocator
     if (OB_ITER_END != ret) {
       LOG_WARN("fail to get next row", KR(ret));
     } else {
-      LOG_DEBUG("iter is end", KR(ret));
+
     }
   } else if (OB_ISNULL(inner_row)) {
     ret = OB_ERR_UNEXPECTED;

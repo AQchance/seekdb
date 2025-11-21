@@ -64,7 +64,7 @@ int ObRpcLoadDataShuffleTaskExecuteP::process()
   ObShuffleTaskHandle *handle = nullptr;
   ObLoadDataStat *job_status = nullptr;
 
-  LOG_DEBUG("LOAD DATA receiving shuffle task", "task_id", task.task_id_);
+
 
   if (OB_FAIL(ObGlobalLoadDataStatMap::getInstance()->get_job_status(task.gid_, job_status))) {
     LOG_WARN("fail to get job, main thread has already quit", K(ret), K(task));
@@ -108,7 +108,7 @@ int ObRpcLoadDataShuffleTaskCallBack::release_resouce()
 int ObRpcLoadDataShuffleTaskCallBack::process() {
   //int ret = OB_SUCCESS;
   //ObShuffleResult &result = result_;
-  LOG_DEBUG("LOAD DATA shuffle task callback process");
+
   handle_->result.process_us_ = ObTimeUtil::current_time() - get_send_ts();
   //handle_->result = result;
   release_resouce();
@@ -143,7 +143,7 @@ int ObRpcLoadDataInsertTaskCallBack::release_resouce()
 
 int ObRpcLoadDataInsertTaskCallBack::process() {
   int ret = OB_SUCCESS;
-  LOG_DEBUG("LOAD DATA insert task callback process", K(result_));
+
   if (OB_NOT_NULL(insert_task_)) {
     if (OB_FAIL(insert_task_->result_.assign(result_))) {
       LOG_WARN("fail to assign result", K(ret));
@@ -422,7 +422,7 @@ int ObRpcLoadDataTaskCallBack::process()
       LOG_ERROR("on task finished failed", K(ret));
     }
   }
-  LOG_DEBUG("in local cb process!", K(result), K(ret));
+
   return OB_SUCCESS;
 }
 
@@ -454,7 +454,7 @@ void ObParallelTaskController::wait_all_task_finish(const char *task_name, int64
   int64_t begin_ts = ObTimeUtil::current_time();
   int64_t processing_count = 0;
   bool is_too_long = false;
-  LOG_DEBUG("start wait_all_task_finish", K(task_name));
+
   while ((processing_count = get_processing_task_cnt()) > 0) {
     ob_usleep(1000 * 10); //wait 10m
     wait_duration_ms += 10;
@@ -496,7 +496,7 @@ int ObRpcLoadDataInsertTaskExecuteP::process()
   ObWarningBuffer *warning_buf = NULL;
   bool need_wait_freeze = false;
 
-  LOG_DEBUG("LOAD DATA receiving insert task", "task_id", task.task_id_);
+
 
   if (OB_UNLIKELY(THIS_WORKER.is_timeout())) {
     ret = OB_TIMEOUT;

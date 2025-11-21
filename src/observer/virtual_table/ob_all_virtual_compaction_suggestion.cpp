@@ -56,10 +56,10 @@ int ObAllVirtualCompactionSuggestion::inner_get_next_row(common::ObNewRow *&row)
     SERVER_LOG(WARN, "ObAllVirtualCompactionSuggestion has been inited", K(ret));
   } else if (OB_FAIL(suggestion_iter_.get_next_info(suggestion_))) {
     if (OB_ITER_END != ret) {
-      STORAGE_LOG(WARN, "Fail to get next suggestion info", K(ret));
+
     }
   } else if (OB_FAIL(fill_cells())) {
-    STORAGE_LOG(WARN, "Fail to fill cells", K(ret), K(suggestion_));
+
   } else {
     row = &cur_row_;
   }
