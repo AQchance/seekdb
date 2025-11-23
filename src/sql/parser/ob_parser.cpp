@@ -17,6 +17,7 @@
 #include "lib/string/ob_string.h"
 #include <algorithm>
 #include <cctype>
+#include <cstddef>
 #include <cstdint>
 #define USING_LOG_PREFIX SQL_PARSER
 #include "lib/oblog/ob_log.h"
@@ -342,9 +343,9 @@ ObParser::State ObParser::transform_normal(ObString &normal) {
            0 == STRNCASECMP(normal.ptr(), str, len)) {                         \
     state = s;                                                                 \
   }
-#define ELSE() \
-  else { \
- \
+#define ELSE()                                                                 \
+  else {                                                                       \
+    LOG_DEBUG("transform_normal", K(state), K(normal));                        \
   }
 
   IF(6, S_CREATE, "create")
@@ -749,14 +750,23 @@ int ObParser::split_multiple_stmt(const ObString &stmt,
 
   std::string cmp_buf = "CREATE TABLE";
   int len = static_cast<int32_t>(cmp_buf.size());
-  std::string stmt_buf = std::string(stmt.ptr(), cmp_buf.size());
+  const char *tmp = stmt.ptr();
+  while (isspace(*tmp)) {
+    tmp++;
+  }
+  std::string stmt_buf;
+  for (size_t i = 0;
+       i < static_cast<size_t>(len) && i < static_cast<size_t>(stmt.length());
+       ++i) {
+    stmt_buf.push_back(tmp[i]);
+  }
   std::transform(stmt_buf.begin(), stmt_buf.end(), stmt_buf.begin(),
                  [](unsigned char c) { return std::toupper(c); });
 
   if (stmt.length() >= len && stmt_buf == cmp_buf) {
     // 前 len 个字符是 "CREATE TABLE"
     // 查找表名，忽略空格
-    const char *start = stmt.ptr() + len;
+    const char *start = tmp + len;
     while (*start && isspace(*start)) {
       ++start;
     }
@@ -919,7 +929,7 @@ int ObParser::parse_sql(const ObString &stmt, ParseResult &parse_result,
     }
 #endif
     if (!no_throw_parser_error) {
-
+      LOG_INFO("failed to parse stmt as sql", K(stmt_str), K(ret));
     }
   } else if (parse_result.is_dynamic_sql_) {
     memmove(parse_result.no_param_sql_ + parse_result.no_param_sql_len_,
