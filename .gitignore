@@ -393,3 +393,5 @@ debug.sh
 things.md
 init.gdb
 all.sh
+
+rag/.venv
