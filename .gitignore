@@ -391,3 +391,8 @@ tmp
 use.sh
 debug.sh
 things.md
+init.gdb
+all.sh
+############# data #############
+data/
+perf_data/
