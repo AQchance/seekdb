@@ -18,6 +18,7 @@ ob_set_subtarget(ob_sql common
   ob_sql_context.cpp
   ob_sql_define.cpp
   ob_sql_mode_manager.cpp
+  ob_query_result_cache.cpp
   ob_sql_task.cpp
   ob_sql_temp_table.cpp
   ob_sql_trans_control.cpp
