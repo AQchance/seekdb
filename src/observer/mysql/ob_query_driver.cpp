@@ -292,9 +292,9 @@ int ObQueryDriver::response_query_result(ObResultSet &result,
 
   ObCachedQueryResult *tmp_cached_result;
   ObQueryCacheKey tmp_cache_key(cache_sql);
-  if (OB_SUCC(query_cache.get(tmp_cache_key, tmp_cached_result))) {
+  if (query_cache.get(tmp_cache_key, tmp_cached_result) == OB_SUCCESS) {
     // 缓存命中，就直接返回缓存的结果
-
+    should_cache = false; // 命中缓存，不需要写入缓存
     for (size_t i = 0; i < tmp_cached_result->rows_.size(); ++i) {
       const ObCachedRow &cached_row = tmp_cached_result->rows_[i];
       ObNewRow row;
@@ -315,106 +315,109 @@ int ObQueryDriver::response_query_result(ObResultSet &result,
         ++row_num;
       }
     }
-  }
+  } else {
+    while (OB_SUCC(ret) && row_num < limit_count &&
+           !OB_FAIL(result.get_next_row(result_row))) {
+      ObNewRow *row = const_cast<ObNewRow *>(result_row);
+      if (is_prexecute_ && row_num == limit_count - 1) {
 
-  while (OB_SUCC(ret) && row_num < limit_count &&
-         !OB_FAIL(result.get_next_row(result_row))) {
-    ObNewRow *row = const_cast<ObNewRow *>(result_row);
-    if (is_prexecute_ && row_num == limit_count - 1) {
-
-      break;
-    }
-    // If it is the first line, then reply to the client with field information
-    // etc.
-    if (is_first_row) {
-      is_first_row = false;
-      can_retry =
-          false; // Already obtained the first row of data, no longer retrying
-      if (OB_FAIL(response_query_header(result, has_more_result, false))) {
-        LOG_WARN("fail to response query header", K(ret), K(row_num),
-                 K(can_retry));
+        break;
       }
-    }
-    for (int64_t i = 0; OB_SUCC(ret) && i < row->get_count(); i++) {
-      ObObj &value = row->get_cell(i);
-      if (result.is_ps_protocol() && !is_packed &&
-          !(value.is_geometry() &&
-            lib::is_oracle_mode())) { // oracle gis will do cast in
-                                      // process_sql_udt_results
-        if (value.get_type() != fields->at(i).type_.get_type()) {
-          ObCastCtx cast_ctx(&result.get_mem_pool(), NULL, CM_WARN_ON_FAIL,
-                             fields->at(i).type_.get_collation_type());
-          if (OB_FAIL(common::ObObjCaster::to_type(
-                  fields->at(i).type_.get_type(), cast_ctx, value, value))) {
-            LOG_WARN("failed to cast object", K(ret), K(value),
-                     K(value.get_type()), K(fields->at(i).type_.get_type()));
+      // If it is the first line, then reply to the client with field
+      // information etc.
+      if (is_first_row) {
+        is_first_row = false;
+        can_retry =
+            false; // Already obtained the first row of data, no longer retrying
+        if (OB_FAIL(response_query_header(result, has_more_result, false))) {
+          LOG_WARN("fail to response query header", K(ret), K(row_num),
+                   K(can_retry));
+        }
+      }
+      for (int64_t i = 0; OB_SUCC(ret) && i < row->get_count(); i++) {
+        ObObj &value = row->get_cell(i);
+        if (result.is_ps_protocol() && !is_packed &&
+            !(value.is_geometry() &&
+              lib::is_oracle_mode())) { // oracle gis will do cast in
+                                        // process_sql_udt_results
+          if (value.get_type() != fields->at(i).type_.get_type()) {
+            ObCastCtx cast_ctx(&result.get_mem_pool(), NULL, CM_WARN_ON_FAIL,
+                               fields->at(i).type_.get_collation_type());
+            if (OB_FAIL(common::ObObjCaster::to_type(
+                    fields->at(i).type_.get_type(), cast_ctx, value, value))) {
+              LOG_WARN("failed to cast object", K(ret), K(value),
+                       K(value.get_type()), K(fields->at(i).type_.get_type()));
+            }
+          }
+        }
+        if (OB_SUCC(ret) && !is_packed) {
+          // cluster version < 4.1
+          //    use only locator and response routine
+          // >= 4.1 for oracle modle
+          //    1. user full lob locator v2 with extern header if client
+          //    supports locator
+          //    2. remove locator if client does not support locator
+          // >= 4.1 for mysql modle
+          //    remove locator
+          if (ob_is_string_tc(value.get_type()) &&
+              CS_TYPE_INVALID != value.get_collation_type()) {
+            OZ(convert_string_value_charset(value, result, charset_type,
+                                            nchar));
+          } else if (ob_is_text_tc(value.get_type()) &&
+                     OB_FAIL(convert_text_value_charset(value, result,
+                                                        charset_type, nchar))) {
+            LOG_WARN("convert text value charset failed", K(ret));
+          }
+          if (OB_FAIL(ret)) {
+          } else if ((value.is_lob() || value.is_json() ||
+                      value.is_geometry() || value.is_roaringbitmap()) &&
+                     OB_FAIL(process_lob_locator_results(value, result))) {
+            LOG_WARN("convert lob locator to longtext failed", K(ret));
+          } else if ((value.is_collection_sql_type() || value.is_geometry()) &&
+                     OB_FAIL(ObXMLExprHelper::process_sql_udt_results(
+                         value, result))) {
+            LOG_WARN("convert udt to client format failed", K(ret),
+                     K(value.get_udt_subschema_id()));
           }
         }
       }
-      if (OB_SUCC(ret) && !is_packed) {
-        // cluster version < 4.1
-        //    use only locator and response routine
-        // >= 4.1 for oracle modle
-        //    1. user full lob locator v2 with extern header if client supports
-        //    locator
-        //    2. remove locator if client does not support locator
-        // >= 4.1 for mysql modle
-        //    remove locator
-        if (ob_is_string_tc(value.get_type()) &&
-            CS_TYPE_INVALID != value.get_collation_type()) {
-          OZ(convert_string_value_charset(value, result, charset_type, nchar));
-        } else if (ob_is_text_tc(value.get_type()) &&
-                   OB_FAIL(convert_text_value_charset(value, result,
-                                                      charset_type, nchar))) {
-          LOG_WARN("convert text value charset failed", K(ret));
-        }
-        if (OB_FAIL(ret)) {
-        } else if ((value.is_lob() || value.is_json() || value.is_geometry() ||
-                    value.is_roaringbitmap()) &&
-                   OB_FAIL(process_lob_locator_results(value, result))) {
-          LOG_WARN("convert lob locator to longtext failed", K(ret));
-        } else if ((value.is_collection_sql_type() || value.is_geometry()) &&
-                   OB_FAIL(ObXMLExprHelper::process_sql_udt_results(value,
-                                                                    result))) {
-          LOG_WARN("convert udt to client format failed", K(ret),
-                   K(value.get_udt_subschema_id()));
-        }
-      }
-    }
-    if (OB_SUCC(ret)) {
-      // ========== 将行数据写入缓存 ==========
-      if (should_cache && OB_NOT_NULL(cache_to_write)) {
-        // int cache_ret = cache_to_write->add_row(*row);
-        int cache_ret = cache_to_write->add_row(*row);
-        if (OB_SUCCESS != cache_ret) {
-          // 缓存写入失败，放弃缓存
-          _OB_LOG(INFO, "[QUERY_CACHE] add_row failed, disable caching, ret=%d",
-                  cache_ret);
-          should_cache = false;
-          query_cache.free_result(cache_to_write);
-          cache_to_write = nullptr;
-        }
-      }
-      // ========== 缓存写入结束 ==========
-
-      const ObDataTypeCastParams dtc_params =
-          ObBasicSessionInfo::create_dtc_params(&session_);
-      ObSMRow sm(protocol_type, *row, dtc_params, session_,
-                 result.get_field_columns(), ctx_.schema_guard_,
-                 session_.get_effective_tenant_id());
-      sm.set_packed(is_packed);
-      OMPKRow rp(sm);
-      rp.set_is_packed(is_packed);
-      if (OB_FAIL(sender_.response_packet(rp, &result.get_session()))) {
-        LOG_WARN("response packet fail", K(ret), KP(row), K(row_num),
-                 K(can_retry));
-        // break;
-      } else {
-      }
       if (OB_SUCC(ret)) {
-        ++row_num;
-        if (0 == row_num % RESET_CONVERT_CHARSET_ALLOCATOR_EVERY_X_ROWS) {
-          (void)result.get_exec_context().try_reset_convert_charset_allocator();
+        // ========== 将行数据写入缓存 ==========
+        if (should_cache && OB_NOT_NULL(cache_to_write)) {
+          // int cache_ret = cache_to_write->add_row(*row);
+          int cache_ret = cache_to_write->add_row(*row);
+          if (OB_SUCCESS != cache_ret) {
+            // 缓存写入失败，放弃缓存
+            _OB_LOG(INFO,
+                    "[QUERY_CACHE] add_row failed, disable caching, ret=%d",
+                    cache_ret);
+            should_cache = false;
+            query_cache.free_result(cache_to_write);
+            cache_to_write = nullptr;
+          }
+        }
+        // ========== 缓存写入结束 ==========
+
+        const ObDataTypeCastParams dtc_params =
+            ObBasicSessionInfo::create_dtc_params(&session_);
+        ObSMRow sm(protocol_type, *row, dtc_params, session_,
+                   result.get_field_columns(), ctx_.schema_guard_,
+                   session_.get_effective_tenant_id());
+        sm.set_packed(is_packed);
+        OMPKRow rp(sm);
+        rp.set_is_packed(is_packed);
+        if (OB_FAIL(sender_.response_packet(rp, &result.get_session()))) {
+          LOG_WARN("response packet fail", K(ret), KP(row), K(row_num),
+                   K(can_retry));
+          // break;
+        } else {
+        }
+        if (OB_SUCC(ret)) {
+          ++row_num;
+          if (0 == row_num % RESET_CONVERT_CHARSET_ALLOCATOR_EVERY_X_ROWS) {
+            (void)result.get_exec_context()
+                .try_reset_convert_charset_allocator();
+          }
         }
       }
     }
