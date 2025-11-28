@@ -396,3 +396,4 @@ all.sh
 ############# data #############
 data/
 perf_data/
+compile_and_restart.sh
