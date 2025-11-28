@@ -19,6 +19,7 @@
 #include "sql/ob_query_result_cache.h"
 #include "lib/ob_errno.h"
 #include "lib/oblog/ob_log.h"
+#include <set>
 
 using namespace oceanbase::common;
 
@@ -116,6 +117,8 @@ int ObQueryResultCache::get(const ObQueryCacheKey &key,
     } else if (it->second == nullptr) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("cached result is null", K(ret));
+    } else {
+      result = it->second;
     }
   }
   return ret;
@@ -204,6 +207,37 @@ bool ObQueryResultCache::is_cacheable_sql(const std::string &sql) {
 
         // 转换为大写进行关键字检查
         std::string upper_sql = sql;
+        std::set<std::string> set = {
+            "select v",
+
+            "select 1",
+
+            "select * from __all_virtual_mem_leak_checker_info",
+
+            "select sum(alloc_size) from __all_virtual_mem_leak_checker_info "
+            "into result_tmp",
+
+            "select @mysqltest_mode into @my_mysqltest_mode",
+
+            "into result_tmp",
+
+            "select count(*) from oceanbase.DBA_OB_SERVERS group by zone limit "
+            "1 into num",
+
+            "select zone from (select zone, count(*) as a from "
+            "oceanbase.DBA_OB_ZONES group by region order by a desc limit 1) "
+
+            "into zone_name",
+            "select value from oceanbase.CDB_OB_SYS_VARIABLES where name = "
+            "'recyclebin' and tenant_id=1 into recyclebin_value",
+
+            "select memory_limit from GV$OB_SERVERS limit 1 into mem",
+
+        };
+        if (set.find(sql) != set.end()) {
+          return false;
+        }
+
         for (auto &c : upper_sql) {
           if (c >= 'a' && c <= 'z') {
             c = c - 'a' + 'A';
@@ -222,6 +256,10 @@ bool ObQueryResultCache::is_cacheable_sql(const std::string &sql) {
         }
       }
     }
+  }
+  if (cacheable) {
+    int ret = OB_SUCCESS;
+    LOG_DEBUG("sql is cacheable", K(sql.c_str()), K(ret));
   }
 
   return cacheable;

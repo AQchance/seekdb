@@ -197,6 +197,7 @@ int ObQueryDriver::response_query_result(ObResultSet &result,
   // ========== 查询结果缓存：准备写入缓存 ==========
   sql::ObQueryResultCache &query_cache =
       sql::ObQueryResultCache::get_instance();
+  query_cache.init();
   sql::ObCachedQueryResult *cache_to_write = nullptr;
   bool should_cache = false;
   sql::ObQueryCacheKey cache_key;
@@ -208,8 +209,14 @@ int ObQueryDriver::response_query_result(ObResultSet &result,
 
   std::string cache_sql;
   // 检查是否需要写入缓存
+  // 排除条件：
+  // 1. 非用户会话 - 系统初始化、后台任务等使用的是 INNER_SESSION
+  //    is_user_session() 返回 true 表示来自 obclient、proxy 或 PL 的用户查询
+  // 2. PS 协议和预执行
+  bool is_user_query = session_.is_user_session();
+
   if (query_cache.is_inited() && OB_NOT_NULL(sql_ctx) && !is_ps_protocol &&
-      !is_prexecute_) {
+      !is_prexecute_ && is_user_query) {
     const ObString &sql = sql_ctx->cur_sql_;
     std::string sql_std_string(sql.ptr(), static_cast<size_t>(sql.length()));
     cache_sql = sql_std_string;
@@ -239,9 +246,10 @@ int ObQueryDriver::response_query_result(ObResultSet &result,
     }
   } else {
     _OB_LOG(INFO,
-            "[QUERY_CACHE_WRITE] skip caching, inited=%d, enabled=%d, "
-            "sql_ctx=%p, is_ps=%d, is_prexec=%d",
-            query_cache.is_inited(), sql_ctx, is_ps_protocol, is_prexecute_);
+            "[QUERY_CACHE_WRITE] skip caching, inited=%d, "
+            "sql_ctx=%p, is_ps=%d, is_prexec=%d, is_inner=%d, tenant_id=%lu",
+            query_cache.is_inited(), sql_ctx, is_ps_protocol, is_prexecute_,
+            session_.is_inner(), session_.get_effective_tenant_id());
   }
   // ========== 缓存准备结束 ==========
 
@@ -290,32 +298,54 @@ int ObQueryDriver::response_query_result(ObResultSet &result,
     }
   }
 
-  ObCachedQueryResult *tmp_cached_result;
-  ObQueryCacheKey tmp_cache_key(cache_sql);
-  if (query_cache.get(tmp_cache_key, tmp_cached_result) == OB_SUCCESS) {
-    // 缓存命中，就直接返回缓存的结果
-    should_cache = false; // 命中缓存，不需要写入缓存
-    for (size_t i = 0; i < tmp_cached_result->rows_.size(); ++i) {
-      const ObCachedRow &cached_row = tmp_cached_result->rows_[i];
-      ObNewRow row;
-      row.cells_ = const_cast<ObObj *>(cached_row.cells_.data());
-      row.count_ = static_cast<int32_t>(cached_row.cells_.size());
-
-      const ObDataTypeCastParams dtc_params =
-          ObBasicSessionInfo::create_dtc_params(&session_);
-      ObSMRow sm(protocol_type, row, dtc_params, session_,
-                 result.get_field_columns(), ctx_.schema_guard_,
-                 session_.get_effective_tenant_id());
-      sm.set_packed(is_packed);
-      OMPKRow rp(sm);
-      rp.set_is_packed(is_packed);
-      if (OB_FAIL(sender_.response_packet(rp, &result.get_session()))) {
-        LOG_WARN("response packet fail", K(ret), KP(&row), K(i));
+  // 缓存读取也需要检查是否是用户查询
+  ObCachedQueryResult *tmp_cached_result = nullptr;
+  bool cache_hit = false;
+  if (is_user_query && !cache_sql.empty()) {
+    ObQueryCacheKey tmp_cache_key(cache_sql);
+    if (query_cache.get(tmp_cache_key, tmp_cached_result) == OB_SUCCESS &&
+        tmp_cached_result != nullptr && tmp_cached_result->rows_.size() > 0) {
+      cache_hit = true;
+      // 缓存命中，就直接返回缓存的结果
+      should_cache = false; // 命中缓存，不需要写入缓存
+      _OB_LOG(INFO,
+              "[QUERY_CACHE_READ] cache hit, returning cached result, "
+              "row_count=%ld",
+              tmp_cached_result->rows_.size());
+      
+      // 重要：必须先发送 header（列定义），否则客户端会报 Malformed packet
+      if (OB_FAIL(response_query_header(result, has_more_result, false))) {
+        LOG_WARN("fail to response query header for cached result", K(ret));
+        cache_hit = false;  // header 发送失败，回退到正常流程
       } else {
-        ++row_num;
+        can_retry = false;  // 已发送 header，不能重试
+        
+        for (size_t i = 0; OB_SUCC(ret) && i < tmp_cached_result->rows_.size();
+             ++i) {
+          const ObCachedRow &cached_row = tmp_cached_result->rows_[i];
+          ObNewRow row;
+          row.cells_ = const_cast<ObObj *>(cached_row.cells_.data());
+          row.count_ = static_cast<int32_t>(cached_row.cells_.size());
+
+          const ObDataTypeCastParams dtc_params =
+              ObBasicSessionInfo::create_dtc_params(&session_);
+          ObSMRow sm(protocol_type, row, dtc_params, session_,
+                     result.get_field_columns(), ctx_.schema_guard_,
+                     session_.get_effective_tenant_id());
+          sm.set_packed(is_packed);
+          OMPKRow rp(sm);
+          rp.set_is_packed(is_packed);
+          if (OB_FAIL(sender_.response_packet(rp, &result.get_session()))) {
+            LOG_WARN("response packet fail", K(ret), KP(&row), K(i));
+          } else {
+            ++row_num;
+          }
+        }
       }
     }
-  } else {
+  }
+
+  if (!cache_hit) {
     while (OB_SUCC(ret) && row_num < limit_count &&
            !OB_FAIL(result.get_next_row(result_row))) {
       ObNewRow *row = const_cast<ObNewRow *>(result_row);
