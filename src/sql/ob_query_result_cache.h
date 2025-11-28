@@ -30,11 +30,12 @@
 #include "common/row/ob_row.h"
 #include "lib/oblog/ob_log.h"
 #include "lib/string/ob_string.h"
-#include <iostream>
+#include <iostream> // 最大缓存条目数
 
 namespace oceanbase {
 namespace sql {
 
+  constexpr int64_t MAX_CACHE_SIZE = 500; // 最大缓存条目数
 // 缓存的单行数据 - 使用 std::vector 存储 ObObj
 struct ObCachedRow {
   ObCachedRow() : cells_() {}
@@ -88,6 +89,8 @@ struct ObQueryCacheKeyHash {
 class ObQueryResultCache {
 public:
   static ObQueryResultCache &get_instance();
+
+  
 
   void destroy();
 

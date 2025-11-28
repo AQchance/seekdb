@@ -135,7 +135,12 @@ int ObQueryResultCache::put(const ObQueryCacheKey &key,
     LOG_WARN("result is null", K(ret));
   } else {
     // 检查是否已存在
-    cache_map_[key] = result;
+    if (cache_map_.size() >= oceanbase::sql::MAX_CACHE_SIZE) {
+      LOG_WARN("query result cache size overflow", K(ret),
+               K(cache_map_.size()));
+    } else {
+      cache_map_[key] = result;
+    }
   }
   return ret;
 }
