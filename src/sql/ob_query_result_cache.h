@@ -35,7 +35,7 @@
 namespace oceanbase {
 namespace sql {
 
-  constexpr int64_t MAX_CACHE_SIZE = 500; // 最大缓存条目数
+  constexpr int64_t MAX_CACHE_SIZE = 700; // 最大缓存条目数
 // 缓存的单行数据 - 使用 std::vector 存储 ObObj
 struct ObCachedRow {
   ObCachedRow() : cells_() {}
