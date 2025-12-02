@@ -17,6 +17,7 @@
 #define USING_LOG_PREFIX STORAGE
 
 #include "ob_text_retrieval_token_iter.h"
+#include "ob_inv_idx_cache.h"
 #include "sql/engine/expr/ob_expr_bm25.h"
 #include "sql/das/iter/sparse_retrieval/ob_das_tr_merge_iter.h"
 
@@ -50,7 +51,11 @@ ObTextRetrievalTokenIter::ObTextRetrievalTokenIter()
     advance_doc_id_(),
     token_doc_cnt_calculated_(false),
     inv_idx_agg_cache_mode_(false),
-    is_inited_(false)
+    is_inited_(false),
+    function_lookup_doc_ids_(),
+    function_lookup_cursor_(0),
+    cache_read_cursor_(0),
+    doc_id_cmp_func_(nullptr)
 {
 }
 
@@ -96,6 +101,10 @@ int ObTextRetrievalTokenIter::init(const ObTextRetrievalScanIterParam &iter_para
     LOG_WARN("failed to allocate skip bit vector", K(ret));
   } else {
     skip_->init(max_batch_size_);
+    // 初始化 doc_id 比较函数，用于 function_lookup_mode 下的缓存过滤
+    ObDatumMeta id_meta = inv_scan_domain_id_col_->datum_meta_;
+    sql::ObExprBasicFuncs *basic_funcs = ObDatumFuncs::get_basic_func(id_meta.type_, id_meta.cs_type_);
+    doc_id_cmp_func_ = lib::is_oracle_mode() ? basic_funcs->null_last_cmp_ : basic_funcs->null_first_cmp_;
   }
   is_inited_ = true;
   return ret;
@@ -114,6 +123,126 @@ void ObTextRetrievalTokenIter::reuse()
   } else {
     token_doc_cnt_calculated_ = false;
   }
+
+  // 重置游标
+  function_lookup_cursor_ = 0;
+  cache_read_cursor_ = 0;
+
+  // 在 function_lookup_mode 下，解析 key_ranges_ 得到需要查询的 doc_ids
+  if (inv_idx_agg_cache_mode_ && OB_NOT_NULL(inv_idx_scan_param_)) {
+    function_lookup_doc_ids_.reuse();
+    parse_function_lookup_doc_ids();
+  }
+}
+
+int ObTextRetrievalTokenIter::parse_function_lookup_doc_ids()
+{
+  int ret = OB_SUCCESS;
+  if (OB_ISNULL(inv_idx_scan_param_)) {
+    ret = OB_ERR_UNEXPECTED;
+    LOG_WARN("inv_idx_scan_param is null", K(ret));
+  } else {
+    const common::ObIArray<ObNewRange> &key_ranges = inv_idx_scan_param_->key_ranges_;
+    for (int64_t i = 0; OB_SUCC(ret) && i < key_ranges.count(); ++i) {
+      const ObNewRange &range = key_ranges.at(i);
+      // key_range 格式为 (token, doc_id)，我们需要提取 doc_id
+      // 倒排索引的 rowkey 是 2 列：token 和 doc_id
+      if (range.start_key_.get_obj_cnt() >= 2) {
+        const ObObj &doc_id_obj = range.start_key_.get_obj_ptr()[1];
+        if (!doc_id_obj.is_null() && !doc_id_obj.is_min_value() && !doc_id_obj.is_max_value()) {
+          sql::ObDocIdExt doc_id;
+          ObDatum tmp_datum;
+          if (OB_FAIL(tmp_datum.from_obj(doc_id_obj))) {
+            LOG_WARN("failed to convert obj to datum", K(ret), K(doc_id_obj));
+          } else if (OB_FAIL(doc_id.from_datum(tmp_datum))) {
+            LOG_WARN("failed to get doc_id from datum", K(ret));
+          } else if (OB_FAIL(function_lookup_doc_ids_.push_back(doc_id))) {
+            LOG_WARN("failed to push back doc_id", K(ret));
+          }
+        }
+      }
+    }
+    // function_lookup_doc_ids_ 应该已经是排序的（因为 set_children_iter_rangekey 里排序过）
+    LOG_DEBUG("[CACHE_DEBUG] parsed function_lookup_doc_ids",
+              "count", function_lookup_doc_ids_.count());
+  }
+  return ret;
+}
+
+// 从缓存中读取数据，支持两路归并过滤（仅返回 function_lookup_doc_ids_ 中包含的 doc_ids）
+int ObTextRetrievalTokenIter::read_filtered_from_cache(
+    ObTokenCacheData &cache_data,
+    const int64_t batch_capacity,
+    int64_t &count)
+{
+  int ret = OB_SUCCESS;
+  count = 0;
+  
+  ObDatum *doc_id_datums = inv_scan_domain_id_col_->locate_batch_datums(*eval_ctx_);
+  ObDatum *doc_length_datums = OB_NOT_NULL(inv_scan_doc_length_col_)
+      ? inv_scan_doc_length_col_->locate_batch_datums(*eval_ctx_)
+      : nullptr;
+  
+  // 重置 skip_ 向量
+  skip_->reset(batch_capacity);
+  
+  // 两路归并：function_lookup_doc_ids_[function_lookup_cursor_] 与 cache_data.entries[cache_read_cursor_]
+  // 都是已排序的，通过比较只输出匹配的 doc_id
+  while (OB_SUCC(ret) && count < batch_capacity 
+         && function_lookup_cursor_ < function_lookup_doc_ids_.count()
+         && cache_read_cursor_ < cache_data.entries.count()) {
+    const sql::ObDocIdExt &lookup_doc_id = function_lookup_doc_ids_.at(function_lookup_cursor_);
+    const ObInvIdxCacheEntry &cache_entry = cache_data.entries.at(cache_read_cursor_);
+    
+    int cmp_result = 0;
+    if (OB_FAIL(doc_id_cmp_func_(lookup_doc_id.get_datum(), cache_entry.doc_id.get_datum(), cmp_result))) {
+      LOG_WARN("failed to compare doc_ids", K(ret));
+    } else if (0 == cmp_result) {
+      // 匹配：输出这个 doc_id
+      doc_id_datums[count] = cache_entry.doc_id.get_datum();
+      if (OB_NOT_NULL(doc_length_datums)) {
+        doc_length_datums[count].set_uint(cache_entry.doc_length);
+      }
+      LOG_DEBUG("[CACHE_DEBUG] filtered cache hit", K(count),
+                "lookup_idx", function_lookup_cursor_,
+                "cache_idx", cache_read_cursor_,
+                "doc_id", cache_entry.doc_id.get_datum());
+      ++count;
+      ++function_lookup_cursor_;
+      ++cache_read_cursor_;
+    } else if (cmp_result < 0) {
+      // lookup_doc_id < cache_entry：这个 lookup_doc_id 在缓存中不存在
+      // 跳过这个 lookup_doc_id（后续 load_results 会当成 miss 处理）
+      LOG_DEBUG("[CACHE_DEBUG] filtered cache miss, skip lookup doc_id",
+                "lookup_idx", function_lookup_cursor_,
+                "cache_idx", cache_read_cursor_);
+      ++function_lookup_cursor_;
+    } else {
+      // lookup_doc_id > cache_entry：缓存中的 doc_id 不在 lookup 列表中
+      // 跳过这个 cache entry
+      LOG_DEBUG("[CACHE_DEBUG] filtered cache skip, cache doc_id not needed",
+                "lookup_idx", function_lookup_cursor_,
+                "cache_idx", cache_read_cursor_);
+      ++cache_read_cursor_;
+    }
+  }
+  
+  if (OB_SUCC(ret) && count > 0) {
+    // 设置表达式的 evaluated 标志
+    inv_scan_domain_id_col_->set_evaluated_projected(*eval_ctx_);
+    if (OB_NOT_NULL(inv_scan_doc_length_col_)) {
+      inv_scan_doc_length_col_->set_evaluated_projected(*eval_ctx_);
+    }
+  }
+  
+  // 检查是否已经处理完所有需要的 doc_id
+  if (function_lookup_cursor_ >= function_lookup_doc_ids_.count()) {
+    if (count == 0) {
+      ret = OB_ITER_END;
+    }
+  }
+  
+  return ret;
 }
 
 int ObTextRetrievalTokenIter::init_calc_exprs_in_relevance_expr()
@@ -415,23 +544,161 @@ int ObTextRetrievalTokenIter::get_next_batch(const int64_t capacity, int64_t &co
 {
   int ret = OB_SUCCESS;
   count = 0;
+  bool from_cache = false;
+  ObString current_token;
+  const int64_t batch_capacity = OB_MIN(max_batch_size_, capacity);
+
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
     LOG_WARN("retrieval token iterator not inited", K(ret));
   } else if (!token_doc_cnt_calculated_ && OB_FAIL(estimate_token_doc_cnt())) {
     LOG_WARN("failed to estimate token doc cnt", K(ret));
-  } else if (OB_FAIL(inv_idx_scan_iter_->get_next_rows(count, OB_MIN(max_batch_size_, capacity)))) {
-    if (OB_UNLIKELY(OB_ITER_END != ret)) {
-      LOG_WARN("failed to get next rows from inverted index", K(ret), KPC_(inv_idx_scan_param), KPC_(inv_idx_scan_iter));
-    } else if (count != 0) {
-      ret = OB_SUCCESS;
+  } else if (OB_FAIL(get_current_token(current_token))) {
+    LOG_WARN("failed to get current token", K(ret));
+  } else {
+    // 检查缓存是否可用（token 存在且缓存完整）
+    ObIvtIdxCache &cache = ObIvtIdxCache::get_instance();
+    ObTokenCacheData *cache_data = cache.get_token_cache(current_token);
+    LOG_INFO("[CACHE_DEBUG]", K(inv_idx_agg_cache_mode_), K(cache_data),
+              "function_lookup_count", function_lookup_doc_ids_.count());
+    
+    if (OB_NOT_NULL(cache_data) && cache_data->is_complete) {
+      from_cache = true;
+      LOG_INFO("[CACHE_DEBUG] use cache");
+      if (inv_idx_agg_cache_mode_ && function_lookup_doc_ids_.count() > 0) {
+        // function_lookup_mode：使用两路归并过滤，只返回需要的 doc_ids
+        if (OB_FAIL(read_filtered_from_cache(*cache_data, batch_capacity, count))) {
+          if (OB_ITER_END != ret) {
+            LOG_WARN("failed to read filtered from cache", K(ret));
+          }
+        }
+        LOG_DEBUG("[CACHE_DEBUG] filtered read from cache", K(current_token), K(count),
+                  "function_lookup_cursor", function_lookup_cursor_,
+                  "cache_read_cursor", cache_read_cursor_);
+      } else {
+        // 普通模式：顺序读取所有缓存数据
+        // 使用迭代器本地的 cache_read_cursor_ 而不是全局共享的 next_read_idx，避免并发问题
+        const int64_t remaining = cache_data->entries.count() - cache_read_cursor_;
+        count = OB_MIN(batch_capacity, remaining);
+
+        LOG_INFO("[CACHE_DEBUG] reading from cache", K(current_token), K(count),
+                 "remaining", remaining, "cache_read_cursor", cache_read_cursor_,
+                 "total_entries", cache_data->entries.count());
+
+        if (count > 0) {
+          // 重置 skip_ 向量，从缓存读取的数据都是有效的
+          skip_->reset(count);
+
+          // 将缓存数据填充到表达式的 datum 中
+          ObDatum *doc_id_datums = inv_scan_domain_id_col_->locate_batch_datums(*eval_ctx_);
+          ObDatum *doc_length_datums = OB_NOT_NULL(inv_scan_doc_length_col_)
+              ? inv_scan_doc_length_col_->locate_batch_datums(*eval_ctx_)
+              : nullptr;
+
+          for (int64_t i = 0; i < count; ++i) {
+            const ObInvIdxCacheEntry &entry = cache_data->entries.at(cache_read_cursor_ + i);
+            // 打印缓存中原始的 doc_id 信息
+            const ObDatum &cached_datum = entry.doc_id.get_datum();
+            LOG_DEBUG("[CACHE_DEBUG] cache entry before copy", K(i), K(current_token),
+                     "cached_datum", cached_datum,
+                     "cached_datum_ptr", (void*)cached_datum.ptr_,
+                     "entry_addr", (void*)&entry,
+                     "cache_idx", cache_read_cursor_ + i);
+
+            doc_id_datums[i] = entry.doc_id.get_datum();
+            if (OB_NOT_NULL(doc_length_datums)) {
+              doc_length_datums[i].set_uint(entry.doc_length);
+            }
+          }
+          cache_read_cursor_ += count;
+
+          // 设置表达式的 evaluated 标志
+          inv_scan_domain_id_col_->set_evaluated_projected(*eval_ctx_);
+          if (OB_NOT_NULL(inv_scan_doc_length_col_)) {
+            inv_scan_doc_length_col_->set_evaluated_projected(*eval_ctx_);
+          }
+
+          // 检查是否已读取完所有缓存数据
+          if (cache_read_cursor_ >= cache_data->entries.count()) {
+            ret = OB_ITER_END;
+            if (count != 0) {
+              ret = OB_SUCCESS;
+            }
+          }
+        } else {
+          ret = OB_ITER_END;
+        }
+      }
+    } else {
+      // 缓存不可用，从存储层读取
+      if (OB_FAIL(inv_idx_scan_iter_->get_next_rows(count, batch_capacity))) {
+        if (OB_UNLIKELY(OB_ITER_END != ret)) {
+          LOG_WARN("failed to get next rows from inverted index", K(ret), KPC_(inv_idx_scan_param), KPC_(inv_idx_scan_iter));
+        } else if (count != 0) {
+          ret = OB_SUCCESS;
+        }
+      }
+
+      // 将读取的数据存储到缓存中
+      if (OB_SUCC(ret) && count > 0) {
+        ObTokenCacheData &token_cache = cache.get_or_create_token_cache(current_token);
+        const ObDatumVector &doc_id_datums = inv_scan_domain_id_col_->locate_expr_datumvector(*eval_ctx_);
+        const ObDatum *doc_length_datums = OB_NOT_NULL(inv_scan_doc_length_col_)
+            ? inv_scan_doc_length_col_->locate_batch_datums(*eval_ctx_)
+            : nullptr;
+
+        LOG_INFO("[CACHE_DEBUG] storing to cache", K(current_token), K(count),
+                 "cache_size_before", token_cache.entries.count());
+
+        for (int64_t i = 0; OB_SUCC(ret) && i < count; ++i) {
+            ObInvIdxCacheEntry entry;
+            if (OB_FAIL(entry.doc_id.from_datum(*doc_id_datums.at(i)))) {
+              LOG_WARN("failed to get doc id from datum", K(ret));
+            } else {
+              if (OB_NOT_NULL(doc_length_datums)) {
+                entry.doc_length = doc_length_datums[i].get_uint();
+              }
+              // 打印每个 doc_id 的信息（存储前）
+              LOG_INFO("[CACHE_DEBUG] storing doc_id entry", K(i), K(current_token),
+                       "src_datum", *doc_id_datums.at(i),
+                       "entry_datum", entry.doc_id.get_datum(),
+                       "entry_datum_ptr", (void*)entry.doc_id.get_datum().ptr_,
+                       "entry_addr", (void*)&entry,
+                       "doc_length", entry.doc_length,
+                       "cache_idx", token_cache.entries.count());
+              if (OB_FAIL(token_cache.entries.push_back(entry))) {
+                LOG_WARN("failed to push back entry to cache", K(ret));
+              } else {
+                // 打印存储后的信息（验证 push_back 后数据是否正确）
+                const ObInvIdxCacheEntry &stored = token_cache.entries.at(token_cache.entries.count() - 1);
+                LOG_INFO("[CACHE_DEBUG] stored doc_id entry", K(i), K(current_token),
+                         "stored_datum", stored.doc_id.get_datum(),
+                         "stored_datum_ptr", (void*)stored.doc_id.get_datum().ptr_,
+                         "stored_addr", (void*)&stored);
+              }
+            }
+        }
+
+        // 如果读取的数据量小于批次容量，说明已经读取完毕，标记缓存为完整
+        if (OB_SUCC(ret) && count < batch_capacity) {
+          token_cache.is_complete = true;
+          LOG_DEBUG("token cache marked as complete", K(current_token),
+                    "entry_count", token_cache.entries.count());
+        }
+      } else if (OB_ITER_END == ret && count == 0) {
+        // 读取结束且没有数据，也标记缓存为完整
+        ObTokenCacheData &token_cache = cache.get_or_create_token_cache(current_token);
+        token_cache.is_complete = true;
+      }
     }
   }
 
   if (OB_FAIL(ret)) {
   } else if (need_calc_relevance()) {
-    const ObBitVector *skip = NULL;
-    PRINT_VECTORIZED_ROWS(SQL, DEBUG, *eval_ctx_, *inv_idx_scan_param_->output_exprs_, count, skip);
+    if (!from_cache) {
+      const ObBitVector *skip = NULL;
+      PRINT_VECTORIZED_ROWS(SQL, DEBUG, *eval_ctx_, *inv_idx_scan_param_->output_exprs_, count, skip);
+    }
     clear_batch_wise_evaluated_flag(count);
     if (OB_FAIL(batch_fill_token_cnt_with_doc_len(count))) {
       LOG_WARN("failed to fill batch token cnt with document length", K(ret));
@@ -632,6 +899,31 @@ int ObTextRetrievalTokenIter::estimate_token_doc_cnt()
         total_doc_cnt = total_doc_cnt_param_expr->locate_expr_datum(*eval_ctx_, 0).get_int();
       }
       max_token_relevance_ = sql::ObExprBM25::query_token_weight(token_doc_cnt_, total_doc_cnt);
+    }
+  }
+  return ret;
+}
+
+int ObTextRetrievalTokenIter::get_current_token(ObString &token) const
+{
+  int ret = OB_SUCCESS;
+  if (OB_ISNULL(inv_idx_scan_param_)) {
+    ret = OB_NOT_INIT;
+    LOG_WARN("inv_idx_scan_param is null", K(ret));
+  } else if (OB_UNLIKELY(inv_idx_scan_param_->key_ranges_.empty())) {
+    ret = OB_ERR_UNEXPECTED;
+    LOG_WARN("unexpected empty key ranges", K(ret));
+  } else {
+    const ObNewRange &scan_range = inv_idx_scan_param_->key_ranges_.at(0);
+    const ObObj *obj_ptr = scan_range.start_key_.get_obj_ptr();
+    if (OB_ISNULL(obj_ptr)) {
+      ret = OB_ERR_UNEXPECTED;
+      LOG_WARN("unexpected null obj ptr", K(ret));
+    } else if (!obj_ptr[0].is_string_type()) {
+      ret = OB_ERR_UNEXPECTED;
+      LOG_WARN("unexpected token type, expected string type", K(ret), K(obj_ptr[0]));
+    } else {
+      token = obj_ptr[0].get_string();
     }
   }
   return ret;

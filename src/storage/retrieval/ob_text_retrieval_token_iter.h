@@ -18,17 +18,22 @@
 #define OB_TEXT_RETRIEVAL_TOKEN_ITER_H_
 
 #include "lib/container/ob_se_array.h"
+#include "sql/engine/basic/ob_chunk_datum_store.h"
 #include "sql/engine/expr/ob_expr.h"
 #include "sql/das/iter/ob_das_scan_iter.h"
 #include "sql/das/ob_das_ir_define.h"
 #include "ob_block_max_iter.h"
 #include "ob_i_sparse_retrieval_iter.h"
+#include "share/cache/ob_kv_storecache.h"
 namespace oceanbase
 {
 namespace storage
 {
 class ObTableScanParam;
 class ObBlockMaxScoreIterator;
+class ObTextIRTokenCacheValue;
+class ObTextIRTokenKVCache;
+struct ObTokenCacheData;  // 前向声明
 struct ObTextRetrievalScanIterParam
 {
   ObTextRetrievalScanIterParam()
@@ -102,9 +107,22 @@ private:
   inline bool need_inv_idx_agg() { return inv_idx_agg_iter_ != nullptr; }
   inline bool need_fwd_idx_agg() { return fwd_idx_agg_iter_ != nullptr; }
   inline bool need_calc_relevance() { return inv_idx_agg_iter_ != nullptr; }
+  int ensure_cache_inited();
+  int get_current_token(ObString &token) const;
+  int materialize_inv_idx_rows(const ObString &token);
+  int build_cache_value_from_store(sql::ObChunkDatumStore &store, ObTextIRTokenCacheValue *&cache_value);
+  int put_cache_value(const ObString &token, ObTextIRTokenCacheValue &cache_value);
+  int try_load_from_cache(const ObString &token);
+  int fill_rows_from_cache(const int64_t capacity, int64_t &count);
+  int record_local_token_cache(const ObString &token, ObTextIRTokenCacheValue &cache_value);
+  int acquire_local_token_cache(const ObString &token, bool &hit);
+  int clone_cache_value(const ObTextIRTokenCacheValue &src, ObTextIRTokenCacheValue *&dst);
   // tools method
   // In ivector2.0, need use the size which is created by precision to alloc the memeory.
   static int set_decimal_int_by_precision(ObDatum &result_datum, const uint64_t decint, const ObPrecision precision);
+  // function_lookup_mode 下的 rangekey 解析和缓存过滤方法
+  int parse_function_lookup_doc_ids();
+  int read_filtered_from_cache(ObTokenCacheData &cache_data, const int64_t batch_capacity, int64_t &count);
 public:
   static const int64_t FWD_IDX_ROWKEY_COL_CNT = 2;
   static const int64_t INV_IDX_ROWKEY_COL_CNT = 2;
@@ -134,6 +152,11 @@ private:
   bool token_doc_cnt_calculated_;
   bool inv_idx_agg_cache_mode_;
   bool is_inited_;
+  // function_lookup_mode 下的 rangekey 过滤相关
+  common::ObSEArray<sql::ObDocIdExt, 64> function_lookup_doc_ids_;  // 需要查询的 doc_ids（已排序）
+  int64_t function_lookup_cursor_;  // 当前处理到的 doc_id 索引
+  int64_t cache_read_cursor_;       // 缓存读取游标（独立于 ObTokenCacheData::next_read_idx）
+  common::ObDatumCmpFuncType doc_id_cmp_func_;  // doc_id 比较函数
   DISALLOW_COPY_AND_ASSIGN(ObTextRetrievalTokenIter);
 };
 

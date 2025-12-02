@@ -211,11 +211,16 @@ int ObSRSortedLookupIter::load_results()
         ++cur_idx;
         ++i;
       } else if (cmp_result < 0) {
+        // cached_domain_ids_[cur_idx] < id_datums[i]：当前需要的 doc_id 在结果中不存在
         cached_relevances_[cur_idx] = 0.0;
         ++cur_idx;
       } else {
-        ret = OB_ERR_UNEXPECTED;
-        LOG_WARN("unexpected comparison result", K(ret), K(cmp_result));
+        // cmp_result > 0：id_datums[i] < cached_domain_ids_[cur_idx]
+        // 结果中返回了不需要的 doc_id（可能来自缓存），跳过它继续处理
+        LOG_DEBUG("skipping extra doc_id from result", K(i),
+                  "result_doc_id", *id_datums.at(i),
+                  "expected_doc_id", cached_domain_ids_[cur_idx].get_datum());
+        ++i;
       }
     }
   }
@@ -324,11 +329,24 @@ int ObSRHashLookupIter::load_results()
         LOG_WARN("unexpected cur idx", K(ret), K(cur_idx), K_(rangekey_size));
       } else if (OB_FAIL(id.from_datum(*id_datums.at(i)))) {
         LOG_WARN("failed to get id from datum", K(ret));
-      } else if (OB_UNLIKELY(OB_HASH_NOT_EXIST != (ret = hash_map_.get_refactored(id, relevance)))) {
-        ret = COVER_SUCC(OB_ERR_UNEXPECTED);
-        LOG_WARN("unexpected repeated domain id", K(ret), K(id), K(relevance));
-      } else if (OB_FAIL(hash_map_.set_refactored(id, relevance_datums.at(i)->get_double(), 0))) {
-        LOG_WARN("failed to set relevance in hash map", K(ret));
+      } else {
+        ret = hash_map_.get_refactored(id, relevance);
+        if (OB_HASH_NOT_EXIST == ret) {
+          // doc_id 不在 hash_map 中，正常插入
+          if (OB_FAIL(hash_map_.set_refactored(id, relevance_datums.at(i)->get_double(), 0))) {
+            LOG_WARN("failed to set relevance in hash map", K(ret));
+          }
+        } else if (OB_SUCCESS == ret) {
+          // doc_id 已存在（可能来自缓存的重复数据），更新相关性值
+          LOG_DEBUG("updating existing doc_id relevance", K(id),
+                    "old_relevance", relevance,
+                    "new_relevance", relevance_datums.at(i)->get_double());
+          if (OB_FAIL(hash_map_.set_refactored(id, relevance_datums.at(i)->get_double(), 1/*overwrite*/))) {
+            LOG_WARN("failed to update relevance in hash map", K(ret));
+          }
+        } else {
+          LOG_WARN("failed to get from hash map", K(ret), K(id));
+        }
       }
     }
   }
