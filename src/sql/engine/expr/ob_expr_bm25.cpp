@@ -17,6 +17,7 @@
 #define USING_LOG_PREFIX SQL_ENG
 #include "sql/engine/expr/ob_expr_bm25.h"
 #include "sql/resolver/expr/ob_raw_expr.h"
+#include "share/vector_type/ob_vector_bm25.h"
 
 namespace oceanbase
 {
@@ -128,22 +129,92 @@ int ObExprBM25::eval_batch_bm25_relevance_expr(const ObExpr &expr, ObEvalCtx &ct
       const double avg_doc_token_cnt = avg_doc_token_cnt_datum.at(0)->get_double();
       ObDatum *res_datum = expr.locate_batch_datums(ctx);
       ObBitVector &eval_flags = expr.get_evaluated_flags(ctx);
-      for(int64_t i = 0; OB_SUCC(ret) && i < size; ++i)
-      {
-        if (OB_UNLIKELY(doc_token_cnt_datum.at(i)->is_null() || related_token_cnt_datum.at(i)->is_null())) {
-          ret = OB_ERR_UNEXPECTED;
-          LOG_WARN("unexpected null datum", K(ret), KPC(doc_token_cnt_datum.at(i)), KPC(related_token_cnt_datum.at(i)));
-        }  else if (!skip.contain(i) && !eval_flags.at(i)) {
-          const int64_t related_token_cnt = related_token_cnt_datum.at(i)->get_uint();
-          const int64_t doc_token_cnt = doc_token_cnt_datum.at(i)->get_int();
-          const double norm_len = doc_token_cnt / avg_doc_token_cnt;
-          const double doc_weight = doc_token_weight(related_token_cnt, norm_len);
-          const double relevance = token_weight * doc_weight;
-          res_datum[i].set_double(relevance);
-          eval_flags.set(i);
-          LOG_DEBUG("show bm25 parameters for current document",
-              K(token_doc_cnt), K(total_doc_cnt), K(related_token_cnt), K(doc_token_cnt), K(avg_doc_token_cnt),
-              K(norm_len), K(token_weight), K(doc_weight), K(relevance));
+
+      // Check if we can use SIMD fast path:
+      // 1. No rows to skip (all rows need processing)
+      // 2. No rows already evaluated
+      // 3. Data is contiguous (ObDatumVector stores contiguous datums)
+      bool can_use_simd = true;
+      int64_t contiguous_start = -1;
+      int64_t contiguous_count = 0;
+
+      // Find contiguous segments without skips or already-evaluated rows
+      for (int64_t i = 0; i < size && can_use_simd; ++i) {
+        if (skip.contain(i) || eval_flags.at(i)) {
+          can_use_simd = false;
+        } else if (doc_token_cnt_datum.at(i)->is_null() || related_token_cnt_datum.at(i)->is_null()) {
+          can_use_simd = false;
+        }
+      }
+
+      if (can_use_simd && size > 0) {
+        // SIMD fast path: extract data to contiguous arrays and compute in batch
+        LOG_INFO("[BM25] Using SIMD fast path", K(size), K(token_weight), K(avg_doc_token_cnt));
+        // Use stack allocation for small batches, heap for large ones
+        constexpr int64_t STACK_BATCH_SIZE = 256;
+        int64_t doc_token_cnts_stack[STACK_BATCH_SIZE];
+        uint64_t related_token_cnts_stack[STACK_BATCH_SIZE];
+        double results_stack[STACK_BATCH_SIZE];
+
+        int64_t *doc_token_cnts = doc_token_cnts_stack;
+        uint64_t *related_token_cnts = related_token_cnts_stack;
+        double *results = results_stack;
+
+        common::ObIAllocator *alloc = nullptr;
+        if (size > STACK_BATCH_SIZE) {
+          alloc = &ctx.exec_ctx_.get_allocator();
+          doc_token_cnts = static_cast<int64_t*>(alloc->alloc(size * sizeof(int64_t)));
+          related_token_cnts = static_cast<uint64_t*>(alloc->alloc(size * sizeof(uint64_t)));
+          results = static_cast<double*>(alloc->alloc(size * sizeof(double)));
+          if (OB_ISNULL(doc_token_cnts) || OB_ISNULL(related_token_cnts) || OB_ISNULL(results)) {
+            ret = OB_ALLOCATE_MEMORY_FAILED;
+            LOG_WARN("failed to allocate memory for SIMD batch", K(ret), K(size));
+          }
+        }
+
+        if (OB_SUCC(ret)) {
+          // Extract data from datum vectors to contiguous arrays
+          for (int64_t i = 0; i < size; ++i) {
+            doc_token_cnts[i] = doc_token_cnt_datum.at(i)->get_int();
+            related_token_cnts[i] = related_token_cnt_datum.at(i)->get_uint();
+          }
+
+          // Call SIMD kernel
+          ret = common::bm25_batch_compute(
+              doc_token_cnts, related_token_cnts,
+              avg_doc_token_cnt, token_weight,
+              results, size, true /* use_simd */);
+
+          if (OB_SUCC(ret)) {
+            // Write results back to datum array
+            for (int64_t i = 0; i < size; ++i) {
+              res_datum[i].set_double(results[i]);
+              eval_flags.set(i);
+            }
+            LOG_DEBUG("BM25 SIMD batch completed", K(size), K(token_doc_cnt),
+                      K(total_doc_cnt), K(avg_doc_token_cnt), K(token_weight));
+          }
+        }
+      } else {
+        // Scalar fallback path: process row by row
+        LOG_INFO("[BM25] Using scalar fallback path", K(size), K(can_use_simd));
+        for(int64_t i = 0; OB_SUCC(ret) && i < size; ++i)
+        {
+          if (OB_UNLIKELY(doc_token_cnt_datum.at(i)->is_null() || related_token_cnt_datum.at(i)->is_null())) {
+            ret = OB_ERR_UNEXPECTED;
+            LOG_WARN("unexpected null datum", K(ret), KPC(doc_token_cnt_datum.at(i)), KPC(related_token_cnt_datum.at(i)));
+          } else if (!skip.contain(i) && !eval_flags.at(i)) {
+            const int64_t related_token_cnt = related_token_cnt_datum.at(i)->get_uint();
+            const int64_t doc_token_cnt = doc_token_cnt_datum.at(i)->get_int();
+            const double norm_len = doc_token_cnt / avg_doc_token_cnt;
+            const double doc_weight = doc_token_weight(related_token_cnt, norm_len);
+            const double relevance = token_weight * doc_weight;
+            res_datum[i].set_double(relevance);
+            eval_flags.set(i);
+            LOG_DEBUG("show bm25 parameters for current document",
+                K(token_doc_cnt), K(total_doc_cnt), K(related_token_cnt), K(doc_token_cnt), K(avg_doc_token_cnt),
+                K(norm_len), K(token_weight), K(doc_weight), K(relevance));
+          }
         }
       }
   }
