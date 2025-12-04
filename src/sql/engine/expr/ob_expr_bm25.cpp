@@ -149,7 +149,6 @@ int ObExprBM25::eval_batch_bm25_relevance_expr(const ObExpr &expr, ObEvalCtx &ct
 
       if (can_use_simd && size > 0) {
         // SIMD fast path: extract data to contiguous arrays and compute in batch
-        LOG_INFO("[BM25] Using SIMD fast path", K(size), K(token_weight), K(avg_doc_token_cnt));
         // Use stack allocation for small batches, heap for large ones
         constexpr int64_t STACK_BATCH_SIZE = 256;
         int64_t doc_token_cnts_stack[STACK_BATCH_SIZE];
@@ -197,7 +196,6 @@ int ObExprBM25::eval_batch_bm25_relevance_expr(const ObExpr &expr, ObEvalCtx &ct
         }
       } else {
         // Scalar fallback path: process row by row
-        LOG_INFO("[BM25] Using scalar fallback path", K(size), K(can_use_simd));
         for(int64_t i = 0; OB_SUCC(ret) && i < size; ++i)
         {
           if (OB_UNLIKELY(doc_token_cnt_datum.at(i)->is_null() || related_token_cnt_datum.at(i)->is_null())) {

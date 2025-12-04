@@ -19,7 +19,6 @@
 
 #include "common/ob_target_specific.h"
 #include "lib/utility/ob_macro_utils.h"
-#include "lib/oblog/ob_log.h"
 
 #if OB_USE_MULTITARGET_CODE
 #include <immintrin.h>
@@ -291,13 +290,11 @@ inline static void bm25_batch_dispatch(
 {
 #if OB_USE_MULTITARGET_CODE
   if (is_arch_supported(ObTargetArch::AVX2)) {
-    LIB_LOG(INFO, "[BM25 SIMD] Using AVX2 path", K(count));
     specific::avx2::bm25_batch(doc_token_cnts, related_token_cnts,
                                avg_doc_token_cnt, token_weight, results, count);
     return;
   }
   if (is_arch_supported(ObTargetArch::SSE42)) {
-    LIB_LOG(INFO, "[BM25 SIMD] Using SSE4.2 path", K(count));
     specific::sse42::bm25_batch(doc_token_cnts, related_token_cnts,
                                 avg_doc_token_cnt, token_weight, results, count);
     return;
@@ -306,7 +303,6 @@ inline static void bm25_batch_dispatch(
 
 #if defined(__aarch64__)
   if (is_arch_supported(ObTargetArch::NEON)) {
-    LIB_LOG(INFO, "[BM25 SIMD] Using NEON path", K(count));
     bm25_batch_neon(doc_token_cnts, related_token_cnts,
                     avg_doc_token_cnt, token_weight, results, count);
     return;
@@ -314,7 +310,6 @@ inline static void bm25_batch_dispatch(
 #endif
 
   // Scalar fallback
-  LIB_LOG(INFO, "[BM25 SIMD] Using scalar fallback path", K(count));
   bm25_batch_scalar(doc_token_cnts, related_token_cnts,
                     avg_doc_token_cnt, token_weight, results, count);
 }
