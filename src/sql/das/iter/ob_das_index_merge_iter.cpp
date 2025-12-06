@@ -198,10 +198,17 @@ int ObDASIndexMergeIter::inner_init(ObDASIterParam &param)
     snapshot_ = index_merge_param.snapshot_;
     is_reverse_ = index_merge_param.is_reverse_;
     
+    LOG_INFO("[INDEX_MERGE_EXEC] ObDASIndexMergeIter::inner_init CALLED - INDEX MERGE EXECUTION STARTED",
+             K(merge_type_), 
+             "is_intersect", (merge_type_ == INDEX_MERGE_INTERSECT),
+             "is_union", (merge_type_ == INDEX_MERGE_UNION),
+             "child_count", index_merge_param.child_iters_->count());
+    
     lib::ContextParam context_param;
     context_param.set_mem_attr(MTL_ID(), "DASIndexMerge", ObCtxIds::DEFAULT_CTX_ID)
         .set_properties(lib::USE_TL_PAGE_OPTIONAL);
-    if (OB_UNLIKELY(merge_type_ != INDEX_MERGE_UNION)) {
+    // Support both UNION and INTERSECT merge types
+    if (OB_UNLIKELY(merge_type_ != INDEX_MERGE_UNION && merge_type_ != INDEX_MERGE_INTERSECT)) {
       ret = OB_INVALID_ARGUMENT;
       LOG_WARN("invalid merge type", K(merge_type_));
     } else if (OB_FAIL(CURRENT_CONTEXT->CREATE_CONTEXT(mem_ctx_, context_param))) {
@@ -641,6 +648,12 @@ int ObDASIndexMergeIter::intersect_get_next_row()
 {
   int ret = OB_SUCCESS;
   bool got_row = false;
+  static int64_t call_count = 0;
+  call_count++;
+  if (call_count <= 10 || call_count % 1000 == 0) {
+    LOG_INFO("[INDEX_MERGE_EXEC] intersect_get_next_row CALLED",
+             K(call_count), K(child_stores_.count()));
+  }
   while (OB_SUCC(ret) && !got_row) {
       /* try to fill each child store */
     int64_t output_idx = OB_INVALID_INDEX;
@@ -699,6 +712,11 @@ int ObDASIndexMergeIter::intersect_get_next_row()
             LOG_WARN("index merge failed to convert row to expr", K(ret));
           } else {
             got_row = true;
+            static int64_t matched_count = 0;
+            matched_count++;
+            if (matched_count <= 10 || matched_count % 100 == 0) {
+              LOG_INFO("[INDEX_MERGE_EXEC] INTERSECT MATCH FOUND", K(matched_count));
+            }
           }
         } else {
           child_stores_.at(output_idx).cur_idx_++;

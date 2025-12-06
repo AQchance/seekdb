@@ -135,6 +135,9 @@ int ObDASIterUtils::create_das_scan_iter_tree(ObDASIterTreeType tree_type,
                                               ObDASIter *&iter_tree)
 {
   int ret = OB_SUCCESS;
+  LOG_INFO("[INDEX_MERGE_EXEC] create_das_scan_iter_tree CALLED",
+           K(tree_type), "attach_ctdef_type", OB_NOT_NULL(attach_ctdef) ? attach_ctdef->op_type_ : -1,
+           "scan_ctdef_ref_table_id", OB_NOT_NULL(scan_ctdef) ? scan_ctdef->ref_table_id_ : 0);
   switch (tree_type) {
     case ITER_TREE_PARTITION_SCAN: {
       ret = create_partition_scan_tree(scan_param, alloc, scan_ctdef, scan_rtdef, attach_ctdef, attach_rtdef, related_tablet_ids, trans_desc, snapshot, iter_tree);
@@ -3077,6 +3080,8 @@ int ObDASIterUtils::create_index_merge_iter_tree(ObTableScanParam &scan_param,
                                                  ObDASIter *&iter_tree)
 {
   int ret = OB_SUCCESS;
+  LOG_INFO("[INDEX_MERGE_EXEC] create_index_merge_iter_tree CALLED - CREATING INDEX MERGE EXECUTOR",
+           "attach_ctdef_type", OB_NOT_NULL(attach_ctdef) ? attach_ctdef->op_type_ : -1);
   if (OB_ISNULL(attach_ctdef) || OB_ISNULL(attach_rtdef)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected nullptr", K(ret));
@@ -3345,7 +3350,10 @@ int ObDASIterUtils::create_index_merge_sub_tree(ObTableScanParam &scan_param,
                                                 ObDASIter *&iter)
 {
   int ret = OB_SUCCESS;
-if (OB_ISNULL(ctdef) || OB_ISNULL(rtdef) || ctdef->op_type_ != DAS_OP_INDEX_MERGE) {
+  LOG_INFO("[INDEX_MERGE_EXEC] create_index_merge_sub_tree CALLED",
+           "ctdef_type", OB_NOT_NULL(ctdef) ? ctdef->op_type_ : -1,
+           "children_cnt", OB_NOT_NULL(ctdef) ? ctdef->children_cnt_ : 0);
+  if (OB_ISNULL(ctdef) || OB_ISNULL(rtdef) || ctdef->op_type_ != DAS_OP_INDEX_MERGE) {
     ret = OB_INVALID_ARGUMENT;
     LOG_WARN("invalid argument", K(ctdef), K(rtdef));
   } else {
@@ -3378,6 +3386,7 @@ if (OB_ISNULL(ctdef) || OB_ISNULL(rtdef) || ctdef->op_type_ != DAS_OP_INDEX_MERG
           LOG_WARN("failed to create index merge sub tree", K(ret));
         }
       } else if (merge_ctdef->merge_node_types_.at(i) == INDEX_MERGE_SCAN) {
+        LOG_INFO("[INDEX_MERGE_EXEC] creating INDEX_MERGE_SCAN child", K(i));
         ObDASScanRtDef *scan_rtdef = nullptr;
         if (child_rtdef->op_type_ == DAS_OP_TABLE_SCAN) {
           scan_rtdef = static_cast<ObDASScanRtDef*>(child_rtdef);
@@ -3403,11 +3412,13 @@ if (OB_ISNULL(ctdef) || OB_ISNULL(rtdef) || ctdef->op_type_ != DAS_OP_INDEX_MERG
           if (OB_FAIL(create_das_iter(alloc, scan_param, scan_iter))) {
             LOG_WARN("failed to create das scan iter", K(ret));
           } else {
+            LOG_INFO("[INDEX_MERGE_EXEC] INDEX_MERGE_SCAN child created successfully", K(i));
             child_scan_iter = scan_iter;
             child_iter = scan_iter;
           }
         }
       } else if (merge_ctdef->merge_node_types_.at(i) == INDEX_MERGE_FTS_INDEX) {
+        LOG_INFO("[INDEX_MERGE_EXEC] creating INDEX_MERGE_FTS_INDEX child", K(i));
         ObDASIRScanRtDef *ir_rtdef = nullptr;
         const ObDASIRScanCtDef *ir_ctdef = nullptr;
         ObDASIter *ir_iter = nullptr;

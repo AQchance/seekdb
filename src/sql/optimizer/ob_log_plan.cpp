@@ -328,6 +328,7 @@ int ObLogPlan::generate_join_orders()
   }
   // Generate first level Array: single table path
   OPT_TRACE_TITLE("GENERATE BASE PATH");
+  LOG_INFO("[PLAN_TRACE] generating base paths for tables", K(join_level));
   for (int64_t i = 0; OB_SUCC(ret) && i < join_level; ++i) {
     if (OB_ISNULL(join_rels.at(0).at(i))) {
       ret = OB_ERR_UNEXPECTED;
@@ -335,11 +336,17 @@ int ObLogPlan::generate_join_orders()
     } else if (OB_FAIL(mock_base_rel_detectors(join_rels.at(0).at(i)))) {
       LOG_WARN("failed to mock base rel detectors", K(ret));
     } else {
+      LOG_INFO("[PLAN_TRACE] calling generate_base_paths for table", K(i),
+               "type", join_rels.at(0).at(i)->get_type(),
+               "table_id", join_rels.at(0).at(i)->get_table_id());
       OPT_TRACE("create base path for ", join_rels.at(0).at(i));
       OPT_TRACE_BEGIN_SECTION;
       ret = join_rels.at(0).at(i)->generate_base_paths();
       OPT_TRACE_MEM_USED;
       OPT_TRACE_END_SECTION;
+      if (OB_FAIL(ret)) {
+        LOG_INFO("[PLAN_TRACE] generate_base_paths FAILED", K(ret), K(i));
+      }
     }
     if (OB_FAIL(ret)) {
     } else if (OB_FAIL(append(get_optimizer_context().get_deduce_info(),
@@ -7011,6 +7018,7 @@ int ObLogPlan::adjust_exprs_by_win_func(ObIArray<ObRawExpr *> &exprs,
 int ObLogPlan::generate_plan_tree()
 {
   int ret = OB_SUCCESS;
+  LOG_INFO("[PLAN_TRACE] ObLogPlan::generate_plan_tree ENTERED");
   if (OB_ISNULL(get_stmt()) || OB_ISNULL(get_optimizer_context().get_query_ctx())) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("Get unexpected null", K(ret), K(get_stmt()));
@@ -7018,12 +7026,17 @@ int ObLogPlan::generate_plan_tree()
     // 1.1 generate access paths
     /* random exprs should be split from condition exprs to avoid being pushed down
      * random exprs will be added back in function candi_init*/
+    LOG_INFO("[PLAN_TRACE] calling generate_join_orders");
     if (OB_FAIL(generate_join_orders())) {
       LOG_WARN("failed to generate the access path for the single-table query",
                K(ret), K(get_optimizer_context().get_query_ctx()->get_sql_stmt()));
+      LOG_INFO("[PLAN_TRACE] generate_join_orders FAILED", K(ret));
     } else if (OB_FAIL(init_candidate_plans())) {
       LOG_WARN("failed to initialized the plan candidates from the join order", K(ret));
+      LOG_INFO("[PLAN_TRACE] init_candidate_plans FAILED", K(ret));
     } else {
+      LOG_INFO("[PLAN_TRACE] generate_plan_tree SUCCESS",
+               "# of candidates", candidates_.candidate_plans_.count());
       LOG_TRACE("plan candidates is initialized from the join order",
                   "# of candidates", candidates_.candidate_plans_.count());
     }
@@ -11141,11 +11154,13 @@ int ObLogPlan::generate_plan()
 {
   int ret = OB_SUCCESS;
   const ObDMLStmt *stmt = NULL;
+  LOG_INFO("[PLAN_TRACE] ObLogPlan::generate_plan ENTERED");
   if (OB_ISNULL(stmt = get_stmt())) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get unexpected null", K(ret));
   } else if (OB_FAIL(generate_raw_plan())) {
     LOG_WARN("fail to generate raw plan", K(ret));
+    LOG_INFO("[PLAN_TRACE] generate_raw_plan FAILED", K(ret));
   } else if (stmt->is_explain_stmt() || stmt->is_help_stmt()) {
     /*do nothing*/
   } else if (OB_FAIL(do_post_plan_processing())) {
@@ -11177,13 +11192,18 @@ int ObLogPlan::generate_raw_plan()
   int ret = OB_SUCCESS;
   const ObDMLStmt *stmt = NULL;
   uint64_t dblink_id = OB_INVALID_ID;
+  LOG_INFO("[PLAN_TRACE] ObLogPlan::generate_raw_plan ENTERED");
   if (OB_ISNULL(stmt = get_stmt())) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get unexpected null", K(ret));
   } else if (OB_FAIL(init_plan_info())) {
     LOG_WARN("failed to init equal_sets");
+    LOG_INFO("[PLAN_TRACE] init_plan_info FAILED", K(ret));
   } else if (OB_FAIL(generate_normal_raw_plan())) {
     LOG_WARN("fail to generate normal raw plan", K(ret));
+    LOG_INFO("[PLAN_TRACE] generate_normal_raw_plan FAILED", K(ret));
+  } else {
+    LOG_INFO("[PLAN_TRACE] generate_raw_plan SUCCESS");
   }
   return ret;
 }

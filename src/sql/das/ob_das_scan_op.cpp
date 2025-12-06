@@ -391,6 +391,13 @@ ObDASIterTreeType ObDASScanOp::get_iter_tree_type() const
   bool is_spatial_index = scan_param_.table_param_->is_spatial_index() && !is_vector_index;
   bool is_multivalue_index = scan_param_.table_param_->is_multivalue_index();
   bool is_es_match = ObDASUtils::is_es_match_scan(attach_ctdef_);
+  bool is_index_merge_check = ObDASUtils::is_index_merge(attach_ctdef_);
+  
+  LOG_INFO("[INDEX_MERGE_EXEC] get_iter_tree_type checking",
+           K(is_fts_index), K(is_vector_index), K(is_spatial_index),
+           K(is_multivalue_index), K(is_es_match), K(is_index_merge_check),
+           "attach_ctdef_type", OB_NOT_NULL(attach_ctdef_) ? attach_ctdef_->op_type_ : -1,
+           "ref_table_id", scan_ctdef_->ref_table_id_);
 
   if (is_vector_index) {
     tree_type = ObDASIterTreeType::ITER_TREE_VEC_LOOKUP;
@@ -464,7 +471,13 @@ int ObDASScanOp::open_op()
   if (OB_FAIL(init_scan_param())) {
     LOG_WARN("init scan param failed", K(ret));
   } else if (FALSE_IT(tree_type = get_iter_tree_type())) {
-  } else if (SUPPORTED_DAS_ITER_TREE(tree_type)) {
+  } else {
+    LOG_INFO("[INDEX_MERGE_EXEC] ObDASScanOp::open_op got tree_type",
+             K(tree_type), "is_supported", SUPPORTED_DAS_ITER_TREE(tree_type),
+             "ref_table_id", scan_ctdef_->ref_table_id_,
+             "attach_ctdef_type", OB_NOT_NULL(attach_ctdef_) ? attach_ctdef_->op_type_ : -1);
+  }
+  if (OB_SUCC(ret) && SUPPORTED_DAS_ITER_TREE(tree_type)) {
     ObDASIter *result = nullptr;
     if (OB_FAIL(init_related_tablet_ids(tablet_ids_))) {
     LOG_WARN("failed to init related tablet ids", K(ret));

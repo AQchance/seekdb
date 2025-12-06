@@ -38,6 +38,7 @@ int ObOptimizer::optimize(ObDMLStmt &stmt, ObLogPlan *&logical_plan)
   int64_t optimizer_mem_usage = 0;
   ObDMLStmt *target_stmt = &stmt;
   ObTaskExecutorCtx *task_exec_ctx = ctx_.get_task_exec_ctx();
+  LOG_INFO("[PLAN_TRACE] ObOptimizer::optimize ENTERED", K(stmt.get_stmt_type()));
   if (stmt.is_explain_stmt()) {
     target_stmt = static_cast<ObExplainStmt*>(&stmt)->get_explain_query_stmt();
   }

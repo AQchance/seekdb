@@ -5288,15 +5288,21 @@ int ObSelectLogPlan::generate_normal_raw_plan()
 {
   int ret = OB_SUCCESS;
   const ObSelectStmt *select_stmt = get_stmt();
+  LOG_INFO("[PLAN_TRACE] ObSelectLogPlan::generate_normal_raw_plan ENTERED",
+           "is_set_stmt", OB_NOT_NULL(select_stmt) ? select_stmt->is_set_stmt() : false,
+           "from_item_size", OB_NOT_NULL(select_stmt) ? select_stmt->get_from_item_size() : 0);
   OPT_TRACE("generate plan for ", select_stmt);
   if (OB_ISNULL(select_stmt)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("get unexpected null", K(ret));
   } else if (select_stmt->is_set_stmt()) {
+    LOG_INFO("[PLAN_TRACE] calling generate_raw_plan_for_set");
     ret = SMART_CALL(generate_raw_plan_for_set());
   } else if (0 == select_stmt->get_from_item_size()) {
+    LOG_INFO("[PLAN_TRACE] calling generate_raw_plan_for_expr_values");
     ret = generate_raw_plan_for_expr_values();
   } else {
+    LOG_INFO("[PLAN_TRACE] calling generate_raw_plan_for_plain_select");
     ret = SMART_CALL(generate_raw_plan_for_plain_select());
   }
   return ret;
@@ -5308,12 +5314,16 @@ int ObSelectLogPlan::generate_normal_raw_plan()
 int ObSelectLogPlan::generate_raw_plan_for_plain_select()
 {
   int ret = OB_SUCCESS;
+  LOG_INFO("[PLAN_TRACE] ObSelectLogPlan::generate_raw_plan_for_plain_select ENTERED");
   if (OB_FAIL(generate_plan_tree())) {
     LOG_WARN("failed to generate plan tree for plain select", K(ret));
+    LOG_INFO("[PLAN_TRACE] generate_plan_tree FAILED", K(ret));
   } else if (OB_FAIL(allocate_plan_top())) {
     LOG_WARN("failed to allocate top operator of plan tree for plain select", K(ret));
+    LOG_INFO("[PLAN_TRACE] allocate_plan_top FAILED", K(ret));
   } else {
     LOG_TRACE("succeed to generate best plan");
+    LOG_INFO("[PLAN_TRACE] generate_raw_plan_for_plain_select SUCCESS");
   }
   return ret;
 }

@@ -19,6 +19,7 @@
 #include "observer/mysql/obmp_query.h"
 
 #include "share/ob_resource_limit.h"
+#include "share/ob_truncated_string.h"
 #include "observer/mysql/ob_sync_plan_driver.h"
 #include "observer/mysql/ob_sync_cmd_driver.h"
 #include "observer/mysql/ob_async_cmd_driver.h"
@@ -447,6 +448,16 @@ int ObMPQuery::process_single_stmt(const ObMultiStmtItem &multi_stmt_item,
   lib::ObMallocCallbackGuard guard(pmcb);
   // After executing setup_wb, all WARNINGS will be written to the WARNING BUFFER of the current session
   setup_wb(session);
+  
+  // Log the SQL being executed
+  ObTruncatedString trunc_sql(multi_stmt_item.get_sql());
+  LOG_DEBUG("[PLAN_TRACE] ObMPQuery::process_single_stmt enter",
+           "sess_id", session.get_server_sid(),
+           "proxy_sess_id", session.get_proxy_sessid(),
+           "tenant_id", session.get_effective_tenant_id(),
+           "execution_id", session.get_current_execution_id(),
+           K(trunc_sql));
+  
   // When a new statement starts, set this value to 0, because curr_trans_last_stmt_end_time is used for
   // Implement the timeout function for excessively long execution intervals of statements within a transaction.
   session.set_curr_trans_last_stmt_end_time(0);
@@ -569,6 +580,14 @@ OB_NOINLINE int ObMPQuery::process_with_tmp_context(ObSQLSessionInfo &session,
                                                     bool &need_disconnect)
 {
   int ret = OB_SUCCESS;
+  const ObString &sql = ctx_.multi_stmt_item_.get_sql();
+  ObTruncatedString trunc_sql(sql);
+  LOG_INFO("[PLAN_TRACE] ObMPQuery::process_with_tmp_context enter",
+           "sess_id", session.get_server_sid(),
+           "proxy_sess_id", session.get_proxy_sessid(),
+           "tenant_id", session.get_effective_tenant_id(),
+           "execution_id", session.get_current_execution_id(),
+           K(trunc_sql));
   //create a temporary memory context to process retry or the rest sql of multi-query,
   //avoid memory dynamic leaks caused by query retry or too many multi-query items
   lib::ContextParam param;
@@ -974,9 +993,19 @@ OB_INLINE int ObMPQuery::do_process(ObSQLSessionInfo &session,
   ObAuditRecordData &audit_record = session.get_raw_audit_record();
   ObExecutingSqlStatRecord sqlstat_record;
   audit_record.try_cnt_++;
+  
+  // Log entry to do_process
   bool is_diagnostics_stmt = false;
   bool need_response_error = true;
   const ObString &sql = ctx_.multi_stmt_item_.get_sql();
+  ObTruncatedString trunc_sql(sql);
+  LOG_INFO("[PLAN_TRACE] ObMPQuery::do_process enter",
+           "sess_id", session.get_server_sid(),
+           "proxy_sess_id", session.get_proxy_sessid(),
+           "tenant_id", session.get_effective_tenant_id(),
+           "execution_id", session.get_current_execution_id(),
+           "try_cnt", audit_record.try_cnt_,
+           K(trunc_sql));
   const bool enable_perf_event = lib::is_diagnose_info_enabled();
   const bool enable_sql_audit =
     GCONF.enable_sql_audit && session.get_local_ob_enable_sql_audit();
@@ -1048,69 +1077,88 @@ OB_INLINE int ObMPQuery::do_process(ObSQLSessionInfo &session,
         LOG_WARN("newest schema is NULL", K(ret));
       } else if (OB_FAIL(set_session_active(sql, session, single_process_timestamp_))) {
         LOG_WARN("fail to set session active", K(ret));
-      } else if (OB_FAIL(gctx_.sql_engine_->stmt_query(sql, ctx_, result))) {
-        exec_start_timestamp_ = ObTimeUtility::current_time();
-        if (!THIS_WORKER.need_retry()) {
-          int cli_ret = OB_SUCCESS;
-          retry_ctrl_.test_and_save_retry_state(gctx_, ctx_, result, ret, cli_ret);
-          if (OB_ERR_PROXY_REROUTE == ret) {
-            LOG_DEBUG("run stmt_query failed, check if need retry",
-                      K(ret), K(cli_ret), K(retry_ctrl_.need_retry()), K(sql));
+      } else {
+        LOG_INFO("[PLAN_TRACE] ObMPQuery::do_process calling stmt_query",
+                 "sess_id", session.get_server_sid(),
+                 "tenant_id", session.get_effective_tenant_id(),
+                 "execution_id", session.get_current_execution_id(),
+                 K(trunc_sql));
+        if (OB_FAIL(gctx_.sql_engine_->stmt_query(sql, ctx_, result))) {
+          LOG_INFO("[PLAN_TRACE] ObMPQuery::do_process stmt_query failed",
+                   "sess_id", session.get_server_sid(),
+                   "tenant_id", session.get_effective_tenant_id(),
+                   "execution_id", session.get_current_execution_id(),
+                   K(ret), K(trunc_sql));
+          exec_start_timestamp_ = ObTimeUtility::current_time();
+          if (!THIS_WORKER.need_retry()) {
+            int cli_ret = OB_SUCCESS;
+            retry_ctrl_.test_and_save_retry_state(gctx_, ctx_, result, ret, cli_ret);
+            if (OB_ERR_PROXY_REROUTE == ret) {
+              LOG_DEBUG("run stmt_query failed, check if need retry",
+                        K(ret), K(cli_ret), K(retry_ctrl_.need_retry()), K(sql));
+            } else {
+              LOG_WARN("run stmt_query failed, check if need retry",
+                       K(ret), K(cli_ret), K(retry_ctrl_.need_retry()),
+                       "sql", ctx_.is_sensitive_ ? ObString(OB_MASKED_STR) : sql);
+            }
+            ret = cli_ret;
+            if (OB_ERR_PROXY_REROUTE == ret) {
+              // This error code is set by the compiler at the compilation stage, the async_resp_used flag must be false
+              // So at this point, we can sync the response packet and set need_response_error
+              // Return an error packet to the client indicating a secondary routing is required
+              need_response_error = true;
+            } else if (ctx_.multi_stmt_item_.is_batched_multi_stmt()) {
+              // batch execute with error,should not response error packet
+              need_response_error = false;
+            } else if (OB_BATCHED_MULTI_STMT_ROLLBACK == ret) {
+              need_response_error = false;
+            }
           } else {
-            LOG_WARN("run stmt_query failed, check if need retry",
-                     K(ret), K(cli_ret), K(retry_ctrl_.need_retry()),
-                     "sql", ctx_.is_sensitive_ ? ObString(OB_MASKED_STR) : sql);
-          }
-          ret = cli_ret;
-          if (OB_ERR_PROXY_REROUTE == ret) {
-            // This error code is set by the compiler at the compilation stage, the async_resp_used flag must be false
-            // So at this point, we can sync the response packet and set need_response_error
-            // Return an error packet to the client indicating a secondary routing is required
-            need_response_error = true;
-          } else if (ctx_.multi_stmt_item_.is_batched_multi_stmt()) {
-            // batch execute with error,should not response error packet
-            need_response_error = false;
-          } else if (OB_BATCHED_MULTI_STMT_ROLLBACK == ret) {
-            need_response_error = false;
+            retry_ctrl_.set_packet_retry(ret);
+            session.get_retry_info_for_update().set_last_query_retry_err(ret);
+            session.get_retry_info_for_update().inc_retry_cnt();
           }
         } else {
-          retry_ctrl_.set_packet_retry(ret);
-          session.get_retry_info_for_update().set_last_query_retry_err(ret);
-          session.get_retry_info_for_update().inc_retry_cnt();
-        }
-      } else {
-        //Monitoring item statistics start
-        exec_start_timestamp_ = ObTimeUtility::current_time();
-        result.get_exec_context().set_plan_start_time(exec_start_timestamp_);
-        // All errors within this branch will be handled properly inside response_result
-        // No need to handle the error response packet additionally
-        need_response_error = false;
-        is_diagnostics_stmt = ObStmt::is_diagnostic_stmt(result.get_literal_stmt_type());
-        ctx_.is_show_trace_stmt_ = ObStmt::is_show_trace_stmt(result.get_literal_stmt_type());
-        plan = result.get_physical_plan();
+          LOG_INFO("[PLAN_TRACE] ObMPQuery::do_process stmt_query success",
+                   "sess_id", session.get_server_sid(),
+                   "tenant_id", session.get_effective_tenant_id(),
+                   "execution_id", session.get_current_execution_id(),
+                   "stmt_type", result.get_stmt_type(),
+                   "is_from_plan_cache", result.get_is_from_plan_cache(),
+                   K(trunc_sql));
+          //Monitoring item statistics start
+          exec_start_timestamp_ = ObTimeUtility::current_time();
+          result.get_exec_context().set_plan_start_time(exec_start_timestamp_);
+          // All errors within this branch will be handled properly inside response_result
+          // No need to handle the error response packet additionally
+          need_response_error = false;
+          is_diagnostics_stmt = ObStmt::is_diagnostic_stmt(result.get_literal_stmt_type());
+          ctx_.is_show_trace_stmt_ = ObStmt::is_show_trace_stmt(result.get_literal_stmt_type());
+          plan = result.get_physical_plan();
 
-        if (get_is_com_filed_list()) {
-          result.set_is_com_filed_list();
-          result.set_wildcard_string(wild_str_);
-        }
+          if (get_is_com_filed_list()) {
+            result.set_is_com_filed_list();
+            result.set_wildcard_string(wild_str_);
+          }
 
-        //response_result
-        if (OB_FAIL(ret)) {
-        //TODO shengle, confirm whether 4.0 is required
-        //} else if (OB_FAIL(fill_feedback_session_info(*result, session))) {
-          //need_response_error = true;
-          //LOG_WARN("failed to fill session info", K(ret));
-        } else if (OB_FAIL(response_result(result,
-                                           force_sync_resp,
-                                           async_resp_used))) {
-          ObPhysicalPlanCtx *plan_ctx = result.get_exec_context().get_physical_plan_ctx();
-          if (OB_ISNULL(plan_ctx)) {
-            // ignore ret
-            LOG_ERROR("execute query fail, and plan_ctx is NULL", K(ret));
-          } else {
-            if (OB_TRANSACTION_SET_VIOLATION != ret && OB_REPLICA_NOT_READABLE != ret) {
-              LOG_WARN("execute query fail", K(ret), "timeout_timestamp",
-                       plan_ctx->get_timeout_timestamp());
+          //response_result
+          if (OB_FAIL(ret)) {
+          //TODO shengle, confirm whether 4.0 is required
+          //} else if (OB_FAIL(fill_feedback_session_info(*result, session))) {
+            //need_response_error = true;
+            //LOG_WARN("failed to fill session info", K(ret));
+          } else if (OB_FAIL(response_result(result,
+                                             force_sync_resp,
+                                             async_resp_used))) {
+            ObPhysicalPlanCtx *plan_ctx = result.get_exec_context().get_physical_plan_ctx();
+            if (OB_ISNULL(plan_ctx)) {
+              // ignore ret
+              LOG_ERROR("execute query fail, and plan_ctx is NULL", K(ret));
+            } else {
+              if (OB_TRANSACTION_SET_VIOLATION != ret && OB_REPLICA_NOT_READABLE != ret) {
+                LOG_WARN("execute query fail", K(ret), "timeout_timestamp",
+                         plan_ctx->get_timeout_timestamp());
+              }
             }
           }
         }

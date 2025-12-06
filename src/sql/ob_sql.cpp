@@ -99,6 +99,14 @@ int ObSql::stmt_prepare(const common::ObString &stmt,
 {
   int ret = OB_SUCCESS;
   LinkExecCtxGuard link_guard(result.get_session(), result.get_exec_context());
+  
+  ObTruncatedString trunc_stmt(stmt);
+  LOG_INFO("[PLAN_TRACE] stmt_prepare enter",
+           "sess_id", result.get_session().get_server_sid(),
+           "tenant_id", result.get_session().get_effective_tenant_id(),
+           "is_inner_sql", is_inner_sql,
+           K(trunc_stmt));
+  
   if (OB_FAIL(sanity_check(context))) {
     LOG_WARN("Failed to do sanity check", K(ret));
   } else if (OB_FAIL(handle_ps_prepare(stmt, context, result, is_inner_sql))) {
@@ -119,6 +127,14 @@ int ObSql::stmt_query(const common::ObString &stmt, ObSqlCtx &context, ObResultS
   LinkExecCtxGuard link_guard(result.get_session(), result.get_exec_context());
   FLTSpanGuard(sql_compile);
   ObTruncatedString trunc_stmt(stmt);
+  
+  // Unconditional logging for plan tracing
+  LOG_WARN("[PLAN_TRACE] stmt_query enter",
+           "sess_id", result.get_session().get_server_sid(),
+           "proxy_sess_id", result.get_session().get_proxy_sessid(),
+           "tenant_id", result.get_session().get_effective_tenant_id(),
+           "execution_id", result.get_session().get_current_execution_id(),
+           K(trunc_stmt));
 #ifndef NDEBUG
   LOG_INFO("Begin to handle text statement",
            "sess_id", result.get_session().get_server_sid(),
@@ -170,6 +186,14 @@ int ObSql::stmt_execute(const ObPsStmtId stmt_id,
 {
   int ret = OB_SUCCESS;
   LinkExecCtxGuard link_guard(result.get_session(), result.get_exec_context());
+  
+  LOG_INFO("[PLAN_TRACE] stmt_execute enter (PS protocol)",
+           "stmt_id", stmt_id,
+           "stmt_type", stmt_type,
+           "params_count", params.count(),
+           "sess_id", result.get_session().get_server_sid(),
+           "tenant_id", result.get_session().get_effective_tenant_id());
+  
   if (OB_FAIL(sanity_check(context))) {
     LOG_WARN("failed to do sanity check", K(ret));
   } else if (OB_FAIL(init_result_set(context, result))) {
@@ -2523,6 +2547,10 @@ OB_INLINE int ObSql::handle_text_query(const ObString &stmt, ObSqlCtx &context, 
   int ret = OB_SUCCESS;
   //trim the sql first, let 'select c1 from t' and '  select c1 from t' and hit the same plan_cache
   ObString trimed_stmt = const_cast<ObString &>(stmt).trim();
+  ObTruncatedString trunc_sql(trimed_stmt);
+  
+  LOG_INFO("[PLAN_TRACE] handle_text_query enter", K(trunc_sql));
+  
   context.is_prepare_protocol_ = false;
   char buf[4096];
   STATIC_ASSERT(sizeof(ObPlanCacheCtx) < sizeof(buf), "ObPlanCacheCtx is too large");
@@ -2588,6 +2616,13 @@ OB_INLINE int ObSql::handle_text_query(const ObString &stmt, ObSqlCtx &context, 
     }
     uint64_t database_id = OB_INVALID_ID;
 
+    LOG_INFO("[PLAN_TRACE] handle_text_query enter",
+             "use_plan_cache", use_plan_cache,
+             "is_begin_commit_stmt", is_begin_commit_stmt,
+             "tenant_id", tenant_id,
+             "sql_id", context.sql_id_,
+             "sql", context.is_sensitive_ ? ObString(OB_MASKED_STR) : trunc_sql.string());
+    
     if (OB_FAIL(session.get_database_id(database_id))) {
       LOG_WARN("Failed to get database id", K(ret));
     } else if (FALSE_IT(context.bl_key_.db_id_ =
@@ -2606,6 +2641,12 @@ OB_INLINE int ObSql::handle_text_query(const ObString &stmt, ObSqlCtx &context, 
                                                ectx.get_need_disconnect_for_update()))) {
       LOG_DEBUG("fail to get plan", K(ret));
     }
+    
+    LOG_INFO("[PLAN_TRACE] plan cache checked",
+             "from_cache", result.get_is_from_plan_cache(),
+             "use_plan_cache", use_plan_cache,
+             "get_plan_err", get_plan_err,
+             "ret", ret);
   }
 
   int tmp_ret = ret;
@@ -2618,13 +2659,23 @@ OB_INLINE int ObSql::handle_text_query(const ObString &stmt, ObSqlCtx &context, 
     //do nothing
   }
   if (OB_SUCC(ret) && !result.get_is_from_plan_cache()) { // did not get plan from plan cache, take the long path to generate plan
+    LOG_INFO("[PLAN_TRACE] calling handle_physical_plan (not from cache)",
+             "sql", context.is_sensitive_ ? ObString(OB_MASKED_STR) : trunc_sql.string());
     if (OB_FAIL(handle_physical_plan(trimed_stmt, context, result, *pc_ctx, get_plan_err))) {
       if (OB_ERR_PROXY_REROUTE == ret) {
         LOG_DEBUG("fail to handle physical plan", K(ret));
       } else {
         LOG_WARN("fail to handle physical plan", K(ret));
       }
+    } else {
+      LOG_INFO("[PLAN_TRACE] physical plan generated",
+               "from_cache", result.get_is_from_plan_cache(),
+               "plan_ptr", result.get_physical_plan());
     }
+  } else if (OB_SUCC(ret)) {
+    LOG_INFO("[PLAN_TRACE] using plan from cache, SKIP optimization",
+             "from_cache", result.get_is_from_plan_cache(),
+             "sql", context.is_sensitive_ ? ObString(OB_MASKED_STR) : trunc_sql.string());
   }
 
   if ((NULL != pc_ctx) && !(pc_ctx->sql_ctx_.is_sensitive_)) {
@@ -3585,8 +3636,10 @@ int ObSql::optimize_stmt(
   logical_plan = NULL;
   LOG_TRACE("stmt to generate plan", K(stmt));
   OPT_TRACE_TITLE("START GENERATE PLAN");
+  LOG_INFO("[PLAN_TRACE] calling optimizer.optimize", K(stmt.get_stmt_type()));
   if (OB_FAIL(optimizer.optimize(stmt, logical_plan))) {
     LOG_WARN("Failed to optimize logical plan", K(ret));
+    LOG_INFO("[PLAN_TRACE] optimizer.optimize FAILED", K(ret));
     // do nothing(plan will be destructed in result set)
   } else if (OB_FAIL(optimizer.update_column_usage_infos())) {
     LOG_WARN("failed to update column usage infos", K(ret));
@@ -3870,6 +3923,11 @@ int ObSql::pc_get_plan_and_fill_result(ObPlanCacheCtx &pc_ctx,
   ObPhysicalPlan *plan = NULL;
   ObExecContext &exec_ctx = result.get_exec_context();
   ObCacheObjGuard& guard = result.get_cache_obj_guard();
+
+  // [DEBUG] Force disable plan cache to always go through optimizer
+  get_plan_err = OB_SQL_PC_NOT_EXIST;
+  LOG_INFO("[DEBUG_PLAN_CACHE] Force disabled plan cache, will use optimizer");
+  return ret;
 
   if (OB_FAIL(pc_get_plan(pc_ctx, guard, get_plan_err,
                           exec_ctx.get_need_disconnect_for_update()))) {
@@ -4370,6 +4428,11 @@ int ObSql::pc_add_plan(ObPlanCacheCtx &pc_ctx,
                        bool& plan_added)
 {
   int ret = OB_SUCCESS;
+  // [DEBUG] Force disable plan cache - don't add new plans
+  plan_added = false;
+  LOG_INFO("[DEBUG_PLAN_CACHE] Force disabled adding plan to cache");
+  return ret;
+
   ObPhysicalPlan *phy_plan = result.get_physical_plan();
   pc_ctx.fp_result_.pc_key_.namespace_ = ObLibCacheNameSpace::NS_CRSR;
   plan_added = false;

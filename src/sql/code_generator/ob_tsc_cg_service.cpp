@@ -53,6 +53,9 @@ int ObTscCgService::generate_tsc_ctdef(ObLogTableScan &op, ObTableScanCtDef &tsc
   OZ(generate_mr_mv_scan_flag(op, query_flag));
   tsc_ctdef.scan_flags_ = query_flag;
   if (op.use_index_merge()) {
+    LOG_INFO("[INDEX_MERGE_EXEC] CG: setting use_index_merge=true",
+             "ref_table_id", op.get_ref_table_id(),
+             "real_ref_table_id", op.get_real_ref_table_id());
     tsc_ctdef.use_index_merge_ = true;
   }
   if (OB_SUCC(ret) && (op.get_table_type() == share::schema::VIRTUAL_TABLE || op.get_table_type() == share::schema::EXTERNAL_TABLE)) {
@@ -321,6 +324,9 @@ int ObTscCgService::generate_tsc_ctdef(ObLogTableScan &op, ObTableScanCtDef &tsc
   }
 
   if (OB_SUCC(ret) && op.use_index_merge()) {
+    LOG_INFO("[INDEX_MERGE_EXEC] CG: generating index merge ctdef",
+             "ref_table_id", op.get_ref_table_id(),
+             "real_ref_table_id", op.get_real_ref_table_id());
     ObDASIndexMergeCtDef *index_merge_ctdef = nullptr;
     if (OB_FAIL(generate_index_merge_ctdef(op, tsc_ctdef, index_merge_ctdef))) {
       LOG_WARN("failed to generate index merge ctdef", K(ret));
@@ -2506,6 +2512,8 @@ int ObTscCgService::generate_index_merge_ctdef(const ObLogTableScan &op,
                                                ObDASIndexMergeCtDef *&root_ctdef)
 {
   int ret = OB_SUCCESS;
+  LOG_INFO("[INDEX_MERGE_EXEC] CG: generate_index_merge_ctdef CALLED",
+           "ref_table_id", op.get_ref_table_id());
   const IndexMergePath *path = nullptr;
   common::ObIAllocator &ctdef_alloc = cg_.phy_plan_->get_allocator();
   if (OB_ISNULL(op.get_access_path())) {
@@ -2529,6 +2537,9 @@ int ObTscCgService::generate_index_merge_node_ctdef(const ObLogTableScan &op,
                                                     ObDASIndexMergeCtDef *&root_ctdef)
 {
   int ret = OB_SUCCESS;
+  LOG_INFO("[INDEX_MERGE_EXEC] CG: generate_index_merge_node_ctdef CALLED",
+           "node_type", OB_NOT_NULL(node) ? node->node_type_ : -1,
+           "children_count", OB_NOT_NULL(node) ? node->children_.count() : 0);
   DASScanCGCtx cg_ctx;
   bool has_rowscn = false;
   if (OB_ISNULL(node) || OB_UNLIKELY(!node->is_merge_node())) {
