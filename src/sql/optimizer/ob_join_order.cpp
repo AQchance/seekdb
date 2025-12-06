@@ -3802,7 +3802,8 @@ int ObJoinOrder::generate_intersect_index_merge_tree(const uint64_t ref_table_id
       LOG_INFO("[INDEX_MERGE_TRACE] processing scalar filters",
                K(ref_table_id), "scalar_filters_count", scalar_filters.count());
       
-      for (int64_t i = 0; OB_SUCC(ret) && !found_scalar_index && i < scalar_filters.count(); ++i) {
+      for (int64_t i = scalar_filters.count() - 1; OB_SUCC(ret) && !found_scalar_index && i >= 0; --i) {
+      // for (int64_t i = 0; OB_SUCC(ret) && !found_scalar_index && i < scalar_filters.count(); ++i) {
         ObRawExpr *filter = scalar_filters.at(i);
         ObSEArray<uint64_t, 1> candicate_index_tids;
         ObIndexMergeNode *child = NULL;
@@ -4095,9 +4096,9 @@ int ObJoinOrder::do_create_index_merge_paths(const uint64_t table_id,
     if (OB_ISNULL(root_node)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("index merge node is null", K(ret), KPC(root_node));
-    } else if (OB_FAIL(choose_best_selectivity_branch(root_node))) {
+    } /* else if (OB_FAIL(choose_best_selectivity_branch(root_node))) {
       LOG_WARN("failed to choose best selectivity branch", K(ret), KPC(root_node));
-    } else if (OB_FAIL(root_node->formalize_index_merge_tree())) {
+    }  */else if (OB_FAIL(root_node->formalize_index_merge_tree())) {
       LOG_WARN("failed to formalize index merge tree", K(ret), KPC(root_node));
     } else if (OB_FAIL(build_access_path_for_scan_node(table_id,
                                                        ref_table_id,
