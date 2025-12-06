@@ -1560,7 +1560,7 @@ DEF_BOOL(_enable_das_keep_order, OB_CLUSTER_PARAMETER, "True",
 DEF_BOOL(_enable_nlj_spf_use_rich_format, OB_CLUSTER_PARAMETER, "True",
          "enable nlj and spf use rich format",
          ObParameterAttr(Section::OBSERVER, Source::DEFAULT, EditLevel::DYNAMIC_EFFECTIVE));
-DEF_BOOL(_enable_index_merge, OB_CLUSTER_PARAMETER, "False",
+DEF_BOOL(_enable_index_merge, OB_CLUSTER_PARAMETER, "True",
          "enable index merge optimization",
          ObParameterAttr(Section::OBSERVER, Source::DEFAULT, EditLevel::DYNAMIC_EFFECTIVE));
 DEF_BOOL(_enable_distributed_das_scan, OB_CLUSTER_PARAMETER, "True",
