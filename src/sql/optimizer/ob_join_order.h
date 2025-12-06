@@ -1803,6 +1803,12 @@ struct NullAwareAntiJoinInfo {
                                          ObIArray<ObSEArray<uint64_t, 4>> &valid_index_cols,
                                          ObIArray<ObIndexMergeNode *> &candi_index_trees);
 
+    int generate_intersect_index_merge_tree(const uint64_t ref_table_id,
+                                            const ObIArray<ObRawExpr*> &filters,
+                                            ObIArray<uint64_t> &valid_index_ids,
+                                            ObIArray<ObSEArray<uint64_t, 4>> &valid_index_cols,
+                                            ObIArray<ObIndexMergeNode *> &candi_index_trees);
+
     int generate_candi_index_merge_node(const uint64_t ref_table_id,
                                         ObRawExpr *filter,
                                         ObIArray<uint64_t> &valid_index_ids,
