@@ -789,6 +789,7 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
   int ret = OB_SUCCESS;
   bool got_row = false;
   static int64_t total_output_count = 0;
+  result_buffer_.reuse();
   LOG_INFO("[INDEX_MERGE_DEBUG] intersect_get_next_rows ENTER", K(count), K(capacity));
   while (OB_SUCC(ret) && count < capacity) {
       /* try to fill each child store */
@@ -890,9 +891,10 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
           }
           if (OB_FAIL(child_stores_.at(output_idx).to_expr())) {
             LOG_WARN("index merge failed to convert row to expr", K(ret));
+          } else if (OB_FAIL(save_row_to_result_buffer())) {
+            LOG_WARN("failed to save row to result buffer", K(ret));
           } else {
             count += 1;
-            // 注意：to_expr() 内部已经做了 cur_idx_++，这里不要再加！
           }
         } else {
           child_stores_.at(output_idx).cur_idx_++;
@@ -901,6 +903,14 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
     }
   }
 
+  if (OB_ITER_END == ret && count > 0) {
+    ret = OB_SUCCESS;
+  }
+  if (OB_SUCC(ret) && count > 0) {
+    if (OB_FAIL(result_buffer_.to_expr(count))) {
+      LOG_WARN("failed to convert result buffer to exprs", K(ret));
+    }
+  }
   return ret;
 }
 
