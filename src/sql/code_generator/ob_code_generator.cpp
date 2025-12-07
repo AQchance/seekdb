@@ -154,7 +154,8 @@ int ObCodeGenerator::detect_batch_size(
           exec_ctx->get_physical_plan_ctx()->get_original_param_cnt(),
           0,
           exec_ctx->get_min_cluster_version());
-      int64_t rowsets_max_rows = tenant_config->_rowsets_max_rows;
+      // int64_t rowsets_max_rows = tenant_config->_rowsets_max_rows;
+      int64_t rowsets_max_rows = 128;
       OZ(expr_cg.detect_batch_size(flattened_exprs, batch_size,
                                    rowsets_max_rows,
                                    tenant_config->_rowsets_target_maxsize,
