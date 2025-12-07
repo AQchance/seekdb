@@ -372,6 +372,8 @@ int ObDASTextRetrievalIter::rescan()
 int ObDASTextRetrievalIter::inner_get_next_row()
 {
   int ret = OB_SUCCESS;
+  static int64_t fts_call_count = 0;
+  fts_call_count++;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
     LOG_WARN("retrieval iterator not inited", K(ret));
@@ -391,6 +393,11 @@ int ObDASTextRetrievalIter::inner_get_next_row()
       LOG_WARN("failed to get next row from inverted index", K(ret), K_(inv_idx_scan_param), KPC_(inverted_idx_scan_iter));
     }
   } else {
+    // 添加 FTS 输出日志
+    if (fts_call_count <= 50 || fts_call_count % 100 == 0) {
+      LOG_INFO("[FTS_DEBUG] inner_get_next_row output",
+               K(fts_call_count));
+    }
     LOG_DEBUG("get one invert index scan row", "row",
         ROWEXPR2STR(*ir_rtdef_->get_inv_idx_scan_rtdef()->eval_ctx_,
         *inv_idx_scan_param_.output_exprs_));

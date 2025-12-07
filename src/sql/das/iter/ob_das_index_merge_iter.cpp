@@ -202,7 +202,8 @@ int ObDASIndexMergeIter::inner_init(ObDASIterParam &param)
              K(merge_type_), 
              "is_intersect", (merge_type_ == INDEX_MERGE_INTERSECT),
              "is_union", (merge_type_ == INDEX_MERGE_UNION),
-             "child_count", index_merge_param.child_iters_->count());
+             "child_count", index_merge_param.child_iters_->count(),
+             "rowkey_exprs_count", rowkey_exprs_ != nullptr ? rowkey_exprs_->count() : 0);
     
     lib::ContextParam context_param;
     context_param.set_mem_attr(MTL_ID(), "DASIndexMerge", ObCtxIds::DEFAULT_CTX_ID)
@@ -591,11 +592,16 @@ int ObDASIndexMergeIter::inner_get_next_rows(int64_t &count, int64_t capacity)
 {
   int ret = OB_SUCCESS;
   clear_evaluated_flag();
+  int64_t before_count = count;
   if (OB_FAIL((this->*get_next_rows_)(count, capacity))) {
     if (ret != OB_ITER_END) {
       LOG_WARN("index merge iter failed to get next rows", K(ret));
     }
   }
+  // 打印本次返回的行数
+  LOG_INFO("[INDEX_MERGE_DEBUG] inner_get_next_rows DONE",
+           K(before_count), K(count), K(capacity), K(ret),
+           "rows_returned", count - before_count);
   LOG_TRACE("[DAS ITER] index merge iter get next rows", K(count), K(capacity), K(ret));
   const ObBitVector *skip = nullptr;
   PRINT_VECTORIZED_ROWS(SQL, DEBUG, *eval_ctx_, *output_, count, skip);
@@ -653,6 +659,13 @@ int ObDASIndexMergeIter::intersect_get_next_row()
   if (call_count <= 10 || call_count % 1000 == 0) {
     LOG_INFO("[INDEX_MERGE_EXEC] intersect_get_next_row CALLED",
              K(call_count), K(child_stores_.count()));
+    // 打印每个子迭代器的类型
+    for (int64_t i = 0; i < child_iters_.count(); ++i) {
+      if (OB_NOT_NULL(child_iters_.at(i))) {
+        LOG_INFO("[INDEX_MERGE_EXEC] child iter type",
+                 K(i), "type", child_iters_.at(i)->get_type());
+      }
+    }
   }
   while (OB_SUCC(ret) && !got_row) {
       /* try to fill each child store */
@@ -675,8 +688,17 @@ int ObDASIndexMergeIter::intersect_get_next_row()
             }
           } else if (OB_FAIL(child_store.save(false, 1))) {
             LOG_WARN("failed to save child row", K(ret));
-          } else if (OB_FAIL(compare(i, output_idx, cmp_ret))) {
-            LOG_WARN("index merge failed to compare row", K(i), K(output_idx), K(ret));
+          } else {
+            // DEBUG: 打印子迭代器返回的行的 rowkey
+            const ObDatum *child_datums = child_store.cur_datums();
+            if (child_datums != nullptr && rowkey_exprs_ != nullptr && rowkey_exprs_->count() > 0) {
+              int64_t rowkey_val = child_datums[0].get_int();
+              LOG_INFO("[INDEX_MERGE_DEBUG] Child iter returned row",
+                       K(i), K(rowkey_val), "datum", child_datums[0]);
+            }
+            if (OB_FAIL(compare(i, output_idx, cmp_ret))) {
+              LOG_WARN("index merge failed to compare row", K(i), K(output_idx), K(ret));
+            }
           }
         }
       } else if (OB_FAIL(compare(i, output_idx, cmp_ret))) {
@@ -699,24 +721,58 @@ int ObDASIndexMergeIter::intersect_get_next_row()
         } else if (OB_FAIL(compare(i, output_idx, cmp_ret))) {
             LOG_WARN("index merge failed to compare row", K(i), K(output_idx), K(ret));
         } else if (cmp_ret == 0) {
+          // DEBUG: 打印匹配的行
+          const ObDatum *match_datums = child_stores_.at(i).cur_datums();
+          const ObDatum *output_datums = child_stores_.at(output_idx).cur_datums();
+          if (match_datums != nullptr && output_datums != nullptr) {
+            LOG_INFO("[INDEX_MERGE_DEBUG] Compare matched",
+                     K(i), K(output_idx), K(cmp_ret),
+                     "child_i_rowkey", match_datums[0].get_int(),
+                     "output_rowkey", output_datums[0].get_int());
+          }
           // FIXME: only one store will project data in intersect get next row(s).
           child_stores_.at(i).cur_idx_++;
         } else {
+          // DEBUG: 打印不匹配的行
+          const ObDatum *nomatch_datums = child_stores_.at(i).cur_datums();
+          const ObDatum *output_datums = child_stores_.at(output_idx).cur_datums();
+          if (nomatch_datums != nullptr && output_datums != nullptr) {
+            LOG_INFO("[INDEX_MERGE_DEBUG] Compare NOT matched",
+                     K(i), K(output_idx), K(cmp_ret),
+                     "child_i_rowkey", nomatch_datums[0].get_int(),
+                     "output_rowkey", output_datums[0].get_int());
+          }
           all_matched = false;
         }
       }
       if (OB_SUCC(ret)) {
         if (all_matched) {
           /* found available row in each child store, output */
+          // 打印当前输出行的 rowkey 信息
+          const ObDatum *out_datums = child_stores_.at(output_idx).cur_datums();
+          static int64_t row_output_count = 0;
+          if (out_datums != nullptr && rowkey_exprs_ != nullptr && rowkey_exprs_->count() > 0) {
+            row_output_count++;
+            // 将 rowkey 转换成可读的整数值
+            int64_t rowkey_int = 0;
+            if (out_datums[0].len_ > 0) {
+              rowkey_int = out_datums[0].get_int();
+            }
+            LOG_INFO("[INDEX_MERGE_DEBUG] OUTPUT ROW (row version)",
+                     K(row_output_count),
+                     K(output_idx),
+                     K(rowkey_int),
+                     "child0_cur_idx", child_stores_.at(0).cur_idx_,
+                     "child0_saved", child_stores_.at(0).saved_size_,
+                     "child1_cur_idx", child_stores_.count() > 1 ? child_stores_.at(1).cur_idx_ : -1,
+                     "child1_saved", child_stores_.count() > 1 ? child_stores_.at(1).saved_size_ : -1,
+                     "rowkey_datum0", out_datums[0]);
+          }
           if (OB_FAIL(child_stores_.at(output_idx).to_expr())) {
             LOG_WARN("index merge failed to convert row to expr", K(ret));
           } else {
             got_row = true;
-            static int64_t matched_count = 0;
-            matched_count++;
-            if (matched_count <= 10 || matched_count % 100 == 0) {
-              LOG_INFO("[INDEX_MERGE_EXEC] INTERSECT MATCH FOUND", K(matched_count));
-            }
+            // 注意：to_expr() 内部已经做了 cur_idx_++，这里不要再加！
           }
         } else {
           child_stores_.at(output_idx).cur_idx_++;
@@ -732,6 +788,8 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
 {
   int ret = OB_SUCCESS;
   bool got_row = false;
+  static int64_t total_output_count = 0;
+  LOG_INFO("[INDEX_MERGE_DEBUG] intersect_get_next_rows ENTER", K(count), K(capacity));
   while (OB_SUCC(ret) && count < capacity) {
       /* try to fill each child store */
     int64_t output_idx = OB_INVALID_INDEX;
@@ -753,10 +811,33 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
             if (OB_SUCC(ret)) {
               if (OB_FAIL(child_store.save(true, child_rows_cnt))) {
                 LOG_WARN("failed to save child rows", K(child_rows_cnt), K(ret));
-              } else if (OB_FAIL(compare(i, output_idx, cmp_ret))) {
-                LOG_WARN("index merge failed to compare row", K(i), K(output_idx), K(ret));
-              } else if (child_iter->get_type() == DAS_ITER_SORT) {
-                reset_datum_ptr(child_iter->get_output(), child_rows_cnt);
+              } else {
+                // Debug: check for consecutive duplicate rowkeys in child batch
+                if (rowkey_exprs_ != nullptr && rowkey_exprs_->count() > 0 && i == 0) {
+                  // Only check FTS child (child 0) for duplicates
+                  int64_t prev_int = -1;
+                  for (int64_t row_idx = child_store.cur_idx_; row_idx < child_store.saved_size_; row_idx++) {
+                    if (child_store.store_rows_ != nullptr && 
+                        child_store.store_rows_[row_idx].store_row_ != nullptr) {
+                      const ObDatum *datums = child_store.store_rows_[row_idx].store_row_->cells();
+                      if (datums != nullptr) {
+                        int64_t cur_int = datums[0].get_int();
+                        if (row_idx > child_store.cur_idx_ && cur_int == prev_int) {
+                          LOG_INFO("[INDEX_MERGE_DEBUG] DUPLICATE DETECTED in child batch",
+                                   K(i), K(row_idx), K(cur_int), K(prev_int),
+                                   "child_cur_idx", child_store.cur_idx_,
+                                   "child_saved", child_store.saved_size_);
+                        }
+                        prev_int = cur_int;
+                      }
+                    }
+                  }
+                }
+                if (OB_FAIL(compare(i, output_idx, cmp_ret))) {
+                  LOG_WARN("index merge failed to compare row", K(i), K(output_idx), K(ret));
+                } else if (child_iter->get_type() == DAS_ITER_SORT) {
+                  reset_datum_ptr(child_iter->get_output(), child_rows_cnt);
+                }
               }
             } else if (OB_ITER_END == ret) {
               child_store.iter_end_ = true;
@@ -794,10 +875,24 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
       if (OB_SUCC(ret)) {
         if (all_matched) {
           /* found available row in each child store, output */
+          // 打印当前输出行的 rowkey 信息
+          const ObDatum *out_datums = child_stores_.at(output_idx).cur_datums();
+          if (out_datums != nullptr && rowkey_exprs_ != nullptr && rowkey_exprs_->count() > 0) {
+            total_output_count++;
+            LOG_INFO("[INDEX_MERGE_DEBUG] OUTPUT ROW (rows version)",
+                     K(total_output_count),
+                     K(output_idx),
+                     "child0_cur_idx", child_stores_.at(0).cur_idx_,
+                     "child0_saved", child_stores_.at(0).saved_size_,
+                     "child1_cur_idx", child_stores_.count() > 1 ? child_stores_.at(1).cur_idx_ : -1,
+                     "child1_saved", child_stores_.count() > 1 ? child_stores_.at(1).saved_size_ : -1,
+                     "rowkey_datum0", out_datums[0]);
+          }
           if (OB_FAIL(child_stores_.at(output_idx).to_expr())) {
             LOG_WARN("index merge failed to convert row to expr", K(ret));
           } else {
             count += 1;
+            // 注意：to_expr() 内部已经做了 cur_idx_++，这里不要再加！
           }
         } else {
           child_stores_.at(output_idx).cur_idx_++;

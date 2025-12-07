@@ -310,6 +310,10 @@ int ObDASCacheLookupIter::inner_get_next_rows(int64_t &count, int64_t capacity)
         }
 
         if (OB_SUCC(ret)) {
+          LOG_INFO("[CACHE_LOOKUP_DEBUG] INDEX_SCAN done",
+                   K(lookup_rowkey_cnt_), K(index_end_),
+                   "index_proj_saved", index_proj_rows_.saved_size_,
+                   "index_proj_cur_idx", index_proj_rows_.cur_idx_);
           if (OB_LIKELY(lookup_rowkey_cnt_ > 0)) {
             state_ = DO_LOOKUP;
           } else {
@@ -353,9 +357,15 @@ int ObDASCacheLookupIter::inner_get_next_rows(int64_t &count, int64_t capacity)
         }
 
         if (OB_FAIL(ret)) {
-        } else if (get_next_rows && index_proj_rows_.have_data() &&
-                   OB_FAIL(index_proj_rows_.to_expr(count))) {
-          LOG_WARN("failed to convert store row to expr", K(ret));
+        } else if (get_next_rows && index_proj_rows_.have_data()) {
+          LOG_INFO("[CACHE_LOOKUP_DEBUG] OUTPUT_ROWS before to_expr",
+                   K(count), K(lookup_row_cnt_),
+                   "index_proj_saved", index_proj_rows_.saved_size_,
+                   "index_proj_cur_idx", index_proj_rows_.cur_idx_,
+                   "capacity", capacity);
+          if (OB_FAIL(index_proj_rows_.to_expr(count))) {
+            LOG_WARN("failed to convert store row to expr", K(ret));
+          }
         }
         break;
       }

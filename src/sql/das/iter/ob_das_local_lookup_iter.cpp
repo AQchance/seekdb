@@ -223,6 +223,7 @@ int ObDASLocalLookupIter::do_table_scan()
 int ObDASLocalLookupIter::add_rowkeys(int64_t count)
 {
   int ret = OB_SUCCESS;
+  static int64_t total_add_count = 0;
   if (OB_ISNULL(eval_ctx_)) {
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected nullptr", K_(eval_ctx));
@@ -231,6 +232,21 @@ int ObDASLocalLookupIter::add_rowkeys(int64_t count)
     batch_info_guard.set_batch_size(count);
     for(int i = 0; OB_SUCC(ret) && i < count; i++) {
       batch_info_guard.set_batch_idx(i);
+      // Debug: print the rowkey value being used for lookup
+      if (rowkey_exprs_.count() > 0) {
+        ObExpr *first_rowkey_expr = rowkey_exprs_.at(0);
+        if (first_rowkey_expr != nullptr) {
+          ObDatum &datum = first_rowkey_expr->locate_expr_datum(*eval_ctx_);
+          total_add_count++;
+          LOG_INFO("[LOOKUP_DEBUG] add_rowkey",
+                   K(total_add_count), K(i), K(count),
+                   "batch_idx", eval_ctx_->get_batch_idx(),
+                   "batch_idx_mask", first_rowkey_expr->batch_idx_mask_,
+                   "is_batch_result", first_rowkey_expr->is_batch_result(),
+                   "datum_idx", first_rowkey_expr->get_datum_idx(*eval_ctx_),
+                   "rowkey_int", datum.get_int());
+        }
+      }
       if(OB_FAIL(add_rowkey())) {
         LOG_WARN("failed to add rowkey", K(ret), K(i));
       }

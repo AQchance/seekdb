@@ -993,6 +993,8 @@ int ObDASTRTaatIter::check_and_prepare()
 int ObDASTRTaatIter::inner_get_next_row()
 {
   int ret = OB_SUCCESS;
+  static int64_t taat_call_count = 0;
+  taat_call_count++;
   bool need_fill_doc_cnt = !doc_cnt_calculated_;
   if (OB_FAIL(check_and_prepare())) {
     if (OB_ITER_END != ret) {
@@ -1015,6 +1017,8 @@ int ObDASTRTaatIter::inner_get_next_row()
     } else if (OB_UNLIKELY(count != 1)) {
       ret = OB_ERR_UNEXPECTED;
       LOG_WARN("unexpected row count", K(ret), K(count));
+    } else if (taat_call_count <= 50 || taat_call_count % 100 == 0) {
+      LOG_INFO("[FTS_TAAT_DEBUG] inner_get_next_row output", K(taat_call_count));
     }
   }
   return ret;
@@ -1947,6 +1951,8 @@ int ObDASTRDaatIter::inner_release()
 int ObDASTRDaatIter::inner_get_next_row()
 {
   int ret = OB_SUCCESS;
+  static int64_t daat_call_count = 0;
+  daat_call_count++;
   if (OB_FAIL(check_and_prepare())) {
     if (OB_ITER_END != ret) {
       LOG_WARN("failed to prepare to get next row", K(ret));
@@ -1983,6 +1989,11 @@ int ObDASTRDaatIter::inner_get_next_row()
           if (input_row_cnt_ > limit_param_.offset_) {
             got_valid_document = true;
             ++output_row_cnt_;
+            // 添加 DAAT 输出日志
+            if (daat_call_count <= 50 || daat_call_count % 100 == 0) {
+              LOG_INFO("[FTS_DAAT_DEBUG] inner_get_next_row output", 
+                       K(daat_call_count), K_(output_row_cnt));
+            }
           }
         }
       }
