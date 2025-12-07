@@ -3924,11 +3924,6 @@ int ObSql::pc_get_plan_and_fill_result(ObPlanCacheCtx &pc_ctx,
   ObExecContext &exec_ctx = result.get_exec_context();
   ObCacheObjGuard& guard = result.get_cache_obj_guard();
 
-  // [DEBUG] Force disable plan cache to always go through optimizer
-  get_plan_err = OB_SQL_PC_NOT_EXIST;
-  LOG_INFO("[DEBUG_PLAN_CACHE] Force disabled plan cache, will use optimizer");
-  return ret;
-
   if (OB_FAIL(pc_get_plan(pc_ctx, guard, get_plan_err,
                           exec_ctx.get_need_disconnect_for_update()))) {
     LOG_DEBUG("fail to get plan", K(ret));
@@ -4428,10 +4423,6 @@ int ObSql::pc_add_plan(ObPlanCacheCtx &pc_ctx,
                        bool& plan_added)
 {
   int ret = OB_SUCCESS;
-  // [DEBUG] Force disable plan cache - don't add new plans
-  plan_added = false;
-  LOG_INFO("[DEBUG_PLAN_CACHE] Force disabled adding plan to cache");
-  return ret;
 
   ObPhysicalPlan *phy_plan = result.get_physical_plan();
   pc_ctx.fp_result_.pc_key_.namespace_ = ObLibCacheNameSpace::NS_CRSR;
