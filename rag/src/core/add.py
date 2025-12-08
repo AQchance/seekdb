@@ -119,7 +119,7 @@ def process_pdf_file(
 
             try:
                 # Step 1: Convert PDF to image
-                page_image_path = pdf_page_to_image(pdf_file, page_num, dpi=100)
+                page_image_path = pdf_page_to_image(pdf_file, page_num, dpi=300)
                 logger.debug(f"Converted page {page_num} to image: {page_image_path}")
 
                 # Step 2: Extract information using VLM
