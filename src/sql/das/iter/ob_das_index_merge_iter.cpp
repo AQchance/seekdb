@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include "lib/ob_errno.h"
 #define USING_LOG_PREFIX SQL_DAS
 #include "sql/das/iter/ob_das_index_merge_iter.h"
 #include "src/sql/das/ob_das_attach_define.h"
@@ -850,6 +851,10 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
         }
       } else if (OB_FAIL(compare(i, output_idx, cmp_ret))) {
         LOG_WARN("index merge failed to compare row", K(i), K(output_idx), K(ret));
+      }
+      const ObDatum *cur_datums = child_stores_.at(i).cur_datums();
+      if(cur_datums->get_uint() > capacity << 3){
+        ret = OB_ITER_END;
       }
     }
 
