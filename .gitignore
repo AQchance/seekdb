@@ -397,3 +397,7 @@ all.sh
 data/
 perf_data/
 compile_and_restart.sh
+rag/
+perf.sh
+compile.sh
+pidstat.sh
