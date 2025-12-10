@@ -18,6 +18,8 @@
 #define USING_LOG_PREFIX SQL_DAS
 #include "sql/das/iter/ob_das_index_merge_iter.h"
 #include "src/sql/das/ob_das_attach_define.h"
+#include <algorithm>
+#include <vector>
 namespace oceanbase
 {
 using namespace common;
@@ -791,6 +793,19 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
   bool got_row = false;
   static int64_t total_output_count = 0;
   result_buffer_.reuse();
+  // 用于存储每一行的 StoredRow 和 relevance score
+  struct RowWithScore {
+    ObChunkDatumStore::StoredRow *stored_row;  // 指向存储的行
+    double relevance_score;
+    
+    RowWithScore() : stored_row(nullptr), relevance_score(0.0) {}
+  };
+
+  // 用来存储所有符合条件的行
+  std::vector<RowWithScore> all_rows;
+  ObArenaAllocator temp_allocator("TempRowStore");  // 临时分配器
+
+
   LOG_INFO("[INDEX_MERGE_DEBUG] intersect_get_next_rows ENTER", K(count), K(capacity));
   while (OB_SUCC(ret) && count < capacity) {
       /* try to fill each child store */
@@ -880,6 +895,52 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
       }
       if (OB_SUCC(ret)) {
         if (all_matched) {
+          // 获取 relevance score
+          double relevance_score = 0.0;
+          const ObDatum *fts_datums = child_stores_.at(0).cur_datums();
+          if (fts_datums != nullptr && child_stores_.at(0).exprs_ != nullptr 
+              && child_stores_.at(0).exprs_->count() > 1) {
+            relevance_score = fts_datums[1].get_double();
+          }
+
+        
+          // 获取当前的 StoredRow
+          const ObChunkDatumStore::StoredRow *src_row = child_stores_.at(output_idx).store_rows_[child_stores_.at(output_idx).cur_idx_].store_row_;
+          
+          if (OB_ISNULL(src_row)) {
+            ret = OB_ERR_UNEXPECTED;
+            LOG_WARN("unexpected null stored row", K(ret));
+          } else {
+            // 使用 StoredRow::build 创建一个新的 StoredRow 副本
+            // 计算需要的内存大小
+            int64_t row_size = src_row->row_size_;
+            char *buf = static_cast<char*>(temp_allocator.alloc(row_size));
+            if (OB_ISNULL(buf)) {
+              ret = OB_ALLOCATE_MEMORY_FAILED;
+              LOG_WARN("failed to allocate memory for stored row", K(row_size), K(ret));
+            } else {
+              // 创建新的 StoredRow 并使用 assign 复制数据
+              ObChunkDatumStore::StoredRow *copied_row = 
+                  reinterpret_cast<ObChunkDatumStore::StoredRow*>(buf);
+              
+              if (OB_FAIL(copied_row->assign(src_row))) {
+                LOG_WARN("failed to assign stored row", K(ret));
+              } else {
+                RowWithScore row_score;
+                row_score.stored_row = copied_row;
+                row_score.relevance_score = relevance_score;
+                all_rows.push_back(row_score);
+                
+                // 移动到下一行
+                child_stores_.at(output_idx).cur_idx_++;
+                
+                LOG_INFO("[INDEX_MERGE_DEBUG] COLLECTED ROW",
+                        "total", all_rows.size(),
+                        "score", relevance_score);
+              }
+            }
+          }
+
           /* found available row in each child store, output */
           // 打印当前输出行的 rowkey 信息
           const ObDatum *out_datums = child_stores_.at(output_idx).cur_datums();
@@ -894,28 +955,70 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
                      "child1_saved", child_stores_.count() > 1 ? child_stores_.at(1).saved_size_ : -1,
                      "rowkey_datum0", out_datums[0]);
           }
-          if (OB_FAIL(child_stores_.at(output_idx).to_expr())) {
-            LOG_WARN("index merge failed to convert row to expr", K(ret));
-          } else if (OB_FAIL(save_row_to_result_buffer())) {
-            LOG_WARN("failed to save row to result buffer", K(ret));
-          } else {
-            count += 1;
-          }
+          // if (OB_FAIL(child_stores_.at(output_idx).to_expr())) {
+          //   LOG_WARN("index merge failed to convert row to expr", K(ret));
+          // } else if (OB_FAIL(save_row_to_result_buffer())) {
+          //   LOG_WARN("failed to save row to result buffer", K(ret));
+          // } else {
+          //   count += 1;
+          // }
         } else {
           child_stores_.at(output_idx).cur_idx_++;
         }
       }
     }
   }
-
-  if (OB_ITER_END == ret && count > 0) {
+  if(OB_ITER_END == ret){
     ret = OB_SUCCESS;
+  }  
+
+  int64_t total_matched = all_rows.size();
+  LOG_INFO("[INDEX_MERGE_DEBUG] Collection phase done", K(total_matched), K(ret));
+
+  if (OB_SUCC(ret) && total_matched > 0) {
+    // 先排序
+    std::sort(all_rows.begin(), all_rows.end(),
+              [](const RowWithScore &a, const RowWithScore &b) {
+                return a.relevance_score > b.relevance_score;  // 降序排序
+              });
+    int64_t rows_to_return = 10;
+    count = rows_to_return;
+    LOG_INFO("[INDEX_MERGE_DEBUG] Returning top results", 
+             K(total_matched), K(rows_to_return), K(capacity));
+    for (int64_t i = 0; OB_SUCC(ret) && i < rows_to_return; i++) {
+      const RowWithScore &row_score = all_rows[i];
+      if (OB_ISNULL(row_score.stored_row)) {
+        ret = OB_ERR_UNEXPECTED;
+        LOG_WARN("unexpected null stored row", K(i), K(ret));
+      } else {
+        // 将 StoredRow 投影到表达式
+        ObEvalCtx::BatchInfoScopeGuard batch_info_guard(*eval_ctx_);
+        batch_info_guard.set_batch_size(1);
+        batch_info_guard.set_batch_idx(0);
+        
+        if (OB_FAIL(row_score.stored_row->to_expr<true>(*output_, *eval_ctx_))) {
+          LOG_WARN("failed to convert stored row to expr", K(i), K(ret));
+        } else if (OB_FAIL(save_row_to_result_buffer())) {
+          LOG_WARN("failed to save row to result buffer", K(i), K(ret));
+        } else {
+          LOG_INFO("[INDEX_MERGE_DEBUG] Added sorted row", 
+                   K(i), "score", row_score.relevance_score);
+        }
+      }
+    }
   }
+
+  // 最后将 result_buffer_ 转换回表达式
   if (OB_SUCC(ret) && count > 0) {
     if (OB_FAIL(result_buffer_.to_expr(count))) {
       LOG_WARN("failed to convert result buffer to exprs", K(ret));
     }
   }
+  
+  LOG_INFO("[INDEX_MERGE_DEBUG] intersect_get_next_rows EXIT", 
+           K(count), K(total_matched), K(ret));
+  
+  ret = OB_ITER_END;
   return ret;
 }
 
