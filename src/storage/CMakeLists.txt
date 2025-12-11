@@ -1063,6 +1063,7 @@ ob_set_subtarget(ob_storage retrieval
   retrieval/ob_text_taat_iter.cpp
   retrieval/ob_spiv_daat_iter.cpp
   retrieval/ob_spiv_dim_iter.cpp
+  retrieval/ob_token_doc_cnt_cache.cpp
 )
 
 ob_add_new_object_target(ob_storage ob_storage)

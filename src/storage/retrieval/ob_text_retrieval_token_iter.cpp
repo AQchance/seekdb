@@ -17,6 +17,7 @@
 #define USING_LOG_PREFIX STORAGE
 
 #include "ob_text_retrieval_token_iter.h"
+#include "ob_token_doc_cnt_cache.h"
 #include "sql/engine/expr/ob_expr_bm25.h"
 #include "sql/das/iter/sparse_retrieval/ob_das_tr_merge_iter.h"
 
@@ -586,56 +587,101 @@ int ObTextRetrievalTokenIter::set_decimal_int_by_precision(ObDatum &result_datum
 int ObTextRetrievalTokenIter::estimate_token_doc_cnt()
 {
   int ret = OB_SUCCESS;
-  int64_t logical_row_cnt = 0;
-  int64_t physical_row_cnt = 0;
-  ObSEArray<ObEstRowCountRecord, 1> est_records;
-  ObArenaAllocator allocator;
-  const int64_t timeout_us = THIS_WORKER.get_timeout_remain();
-  ObAccessService *access_service = NULL;
-  storage::ObTableScanRange table_scan_range;
-  ObSimpleBatch batch;
-  batch.type_ = ObSimpleBatch::T_SCAN;
-  batch.range_ = &inv_idx_agg_param_->key_ranges_.at(0);
-  ObTableScanParam est_param;
-  est_param.index_id_ = inv_idx_agg_param_->index_id_;
-  est_param.scan_flag_ = inv_idx_agg_param_->scan_flag_;
-  est_param.tablet_id_ = inv_idx_agg_param_->tablet_id_;
-  est_param.ls_id_ = inv_idx_agg_param_->ls_id_;
-  est_param.tx_id_ = inv_idx_agg_param_->tx_id_;
-  est_param.schema_version_ = inv_idx_agg_param_->schema_version_;
-  est_param.frozen_version_ = GET_BATCH_ROWS_READ_SNAPSHOT_VERSION;
-  if (OB_ISNULL(access_service = MTL(ObAccessService *))) {
+
+  // Step 1: Try to get from cache
+  if (OB_UNLIKELY(inv_idx_agg_param_->key_ranges_.count() != 1)) {
     ret = OB_ERR_UNEXPECTED;
-    LOG_WARN("get unexpected null", K(ret), K(access_service));
-  } else if (OB_FAIL(table_scan_range.init(*inv_idx_agg_param_, batch, allocator))) {
-    STORAGE_LOG(WARN, "Failed to init table scan range", K(ret), K(batch));
-  } else if (OB_FAIL(access_service->estimate_row_count(est_param,
-                                                        table_scan_range,
-                                                        timeout_us,
-                                                        est_records,
-                                                        logical_row_cnt,
-                                                        physical_row_cnt))) {
-    LOG_TRACE("OPT:[STORAGE EST FAILED, USE STAT EST]", "storage_ret", ret);
+    LOG_WARN("unexpected key range count for cache lookup", K(ret));
   } else {
-    token_doc_cnt_ = logical_row_cnt;
-    token_doc_cnt_calculated_ = true;
-    sql::ObExpr *total_doc_cnt_param_expr = relevance_expr_->args_[sql::ObExprBM25::TOTAL_DOC_CNT_PARAM_IDX];
-    if (OB_ISNULL(total_doc_cnt_param_expr)) {
+    // Extract the token from key_ranges
+    const ObNewRange &scan_range = inv_idx_agg_param_->key_ranges_.at(0);
+    ObString token_str;
+    if (OB_NOT_NULL(scan_range.start_key_.get_obj_ptr())) {
+      token_str = scan_range.start_key_.get_obj_ptr()->get_string();
+    }
+
+    ObTokenDocCntCacheKey cache_key(
+        inv_idx_agg_param_->tenant_id_,
+        inv_idx_agg_param_->index_id_,
+        inv_idx_agg_param_->tablet_id_,
+        token_str);
+
+    const ObTokenDocCntCacheValue *cache_value = nullptr;
+    common::ObKVCacheHandle handle;
+
+    if (OB_SUCC(ObTokenDocCntCache::get_instance().get_token_doc_cnt(cache_key, cache_value, handle))) {
+      // Cache hit
+      token_doc_cnt_ = cache_value->get_token_doc_cnt();
+      max_token_relevance_ = cache_value->get_max_token_relevance();
+      token_doc_cnt_calculated_ = true;
+      LOG_DEBUG("token doc cnt cache hit", K(token_str), K_(token_doc_cnt), K_(max_token_relevance));
+      return ret;
+    }
+
+    // Step 2: Cache miss, execute original estimation logic
+    ret = OB_SUCCESS;  // Reset ret from cache miss
+    int64_t logical_row_cnt = 0;
+    int64_t physical_row_cnt = 0;
+    ObSEArray<ObEstRowCountRecord, 1> est_records;
+    ObArenaAllocator allocator;
+    const int64_t timeout_us = THIS_WORKER.get_timeout_remain();
+    ObAccessService *access_service = NULL;
+    storage::ObTableScanRange table_scan_range;
+    ObSimpleBatch batch;
+    batch.type_ = ObSimpleBatch::T_SCAN;
+    batch.range_ = &inv_idx_agg_param_->key_ranges_.at(0);
+    ObTableScanParam est_param;
+    est_param.index_id_ = inv_idx_agg_param_->index_id_;
+    est_param.scan_flag_ = inv_idx_agg_param_->scan_flag_;
+    est_param.tablet_id_ = inv_idx_agg_param_->tablet_id_;
+    est_param.ls_id_ = inv_idx_agg_param_->ls_id_;
+    est_param.tx_id_ = inv_idx_agg_param_->tx_id_;
+    est_param.schema_version_ = inv_idx_agg_param_->schema_version_;
+    est_param.frozen_version_ = GET_BATCH_ROWS_READ_SNAPSHOT_VERSION;
+    if (OB_ISNULL(access_service = MTL(ObAccessService *))) {
       ret = OB_ERR_UNEXPECTED;
-      LOG_WARN("unexpected null total doc cnt expr", K(ret));
+      LOG_WARN("get unexpected null", K(ret), K(access_service));
+    } else if (OB_FAIL(table_scan_range.init(*inv_idx_agg_param_, batch, allocator))) {
+      STORAGE_LOG(WARN, "Failed to init table scan range", K(ret), K(batch));
+    } else if (OB_FAIL(access_service->estimate_row_count(est_param,
+                                                          table_scan_range,
+                                                          timeout_us,
+                                                          est_records,
+                                                          logical_row_cnt,
+                                                          physical_row_cnt))) {
+      LOG_TRACE("OPT:[STORAGE EST FAILED, USE STAT EST]", "storage_ret", ret);
     } else {
-      int64_t total_doc_cnt = 0;
-      if (total_doc_cnt_param_expr->enable_rich_format()
-          && is_valid_format(total_doc_cnt_param_expr->get_format(*eval_ctx_))) {
-        total_doc_cnt = total_doc_cnt_param_expr->get_vector(*eval_ctx_)->get_int(0);
+      token_doc_cnt_ = logical_row_cnt;
+      token_doc_cnt_calculated_ = true;
+      sql::ObExpr *total_doc_cnt_param_expr = relevance_expr_->args_[sql::ObExprBM25::TOTAL_DOC_CNT_PARAM_IDX];
+      if (OB_ISNULL(total_doc_cnt_param_expr)) {
+        ret = OB_ERR_UNEXPECTED;
+        LOG_WARN("unexpected null total doc cnt expr", K(ret));
       } else {
-        total_doc_cnt = total_doc_cnt_param_expr->locate_expr_datum(*eval_ctx_, 0).get_int();
+        int64_t total_doc_cnt = 0;
+        if (total_doc_cnt_param_expr->enable_rich_format()
+            && is_valid_format(total_doc_cnt_param_expr->get_format(*eval_ctx_))) {
+          total_doc_cnt = total_doc_cnt_param_expr->get_vector(*eval_ctx_)->get_int(0);
+        } else {
+          total_doc_cnt = total_doc_cnt_param_expr->locate_expr_datum(*eval_ctx_, 0).get_int();
+        }
+        max_token_relevance_ = sql::ObExprBM25::query_token_weight(token_doc_cnt_, total_doc_cnt);
+
+        // Step 3: Put the result into cache
+        ObTokenDocCntCacheValue new_value(token_doc_cnt_, max_token_relevance_);
+        int cache_ret = ObTokenDocCntCache::get_instance().put_token_doc_cnt(cache_key, new_value);
+        if (OB_UNLIKELY(OB_SUCCESS != cache_ret)) {
+          // Cache write failure should not affect main logic, just log a warning
+          LOG_WARN("failed to put token doc cnt to cache", K(cache_ret), K(cache_key));
+        } else {
+          LOG_DEBUG("token doc cnt cache put", K(token_str), K_(token_doc_cnt), K_(max_token_relevance));
+        }
       }
-      max_token_relevance_ = sql::ObExprBM25::query_token_weight(token_doc_cnt_, total_doc_cnt);
     }
   }
   return ret;
 }
+
 
 ObTextRetrievalDaaTTokenIter::ObTextRetrievalDaaTTokenIter()
   : ObISRDaaTDimIter(),
