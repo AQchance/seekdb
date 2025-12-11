@@ -3802,7 +3802,7 @@ int ObJoinOrder::generate_intersect_index_merge_tree(const uint64_t ref_table_id
       LOG_INFO("[INDEX_MERGE_TRACE] processing scalar filters",
                K(ref_table_id), "scalar_filters_count", scalar_filters.count());
       
-      for (int64_t i = scalar_filters.count() - 1; OB_SUCC(ret) && !found_scalar_index && i >= 0; --i) {
+      for (int64_t i = scalar_filters.count() - 1; OB_SUCC(ret) && i >= 0; --i) {
       // for (int64_t i = 0; OB_SUCC(ret) && !found_scalar_index && i < scalar_filters.count(); ++i) {
         ObRawExpr *filter = scalar_filters.at(i);
         ObSEArray<uint64_t, 1> candicate_index_tids;
