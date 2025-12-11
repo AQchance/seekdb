@@ -8,7 +8,7 @@ from src.integrations.llm import generate_response as generate_llm_response
 from src.prompt import QUERY_SYSTEM_PROMPT, QUERY_USER_PROMPT_TEMPLATE
 from src.storage.oceanbase import get_or_create_client
 from src.util import Answer
-
+import json
 logger = logging.getLogger(__name__)
 
 dotenv.load_dotenv()
@@ -105,12 +105,19 @@ def search(question: str) -> Answer:
             filename = result.get("filename", "")
             page = result.get("page", 0)
 
-            if content:
-                contexts.append(content)
-                if filename:
-                    filenames.append(filename)
-                if page:
-                    pages.append(page)
+            # if content:
+            #     contexts.append(content)
+            #     if filename:
+            #         filenames.append(filename)
+            #     if page:
+            #         pages.append(page)
+            contexts.append(
+                {
+                    "content": content,
+                    "filename": filename,
+                    "page": page,
+                }
+            )
 
         if not contexts:
             logger.warning(
@@ -118,20 +125,33 @@ def search(question: str) -> Answer:
             )
             answer.answer = "抱歉，我没有找到相关的信息来回答这个问题。"
             return answer
+        context_blocks = []
+
+        for i, c in enumerate(contexts, start=1):
+            block = (
+                f"【文档 {i}】\n"
+                f"filename: {c['filename']}\n"
+                f"page: {c['page']}\n"
+                f"content:\n{c['content']}"
+            )
+
+            context_blocks.append(block)
+
+        context_text = "\n\n".join(context_blocks)
 
         logger.debug(
             f"Extracted {len(contexts)} valid contexts, total length: {sum(len(c) for c in contexts)} chars"
         )
 
         # Combine contexts
-        context_text = "\n\n".join(contexts)
+        # context_text = "\n\n".join(contexts)
 
         # Use the most common filename and page from results
-        if filenames:
-            answer.filename = max(set(filenames), key=filenames.count)
-        if pages:
-            answer.page = max(set(pages), key=pages.count)
-
+        # if filenames:
+        #     answer.filename = max(set(filenames), key=filenames.count)
+        # if pages:
+        #     answer.page = max(set(pages), key=pages.count)
+#todo 这个是导致有时候file 里面 没有这个page的原因
         # Generate answer using LLM
         logger.debug(f"Generating answer using LLM model ...")
         prompt = QUERY_USER_PROMPT_TEMPLATE.format(
@@ -147,7 +167,12 @@ def search(question: str) -> Answer:
             {"role": "user", "content": prompt},
         ]
 
-        answer.answer = generate_llm_response(messages)
+        # answer.answer = generate_llm_response(messages)
+        raw = generate_llm_response(messages)
+        data = json.loads(raw)
+        answer.answer = data["content"]
+        answer.filename = data["filename"]
+        answer.page = int(data["page"])
         logger.debug(
             f"Query completed: question='{question[:50]}...', filename='{answer.filename}', page={answer.page}"
         )
@@ -155,5 +180,4 @@ def search(question: str) -> Answer:
     except Exception as e:
         logger.error(f"Error in query: {e}", exc_info=True)
         answer.answer = f"查询过程中发生错误：{str(e)}"
-
     return answer
