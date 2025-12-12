@@ -141,9 +141,9 @@ int ObDASScanIter::inner_get_next_rows(int64_t &count, int64_t capacity)
       LOG_WARN("failed to get next row", K(ret));
     }
   }
-  LOG_TRACE("[DAS ITER] scan iter get next rows", K(count), K(capacity), KPC_(scan_param), K(ret));
+  // LOG_TRACE("[DAS ITER] scan iter get next rows", K(count), K(capacity), KPC_(scan_param), K(ret));
   const ObBitVector *skip = nullptr;
-  PRINT_VECTORIZED_ROWS(SQL, DEBUG, *eval_ctx_, *output_, count, skip);
+  // PRINT_VECTORIZED_ROWS(SQL, DEBUG, *eval_ctx_, *output_, count, skip);
   return ret;
 }
 
