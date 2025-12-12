@@ -6,7 +6,7 @@ from typing import List
 
 from src.core import add, search
 from src.util import Answer, read_questions_json, write_answers
-
+import time
 logger = logging.getLogger(__name__)
 
 
@@ -82,10 +82,13 @@ if __name__ == "__main__":
     logger.info(f"Output file: {args.output}")
 
     logger.info("Starting data preparation...")
+    
     add(
         dataset_dir=args.dataset,
         max_worker=4,
     )
+  
+
     logger.info("Data preparation completed.")
 
     answers: List[Answer] = []
