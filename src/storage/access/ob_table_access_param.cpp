@@ -339,6 +339,11 @@ int ObTableAccessParam::init(
                     !scan_param.scan_flag_.is_use_block_cache())) {
       iter_param_.disable_blockscan();
     }
+    // Force enable blockscan for FTS inverted index scan to allow batch mode in storage layer
+    if (table_param.is_fts_index()) {
+      iter_param_.pd_storage_flag_.set_blockscan_pushdown(true);
+      iter_param_.pd_storage_flag_.set_filter_pushdown(true);
+    }
     iter_param_.auto_split_filter_type_ = scan_param.auto_split_filter_type_;
     iter_param_.auto_split_filter_ = scan_param.auto_split_filter_;
     iter_param_.auto_split_params_ = scan_param.auto_split_params_;
