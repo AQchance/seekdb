@@ -85,7 +85,7 @@ if __name__ == "__main__":
     
     add(
         dataset_dir=args.dataset,
-        max_worker=4,
+        max_worker=12,
     )
   
 
