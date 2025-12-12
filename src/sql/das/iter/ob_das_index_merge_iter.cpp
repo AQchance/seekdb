@@ -602,12 +602,12 @@ int ObDASIndexMergeIter::inner_get_next_rows(int64_t &count, int64_t capacity)
     }
   }
   // 打印本次返回的行数
-  LOG_INFO("[INDEX_MERGE_DEBUG] inner_get_next_rows DONE",
-           K(before_count), K(count), K(capacity), K(ret),
-           "rows_returned", count - before_count);
-  LOG_TRACE("[DAS ITER] index merge iter get next rows", K(count), K(capacity), K(ret));
+  // LOG_INFO("[INDEX_MERGE_DEBUG] inner_get_next_rows DONE",
+  //          K(before_count), K(count), K(capacity), K(ret),
+  //          "rows_returned", count - before_count);
+  // LOG_TRACE("[DAS ITER] index merge iter get next rows", K(count), K(capacity), K(ret));
   const ObBitVector *skip = nullptr;
-  PRINT_VECTORIZED_ROWS(SQL, DEBUG, *eval_ctx_, *output_, count, skip);
+  // PRINT_VECTORIZED_ROWS(SQL, DEBUG, *eval_ctx_, *output_, count, skip);
 
   return ret;
 }
@@ -660,13 +660,13 @@ int ObDASIndexMergeIter::intersect_get_next_row()
   static int64_t call_count = 0;
   call_count++;
   if (call_count <= 10 || call_count % 1000 == 0) {
-    LOG_INFO("[INDEX_MERGE_EXEC] intersect_get_next_row CALLED",
-             K(call_count), K(child_stores_.count()));
+    // LOG_INFO("[INDEX_MERGE_EXEC] intersect_get_next_row CALLED",
+    //          K(call_count), K(child_stores_.count()));
     // 打印每个子迭代器的类型
     for (int64_t i = 0; i < child_iters_.count(); ++i) {
       if (OB_NOT_NULL(child_iters_.at(i))) {
-        LOG_INFO("[INDEX_MERGE_EXEC] child iter type",
-                 K(i), "type", child_iters_.at(i)->get_type());
+        // LOG_INFO("[INDEX_MERGE_EXEC] child iter type",
+        //          K(i), "type", child_iters_.at(i)->get_type());
       }
     }
   }
@@ -696,8 +696,8 @@ int ObDASIndexMergeIter::intersect_get_next_row()
             const ObDatum *child_datums = child_store.cur_datums();
             if (child_datums != nullptr && rowkey_exprs_ != nullptr && rowkey_exprs_->count() > 0) {
               int64_t rowkey_val = child_datums[0].get_int();
-              LOG_INFO("[INDEX_MERGE_DEBUG] Child iter returned row",
-                       K(i), K(rowkey_val), "datum", child_datums[0]);
+              // LOG_INFO("[INDEX_MERGE_DEBUG] Child iter returned row",
+              //          K(i), K(rowkey_val), "datum", child_datums[0]);
             }
             if (OB_FAIL(compare(i, output_idx, cmp_ret))) {
               LOG_WARN("index merge failed to compare row", K(i), K(output_idx), K(ret));
@@ -728,10 +728,10 @@ int ObDASIndexMergeIter::intersect_get_next_row()
           const ObDatum *match_datums = child_stores_.at(i).cur_datums();
           const ObDatum *output_datums = child_stores_.at(output_idx).cur_datums();
           if (match_datums != nullptr && output_datums != nullptr) {
-            LOG_INFO("[INDEX_MERGE_DEBUG] Compare matched",
-                     K(i), K(output_idx), K(cmp_ret),
-                     "child_i_rowkey", match_datums[0].get_int(),
-                     "output_rowkey", output_datums[0].get_int());
+            // LOG_INFO("[INDEX_MERGE_DEBUG] Compare matched",
+            //          K(i), K(output_idx), K(cmp_ret),
+            //          "child_i_rowkey", match_datums[0].get_int(),
+            //          "output_rowkey", output_datums[0].get_int());
           }
           // FIXME: only one store will project data in intersect get next row(s).
           child_stores_.at(i).cur_idx_++;
@@ -740,10 +740,10 @@ int ObDASIndexMergeIter::intersect_get_next_row()
           const ObDatum *nomatch_datums = child_stores_.at(i).cur_datums();
           const ObDatum *output_datums = child_stores_.at(output_idx).cur_datums();
           if (nomatch_datums != nullptr && output_datums != nullptr) {
-            LOG_INFO("[INDEX_MERGE_DEBUG] Compare NOT matched",
-                     K(i), K(output_idx), K(cmp_ret),
-                     "child_i_rowkey", nomatch_datums[0].get_int(),
-                     "output_rowkey", output_datums[0].get_int());
+            // LOG_INFO("[INDEX_MERGE_DEBUG] Compare NOT matched",
+            //          K(i), K(output_idx), K(cmp_ret),
+            //          "child_i_rowkey", nomatch_datums[0].get_int(),
+            //          "output_rowkey", output_datums[0].get_int());
           }
           all_matched = false;
         }
@@ -761,15 +761,15 @@ int ObDASIndexMergeIter::intersect_get_next_row()
             if (out_datums[0].len_ > 0) {
               rowkey_int = out_datums[0].get_int();
             }
-            LOG_INFO("[INDEX_MERGE_DEBUG] OUTPUT ROW (row version)",
-                     K(row_output_count),
-                     K(output_idx),
-                     K(rowkey_int),
-                     "child0_cur_idx", child_stores_.at(0).cur_idx_,
-                     "child0_saved", child_stores_.at(0).saved_size_,
-                     "child1_cur_idx", child_stores_.count() > 1 ? child_stores_.at(1).cur_idx_ : -1,
-                     "child1_saved", child_stores_.count() > 1 ? child_stores_.at(1).saved_size_ : -1,
-                     "rowkey_datum0", out_datums[0]);
+            // LOG_INFO("[INDEX_MERGE_DEBUG] OUTPUT ROW (row version)",
+            //          K(row_output_count),
+            //          K(output_idx),
+            //          K(rowkey_int),
+            //          "child0_cur_idx", child_stores_.at(0).cur_idx_,
+            //          "child0_saved", child_stores_.at(0).saved_size_,
+            //          "child1_cur_idx", child_stores_.count() > 1 ? child_stores_.at(1).cur_idx_ : -1,
+            //          "child1_saved", child_stores_.count() > 1 ? child_stores_.at(1).saved_size_ : -1,
+            //          "rowkey_datum0", out_datums[0]);
           }
           if (OB_FAIL(child_stores_.at(output_idx).to_expr())) {
             LOG_WARN("index merge failed to convert row to expr", K(ret));
@@ -806,7 +806,7 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
   ObArenaAllocator temp_allocator("TempRowStore");  // 临时分配器
 
 
-  LOG_INFO("[INDEX_MERGE_DEBUG] intersect_get_next_rows ENTER", K(count), K(capacity));
+  // LOG_INFO("[INDEX_MERGE_DEBUG] intersect_get_next_rows ENTER", K(count), K(capacity));
   while (OB_SUCC(ret) && count < capacity) {
       /* try to fill each child store */
     int64_t output_idx = OB_INVALID_INDEX;
@@ -840,10 +840,10 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
                       if (datums != nullptr) {
                         int64_t cur_int = datums[0].get_int();
                         if (row_idx > child_store.cur_idx_ && cur_int == prev_int) {
-                          LOG_INFO("[INDEX_MERGE_DEBUG] DUPLICATE DETECTED in child batch",
-                                   K(i), K(row_idx), K(cur_int), K(prev_int),
-                                   "child_cur_idx", child_store.cur_idx_,
-                                   "child_saved", child_store.saved_size_);
+                          // LOG_INFO("[INDEX_MERGE_DEBUG] DUPLICATE DETECTED in child batch",
+                          //          K(i), K(row_idx), K(cur_int), K(prev_int),
+                          //          "child_cur_idx", child_store.cur_idx_,
+                          //          "child_saved", child_store.saved_size_);
                         }
                         prev_int = cur_int;
                       }
@@ -866,10 +866,6 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
         }
       } else if (OB_FAIL(compare(i, output_idx, cmp_ret))) {
         LOG_WARN("index merge failed to compare row", K(i), K(output_idx), K(ret));
-      }
-      const ObDatum *cur_datums = child_stores_.at(i).cur_datums();
-      if(cur_datums->get_uint() > capacity << 3){
-        ret = OB_ITER_END;
       }
     }
 
@@ -934,9 +930,9 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
                 // 移动到下一行
                 child_stores_.at(output_idx).cur_idx_++;
                 
-                LOG_INFO("[INDEX_MERGE_DEBUG] COLLECTED ROW",
-                        "total", all_rows.size(),
-                        "score", relevance_score);
+                // LOG_INFO("[INDEX_MERGE_DEBUG] COLLECTED ROW",
+                //         "total", all_rows.size(),
+                //         "score", relevance_score);
               }
             }
           }
@@ -946,14 +942,14 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
           const ObDatum *out_datums = child_stores_.at(output_idx).cur_datums();
           if (out_datums != nullptr && rowkey_exprs_ != nullptr && rowkey_exprs_->count() > 0) {
             total_output_count++;
-            LOG_INFO("[INDEX_MERGE_DEBUG] OUTPUT ROW (rows version)",
-                     K(total_output_count),
-                     K(output_idx),
-                     "child0_cur_idx", child_stores_.at(0).cur_idx_,
-                     "child0_saved", child_stores_.at(0).saved_size_,
-                     "child1_cur_idx", child_stores_.count() > 1 ? child_stores_.at(1).cur_idx_ : -1,
-                     "child1_saved", child_stores_.count() > 1 ? child_stores_.at(1).saved_size_ : -1,
-                     "rowkey_datum0", out_datums[0]);
+            // LOG_INFO("[INDEX_MERGE_DEBUG] OUTPUT ROW (rows version)",
+            //          K(total_output_count),
+            //          K(output_idx),
+            //          "child0_cur_idx", child_stores_.at(0).cur_idx_,
+            //          "child0_saved", child_stores_.at(0).saved_size_,
+            //          "child1_cur_idx", child_stores_.count() > 1 ? child_stores_.at(1).cur_idx_ : -1,
+            //          "child1_saved", child_stores_.count() > 1 ? child_stores_.at(1).saved_size_ : -1,
+            //          "rowkey_datum0", out_datums[0]);
           }
           // if (OB_FAIL(child_stores_.at(output_idx).to_expr())) {
           //   LOG_WARN("index merge failed to convert row to expr", K(ret));
@@ -973,7 +969,7 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
   }  
 
   int64_t total_matched = all_rows.size();
-  LOG_INFO("[INDEX_MERGE_DEBUG] Collection phase done", K(total_matched), K(ret));
+  // LOG_INFO("[INDEX_MERGE_DEBUG] Collection phase done", K(total_matched), K(ret));
 
   if (OB_SUCC(ret) && total_matched > 0) {
     // 先排序
@@ -983,8 +979,8 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
               });
     int64_t rows_to_return = 10;
     count = rows_to_return;
-    LOG_INFO("[INDEX_MERGE_DEBUG] Returning top results", 
-             K(total_matched), K(rows_to_return), K(capacity));
+    // LOG_INFO("[INDEX_MERGE_DEBUG] Returning top results", 
+    //          K(total_matched), K(rows_to_return), K(capacity));
     for (int64_t i = 0; OB_SUCC(ret) && i < rows_to_return; i++) {
       const RowWithScore &row_score = all_rows[i];
       if (OB_ISNULL(row_score.stored_row)) {
@@ -1001,8 +997,8 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
         } else if (OB_FAIL(save_row_to_result_buffer())) {
           LOG_WARN("failed to save row to result buffer", K(i), K(ret));
         } else {
-          LOG_INFO("[INDEX_MERGE_DEBUG] Added sorted row", 
-                   K(i), "score", row_score.relevance_score);
+          // LOG_INFO("[INDEX_MERGE_DEBUG] Added sorted row", 
+          //          K(i), "score", row_score.relevance_score);
         }
       }
     }
@@ -1015,8 +1011,8 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
     }
   }
   
-  LOG_INFO("[INDEX_MERGE_DEBUG] intersect_get_next_rows EXIT", 
-           K(count), K(total_matched), K(ret));
+  // LOG_INFO("[INDEX_MERGE_DEBUG] intersect_get_next_rows EXIT", 
+  //          K(count), K(total_matched), K(ret));
   
   ret = OB_ITER_END;
   return ret;
