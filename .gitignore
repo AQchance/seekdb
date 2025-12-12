@@ -401,3 +401,7 @@ rag/
 perf.sh
 compile.sh
 pidstat.sh
+
+.gemini/
+gha-creds-*.json
+.github
