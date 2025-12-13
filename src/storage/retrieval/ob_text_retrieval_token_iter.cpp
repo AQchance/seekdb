@@ -111,6 +111,8 @@ void ObTextRetrievalTokenIter::reset()
 {
   relevance_calc_exprs_.reset();
   token_doc_cnt_calculated_ = false;
+  use_cache_ = false;
+  cache_read_idx_ = 0;
 }
 
 void ObTextRetrievalTokenIter::reuse()
@@ -120,6 +122,8 @@ void ObTextRetrievalTokenIter::reuse()
   } else {
     token_doc_cnt_calculated_ = false;
   }
+  use_cache_ = false;
+  cache_read_idx_ = 0;
 }
 
 int ObTextRetrievalTokenIter::init_calc_exprs_in_relevance_expr()
@@ -444,7 +448,9 @@ int ObTextRetrievalTokenIter::get_next_batch(const int64_t capacity, int64_t &co
     LOG_WARN("retrieval token iterator not inited", K(ret));
   } else if (!token_doc_cnt_calculated_ && OB_FAIL(estimate_token_doc_cnt())) {
     LOG_WARN("failed to estimate token doc cnt", K(ret));
-  } else if (use_cache_ && OB_SUCC(ObTokenPostingListCache::get_instance().get_posting_list(cache_key, cache_value, handle))){
+  } 
+
+  if (use_cache_ && OB_SUCC(ObTokenPostingListCache::get_instance().get_posting_list(cache_key, cache_value, handle))){
     // TODO: 命中缓存，这里应该返回缓存中的结果
     // 缓存命中，将缓存中的数据填充到 expression datums 中
     const ObArray<PostingEntry> &postentry_list = cache_value->postentry_list();
@@ -461,8 +467,8 @@ int ObTextRetrievalTokenIter::get_next_batch(const int64_t capacity, int64_t &co
       ObDatum *token_freq_datums = token_freq_expr->locate_batch_datums(*eval_ctx_);
       
       // 从缓存中填充数据
-      for (int64_t i = cache_read_idx_; i < count; ++i) {
-        const PostingEntry &entry = postentry_list.at(i);
+      for (int64_t i = 0; i < count; ++i) {
+        const PostingEntry &entry = postentry_list.at(i + cache_read_idx_);
         doc_id_datums[i].set_int(entry.doc_id_);
         doc_len_datums[i].set_int(entry.doc_len_);
         
@@ -479,6 +485,7 @@ int ObTextRetrievalTokenIter::get_next_batch(const int64_t capacity, int64_t &co
       LOG_DEBUG("cache hit for posting list", K(count), K(cache_key));
     }
     else {
+      count = 0;
       // 缓存中没有更多数据了，这个时候就需要从倒排索引中来取数据
       ret = OB_SUCCESS;
       if (OB_FAIL(inv_idx_scan_iter_->get_next_rows(count, OB_MIN(max_batch_size_, capacity)))) {
@@ -488,14 +495,14 @@ int ObTextRetrievalTokenIter::get_next_batch(const int64_t capacity, int64_t &co
           ret = OB_SUCCESS;
         }
       }
-      else{
+      if (OB_SUCC(ret)) {
         // TODO: 这个时候应该把结果缓存起来
         for (int64_t i = 0; i < count; ++i) {
           int64_t doc_id = inv_scan_domain_id_col_->locate_batch_datums(*eval_ctx_)[i].get_int();
           int64_t doc_length = inv_scan_doc_length_col_->locate_batch_datums(*eval_ctx_)[i].get_int();
           int64_t token_frequency = relevance_expr_->args_[4]->locate_batch_datums(*eval_ctx_)[i].get_int();
           PostingEntry posting_entry(doc_id, token_frequency, doc_length);
-          ObTokenPostingListCache::get_instance().insert_posting_entry(cache_key, posting_entry);
+          int ret_tmp = ObTokenPostingListCache::get_instance().insert_posting_entry(cache_key, posting_entry);
         }
       }
     }
@@ -508,7 +515,7 @@ int ObTextRetrievalTokenIter::get_next_batch(const int64_t capacity, int64_t &co
         ret = OB_SUCCESS;
       }
     }
-    else{
+    if (OB_SUCC(ret)) {
       // TODO: 这个时候应该把结果缓存起来
       for (int64_t i = 0; i < count; ++i) {
         int64_t doc_id = inv_scan_domain_id_col_->locate_batch_datums(*eval_ctx_)[i].get_int();

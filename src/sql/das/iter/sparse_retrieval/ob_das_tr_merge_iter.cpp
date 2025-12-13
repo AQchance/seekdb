@@ -425,12 +425,13 @@ int ObDASTRMergeIter::create_dim_iters()
           dim_iter->set_use_cache(false);
         }
         ret = OB_SUCCESS;
-      } else if (OB_FAIL(dim_iter->init(iter_param))) {
+        if (OB_FAIL(dim_iter->init(iter_param))){
           LOG_WARN("failed to init text retrieval daat token iter", K(ret));
-      }
-      else if (OB_FAIL(dim_iters_.push_back(dim_iter))) {
-        LOG_WARN("failed to push back dim iter", K(ret));
-      }
+        }
+        if (OB_FAIL(dim_iters_.push_back(dim_iter))){
+          LOG_WARN("failed to push back dim iter", K(ret));
+        }
+      } 
     }
   } else if (taat_mode_) {
     ObTextRetrievalScanIterParam iter_param;

@@ -75,6 +75,7 @@
 #include "lib/stat/ob_diagnostic_info_container.h"
 #include "storage/fts/dict/ob_ft_cache.h"
 #include "storage/retrieval/ob_token_doc_cnt_cache.h"
+#include "storage/retrieval/ob_token_posting_list_cache.h"
 #include "common/ob_target_specific.h"
 #include "storage/fts/dict/ob_gen_dic_loader.h"
 #include "plugin/sys/ob_plugin_mgr.h"
@@ -496,6 +497,8 @@ int ObServer::init(const ObServerOptions &opts, const ObPLogWriterCfg &log_cfg)
       LOG_ERROR("init dict cache failed", KR(ret));
     } else if (OB_FAIL(ObTokenDocCntCache::get_instance().init("token_doc_cnt_cache"))) {
       LOG_ERROR("init token doc cnt cache failed", KR(ret));
+    } else if (OB_FAIL(ObTokenPostingListCache::get_instance().init("token_postling_list_cache"))) {
+      LOG_ERROR("init token postling list cache failed", KR(ret));
     } else if (OB_FAIL(ObActiveSessHistList::get_instance().init())) {
       LOG_ERROR("init ASH failed", KR(ret));
 #ifndef OB_BUILD_LITE
@@ -804,6 +807,10 @@ void ObServer::destroy()
     FLOG_INFO("begin to destroy token doc cnt cache");
     ObTokenDocCntCache::get_instance().destroy();
     FLOG_INFO("token doc cnt cache destroyed");
+
+    FLOG_INFO("begin to destroy token posting list cache");
+    ObTokenPostingListCache::get_instance().destroy();
+    FLOG_INFO("token posting list cache destroyed");
 
     FLOG_INFO("begin to destroy log block mgr");
     log_block_mgr_.destroy();
