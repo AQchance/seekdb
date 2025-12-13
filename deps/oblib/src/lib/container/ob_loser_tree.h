@@ -72,6 +72,7 @@ public:
   virtual int pop();
   virtual int push(const T &player);
   virtual int push_top(const T &player);
+  virtual int replace_top(const T &player);
   virtual int rebuild();
 
   virtual OB_INLINE int count() const { return player_cnt_ - cur_free_cnt_; }
@@ -557,6 +558,50 @@ int ObLoserTree<T, CompareFunctor>::push_top(const T &player)
 {
   UNUSED(player);
   return OB_NOT_SUPPORTED;
+}
+
+template <typename T, typename CompareFunctor>
+int ObLoserTree<T, CompareFunctor>::replace_top(const T &player)
+{
+  int ret = OB_SUCCESS;
+  if (IS_NOT_INIT) {
+    ret = OB_NOT_INIT;
+    LIB_LOG(WARN, "not init", K(ret));
+  } else if (empty()) {
+    ret = OB_EMPTY_RESULT;
+    LIB_LOG(WARN, "tree is empty", K(ret));
+  } else {
+    const int64_t champion_idx = matches_[0].winner_idx_;
+    players_[champion_idx] = player;
+
+    int64_t child = get_leaf(champion_idx);
+    int64_t parent = INVALID_IDX;
+    int64_t winner = champion_idx;
+
+    while (child > 0 && OB_SUCC(ret)) {
+      parent = get_parent(child);
+      int64_t loser = matches_[parent].loser_idx_;
+      
+      if (loser == INVALID_IDX) {
+          matches_[parent].loser_idx_ = INVALID_IDX; 
+      } else {
+        bool is_offender_win = false;
+        if (OB_FAIL(duel(players_[winner], players_[loser], parent, is_offender_win))) {
+             LIB_LOG(WARN, "duel failed", K(ret), K(parent));
+        } else {
+             if (!is_offender_win) {
+                 matches_[parent].loser_idx_ = winner;
+                 winner = loser;
+             } else {
+                 matches_[parent].loser_idx_ = loser;
+             }
+        }
+      }
+      matches_[parent].winner_idx_ = winner;
+      child = parent;
+    }
+  }
+  return ret;
 }
 
 template <typename T, typename CompareFunctor>

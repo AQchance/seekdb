@@ -219,7 +219,7 @@ int ObSRBMWIterImpl::build_top_k_heap()
   } else {
     bool need_project = true;
     double relevance = 0.0;
-    const ObDatum *id_datum = nullptr;
+    ObDatum id_datum;
     while (OB_SUCC(ret) && top_k_heap_.count() < top_k_count_) {
       if (OB_FAIL(fill_merge_heap())) {
         if (OB_UNLIKELY(OB_ITER_END != ret)) {
@@ -421,7 +421,7 @@ int ObSRBMWIterImpl::evaluate_pivot(const int64_t pivot_iter_idx)
   int ret = OB_SUCCESS;
   ObISRDimBlockMaxIter *iter = get_iter(pivot_iter_idx);
   const ObDatum *pivot_id = nullptr;
-  const ObDatum *collected_id = nullptr;
+  ObDatum collected_id;
   double pivot_relevance = 0.0;
   bool need_project = false;
   if (OB_ISNULL(iter)) {
