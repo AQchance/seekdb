@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
+#include "lib/ob_errno.h"
+#include "lib/string/ob_string.h"
 #define USING_LOG_PREFIX STORAGE
 
 #include "ob_text_retrieval_token_iter.h"
 #include "ob_token_doc_cnt_cache.h"
 #include "sql/engine/expr/ob_expr_bm25.h"
 #include "sql/das/iter/sparse_retrieval/ob_das_tr_merge_iter.h"
+#include "ob_token_posting_list_cache.h"
+#include "sql/engine/expr/ob_expr_bm25.h"
 
 namespace oceanbase
 {
@@ -58,6 +62,7 @@ ObTextRetrievalTokenIter::ObTextRetrievalTokenIter()
 int ObTextRetrievalTokenIter::init(const ObTextRetrievalScanIterParam &iter_param)
 {
   int ret = OB_SUCCESS;
+  cache_read_idx_ = 0;
   allocator_ = iter_param.allocator_;
   mem_context_ = iter_param.mem_context_;
   inv_idx_scan_param_ = iter_param.inv_idx_scan_param_;
@@ -415,17 +420,103 @@ int ObTextRetrievalTokenIter::batch_eval_relevance_expr(const int64_t count)
 int ObTextRetrievalTokenIter::get_next_batch(const int64_t capacity, int64_t &count)
 {
   int ret = OB_SUCCESS;
+
+  // 构造缓存key
+  const ObNewRange &scan_range = inv_idx_agg_param_->key_ranges_.at(0);
+  ObString token_str;
+  if (OB_NOT_NULL(scan_range.start_key_.get_obj_ptr())) {
+    token_str = scan_range.start_key_.get_obj_ptr()->get_string();
+  }
+
+  ObTokenPostingListCacheKey cache_key(
+      inv_idx_agg_param_->tenant_id_,
+      inv_idx_agg_param_->index_id_,
+      inv_idx_agg_param_->tablet_id_,
+      token_str);
+
+  const ObTokenPostingListValue *cache_value = nullptr;
+  common::ObKVCacheHandle handle;
+
+
   count = 0;
   if (IS_NOT_INIT) {
     ret = OB_NOT_INIT;
     LOG_WARN("retrieval token iterator not inited", K(ret));
   } else if (!token_doc_cnt_calculated_ && OB_FAIL(estimate_token_doc_cnt())) {
     LOG_WARN("failed to estimate token doc cnt", K(ret));
-  } else if (OB_FAIL(inv_idx_scan_iter_->get_next_rows(count, OB_MIN(max_batch_size_, capacity)))) {
-    if (OB_UNLIKELY(OB_ITER_END != ret)) {
-      LOG_WARN("failed to get next rows from inverted index", K(ret), KPC_(inv_idx_scan_param), KPC_(inv_idx_scan_iter));
-    } else if (count != 0) {
+  } else if (use_cache_ && OB_SUCC(ObTokenPostingListCache::get_instance().get_posting_list(cache_key, cache_value, handle))){
+    // TODO: 命中缓存，这里应该返回缓存中的结果
+    // 缓存命中，将缓存中的数据填充到 expression datums 中
+    const ObArray<PostingEntry> &postentry_list = cache_value->postentry_list();
+    count = OB_MIN(postentry_list.count() - cache_read_idx_, OB_MIN(max_batch_size_, capacity));
+    
+    if (count > 0) {
+      // 获取 expression 的 datums 数组用于写入
+      ObDatum *doc_id_datums = inv_scan_domain_id_col_->locate_batch_datums(*eval_ctx_);
+      ObDatum *doc_len_datums = inv_scan_doc_length_col_->locate_batch_datums(*eval_ctx_);
+      
+      // 获取 token frequency expression 的 datums
+      // relevance_expr_->args_[4] 是 token frequency 表达式
+      sql::ObExpr *token_freq_expr = relevance_expr_->args_[4];
+      ObDatum *token_freq_datums = token_freq_expr->locate_batch_datums(*eval_ctx_);
+      
+      // 从缓存中填充数据
+      for (int64_t i = cache_read_idx_; i < count; ++i) {
+        const PostingEntry &entry = postentry_list.at(i);
+        doc_id_datums[i].set_int(entry.doc_id_);
+        doc_len_datums[i].set_int(entry.doc_len_);
+        
+        // 如果需要 token_frequency，也要填充
+        // 这取决于 BM25 计算是否需要 token_frequency
+        token_freq_datums[i].set_int(entry.token_frequency_);
+      }
+      cache_read_idx_ += count;
+      
+      // 设置 evaluated 标志
+      inv_scan_domain_id_col_->get_evaluated_flags(*eval_ctx_).set_all(count);
+      inv_scan_doc_length_col_->get_evaluated_flags(*eval_ctx_).set_all(count);
+
+      LOG_DEBUG("cache hit for posting list", K(count), K(cache_key));
+    }
+    else {
+      // 缓存中没有更多数据了，这个时候就需要从倒排索引中来取数据
       ret = OB_SUCCESS;
+      if (OB_FAIL(inv_idx_scan_iter_->get_next_rows(count, OB_MIN(max_batch_size_, capacity)))) {
+        if (OB_UNLIKELY(OB_ITER_END != ret)) {
+          LOG_WARN("failed to get next rows from inverted index", K(ret), KPC_(inv_idx_scan_param), KPC_(inv_idx_scan_iter));
+        } else if (count != 0) {
+          ret = OB_SUCCESS;
+        }
+      }
+      else{
+        // TODO: 这个时候应该把结果缓存起来
+        for (int64_t i = 0; i < count; ++i) {
+          int64_t doc_id = inv_scan_domain_id_col_->locate_batch_datums(*eval_ctx_)[i].get_int();
+          int64_t doc_length = inv_scan_doc_length_col_->locate_batch_datums(*eval_ctx_)[i].get_int();
+          int64_t token_frequency = relevance_expr_->args_[4]->locate_batch_datums(*eval_ctx_)[i].get_int();
+          PostingEntry posting_entry(doc_id, token_frequency, doc_length);
+          ObTokenPostingListCache::get_instance().insert_posting_entry(cache_key, posting_entry);
+        }
+      }
+    }
+  } else {
+    ret = OB_SUCCESS;
+    if (OB_FAIL(inv_idx_scan_iter_->get_next_rows(count, OB_MIN(max_batch_size_, capacity)))) {
+      if (OB_UNLIKELY(OB_ITER_END != ret)) {
+        LOG_WARN("failed to get next rows from inverted index", K(ret), KPC_(inv_idx_scan_param), KPC_(inv_idx_scan_iter));
+      } else if (count != 0) {
+        ret = OB_SUCCESS;
+      }
+    }
+    else{
+      // TODO: 这个时候应该把结果缓存起来
+      for (int64_t i = 0; i < count; ++i) {
+        int64_t doc_id = inv_scan_domain_id_col_->locate_batch_datums(*eval_ctx_)[i].get_int();
+        int64_t doc_length = inv_scan_doc_length_col_->locate_batch_datums(*eval_ctx_)[i].get_int();
+        int64_t token_frequency = relevance_expr_->args_[4]->locate_batch_datums(*eval_ctx_)[i].get_int();
+        PostingEntry posting_entry(doc_id, token_frequency, doc_length);
+        ObTokenPostingListCache::get_instance().insert_posting_entry(cache_key, posting_entry);
+      }
     }
   }
 
@@ -713,6 +804,8 @@ int ObTextRetrievalDaaTTokenIter::init(const ObTextRetrievalScanIterParam &iter_
     LOG_WARN("failed to allocate memory", K(ret));
   } else {
     token_iter_ = new (buf) ObTextRetrievalTokenIter();
+    // NOTE: 是否使用缓存
+    token_iter_->set_use_cache(use_cache_);
     if (OB_FAIL(token_iter_->init(iter_param))) {
       LOG_WARN("failed to init token iter", K(ret));
     } else {

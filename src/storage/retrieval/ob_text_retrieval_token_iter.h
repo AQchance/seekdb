@@ -85,6 +85,12 @@ public:
   sql::ObBitVector *get_skip() { return skip_; }
   int get_token_doc_cnt(int64_t &token_doc_cnt) const;
   double get_max_token_relevance() const { return max_token_relevance_; }
+  void set_use_cache(const bool use_cache){
+    use_cache_ = use_cache;
+  }
+  bool use_cache() const {
+    return use_cache_;
+  }
 private:
   int init_calc_exprs_in_relevance_expr();
   void clear_batch_wise_evaluated_flag(const int64_t count);
@@ -134,6 +140,8 @@ private:
   bool token_doc_cnt_calculated_;
   bool inv_idx_agg_cache_mode_;
   bool is_inited_;
+  bool use_cache_;
+  int64_t cache_read_idx_;  // 缓存读取位置
   DISALLOW_COPY_AND_ASSIGN(ObTextRetrievalTokenIter);
 };
 
@@ -161,6 +169,8 @@ public:
     }
     return ret;
   }
+  void set_use_cache(const bool use_cache) { use_cache_ = use_cache; }
+  bool use_cache() const { return use_cache_; }
 private:
   int save_relevances_and_docids();
   int save_docids();
@@ -176,6 +186,7 @@ private:
   ObFixedArray<ObDocIdExt, ObIAllocator> doc_id_;
   common::ObDatumCmpFuncType cmp_func_;
   bool is_inited_;
+  bool use_cache_;
   DISALLOW_COPY_AND_ASSIGN(ObTextRetrievalDaaTTokenIter);
 };
 

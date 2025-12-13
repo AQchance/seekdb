@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+#include "lib/ob_errno.h"
+#include "share/cache/ob_kv_storecache.h"
 #define USING_LOG_PREFIX SQL_DAS
 #include "ob_das_tr_merge_iter.h"
 #include "sql/das/ob_das_ir_define.h"
+#include "storage/retrieval/ob_token_posting_list_cache.h"
 
 namespace oceanbase
 {
@@ -399,9 +402,33 @@ int ObDASTRMergeIter::create_dim_iters()
       } else if (OB_ISNULL(dim_iter = OB_NEWx(ObTextRetrievalDaaTTokenIter, &myself_allocator_))) {
         ret = OB_ALLOCATE_MEMORY_FAILED;
         LOG_WARN("failed to allocate memory for text retrieval daat token iter", K(ret));
+      } else if (OB_SUCC(ret)) {
+        uint64_t tenant_id = inv_agg_params_.at(i)->tenant_id_;
+        uint64_t index_id = inv_scan_params_.at(i)->index_id_;
+        ObTabletID tablet_id = inv_agg_params_.at(i)->tablet_id_;
+        ObString token = query_tokens_.at(i);
+        
+        // 构建 cache key
+        ObTokenPostingListCacheKey cache_key(tenant_id, index_id, tablet_id, token);
+        
+        // 检查 cache
+        oceanbase::storage::ObTokenPostingListCache &cache = 
+            oceanbase::storage::ObTokenPostingListCache::get_instance();
+        const ObTokenPostingListValue *cache_value = nullptr;
+        common::ObKVCacheHandle handle;
+
+        // ...
+        if (OB_SUCC(cache.get_posting_list(cache_key, cache_value, handle))) {
+          dim_iter->set_use_cache(true);
+          LOG_DEBUG("hit token posting list cache", K(cache_key));
+        } else {
+          dim_iter->set_use_cache(false);
+        }
+        ret = OB_SUCCESS;
       } else if (OB_FAIL(dim_iter->init(iter_param))) {
           LOG_WARN("failed to init text retrieval daat token iter", K(ret));
-      } else if (OB_FAIL(dim_iters_.push_back(dim_iter))) {
+      }
+      else if (OB_FAIL(dim_iters_.push_back(dim_iter))) {
         LOG_WARN("failed to push back dim iter", K(ret));
       }
     }
@@ -812,6 +839,9 @@ int ObDASTRMergeIter::gen_inv_idx_scan_default_range(const ObString &query_token
     LOG_WARN("failed to write obj", K(ret));
   } else {
     obj_ptr[1].set_min_value();
+    // NOTE: 这里可以用来为缓存设置start_key
+    // obj_ptr[1].set_uint64(2);
+    
     obj_ptr[3].set_max_value();
     ObRowkey start_key(obj_ptr, INV_IDX_ROWKEY_COL_CNT);
     ObRowkey end_key(&obj_ptr[2], INV_IDX_ROWKEY_COL_CNT);
