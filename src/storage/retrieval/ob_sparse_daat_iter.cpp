@@ -286,7 +286,7 @@ int ObSRDaaTIterImpl::do_one_merge_round(int64_t &count)
   int ret = OB_SUCCESS;
   bool need_project = true;
   double relevance = 0.0;
-  const ObDatum *id_datum = nullptr;
+  ObDatum id_datum;
   if (OB_FAIL(fill_merge_heap())) {
     if (OB_UNLIKELY(OB_ITER_END != ret)) {
       LOG_WARN("failed to fill merge heap", K(ret));
@@ -295,7 +295,7 @@ int ObSRDaaTIterImpl::do_one_merge_round(int64_t &count)
     LOG_WARN("failed to merge dimensions", K(ret));
   } else if (need_project && OB_FAIL(filter_on_demand(count, relevance, need_project))) {
     LOG_WARN("failed to process filter", K(ret));
-  } else if (need_project && OB_FAIL(cache_result(count, *id_datum, relevance))) {
+  } else if (need_project && OB_FAIL(cache_result(count, id_datum, relevance))) {
     if (OB_ITER_END != ret) {
       LOG_WARN("failed to cache result", K(ret));
     }
@@ -315,7 +315,7 @@ int ObSRDaaTIterImpl::fill_merge_heap()
       LOG_WARN("unexpected null dimension iter", K(ret), K(iter_idx), KPC_(iter_param));
     } else if (OB_FAIL(dim_iter->get_next_row())) {
       if (OB_UNLIKELY(OB_ITER_END != ret)) {
-        LOG_WARN("fail to try load next batch dimension data", K(ret));\
+        LOG_WARN("fail to try load next batch dimension data", K(ret));
       } else {
         ret = OB_SUCCESS;
       }
@@ -341,41 +341,96 @@ int ObSRDaaTIterImpl::fill_merge_heap()
   return ret;
 }
 
-int ObSRDaaTIterImpl::collect_dims_by_id(const ObDatum *&id_datum, double &relevance, bool &got_valid_id)
-{
+int ObSRDaaTIterImpl::collect_dims_by_id(ObDatum &id_datum, double &relevance,
+                                         bool &got_valid_id) {
   int ret = OB_SUCCESS;
-
   const ObSRMergeItem *top_item = nullptr;
-  bool curr_doc_end = false;
-  int64_t iter_idx = 0;
   relevance = 0.0;
   got_valid_id = false;
 
-  while (OB_SUCC(ret) && !merge_heap_->empty() && !curr_doc_end) {
-    if (merge_heap_->is_unique_champion()) {
-      curr_doc_end = true;
-    }
-    if (OB_FAIL(merge_heap_->top(top_item))) {
-      LOG_WARN("failed to get top item from merge heap", K(ret));
-    } else if (OB_FAIL(relevance_collector_->collect_one_dim(top_item->iter_idx_, top_item->relevance_))) {
-      LOG_WARN("failed to collect one dimension", K(ret));
-    } else if (FALSE_IT(iter_idx = top_item->iter_idx_)) {
-    } else if (OB_FAIL(merge_heap_->pop())) {
-      LOG_WARN("failed to pop top item in heap", K(ret));
-    } else {
-      next_round_iter_idxes_[next_round_cnt_++] = iter_idx;
+  if (OB_UNLIKELY(merge_heap_->empty())) {
+    return ret;
+  }
+
+  // Peek top to determine the DocID
+  if (OB_FAIL(merge_heap_->top(top_item))) {
+    LOG_WARN("failed to get top item from merge heap", K(ret));
+  } else {
+    const int64_t current_iter_idx = top_item->iter_idx_;
+    const ObDatum *expected_doc_datum = iter_domain_ids_[current_iter_idx];
+    id_datum = *expected_doc_datum;
+    bool same_doc = true;
+    int cmp_ret = 0;
+
+    // Process all items matching the current DocID
+    while (OB_SUCC(ret) && !merge_heap_->empty() && same_doc) {
+      if (OB_FAIL(merge_heap_->top(top_item))) {
+        LOG_WARN("failed to get top item", K(ret));
+        break;
+      }
+
+      // Check DocID match
+      const int64_t iter_idx = top_item->iter_idx_;
+      const ObDatum *curr_datum = iter_domain_ids_[iter_idx];
+
+      const uint64_t v1 = expected_doc_datum->get_uint64();
+      const uint64_t v2 = curr_datum->get_uint64();
+      if (v1 < v2) {
+        cmp_ret = -1;
+      } else if (v1 > v2) {
+        cmp_ret = 1;
+      } else {
+        cmp_ret = 0;
+      }
+
+      if (cmp_ret != 0) {
+        same_doc = false;
+        break;
+      }
+
+      // Collect relevance
+      if (OB_FAIL(relevance_collector_->collect_one_dim(
+              iter_idx, top_item->relevance_))) {
+        LOG_WARN("failed to collect one dimension", K(ret));
+        break;
+      }
+
+      // Optimization: Fetch next row and REPLACE_TOP immediately
+      ObISRDaaTDimIter *dim_iter = dim_iters_->at(iter_idx);
+      int ret_iter = dim_iter->get_next_row();
+
+      if (OB_SUCC(ret_iter)) {
+        ObSRMergeItem new_item;
+        new_item.iter_idx_ = iter_idx;
+
+        if (OB_FAIL(dim_iter->get_curr_score(new_item.relevance_))) {
+          LOG_WARN("fail to get current score", K(ret));
+        } else if (OB_NOT_NULL(iter_param_->dim_weights_) &&
+                   FALSE_IT(new_item.relevance_ *=
+                            iter_param_->field_boost_ *
+                            iter_param_->dim_weights_->at(iter_idx))) {
+        } else if (OB_FAIL(dim_iter->get_curr_id(iter_domain_ids_[iter_idx]))) {
+          LOG_WARN("fail to get current doc id", K(ret));
+        } else if (OB_FAIL(merge_heap_->replace_top(new_item))) {
+          LOG_WARN("fail to replace top in merge heap", K(ret));
+        }
+      } else if (OB_ITER_END == ret_iter) {
+        // Iterator exhausted, pop it
+        if (OB_FAIL(merge_heap_->pop())) {
+          LOG_WARN("failed to pop top item", K(ret));
+        }
+        ret = OB_SUCCESS; // Continue
+      } else {
+        ret = ret_iter;
+        LOG_WARN("fail to load next dimension data", K(ret));
+      }
     }
   }
 
   if (OB_SUCC(ret)) {
-    id_datum = iter_domain_ids_[iter_idx];
-    LOG_DEBUG("collect one dim", KPC(id_datum));
-    if (OB_ISNULL(id_datum)) {
-      ret = OB_ERR_UNEXPECTED;
-      LOG_WARN("unexpected null id datum", K(ret));
-    } else if (OB_FAIL(relevance_collector_->get_result(relevance, got_valid_id))) {
+    if (OB_FAIL(relevance_collector_->get_result(relevance, got_valid_id))) {
       LOG_WARN("failed to get result", K(ret));
-    } else if (got_valid_id && OB_FAIL(process_collected_row(*id_datum, relevance))) {
+    } else if (got_valid_id && OB_FAIL(process_collected_row(id_datum, relevance))) {
       LOG_WARN("failed to process collected row", K(ret));
     }
   }
