@@ -201,46 +201,82 @@ struct PostingEntry {
 
 /**
  * Cache value for token posting list cache.
- * Stores the posting entries for a token.
+ * Uses flexible array member for proper memory layout in KVCache.
+ * Memory layout: [ObTokenPostingListValue header][PostingEntry entries...]
  */
 class ObTokenPostingListValue : public common::ObIKVCacheValue {
 public:
-  ObTokenPostingListValue() {}
+  ObTokenPostingListValue() : count_(0) {}
 
   virtual ~ObTokenPostingListValue() {}
 
+  // Calculate the total size needed for deep copy
   virtual int64_t size() const override {
-    return sizeof(ObTokenPostingListValue) +
-           postentry_list_.count() * sizeof(PostingEntry);
+    return sizeof(ObTokenPostingListValue) + count_ * sizeof(PostingEntry);
   }
 
+  // Deep copy into pre-allocated buffer
   virtual int deep_copy(char *buf, const int64_t buf_len,
                         ObIKVCacheValue *&value) const override {
     int ret = common::OB_SUCCESS;
-    if (OB_ISNULL(buf) || OB_UNLIKELY(buf_len < size())) {
+    const int64_t copy_size = size();
+    if (OB_ISNULL(buf) || OB_UNLIKELY(buf_len < copy_size)) {
       ret = common::OB_INVALID_ARGUMENT;
-      COMMON_LOG(WARN,
-                 "invalid argument for token doc cnt cache value deep copy",
-                 K(ret), K(buf_len), K(size()));
+      COMMON_LOG(
+          WARN, "invalid argument for token posting list cache value deep copy",
+          K(ret), K(buf_len), K(copy_size), K(count_));
     } else {
+      // Construct header in buffer
       ObTokenPostingListValue *new_value = new (buf) ObTokenPostingListValue();
-      if (OB_FAIL(new_value->postentry_list_.assign(postentry_list_))) {
-        COMMON_LOG(WARN, "failed to assign postentry list", K(ret));
-      } else {
-        value = new_value;
+      new_value->count_ = count_;
+
+      // Copy entries directly after the header
+      if (count_ > 0) {
+        MEMCPY(new_value->entries_, entries_, count_ * sizeof(PostingEntry));
       }
+
+      value = new_value;
     }
     return ret;
   }
 
-  const ObArray<PostingEntry> &postentry_list() const {
-    return postentry_list_;
+  // Get entry at index (no bounds check for performance)
+  const PostingEntry &at(int64_t idx) const { return entries_[idx]; }
+  PostingEntry &at(int64_t idx) { return entries_[idx]; }
+
+  int64_t count() const { return count_; }
+
+  // Calculate size needed for a given entry count
+  static int64_t calc_size(int64_t entry_count) {
+    return sizeof(ObTokenPostingListValue) + entry_count * sizeof(PostingEntry);
   }
 
-  TO_STRING_KV(K_(postentry_list));
+  // Create a temporary value from ObArray for passing to KVCache::put()
+  // Note: This creates a stack-allocated wrapper that points to external data.
+  // Only use this temporarily for passing to put(), which will deep_copy it.
+  static int create_temp_value(const ObArray<PostingEntry> &entries, char *buf,
+                               int64_t buf_len,
+                               ObTokenPostingListValue *&out_value) {
+    int ret = common::OB_SUCCESS;
+    const int64_t needed_size = calc_size(entries.count());
+    if (OB_ISNULL(buf) || buf_len < needed_size) {
+      ret = common::OB_INVALID_ARGUMENT;
+    } else {
+      ObTokenPostingListValue *value = new (buf) ObTokenPostingListValue();
+      value->count_ = entries.count();
+      for (int64_t i = 0; i < entries.count(); ++i) {
+        value->entries_[i] = entries.at(i);
+      }
+      out_value = value;
+    }
+    return ret;
+  }
+
+  TO_STRING_KV(K_(count));
 
 public:
-  ObArray<PostingEntry> postentry_list_;
+  int64_t count_;
+  PostingEntry entries_[0]; // Flexible array member - must be last!
 };
 
 /**
