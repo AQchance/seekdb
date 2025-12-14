@@ -20,6 +20,8 @@
 #include "src/sql/das/ob_das_attach_define.h"
 #include <algorithm>
 #include <vector>
+#include "storage/retrieval/ob_token_posting_list_cache.h"
+
 namespace oceanbase
 {
 using namespace common;
@@ -964,6 +966,10 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
       }
     }
   }
+  // finalize all pendings
+  oceanbase::ObTokenPostingListCache::get_instance().finalize_all_pending();
+
+  // 结束后检查 ret
   if(OB_ITER_END == ret){
     ret = OB_SUCCESS;
   }  

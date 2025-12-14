@@ -495,16 +495,16 @@ int ObTextRetrievalTokenIter::get_next_batch(const int64_t capacity, int64_t &co
           ret = OB_SUCCESS;
         }
       }
-      if (OB_SUCC(ret)) {
-        // TODO: 这个时候应该把结果缓存起来
-        for (int64_t i = 0; i < count; ++i) {
-          int64_t doc_id = inv_scan_domain_id_col_->locate_batch_datums(*eval_ctx_)[i].get_int();
-          int64_t doc_length = inv_scan_doc_length_col_->locate_batch_datums(*eval_ctx_)[i].get_int();
-          int64_t token_frequency = relevance_expr_->args_[4]->locate_batch_datums(*eval_ctx_)[i].get_int();
-          PostingEntry posting_entry(doc_id, token_frequency, doc_length);
-          int ret_tmp = ObTokenPostingListCache::get_instance().insert_posting_entry(cache_key, posting_entry);
-        }
-      }
+      // if (OB_SUCC(ret)) {
+      //   // TODO: 这个时候应该把结果缓存起来
+      //   for (int64_t i = 0; i < count; ++i) {
+      //     int64_t doc_id = inv_scan_domain_id_col_->locate_batch_datums(*eval_ctx_)[i].get_int();
+      //     int64_t doc_length = inv_scan_doc_length_col_->locate_batch_datums(*eval_ctx_)[i].get_int();
+      //     int64_t token_frequency = relevance_expr_->args_[4]->locate_batch_datums(*eval_ctx_)[i].get_int();
+      //     PostingEntry posting_entry(doc_id, token_frequency, doc_length);
+      //     int ret_tmp = ObTokenPostingListCache::get_instance().insert_posting_entry(cache_key, posting_entry);
+      //   }
+      // }
     }
   } else {
     ret = OB_SUCCESS;
@@ -522,7 +522,7 @@ int ObTextRetrievalTokenIter::get_next_batch(const int64_t capacity, int64_t &co
         int64_t doc_length = inv_scan_doc_length_col_->locate_batch_datums(*eval_ctx_)[i].get_int();
         int64_t token_frequency = relevance_expr_->args_[4]->locate_batch_datums(*eval_ctx_)[i].get_int();
         PostingEntry posting_entry(doc_id, token_frequency, doc_length);
-        ObTokenPostingListCache::get_instance().insert_posting_entry(cache_key, posting_entry);
+        ObTokenPostingListCache::get_instance().append_to_pending(cache_key, posting_entry);
       }
     }
   }

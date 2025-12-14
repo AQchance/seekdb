@@ -18,8 +18,10 @@
 #define OB_TOKEN_POSTING_LIST_CACHE_H
 
 #include "common/ob_tablet_id.h"
+#include "lib/hash/ob_hashmap.h"
 #include "lib/hash_func/murmur_hash.h"
 #include "lib/string/ob_string.h"
+#include "lib/utility/ob_macro_utils.h"
 #include "share/cache/ob_kv_storecache.h"
 #include "share/cache/ob_kvcache_struct.h"
 #include <cstdint>
@@ -28,7 +30,7 @@ namespace oceanbase {
 namespace storage {
 
 /**
- * Cache key for token document count cache.
+ * Cache key for token posting list cache.
  * Key = (tenant_id, index_id, tablet_id, token)
  */
 class ObTokenPostingListCacheKey : public common::ObIKVCacheKey {
@@ -88,14 +90,12 @@ public:
       COMMON_LOG(WARN, "invalid argument for token doc cnt cache key deep copy",
                  K(ret), K(buf_len), K(deep_copy_size));
     } else {
-      // Copy the key structure first
       ObTokenPostingListCacheKey *new_key =
           new (buf) ObTokenPostingListCacheKey();
       new_key->tenant_id_ = tenant_id_;
       new_key->index_id_ = index_id_;
       new_key->tablet_id_ = tablet_id_;
 
-      // Deep copy the token string after the key structure
       char *token_buf = buf + sizeof(ObTokenPostingListCacheKey);
       MEMCPY(token_buf, token_.ptr(), token_.length());
       new_key->token_.assign_ptr(token_buf, token_.length());
@@ -105,6 +105,11 @@ public:
     return ret;
   }
 
+  // Getters for accessing key components
+  uint64_t get_index_id() const { return index_id_; }
+  common::ObTabletID get_tablet_id() const { return tablet_id_; }
+  const common::ObString &get_token() const { return token_; }
+
   TO_STRING_KV(K_(tenant_id), K_(index_id), K_(tablet_id), K_(token));
 
 private:
@@ -112,6 +117,76 @@ private:
   uint64_t index_id_;
   common::ObTabletID tablet_id_;
   common::ObString token_;
+};
+
+/**
+ * Wrapper key for pending map that owns the token string memory.
+ * Used as HashMap key to avoid dangling pointers.
+ */
+struct PendingCacheKey {
+  PendingCacheKey()
+      : tenant_id_(0), index_id_(0), tablet_id_(), token_buf_(), token_len_(0) {
+  }
+
+  PendingCacheKey(const ObTokenPostingListCacheKey &key) {
+    tenant_id_ = key.get_tenant_id();
+    index_id_ = key.get_index_id();
+    tablet_id_ = key.get_tablet_id();
+    const common::ObString &token = key.get_token();
+    token_len_ =
+        std::min(token.length(), static_cast<int32_t>(sizeof(token_buf_)));
+    if (token_len_ > 0 && token.ptr() != nullptr) {
+      MEMCPY(token_buf_, token.ptr(), token_len_);
+    }
+  }
+
+  bool operator==(const PendingCacheKey &other) const {
+    return tenant_id_ == other.tenant_id_ && index_id_ == other.index_id_ &&
+           tablet_id_ == other.tablet_id_ && token_len_ == other.token_len_ &&
+           (token_len_ == 0 ||
+            MEMCMP(token_buf_, other.token_buf_, token_len_) == 0);
+  }
+
+  uint64_t hash() const {
+    uint64_t hash_val = 0;
+    hash_val = common::murmurhash(&tenant_id_, sizeof(tenant_id_), hash_val);
+    hash_val = common::murmurhash(&index_id_, sizeof(index_id_), hash_val);
+    uint64_t tablet_id_val = tablet_id_.id();
+    hash_val =
+        common::murmurhash(&tablet_id_val, sizeof(tablet_id_val), hash_val);
+    hash_val = common::murmurhash(token_buf_, token_len_, hash_val);
+    return hash_val;
+  }
+
+  // Convert back to ObTokenPostingListCacheKey
+  ObTokenPostingListCacheKey to_cache_key() const {
+    common::ObString token(token_len_, token_buf_);
+    return ObTokenPostingListCacheKey(tenant_id_, index_id_, tablet_id_, token);
+  }
+
+  TO_STRING_KV(K_(tenant_id), K_(index_id), K_(tablet_id), K_(token_len));
+
+  uint64_t tenant_id_;
+  uint64_t index_id_;
+  common::ObTabletID tablet_id_;
+  char token_buf_[256]; // Max token length, adjust as needed
+  int32_t token_len_;
+};
+
+// Hash functor for PendingCacheKey (OceanBase style)
+struct PendingCacheKeyHash {
+  int operator()(const PendingCacheKey &key, uint64_t &hash_value) const {
+    hash_value = key.hash();
+    return common::OB_SUCCESS;
+  }
+};
+
+// Equal functor for PendingCacheKey (OceanBase style)
+struct PendingCacheKeyEqual {
+  bool operator()(const PendingCacheKey &lhs,
+                  const PendingCacheKey &rhs) const {
+    return lhs == rhs;
+  }
 };
 
 struct PostingEntry {
@@ -125,8 +200,8 @@ struct PostingEntry {
 };
 
 /**
- * Cache value for token document count cache.
- * Stores the estimated token document count and max token relevance.
+ * Cache value for token posting list cache.
+ * Stores the posting entries for a token.
  */
 class ObTokenPostingListValue : public common::ObIKVCacheValue {
 public:
@@ -135,7 +210,6 @@ public:
   virtual ~ObTokenPostingListValue() {}
 
   virtual int64_t size() const override {
-    // 对象本身大小 + 数组数据大小
     return sizeof(ObTokenPostingListValue) +
            postentry_list_.count() * sizeof(PostingEntry);
   }
@@ -149,7 +223,6 @@ public:
                  "invalid argument for token doc cnt cache value deep copy",
                  K(ret), K(buf_len), K(size()));
     } else {
-      // 这里开始深拷贝
       ObTokenPostingListValue *new_value = new (buf) ObTokenPostingListValue();
       if (OB_FAIL(new_value->postentry_list_.assign(postentry_list_))) {
         COMMON_LOG(WARN, "failed to assign postentry list", K(ret));
@@ -171,8 +244,19 @@ public:
 };
 
 /**
- * Global cache for token document count.
- * Uses LRU eviction policy to manage cache entries.
+ * Pending posting list for dynamic building.
+ * Stored in ObHashMap during iteration, moved to KVCache on completion.
+ */
+struct PendingPostingList {
+  PendingPostingList() : entries_() {}
+  ObArray<PostingEntry> entries_;
+};
+
+/**
+ * Global cache for token posting lists.
+ * Uses two-tier caching:
+ * 1. pending_map_: ObHashMap for dynamic appending during iteration
+ * 2. KVCache: for completed, immutable posting lists
  */
 class ObTokenPostingListCache
     : public common::ObKVCache<ObTokenPostingListCacheKey,
@@ -183,18 +267,57 @@ public:
     return cache;
   }
 
+  // Initialize the cache (call once at startup)
+  int init(const char *cache_name, const int64_t priority = 1) {
+    int ret = common::OB_SUCCESS;
+    ret = ObKVCache::init(cache_name, priority);
+    if (OB_FAIL(ret)) {
+      COMMON_LOG(WARN, "failed to init kv cache", K(ret));
+    } else if (!pending_map_.created()) {
+      ret = pending_map_.create(1024, "PendingPostMap", "PendingPostNode");
+    }
+    return ret;
+  }
+
+  // Get from KVCache (completed posting lists only)
   int get_posting_list(const ObTokenPostingListCacheKey &key,
                        const ObTokenPostingListValue *&value,
                        common::ObKVCacheHandle &handle);
 
+  // Put completed posting list to KVCache
   int put_posting_list(const ObTokenPostingListCacheKey &key,
                        const ObTokenPostingListValue &value);
-  int insert_posting_entry(const ObTokenPostingListCacheKey &key,
-                           const PostingEntry &posting_entry);
+
+  // Append entry to pending list (dynamic building)
+  int append_to_pending(const ObTokenPostingListCacheKey &key,
+                        const PostingEntry &entry);
+
+  // Get pending list for reading (returns nullptr if not found)
+  const PendingPostingList *
+  get_pending(const ObTokenPostingListCacheKey &key) const;
+
+  // Finalize pending list to KVCache and remove from pending map
+  int finalize_to_cache(const ObTokenPostingListCacheKey &key);
+
+  // Clear pending list without caching (e.g., on error)
+  int clear_pending(const ObTokenPostingListCacheKey &key);
+
+  // Finalize all pending lists to KVCache and clear pending map
+  int finalize_all_pending();
+
+  // Clear all pending lists without caching
+  int clear_all_pending();
 
 private:
   ObTokenPostingListCache() {}
   virtual ~ObTokenPostingListCache() {}
+
+  // Pending map: PendingCacheKey -> PendingPostingList
+  common::hash::ObHashMap<PendingCacheKey, PendingPostingList,
+                          common::hash::NoPthreadDefendMode,
+                          PendingCacheKeyHash, PendingCacheKeyEqual>
+      pending_map_;
+
   DISALLOW_COPY_AND_ASSIGN(ObTokenPostingListCache);
 };
 
