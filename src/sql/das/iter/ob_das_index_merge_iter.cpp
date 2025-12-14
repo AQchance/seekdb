@@ -966,8 +966,9 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
       }
     }
   }
-  // finalize all pendings
-  oceanbase::ObTokenPostingListCache::get_instance().finalize_all_pending();
+  // finalize all pendings and clear all pendings
+  oceanbase::storage::ObTokenPostingListCache::get_instance().finalize_all_pending();
+  oceanbase::storage::ObTokenPostingListCache::get_instance().clear_all_pending();
 
   // 结束后检查 ret
   if(OB_ITER_END == ret){
