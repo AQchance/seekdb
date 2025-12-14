@@ -405,3 +405,4 @@ pidstat.sh
 .gemini/
 gha-creds-*.json
 .github
+.gdb_history
