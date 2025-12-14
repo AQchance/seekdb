@@ -453,8 +453,7 @@ int ObTextRetrievalTokenIter::get_next_batch(const int64_t capacity, int64_t &co
   if (use_cache_ && OB_SUCC(ObTokenPostingListCache::get_instance().get_posting_list(cache_key, cache_value, handle))){
     // TODO: 命中缓存，这里应该返回缓存中的结果
     // 缓存命中，将缓存中的数据填充到 expression datums 中
-    const ObArray<PostingEntry> &postentry_list = cache_value->postentry_list();
-    count = OB_MIN(postentry_list.count() - cache_read_idx_, OB_MIN(max_batch_size_, capacity));
+    count = OB_MIN(cache_value->count() - cache_read_idx_, OB_MIN(max_batch_size_, capacity));
     
     if (count > 0) {
       // 获取 expression 的 datums 数组用于写入
@@ -468,7 +467,7 @@ int ObTextRetrievalTokenIter::get_next_batch(const int64_t capacity, int64_t &co
       
       // 从缓存中填充数据
       for (int64_t i = 0; i < count; ++i) {
-        const PostingEntry &entry = postentry_list.at(i + cache_read_idx_);
+        const PostingEntry &entry = cache_value->at(i + cache_read_idx_);
         doc_id_datums[i].set_int(entry.doc_id_);
         doc_len_datums[i].set_int(entry.doc_len_);
         
