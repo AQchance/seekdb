@@ -457,13 +457,12 @@ int ObTextRetrievalTokenIter::get_next_batch(const int64_t capacity, int64_t &co
     
     if (count > 0) {
       // 获取 expression 的 datums 数组用于写入
-      ObDatum *doc_id_datums = inv_scan_domain_id_col_->locate_batch_datums(*eval_ctx_);
-      ObDatum *doc_len_datums = inv_scan_doc_length_col_->locate_batch_datums(*eval_ctx_);
+      // ObDatum *doc_id_datums = inv_scan_domain_id_col_->locate_batch_datums(*eval_ctx_);
+      // ObDatum *doc_len_datums = inv_scan_doc_length_col_->locate_batch_datums(*eval_ctx_);
+      ObDatum *doc_id_datums = inv_idx_scan_param_->output_exprs_->at(1)->locate_batch_datums(*eval_ctx_);
+      ObDatum *doc_len_datums = inv_idx_scan_param_->output_exprs_->at(2)->locate_batch_datums(*eval_ctx_);
+      ObDatum *token_freq_datums = inv_idx_scan_param_->output_exprs_->at(0)->locate_batch_datums(*eval_ctx_);
       
-      // 获取 token frequency expression 的 datums
-      // relevance_expr_->args_[4] 是 token frequency 表达式
-      sql::ObExpr *token_freq_expr = relevance_expr_->args_[4];
-      ObDatum *token_freq_datums = token_freq_expr->locate_batch_datums(*eval_ctx_);
       
       // 从缓存中填充数据
       for (int64_t i = 0; i < count; ++i) {
@@ -478,8 +477,10 @@ int ObTextRetrievalTokenIter::get_next_batch(const int64_t capacity, int64_t &co
       cache_read_idx_ += count;
       
       // 设置 evaluated 标志
-      inv_scan_domain_id_col_->get_evaluated_flags(*eval_ctx_).set_all(count);
-      inv_scan_doc_length_col_->get_evaluated_flags(*eval_ctx_).set_all(count);
+      for (int64_t i = 0; i < inv_idx_scan_param_->output_exprs_->count(); ++i) {
+        sql::ObExpr *expr = inv_idx_scan_param_->output_exprs_->at(i);
+        expr->get_evaluated_flags(*eval_ctx_).set_all(count);
+      }
 
       LOG_DEBUG("cache hit for posting list", K(count), K(cache_key));
     }
@@ -517,9 +518,12 @@ int ObTextRetrievalTokenIter::get_next_batch(const int64_t capacity, int64_t &co
     if (OB_SUCC(ret)) {
       // TODO: 这个时候应该把结果缓存起来
       for (int64_t i = 0; i < count; ++i) {
-        int64_t doc_id = inv_scan_domain_id_col_->locate_batch_datums(*eval_ctx_)[i].get_int();
-        int64_t doc_length = inv_scan_doc_length_col_->locate_batch_datums(*eval_ctx_)[i].get_int();
-        int64_t token_frequency = relevance_expr_->args_[4]->locate_batch_datums(*eval_ctx_)[i].get_int();
+        // int64_t doc_id = inv_scan_domain_id_col_->locate_batch_datums(*eval_ctx_)[i].get_int();
+        // int64_t doc_length = inv_scan_doc_length_col_->locate_batch_datums(*eval_ctx_)[i].get_int();
+        // int64_t token_frequency = relevance_expr_->args_[4]->locate_batch_datums(*eval_ctx_)[i].get_int();
+        int64_t doc_id = inv_idx_scan_param_->output_exprs_->at(1)->locate_batch_datums(*eval_ctx_)[i].get_int();
+        int64_t doc_length = inv_idx_scan_param_->output_exprs_->at(2)->locate_batch_datums(*eval_ctx_)[i].get_int();
+        int64_t token_frequency = inv_idx_scan_param_->output_exprs_->at(0)->locate_batch_datums(*eval_ctx_)[i].get_int();
         PostingEntry posting_entry(doc_id, token_frequency, doc_length);
         ObTokenPostingListCache::get_instance().append_to_pending(cache_key, posting_entry);
       }
