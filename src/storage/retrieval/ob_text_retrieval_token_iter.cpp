@@ -487,14 +487,17 @@ int ObTextRetrievalTokenIter::get_next_batch(const int64_t capacity, int64_t &co
     else {
       count = 0;
       // 缓存中没有更多数据了，这个时候就需要从倒排索引中来取数据
-      ret = OB_SUCCESS;
-      if (OB_FAIL(inv_idx_scan_iter_->get_next_rows(count, OB_MIN(max_batch_size_, capacity)))) {
-        if (OB_UNLIKELY(OB_ITER_END != ret)) {
-          LOG_WARN("failed to get next rows from inverted index", K(ret), KPC_(inv_idx_scan_param), KPC_(inv_idx_scan_iter));
-        } else if (count != 0) {
-          ret = OB_SUCCESS;
-        }
-      }
+      // FIXME: 这里暂时先不去底层取数据，直接返回结束
+      ret = OB_ITER_END;
+
+      // if (OB_FAIL(inv_idx_scan_iter_->get_next_rows(count, OB_MIN(max_batch_size_, capacity)))) {
+      //   if (OB_UNLIKELY(OB_ITER_END != ret)) {
+      //     LOG_WARN("failed to get next rows from inverted index", K(ret), KPC_(inv_idx_scan_param), KPC_(inv_idx_scan_iter));
+      //   } else if (count != 0) {
+      //     ret = OB_SUCCESS;
+      //   }
+      // }
+
       // if (OB_SUCC(ret)) {
       //   // TODO: 这个时候应该把结果缓存起来
       //   for (int64_t i = 0; i < count; ++i) {
