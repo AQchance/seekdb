@@ -23,7 +23,7 @@ OCEANBASE_DBNAME = os.getenv("OCEANBASE_DBNAME")
 TABLE_NAME = "rag_documents"
 
 # Number of top results to retrieve
-TOP_K = 8
+TOP_K = 20
 
 
 def search(question: str) -> Answer:
@@ -60,7 +60,7 @@ def search(question: str) -> Answer:
                             "fields": ["content"],
                             "type": "best_fields",
                             "query": question,
-                            "minimum_should_match": "50%",
+                            "minimum_should_match": "20%",
                         }
                     }
                 ],
