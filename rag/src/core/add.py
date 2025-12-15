@@ -251,6 +251,7 @@ def add(dataset_dir: str, max_worker: int):
         dataset_dir: Directory containing PDF files
         max_worker: Number of parallel workers for processing PDF files (default: 2)
     """
+
     pdf_files: List[str] = glob.glob(os.path.join(dataset_dir, "*.pdf"))
 
     if not pdf_files:

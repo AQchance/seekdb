@@ -82,12 +82,10 @@ if __name__ == "__main__":
     logger.info(f"Output file: {args.output}")
 
     logger.info("Starting data preparation...")
-    
     add(
         dataset_dir=args.dataset,
         max_worker=12,
     )
-  
 
     logger.info("Data preparation completed.")
 
@@ -100,7 +98,6 @@ if __name__ == "__main__":
     for idx, question in enumerate(questions, 1):
         logger.debug(f"Processing question {idx}/{len(questions)}: {question[:50]}...")
         answers.append(search(question))
-
     logger.info(f"Completed processing {len(answers)} questions.")
     logger.info(f"Writing answers to {args.output}...")
     write_answers(answers, args.output)

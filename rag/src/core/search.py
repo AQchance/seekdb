@@ -60,7 +60,7 @@ def search(question: str) -> Answer:
                             "fields": ["content"],
                             "type": "best_fields",
                             "query": question,
-                            "minimum_should_match": "20%",
+                            "minimum_should_match": "10%",
                         }
                     }
                 ],

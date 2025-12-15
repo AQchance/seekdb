@@ -14,8 +14,6 @@ from src.util import Answer, read_train_json
 dotenv.load_dotenv()
 
 _logger = logging.getLogger("eval")
-
-
 def llm_judge(origin_text: str, text: str) -> Optional[float]:
     """
     使用大模型评估两个文本的相关性/相似性
@@ -362,12 +360,22 @@ Examples:
     )
 
     args = parser.parse_args()
+    #
+    # logging.basicConfig(
+    #     level=logging.DEBUG,
+    #     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    # )
+    os.makedirs("logs", exist_ok=True)
 
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        handlers=[
+            logging.FileHandler("evaluation.log", encoding="utf-8"),
+            logging.StreamHandler(),  # 如果你不想打印到控制台，删除这一行
+        ],
     )
-
+    _logger = logging.getLogger(__name__)
     try:
         final_score = run(args.dataset, args.output, args.answer)
         _logger.info(f"\nFinal evaluation score: {final_score:.4f}")
