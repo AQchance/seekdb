@@ -357,8 +357,7 @@ int ObSRDaaTIterImpl::collect_dims_by_id(ObDatum &id_datum, double &relevance,
     LOG_WARN("failed to get top item from merge heap", K(ret));
   } else {
     const int64_t current_iter_idx = top_item->iter_idx_;
-    const ObDatum *expected_doc_datum = iter_domain_ids_[current_iter_idx];
-    id_datum = *expected_doc_datum;
+    id_datum.deep_copy(*iter_domain_ids_[current_iter_idx], *iter_allocator_);
     bool same_doc = true;
     int cmp_ret = 0;
 
@@ -373,7 +372,7 @@ int ObSRDaaTIterImpl::collect_dims_by_id(ObDatum &id_datum, double &relevance,
       const int64_t iter_idx = top_item->iter_idx_;
       const ObDatum *curr_datum = iter_domain_ids_[iter_idx];
 
-      const uint64_t v1 = expected_doc_datum->get_uint64();
+      const uint64_t v1 = id_datum.get_uint64();
       const uint64_t v2 = curr_datum->get_uint64();
       if (v1 < v2) {
         cmp_ret = -1;
