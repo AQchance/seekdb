@@ -3239,6 +3239,8 @@ int ObJoinOrder::create_index_merge_access_paths(const uint64_t table_id,
                                                  bool &ignore_normal_access_path)
  {
   int ret = OB_SUCCESS;
+  // TODO: 为了方便测试BMW，暂时禁用 index merge
+  return ret;
   const ObDMLStmt *stmt = NULL;
   ObQueryCtx *query_ctx = NULL;
   ObSEArray<ObIndexMergeNode*, 4> candi_index_trees;
