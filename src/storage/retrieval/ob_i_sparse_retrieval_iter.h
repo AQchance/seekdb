@@ -53,6 +53,7 @@ public:
     UNUSED(id_datum);
     return OB_NOT_IMPLEMENT;
   }
+  virtual bool is_mandatory() const { return false; }
   TO_STRING_EMPTY();
 private:
   DISALLOW_COPY_AND_ASSIGN(ObISparseRetrievalDimIter);
