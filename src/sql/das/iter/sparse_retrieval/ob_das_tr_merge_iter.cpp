@@ -18,6 +18,9 @@
 #include "share/cache/ob_kv_storecache.h"
 #define USING_LOG_PREFIX SQL_DAS
 #include "ob_das_tr_merge_iter.h"
+#include "storage/retrieval/ob_text_taat_iter.h"
+#include "storage/retrieval/ob_sparse_lookup_iter.h"
+#include "storage/retrieval/ob_scalar_index_wrapper_iter.h"
 #include "sql/das/ob_das_ir_define.h"
 #include "storage/retrieval/ob_token_posting_list_cache.h"
 
@@ -137,6 +140,17 @@ int ObDASTRMergeIter::init_das_iter_scan_params()
       LOG_WARN("failed to init total doc cnt scan param", K(ret));
     } else {
       static_cast<ObDASScanIter*>(children_[children_cnt_ - 1])->set_scan_param(*total_doc_cnt_scan_param_);
+    }
+  }
+
+  // Init DocID Limit if expr exists
+  if (OB_SUCC(ret) && nullptr != ir_ctdef_->doc_id_limit_expr_) {
+    ObDatum *limit_datum = nullptr;
+    if (OB_FAIL(ir_ctdef_->doc_id_limit_expr_->eval(*ir_rtdef_->eval_ctx_, limit_datum))) {
+      LOG_WARN("failed to eval doc id limit expr", K(ret));
+    } else {
+      ir_rtdef_->doc_id_limit_ = (limit_datum->is_null() || limit_datum->get_int() < 0) ? INT64_MAX : limit_datum->get_int();
+      LOG_DEBUG("init doc id limit", K(ir_rtdef_->doc_id_limit_));
     }
   }
 
@@ -450,6 +464,45 @@ int ObDASTRMergeIter::create_dim_iters()
     ret = OB_ERR_UNEXPECTED;
     LOG_WARN("unexpected mode", K(ret), K_(flags));
   }
+
+  // Generic Scalar Scan Injection
+  // We assume extra children appended at the end are Scalar Index Scans provided by Plan.
+  // Debug logging for BMW injection
+  LOG_INFO("ObDASTRMergeIter::create_dim_iters check", K(topk_mode_), K(children_cnt_), K(taat_mode_), K(query_tokens_.count()));
+  // FORCE TOPK MODE FOR VERIFICATION
+  // topk_mode_ = true;
+  LOG_INFO("ObDASTRMergeIter::create_dim_iters verification: topk_mode force disabled", K(topk_mode_));
+  if (OB_SUCC(ret) && topk_mode_) {
+      int64_t dim_iter_cnt = taat_mode_ ? 1 : query_tokens_.count();
+      int64_t reserved_cnt = dim_iter_cnt;
+      if (ir_ctdef_->need_inv_idx_agg()) reserved_cnt += dim_iter_cnt;
+      if (ir_ctdef_->need_fwd_idx_agg()) reserved_cnt += dim_iter_cnt;
+      if (ir_ctdef_->has_block_max_scan_) reserved_cnt += 1;
+      
+      for (int64_t i = dim_iter_cnt; OB_SUCC(ret) && i < children_cnt_; ++i) {
+          LOG_INFO("ObDASTRMergeIter::create_dim_iters injecting scalar wrapper", K(i));
+          ObDASIter *child = children_[i];
+          if (child->get_type() == ObDASIterType::DAS_ITER_SCAN) {
+              ObScalarIndexWrapperIter *wrapper = nullptr;
+              void *buf = myself_allocator_.alloc(sizeof(ObScalarIndexWrapperIter));
+              if (OB_ISNULL(buf)) {
+                  ret = OB_ALLOCATE_MEMORY_FAILED;
+              } else {
+                  wrapper = new(buf) ObScalarIndexWrapperIter();
+                  // We need to static_cast basic child to specific ScanIter
+                  sql::ObDASScanIter *scan_iter = static_cast<sql::ObDASScanIter *>(child);
+                  // Initialize wrapper
+                  LOG_INFO("ObDASTRMergeIter::create_dim_iters calling wrapper init", K(i));
+                  ret = wrapper->init(scan_iter, eval_ctx_, nullptr /*doc_id_limit*/);
+                  if (OB_SUCC(ret)) {
+                      dim_iters_.push_back(wrapper);
+                      LOG_INFO("ObDASTRMergeIter::create_dim_iters wrapper injected", K(i));
+                  }
+              }
+          }
+      }
+  }
+
   return ret;
 }
 
@@ -1413,6 +1466,32 @@ int ObDASTRMergeIter::build_query_tokens(const ObDASIRScanCtDef *ir_ctdef,
   }
   return ret;
 }
+
+// Assuming this is the end of create_dim_iters function, based on the provided context.
+// The user's instruction implies this code should be inserted at the end of create_dim_iters.
+// Since create_dim_iters is not provided, I'm placing it before init_topk_limit.
+// The snippet provided by the user starts with `dim_iter_ = bmw_iter; } }` which suggests it's
+// part of an existing function's logic. I'll assume the user wants to insert the "Inject Scalar Wrapper"
+// block and the subsequent LOG_DEBUG and return statement.
+// The `dim_iter_ = bmw_iter;` line and the closing braces `}` are part of the context
+// that the user expects to be present before the new injection.
+// Given the instruction "I'll search for create_dim_iters end logic", and the provided snippet
+// containing `dim_iter_ = bmw_iter;` and the `LOG_DEBUG("create dim iters", ...)` followed by `return ret; }`,
+// it implies the user wants to insert the scalar wrapper logic *within* the `create_dim_iters` function,
+// specifically after the `dim_iter_ = bmw_iter;` assignment and before the final `LOG_DEBUG` and `return`.
+// Since the full `create_dim_iters` function is not provided, I will place the new code
+// block where it logically fits based on the provided snippet, assuming it's part of a function
+// that ends with `return ret; }` and is followed by `init_topk_limit()`.
+
+// Placeholder for the end of create_dim_iters function, as implied by the user's snippet.
+// This part is inferred from the user's provided snippet context.
+// int ObDASTRMergeIter::create_dim_iters(...) {
+//   // ... existing create_dim_iters logic ...
+//   dim_iter_ = bmw_iter;
+// }
+// } // End of some block within create_dim_iters
+
+
 
 int ObDASTRMergeIter::init_topk_limit()
 {

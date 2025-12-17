@@ -80,7 +80,8 @@ public:
       avg_doc_len_est_spec_(alloc),
       mode_flag_(NATURAL_LANGUAGE_MODE),
       flags_(0),
-      field_boost_expr_(nullptr) {}
+      field_boost_expr_(nullptr),
+      doc_id_limit_expr_(nullptr) {}
   bool need_calc_relevance() const { return nullptr != relevance_expr_; }
   bool need_proj_relevance_score() const { return nullptr != relevance_proj_col_; }
   bool need_fwd_idx_agg() const { return has_fwd_agg_ && need_calc_relevance(); }
@@ -176,7 +177,8 @@ public:
                        K_(token_col),
                        K_(block_max_spec),
                        K_(mode_flag),
-                       KPC_(field_boost_expr));
+                       KPC_(field_boost_expr),
+                       KPC_(doc_id_limit_expr));
 
   ObExpr *search_text_;
   ObExpr *inv_scan_domain_id_col_;
@@ -206,6 +208,7 @@ public:
     };
   };
   ObExpr *field_boost_expr_;
+  ObExpr *doc_id_limit_expr_;
 };
 
 struct ObDASIRScanRtDef : ObDASAttachRtDef
@@ -276,6 +279,7 @@ public:
   // fts_idx_ is dynamically generated during execution based on the rtdef tree and does not need to be serialized.
   int64_t fts_idx_;
   int64_t minimum_should_match_;
+  int64_t doc_id_limit_;
 };
 
 struct ObDASIRAuxLookupCtDef : ObDASAttachCtDef
