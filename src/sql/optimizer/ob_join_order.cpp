@@ -5002,6 +5002,8 @@ int ObJoinOrder::compute_cost_and_prune_access_path(PathHelper &helper,
         LOG_WARN("get unexpected null", K(ap), K(ret));
       } else if (OB_FAIL(ap->estimate_cost())) {
         LOG_WARN("failed to estimate cost", K(ret));
+        // TODO: 为了测试BMW，如果遇到全文索引，强制cost为0
+      } else if (OB_FALSE_IT(ap->est_cost_info_.index_meta_info_.is_fulltext_index_ ? ap->cost_ = 0.0 : 0)) {
       } else if (OB_FAIL(ap->compute_pipeline_info())) {
         LOG_WARN("failed to compute pipelined path", K(ret));
       } else if (OB_FAIL(ap->compute_valid_inner_path())) {
