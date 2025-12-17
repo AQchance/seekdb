@@ -118,7 +118,7 @@ def vision_judge_page(question: str, pdf_path: str, page_num: int) -> Optional[f
 
 请只返回一个0.0到1.0之间的浮点数评分，不要包含任何其他文字说明。"""
 
-    page_image_path = pdf_page_to_image(pdf_path, page_num, dpi=100)
+    page_image_path = pdf_page_to_image(pdf_path, page_num, dpi=300)
 
     try:
         # 调用视觉模型API

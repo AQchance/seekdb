@@ -54,13 +54,13 @@ def search(question: str) -> Answer:
         # First, build a simple full-text search query
         fts_query = {
             "bool": {
-                "should": [
+                "must": [
                     {
                         "query_string": {
                             "fields": ["content"],
                             "type": "best_fields",
                             "query": question,
-                            "minimum_should_match": 0,
+                            "minimum_should_match": "10%",
                         }
                     }
                 ],
