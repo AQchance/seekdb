@@ -776,13 +776,89 @@ int ObParser::split_multiple_stmt(const ObString &stmt,
       ++start;
     }
 
-    std::string index_stmt =
-        "CREATE INDEX ID_INDEX ON " + table_name_str + " (id);";
-    char *index_stmt_buf = new char[index_stmt.size() + 1];
-    std::strcpy(index_stmt_buf, index_stmt.c_str());
-    ObString index_obstr(static_cast<int32_t>(index_stmt.size()),
-                         index_stmt_buf);
-    queries.push_back(index_obstr);
+    // 创建原始语句和大写语句的副本用于解析
+    std::string stmt_str(stmt.ptr(), stmt.length());
+    std::string stmt_upper;
+    for (size_t i = 0; i < stmt_str.size(); ++i) {
+      stmt_upper.push_back(static_cast<char>(
+          std::toupper(static_cast<unsigned char>(stmt_str[i]))));
+    }
+
+    // 查找所有带 AUTO_INCREMENT 的列名
+    std::vector<std::string> auto_inc_columns;
+    size_t search_pos = 0;
+    while ((search_pos = stmt_upper.find("AUTO_INCREMENT", search_pos)) !=
+           std::string::npos) {
+      // 从 AUTO_INCREMENT 位置向前查找列名
+      // 列定义格式: column_name TYPE ... AUTO_INCREMENT ...
+      size_t pos = search_pos;
+
+      // 跳过 AUTO_INCREMENT 之前的空格
+      while (pos > 0 && isspace(stmt_str[pos - 1])) {
+        --pos;
+      }
+
+      // 向前跳过类型信息（可能包含括号如 INT(11)、逗号前的内容等）
+      // 我们需要找到最近的逗号或左括号（列定义开始）
+      size_t line_start = pos;
+      int paren_depth = 0;
+      while (line_start > 0) {
+        char c = stmt_str[line_start - 1];
+        if (c == ')') {
+          paren_depth++;
+        } else if (c == '(') {
+          if (paren_depth > 0) {
+            paren_depth--;
+          } else {
+            // 这是列定义列表的开始括号
+            break;
+          }
+        } else if (c == ',' && paren_depth == 0) {
+          break;
+        }
+        --line_start;
+      }
+
+      // 现在 line_start 指向列定义开始（逗号或括号之后）
+      // 跳过空格找到列名
+      while (line_start < pos && isspace(stmt_str[line_start])) {
+        ++line_start;
+      }
+
+      // 提取列名（直到空格或其他分隔符）
+      std::string col_name;
+      while (line_start < pos && !isspace(stmt_str[line_start]) &&
+             stmt_str[line_start] != '(' && stmt_str[line_start] != ',') {
+        col_name.push_back(stmt_str[line_start]);
+        ++line_start;
+      }
+
+      if (!col_name.empty()) {
+        // 移除可能的反引号
+        if (col_name.front() == '`' && col_name.back() == '`' &&
+            col_name.size() > 2) {
+          col_name = col_name.substr(1, col_name.size() - 2);
+        }
+        auto_inc_columns.push_back(col_name);
+      }
+
+      search_pos += 14; // "AUTO_INCREMENT" 长度
+    }
+
+    // 为每个自增列创建索引
+    for (const auto &col_name : auto_inc_columns) {
+      std::string col_upper = col_name;
+      std::transform(col_upper.begin(), col_upper.end(), col_upper.begin(),
+                     [](unsigned char c) { return std::toupper(c); });
+
+      std::string index_stmt = "CREATE INDEX " + col_upper + "_AUTO_INDEX ON " +
+                               table_name_str + " (" + col_name + ");";
+      char *index_stmt_buf = new char[index_stmt.size() + 1];
+      std::strcpy(index_stmt_buf, index_stmt.c_str());
+      ObString index_obstr(static_cast<int32_t>(index_stmt.size()),
+                           index_stmt_buf);
+      queries.push_back(index_obstr);
+    }
   }
 
   return ret;
