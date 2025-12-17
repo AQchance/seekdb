@@ -15732,6 +15732,8 @@ int ObLogPlan::try_push_topn_into_text_retrieval_scan(ObLogicalOperator *&top,
                                                         all_filters,
                                                         tr_info.pushdown_match_filter_))) {
         LOG_WARN("build and expr failed", K(ret));
+      } else if (OB_FAIL(tr_info.pushdown_match_filter_->formalize(get_optimizer_context().get_session_info()))) {
+        LOG_WARN("formalize match filter failed", K(ret));
       }
     }
 
