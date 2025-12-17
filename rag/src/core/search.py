@@ -54,13 +54,13 @@ def search(question: str) -> Answer:
         # First, build a simple full-text search query
         fts_query = {
             "bool": {
-                "must": [
+                "should": [
                     {
                         "query_string": {
                             "fields": ["content"],
                             "type": "best_fields",
                             "query": question,
-                            "minimum_should_match": "10%",
+                            "minimum_should_match": 0,
                         }
                     }
                 ],
@@ -75,8 +75,8 @@ def search(question: str) -> Answer:
                 "k": TOP_K * 2,  # Retrieve more candidates for filtering
                 "num_candidates": TOP_K * 4,
                 "query_vector": question_embedding,
-                "filter": fts_query,
-                "similarity": 0.3,  # Similarity threshold
+                # "filter": fts_query,
+                # "similarity": 0.5,  # Similarity threshold
             },
             "from": 0,
             "size": TOP_K,
@@ -85,7 +85,9 @@ def search(question: str) -> Answer:
         # Perform hybrid search
         logger.debug(f"Performing hybrid search with TOP_K={TOP_K}...")
         search_results = client.search(index=TABLE_NAME, body=search_request)
-
+        content1 = []
+        for result in search_results[:TOP_K]:
+            content1.append(result.get("content", ""))
         if not search_results or len(search_results) == 0:
             logger.warning(
                 f"No search results found for question: '{question[:50]}...'"

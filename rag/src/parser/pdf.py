@@ -163,9 +163,9 @@ def pdf_page_to_image(pdf_path: str, page_num: int, dpi: int) -> str:
 
         # Convert image to grayscale (black and white)
         img = images[0]
-        if img.mode != "L":
-            logger.debug(f"Converting image from {img.mode} mode to grayscale (L mode)")
-            img = img.convert("L")
+        # if img.mode != "L":
+        #     logger.debug(f"Converting image from {img.mode} mode to grayscale (L mode)")
+        #     img = img.convert("L")
 
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
         img.save(temp_file.name, "PNG")

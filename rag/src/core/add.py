@@ -96,7 +96,6 @@ def process_pdf_file(
     """
     filename = os.path.basename(pdf_file)
     logger.info(f"Processing {filename}...")
-
     try:
         # Get total number of pages from PDF
         try:
@@ -119,7 +118,7 @@ def process_pdf_file(
 
             try:
                 # Step 1: Convert PDF to image
-                page_image_path = pdf_page_to_image(pdf_file, page_num, dpi=300)
+                page_image_path = pdf_page_to_image(pdf_file, page_num, dpi=600)
                 logger.debug(f"Converted page {page_num} to image: {page_image_path}")
 
                 # Step 2: Extract information using VLM
@@ -192,7 +191,6 @@ def process_pdf_file(
 
             # Step 3: Split text
             text_chunks = split_text(page_text)
-
             # Step 4 & 5: Embed -> Store
             for chunk_text in text_chunks:
                 if not chunk_text.strip():
