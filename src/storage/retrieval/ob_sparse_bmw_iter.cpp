@@ -390,6 +390,52 @@ int ObSRBMWIterImpl::next_pivot_range(int64_t &skip_range_cnt)
     } else if (OB_FAIL(try_generate_next_range_from_merge_heap(
         is_candidate_range, min_unevaluated_id, max_evaluated_id))) {
       LOG_WARN("failed to try generate next range from merge heap", K(ret));
+    } else if (is_candidate_range) {
+      const ObDatum *mandatory_jump_id = nullptr;
+      for (int64_t i = 0; OB_SUCC(ret) && i < dim_iters_->count(); ++i) {
+        if (dim_iters_->at(i)->is_mandatory()) {
+          bool present = false;
+          for (int64_t j = 0; j < next_round_cnt_; ++j) {
+            if (next_round_iter_idxes_[j] == i) {
+              present = true;
+              break;
+            }
+          }
+          if (!present) {
+            const ObDatum *id = nullptr;
+            if (OB_FAIL(dim_iters_->at(i)->get_curr_id(id))) {
+              if (OB_ITER_END != ret) {
+                 LOG_WARN("failed to get mandatory dim id", K(ret), K(i));
+              } else {
+                 ret = OB_SUCCESS; // Ended, logic below will handle jump (but id is invalid?)
+                 // If mandatory ended, we should probably terminate search or jump to max?
+                 // Current implementation just ignores?
+                 // If OB_ITER_END, id is undefined.
+                 // We need to signal STOP.
+                 // If we return success but is_candidate=false, and don't advance max_evaluated?
+                 // No, loop will stuck.
+                 // If mandatory is END, we should set max_evaluated_id to MAX?
+                 // Or return OB_ITER_END explicitly?
+                 ret = OB_ITER_END;
+              }
+            } else {
+              mandatory_jump_id = id;
+            }
+            break;
+          }
+        }
+      }
+
+      if (OB_SUCC(ret)) {
+        if (mandatory_jump_id != nullptr) {
+          is_candidate_range = false;
+          max_evaluated_id = mandatory_jump_id;
+          last_border_inclusive = true;
+          LOG_DEBUG("[Sparse Retrieval] Mandatory dim skip", KPC(mandatory_jump_id));
+        } else {
+          last_border_inclusive = false;
+        }
+      }
     } else {
       last_border_inclusive = false;
     }
