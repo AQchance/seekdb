@@ -9,7 +9,7 @@ import dotenv
 from pyobvector import VECTOR, FtsIndexParam, FtsParser, VectorIndex
 from pyobvector.client.hybrid_search import HybridSearch
 from sqlalchemy import VARCHAR, Column, Integer
-
+import re
 logger = logging.getLogger(__name__)
 
 try:
@@ -78,7 +78,19 @@ def create_table_if_not_exists(client: HybridSearch, vector_dim: int):
         f"Table '{TABLE_NAME}' created successfully with vector and FTS indexes"
     )
 
+def is_chart_title_only_chunk(text: str) -> bool:
+    text = text.strip()
 
+    # 是否以“图表xx / 表xx”开头
+    is_chart_title = re.match(r"^(图表|表)\s*\d+[:：]", text)
+
+    if not is_chart_title:
+        return False  # 不是图表标题，正常内容
+
+    # 去掉标题行，只看后面的内容
+    lines = text.splitlines()
+    if len(lines) <= 1:
+        return True  # 只有标题
 def process_pdf_file(
     pdf_file: str,
     client: HybridSearch,
@@ -118,7 +130,7 @@ def process_pdf_file(
 
             try:
                 # Step 1: Convert PDF to image
-                page_image_path = pdf_page_to_image(pdf_file, page_num, dpi=600)
+                page_image_path = pdf_page_to_image(pdf_file, page_num, dpi=300)
                 logger.debug(f"Converted page {page_num} to image: {page_image_path}")
 
                 # Step 2: Extract information using VLM
@@ -195,7 +207,8 @@ def process_pdf_file(
             for chunk_text in text_chunks:
                 if not chunk_text.strip():
                     continue
-
+                if is_chart_title_only_chunk(chunk_text):
+                    continue
                 # Generate embedding
                 try:
                     embedding = generate_embedding(chunk_text)
