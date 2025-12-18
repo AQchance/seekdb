@@ -82,7 +82,7 @@ def is_chart_title_only_chunk(text: str) -> bool:
     text = text.strip()
 
     # 是否以“图表xx / 表xx”开头
-    is_chart_title = re.match(r"^(图表|表)\s*\d+[:：]", text)
+    is_chart_title = re.match(r"^(图表|表|图)\s*\d+[:：]", text)
 
     if not is_chart_title:
         return False  # 不是图表标题，正常内容
