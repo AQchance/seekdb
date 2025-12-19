@@ -1,8 +1,9 @@
 import logging
 import os
-
+from numpy import dot
+from numpy.linalg import norm
 import dotenv
-
+import numpy   as  np
 from src.integrations.embedding import generate_response as generate_embedding
 from src.integrations.llm import generate_response as generate_llm_response
 from src.prompt import QUERY_SYSTEM_PROMPT, QUERY_USER_PROMPT_TEMPLATE
@@ -60,7 +61,7 @@ def search(question: str) -> Answer:
                             "fields": ["content"],
                             "type": "best_fields",
                             "query": question,
-                            "minimum_should_match":"10%",
+                            "minimum_should_match":"20%",
                         }
                     }
                 ],
@@ -101,8 +102,24 @@ def search(question: str) -> Answer:
         contexts = []
         filenames = []
         pages = []
+        for doc in search_results[:TOP_K]:
+            if isinstance(doc['vector'], str):
+                # 将字符串 JSON 转成 list
+                doc['vector'] = json.loads(doc['vector'])
+            # 转成 numpy float32
+            doc['vector'] = np.array(doc['vector'], dtype=np.float32)
+        question_embedding = np.array(question_embedding, dtype=np.float32)
 
-        for result in search_results[:TOP_K]:
+        def cosine(a, b):
+            return dot(a, b) / (norm(a) * norm(b) + 1e-8)
+
+        reranked = sorted(
+            search_results[:TOP_K],
+            key=lambda doc: cosine(question_embedding, doc['vector']),
+            reverse=True
+        )[:TOP_K]
+
+        for result in search_results[:20]:
             content = result.get("content", "")
             filename = result.get("filename", "")
             page = result.get("page", 0)
@@ -120,6 +137,7 @@ def search(question: str) -> Answer:
                     "page": page,
                 }
             )
+
 
         if not contexts:
             logger.warning(
