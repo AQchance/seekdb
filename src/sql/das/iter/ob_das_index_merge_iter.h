@@ -19,6 +19,7 @@
 
 #include "sql/das/iter/ob_das_iter.h"
 #include "sql/optimizer/ob_join_order.h"
+#include "sql/das/ob_index_scan_cache.h"
 
 namespace oceanbase
 {
@@ -83,7 +84,11 @@ public:
         saved_size_(0),
         cur_idx_(OB_INVALID_INDEX),
         store_rows_(nullptr),
-        iter_end_(false)
+        iter_end_(false),
+        cached_value_(nullptr),
+        cache_offset_(0),
+        cache_total_count_(0),
+        use_cached_data_(false)
     {}
     IndexMergeRowStore(const common::ObIArray<ObExpr*> *exprs,
                        ObEvalCtx *eval_ctx,
@@ -94,7 +99,11 @@ public:
         saved_size_(0),
         cur_idx_(OB_INVALID_INDEX),
         store_rows_(nullptr),
-        iter_end_(false)
+        iter_end_(false),
+        cached_value_(nullptr),
+        cache_offset_(0),
+        cache_total_count_(0),
+        use_cached_data_(false)
     {}
 
     int init(common::ObIAllocator &allocator,
@@ -111,7 +120,10 @@ public:
     TO_STRING_KV(K_(exprs),
                  K_(saved_size),
                  K_(cur_idx),
-                 K_(iter_end));
+                 K_(iter_end),
+                 K_(cache_offset),
+                 K_(cache_total_count),
+                 K_(use_cached_data));
 
   public:
     typedef ObChunkDatumStore::LastStoredRow LastDASStoreRow;
@@ -122,6 +134,12 @@ public:
     int64_t cur_idx_;
     LastDASStoreRow *store_rows_;
     bool iter_end_;
+    
+    // Cache state for batched reading (handle managed externally)
+    const ObIndexScanCacheValue *cached_value_;
+    int64_t cache_offset_;                  // Current position in cache
+    int64_t cache_total_count_;             // Total rows in cache
+    bool use_cached_data_;                  // Flag indicating using cache
   };
 
   /* shared exprs may cause the results on the frame to be overwritten by get_next_rows() of child iters,

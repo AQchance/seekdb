@@ -1,187 +1,225 @@
 /*
  * Copyright (c) 2025 OceanBase.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
+#include "storage/retrieval/ob_token_posting_list_cache.h"
 #define USING_LOG_PREFIX SQL_DAS
-
 #include "sql/das/ob_index_scan_cache.h"
-#include "lib/oblog/ob_log_module.h"
-#include "lib/utility/ob_macro_utils.h"
+#include "lib/oblog/ob_log.h"
+#include "lib/allocator/ob_malloc.h"
+#include "share/cache/ob_kvcache_struct.h"
+#include "share/cache/ob_kv_storecache.h"
+#include "lib/hash/ob_hashmap.h"
 
 namespace oceanbase
 {
 namespace sql
 {
 
-//------------------------------------------------------------------------------
-// ObIndexScanCacheValue Implementation
-//------------------------------------------------------------------------------
+// ObIndexScanCacheKey implementations
+
+bool ObIndexScanCacheKey::operator==(const ObIKVCacheKey &other) const
+{
+  const ObIndexScanCacheKey &other_key = reinterpret_cast<const ObIndexScanCacheKey &>(other);
+  if (&other == this) return true;
+  if (tenant_id_ != other_key.tenant_id_ || index_id_ != other_key.index_id_ ||
+      tablet_id_ != other_key.tablet_id_ || range_count_ != other_key.range_count_) {
+    return false;
+  }
+  for (int64_t i = 0; i < range_count_; ++i) {
+    if (start_keys_[i] != other_key.start_keys_[i] || end_keys_[i] != other_key.end_keys_[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+uint64_t ObIndexScanCacheKey::hash() const
+{
+  uint64_t hash_val = 0;
+  hash_val = common::murmurhash(&tenant_id_, sizeof(tenant_id_), hash_val);
+  hash_val = common::murmurhash(&index_id_, sizeof(index_id_), hash_val);
+  uint64_t tablet_id_val = tablet_id_.id();
+  hash_val = common::murmurhash(&tablet_id_val, sizeof(tablet_id_val), hash_val);
+  for (int64_t i = 0; i < range_count_; ++i) {
+    hash_val = start_keys_[i].hash(hash_val);
+    hash_val = end_keys_[i].hash(hash_val);
+  }
+  return hash_val;
+}
+
+int ObIndexScanCacheKey::deep_copy(char *buf, const int64_t buf_len, ObIKVCacheKey *&key) const
+{
+  int ret = common::OB_SUCCESS;
+  if (OB_ISNULL(buf) || buf_len < size()) {
+    ret = common::OB_INVALID_ARGUMENT;
+  } else {
+    ObIndexScanCacheKey *new_key = new (buf) ObIndexScanCacheKey();
+    new_key->tenant_id_ = tenant_id_;
+    new_key->index_id_ = index_id_;
+    new_key->tablet_id_ = tablet_id_;
+    new_key->range_count_ = range_count_;
+    for (int64_t i = 0; i < range_count_; ++i) {
+      new_key->start_keys_[i] = start_keys_[i];
+      new_key->end_keys_[i] = end_keys_[i];
+    }
+    key = new_key;
+  }
+  return ret;
+}
+
+// ObIndexScanCacheValue implementations
 
 int ObIndexScanCacheValue::deep_copy(char *buf, const int64_t buf_len, ObIKVCacheValue *&value) const
 {
   int ret = common::OB_SUCCESS;
-  const int64_t copy_size = size();
-  if (OB_ISNULL(buf) || OB_UNLIKELY(buf_len < copy_size)) {
+  int64_t need_size = size();
+  if (OB_ISNULL(buf) || buf_len < need_size) {
     ret = common::OB_INVALID_ARGUMENT;
-    COMMON_LOG(WARN, "invalid argument for index scan cache value deep copy",
-               K(ret), K(buf_len), K(copy_size), K(count_));
   } else {
-    ObIndexScanCacheValue *new_value = new (buf) ObIndexScanCacheValue();
-    new_value->count_ = count_;
-    if (count_ > 0) {
-      MEMCPY(new_value->ids_, ids_, count_ * sizeof(uint64_t));
-    }
-    value = new_value;
+    MEMCPY(buf, static_cast<const void*>(this), need_size);
+    value = reinterpret_cast<ObIndexScanCacheValue*>(buf);
   }
   return ret;
 }
 
-int ObIndexScanCacheValue::create_value(const ObArray<uint64_t> &ids, char *buf,
-                                        int64_t buf_len, ObIndexScanCacheValue *&out_value)
+// PendingRowList implementations
+
+int PendingRowList::append_row(const ObChunkDatumStore::StoredRow *row)
 {
   int ret = common::OB_SUCCESS;
-  const int64_t needed_size = calc_size(ids.count());
-  if (OB_ISNULL(buf) || buf_len < needed_size) {
+  if (OB_ISNULL(row)) {
     ret = common::OB_INVALID_ARGUMENT;
-    LOG_WARN("invalid argument", K(ret), KP(buf), K(buf_len), K(needed_size));
   } else {
-    ObIndexScanCacheValue *value = new (buf) ObIndexScanCacheValue();
-    value->count_ = ids.count();
-    for (int64_t i = 0; i < ids.count(); ++i) {
-      value->ids_[i] = ids.at(i);
+    int64_t row_size = row->row_size_;
+    char *buf = static_cast<char*>(allocator_.alloc(row_size));
+    if (OB_ISNULL(buf)) {
+      ret = common::OB_ALLOCATE_MEMORY_FAILED;
+    } else {
+      MEMCPY(buf, row, row_size);
+      RowInfo info;
+      info.data = buf;
+      info.size = row_size;
+      if (OB_FAIL(rows_.push_back(info))) {
+        LOG_WARN("failed to push back row info", K(ret));
+      }
     }
-    out_value = value;
   }
   return ret;
 }
 
-//------------------------------------------------------------------------------
-// ObIndexScanCache Implementation
-//------------------------------------------------------------------------------
+// ObIndexScanCache implementations
 
 int ObIndexScanCache::init(const char *cache_name, const int64_t priority)
 {
   int ret = common::OB_SUCCESS;
-  ret = ObKVCache::init(cache_name, priority);
-  if (OB_FAIL(ret)) {
-    COMMON_LOG(WARN, "failed to init kv cache", K(ret));
+  // Call base class ObKVCache::init first
+  if (OB_FAIL(ObKVCache::init(cache_name, priority))) {
+    LOG_WARN("failed to init ObKVCache base class", K(ret));
   } else if (!pending_map_.created()) {
-    ret = pending_map_.create(1024, "PendingIdxScan", "PendingIdxNode");
-    if (OB_FAIL(ret)) {
+    if (OB_FAIL(pending_map_.create(1024, "IdxScanPending", "IdxScanPNode"))) {
       LOG_WARN("failed to create pending map", K(ret));
     }
   }
   return ret;
 }
 
-int ObIndexScanCache::get_cached_ids(
-    const ObIndexScanCacheKey &key,
-    const ObIndexScanCacheValue *&value,
-    common::ObKVCacheHandle &handle)
+int ObIndexScanCache::get_cached_rows(const ObIndexScanCacheKey &key,
+                                      const ObIndexScanCacheValue *&value,
+                                      common::ObKVCacheHandle &handle)
 {
-  int ret = common::OB_SUCCESS;
-  if (OB_FAIL(get(key, value, handle))) {
-    if (common::OB_ENTRY_NOT_EXIST != ret) {
-      LOG_WARN("failed to get from index scan cache", K(ret), K(key));
-    }
-  }
-  return ret;
+  return this->get(key, value, handle);
 }
 
-int ObIndexScanCache::put_cached_ids(
-    const ObIndexScanCacheKey &key,
-    const ObIndexScanCacheValue &value)
+int ObIndexScanCache::append_row_to_pending(const ObIndexScanCacheKey &key,
+                                            const ObChunkDatumStore::StoredRow *row)
 {
   int ret = common::OB_SUCCESS;
-  if (OB_FAIL(put(key, value))) {
-    LOG_WARN("failed to put into index scan cache", K(ret), K(key), K(value));
-  }
-  return ret;
-}
-
-int ObIndexScanCache::append_to_pending(const ObIndexScanCacheKey &key, const uint64_t id)
-{
-  int ret = common::OB_SUCCESS;
-  PendingIdList pending_list;
-
-  ret = pending_map_.get_refactored(key, pending_list);
-  if (common::OB_HASH_NOT_EXIST == ret) {
-    // Create new pending list
-    PendingIdList new_list;
-    if (OB_FAIL(new_list.ids_.push_back(id))) {
-      LOG_WARN("failed to push back id", K(ret), K(id));
-    } else if (OB_FAIL(pending_map_.set_refactored(key, new_list))) {
-      LOG_WARN("failed to set pending list", K(ret), K(key));
+  PendingRowList *list = nullptr;
+  
+  if (OB_FAIL(pending_map_.get_refactored(key, list))) {
+    if (ret == common::OB_HASH_NOT_EXIST) {
+      // Create new list
+      void *buf = ob_malloc(sizeof(PendingRowList), "PendingList");
+      if (OB_ISNULL(buf)) {
+        ret = common::OB_ALLOCATE_MEMORY_FAILED;
+      } else {
+        list = new (buf) PendingRowList();
+        if (OB_FAIL(pending_map_.set_refactored(key, list))) {
+          list->~PendingRowList();
+          ob_free(buf);
+          LOG_WARN("failed to set pending list to map", K(ret));
+        } else {
+          ret = list->append_row(row);
+        }
+      }
+    } else {
+      LOG_WARN("failed to get pending list", K(ret));
     }
-  } else if (OB_SUCCESS == ret) {
-    // Append to existing list
-    if (OB_FAIL(pending_list.ids_.push_back(id))) {
-      LOG_WARN("failed to push back id", K(ret), K(id));
-    } else if (OB_FAIL(pending_map_.set_refactored(key, pending_list, 1 /* overwrite */))) {
-      LOG_WARN("failed to update pending list", K(ret), K(key));
-    }
+  } else if (OB_ISNULL(list)) {
+    ret = common::OB_ERR_UNEXPECTED;
   } else {
-    LOG_WARN("failed to get pending list", K(ret), K(key));
+    ret = list->append_row(row);
   }
   return ret;
-}
-
-const PendingIdList *ObIndexScanCache::get_pending(const ObIndexScanCacheKey &key) const
-{
-  // Note: This returns nullptr if not found. Use get_refactored for actual lookup.
-  // For thread safety, caller should copy the data.
-  return nullptr;  // Not implemented for thread safety reasons
 }
 
 int ObIndexScanCache::finalize_to_cache(const ObIndexScanCacheKey &key)
 {
   int ret = common::OB_SUCCESS;
-  PendingIdList pending_list;
-
-  if (OB_FAIL(pending_map_.get_refactored(key, pending_list))) {
-    if (common::OB_HASH_NOT_EXIST == ret) {
-      ret = common::OB_SUCCESS;  // Nothing to finalize
-    } else {
-      LOG_WARN("failed to get pending list", K(ret), K(key));
+  PendingRowList *list = nullptr;
+  
+  if (OB_FAIL(pending_map_.get_refactored(key, list))) {
+    // Not in pending, skip
+    if (ret == common::OB_HASH_NOT_EXIST) {
+      ret = common::OB_SUCCESS;
     }
-  } else if (pending_list.ids_.count() > 0) {
-    const int64_t buf_size = ObIndexScanCacheValue::calc_size(pending_list.ids_.count());
-    char *buf = static_cast<char *>(common::ob_malloc(buf_size, "IdxScanCache"));
+  } else if (OB_ISNULL(list) || list->rows_.count() == 0) {
+    // Empty list, skip but remove from map
+    pending_map_.erase_refactored(key);
+  } else {
+    // Calculate total size
+    int64_t row_count = list->rows_.count();
+    int64_t total_data_size = 0;
+    for (int64_t i = 0; i < row_count; ++i) {
+      total_data_size += list->rows_[i].size;
+    }
+    
+    int64_t value_size = ObIndexScanCacheValue::calc_size(row_count, total_data_size);
+    char *buf = static_cast<char*>(ob_malloc(value_size, "IdxScanVal"));
     if (OB_ISNULL(buf)) {
       ret = common::OB_ALLOCATE_MEMORY_FAILED;
-      LOG_WARN("failed to allocate memory for cache value", K(ret), K(buf_size));
     } else {
-      ObIndexScanCacheValue *cache_value = nullptr;
-      if (OB_FAIL(ObIndexScanCacheValue::create_value(pending_list.ids_, buf, buf_size, cache_value))) {
-        LOG_WARN("failed to create value", K(ret));
-      } else if (OB_FAIL(put(key, *cache_value))) {
-        LOG_WARN("failed to put cache value", K(ret), K(key));
+      // Build the value
+      ObIndexScanCacheValue *value = new (buf) ObIndexScanCacheValue();
+      value->row_count_ = row_count;
+      value->total_data_size_ = total_data_size;
+      
+      // Write row sizes
+      int64_t *sizes = reinterpret_cast<int64_t*>(value->data_);
+      for (int64_t i = 0; i < row_count; ++i) {
+        sizes[i] = list->rows_[i].size;
       }
-      common::ob_free(buf);
-    }
-
-    // Remove from pending map
-    if (OB_SUCC(ret)) {
-      if (OB_FAIL(pending_map_.erase_refactored(key))) {
-        if (common::OB_HASH_NOT_EXIST == ret) {
-          ret = common::OB_SUCCESS;
-        } else {
-          LOG_WARN("failed to erase pending list", K(ret), K(key));
-        }
+      
+      // Write row data
+      char *data_ptr = value->data_ + row_count * sizeof(int64_t);
+      for (int64_t i = 0; i < row_count; ++i) {
+        MEMCPY(data_ptr, list->rows_[i].data, list->rows_[i].size);
+        data_ptr += list->rows_[i].size;
       }
+      
+      // Put to cache
+      if (OB_FAIL(this->put(key, *value))) {
+        LOG_WARN("failed to put to cache", K(ret));
+      }
+      
+      ob_free(buf);
     }
+    
+    // Clean up
+    list->~PendingRowList();
+    ob_free(list);
+    pending_map_.erase_refactored(key);
   }
   return ret;
 }
@@ -189,29 +227,27 @@ int ObIndexScanCache::finalize_to_cache(const ObIndexScanCacheKey &key)
 int ObIndexScanCache::clear_pending(const ObIndexScanCacheKey &key)
 {
   int ret = common::OB_SUCCESS;
-  ret = pending_map_.erase_refactored(key);
-  if (common::OB_HASH_NOT_EXIST == ret) {
-    ret = common::OB_SUCCESS;
+  PendingRowList *list = nullptr;
+  if (OB_SUCC(pending_map_.get_refactored(key, list)) && list != nullptr) {
+    list->~PendingRowList();
+    ob_free(list);
   }
-  return ret;
+  pending_map_.erase_refactored(key);
+  return common::OB_SUCCESS;
 }
 
 int ObIndexScanCache::finalize_all_pending()
 {
   int ret = common::OB_SUCCESS;
-  ObArray<ObIndexScanCacheKey> keys_to_finalize;
-
-  // Collect all keys first
-  for (auto iter = pending_map_.begin(); OB_SUCC(ret) && iter != pending_map_.end(); ++iter) {
-    if (OB_FAIL(keys_to_finalize.push_back(iter->first))) {
-      LOG_WARN("failed to push back key", K(ret));
-    }
+  // Copy keys first to avoid modifying map during iteration
+  ObArray<ObIndexScanCacheKey> keys;
+  for (auto it = pending_map_.begin(); it != pending_map_.end(); ++it) {
+    keys.push_back(it->first);
   }
-
-  // Finalize each key
-  for (int64_t i = 0; OB_SUCC(ret) && i < keys_to_finalize.count(); ++i) {
-    if (OB_FAIL(finalize_to_cache(keys_to_finalize.at(i)))) {
-      LOG_WARN("failed to finalize pending list", K(ret));
+  for (int64_t i = 0; i < keys.count(); ++i) {
+    int tmp_ret = finalize_to_cache(keys[i]);
+    if (tmp_ret != common::OB_SUCCESS) {
+      LOG_WARN("failed to finalize pending", K(tmp_ret), K(i));
     }
   }
   return ret;
@@ -219,8 +255,16 @@ int ObIndexScanCache::finalize_all_pending()
 
 int ObIndexScanCache::clear_all_pending()
 {
-  pending_map_.reuse();
-  return common::OB_SUCCESS;
+  int ret = common::OB_SUCCESS;
+  for (auto it = pending_map_.begin(); it != pending_map_.end(); ++it) {
+    PendingRowList *list = it->second;
+    if (list != nullptr) {
+      list->~PendingRowList();
+      ob_free(list);
+    }
+  }
+  pending_map_.clear();
+  return ret;
 }
 
 } // namespace sql

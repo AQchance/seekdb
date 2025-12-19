@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <vector>
 #include "storage/retrieval/ob_token_posting_list_cache.h"
+#include "sql/das/ob_index_scan_cache.h"
 
 namespace oceanbase
 {
@@ -111,6 +112,11 @@ void ObDASIndexMergeIter::IndexMergeRowStore::reuse()
   cur_idx_ = OB_INVALID_INDEX;
   saved_size_ = 0;
   iter_end_ = false;
+  // Reset cache state (handle managed externally)
+  cached_value_ = nullptr;
+  cache_offset_ = 0;
+  cache_total_count_ = 0;
+  use_cached_data_ = false;
 }
 
 void ObDASIndexMergeIter::IndexMergeRowStore::reset()
@@ -127,6 +133,11 @@ void ObDASIndexMergeIter::IndexMergeRowStore::reset()
   saved_size_ = 0;
   cur_idx_ = OB_INVALID_INDEX;
   iter_end_ = false;
+  // Reset cache state (handle managed externally)
+  cached_value_ = nullptr;
+  cache_offset_ = 0;
+  cache_total_count_ = 0;
+  use_cached_data_ = false;
 }
 
 int ObDASIndexMergeIter::MergeResultBuffer::init(int64_t max_size,
@@ -823,46 +834,156 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
             ret = OB_ERR_UNEXPECTED;
             LOG_WARN("unexpected nullptr", K(i));
           } else {
-            ret = child_iter->get_next_rows(child_rows_cnt, capacity);
-            if (OB_ITER_END == ret && child_rows_cnt > 0) {
-              ret = OB_SUCCESS;
-            }
-            if (OB_SUCC(ret)) {
-              if (OB_FAIL(child_store.save(true, child_rows_cnt))) {
-                LOG_WARN("failed to save child rows", K(child_rows_cnt), K(ret));
-              } else {
-                // Debug: check for consecutive duplicate rowkeys in child batch
-                if (rowkey_exprs_ != nullptr && rowkey_exprs_->count() > 0 && i == 0) {
-                  // Only check FTS child (child 0) for duplicates
-                  int64_t prev_int = -1;
-                  for (int64_t row_idx = child_store.cur_idx_; row_idx < child_store.saved_size_; row_idx++) {
-                    if (child_store.store_rows_ != nullptr && 
-                        child_store.store_rows_[row_idx].store_row_ != nullptr) {
-                      const ObDatum *datums = child_store.store_rows_[row_idx].store_row_->cells();
-                      if (datums != nullptr) {
-                        int64_t cur_int = datums[0].get_int();
-                        if (row_idx > child_store.cur_idx_ && cur_int == prev_int) {
-                          // LOG_INFO("[INDEX_MERGE_DEBUG] DUPLICATE DETECTED in child batch",
-                          //          K(i), K(row_idx), K(cur_int), K(prev_int),
-                          //          "child_cur_idx", child_store.cur_idx_,
-                          //          "child_saved", child_store.saved_size_);
-                        }
-                        prev_int = cur_int;
+            // Check if this is a non-FTS iterator that can use caching
+            ObDASIterType iter_type = child_iter->get_type();
+            bool is_fts_iter = (iter_type == DAS_ITER_TEXT_RETRIEVAL 
+                                || iter_type == DAS_ITER_TEXT_RETRIEVAL_MERGE);
+            ObTableScanParam *scan_param = child_scan_params_.at(i);
+            bool cache_hit = false;
+            const ObIndexScanCacheValue *cached_value = nullptr;
+            common::ObKVCacheHandle cache_handle;
+            ObIndexScanCacheKey cache_key;
+            
+            // Try cache for non-FTS iterators with valid scan_param
+            if (!is_fts_iter && scan_param != nullptr) {
+              // Build cache key
+              cache_key = ObIndexScanCacheKey(
+                  scan_param->tenant_id_,
+                  scan_param->index_id_,
+                  scan_param->tablet_id_);
+              if (scan_param->key_ranges_.count() > 0) {
+                cache_key.set_key_ranges(scan_param->key_ranges_);
+              }
+              
+              // Try to get from cache (or continue from previous position)
+              common::ObKVCacheHandle temp_handle;  // Temporary handle for this batch
+              int cache_ret = ObIndexScanCache::get_instance().get_cached_rows(
+                  cache_key, cached_value, temp_handle);
+              
+              if (OB_SUCCESS == cache_ret && cached_value != nullptr && cached_value->row_count() > 0) {
+                // Determine batch to read
+                int64_t cache_offset = child_store.use_cached_data_ ? child_store.cache_offset_ : 0;
+                int64_t total_cached = cached_value->row_count();
+                int64_t remaining = total_cached - cache_offset;
+                
+                if (remaining > 0) {
+                  cache_hit = true;
+                  child_rows_cnt = std::min(remaining, child_store.max_size_);
+                  
+                  // Mark that we're using cached data
+                  if (!child_store.use_cached_data_) {
+                    child_store.use_cached_data_ = true;
+                    child_store.cache_offset_ = 0;
+                    child_store.cache_total_count_ = total_cached;
+                    LOG_INFO("[INDEX_SCAN_CACHE] Cache HIT (first batch)", K(i),
+                             "batch_size", child_rows_cnt, "total", total_cached);
+                  } else {
+                    LOG_INFO("[INDEX_SCAN_CACHE] Cache HIT (continued)", K(i),
+                             "batch_size", child_rows_cnt, "offset", cache_offset, "total", total_cached);
+                  }
+                }
+              }
+              
+              // Populate child_store from current batch of cached data
+              if (cache_hit && cached_value != nullptr) {
+                if (child_store.store_rows_ != nullptr && child_rows_cnt > 0) {
+                  for (int64_t row_idx = 0; row_idx < child_rows_cnt && OB_SUCC(ret); ++row_idx) {
+                    int64_t cache_row_idx = child_store.cache_offset_ + row_idx;
+                    const char *row_data = cached_value->get_row_data(cache_row_idx);
+                    int64_t row_size = cached_value->get_row_size(cache_row_idx);
+                    if (row_data != nullptr && row_size > 0) {
+                      // Allocate memory using the iterator's mem_ctx_
+                      char *row_buf = static_cast<char*>(mem_ctx_->get_arena_allocator().alloc(row_size));
+                      if (OB_ISNULL(row_buf)) {
+                        ret = OB_ALLOCATE_MEMORY_FAILED;
+                        LOG_WARN("failed to alloc memory for cached row", K(ret), K(row_size));
+                      } else {
+                        MEMCPY(row_buf, row_data, row_size);
+                        child_store.store_rows_[row_idx].store_row_ = 
+                            reinterpret_cast<ObChunkDatumStore::StoredRow*>(row_buf);
                       }
                     }
                   }
-                }
-                if (OB_FAIL(compare(i, output_idx, cmp_ret))) {
-                  LOG_WARN("index merge failed to compare row", K(i), K(output_idx), K(ret));
-                } else if (child_iter->get_type() == DAS_ITER_SORT) {
-                  reset_datum_ptr(child_iter->get_output(), child_rows_cnt);
+                  if (OB_SUCC(ret)) {
+                    child_store.cur_idx_ = 0;
+                    child_store.saved_size_ = child_rows_cnt;
+                    // Update cache offset
+                    child_store.cache_offset_ += child_rows_cnt;
+                    
+                    // Check if we've consumed all cached data
+                    if (child_store.cache_offset_ >= child_store.cache_total_count_) {
+                      child_store.iter_end_ = true;
+                      LOG_INFO("[INDEX_SCAN_CACHE] All cached data consumed", K(i));
+                    }
+                  }
+                } else {
+                  ret = OB_ERR_UNEXPECTED;
+                  LOG_WARN("store_rows_ is null or no data to read", 
+                           K(child_store.store_rows_), K(child_rows_cnt));
                 }
               }
-            } else if (OB_ITER_END == ret) {
-              child_store.iter_end_ = true;
-              ret = OB_SUCCESS;
+            }
+            
+            // If cache miss, call the iterator normally
+            if (!cache_hit) {
+              ret = child_iter->get_next_rows(child_rows_cnt, capacity);
+              if (OB_ITER_END == ret && child_rows_cnt > 0) {
+                ret = OB_SUCCESS;
+              }
+              if (OB_SUCC(ret)) {
+                if (OB_FAIL(child_store.save(true, child_rows_cnt))) {
+                  LOG_WARN("failed to save child rows", K(child_rows_cnt), K(ret));
+                } else {
+                  // Cache the rows for non-FTS iterators
+                  if (!is_fts_iter && scan_param != nullptr && child_store.store_rows_ != nullptr) {
+                    for (int64_t row_idx = 0; row_idx < child_rows_cnt; ++row_idx) {
+                      if (child_store.store_rows_[row_idx].store_row_ != nullptr) {
+                        int cache_ret = ObIndexScanCache::get_instance().append_row_to_pending(
+                            cache_key, child_store.store_rows_[row_idx].store_row_);
+                        if (cache_ret != OB_SUCCESS) {
+                          LOG_WARN("failed to cache row", K(cache_ret), K(row_idx));
+                        }
+                      }
+                    }
+                  }
+                  // Debug: check for consecutive duplicate rowkeys in child batch
+                  if (rowkey_exprs_ != nullptr && rowkey_exprs_->count() > 0 && i == 0) {
+                    // Only check FTS child (child 0) for duplicates
+                    int64_t prev_int = -1;
+                    for (int64_t row_idx = child_store.cur_idx_; row_idx < child_store.saved_size_; row_idx++) {
+                      if (child_store.store_rows_ != nullptr && 
+                          child_store.store_rows_[row_idx].store_row_ != nullptr) {
+                        const ObDatum *datums = child_store.store_rows_[row_idx].store_row_->cells();
+                        if (datums != nullptr) {
+                          int64_t cur_int = datums[0].get_int();
+                          if (row_idx > child_store.cur_idx_ && cur_int == prev_int) {
+                            // Duplicate detected
+                          }
+                          prev_int = cur_int;
+                        }
+                      }
+                    }
+                  }
+                  // Compare call is INSIDE save success block (like original code)
+                  if (OB_FAIL(compare(i, output_idx, cmp_ret))) {
+                    LOG_WARN("index merge failed to compare row", K(i), K(output_idx), K(ret));
+                  } else if (child_iter->get_type() == DAS_ITER_SORT) {
+                    reset_datum_ptr(child_iter->get_output(), child_rows_cnt);
+                  }
+                }
+              } else if (OB_ITER_END == ret) {
+                child_store.iter_end_ = true;
+                ret = OB_SUCCESS;
+              } else {
+                LOG_WARN("failed to get next rows from child iter", K(ret));
+              }
             } else {
-              LOG_WARN("failed to get next rows from child iter", K(ret));
+              // Cache hit path - also need to call compare
+              if (OB_SUCC(ret)) {
+                if (OB_FAIL(compare(i, output_idx, cmp_ret))) {
+                  LOG_WARN("index merge failed to compare row (cache hit)", K(i), K(output_idx), K(ret));
+                }
+              }
             }
           }
         }
@@ -969,6 +1090,10 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
   // finalize all pendings and clear all pendings
   oceanbase::storage::ObTokenPostingListCache::get_instance().finalize_all_pending();
   oceanbase::storage::ObTokenPostingListCache::get_instance().clear_all_pending();
+  
+  // Finalize index scan cache
+  ObIndexScanCache::get_instance().finalize_all_pending();
+  ObIndexScanCache::get_instance().clear_all_pending();
 
   // 结束后检查 ret
   if(OB_ITER_END == ret){
