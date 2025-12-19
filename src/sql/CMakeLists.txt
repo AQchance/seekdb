@@ -99,6 +99,7 @@ ob_set_subtarget(ob_sql das
   das/iter/ob_das_vec_scan_utils.cpp
   das/iter/sparse_retrieval/ob_das_tr_merge_iter.cpp
   das/iter/sparse_retrieval/ob_das_match_iter.cpp
+  das/ob_index_scan_cache.cpp
 )
 
 ob_set_subtarget(ob_sql dtl
