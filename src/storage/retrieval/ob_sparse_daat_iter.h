@@ -81,10 +81,18 @@ public:
   INHERIT_TO_STRING_KV("ObISparseRetrievalMergeIter", ObISparseRetrievalMergeIter,
       K_(next_round_iter_idxes), K_(next_round_cnt));
 protected:
+protected:
   virtual int pre_process();
   virtual int do_one_merge_round(int64_t &count);
   virtual int fill_merge_heap();
   virtual int collect_dims_by_id(ObDatum &id_datum, double &relevance, bool &got_valid_id);
+  // Helpers for dual path
+  virtual int fill_heap();
+  virtual int collect_dims_by_heap(ObDatum &id_datum, double &relevance, bool &got_valid_id);
+  virtual int fill_linear();
+  virtual int collect_dims_by_linear(ObDatum &id_datum, double &relevance, bool &got_valid_id);
+  virtual int collect_dims_by_simd(ObDatum &id_datum, double &relevance, bool &got_valid_id);
+
   virtual int process_collected_row(const ObDatum &id_datum, const double relevance);
   virtual int filter_on_demand(const int64_t count, const double relevance, bool &need_project);
   virtual int cache_result(int64_t &count, const ObDatum &id_datum, const double relevance);
@@ -101,6 +109,10 @@ protected:
   ObFixedArray<double, ObIAllocator> buffered_relevances_;
   ObFixedArray<int64_t, ObIAllocator> next_round_iter_idxes_;
   int64_t next_round_cnt_;
+  // Linear scan optimization: store docid for each dimension iterator
+  ObFixedArray<uint64_t, ObIAllocator> current_heads_;
+  int64_t active_iter_cnt_;  // Number of iterators that haven't been exhausted
+  bool use_linear_scan_;
   void (*set_datum_func_)(ObDatum &, const ObDocIdExt &);
 private:
   DISALLOW_COPY_AND_ASSIGN(ObSRDaaTIterImpl);
