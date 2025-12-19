@@ -93,6 +93,9 @@ protected:
   virtual int collect_dims_by_linear(ObDatum &id_datum, double &relevance, bool &got_valid_id);
   virtual int collect_dims_by_simd(ObDatum &id_datum, double &relevance, bool &got_valid_id);
 
+protected:
+  inline int process_linear_match(int64_t iter_idx, bool &first_match, ObDatum &id_datum);
+
   virtual int process_collected_row(const ObDatum &id_datum, const double relevance);
   virtual int filter_on_demand(const int64_t count, const double relevance, bool &need_project);
   virtual int cache_result(int64_t &count, const ObDatum &id_datum, const double relevance);

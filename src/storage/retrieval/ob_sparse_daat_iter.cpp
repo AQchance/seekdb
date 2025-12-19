@@ -409,36 +409,8 @@ int ObSRDaaTIterImpl::collect_dims_by_linear(ObDatum &id_datum, double &relevanc
   bool first_match = true;
   for (int64_t i = 0; OB_SUCC(ret) && i < iter_cnt; ++i) {
     if (current_heads_[i] == min_id) {
-      if (first_match) {
-        id_datum.deep_copy(*iter_domain_ids_[i], *iter_allocator_);
-        first_match = false;
-      }
-      
-      // Get score and accumulate
-      ObISRDaaTDimIter *dim_iter = dim_iters_->at(i);
-      double score = 0.0;
-      if (OB_FAIL(dim_iter->get_curr_score(score))) {
-        LOG_WARN("fail to get current score", K(ret));
-      } else if (OB_NOT_NULL(iter_param_->dim_weights_) && 
-                 FALSE_IT(score *= iter_param_->field_boost_ * iter_param_->dim_weights_->at(i))) {
-      } else if (OB_FAIL(relevance_collector_->collect_one_dim(i, score))) {
-        LOG_WARN("failed to collect one dimension", K(ret));
-      } else {
-        // Advance iterator immediately
-        int ret_iter = dim_iter->get_next_row();
-        if (OB_SUCC(ret_iter)) {
-          if (OB_FAIL(dim_iter->get_curr_id(iter_domain_ids_[i]))) {
-            LOG_WARN("fail to get current doc id", K(ret));
-          } else {
-            current_heads_[i] = iter_domain_ids_[i]->get_uint64();
-          }
-        } else if (OB_ITER_END == ret_iter) {
-          current_heads_[i] = UINT64_MAX;
-          active_iter_cnt_--;
-        } else {
-          ret = ret_iter;
-          LOG_WARN("fail to load next dimension data", K(ret));
-        }
+      if (OB_FAIL(process_linear_match(i, first_match, id_datum))) {
+        LOG_WARN("process linear match failed", K(ret), K(i));
       }
     }
   }
@@ -451,6 +423,142 @@ int ObSRDaaTIterImpl::collect_dims_by_linear(ObDatum &id_datum, double &relevanc
     }
   }
 
+  return ret;
+}
+
+__attribute__((target("avx2")))
+int ObSRDaaTIterImpl::collect_dims_by_simd(ObDatum &id_datum, double &relevance, bool &got_valid_id)
+{
+  int ret = OB_SUCCESS;
+  relevance = 0.0;
+  got_valid_id = false;
+
+  if (active_iter_cnt_ <= 0) {
+    return ret;
+  }
+
+  uint64_t min_id = UINT64_MAX;
+  const int64_t iter_cnt = dim_iters_->count();
+  int64_t i = 0;
+
+  // 1. SIMD Min Reduction (Chunks of 4)
+  // We flip the sign bit to perform unsigned comparison using signed AVX2 instructions
+  __m256i v_min_val = _mm256_set1_epi64x(-1LL); // Start with UINT64_MAX
+  __m256i v_sign_flip = _mm256_set1_epi64x(0x8000000000000000ULL);
+
+  for (; i <= iter_cnt - 4; i += 4) {
+    __m256i v_data = _mm256_loadu_si256((const __m256i*)&current_heads_[i]);
+    
+    // Unsigned comparison: (a ^ sign) > (b ^ sign)
+    __m256i v_data_s = _mm256_xor_si256(v_data, v_sign_flip);
+    __m256i v_min_s  = _mm256_xor_si256(v_min_val, v_sign_flip);
+    __m256i mask     = _mm256_cmpgt_epi64(v_min_s, v_data_s); // v_min > v_data (unsigned)
+    
+    // Update min value where v_data was smaller
+    v_min_val = _mm256_blendv_epi8(v_min_val, v_data, mask);
+  }
+
+  // Horizontal reduction of vector min
+  uint64_t tmp[4];
+  _mm256_storeu_si256((__m256i*)tmp, v_min_val);
+  for (int k = 0; k < 4; ++k) {
+    if (tmp[k] < min_id) {
+      min_id = tmp[k];
+    }
+  }
+
+  // Tail processing for Min
+  for (; i < iter_cnt; ++i) {
+    if (current_heads_[i] < min_id) {
+      min_id = current_heads_[i];
+    }
+  }
+
+  if (min_id == UINT64_MAX) {
+    return ret;
+  }
+
+  // 2. Scan and Collect (Process matches using Mask)
+  bool first_match = true;
+  __m256i v_target = _mm256_set1_epi64x(min_id);
+  i = 0;
+
+  for (; OB_SUCC(ret) && i <= iter_cnt - 4; i += 4) {
+    __m256i v_data = _mm256_loadu_si256((const __m256i*)&current_heads_[i]);
+    __m256i v_cmp  = _mm256_cmpeq_epi64(v_data, v_target);
+    int mask = _mm256_movemask_pd(_mm256_castsi256_pd(v_cmp)); // 4-bit mask
+
+    while (mask) {
+      int tz = __builtin_ctz(mask);
+      int idx = i + tz;
+      
+      if (OB_FAIL(process_linear_match(idx, first_match, id_datum))) {
+        LOG_WARN("process linear match failed", K(ret), K(idx));
+      }
+      
+      mask &= (mask - 1); // Clear lowest set bit
+    }
+  }
+
+  // Tail processing for Collect
+  for (; OB_SUCC(ret) && i < iter_cnt; ++i) {
+    if (current_heads_[i] == min_id) {
+      if (first_match) {
+        id_datum.deep_copy(*iter_domain_ids_[i], *iter_allocator_);
+        first_match = false;
+      }
+      
+      bool unused_bool = false;
+      if (OB_FAIL(process_linear_match(i, unused_bool, id_datum))) {
+        LOG_WARN("process linear match failed", K(ret), K(i));
+      }
+    }
+  }
+
+  if (OB_SUCC(ret)) {
+    if (OB_FAIL(relevance_collector_->get_result(relevance, got_valid_id))) {
+      LOG_WARN("failed to get result", K(ret));
+    } else if (got_valid_id && OB_FAIL(process_collected_row(id_datum, relevance))) {
+      LOG_WARN("failed to process collected row", K(ret));
+    }
+  }
+
+  return ret;
+}
+
+inline int ObSRDaaTIterImpl::process_linear_match(int64_t iter_idx, bool &first_match, ObDatum &id_datum)
+{
+  int ret = OB_SUCCESS;
+  
+  if (first_match) {
+     id_datum.deep_copy(*iter_domain_ids_[iter_idx], *iter_allocator_);
+     first_match = false;
+  }
+
+  ObISRDaaTDimIter *dim_iter = dim_iters_->at(iter_idx);
+  double score = 0.0;
+  if (OB_FAIL(dim_iter->get_curr_score(score))) {
+    LOG_WARN("fail to get current score", K(ret));
+  } else if (OB_NOT_NULL(iter_param_->dim_weights_) && 
+             FALSE_IT(score *= iter_param_->field_boost_ * iter_param_->dim_weights_->at(iter_idx))) {
+  } else if (OB_FAIL(relevance_collector_->collect_one_dim(iter_idx, score))) {
+    LOG_WARN("failed to collect one dimension", K(ret));
+  } else {
+    int ret_iter = dim_iter->get_next_row();
+    if (OB_SUCC(ret_iter)) {
+      if (OB_FAIL(dim_iter->get_curr_id(iter_domain_ids_[iter_idx]))) {
+        LOG_WARN("fail to get current doc id", K(ret));
+      } else {
+        current_heads_[iter_idx] = iter_domain_ids_[iter_idx]->get_uint64();
+      }
+    } else if (OB_ITER_END == ret_iter) {
+      current_heads_[iter_idx] = UINT64_MAX;
+      active_iter_cnt_--;
+    } else {
+      ret = ret_iter;
+      LOG_WARN("fail to load next dimension data", K(ret));
+    }
+  }
   return ret;
 }
 
@@ -574,153 +682,6 @@ int ObSRDaaTIterImpl::collect_dims_by_heap(ObDatum &id_datum, double &relevance,
       } else {
         ret = ret_iter;
         LOG_WARN("fail to load next dimension data", K(ret));
-      }
-    }
-  }
-
-  if (OB_SUCC(ret)) {
-    if (OB_FAIL(relevance_collector_->get_result(relevance, got_valid_id))) {
-      LOG_WARN("failed to get result", K(ret));
-    } else if (got_valid_id && OB_FAIL(process_collected_row(id_datum, relevance))) {
-      LOG_WARN("failed to process collected row", K(ret));
-    }
-  }
-
-  return ret;
-}
-
-__attribute__((target("avx2")))
-int ObSRDaaTIterImpl::collect_dims_by_simd(ObDatum &id_datum, double &relevance, bool &got_valid_id)
-{
-  int ret = OB_SUCCESS;
-  relevance = 0.0;
-  got_valid_id = false;
-
-  if (active_iter_cnt_ <= 0) {
-    return ret;
-  }
-
-  uint64_t min_id = UINT64_MAX;
-  const int64_t iter_cnt = dim_iters_->count();
-  int64_t i = 0;
-
-  // 1. SIMD Min Reduction (Chunks of 4)
-  // We flip the sign bit to perform unsigned comparison using signed AVX2 instructions
-  __m256i v_min_val = _mm256_set1_epi64x(-1LL); // Start with UINT64_MAX
-  __m256i v_sign_flip = _mm256_set1_epi64x(0x8000000000000000ULL);
-
-  for (; i <= iter_cnt - 4; i += 4) {
-    __m256i v_data = _mm256_loadu_si256((const __m256i*)&current_heads_[i]);
-    
-    // Unsigned comparison: (a ^ sign) > (b ^ sign)
-    __m256i v_data_s = _mm256_xor_si256(v_data, v_sign_flip);
-    __m256i v_min_s  = _mm256_xor_si256(v_min_val, v_sign_flip);
-    __m256i mask     = _mm256_cmpgt_epi64(v_min_s, v_data_s); // v_min > v_data (unsigned)
-    
-    // Update min value where v_data was smaller
-    v_min_val = _mm256_blendv_epi8(v_min_val, v_data, mask);
-  }
-
-  // Horizontal reduction of vector min
-  uint64_t tmp[4];
-  _mm256_storeu_si256((__m256i*)tmp, v_min_val);
-  for (int k = 0; k < 4; ++k) {
-    if (tmp[k] < min_id) {
-      min_id = tmp[k];
-    }
-  }
-
-  // Tail processing for Min
-  for (; i < iter_cnt; ++i) {
-    if (current_heads_[i] < min_id) {
-      min_id = current_heads_[i];
-    }
-  }
-
-  if (min_id == UINT64_MAX) {
-    return ret;
-  }
-
-  // 2. Scan and Collect (Process matches using Mask)
-  bool first_match = true;
-  __m256i v_target = _mm256_set1_epi64x(min_id);
-  i = 0;
-
-  for (; OB_SUCC(ret) && i <= iter_cnt - 4; i += 4) {
-    __m256i v_data = _mm256_loadu_si256((const __m256i*)&current_heads_[i]);
-    __m256i v_cmp  = _mm256_cmpeq_epi64(v_data, v_target);
-    int mask = _mm256_movemask_pd(_mm256_castsi256_pd(v_cmp)); // 4-bit mask
-
-    while (mask) {
-      int tz = __builtin_ctz(mask);
-      int idx = i + tz;
-      
-      if (first_match) {
-        id_datum.deep_copy(*iter_domain_ids_[idx], *iter_allocator_);
-        first_match = false;
-      }
-
-      // Logic identical to scalar collect_dims_by_linear
-      ObISRDaaTDimIter *dim_iter = dim_iters_->at(idx);
-      double score = 0.0;
-      if (OB_FAIL(dim_iter->get_curr_score(score))) {
-        LOG_WARN("fail to get current score", K(ret));
-      } else if (OB_NOT_NULL(iter_param_->dim_weights_) && 
-                 FALSE_IT(score *= iter_param_->field_boost_ * iter_param_->dim_weights_->at(idx))) {
-      } else if (OB_FAIL(relevance_collector_->collect_one_dim(idx, score))) {
-        LOG_WARN("failed to collect one dimension", K(ret));
-      } else {
-        int ret_iter = dim_iter->get_next_row();
-        if (OB_SUCC(ret_iter)) {
-          if (OB_FAIL(dim_iter->get_curr_id(iter_domain_ids_[idx]))) {
-            LOG_WARN("fail to get current doc id", K(ret));
-          } else {
-            current_heads_[idx] = iter_domain_ids_[idx]->get_uint64();
-          }
-        } else if (OB_ITER_END == ret_iter) {
-          current_heads_[idx] = UINT64_MAX;
-          active_iter_cnt_--;
-        } else {
-          ret = ret_iter;
-          LOG_WARN("fail to load next dimension data", K(ret));
-        }
-      }
-      
-      mask &= (mask - 1); // Clear lowest set bit
-    }
-  }
-
-  // Tail processing for Collect
-  for (; OB_SUCC(ret) && i < iter_cnt; ++i) {
-    if (current_heads_[i] == min_id) {
-      if (first_match) {
-        id_datum.deep_copy(*iter_domain_ids_[i], *iter_allocator_);
-        first_match = false;
-      }
-      
-      ObISRDaaTDimIter *dim_iter = dim_iters_->at(i);
-      double score = 0.0;
-      if (OB_FAIL(dim_iter->get_curr_score(score))) {
-        LOG_WARN("fail to get current score", K(ret));
-      } else if (OB_NOT_NULL(iter_param_->dim_weights_) && 
-                 FALSE_IT(score *= iter_param_->field_boost_ * iter_param_->dim_weights_->at(i))) {
-      } else if (OB_FAIL(relevance_collector_->collect_one_dim(i, score))) {
-        LOG_WARN("failed to collect one dimension", K(ret));
-      } else {
-        int ret_iter = dim_iter->get_next_row();
-        if (OB_SUCC(ret_iter)) {
-          if (OB_FAIL(dim_iter->get_curr_id(iter_domain_ids_[i]))) {
-            LOG_WARN("fail to get current doc id", K(ret));
-          } else {
-            current_heads_[i] = iter_domain_ids_[i]->get_uint64();
-          }
-        } else if (OB_ITER_END == ret_iter) {
-          current_heads_[i] = UINT64_MAX;
-          active_iter_cnt_--;
-        } else {
-          ret = ret_iter;
-          LOG_WARN("fail to load next dimension data", K(ret));
-        }
       }
     }
   }
