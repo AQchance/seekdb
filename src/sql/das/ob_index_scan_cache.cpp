@@ -161,6 +161,37 @@ int ObIndexScanCache::append_row_to_pending(const ObIndexScanCacheKey &key,
   } else {
     ret = list->append_row(row);
   }
+  
+  // Debug: Print first row in the pending list after append
+  if (OB_SUCC(ret) && list != nullptr && list->rows_.count() > 0) {
+    const ObChunkDatumStore::StoredRow *first_row = 
+        reinterpret_cast<const ObChunkDatumStore::StoredRow*>(list->rows_[0].data);
+    if (first_row != nullptr) {
+      LOG_INFO("[CACHE_DEBUG] Pending list first row after append",
+               "total_rows_in_list", list->rows_.count(),
+               "first_row_size", first_row->row_size_,
+               "first_row_cnt", first_row->cnt_,
+               "appended_row_size", row->row_size_,
+               "appended_row_cnt", row->cnt_);
+      
+      // If the row has at least one cell (column), print the first cell value
+      if (first_row->cnt_ > 0) {
+        const ObDatum *cells = first_row->cells();
+        if (cells != nullptr && !cells[0].is_null()) {
+          // Assume first column is often the rowkey (typically an integer)
+          if (cells[0].len_ == sizeof(int64_t)) {
+            LOG_INFO("[CACHE_DEBUG] First row first cell (int64)",
+                     "value", cells[0].get_int());
+          } else {
+            LOG_INFO("[CACHE_DEBUG] First row first cell",
+                     "len", cells[0].len_,
+                     "is_null", cells[0].is_null());
+          }
+        }
+      }
+    }
+  }
+  
   return ret;
 }
 
