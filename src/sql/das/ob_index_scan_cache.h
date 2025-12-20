@@ -105,75 +105,63 @@ struct IndexScanCacheKeyEqual {
  * 
  * Each row is a serialized StoredRow that can be used directly with LastStoredRow.
  */
+/**
+ * Simplified cache value - stores only rowkey int64 values
+ */
 class ObIndexScanCacheValue : public common::ObIKVCacheValue
 {
 public:
-  ObIndexScanCacheValue() : row_count_(0), total_data_size_(0) {}
+  ObIndexScanCacheValue() : rowkey_count_(0) {}
   virtual ~ObIndexScanCacheValue() {}
 
   virtual int64_t size() const override
   {
-    return sizeof(ObIndexScanCacheValue) + row_count_ * sizeof(int64_t) + total_data_size_;
+    return sizeof(ObIndexScanCacheValue) + rowkey_count_ * sizeof(int64_t);
   }
 
   virtual int deep_copy(char *buf, const int64_t buf_len, ObIKVCacheValue *&value) const override;
 
-  int64_t row_count() const { return row_count_; }
+  int64_t rowkey_count() const { return rowkey_count_; }
   
-  // Get size of row at index
-  int64_t get_row_size(int64_t idx) const {
-    if (idx < 0 || idx >= row_count_) return 0;
-    const int64_t *sizes = reinterpret_cast<const int64_t*>(data_);
-    return sizes[idx];
+  // Get rowkey at index
+  int64_t get_rowkey(int64_t idx) const {
+    if (idx < 0 || idx >= rowkey_count_) return 0;
+    return rowkeys_[idx];
   }
   
-  // Get pointer to row data at index
-  const char* get_row_data(int64_t idx) const {
-    if (idx < 0 || idx >= row_count_) return nullptr;
-    const int64_t *sizes = reinterpret_cast<const int64_t*>(data_);
-    const char *row_data = data_ + row_count_ * sizeof(int64_t);
-    for (int64_t i = 0; i < idx; ++i) {
-      row_data += sizes[i];
-    }
-    return row_data;
-  }
+  // Get all rowkeys
+  const int64_t* get_rowkeys() const { return rowkeys_; }
 
-  static int64_t calc_size(int64_t row_count, int64_t total_data_size)
+  static int64_t calc_size(int64_t rowkey_count)
   {
-    return sizeof(ObIndexScanCacheValue) + row_count * sizeof(int64_t) + total_data_size;
+    return sizeof(ObIndexScanCacheValue) + rowkey_count * sizeof(int64_t);
   }
 
-  TO_STRING_KV(K_(row_count), K_(total_data_size));
+  TO_STRING_KV(K_(rowkey_count));
 
 public:
-  int64_t row_count_;
-  int64_t total_data_size_;
-  char data_[0];  // Flexible array: [row_sizes[row_count]][row_data...]
+  int64_t rowkey_count_;
+  int64_t rowkeys_[0];  // Flexible array of rowkey values
 };
 
 /**
  * Pending row list for dynamic building.
  */
+/**
+ * Simplified pending row list - stores only rowkey int64 values
+ */
 struct PendingRowList
 {
-  struct RowInfo {
-    char *data;
-    int64_t size;
-    TO_STRING_KV(KP(data), K(size));
-  };
-  
-  PendingRowList() : rows_(), allocator_("PendingRows") {}
+  PendingRowList() : rowkeys_() {}
   ~PendingRowList() { clear(); }
   
   void clear() {
-    rows_.reset();
-    allocator_.reset();
+    rowkeys_.reset();
   }
   
   int append_row(const ObChunkDatumStore::StoredRow *row);
   
-  ObArray<RowInfo> rows_;
-  common::ObArenaAllocator allocator_;
+  ObArray<int64_t> rowkeys_;  // Only store rowkey values (first column int64)
 };
 
 /**

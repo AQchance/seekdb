@@ -860,10 +860,10 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
               int cache_ret = ObIndexScanCache::get_instance().get_cached_rows(
                   cache_key, cached_value, temp_handle);
               
-              if (OB_SUCCESS == cache_ret && cached_value != nullptr && cached_value->row_count() > 0) {
+              if (OB_SUCCESS == cache_ret && cached_value != nullptr && cached_value->rowkey_count() > 0) {
                 // Determine batch to read
                 int64_t cache_offset = child_store.use_cached_data_ ? child_store.cache_offset_ : 0;
-                int64_t total_cached = cached_value->row_count();
+                int64_t total_cached = cached_value->rowkey_count();
                 int64_t remaining = total_cached - cache_offset;
                 
                 if (remaining > 0) {
@@ -884,37 +884,62 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
                 }
               }
               
-              // Populate child_store from current batch of cached data
+              
+              // Populate child_store from current batch of cached rowkeys
               if (cache_hit && cached_value != nullptr) {
                 if (child_store.store_rows_ != nullptr && child_rows_cnt > 0) {
+                  const int64_t *cached_rowkeys = cached_value->get_rowkeys();
+                  int64_t total_cached = cached_value->rowkey_count();
+                  int64_t actual_filled = 0;  // Track actual number of rows filled
+                  
                   for (int64_t row_idx = 0; row_idx < child_rows_cnt && OB_SUCC(ret); ++row_idx) {
                     int64_t cache_row_idx = child_store.cache_offset_ + row_idx;
-                    const char *row_data = cached_value->get_row_data(cache_row_idx);
-                    int64_t row_size = cached_value->get_row_size(cache_row_idx);
-                    if (row_data != nullptr && row_size > 0) {
-                      // Allocate memory using the iterator's mem_ctx_
+                    if (cache_row_idx < total_cached) {
+                      int64_t rowkey = cached_rowkeys[cache_row_idx];
+                      
+                      // Build minimal StoredRow with single int64 column (rowkey)
+                      // Layout: [StoredRow header][ObDatum][int64 data]
+                      int64_t row_size = sizeof(ObChunkDatumStore::StoredRow) + sizeof(ObDatum) + sizeof(int64_t);
                       char *row_buf = static_cast<char*>(mem_ctx_->get_arena_allocator().alloc(row_size));
+                      
                       if (OB_ISNULL(row_buf)) {
                         ret = OB_ALLOCATE_MEMORY_FAILED;
                         LOG_WARN("failed to alloc memory for cached row", K(ret), K(row_size));
                       } else {
-                        MEMCPY(row_buf, row_data, row_size);
-                        child_store.store_rows_[row_idx].store_row_ = 
+                        // Build StoredRow
+                        ObChunkDatumStore::StoredRow *stored_row = 
                             reinterpret_cast<ObChunkDatumStore::StoredRow*>(row_buf);
+                        stored_row->cnt_ = 1;  // Only rowkey column
+                        stored_row->row_size_ = row_size;
+                        
+                        // Setup ObDatum
+                        ObDatum *cell = stored_row->cells();
+                        int64_t *data_ptr = reinterpret_cast<int64_t*>(row_buf + sizeof(ObChunkDatumStore::StoredRow) + sizeof(ObDatum));
+                        *data_ptr = rowkey;  // Write rowkey value
+                        
+                        cell->ptr_ = reinterpret_cast<const char*>(data_ptr);
+                        cell->len_ = sizeof(int64_t);
+                        cell->pack_ = 0;
+                        cell->null_ = 0;
+                        
+                        child_store.store_rows_[row_idx].store_row_ = stored_row;
+                        actual_filled++;  // Increment actual filled count
                       }
+                    } else {
+                      // Reached end of cached data, stop filling
+                      break;
                     }
                   }
+                  
                   if (OB_SUCC(ret)) {
                     child_store.cur_idx_ = 0;
-                    child_store.saved_size_ = child_rows_cnt;
+                    child_store.saved_size_ = actual_filled;  // Use actual filled count, not child_rows_cnt!
                     // Update cache offset
-                    child_store.cache_offset_ += child_rows_cnt;
+                    child_store.cache_offset_ += actual_filled;
                     
-                    // Check if we've consumed all cached data
-                    if (child_store.cache_offset_ >= child_store.cache_total_count_) {
-                      child_store.iter_end_ = true;
-                      LOG_INFO("[INDEX_SCAN_CACHE] All cached data consumed", K(i));
-                    }
+                    // Log cache read progress (don't set iter_end here - data hasn't been consumed yet!)
+                    LOG_INFO("[INDEX_SCAN_CACHE] Batch filled from cache", K(i), K(actual_filled),
+                             "offset", child_store.cache_offset_, "total", child_store.cache_total_count_);
                   }
                 } else {
                   ret = OB_ERR_UNEXPECTED;
@@ -934,7 +959,7 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
                 if (OB_FAIL(child_store.save(true, child_rows_cnt))) {
                   LOG_WARN("failed to save child rows", K(child_rows_cnt), K(ret));
                 } else {
-                  // Cache the rows for non-FTS iterators
+                  // Cache the rows for non-FTS iterators (rowkey-only format)
                   if (!is_fts_iter && scan_param != nullptr && child_store.store_rows_ != nullptr) {
                     for (int64_t row_idx = 0; row_idx < child_rows_cnt; ++row_idx) {
                       if (child_store.store_rows_[row_idx].store_row_ != nullptr) {
