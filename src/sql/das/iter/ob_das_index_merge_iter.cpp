@@ -882,11 +882,16 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
                              "batch_size", child_rows_cnt, "offset", cache_offset, "total", total_cached);
                   }
                 }
+                else if(remaining == 0 && child_store.use_cached_data_){
+                  ret = OB_ITER_END;
+                  LOG_INFO("[INDEX_SCAN_CACHE] Cache HIT (end)", K(i),
+                           "batch_size", child_rows_cnt, "offset", cache_offset, "total", total_cached);
+                }
               }
               
               
               // Populate child_store from current batch of cached rowkeys
-              if (cache_hit && cached_value != nullptr) {
+              if (OB_SUCC(ret) &&cache_hit && cached_value != nullptr) {
                 if (child_store.store_rows_ != nullptr && child_rows_cnt > 0) {
                   const int64_t *cached_rowkeys = cached_value->get_rowkeys();
                   int64_t total_cached = cached_value->rowkey_count();
@@ -950,7 +955,7 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
             }
             
             // If cache miss, call the iterator normally
-            if (!cache_hit) {
+            if (OB_SUCC(ret) && !cache_hit) {
               ret = child_iter->get_next_rows(child_rows_cnt, capacity);
               if (OB_ITER_END == ret && child_rows_cnt > 0) {
                 ret = OB_SUCCESS;
