@@ -238,13 +238,13 @@ int ObDASLocalLookupIter::add_rowkeys(int64_t count)
         if (first_rowkey_expr != nullptr) {
           ObDatum &datum = first_rowkey_expr->locate_expr_datum(*eval_ctx_);
           total_add_count++;
-          LOG_INFO("[LOOKUP_DEBUG] add_rowkey",
-                   K(total_add_count), K(i), K(count),
-                   "batch_idx", eval_ctx_->get_batch_idx(),
-                   "batch_idx_mask", first_rowkey_expr->batch_idx_mask_,
-                   "is_batch_result", first_rowkey_expr->is_batch_result(),
-                   "datum_idx", first_rowkey_expr->get_datum_idx(*eval_ctx_),
-                   "rowkey_int", datum.get_int());
+          // LOG_INFO("[LOOKUP_DEBUG] add_rowkey",
+          //          K(total_add_count), K(i), K(count),
+          //          "batch_idx", eval_ctx_->get_batch_idx(),
+          //          "batch_idx_mask", first_rowkey_expr->batch_idx_mask_,
+          //          "is_batch_result", first_rowkey_expr->is_batch_result(),
+          //          "datum_idx", first_rowkey_expr->get_datum_idx(*eval_ctx_),
+          //          "rowkey_int", datum.get_int());
         }
       }
       if(OB_FAIL(add_rowkey())) {

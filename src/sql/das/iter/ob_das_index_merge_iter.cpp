@@ -217,7 +217,9 @@ int ObDASIndexMergeIter::inner_init(ObDASIterParam &param)
     LOG_INFO("[INDEX_MERGE_EXEC] ObDASIndexMergeIter::inner_init CALLED - INDEX MERGE EXECUTION STARTED",
              K(merge_type_), 
              "is_intersect", (merge_type_ == INDEX_MERGE_INTERSECT),
-             "is_union", (merge_type_ == INDEX_MERGE_UNION),
+             "is_topk_target", (merge_ctdef_ != nullptr ? merge_ctdef_->is_topk_target_ : false),
+             "limit_expr", (merge_ctdef_ != nullptr ? merge_ctdef_->limit_expr_ : nullptr),
+             "offset_expr", (merge_ctdef_ != nullptr ? merge_ctdef_->offset_expr_ : nullptr),
              "child_count", index_merge_param.child_iters_->count(),
              "rowkey_exprs_count", rowkey_exprs_ != nullptr ? rowkey_exprs_->count() : 0);
     
@@ -1139,12 +1141,52 @@ int ObDASIndexMergeIter::intersect_get_next_rows(int64_t &count, int64_t capacit
               [](const RowWithScore &a, const RowWithScore &b) {
                 return a.relevance_score > b.relevance_score;  // 降序排序
               });
-    int64_t rows_to_return = 10;
+    int64_t rows_to_return = total_matched;  // default: return all
+    int64_t offset = 0;
+    // Evaluate limit expression if present
+    if (OB_NOT_NULL(merge_ctdef_) && OB_NOT_NULL(merge_ctdef_->limit_expr_)) {
+      ObDatum *limit_datum = nullptr;
+      if (OB_FAIL(merge_ctdef_->limit_expr_->eval(*eval_ctx_, limit_datum))) {
+        LOG_WARN("failed to eval limit expr", K(ret), KPC(merge_ctdef_->limit_expr_));
+      } else if (OB_ISNULL(limit_datum)) {
+        LOG_WARN("limit datum is null after eval", K(ret));
+      } else if (limit_datum->is_null()) {
+        LOG_INFO("limit datum is sql null", K(ret));
+      } else {
+        rows_to_return = limit_datum->get_int();
+        LOG_INFO("Evaluated limit expr", "limit", rows_to_return);
+      }
+    } else {
+      LOG_INFO("No limit expr found in ctdef", "ctdef", merge_ctdef_, 
+               "limit_expr", (merge_ctdef_ ? merge_ctdef_->limit_expr_ : nullptr));
+    }
+    // Evaluate offset expression if present
+    if (OB_SUCC(ret) && OB_NOT_NULL(merge_ctdef_) && OB_NOT_NULL(merge_ctdef_->offset_expr_)) {
+      ObDatum *offset_datum = nullptr;
+      if (OB_FAIL(merge_ctdef_->offset_expr_->eval(*eval_ctx_, offset_datum))) {
+        LOG_WARN("failed to eval offset expr", K(ret), KPC(merge_ctdef_->offset_expr_));
+      } else if (OB_ISNULL(offset_datum)) {
+        LOG_WARN("offset datum is null after eval", K(ret));
+      } else if (offset_datum->is_null()) {
+        LOG_INFO("offset datum is sql null", K(ret));
+      } else {
+        offset = offset_datum->get_int();
+        LOG_INFO("Evaluated offset expr", "offset", offset);
+      }
+    }
+    // Clamp rows_to_return to available data after offset
+    if (OB_SUCC(ret)) {
+      if (offset >= total_matched) {
+        rows_to_return = 0;
+      } else if (offset + rows_to_return > total_matched) {
+        rows_to_return = total_matched - offset;
+      }
+    }
     count = rows_to_return;
-    // LOG_INFO("[INDEX_MERGE_DEBUG] Returning top results", 
-    //          K(total_matched), K(rows_to_return), K(capacity));
+    LOG_INFO("[INDEX_MERGE_DEBUG] TopK sort with limit", 
+             K(total_matched), K(rows_to_return), K(offset), K(capacity));
     for (int64_t i = 0; OB_SUCC(ret) && i < rows_to_return; i++) {
-      const RowWithScore &row_score = all_rows[i];
+      const RowWithScore &row_score = all_rows[offset + i];
       if (OB_ISNULL(row_score.stored_row)) {
         ret = OB_ERR_UNEXPECTED;
         LOG_WARN("unexpected null stored row", K(i), K(ret));

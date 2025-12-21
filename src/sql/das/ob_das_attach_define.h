@@ -211,6 +211,9 @@ public:
     : ObDASAttachCtDef(alloc, DAS_OP_INDEX_MERGE),
       merge_type_(INDEX_MERGE_INVALID),
       is_reverse_(false),
+      is_topk_target_(false),
+      limit_expr_(nullptr),
+      offset_expr_(nullptr),
       merge_node_types_(alloc),
       rowkey_exprs_(alloc)
   {}
@@ -219,6 +222,9 @@ public:
 public:
   ObIndexMergeType merge_type_;
   bool is_reverse_;
+  bool is_topk_target_;  // true if ORDER BY and LIMIT are present
+  ObExpr *limit_expr_;   // LIMIT expression from SQL
+  ObExpr *offset_expr_;  // OFFSET expression from SQL
   /* child node types, include NODE_MERGE, NODE_SCAN, NDOE_FTS now */
   ObFixedArray<ObIndexMergeType, common::ObIAllocator> merge_node_types_;
   sql::ExprFixedArray rowkey_exprs_;  // merge by rowkey

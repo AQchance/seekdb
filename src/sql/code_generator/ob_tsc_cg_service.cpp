@@ -2525,6 +2525,43 @@ int ObTscCgService::generate_index_merge_ctdef(const ObLogTableScan &op,
     ObIndexMergeNode *root = path->root_;
     if (OB_FAIL(generate_index_merge_node_ctdef(op, tsc_ctdef, root, ctdef_alloc, root_ctdef))) {
       LOG_WARN("failed to generate index merge ctdef", K(root_ctdef));
+    } else if (OB_NOT_NULL(root_ctdef)) {
+      // For Index Merge, LIMIT is not pushed to ObLogTableScan directly
+      // So we get it from the statement instead
+      const ObDMLStmt *stmt = nullptr;
+      ObRawExpr *stmt_limit_expr = nullptr;
+      ObRawExpr *stmt_offset_expr = nullptr;
+      if (OB_NOT_NULL(op.get_plan()) && OB_NOT_NULL(stmt = op.get_plan()->get_stmt())) {
+        stmt_limit_expr = stmt->get_limit_expr();
+        stmt_offset_expr = stmt->get_offset_expr();
+      }
+      // Fallback to TableScan's limit if available (for cases where it's pushed)
+      ObRawExpr *limit_expr = (nullptr != op.get_limit_expr()) ? 
+                              const_cast<ObRawExpr*>(op.get_limit_expr()) : stmt_limit_expr;
+      ObRawExpr *offset_expr = (nullptr != const_cast<ObLogTableScan&>(op).get_offset_expr()) ? 
+                               const_cast<ObLogTableScan&>(op).get_offset_expr() : stmt_offset_expr;
+      
+      const bool has_limit = (nullptr != limit_expr);
+      const bool has_ordering = (op.get_op_ordering().count() > 0);
+      root_ctdef->is_topk_target_ = has_limit && has_ordering;
+      
+      // Generate limit and offset expressions
+      if (nullptr != limit_expr) {
+        if (OB_FAIL(cg_.generate_rt_expr(*limit_expr, root_ctdef->limit_expr_))) {
+          LOG_WARN("failed to generate limit expr", K(ret));
+        }
+      }
+      if (OB_SUCC(ret) && nullptr != offset_expr) {
+        if (OB_FAIL(cg_.generate_rt_expr(*offset_expr, root_ctdef->offset_expr_))) {
+          LOG_WARN("failed to generate offset expr", K(ret));
+        }
+      }
+      LOG_INFO("[INDEX_MERGE_EXEC] CG: is_topk_target_ and limit set",
+               "is_topk_target", root_ctdef->is_topk_target_,
+               K(has_limit), K(has_ordering),
+               "limit_expr", root_ctdef->limit_expr_,
+               "offset_expr", root_ctdef->offset_expr_,
+               "from_stmt", (limit_expr == stmt_limit_expr));
     }
   }
   return ret;
