@@ -10,6 +10,7 @@ from src.prompt import QUERY_SYSTEM_PROMPT, QUERY_USER_PROMPT_TEMPLATE
 from src.storage.oceanbase import get_or_create_client
 from src.util import Answer
 import json
+from typing import List, Dict, Any, Set
 logger = logging.getLogger(__name__)
 
 dotenv.load_dotenv()
@@ -24,9 +25,138 @@ OCEANBASE_DBNAME = os.getenv("OCEANBASE_DBNAME")
 TABLE_NAME = "rag_documents"
 
 # Number of top results to retrieve
-TOP_K = 50
+TOP_K = 30
+
+QUERY_VARIATIONS = 3
 
 
+def generate_query_variations(question: str) :
+    try:
+        # 使用LLM生成同义重写
+        prompt = f"""请为以下问题生成{QUERY_VARIATIONS - 1}个不同但意义相同的表达方式，保持核心意思不变：
+
+        原始问题：{question}
+
+        要求：
+        1. 每个表达方式都应与原始问题意思相同
+        2. 使用不同的措辞和句式
+        3. 保持专业性和准确性
+        4. 用中文回答
+
+        请以JSON数组格式输出，格式如下：
+        ["问题变体1", "问题变体2", ...]"""
+
+        messages = [
+            {
+                "role": "system",
+                "content": "你是一个专业的同义改写助手，负责生成问题的不同表达方式。"
+            },
+            {"role": "user", "content": prompt}
+        ]
+
+        response = generate_llm_response(messages)
+
+        # 解析响应
+        try:
+            variations = json.loads(response)
+            if isinstance(variations, list) and len(variations) >= 1:
+                # 确保包含原始问题，并去重
+                all_queries = [question] + variations
+                unique_queries = []
+                seen = set()
+                for q in all_queries:
+                    if q not in seen:
+                        seen.add(q)
+                        unique_queries.append(q)
+                return unique_queries[:QUERY_VARIATIONS]
+        except json.JSONDecodeError:
+            # 如果无法解析JSON，使用简单的方法生成变体
+            logger.warning("Failed to parse LLM response for query variations")
+
+    except Exception as e:
+        logger.error(f"Error generating query variations: {e}")
+
+    # 备用方案：返回原始问题和一些简单的变体
+    variations = [question]
+
+    # 添加一些简单的变体（可以根据需要扩展）
+    simple_variants = [
+        f"请问：{question}",
+        f"我想了解：{question}",
+        f"请解释：{question}"
+    ]
+
+    for variant in simple_variants:
+        if len(variations) < QUERY_VARIATIONS:
+            variations.append(variant)
+
+    return variations
+
+
+def deduplicate_results(results: List[Dict]) -> List[Dict]:
+    """
+    基于source_id去重结果。
+
+    Args:
+        results: 搜索结果列表
+
+    Returns:
+        去重后的结果列表
+    """
+    if not results:
+        return results
+
+    # 使用source_id进行去重
+    seen_ids = set()
+    unique_results = []
+
+    for result in results:
+        source_id = result.get('source_id')
+
+        # 如果有source_id且未出现过，则保留
+        if source_id and source_id not in seen_ids:
+            seen_ids.add(source_id)
+            unique_results.append(result)
+        elif not source_id:
+            # 如果没有source_id，直接保留（避免丢失数据）
+            unique_results.append(result)
+
+    logger.debug(f"Deduplication: {len(results)} -> {len(unique_results)} results")
+    return unique_results
+
+
+def search_with_query(query: str, question_embedding, client, top_k: int) -> List[Dict]:
+        fts_query = {
+            "bool": {
+                "must": [
+                    {
+                        "query_string": {
+                            "fields": ["content"],
+                            "type": "best_fields",
+                            "query": query,
+                            "minimum_should_match": "20%",
+                        }
+                    }
+                ],
+            }
+        }
+
+        # Build the hybrid search request
+        search_request = {
+            "query": fts_query,
+            "knn": {
+                "field": "vector",
+                "k": top_k * 2,
+                "num_candidates": top_k * 4,
+                "query_vector": question_embedding,
+            },
+            "from": 0,
+            "size": top_k,
+        }
+
+        # Perform hybrid search
+        search_results = client.search(index=TABLE_NAME, body=search_request)
+        return search_results
 def search(question: str) -> Answer:
     """
     Query the RAG system with a question and return an answer.
@@ -47,47 +177,43 @@ def search(question: str) -> Answer:
         # Generate embedding for the question
         logger.debug("Generating embedding for question...")
         question_embedding = generate_embedding(question)
-
+        questions=generate_query_variations(question)
         # Initialize OceanBase client
         client = get_or_create_client()
+        all_results = []
+
+        # 为每个问题变体执行搜索
+        for i, query_variant in enumerate(questions):
+            logger.debug(f"Searching with query variant {i + 1}/{len(questions)}: '{query_variant[:50]}...'")
+
+            # 为每个变体生成嵌入向量（第一个已经是原始问题的嵌入）
+            if i == 0:
+                query_embedding = question_embedding
+            else:
+                try:
+                    query_embedding = generate_embedding(query_variant)
+                except Exception as e:
+                    logger.warning(f"Failed to generate embedding for variant, using original: {e}")
+                    query_embedding = question_embedding
+
+            # 执行搜索
+            search_results = search_with_query(query_variant, query_embedding, client, TOP_K)
+
+            logger.debug(f"Query variant {i + 1} returned {len(search_results)} results")
+            all_results.extend(search_results)
+
+        logger.debug(f"Total results from all query variants: {len(all_results)}")
+        search_results = deduplicate_results(all_results)
 
         # Build hybrid search query
         # First, build a simple full-text search query
-        fts_query = {
-            "bool": {
-                "must": [
-                    {
-                        "query_string": {
-                            "fields": ["content"],
-                            "type": "best_fields",
-                            "query": question,
-                            "minimum_should_match":"20%",
-                        }
-                    }
-                ],
-            }
-        }
 
         # Build the hybrid search request
-        search_request = {
-            "query": fts_query,
-            "knn": {
-                "field": "vector",
-                "k": TOP_K * 2,  # Retrieve more candidates for filtering
-                "num_candidates": TOP_K * 4,
-                "query_vector": question_embedding,
-                # "filter": fts_query,
-                # "similarity": 0.5,  # Similarity threshold
-            },
-            "from": 0,
-            "size": TOP_K,
-        }
 
         # Perform hybrid search
-        logger.debug(f"Performing hybrid search with TOP_K={TOP_K}...")
-        search_results = client.search(index=TABLE_NAME, body=search_request)
+
         content1 = []
-        for result in search_results[:TOP_K]:
+        for result in search_results:
             content1.append(result.get("content", ""))
         if not search_results or len(search_results) == 0:
             logger.warning(
@@ -108,18 +234,17 @@ def search(question: str) -> Answer:
                 doc['vector'] = json.loads(doc['vector'])
             # 转成 numpy float32
             doc['vector'] = np.array(doc['vector'], dtype=np.float32)
-        question_embedding = np.array(question_embedding, dtype=np.float32)
 
         def cosine(a, b):
             return dot(a, b) / (norm(a) * norm(b) + 1e-8)
+        #
+        # reranked = sorted(
+        #     search_results,
+        #     key=lambda doc: cosine(question_embedding, doc['vector']),
+        #     reverse=True
+        # )[:TOP_K]
 
-        reranked = sorted(
-            search_results[:TOP_K],
-            key=lambda doc: cosine(question_embedding, doc['vector']),
-            reverse=True
-        )[:TOP_K]
-
-        for result in search_results[:20]:
+        for result in search_results[:50]:
             content = result.get("content", "")
             filename = result.get("filename", "")
             page = result.get("page", 0)
