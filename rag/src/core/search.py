@@ -25,9 +25,9 @@ OCEANBASE_DBNAME = os.getenv("OCEANBASE_DBNAME")
 TABLE_NAME = "rag_documents"
 
 # Number of top results to retrieve
-TOP_K = 30
+TOP_K = 20
 
-QUERY_VARIATIONS = 3
+QUERY_VARIATIONS = 5
 
 
 def generate_query_variations(question: str) :
@@ -204,6 +204,7 @@ def search(question: str) -> Answer:
 
         logger.debug(f"Total results from all query variants: {len(all_results)}")
         search_results = deduplicate_results(all_results)
+        search_results.sort(key=lambda x: x["_score"], reverse=True)
 
         # Build hybrid search query
         # First, build a simple full-text search query

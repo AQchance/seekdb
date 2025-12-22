@@ -82,10 +82,10 @@ if __name__ == "__main__":
     logger.info(f"Output file: {args.output}")
 
     logger.info("Starting data preparation...")
-    # add(
-    #     dataset_dir=args.dataset,
-    #     max_worker=16,
-    # )
+    add(
+        dataset_dir=args.dataset,
+        max_worker=16,
+    )
 
     logger.info("Data preparation completed.")
 
